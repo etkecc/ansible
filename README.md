@@ -18,5 +18,7 @@ That repo provides following playbooks:
 # Install
 
 ```bash
+git clone https://gitlab.com/rakshazi/matrix-ansible.git
+cd matrix-ansible
 git submodule update --init --recursive
 ```
