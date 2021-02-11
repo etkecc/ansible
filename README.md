@@ -45,4 +45,5 @@ vim inventory/host_vars/DOMAIN/vars.yml
 
 and now, follow the [spantaleev/matrix-docker-ansible-deploy documentation](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/docs/README.md)
 
-**NOTE**: For initial server setup use playbook `play/all.yml`, after that you can use playbook `play/matrix.yml`
+**NOTE**: For initial server setup use playbook `play/all.yml` (yep, with tags as described in parent project's documentation),
+after that you can use playbook `play/matrix.yml`

@@ -5,9 +5,13 @@
 
 - name: System maintenance
   import_playbook: maintenance.yml
+  tags:
+    - setup-all
 
 - name: System security adjustments
   import_playbook: security.yml
+  tags:
+    - setup-all
 
 - name: Matrix server setup
   import_playbook: matrix.yml
