@@ -1,0 +1,27 @@
+---
+- name: Enforce sshd config
+  blockinfile:
+    path: /etc/ssh/sshd_config
+    block: |
+      AllowStreamLocalForwarding no
+      AllowTcpForwarding no
+      Compression no
+      GatewayPorts no
+      IgnoreRhosts yes
+      MaxAuthTries 3
+      PasswordAuthentication no
+      PermitEmptyPasswords no
+      PermitRootLogin yes
+      PermitTunnel no
+      PrintLastLog no
+      PrintMotd no
+      PubkeyAuthentication yes
+      UseDNS no
+      X11Forwarding no
+  register: system_security_sshd_config
+
+- name: Reload sshd configuration
+  systemd:
+    name: sshd
+    state: reloaded
+  when: system_security_sshd_config.changed

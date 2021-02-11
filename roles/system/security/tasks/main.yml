@@ -1,0 +1,9 @@
+---
+- import_tasks: fail2ban/main.yml
+  tags: security-fail2ban
+
+- import_tasks: ufw/main.yml
+  tags: security-ufw
+
+- import_tasks: sshd/main.yml
+  tags: security-ssh

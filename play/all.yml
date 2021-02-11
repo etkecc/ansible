@@ -1,0 +1,13 @@
+---
+- name: All playbooks at once
+  hosts: "{{ target if target is defined else 'matrix_servers' }}"
+  become: true
+
+- name: System maintenance
+  import_playbook: maintenance.yml
+
+- name: System security adjustments
+  import_playbook: security.yml
+
+- name: Matrix server setup
+  import_playbook: matrix.yml
