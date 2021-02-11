@@ -15,10 +15,34 @@ That repo provides following playbooks:
 * `play/matrix.yml` - symlink to `setup.yml` of [spantaleev/matrix-docker-ansible-deploy](https://github.com/spantaleev/matrix-docker-ansible-deploy)
 * `play/all.yml` - run all the stuff above, usefull when configuring new server
 
-# Install
+# How to start
+
+1. Decide what the domain name will be used for your matrix server ("pretty" domain, like: "gitlab.com" or "issuperstar.com" so your mxid will be like "@john:issuperstar.com"), replace `DOMAIN` below with that domain name
+2. Run the following commands and read instructions
 
 ```bash
+# clone that repo
 git clone https://gitlab.com/rakshazi/matrix-ansible.git
 cd matrix-ansible
+
+# pull the spantaleev/matrix-docker-ansible-deploy repo
 git submodule update --init --recursive
+
+# create directory for your server config
+mkdir inventory/host_vars/DOMAIN
+
+# copy the example configs
+cp upstream/examples/hosts inventory/hosts
+cp upstream/examples/vars.yml inventory/host_vars/DOMAIN/
+
+# edit inventory file and put your server connection details (vim is optional, aye).
+# note: replace matrix.<your-domain> with your DOMAIN (tbh, you dont need matrix. prefix here, so you may remove it, too)
+vim inventory/hosts
+
+# edit your server configuration file (vim is optional here)
+vim inventory/host_vars/DOMAIN/vars.yml
 ```
+
+and now, follow the [spantaleev/matrix-docker-ansible-deploy documentation](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/docs/README.md)
+
+**NOTE**: For initial server setup use playbook `play/all.yml`, after that you can use playbook `play/matrix.yml`
