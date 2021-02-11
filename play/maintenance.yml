@@ -1,0 +1,7 @@
+---
+- name: "Maintenance"
+  hosts: "{{ target if target is defined else 'matrix_servers' }}"
+  become: true
+
+  roles:
+    - system/maintenance

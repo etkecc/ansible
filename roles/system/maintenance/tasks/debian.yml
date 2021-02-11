@@ -1,0 +1,26 @@
+---
+- name: Update packages list
+  apt:
+    update_cache: yes
+    force_apt_get: yes
+    cache_valid_time: 3600
+
+- name: Upgrade packages
+  apt:
+    upgrade: "{{ system_maintenance_upgrade_type }}"
+
+- name: Cleanup system packages
+  apt:
+    autoclean: yes
+    autoremove: yes
+
+# check if reboot required
+- name: Check if system reboot is required
+  stat:
+    path: /var/run/reboot-required
+  register: system_reboot_required
+
+- name: Notify if system reboot is required
+  debug:
+    msg: System reboot required
+  when: system_reboot_required.stat.exists
