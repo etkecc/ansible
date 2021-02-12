@@ -1,0 +1,51 @@
+---
+- include_vars: parent.yml
+  when: matrix_nginx_proxy_website_enabled|bool and matrix_nginx_proxy_data_path is not defined
+
+- name: Clone website repo
+  git:
+    force: yes
+    repo: "{{ matrix_nginx_proxy_website_repo }}"
+    dest: "{{ matrix_nginx_proxy_website_tmp_path }}/nginx-proxy-website_{{ inventory_hostname }}"
+    version: "{{ matrix_nginx_proxy_website_repo_ref }}"
+  delegate_to: 127.0.0.1
+  become: no
+  when: matrix_nginx_proxy_website_enabled|bool
+
+- name: Build website
+  command: "{{ matrix_nginx_proxy_website_command }}"
+  args:
+    chdir: "{{ matrix_nginx_proxy_website_tmp_path }}/nginx-proxy-website_{{ inventory_hostname }}"
+  delegate_to: 127.0.0.1
+  become: no
+  when: matrix_nginx_proxy_website_enabled|bool and matrix_nginx_proxy_website_command != ""
+
+- name: Cleanup build directory before deploy
+  file:
+    state: absent
+    path: "{{ matrix_nginx_proxy_website_tmp_path }}/nginx-proxy-website_{{ inventory_hostname }}/{{ matrix_nginx_proxy_website_dist }}/{{ item }}"
+  with_items: "{{ matrix_nginx_proxy_website_exclude }}"
+  delegate_to: 127.0.0.1
+  become: no
+  when: matrix_nginx_proxy_website_enabled|bool
+
+- name: Deploy website
+  copy:
+    src: "{{ matrix_nginx_proxy_website_tmp_path }}/nginx-proxy-website_{{ inventory_hostname }}/{{ matrix_nginx_proxy_website_dist }}/"
+    dest: "{{ matrix_nginx_proxy_website_path }}"
+    directory_mode: 0750
+    mode: 0644
+    owner: "{{ matrix_user_username }}"
+    group: "{{ matrix_user_groupname }}"
+    follow: yes
+    force: yes
+  become: no
+  when: matrix_nginx_proxy_website_enabled
+
+- name: Remove temporary build dir
+  file:
+    state: absent
+    path: "{{ matrix_nginx_proxy_website_tmp_path }}/nginx-proxy-website_{{ inventory_hostname }}"
+  delegate_to: 127.0.0.1
+  become: no
+  when: matrix_nginx_proxy_website_enabled|bool

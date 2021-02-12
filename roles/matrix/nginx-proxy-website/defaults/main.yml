@@ -1,0 +1,24 @@
+---
+# Enable website deploy
+matrix_nginx_proxy_website_enabled: false
+
+# git repository of your website or website source code
+matrix_nginx_proxy_website_repo: ""
+
+# This can be the literal string HEAD, a branch name, a tag name.
+matrix_nginx_proxy_website_repo_ref: "HEAD"
+
+# website build command
+matrix_nginx_proxy_website_command: "hugo --i18n-warnings --ignoreCache --path-warnings --minify"
+
+# website build artifact folder, it may be empty if you need to copy the content of git dir
+matrix_nginx_proxy_website_dist: "public"
+
+# remove following files or dirs from dist folder before deployment
+matrix_nginx_proxy_website_exclude: ['.git']
+
+####
+# DO NOT CHANGE following variables, unless you know what you are doing.
+####
+# temp directory for website build on host/control machine, note that it's an absolute path
+matrix_nginx_proxy_website_tmp_path: "/tmp"
