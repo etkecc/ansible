@@ -15,6 +15,7 @@ That repo provides following playbooks:
 * `play/maintenance.yml` - update system packages, clean up space
 * `play/security.yml` - install and configure fail2ban, ufw and sshd to avoid breaches
 * `play/matrix.yml` - symlink to `setup.yml` of [spantaleev/matrix-docker-ansible-deploy](https://github.com/spantaleev/matrix-docker-ansible-deploy)
+* `play/website.yml` - deploy your static website to base domain, [documentation](./roles/matrix/nginx-proxy-website/README.md)
 * `play/all.yml` - run all the stuff above, usefull when configuring new server
 
 ## roles

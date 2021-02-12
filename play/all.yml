@@ -1,4 +1,5 @@
 ---
+# NOTE: setup-all tags added to follow the matrix.yml playbook style and allow to run all playbooks at once
 - name: All playbooks at once
   hosts: "{{ target if target is defined else 'matrix_servers' }}"
   become: true
@@ -15,3 +16,8 @@
 
 - name: Matrix server setup
   import_playbook: matrix.yml
+
+- name: Website setup
+  import_playbook: website.yml
+  tags:
+    - setup-all
