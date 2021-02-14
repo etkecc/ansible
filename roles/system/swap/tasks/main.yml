@@ -1,0 +1,49 @@
+---
+- name: Allocate space
+  command: |
+    {% if system_swap_fallocate %}
+    fallocate -l {{ ((system_swap_size) | int * 1024 * 1024) }} {{ system_swap_path }}
+    {% else %}
+    dd if=/dev/zero of={{ system_swap_path }} bs=1M count={{ system_swap_size }}
+    {% endif %}
+  args:
+    creates: "{{ system_swap_path }}"
+  register: system_swap_file
+  when: system_swap_enabled|bool
+
+- name: Set file permissions
+  file:
+    path: "{{ system_swap_path }}"
+    state: file
+    owner: root
+    group: root
+    mode: '0600'
+  when: system_swap_enabled|bool and system_swap_file is changed
+
+- name: Create swap
+  command: "mkswap {{ system_swap_path }}"
+  when: system_swap_enabled|bool and system_swap_file is changed
+
+- name: Enable swap
+  command: "swapon {{ system_swap_path }}"
+  when: system_swap_enabled|bool and system_swap_file is changed
+
+- name: Persist swap config in /etc/fstab
+  mount:
+    name: none
+    src: "{{ system_swap_path }}"
+    fstype: swap
+    opts: sw,nofail
+    dump: '0'
+    passno: '0'
+    state: present
+  when: system_swap_enabled|bool and system_swap_file is changed
+
+- name: Set sysctl params
+  sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    state: present
+    reload: yes
+  with_items: "{{ system_swap_sysctl }}"
+  when: system_swap_enabled|bool and system_swap_file is changed

@@ -12,7 +12,7 @@ because matrix-ansible repo is only a wrapper around it, so 99% of work done in 
 
 That repo provides following playbooks:
 
-* `play/maintenance.yml` - update system packages, clean up space
+* `play/maintenance.yml` - add swap, update system packages, clean up space
 * `play/security.yml` - install and configure fail2ban, ufw and sshd to avoid breaches
 * `play/matrix.yml` - symlink to `setup.yml` of [spantaleev/matrix-docker-ansible-deploy](https://github.com/spantaleev/matrix-docker-ansible-deploy)
 * `play/website.yml` - deploy your static website to base domain, [documentation](./roles/matrix/nginx-proxy-website/README.md)
@@ -22,6 +22,7 @@ That repo provides following playbooks:
 
 * `roles/system/maintenance` - used by `play/maintenance.yml`
 * `roles/system/security` - used by `play/security.yml`
+* `roles/system/swap` - used by `play/maintenance.yml`, [documentation](./roles/system/swap/README.md)
 * `roles/matrix/nginx-proxy-website` - used by `play/website.yml`, [documentation](./roles/matrix/nginx-proxy-website/README.md)
 
 # Usage
