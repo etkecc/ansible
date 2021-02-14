@@ -84,3 +84,14 @@ New versions of matrix-related software releases very often, so to stay up to da
 * **Don't forget to carefuly read changelog**, because it may contains breaking changes!
 * Run the upgrade: `ansible-playbook play/all.yml -t setup-all`
 * Check if it works as expected: `ansible-playbook play/matrix.yml -t self-check`
+
+## Supported distributives
+
+[Parent project prerequisites](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/docs/prerequisites.md#prerequisites)
+has a list of supported distributives and versions.
+
+**NOTE**: that repository developing and testing on Ubuntu 18.04 LTS _and following cloud providers: AWS, Digital Ocean, Hetzner_.
+
+I'm trying to avoid distro-specific tools and commands (if such tool/command/module used, it will be called only if `ansible_os_family` allows that),
+but again - all development and testing performed only on Ubuntu 18.04 LTS and I cannot guarantee that my "wrapper" will work as expected on any other
+distro or version.
