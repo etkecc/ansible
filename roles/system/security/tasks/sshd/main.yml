@@ -21,7 +21,7 @@
   register: system_security_sshd_config
 
 - name: Reload sshd configuration
-  systemd:
+  service:
     name: sshd
     state: reloaded
   when: system_security_sshd_config.changed

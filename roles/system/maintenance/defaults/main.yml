@@ -2,3 +2,6 @@
 # https://docs.ansible.com/ansible/2.9/modules/apt_module.html#parameter-upgrade
 # allowed values: safe, full, dist
 system_maintenance_upgrade_type: safe
+
+# run `docker system prune -a -f` to remove unused images and containers
+system_maintenance_docker_prune: yes

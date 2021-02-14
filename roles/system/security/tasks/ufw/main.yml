@@ -1,73 +1,24 @@
 ---
-- include_tasks: debian.yml
-  when: ansible_os_family == "Debian"
+- name: Install ufw
+  package:
+    name: ufw
+    state: present
 
-- name: Allow ssh access
-  ufw:
-    rule: allow
-    name: OpenSSH
-
-- name: Allow HTTP
-  ufw:
-    rule: allow
-    port: '80'
-    proto: tcp
-
-- name: Allow HTTPS
-  ufw:
-    rule: allow
-    port: '443'
-    proto: tcp
-
-- name: Allow Matrix Federation
-  ufw:
-    rule: allow
-    port: '8448'
-    proto: tcp
-
-- name: Allow TURN over TCP
-  ufw:
-    rule: allow
-    port: '3478'
-    proto: tcp
-
-- name: Allow TURN over TCP 2
-  ufw:
-    rule: allow
-    port: '5349'
-    proto: tcp
-
-- name: Allow TURN over UDP
-  ufw:
-    rule: allow
-    port: '3478'
-    proto: udp
-
-- name: Allow TURN over UDP 2
-  ufw:
-    rule: allow
-    port: '5349'
-    proto: udp
-
-- name: Allow TURN over UDP (port range)
-  ufw:
-    rule: allow
-    port: 49152:49172
-    proto: udp
-
-- name: Allow Jitsi Harveser fallback
-  ufw:
-    rule: allow
-    port: '4443'
-    proto: tcp
-
-- name: Allow Jitsi Video RTP
-  ufw:
-    rule: allow
-    port: '10000'
-    proto: udp
+- name: Ensure ufw stared and running
+  service:
+    state: started
+    enabled: yes
+    name: ufw
 
 - name: Apply rules
+  ufw:
+    rule: "{{ item.rule }}"
+    port: "{{ item.port }}"
+    proto: "{{ item.proto }}"
+    comment: "{{ item.name }}"
+  with_items: "{{ system_security_ufw_rules }}"
+
+- name: Start ufw
   ufw:
     logging: 'on'
     policy: deny

@@ -1,0 +1,4 @@
+---
+- name: Clean up docker images and containers
+  command: docker system prune -a -f
+  when: system_maintenance_docker_prune|bool

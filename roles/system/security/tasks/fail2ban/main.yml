@@ -1,3 +1,11 @@
 ---
-- include_tasks: debian.yml
-  when: ansible_os_family == "Debian"
+- name: Install fail2ban
+  package:
+    name: fail2ban
+    state: present
+
+- name: Ensure fail2ban stared and running
+  service:
+    state: started
+    enabled: yes
+    name: fail2ban
