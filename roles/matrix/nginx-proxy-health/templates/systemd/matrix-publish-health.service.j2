@@ -1,0 +1,6 @@
+[Unit]
+Description=Publish Matrix Services status to html report
+
+[Service]
+Type=oneshot
+ExecStart={{ matrix_local_bin_path }}/matrix-publish-health

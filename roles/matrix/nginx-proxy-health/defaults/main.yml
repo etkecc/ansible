@@ -1,0 +1,7 @@
+---
+# Enable the health report
+matrix_nginx_proxy_health_enabled: false
+# Health report filename
+matrix_nginx_proxy_health_file: health.html
+# How often report should be updated (minutes)
+matrix_nginx_proxy_health_timer: 1

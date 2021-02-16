@@ -15,7 +15,7 @@ That repo provides following playbooks:
 * `play/maintenance.yml` - add swap, update system packages, clean up space
 * `play/security.yml` - install and configure fail2ban, ufw and sshd to avoid breaches
 * `play/matrix.yml` - symlink to `setup.yml` of [spantaleev/matrix-docker-ansible-deploy](https://github.com/spantaleev/matrix-docker-ansible-deploy)
-* `play/website.yml` - deploy your static website to base domain, [documentation](./roles/matrix/nginx-proxy-website/README.md)
+* `play/website.yml` - deploy your static website to base domain, [website deploy documentation](./roles/matrix/nginx-proxy-website/README.md), [health report documentation](./roles/matrix/nginx-proxy-health/README.md)
 * `play/all.yml` - run all the stuff above, usefull when configuring new server
 
 ## roles
@@ -23,6 +23,7 @@ That repo provides following playbooks:
 * `roles/system/maintenance` - used by `play/maintenance.yml`
 * `roles/system/security` - used by `play/security.yml`
 * `roles/system/swap` - used by `play/maintenance.yml`, [documentation](./roles/system/swap/README.md)
+* `roles/matrix/nginx-proxy-health` - used by `play/website.yml`, [documentation](./roles/matrix/nginx-proxy-health/README.md)
 * `roles/matrix/nginx-proxy-website` - used by `play/website.yml`, [documentation](./roles/matrix/nginx-proxy-website/README.md)
 
 # Usage

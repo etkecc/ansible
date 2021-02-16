@@ -5,3 +5,4 @@
 
   roles:
     - matrix/nginx-proxy-website
+    - matrix/nginx-proxy-health
