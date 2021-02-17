@@ -21,3 +21,8 @@
   import_playbook: website.yml
   tags:
     - setup-all
+
+- name: Integrations setup
+  import_playbook: integration.yml
+  tags:
+    - setup-all

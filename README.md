@@ -16,6 +16,7 @@ That repo provides following playbooks:
 * `play/security.yml` - install and configure fail2ban, ufw and sshd to avoid breaches
 * `play/matrix.yml` - symlink to `setup.yml` of [spantaleev/matrix-docker-ansible-deploy](https://github.com/spantaleev/matrix-docker-ansible-deploy)
 * `play/website.yml` - deploy your static website to base domain, [website deploy documentation](./roles/matrix/nginx-proxy-website/README.md), [health report documentation](./roles/matrix/nginx-proxy-health/README.md)
+* `play/integration.yml` - UptimeRobot integration
 * `play/all.yml` - run all the stuff above, usefull when configuring new server
 
 ## roles
@@ -25,6 +26,7 @@ That repo provides following playbooks:
 * `roles/system/swap` - used by `play/maintenance.yml`, [documentation](./roles/system/swap/README.md)
 * `roles/matrix/nginx-proxy-health` - used by `play/website.yml`, [documentation](./roles/matrix/nginx-proxy-health/README.md)
 * `roles/matrix/nginx-proxy-website` - used by `play/website.yml`, [documentation](./roles/matrix/nginx-proxy-website/README.md)
+* `roles/integration/uptimerobot` - used by `play/integration`, [documentation](./roles/integration/uptimerobot/README.md)
 
 # Usage
 

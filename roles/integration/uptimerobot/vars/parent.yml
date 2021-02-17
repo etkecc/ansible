@@ -1,0 +1,4 @@
+---
+# Following variables defined in parent roles, like matrix-nginx-proxy-health or matrix-base,
+# but if current role used without parent roles, we should define those vars.
+matrix_nginx_proxy_health_file: health.html

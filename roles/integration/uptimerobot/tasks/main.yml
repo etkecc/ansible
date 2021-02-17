@@ -1,0 +1,57 @@
+---
+- include_vars: parent.yml
+  when: integration_uptimerobot_enabled|bool and matrix_nginx_proxy_health_file is not defined
+
+- name: Prepare auth params
+  set_fact:
+    integration_uptimerobot_params:
+      api_key: "{{ integration_uptimerobot_api_key }}"
+      format: "{{ integration_uptimerobot_api_format }}"
+  when: integration_uptimerobot_enabled|bool
+
+- name: Get monitors
+  uri:
+    url: https://api.uptimerobot.com/v2/getMonitors
+    body_format: form-urlencoded
+    status_code: 200
+    method: POST
+    body: "{{ integration_uptimerobot_params }}"
+  register: integration_uptimerobot_monitors_existing
+  when: integration_uptimerobot_enabled|bool and integration_uptimerobot_recreate|bool
+
+- name: Select monitors to recreate
+  set_fact:
+    integration_uptimerobot_monitors_recreate: "{{ integration_uptimerobot_monitors_recreate + [ item[1].id ] }}"
+  with_nested:
+    - "{{ integration_uptimerobot_monitors }}"
+    - "{{ integration_uptimerobot_monitors_existing.json.monitors }}"
+  when: integration_uptimerobot_enabled|bool and integration_uptimerobot_recreate|bool and item[0].options.friendly_name == item[1].friendly_name
+
+- name: Remove existing monitors
+  uri:
+    url: https://api.uptimerobot.com/v2/deleteMonitor
+    body_format: form-urlencoded
+    status_code: 200
+    method: POST
+    body: "{{ integration_uptimerobot_params | combine({'id': item}) }}"
+  loop: "{{ integration_uptimerobot_monitors_recreate }}"
+  when: integration_uptimerobot_enabled|bool and integration_uptimerobot_recreate|bool
+
+- name: Create monitors
+  uri:
+    url: https://api.uptimerobot.com/v2/newMonitor
+    body_format: form-urlencoded
+    status_code: 200
+    method: POST
+    body: "{{ item.options | combine(integration_uptimerobot_params) }}"
+  loop: "{{ integration_uptimerobot_monitors }}"
+  when: integration_uptimerobot_enabled|bool and item.enabled|bool
+
+- name: Create Status Page
+  uri:
+    url: https://api.uptimerobot.com/v2/newPSP
+    body_format: form-urlencoded
+    status_code: 200
+    method: POST
+    body: "{{ integration_uptimerobot_statuspage_options | combine(integration_uptimerobot_params) }}"
+  when: integration_uptimerobot_enabled|bool and integration_uptimerobot_statuspage_enabled|bool
