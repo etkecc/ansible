@@ -1,6 +1,6 @@
 /tmp
 !/tmp/.gitkeep
-inventory/hosts
+/inventory/hosts
 /inventory/host_vars/*
 !/inventory/host_vars/.gitkeep
 !/inventory/scripts
