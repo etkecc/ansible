@@ -33,12 +33,20 @@ All other components should be enabled manually, here is example list with pre-c
 integration_uptimerobot_monitors_custom:
   - enabled: true
     options:
+      friendly_name: 'Bridge: email'
+      keyword_type: 2
+      keyword_value: "matrix-email2matrix.service                                                                           loaded    active     running"
+      status: 1
+      type: 2
+      url: "{{ integration_uptimerobot_healthurl }}"
+  - enabled: true
+    options:
       friendly_name: Webhooks
       keyword_type: 2
       keyword_value: "matrix-appservice-webhooks.service                                                                    loaded    active     running"
       status: 1
       type: 2
-      url: https://etke.cc/health.html
+      url: "{{ integration_uptimerobot_healthurl }}"
   - enabled: true
     options:
       friendly_name: 'Bridge: discord'

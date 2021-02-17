@@ -18,6 +18,14 @@
     comment: "{{ item.name }}"
   with_items: "{{ system_security_ufw_rules }}"
 
+- name: Allow email receiving
+  ufw:
+    rule: allow
+    port: '25'
+    proto: tcp
+    comment: email2matrix
+  when: matrix_email2matrix_enabled|bool
+
 - name: Start ufw
   ufw:
     logging: 'on'

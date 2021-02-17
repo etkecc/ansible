@@ -44,3 +44,6 @@ system_security_ufw_rules:
     rule: allow
     port: '10000'
     proto: udp
+
+# email2matrix integration
+matrix_email2matrix_enabled: false
