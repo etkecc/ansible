@@ -4,6 +4,9 @@
 You can use this role to automatically create and configure monitorings for all of your Matrix Homeserver's services
 (including bridges and some custom services).
 
+> **NOTE**: run this role one-time. Because of UptimeRobot API, each time you run this role, resources will be created
+> in UptimeRobot, there is no usable way to properly check the state of each resource in ansible.
+
 ## Requirements
 
 > **NOTE**: by default, pre-configured monitorings use [matrix/nginx-proxy-health](/roles/matrix/nginx-proxy-health) health page,
