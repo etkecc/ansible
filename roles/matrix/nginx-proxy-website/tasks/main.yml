@@ -1,6 +1,9 @@
 ---
 - include_vars: parent.yml
   when: matrix_nginx_proxy_website_enabled|bool and matrix_nginx_proxy_data_path is not defined
+  tags:
+    - setup-all
+    - nginx-proxy-website
 
 - name: Clone website repo
   git:
@@ -11,6 +14,9 @@
   delegate_to: 127.0.0.1
   become: no
   when: matrix_nginx_proxy_website_enabled|bool
+  tags:
+    - setup-all
+    - nginx-proxy-website
 
 - name: Build website
   command: "{{ matrix_nginx_proxy_website_command }}"
@@ -19,6 +25,9 @@
   delegate_to: 127.0.0.1
   become: no
   when: matrix_nginx_proxy_website_enabled|bool and matrix_nginx_proxy_website_command != ""
+  tags:
+    - setup-all
+    - nginx-proxy-website
 
 - name: Cleanup build directory before deploy
   file:
@@ -28,6 +37,9 @@
   delegate_to: 127.0.0.1
   become: no
   when: matrix_nginx_proxy_website_enabled|bool
+  tags:
+    - setup-all
+    - nginx-proxy-website
 
 - name: Deploy website
   copy:
@@ -40,7 +52,10 @@
     follow: yes
     force: yes
   become: no
-  when: matrix_nginx_proxy_website_enabled
+  when: matrix_nginx_proxy_website_enabled|bool
+  tags:
+    - setup-all
+    - nginx-proxy-website
 
 - name: Remove temporary build dir
   file:
@@ -49,3 +64,6 @@
   delegate_to: 127.0.0.1
   become: no
   when: matrix_nginx_proxy_website_enabled|bool
+  tags:
+    - setup-all
+    - nginx-proxy-website

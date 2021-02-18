@@ -10,6 +10,9 @@
     creates: "{{ system_swap_path }}"
   register: system_swap_file
   when: system_swap_enabled|bool
+  tags:
+    - setup-all
+    - system-swap
 
 - name: Set file permissions
   file:
@@ -19,14 +22,23 @@
     group: root
     mode: '0600'
   when: system_swap_enabled|bool and system_swap_file is changed
+  tags:
+    - setup-all
+    - system-swap
 
 - name: Create swap
   command: "mkswap {{ system_swap_path }}"
   when: system_swap_enabled|bool and system_swap_file is changed
+  tags:
+    - setup-all
+    - system-swap
 
 - name: Enable swap
   command: "swapon {{ system_swap_path }}"
   when: system_swap_enabled|bool and system_swap_file is changed
+  tags:
+    - setup-all
+    - system-swap
 
 - name: Persist swap config in /etc/fstab
   mount:
@@ -38,6 +50,9 @@
     passno: '0'
     state: present
   when: system_swap_enabled|bool and system_swap_file is changed
+  tags:
+    - setup-all
+    - system-swap
 
 - name: Set sysctl params
   sysctl:
@@ -47,3 +62,6 @@
     reload: yes
   with_items: "{{ system_swap_sysctl }}"
   when: system_swap_enabled|bool and system_swap_file is changed
+  tags:
+    - setup-all
+    - system-swap

@@ -1,9 +1,18 @@
 ---
 - import_tasks: fail2ban/main.yml
-  tags: security-fail2ban
+  when: system_security_fail2ban_enabled|bool
+  tags:
+    - setup-all
+    - security-fail2ban
 
 - import_tasks: ufw/main.yml
-  tags: security-ufw
+  when: system_security_ufw_enabled|bool
+  tags:
+    - setup-all
+    - security-ufw
 
 - import_tasks: sshd/main.yml
-  tags: security-ssh
+  when: system_security_ssh_enabled|bool
+  tags:
+    - setup-all
+    - security-ssh

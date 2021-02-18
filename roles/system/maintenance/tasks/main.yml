@@ -1,5 +1,20 @@
 ---
 - include_tasks: debian.yml
-  when: ansible_os_family == "Debian"
+  when: ansible_os_family == "Debian" and system_maintenance_upgrade_enabled|bool
+  tags:
+    - setup-all
+    - system-upgrade
 
-- import_tasks: docker.yml
+- name: Clean up unused docker resources
+  command: docker system prune -a -f --volumes
+  when: system_maintenance_docker_prune|bool
+  tags:
+    - setup-all
+    - system-cleanup
+
+- name: Clean up matrix logs older that 7 days
+  command: journalctl --vacuum-time=7d
+  when: system_maintenance_journalctl_vacuum|bool
+  tags:
+    - setup-all
+    - system-cleanup

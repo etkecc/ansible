@@ -1,4 +1,13 @@
 ---
+# Enable fail2ban installation and config
+system_security_fail2ban_enabled: yes
+
+# Enable ufw installation and config
+system_security_ufw_enabled: yes
+
+# Enable ssh config hardening
+system_security_ssh_enabled: yes
+
 system_security_ufw_rules:
   - name: SSH
     rule: allow
