@@ -4,8 +4,11 @@
   hosts: "{{ target if target is defined else 'matrix_servers' }}"
   become: true
 
-- name: System maintenance
-  import_playbook: maintenance.yml
+- name: Matrix server setup
+  import_playbook: matrix.yml
+
+- name: Website setup
+  import_playbook: website.yml
   tags:
     - setup-all
 
@@ -14,11 +17,8 @@
   tags:
     - setup-all
 
-- name: Matrix server setup
-  import_playbook: matrix.yml
-
-- name: Website setup
-  import_playbook: website.yml
+- name: System maintenance
+  import_playbook: maintenance.yml
   tags:
     - setup-all
 
