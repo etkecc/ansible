@@ -38,6 +38,9 @@
     - matrix-prometheus-node-exporter
     - matrix-prometheus
     - matrix-grafana
+    # CUSTOM
+    - custom/miniflux
+    # END custom
     - matrix-registration
     - matrix-client-element
     - matrix-jitsi

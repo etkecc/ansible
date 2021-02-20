@@ -1,5 +1,8 @@
 /tmp
 !/tmp/.gitkeep
+/roles/custom/*
+!/roles/custom/miniflux
+!/roles/custom/.gitkeep
 /inventory/hosts
 /inventory/host_vars/*
 !/inventory/host_vars/.gitkeep
