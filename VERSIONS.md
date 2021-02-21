@@ -11,11 +11,10 @@
 * email2matrix: 1.0.1
 * etherpad: 1.8.7
 * grafana: 7.4.0
-* jitsi_ldap: "3"
+* jitsi_ldap: '3'
 * jitsi: stable-5142
-* ma1sd: "2.4.0"
+* ma1sd: 2.4.0
 * mailer: 4.93-r1
-* mailer_container_image_self_build: "{{ matrix_mailer_docker_image.split(':')[1] }}"
 * mautrix_facebook: latest
 * mautrix_hangouts: latest
 * mautrix_instagram: latest
@@ -35,9 +34,7 @@
 * prometheus_node_exporter: v1.1.0
 * prometheus: v2.24.1
 * redis: 6.0.10-alpine
-* registration: "v0.7.2"
+* registration: v0.7.2
 * sms_bridge: 0.5.5
 * synapse_admin: 0.7.0
-* synapse_default_room: "6"
-* synapse_ext_spam_checker_synapse_simple_antispam_git: "f058d9ce2c7d4195ae461dcdd02df11a2d06a36b"
 * synapse: v1.27.0

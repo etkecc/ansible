@@ -16,7 +16,7 @@ that list generated with pre-commit hook:
 
 ```bash
 #!/bin/sh
-grep -rhE "^matrix_.*_version: |^custom_.*_version: " ./upstream/roles/*/defaults/main.yml ./roles/*/*/defaults/main.yml | sed -e "s/matrix_/\*\ /;s/custom_/\*\ /;s/_version//" | sort > $PWD/VERSIONS.md
+grep -rhE "^matrix_.*_version: |^custom_.*_version: " ./upstream/roles/*/defaults/main.yml ./roles/*/*/defaults/main.yml | sed -e "s/matrix_//;s/custom_//;s/_version//;/^synapse_default/d;/^synapse_ext/d;/^mailer_container/d" | sort | yq -y | sed "s/^/\*\ /" > $PWD/VERSIONS.md
 git add $PWD/VERSIONS.md
 ```
 
