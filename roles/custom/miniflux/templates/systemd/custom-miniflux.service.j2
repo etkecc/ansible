@@ -17,16 +17,18 @@ ExecStartPre=-/usr/bin/env sh -c '/usr/bin/env docker rm custom-miniflux 2>/dev/
 ExecStartPre=/usr/bin/env sleep 5
 
 ExecStart=/usr/bin/env docker run --rm --name custom-miniflux \
-			--log-driver=none \
-			--user={{ matrix_user_uid }}:{{ matrix_user_gid }} \
-			--cap-drop=ALL \
-			--network={{ matrix_docker_network }} \
-            -e "DATABASE_URL={{ custom_miniflux_database_connection_string }}" \
-            -e "RUN_MIGRATIONS=1" \
-			{% for arg in custom_miniflux_container_extra_arguments %}
-			{{ arg }} \
-			{% endfor %}
-			{{ custom_miniflux_docker_image }}
+          --log-driver=none \
+          --user={{ matrix_user_uid }}:{{ matrix_user_gid }} \
+          --cap-drop=ALL \
+          --network={{ matrix_docker_network }} \
+          -e "DATABASE_URL={{ custom_miniflux_database_connection_string }}" \
+          -e "BASE_URL=https://{{ matrix_server_fqn_miniflux }}" \
+          -e "ROOT_URL=https://{{ matrix_server_fqn_miniflux }}" \
+          -e "RUN_MIGRATIONS=1" \
+          {% for arg in custom_miniflux_container_extra_arguments %}
+          {{ arg }} \
+          {% endfor %}
+          {{ custom_miniflux_docker_image }}
 
 ExecStop=-/usr/bin/env sh -c '/usr/bin/env docker kill custom-miniflux 2>/dev/null'
 ExecStop=-/usr/bin/env sh -c '/usr/bin/env docker rm custom-miniflux 2>/dev/null'
