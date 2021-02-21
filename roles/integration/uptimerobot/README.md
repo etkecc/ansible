@@ -36,6 +36,12 @@ All other components should be enabled manually, here is example list with pre-c
 integration_uptimerobot_monitors_custom:
   - enabled: true
     options:
+      friendly_name: Miniflux
+      status: 1
+      type: 1
+      url: "https://{{ matrix_server_fqn_miniflux }}"
+  - enabled: true
+    options:
       friendly_name: 'Bridge: email'
       keyword_type: 2
       keyword_value: "matrix-email2matrix.service                                                                           loaded    active     running"
