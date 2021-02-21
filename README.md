@@ -8,6 +8,18 @@ because matrix-ansible repo is only a wrapper around it, so 99% of work done in 
 
 # Included features & perks
 
+## versions
+
+List of used sofrware versions available here: [VERSIONS.md](./VERSIONS.md)
+
+that list generated with pre-commit hook:
+
+```bash
+#!/bin/sh
+grep -rhE "^matrix_.*_version: |^custom_.*_version: " ./upstream/roles/*/defaults/main.yml ./roles/*/*/defaults/main.yml | sed -e "s/matrix_/\*\ /;s/custom_/\*\ /;s/_version//" | sort > $PWD/VERSIONS.md
+git add $PWD/VERSIONS.md
+```
+
 ## playbooks
 
 That repo provides following playbooks:

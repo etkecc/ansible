@@ -23,6 +23,7 @@
 * mautrix_signal: latest
 * mautrix_telegram: v0.9.0
 * mautrix_whatsapp: latest
+* miniflux: latest
 * mx_puppet_discord: latest
 * mx_puppet_groupme: latest
 * mx_puppet_instagram: latest
