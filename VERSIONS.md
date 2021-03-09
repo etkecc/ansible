@@ -37,4 +37,4 @@
 * registration: v0.7.2
 * sms_bridge: 0.5.5
 * synapse_admin: 0.7.0
-* synapse: v1.28.0
+* synapse: v1.29.0
