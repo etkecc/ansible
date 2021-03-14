@@ -1,4 +1,10 @@
 ---
+- include_vars: parent.yml
+  when: matrix_synapse_media_store_path is not defined
+  tags:
+    - setup-all
+    - system-cleanup
+
 - include_tasks: debian.yml
   when: ansible_os_family == "Debian" and system_maintenance_upgrade_enabled|bool
   tags:
@@ -15,6 +21,19 @@
 - name: Clean up matrix logs older that 7 days
   command: journalctl --vacuum-time=7d
   when: system_maintenance_journalctl_vacuum|bool
+  tags:
+    - setup-all
+    - system-cleanup
+
+- name: Clean up thumbnails
+  file:
+    path: "{{ matrix_synapse_media_store_path }}/{{ item }}"
+    state: absent
+  with_items:
+    - local_thumbnails
+    - remote_thumbnail
+    - url_cache_thumbnails
+  when: system_maintenance_thumbnails_prune|bool
   tags:
     - setup-all
     - system-cleanup

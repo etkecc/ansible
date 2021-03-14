@@ -1,0 +1,4 @@
+---
+# Following variables defined in parent roles, like matrix-nginx-proxy or matrix-base,
+# but if that role used without parent roles, we should define those vars.
+matrix_synapse_media_store_path: /matrix/synapse/storage/media-store
