@@ -2,6 +2,7 @@
 * appservice_irc: release-0.23.0
 * appservice_slack: release-1.5.0
 * appservice_webhooks: latest
+* bot_go_neb: latest
 * bot_matrix_reminder_bot: release-v0.2.0
 * client_element: v1.7.23
 * corporal: 2.1.0
