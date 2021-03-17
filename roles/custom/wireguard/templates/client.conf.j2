@@ -1,0 +1,12 @@
+# {{ ansible_managed }}
+
+[Interface]
+Address = {{ custom_wireguard_subnet }}.{{item.0 + 2 }}/32
+DNS = {{ custom_wireguard_dns|join(',') }}
+PrivateKey = {{ client_keys_private.results[item.0].stdout }}
+
+[Peer]
+PublicKey = {{ server_key_public.stdout }}
+AllowedIPs = 0.0.0.0/0
+Endpoint = {{ ansible_default_ipv4.address }}:{{ custom_wireguard_port }}
+PersistentKeepalive = 21

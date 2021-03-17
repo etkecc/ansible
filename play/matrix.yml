@@ -8,6 +8,7 @@
     - "{{ playbook_dir }}/../upstream/roles/matrix-synapse/vars/workers.yml"
 
   roles:
+    - matrix-awx
     - matrix-base
     - matrix-dynamic-dns
     - matrix-mailer
@@ -41,6 +42,7 @@
     - matrix-grafana
     # CUSTOM
     - custom/miniflux
+    - custom/wireguard
     # END custom
     - matrix-registration
     - matrix-client-element

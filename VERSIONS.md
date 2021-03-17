@@ -10,7 +10,7 @@
 * dimension: latest
 * dynamic_dns: v3.9.1-ls45
 * email2matrix: 1.0.1
-* etherpad: 1.8.7
+* etherpad: 1.8.12
 * grafana: 7.4.0
 * jitsi_ldap: '3'
 * jitsi: stable-5142

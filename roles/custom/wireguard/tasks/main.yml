@@ -1,0 +1,160 @@
+---
+- name: Install wireguard packages
+  package:
+    name:
+      - wireguard-tools
+      - wireguard-dkms
+  when: custom_wireguard_enabled|bool and ansible_kernel is version('5.6', '<')
+  tags:
+    - setup-all
+    - setup-wireguard
+
+- name: Install wireguard-tools
+  package:
+    name: wireguard-tools
+  when: custom_wireguard_enabled|bool and ansible_kernel is version('5.6', '>=')
+  tags:
+    - setup-all
+    - setup-wireguard
+
+- name: Check if wireguard server already configured
+  stat:
+    path: "{{ custom_wireguard_path }}/{{ custom_wireguard_interface }}.conf"
+  register: server_conf
+  when: custom_wireguard_enabled|bool
+  tags:
+    - setup-all
+    - setup-wireguard
+
+- name: Set sysctl params
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    state: present
+  when: custom_wireguard_enabled|bool
+  tags:
+    - setup-all
+    - setup-wireguard
+
+- name: Create wireguard directories
+  file:
+    path: "{{ item }}"
+    mode: 0600
+    state: directory
+    group: root
+    owner: root
+  with_items:
+    - /etc/wireguard
+    - /etc/wireguard/clients
+  when: custom_wireguard_enabled|bool and server_conf.stat.exists|bool == false
+  tags:
+    - setup-all
+    - setup-wireguard
+
+- name: Create wireguard clients directories
+  file:
+    path: "{{ custom_wireguard_path }}/clients/{{ item }}"
+    mode: 0600
+    state: directory
+    group: root
+    owner: root
+  with_items: "{{ custom_wireguard_clients }}"
+  when: custom_wireguard_enabled|bool and server_conf.stat.exists|bool == false
+  tags:
+    - setup-all
+    - setup-wireguard
+
+- name: Generate wireguard server private key
+  shell: "umask 077; wg genkey | tee {{ custom_wireguard_path }}/key | wg pubkey > {{ custom_wireguard_path }}/key.public"
+  when: custom_wireguard_enabled|bool and server_conf.stat.exists|bool == false
+  tags:
+    - setup-all
+    - setup-wireguard
+
+- name: Register server private key contents
+  shell: "cat {{ custom_wireguard_path }}/key"
+  register: server_key_private
+  when: custom_wireguard_enabled|bool
+  tags:
+    - setup-all
+    - setup-wireguard
+
+- name: Register server public key contents
+  shell: "cat {{ custom_wireguard_path }}/key.public"
+  register: server_key_public
+  when: custom_wireguard_enabled|bool
+  tags:
+    - setup-all
+    - setup-wireguard
+
+- name: Stop wireguard service
+  service:
+    name: "wg-quick@{{ custom_wireguard_interface }}"
+    state: stopped
+  when: custom_wireguard_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - setup-wireguard
+
+- name: Configure clients
+  block:
+    - name: Check if client configuration exists
+      stat:
+        path: "{{ custom_wireguard_path }}/clients/{{ item.1 }}/profile.conf"
+      register: client_profiles
+      with_indexed_items: "{{ custom_wireguard_clients }}"
+
+    - name: Check if client key exists
+      stat:
+        path: "{{ custom_wireguard_path }}/clients/{{ item.1 }}/key"
+      register: client_keys
+      with_indexed_items: "{{ custom_wireguard_clients }}"
+
+    - name: Generate client keys
+      shell: "umask 077; wg genkey | tee \"{{ custom_wireguard_path }}/clients/{{ item.1 }}/key\" | wg pubkey > \"{{ custom_wireguard_path }}/clients/{{ item.1 }}/key.public\""
+      with_indexed_items: "{{ custom_wireguard_clients }}"
+      when: client_keys.results[item.0].stat.exists|bool == false
+
+    - name: Register client private key
+      shell: "cat \"{{ custom_wireguard_path }}/clients/{{ item.1 }}/key\""
+      register: client_keys_private
+      with_indexed_items: "{{ custom_wireguard_clients }}"
+
+    - name: Register client public key
+      shell: "cat \"{{ custom_wireguard_path }}/clients/{{ item.1 }}/key.public\""
+      register: client_keys_public
+      with_indexed_items: "{{ custom_wireguard_clients }}"
+
+    - name: Generate client config
+      template:
+        src: "client.conf.j2"
+        dest: "{{ custom_wireguard_path }}/clients/{{ item.1 }}/profile.conf"
+        owner: root
+        group: root
+        mode: 0600
+      with_indexed_items: "{{ custom_wireguard_clients }}"
+      when: client_profiles.results[item.0].stat.exists|bool == false or custom_wireguard_overwrite|bool
+  when: custom_wireguard_enabled|bool
+  tags:
+    - setup-all
+    - setup-wireguard
+
+- name: Generate server config
+  template:
+    src: "server.conf.j2"
+    dest: "{{ custom_wireguard_path }}/{{ custom_wireguard_interface }}.conf"
+    owner: root
+    group: root
+    mode: 0600
+  when: custom_wireguard_enabled|bool and (server_conf.stat.exists|bool == false or custom_wireguard_overwrite|bool)
+
+- name: Start wireguard service
+  service:
+    name: "wg-quick@{{ custom_wireguard_interface }}"
+    enabled: yes
+    state: started
+  when: custom_wireguard_enabled|bool
+  tags:
+    - setup-all
+    - setup-wireguard

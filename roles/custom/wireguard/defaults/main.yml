@@ -1,0 +1,10 @@
+---
+custom_wireguard_enabled: false
+custom_wireguard_interface_net: eth0
+custom_wireguard_interface: wg0
+custom_wireguard_overwrite: true
+custom_wireguard_subnet: 10.200.200
+custom_wireguard_dns: ['1.1.1.1', '1.0.0.1']
+custom_wireguard_port: '51820'
+custom_wireguard_path: /etc/wireguard
+custom_wireguard_clients: []

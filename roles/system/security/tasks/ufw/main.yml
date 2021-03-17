@@ -26,6 +26,22 @@
     comment: email2matrix
   when: matrix_email2matrix_enabled|bool
 
+- name: Allow wireguard
+  ufw:
+    rule: allow
+    port: "{{ custom_wireguard_port }}"
+    proto: udp
+    comment: wireguard server
+  when: custom_wireguard_enabled|bool
+
+- name: Allow wireguard network
+  ufw:
+    rule: allow
+    interface: "{{ custom_wireguard_interface }}"
+    direction: in
+    proto: any
+  when: custom_wireguard_enabled|bool
+
 - name: Start ufw
   ufw:
     logging: 'on'
