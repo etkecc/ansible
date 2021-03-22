@@ -1,5 +1,5 @@
 * appservice_discord: v1.0.0
-* appservice_irc: release-0.23.0
+* appservice_irc: release-0.25.0
 * appservice_slack: release-1.5.0
 * appservice_webhooks: latest
 * bot_go_neb: latest
@@ -37,5 +37,6 @@
 * redis: 6.0.10-alpine
 * registration: v0.7.2
 * sms_bridge: 0.5.5
+* sygnal: v0.9.0
 * synapse_admin: 0.7.0
 * synapse: v1.29.0
