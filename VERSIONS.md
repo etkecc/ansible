@@ -39,4 +39,4 @@
 * sms_bridge: 0.5.5
 * sygnal: v0.9.0
 * synapse_admin: 0.7.0
-* synapse: v1.29.0
+* synapse: v1.30.0
