@@ -1,6 +1,6 @@
 ---
 - include_vars: parent.yml
-  when: matrix_nginx_proxy_website_enabled|bool and matrix_nginx_proxy_data_path is not defined
+  when: matrix_nginx_proxy_website_enabled|bool and matrix_nginx_proxy_base_path is not defined
   tags:
     - setup-all
     - nginx-proxy-website
