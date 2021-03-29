@@ -4,7 +4,7 @@
 * appservice_webhooks: latest
 * bot_go_neb: latest
 * bot_matrix_reminder_bot: release-v0.2.0
-* client_element: v1.7.23
+* client_element: v1.7.24
 * corporal: 2.1.0
 * coturn: 4.5.2
 * dimension: latest
@@ -31,7 +31,7 @@
 * mx_puppet_slack: latest
 * mx_puppet_steam: latest
 * mx_puppet_twitter: latest
-* nginx_proxy: 1.19.6-alpine
+* nginx_proxy: 1.19.8-alpine
 * prometheus_node_exporter: v1.1.0
 * prometheus: v2.24.1
 * redis: 6.0.10-alpine
@@ -39,4 +39,4 @@
 * sms_bridge: 0.5.5
 * sygnal: v0.9.0
 * synapse_admin: 0.7.0
-* synapse: v1.30.0
+* synapse: v1.30.1
