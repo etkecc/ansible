@@ -35,6 +35,7 @@
     - matrix-bridge-sms
     - matrix-bot-matrix-reminder-bot
     - matrix-bot-go-neb
+    - matrix-bot-mjolnir
     - matrix-synapse
     - matrix-synapse-admin
     - matrix-prometheus-node-exporter
@@ -55,4 +56,6 @@
     - matrix-nginx-proxy
     - matrix-coturn
     - matrix-aux
+    - matrix-postgres-backup
     - matrix-common-after
+

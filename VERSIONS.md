@@ -4,14 +4,15 @@
 * appservice_webhooks: latest
 * bot_go_neb: latest
 * bot_matrix_reminder_bot: release-v0.2.0
-* client_element: v1.7.24
+* bot_mjolnir: v0.1.17
+* client_element: v1.7.24.1
 * corporal: 2.1.0
 * coturn: 4.5.2
 * dimension: latest
 * dynamic_dns: v3.9.1-ls45
 * email2matrix: 1.0.1
 * etherpad: 1.8.12
-* grafana: 7.4.0
+* grafana: 7.5.2
 * jitsi_ldap: '3'
 * jitsi: stable-5142
 * ma1sd: 2.4.0
@@ -39,4 +40,4 @@
 * sms_bridge: 0.5.5
 * sygnal: v0.9.0
 * synapse_admin: 0.7.0
-* synapse: v1.30.1
+* synapse: v1.31.0
