@@ -87,16 +87,6 @@
     - setup-all
     - setup-wireguard
 
-- name: Stop wireguard service
-  service:
-    name: "wg-quick@{{ custom_wireguard_interface }}"
-    state: stopped
-  when: custom_wireguard_enabled|bool
-  ignore_errors: yes
-  tags:
-    - setup-all
-    - setup-wireguard
-
 - name: Configure clients
   block:
     - name: Check if client configuration exists
@@ -154,6 +144,15 @@
     name: "wg-quick@{{ custom_wireguard_interface }}"
     enabled: yes
     state: started
+  when: custom_wireguard_enabled|bool
+  tags:
+    - setup-all
+    - setup-wireguard
+
+- name: Reload wireguard config
+  shell: "wg syncconf {{ custom_wireguard_interface }} <(wg-quick strip {{ custom_wireguard_interface }})"
+  args:
+    executable: /bin/bash
   when: custom_wireguard_enabled|bool
   tags:
     - setup-all

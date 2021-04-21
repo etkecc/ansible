@@ -2,7 +2,7 @@
 
 [Interface]
 Address = {{ custom_wireguard_subnet }}.1/24
-SaveConfig = true
+SaveConfig = false
 ListenPort = {{ custom_wireguard_port }}
 PrivateKey = {{ server_key_private.stdout }}
 PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -t nat -A POSTROUTING -o {{ custom_wireguard_interface_net }} -j MASQUERADE
