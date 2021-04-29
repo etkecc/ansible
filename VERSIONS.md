@@ -5,9 +5,10 @@
 * bot_go_neb: latest
 * bot_matrix_reminder_bot: release-v0.2.0
 * bot_mjolnir: v0.1.17
-* client_element: v1.7.25
+* client_element: v1.7.26
 * corporal: 2.1.0
 * coturn: 4.5.2
+* coturn_container_image_self_build_repo: upstream/{{ matrix_coturn_version }}
 * dimension: latest
 * dynamic_dns: v3.9.1-ls45
 * email2matrix: 1.0.1
@@ -37,7 +38,7 @@
 * prometheus: v2.26.0
 * redis: 6.0.10-alpine
 * registration: v0.7.2
-* sms_bridge: 0.5.5
+* sms_bridge: 0.5.7
 * sygnal: v0.9.0
 * synapse_admin: 0.7.2
 * synapse: v1.32.2
