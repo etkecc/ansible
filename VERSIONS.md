@@ -13,7 +13,7 @@
 * dynamic_dns: v3.9.1-ls45
 * email2matrix: 1.0.1
 * etherpad: 1.8.12
-* grafana: 7.5.4
+* grafana: 7.5.5
 * jitsi_ldap: '3'
 * jitsi: stable-5142
 * ma1sd: 2.4.0
@@ -33,7 +33,7 @@
 * mx_puppet_slack: latest
 * mx_puppet_steam: latest
 * mx_puppet_twitter: latest
-* nginx_proxy: 1.19.10-alpine
+* nginx_proxy: 1.20.0-alpine
 * prometheus_node_exporter: v1.1.2
 * prometheus: v2.26.0
 * redis: 6.0.10-alpine
