@@ -9,3 +9,4 @@
 !/inventory/host_vars/.gitkeep
 !/inventory/scripts
 *.pyc
+/taskell.md
