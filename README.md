@@ -1,10 +1,10 @@
-[![Support room on Matrix](https://img.shields.io/matrix/matrix-docker-ansible-deploy:devture.com.svg?label=%23matrix-docker-ansible-deploy%3Adevture.com&logo=matrix&style=for-the-badge&server_fqdn=matrix.devture.com)](https://matrix.to/#/#matrix-docker-ansible-deploy:devture.com)[![donate](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/s.pantaleev/donate)
+[![Matrix](https://img.shields.io/matrix/announcements:etke.cc?logo=matrix&server_fqdn=matrix.org&style=for-the-badge)](https://matrix.to/#/#discuss:etke.cc) [![Buy me a Coffee](https://shields.io/badge/donate-buy%20me%20a%20coffee-green?logo=buy-me-a-coffee&style=for-the-badge)](https://buymeacoffee.com/etkecc)
 
 It's a wrapper around awesome [spantaleev/matrix-docker-ansible-deploy](https://github.com/spantaleev/matrix-docker-ansible-deploy) playbook
-with additional tasks, like system Maintenance.
+with additional roles and playbooks, like system maintenance (check the list below)
 
 Please, read the [spantaleev/matrix-docker-ansible-deploy](https://github.com/spantaleev/matrix-docker-ansible-deploy) documentation,
-because matrix-ansible repo is only a wrapper around it, so 99% of work done in Slavi's repo.
+because matrix-ansible repo provides only system related stuff and customizations, 99% of matrix-related work done in Slavi's repo.
 
 # Included features & perks
 
@@ -111,5 +111,4 @@ has a list of supported distributives and versions.
 **NOTE**: that repository developing and testing on Ubuntu 18.04 LTS _and following cloud providers: AWS, Digital Ocean, Hetzner_.
 
 I'm trying to avoid distro-specific tools and commands (if such tool/command/module used, it will be called only if `ansible_os_family` allows that),
-but again - all development and testing performed only on Ubuntu 18.04 LTS and I cannot guarantee that my "wrapper" will work as expected on any other
-distro or version.
+but again - all development and testing performed only on Ubuntu 18.04 LTS and I cannot guarantee that my "wrapper" will work as expected on any other distro or version.
