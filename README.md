@@ -6,6 +6,9 @@ with additional roles and playbooks, like system maintenance (check the list bel
 Please, read the [spantaleev/matrix-docker-ansible-deploy](https://github.com/spantaleev/matrix-docker-ansible-deploy) documentation,
 because matrix-ansible repo provides only system related stuff and customizations, 99% of matrix-related work done in Slavi's repo.
 
+**NOTE**: we have [paid service - etke.cc](https://etke.cc/#contact) - that will do all setup, configuration and maintenance for you.
+That service pretty cheap and has 2 purposes - invite new people to matrix and support project.
+
 # Included features & perks
 
 ## versions
@@ -98,9 +101,8 @@ New versions of matrix-related software releases very often, so to stay up to da
 
 * Check parent project's [CHANGELOG](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/CHANGELOG.md) for news
 * Upgrade playbooks and roles with `git pull`
-* If you see changes in changelog, but nothing with git pull, do the `cd upstream; git pull; cd ..`, because i forgot to updated the submodule
 * **Don't forget to carefuly read changelog**, because it may contains breaking changes!
-* Run the upgrade: `ansible-playbook play/all.yml -t setup-all`
+* Run the upgrade: `ansible-playbook play/all.yml -t setup-all,start`
 * Check if it works as expected: `ansible-playbook play/matrix.yml -t self-check`
 
 ## Supported distributives
