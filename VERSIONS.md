@@ -15,7 +15,7 @@
 * etherpad: 1.8.12
 * grafana: 7.5.5
 * jitsi_ldap: '3'
-* jitsi: stable-5142
+* jitsi: stable-5765-1
 * ma1sd: 2.4.0
 * mailer: 4.94-r0
 * mautrix_facebook: latest
