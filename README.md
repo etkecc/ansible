@@ -1,10 +1,7 @@
 [![Matrix](https://img.shields.io/matrix/announcements:etke.cc?logo=matrix&server_fqdn=matrix.org&style=for-the-badge)](https://matrix.to/#/#discuss:etke.cc) [![Buy me a Coffee](https://shields.io/badge/donate-buy%20me%20a%20coffee-green?logo=buy-me-a-coffee&style=for-the-badge)](https://buymeacoffee.com/etkecc)
 
 It's a wrapper around awesome [spantaleev/matrix-docker-ansible-deploy](https://github.com/spantaleev/matrix-docker-ansible-deploy) playbook
-with additional roles and playbooks, like system maintenance (check the list below)
-
-Please, read the [spantaleev/matrix-docker-ansible-deploy](https://github.com/spantaleev/matrix-docker-ansible-deploy) documentation,
-because matrix-ansible repo provides only system related stuff and customizations, 99% of matrix-related work done in Slavi's repo.
+with additional roles and playbooks, like system maintenance (check the list below).
 
 **NOTE**: we have [paid service - etke.cc](https://etke.cc/#contact) - that will do all setup, configuration and maintenance for you.
 That service pretty cheap and has 2 purposes - invite new people to matrix and support project.
