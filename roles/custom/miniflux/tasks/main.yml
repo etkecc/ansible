@@ -26,12 +26,11 @@
   service:
     enabled: yes
     state: restarted
-    daemon_reload: yes
     name: custom-miniflux
-  when: custom_miniflux_enabled|bool and (custom_miniflux_systemd_service_result.changed or custom_miniflux_docker_image_force_pull|bool)
+  when: custom_miniflux_enabled|bool
   tags:
-    - setup-all
-    - setup-miniflux
+    - start
+    - start-miniflux
 
 - name: Ensure Matrix nginx-proxy configuration for Miniflux domain exists
   template:
