@@ -8,7 +8,7 @@
 * client_element: v1.7.26
 * corporal: 2.1.0
 * coturn: 4.5.2
-* coturn_container_image_self_build_repo: upstream/{{ matrix_coturn_version }}
+* coturn_container_image_self_build_repo: docker/{{ matrix_coturn_version }}-r0
 * dimension: latest
 * dynamic_dns: v3.9.1-ls45
 * email2matrix: 1.0.1
@@ -17,7 +17,7 @@
 * jitsi_ldap: '3'
 * jitsi: stable-5765-1
 * ma1sd: 2.4.0
-* mailer: 4.94-r0
+* mailer: 4.94.2-r0
 * mautrix_facebook: latest
 * mautrix_hangouts: latest
 * mautrix_instagram: latest
@@ -40,5 +40,5 @@
 * registration: v0.7.2
 * sms_bridge: 0.5.7
 * sygnal: v0.9.0
-* synapse_admin: 0.7.2
+* synapse_admin: 0.8.0
 * synapse: v1.33.1
