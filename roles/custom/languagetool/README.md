@@ -1,0 +1,18 @@
+# custom/languagetool
+
+A bit hacky way to install [LanguageTool server](https://languagetool.org) with Matrix homeserver
+
+## Requirements & install
+
+**Put following in your matrix host's vars.yml file**:
+
+```yml
+custom_languagetool_enabled: true
+matrix_server_fqn_languagetool: "languagetool.{{ matrix_domain }}" # you can use anything you want here, it's just default value
+matrix_nginx_proxy_proxy_languagetool_hostname: "{{ matrix_server_fqn_languagetool }}" # yep, duplicate, but it's required
+
+matrix_ssl_additional_domains_to_obtain_certificates_for:
+  - "{{ matrix_server_fqn_languagetool }}"
+```
+
+Run `ansible-playbook play/all.yml -t setup-languagetool,start-languagetool`

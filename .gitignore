@@ -3,6 +3,7 @@
 /roles/custom/*
 !/roles/custom/miniflux
 !/roles/custom/wireguard
+!/roles/custom/languagetool
 !/roles/custom/.gitkeep
 /inventory/hosts
 /inventory/host_vars/*

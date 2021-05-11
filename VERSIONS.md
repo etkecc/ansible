@@ -16,6 +16,7 @@
 * grafana: 7.5.5
 * jitsi_ldap: '3'
 * jitsi: stable-5765-1
+* languagetool: latest
 * ma1sd: 2.4.0
 * mailer: 4.94.2-r0
 * mautrix_facebook: latest
@@ -40,5 +41,5 @@
 * registration: v0.7.2
 * sms_bridge: 0.5.7
 * sygnal: v0.9.0
-* synapse_admin: 0.8.0
+* synapse_admin: latest
 * synapse: v1.33.2
