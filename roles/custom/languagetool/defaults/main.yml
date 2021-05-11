@@ -1,9 +1,15 @@
 ---
 custom_languagetool_enabled: false
 custom_languagetool_version: latest
+custom_languagetool_path: "{{ matrix_base_data_path }}/custom-languagetool"
 matrix_nginx_proxy_proxy_languagetool_hostname: "{{ matrix_server_fqn_languagetool }}"
 custom_languagetool_docker_image: "erikvl87/languagetool:{{ custom_languagetool_version }}"
 custom_languagetool_docker_image_force_pull: "{{ custom_languagetool_docker_image.endswith(':latest') }}"
+
+# n-grams
+custom_languagetool_ngrams_enabled: false
+custom_languagetool_ngrams_url: https://languagetool.org/download/ngram-data/ngrams-en-20150817.zip
+custom_languagetool_ngrams_tmp: /tmp/custom-languagetool-ngrams.zip
 
 custom_languagetool_java_heap_min: 256m
 custom_languagetool_java_heap_max: 512m

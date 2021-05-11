@@ -8,6 +8,7 @@ A bit hacky way to install [LanguageTool server](https://languagetool.org) with 
 
 ```yml
 custom_languagetool_enabled: true
+custom_languagetool_ngrams_enabled: true #WARNING: requires A LOT of storage (zip is > 8gb, unpacked - even more!)
 matrix_server_fqn_languagetool: "languagetool.{{ matrix_domain }}" # you can use anything you want here, it's just default value
 matrix_nginx_proxy_proxy_languagetool_hostname: "{{ matrix_server_fqn_languagetool }}" # yep, duplicate, but it's required
 
