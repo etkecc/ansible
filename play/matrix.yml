@@ -41,10 +41,6 @@
     - matrix-prometheus-node-exporter
     - matrix-prometheus
     - matrix-grafana
-    # CUSTOM
-    - custom/miniflux
-    - custom/wireguard
-    # END custom
     - matrix-registration
     - matrix-client-element
     - matrix-jitsi
@@ -53,6 +49,11 @@
     - matrix-etherpad
     - matrix-email2matrix
     - matrix-sygnal
+    # CUSTOM
+    - custom/miniflux
+    - custom/languagetool
+    - custom/wireguard
+    # END CUSTOM
     - matrix-nginx-proxy
     - matrix-coturn
     - matrix-aux

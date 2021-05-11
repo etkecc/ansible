@@ -1,0 +1,43 @@
+---
+- name: Ensure Languagetool image is pulled
+  docker_image:
+    name: "{{ custom_languagetool_docker_image }}"
+    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+    force_source: "{{ custom_languagetool_docker_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else custom_languagetool_docker_image_force_pull }}"
+  when: custom_languagetool_enabled|bool
+  tags:
+    - setup-all
+    - setup-languagetool
+
+
+- name: Ensure custom-languagetool.service is present
+  template:
+    src: systemd/custom-languagetool.service.j2
+    dest: /etc/systemd/system/custom-languagetool.service
+    mode: 0644
+  register: custom_languagetool_systemd_service_result
+  when: custom_languagetool_enabled|bool
+  tags:
+    - setup-all
+    - setup-languagetool
+
+- name: Run custom-languagetool.service
+  service:
+    enabled: yes
+    state: restarted
+    name: custom-languagetool
+  when: custom_languagetool_enabled|bool
+  tags:
+    - start
+    - start-languagetool
+
+- name: Ensure Matrix nginx-proxy configuration for Languagetool domain exists
+  template:
+    src: nginx.conf.j2
+    dest: "{{ matrix_nginx_proxy_confd_path }}/matrix-custom-languagetool.conf"
+    mode: 0644
+  when: custom_languagetool_enabled|bool and matrix_nginx_proxy_enabled|bool
+  tags:
+    - setup-all
+    - setup-languagetool

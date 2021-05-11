@@ -1,0 +1,38 @@
+#jinja2: lstrip_blocks: "True"
+[Unit]
+Description=LanguageTool
+{% for service in custom_languagetool_systemd_required_services_list %}
+Requires={{ service }}
+After={{ service }}
+{% endfor %}
+DefaultDependencies=no
+
+[Service]
+Type=simple
+Environment="HOME={{ matrix_systemd_unit_home_path }}"
+ExecStartPre=-/usr/bin/env sh -c '/usr/bin/env docker kill custom-languagetool 2>/dev/null'
+ExecStartPre=-/usr/bin/env sh -c '/usr/bin/env docker rm custom-languagetool 2>/dev/null'
+
+# Intentional delay, so that the postgres (we likely depend on) can manage to start.
+ExecStartPre=/usr/bin/env sleep 5
+
+ExecStart=/usr/bin/env docker run --rm --name custom-languagetool \
+          --log-driver=none \
+          --user={{ matrix_user_uid }}:{{ matrix_user_gid }} \
+          --cap-drop=ALL \
+          --network={{ matrix_docker_network }} \
+          -e Java_Xms={{ custom_languagetool_java_heap_min }} \
+          -e Java_Xmx={{ custom_languagetool_java_heap_max }} \
+          {% for arg in custom_languagetool_container_extra_arguments %}
+          {{ arg }} \
+          {% endfor %}
+          {{ custom_languagetool_docker_image }}
+
+ExecStop=-/usr/bin/env sh -c '/usr/bin/env docker kill custom-languagetool 2>/dev/null'
+ExecStop=-/usr/bin/env sh -c '/usr/bin/env docker rm custom-languagetool 2>/dev/null'
+Restart=always
+RestartSec=30
+SyslogIdentifier=custom-languagetool
+
+[Install]
+WantedBy=multi-user.target
