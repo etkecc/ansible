@@ -16,7 +16,7 @@
 * grafana: 7.5.5
 * jitsi_ldap: '3'
 * jitsi: stable-5765-1
-* languagetool: latest
+* languagetool: 5.3
 * ma1sd: 2.4.0
 * mailer: 4.94.2-r0
 * mautrix_facebook: latest
@@ -26,7 +26,7 @@
 * mautrix_signal: latest
 * mautrix_telegram: v0.9.0
 * mautrix_whatsapp: latest
-* miniflux: latest
+* miniflux: 2.0.30
 * mx_puppet_discord: latest
 * mx_puppet_groupme: latest
 * mx_puppet_instagram: latest
