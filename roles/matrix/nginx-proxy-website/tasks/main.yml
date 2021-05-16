@@ -3,7 +3,7 @@
   when: matrix_nginx_proxy_website_enabled|bool and matrix_nginx_proxy_base_path is not defined
   tags:
     - setup-all
-    - nginx-proxy-website
+    - setup-website
 
 - name: Clone website repo
   git:
@@ -16,7 +16,7 @@
   when: matrix_nginx_proxy_website_enabled|bool
   tags:
     - setup-all
-    - nginx-proxy-website
+    - setup-website
 
 - name: Build website
   command: "{{ matrix_nginx_proxy_website_command }}"
@@ -27,7 +27,7 @@
   when: matrix_nginx_proxy_website_enabled|bool and matrix_nginx_proxy_website_command != ""
   tags:
     - setup-all
-    - nginx-proxy-website
+    - setup-website
 
 - name: Cleanup build directory before deploy
   file:
@@ -39,7 +39,7 @@
   when: matrix_nginx_proxy_website_enabled|bool
   tags:
     - setup-all
-    - nginx-proxy-website
+    - setup-website
 
 - name: Deploy website
   copy:
@@ -55,7 +55,7 @@
   when: matrix_nginx_proxy_website_enabled|bool
   tags:
     - setup-all
-    - nginx-proxy-website
+    - setup-website
 
 - name: Remove temporary build dir
   file:
@@ -66,4 +66,4 @@
   when: matrix_nginx_proxy_website_enabled|bool
   tags:
     - setup-all
-    - nginx-proxy-website
+    - setup-website
