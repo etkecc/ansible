@@ -5,7 +5,7 @@
 * bot_go_neb: latest
 * bot_matrix_reminder_bot: release-v0.2.0
 * bot_mjolnir: v0.1.17
-* client_element: v1.7.27
+* client_element: v1.7.28
 * corporal: 2.1.0
 * coturn: 4.5.2
 * coturn_container_image_self_build_repo: docker/{{ matrix_coturn_version }}-r0
@@ -13,12 +13,12 @@
 * dynamic_dns: v3.9.1-ls45
 * email2matrix: 1.0.1
 * etherpad: 1.8.12
-* grafana: 7.5.5
+* grafana: 7.5.6
 * jitsi_ldap: '3'
 * jitsi: stable-5765-1
 * languagetool: 5.3
 * ma1sd: 2.4.0
-* mailer: 4.94.2-r0
+* mailer: 4.94.2-r0-1
 * mautrix_facebook: latest
 * mautrix_hangouts: latest
 * mautrix_instagram: latest
@@ -36,10 +36,10 @@
 * mx_puppet_twitter: latest
 * nginx_proxy: 1.20.0-alpine
 * prometheus_node_exporter: v1.1.2
-* prometheus: v2.26.0
+* prometheus: v2.27.0
 * redis: 6.0.10-alpine
 * registration: v0.7.2
 * sms_bridge: 0.5.7
 * sygnal: v0.9.0
 * synapse_admin: latest
-* synapse: v1.33.2
+* synapse: v1.34.0
