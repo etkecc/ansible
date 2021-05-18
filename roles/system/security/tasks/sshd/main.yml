@@ -9,7 +9,6 @@
       GatewayPorts no
       IgnoreRhosts yes
       MaxAuthTries 3
-      PasswordAuthentication no
       PermitEmptyPasswords no
       PermitRootLogin yes
       PermitTunnel no
@@ -19,6 +18,12 @@
       UseDNS no
       X11Forwarding no
   register: system_security_sshd_config
+
+- name: Disable ssh password auth
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    line: PasswordAuthentication no
+  when: not system_security_sshd_passwordauth|bool
 
 - name: Reload sshd configuration
   service:

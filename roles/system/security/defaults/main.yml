@@ -8,6 +8,9 @@ system_security_ufw_enabled: yes
 # Enable ssh config hardening
 system_security_ssh_enabled: yes
 
+# ssh password auth: yes - allow, no - block
+system_security_ssh_passwordauth: no
+
 system_security_ufw_rules:
   - name: SSH
     rule: allow

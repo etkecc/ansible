@@ -49,12 +49,12 @@
     - matrix-etherpad
     - matrix-email2matrix
     - matrix-sygnal
+    - matrix-nginx-proxy
     # CUSTOM
     - custom/miniflux
     - custom/languagetool
     - custom/wireguard
     # END CUSTOM
-    - matrix-nginx-proxy
     - matrix-coturn
     - matrix-aux
     - matrix-postgres-backup
