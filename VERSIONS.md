@@ -14,6 +14,7 @@
 * email2matrix: 1.0.1
 * etherpad: 1.8.12
 * grafana: 7.5.6
+* heisenbridge: latest
 * jitsi_ldap: '3'
 * jitsi: stable-5765-1
 * languagetool: 5.3
