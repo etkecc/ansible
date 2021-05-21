@@ -16,13 +16,16 @@
   import_playbook: security.yml
   tags:
     - setup-all
+    - setup-security
 
 - name: System maintenance
   import_playbook: maintenance.yml
   tags:
     - setup-all
+    - setup-maintenance
 
 - name: Integrations setup
   import_playbook: integration.yml
   tags:
     - setup-all
+    - setup-integrations

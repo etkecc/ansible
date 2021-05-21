@@ -23,7 +23,7 @@
   lineinfile:
     path: /etc/ssh/sshd_config
     line: PasswordAuthentication no
-  when: not system_security_sshd_passwordauth|bool
+  when: not system_security_ssh_passwordauth|bool
 
 - name: Reload sshd configuration
   service:
