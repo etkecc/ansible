@@ -138,6 +138,9 @@
     group: root
     mode: 0600
   when: custom_wireguard_enabled|bool and (server_conf.stat.exists|bool == false or custom_wireguard_overwrite|bool)
+  tags:
+    - setup-all
+    - setup-wireguard
 
 - name: Start wireguard service
   service:
