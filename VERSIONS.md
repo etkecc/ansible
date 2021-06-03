@@ -6,7 +6,7 @@
 * bot_matrix_reminder_bot: release-v0.2.0
 * bot_mjolnir: v0.1.17
 * client_element: v1.7.29
-* client_hydrogen: v0.1.53
+* client_hydrogen: v0.1.56
 * corporal: 2.1.0
 * coturn: 4.5.2
 * coturn_container_image_self_build_repo: docker/{{ matrix_coturn_version }}-r0
@@ -45,4 +45,4 @@
 * sms_bridge: 0.5.7
 * sygnal: v0.9.0
 * synapse_admin: 0.8.1
-* synapse: v1.35.0
+* synapse: v1.35.1
