@@ -1,5 +1,5 @@
 * appservice_discord: v1.0.0
-* appservice_irc: release-0.26.0
+* appservice_irc: release-0.26.1
 * appservice_slack: release-1.5.0
 * appservice_webhooks: latest
 * bot_go_neb: latest
