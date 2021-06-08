@@ -5,7 +5,7 @@
 * bot_go_neb: latest
 * bot_matrix_reminder_bot: release-v0.2.0
 * bot_mjolnir: v0.1.17
-* client_element: v1.7.29
+* client_element: v1.7.30
 * client_hydrogen: v0.1.56
 * corporal: 2.1.0
 * coturn: 4.5.2
