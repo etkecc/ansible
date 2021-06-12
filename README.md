@@ -38,6 +38,7 @@ That repo provides following playbooks:
 * `roles/system/swap` - used by `play/maintenance.yml`, [documentation](./roles/system/swap/README.md)
 * `roles/matrix/nginx-proxy-health` - used by `play/website.yml`, [documentation](./roles/matrix/nginx-proxy-health/README.md)
 * `roles/matrix/nginx-proxy-website` - used by `play/website.yml`, [documentation](./roles/matrix/nginx-proxy-website/README.md)
+* `roles/matrix/restart` - used by `play/matrix.yml`
 * `roles/custom/wireguard` - used by `play/matrix.yml`, [documentation](./roles/custom/wireguard/README.md)
 * `roles/custom/miniflux` - used by `play/matrix.yml`, [documentation](./roles/custom/miniflux/README.md)
 * `roles/custom/languagetool` - used by `play/matrix.yml`, [documentation](./roles/custom/languagetool/README.md)
