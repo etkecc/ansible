@@ -8,13 +8,19 @@ system_security_ufw_enabled: yes
 # Enable ssh config hardening
 system_security_ssh_enabled: yes
 
+# ssh port
+system_security_ssh_port: 22
+
 # ssh password auth: yes - allow, no - block
 system_security_ssh_passwordauth: no
+
+# ssh root login: yes - allow, no - block
+system_security_ssh_rootlogin: yes
 
 system_security_ufw_rules:
   - name: SSH
     rule: allow
-    port: '22'
+    port: "{{ system_security_ssh_port }}"
     proto: tcp
   - name: HTTP
     rule: allow

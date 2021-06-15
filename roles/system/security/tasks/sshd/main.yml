@@ -10,7 +10,6 @@
       IgnoreRhosts yes
       MaxAuthTries 3
       PermitEmptyPasswords no
-      PermitRootLogin yes
       PermitTunnel no
       PrintLastLog no
       PrintMotd no
@@ -24,6 +23,17 @@
     path: /etc/ssh/sshd_config
     line: PasswordAuthentication no
   when: not system_security_ssh_passwordauth|bool
+
+- name: Disable ssh root login
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    line: PermitRootLogin no
+  when: not system_security_ssh_rootlogin|bool
+
+- name: Set custom ssh port
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    line: "Port {{ system_security_ssh_port }}"
 
 - name: Reload sshd configuration
   service:
