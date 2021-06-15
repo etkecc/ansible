@@ -6,15 +6,15 @@
 * bot_matrix_reminder_bot: release-v0.2.0
 * bot_mjolnir: v0.1.17
 * client_element: v1.7.30
-* client_hydrogen: v0.1.56
+* client_hydrogen: v0.1.57
 * corporal: 2.1.0
 * coturn: 4.5.2
-* coturn_container_image_self_build_repo: docker/{{ matrix_coturn_version }}-r0
+* coturn_container_image_self_build_repo: docker/{{ matrix_coturn_version }}-r1
 * dimension: latest
 * dynamic_dns: v3.9.1-ls45
 * email2matrix: 1.0.1
 * etherpad: 1.8.12
-* grafana: 7.5.7
+* grafana: 8.0.2
 * heisenbridge: latest
 * jitsi_ldap: '3'
 * jitsi: stable-5765-1
@@ -40,9 +40,9 @@
 * prometheus_node_exporter: v1.1.2
 * prometheus_postgres_exporter: v0.9.0
 * prometheus: v2.27.1
-* redis: 6.0.10-alpine
+* redis: 6.2.4-alpine
 * registration: v0.7.2
 * sms_bridge: 0.5.7
 * sygnal: v0.9.0
 * synapse_admin: 0.8.1
-* synapse: v1.35.1
+* synapse: v1.36.0
