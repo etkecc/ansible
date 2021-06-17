@@ -1,0 +1,19 @@
+---
+custom_miounne_enabled: false
+custom_miounne_version: latest
+matrix_nginx_proxy_proxy_miounne_hostname: "{{ matrix_server_fqn_miounne }}"
+custom_miounne_docker_image: "registry.gitlab.com/etke.cc/miounne:{{ custom_miounne_version }}"
+custom_miounne_docker_image_force_pull: "{{ custom_miounne_docker_image.endswith(':latest') }}"
+
+custom_miounne_server_port: 8080
+custom_miounne_webhooks_setuporder_url: ""
+custom_miounne_webhooks_setuporder_redirect: ""
+custom_miounne_webhooks_setuporder_img: ""
+custom_miounne_webhooks_setuporder_honeypot: ""
+
+#
+# A list of extra arguments to pass to the container
+custom_miounne_container_extra_arguments: []
+
+# List of systemd services that miounne.service depends on
+custom_miounne_systemd_required_services_list: ['docker.service']

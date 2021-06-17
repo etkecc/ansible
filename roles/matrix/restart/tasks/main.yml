@@ -491,3 +491,13 @@
   tags:
     - setup-all
     - setup-synapse-admin
+
+- name: Restart Miounne
+  service:
+    enabled: yes
+    state: restarted
+    name: custom-miounne
+  when: custom_miounne_enabled|bool
+  tags:
+    - setup-all
+    - setup-miounne

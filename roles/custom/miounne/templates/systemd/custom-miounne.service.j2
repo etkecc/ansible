@@ -1,0 +1,37 @@
+#jinja2: lstrip_blocks: "True"
+[Unit]
+Description=Mother Miounne
+{% for service in custom_miounne_systemd_required_services_list %}
+Requires={{ service }}
+After={{ service }}
+{% endfor %}
+DefaultDependencies=no
+
+[Service]
+Type=simple
+Environment="HOME={{ matrix_systemd_unit_home_path }}"
+ExecStartPre=-/usr/bin/env sh -c '/usr/bin/env docker kill custom-miounne 2>/dev/null'
+ExecStartPre=-/usr/bin/env sh -c '/usr/bin/env docker rm custom-miounne 2>/dev/null'
+
+ExecStart=/usr/bin/env docker run --rm --name custom-miounne \
+          --log-driver=none \
+          --user=miounne:miounne \
+          --cap-drop=ALL \
+          --network={{ matrix_docker_network }} \
+          -e MIOUNNE_SERVER_PORT={{ custom_miounne_server_port }} \
+          -e MIOUNNE_WEBHOOKS_SETUPORDER_URL="{{ custom_miounne_webhooks_setuporder_url }}" \
+          -e MIOUNNE_WEBHOOKS_SETUPORDER_IMG="{{ custom_miounne_webhooks_setuporder_img }}" \
+          -e MIOUNNE_WEBHOOKS_SETUPORDER_HONEYPOT={{ custom_miounne_webhooks_setuporder_honeypot }} \
+          {% for arg in custom_miounne_container_extra_arguments %}
+          {{ arg }} \
+          {% endfor %}
+          {{ custom_miounne_docker_image }}
+
+ExecStop=-/usr/bin/env sh -c '/usr/bin/env docker kill custom-miounne 2>/dev/null'
+ExecStop=-/usr/bin/env sh -c '/usr/bin/env docker rm custom-miounne 2>/dev/null'
+Restart=always
+RestartSec=30
+SyslogIdentifier=custom-miounne
+
+[Install]
+WantedBy=multi-user.target

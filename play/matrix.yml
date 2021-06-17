@@ -54,6 +54,7 @@
     - matrix-nginx-proxy
     - matrix-coturn
     # CUSTOM
+    - custom/miounne
     - custom/miniflux
     - custom/languagetool
     - custom/wireguard

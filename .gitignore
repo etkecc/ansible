@@ -1,6 +1,7 @@
 /tmp
 !/tmp/.gitkeep
 /roles/custom/*
+!/roles/custom/miounne
 !/roles/custom/miniflux
 !/roles/custom/wireguard
 !/roles/custom/languagetool
