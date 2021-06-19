@@ -18,9 +18,11 @@ ExecStart=/usr/bin/env docker run --rm --name custom-miounne \
           --user=miounne:miounne \
           --cap-drop=ALL \
           --network={{ matrix_docker_network }} \
+          -e MIOUNNE_SENTRY="{{ custom_miounne_sentry }}" \
           -e MIOUNNE_SERVER_PORT={{ custom_miounne_server_port }} \
           -e MIOUNNE_WEBHOOKS_SETUPORDER_URL="{{ custom_miounne_webhooks_setuporder_url }}" \
           -e MIOUNNE_WEBHOOKS_SETUPORDER_IMG="{{ custom_miounne_webhooks_setuporder_img }}" \
+          -e MIOUNNE_WEBHOOKS_SETUPORDER_REDIRECT="{{ custom_miounne_webhooks_setuporder_redirect }}" \
           -e MIOUNNE_WEBHOOKS_SETUPORDER_HONEYPOT={{ custom_miounne_webhooks_setuporder_honeypot }} \
           {% for arg in custom_miounne_container_extra_arguments %}
           {{ arg }} \

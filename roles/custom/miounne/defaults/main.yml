@@ -6,6 +6,7 @@ custom_miounne_docker_image: "registry.gitlab.com/etke.cc/miounne:{{ custom_miou
 custom_miounne_docker_image_force_pull: "{{ custom_miounne_docker_image.endswith(':latest') }}"
 
 custom_miounne_server_port: 8080
+custom_miounne_sentry: ""
 custom_miounne_webhooks_setuporder_url: ""
 custom_miounne_webhooks_setuporder_redirect: ""
 custom_miounne_webhooks_setuporder_img: ""
