@@ -1,4 +1,58 @@
 ---
+- name: Reload init system before any restart
+  service:
+    daemon_reload: yes
+  tags:
+    - setup-all
+    - setup-appservice-discord
+    - setup-appservice-irc
+    - setup-appservice-slack
+    - setup-appservice-webhooks
+    - setup-bot-go-neb
+    - setup-bot-matrix-reminder-bot
+    - setup-bot-mjolnir
+    - setup-client-element
+    - setup-client-hydrogen
+    - setup-corporal
+    - setup-coturn
+    - setup-dimension
+    - setup-dynamic-dns
+    - setup-email2matrix
+    - setup-etherpad
+    - setup-grafana
+    - setup-heisenbridge
+    - setup-jitsi
+    - setup-languagetool
+    - setup-ma1sd
+    - setup-mailer
+    - setup-mautrix-facebook
+    - setup-mautrix-hangouts
+    - setup-mautrix-instagram
+    - setup-mautrix-signal
+    - setup-mautrix-telegram
+    - setup-mautrix-whatsapp
+    - setup-miniflux
+    - setup-miounne
+    - setup-mx-puppet-discord
+    - setup-mx-puppet-groupme
+    - setup-mx-puppet-instagram
+    - setup-mx-puppet-skype
+    - setup-mx-puppet-slack
+    - setup-mx-puppet-steam
+    - setup-mx-puppet-twitter
+    - setup-nginx-proxy
+    - setup-postgres
+    - setup-prometheus
+    - setup-prometheus-node-exporter
+    - setup-prometheus-postgres-exporter
+    - setup-redis
+    - setup-registration
+    - setup-sms-bridge
+    - setup-ssl
+    - setup-sygnal
+    - setup-synapse
+    - setup-synapse-admin
+
 - name: Restart Synapse
   service:
     enabled: yes
