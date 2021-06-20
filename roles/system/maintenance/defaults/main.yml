@@ -1,7 +1,4 @@
 ---
-# allow package updates
-system_maintenance_upgrade_enabled: yes
-
 # https://docs.ansible.com/ansible/2.9/modules/apt_module.html#parameter-upgrade
 # allowed values: safe, full, dist
 system_maintenance_upgrade_type: safe
@@ -13,4 +10,10 @@ system_maintenance_docker_prune: yes
 system_maintenance_journalctl_vacuum: yes
 
 # remove synapse media store thumbnails (they will be regenerated on request)
-system_maintenance_thumbnails_prune: no
+system_maintenance_thumbnails_prune: yes
+
+# purge-old-kernels script path
+system_maintenance_pok_path: /usr/local/bin/purge-old-kernels
+
+# purge-old-kernels --keep param
+system_maintenance_pok_keep: 1

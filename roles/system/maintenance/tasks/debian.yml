@@ -1,4 +1,36 @@
 ---
+- name: Ensure purge-old-kernels script installed
+  stat:
+    path: "{{ system_maintenance_pok_path }}"
+  register: pok
+
+- name: Configure purge-old-kernels script
+  block:
+    - name: Install purge-old-kernels script
+      get_url:
+        url: https://raw.githubusercontent.com/algodelinux/purge-old-kernels/master/purge-old-kernels
+        dest: "{{ system_maintenance_pok_path }}"
+        mode: 0755
+        force: yes
+        owner: "{{ matrix_user_username }}"
+        group: "{{ matrix_user_groupname }}"
+    - name: Modify purge-old-kernels to use it with ansible
+      replace:
+        path: "{{ system_maintenance_pok_path }}"
+        mode: 0755
+        owner: "{{ matrix_user_username }}"
+        group: "{{ matrix_user_groupname }}"
+        regexp: "^APT_OPTS=$"
+        replace: "APT_OPTS=\"-y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew\""
+  when: pok.stat.exists|bool == false
+  ignore_errors: yes
+
+- name: Cleanup old kernels
+  command: "{{ system_maintenance_pok_path }} --keep {{ system_maintenance_pok_keep }}"
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  ignore_errors: yes
+
 - name: Update packages list
   apt:
     update_cache: yes
@@ -9,10 +41,13 @@
   apt:
     upgrade: "{{ system_maintenance_upgrade_type }}"
 
-- name: Cleanup system packages
+- name: Uninstall unused packages and remove old packages in cache
   apt:
     autoclean: yes
     autoremove: yes
+
+- name: Cleanup system packages cache
+  command: apt-get clean
 
 # check if reboot required
 - name: Check if system reboot is required

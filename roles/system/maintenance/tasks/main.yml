@@ -6,10 +6,10 @@
     - system-cleanup
 
 - include_tasks: debian.yml
-  when: ansible_os_family == "Debian" and system_maintenance_upgrade_enabled|bool
+  when: ansible_os_family == "Debian"
   tags:
     - setup-all
-    - system-upgrade
+    - system-cleanup
 
 - name: Clean up unused docker resources
   command: docker system prune -a -f --volumes
