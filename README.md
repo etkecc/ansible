@@ -108,11 +108,19 @@ New versions of matrix-related software releases very often, so to stay up to da
 
 1. Run all playbooks (including cleanup tasks)
 2. Run rust-synapse-compress-state
+3. Run postgres full vacuum.
 
 ```bash
 ansible-playbook play/all.yml -t setup-all
 ansible-playbook play/all.yml -t rust-synapse-compress-state
 ansible-playbook play/all.yml -t run-postgres-vacuum
+```
+
+One-liner with notifications:
+
+```bash
+ansible-playbook play/all.yml -t setup-all; notify-send ansible "setup done"; ansible-playbook play/all.yml -t rust-synapse-compress-state; notify-send ansible "compress state done"; ansible-playbook play/all.yml -t run-postgres-vacuum; notify-send ansible "postgres vacuum done"
+```
 
 ## Supported distributives
 
