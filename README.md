@@ -104,6 +104,16 @@ New versions of matrix-related software releases very often, so to stay up to da
 * Run the upgrade: `ansible-playbook play/all.yml -t setup-all,start`
 * Check if it works as expected: `ansible-playbook play/matrix.yml -t self-check`
 
+### Full maintenace cycle:
+
+1. Run all playbooks (including cleanup tasks)
+2. Run rust-synapse-compress-state
+
+```bash
+ansible-playbook play/all.yml -t setup-all
+ansible-playbook play/all.yml -t rust-synapse-compress-state
+ansible-playbook play/all.yml -t run-postgres-vacuum
+
 ## Supported distributives
 
 [Parent project prerequisites](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/docs/prerequisites.md#prerequisites)
