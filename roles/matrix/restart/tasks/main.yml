@@ -373,6 +373,16 @@
     - setup-all
     - setup-mautrix-signal
 
+- name: Restart Signal bridge's daemon (mautrix)
+  service:
+    enabled: yes
+    state: restarted
+    name: matrix-mautrix-signal-daemon
+  when: matrix_mautrix_signal_enabled|bool
+  tags:
+    - setup-all
+    - setup-mautrix-signal
+
 - name: Restart Telegram bridge (mautrix)
   service:
     enabled: yes
