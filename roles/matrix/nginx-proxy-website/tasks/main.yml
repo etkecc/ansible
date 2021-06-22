@@ -51,7 +51,6 @@
     group: "{{ matrix_user_groupname }}"
     follow: yes
     force: yes
-  become: no
   when: matrix_nginx_proxy_website_enabled|bool
   tags:
     - setup-all
