@@ -4,6 +4,7 @@
     daemon_reload: yes
   tags:
     - setup-all
+    - restart-all
     - setup-appservice-discord
     - setup-appservice-irc
     - setup-appservice-slack
@@ -61,6 +62,7 @@
   when: matrix_synapse_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-synapse
 
 - name: Restart Database (postgres)
@@ -71,6 +73,7 @@
   when: matrix_postgres_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-postgres
 
 - name: Restart Discord bridge (appservice)
@@ -81,6 +84,7 @@
   when: matrix_appservice_discord_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-appservice-discord
 
 - name: Restart IRC bridge (appservice)
@@ -91,6 +95,7 @@
   when: matrix_appservice_irc_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-appservice-irc
 
 - name: Restart Slack bridge (appservice)
@@ -101,6 +106,7 @@
   when: matrix_appservice_slack_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-appservice-slack
 
 - name: Restart Webhooks bridge (appservice)
@@ -111,6 +117,7 @@
   when: matrix_appservice_webhooks_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-appservice-webhooks
 
 - name: Restart go-neb bot
@@ -121,6 +128,7 @@
   when: matrix_bot_go_neb_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-bot-go-neb
 
 - name: Restart reminder bot
@@ -131,6 +139,7 @@
   when: matrix_bot_matrix_reminder_bot_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-bot-matrix-reminder-bot
 
 - name: Restart mjolnir bot
@@ -141,6 +150,7 @@
   when: matrix_bot_mjolnir_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-bot-mjolnir
 
 - name: Restart Element
@@ -151,6 +161,7 @@
   when: matrix_client_element_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-client-element
 
 - name: Restart Hydrogen
@@ -161,6 +172,7 @@
   when: matrix_client_hydrogen_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-client-hydrogen
 
 - name: Restart Corporal
@@ -171,6 +183,7 @@
   when: matrix_corporal_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-corporal
 
 - name: Restart Coturn
@@ -181,6 +194,7 @@
   when: matrix_coturn_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-coturn
 
 - name: Restart Dimension
@@ -191,6 +205,7 @@
   when: matrix_dimension_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-dimension
 
 - name: Restart Dynamic DNS
@@ -201,6 +216,7 @@
   when: matrix_dynamic_dns_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-dynamic-dns
 
 - name: Restart Email2Matrix
@@ -211,6 +227,7 @@
   when: matrix_email2matrix_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-email2matrix
 
 - name: Restart Etherpad
@@ -221,6 +238,7 @@
   when: matrix_etherpad_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-etherpad
 
 - name: Restart Grafana
@@ -231,6 +249,7 @@
   when: matrix_grafana_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-grafana
 
 - name: Restart IRC bridge (heisenbridge)
@@ -241,6 +260,7 @@
   when: matrix_heisenbridge_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-heisenbridge
 
 - name: Restart Jitsi Conference Focus
@@ -251,6 +271,7 @@
   when: matrix_jitsi_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-jitsi
 
 - name: Restart Jitsi Video Bridge
@@ -261,6 +282,7 @@
   when: matrix_jitsi_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-jitsi
 
 - name: Restart Jitsi Prosody
@@ -271,6 +293,7 @@
   when: matrix_jitsi_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-jitsi
 
 - name: Restart Jitsi Web
@@ -281,6 +304,7 @@
   when: matrix_jitsi_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-jitsi
 
 - name: Restart LanguageTool
@@ -291,6 +315,7 @@
   when: custom_languagetool_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-languagetool
 
 - name: Restart Identity Server (ma1sd)
@@ -301,6 +326,7 @@
   when: matrix_ma1sd_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-ma1sd
 
 - name: Restart Mailer (exim)
@@ -311,6 +337,7 @@
   when: matrix_mailer_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-mailer
 
 - name: Restart matrix-registration
@@ -321,6 +348,7 @@
   when: matrix_registration_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-registration
 
 - name: Restart SMS bridge
@@ -331,6 +359,7 @@
   when: matrix_sms_bridge_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-sms-bridge
 
 - name: Restart Facebook bridge (mautrix)
@@ -341,6 +370,7 @@
   when: matrix_mautrix_facebook_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-mautrix-facebook
 
 - name: Restart Hangouts bridge (mautrix)
@@ -351,6 +381,7 @@
   when: matrix_mautrix_hangouts_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-mautrix-hangouts
 
 - name: Restart Instagram bridge (mautrix)
@@ -361,6 +392,7 @@
   when: matrix_mautrix_instagram_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-mautrix-instagram
 
 - name: Restart Signal bridge (mautrix)
@@ -371,6 +403,7 @@
   when: matrix_mautrix_signal_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-mautrix-signal
 
 - name: Restart Signal bridge's daemon (mautrix)
@@ -381,6 +414,7 @@
   when: matrix_mautrix_signal_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-mautrix-signal
 
 - name: Restart Telegram bridge (mautrix)
@@ -391,6 +425,7 @@
   when: matrix_mautrix_telegram_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-mautrix-telegram
 
 - name: Restart WhatsApp bridge (mautrix)
@@ -401,6 +436,7 @@
   when: matrix_mautrix_whatsapp_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-mautrix-whatsapp
 
 - name: Restart Miniflux
@@ -411,6 +447,7 @@
   when: custom_miniflux_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-miniflux
 
 - name: Restart Discord bridge (mx-puppet)
@@ -421,6 +458,7 @@
   when: matrix_mx_puppet_discord_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-mx-puppet-discord
 
 - name: Restart GroupMe bridge (mx-puppet)
@@ -431,6 +469,7 @@
   when: matrix_mx_puppet_groupme_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-mx-puppet-groupme
 
 - name: Restart Instagram bridge (mx-puppet)
@@ -441,6 +480,7 @@
   when: matrix_mx_puppet_instagram_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-mx-puppet-instagram
 
 - name: Restart Skype bridge (mx-puppet)
@@ -451,6 +491,7 @@
   when: matrix_mx_puppet_skype_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-mx-puppet-skype
 
 - name: Restart Slack bridge (mx-puppet)
@@ -461,6 +502,7 @@
   when: matrix_mx_puppet_slack_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-mx-puppet-slack
 
 - name: Restart Steam bridge (mx-puppet)
@@ -471,6 +513,7 @@
   when: matrix_mx_puppet_steam_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-mx-puppet-steam
 
 - name: Restart Twitter bridge (mx-puppet)
@@ -481,6 +524,7 @@
   when: matrix_mx_puppet_twitter_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-mx-puppet-twitter
 
 - name: Restart Proxy (nginx)
@@ -491,6 +535,7 @@
   when: matrix_nginx_proxy_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-ssl
     - setup-nginx-proxy
 
@@ -502,6 +547,7 @@
   when: matrix_prometheus_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-prometheus
 
 - name: Restart Prometheus Node Exporter
@@ -512,6 +558,7 @@
   when: matrix_prometheus_node_exporter_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-prometheus
     - setup-prometheus-node-exporter
 
@@ -523,6 +570,7 @@
   when: matrix_prometheus_postgres_exporter_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-prometheus
     - setup-prometheus-postgres-exporter
 
@@ -534,6 +582,7 @@
   when: matrix_redis_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-redis
 
 - name: Restart Sygnal
@@ -544,6 +593,7 @@
   when: matrix_sygnal_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-sygnal
 
 - name: Restart Synapse Admin
@@ -554,6 +604,7 @@
   when: matrix_synapse_admin_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-synapse-admin
 
 - name: Restart Miounne
@@ -564,4 +615,5 @@
   when: custom_miounne_enabled|bool
   tags:
     - setup-all
+    - restart-all
     - setup-miounne
