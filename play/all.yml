@@ -54,8 +54,6 @@
     - matrix-nginx-proxy
     - matrix-coturn
     # CUSTOM
-    - matrix/nginx-proxy-website
-    - matrix/nginx-proxy-health
     - system/swap
     - system/security
     - system/maintenance
@@ -64,6 +62,8 @@
     - custom/wireguard
     - custom/languagetool
     - integration/uptimerobot
+    - matrix/nginx-proxy-website
+    - matrix/nginx-proxy-health
     # END CUSTOM
     - matrix-aux
     - matrix-postgres-backup

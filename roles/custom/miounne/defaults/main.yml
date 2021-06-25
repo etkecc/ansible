@@ -7,10 +7,16 @@ custom_miounne_docker_image_force_pull: "{{ custom_miounne_docker_image.endswith
 
 custom_miounne_server_port: 8080
 custom_miounne_sentry: ""
-custom_miounne_webhooks_setuporder_url: ""
-custom_miounne_webhooks_setuporder_redirect: ""
-custom_miounne_webhooks_setuporder_img: ""
-custom_miounne_webhooks_setuporder_honeypot: ""
+custom_miounne_spam_emails: []
+custom_miounne_spam_hosts: []
+# format:
+  # - name: myform
+  #   url: https://your-matrix-webhook.url/
+  #   img: https://url-of-your-avatar.img
+  #   fields: ["your", "form", "fields"]
+  #   redirect: https://url-to-redirect-after-form.com
+  #   honeypot: honeypot_field_name
+custom_miounne_forms: []
 
 #
 # A list of extra arguments to pass to the container
