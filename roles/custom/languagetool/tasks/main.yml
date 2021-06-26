@@ -40,6 +40,16 @@
     - setup-all
     - setup-languagetool
 
+- name: Ensure unzip installed
+  package:
+    name: unzip
+    state: present
+  ignore_errors: yes
+  when: custom_languagetool_enabled|bool and custom_languagetool_ngrams_enabled|bool and ngrams.stat.exists|bool == false
+  tags:
+    - setup-all
+    - setup-languagetool
+
 - name: Unpack n-grams
   unarchive:
     src: "{{ custom_languagetool_ngrams_tmp }}"

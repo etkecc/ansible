@@ -56,7 +56,6 @@
     # CUSTOM
     - system/swap
     - system/security
-    - system/maintenance
     - custom/miounne
     - custom/miniflux
     - custom/wireguard
@@ -69,5 +68,8 @@
     - matrix-postgres-backup
     - matrix-prometheus-postgres-exporter
     - matrix-common-after
-    - matrix/restart #CUSTOM
+    # CUSTOM
+    - matrix/restart
+    - system/maintenance
+    # END CUSTOM
 
