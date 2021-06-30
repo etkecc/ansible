@@ -18,7 +18,7 @@
 * heisenbridge: latest
 * jitsi_ldap: '3'
 * jitsi: stable-5765-1
-* languagetool: 5.4
+* languagetool: 5.3
 * ma1sd: 2.4.0
 * mailer: 4.94.2-r0-2
 * mautrix_facebook: latest
@@ -46,4 +46,4 @@
 * sms_bridge: 0.5.7
 * sygnal: v0.9.0
 * synapse_admin: 0.8.1
-* synapse: v1.37.0
+* synapse: v1.37.1
