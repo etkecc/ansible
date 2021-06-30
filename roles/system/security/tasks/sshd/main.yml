@@ -1,4 +1,26 @@
 ---
+- name: Add authorized keys
+  authorized_key:
+    user: "{{ ansible_user }}"
+    state: present
+    key: "{{ item }}"
+  with_items: "{{ system_security_autorizedkeys }}"
+  tags:
+    - setup-all
+    - security-ssh
+    - rotate-ssh-keys
+
+- name: Revoke authorized keys
+  authorized_key:
+    user: "{{ ansible_user }}"
+    state: absent
+    key: "{{ item }}"
+  with_items: "{{ system_security_notautorizedkeys }}"
+  tags:
+    - setup-all
+    - security-ssh
+    - rotate-ssh-keys
+
 - name: Enforce sshd config
   blockinfile:
     path: /etc/ssh/sshd_config

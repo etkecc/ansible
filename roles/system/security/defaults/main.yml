@@ -17,6 +17,12 @@ system_security_ssh_passwordauth: no
 # ssh root login: yes - allow, no - block
 system_security_ssh_rootlogin: yes
 
+# list of public ssh keys, allowed to connect to the server
+system_security_autorizedkeys: []
+
+# list of public ssh keys to revoke (remove) from .ssh/authorized_keys
+system_security_notautorizedkeys: []
+
 system_security_ufw_rules:
   - name: SSH
     rule: allow
