@@ -119,7 +119,7 @@ ansible-playbook play/all.yml -t run-postgres-vacuum
 One-liner with notifications:
 
 ```bash
-ansible-playbook play/all.yml -t setup-all; notify-send ansible "setup done"; ansible-playbook play/all.yml -t rust-synapse-compress-state; notify-send ansible "compress state done"; ansible-playbook play/all.yml -t run-postgres-vacuum; notify-send ansible "postgres vacuum done"; ansible-playbook play/all.yml -t restart-all; notify-send ansible "restarted all the things"
+ansible-playbook play/all.yml -l HOST -t setup-all; notify-send ansible "setup done"; ansible-playbook play/all.yml -l HOST -t rust-synapse-compress-state; notify-send ansible "compress state done"; ansible-playbook play/all.yml -l HOST -t run-postgres-vacuum; notify-send ansible "postgres vacuum done"; ansible-playbook play/all.yml -l HOST -t restart-all; notify-send ansible "restarted all the things"
 ```
 
 ## Supported distributives

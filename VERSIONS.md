@@ -4,12 +4,12 @@
 * appservice_webhooks: latest
 * bot_go_neb: latest
 * bot_matrix_reminder_bot: release-v0.2.0
-* bot_mjolnir: v0.1.17
+* bot_mjolnir: v0.1.18
 * client_element: v1.7.31
 * client_hydrogen: v0.2.0
 * corporal: 2.1.0
 * coturn: 4.5.2-r2
-* coturn_container_image_self_build_repo: docker/{{ matrix_coturn_version }}-r2
+* coturn_container_image_self_build_repo: docker/{{ matrix_coturn_version }}
 * dimension: latest
 * dynamic_dns: v3.9.1-ls45
 * email2matrix: 1.0.1
