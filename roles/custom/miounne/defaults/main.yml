@@ -11,9 +11,16 @@ custom_miounne_server_trustedproxies:
 custom_miounne_sentry: ""
 custom_miounne_spam_emails: []
 custom_miounne_spam_hosts: []
+
+custom_miounne_matrix_homeserver: "{{ matrix_domain }}"
+custom_miounne_matrix_user_login: "mother.miounne"
+custom_miounne_matrix_user_password: ""
+custom_miounne_matrix_user_displayname: "Mother Miounne"
+
 # format:
   # - name: myform
   #   url: https://your-matrix-webhook.url/
+  #   roomid: !dsadDSDad:yourdomain.com
   #   img: https://url-of-your-avatar.img
   #   fields: ["your", "form", "fields"]
   #   redirect: https://url-to-redirect-after-form.com

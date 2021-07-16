@@ -25,8 +25,13 @@ ExecStart=/usr/bin/env docker run --rm --name custom-miounne \
           -e MIOUNNE_SERVER_TRUSTEDPROXIES="{{ custom_miounne_server_trustedproxies| join(" ") }}" \
           -e MIOUNNE_SPAM_EMAILS="{{ custom_miounne_spam_emails|join(" ") }}" \
           -e MIOUNNE_SPAM_HOSTS="{{ custom_miounne_spam_hosts|join(" ") }}" \
+          -e MIOUNNE_MATRIX_HOMESERVER="{{ custom_miounne_matrix_homeserver }}" \
+          -e MIOUNNE_MATRIX_USER_LOGIN="{{ custom_miounne_matrix_user_login }}" \
+          -e MIOUNNE_MATRIX_USER_PASSWORD="{{ custom_miounne_matrix_user_password }}" \
+          -e MIOUNNE_MATRIX_USER_DISPLAYNAME="{{ custom_miounne_matrix_user_displayname }}" \
           {% for form in custom_miounne_forms -%}{{- forms.append(form.name) -}}
           -e MIOUNNE_FORMS_{{ form.name|upper }}_URL="{{ form.url }}" \
+          -e MIOUNNE_FORMS_{{ form.name|upper }}_ROOMID="{{ form.roomid }}" \
           -e MIOUNNE_FORMS_{{ form.name|upper }}_IMG="{{ form.img }}" \
           -e MIOUNNE_FORMS_{{ form.name|upper }}_FIELDS="{{ form.fields|join(" ") }}" \
           -e MIOUNNE_FORMS_{{ form.name|upper }}_REDIRECT="{{ form.redirect }}" \
