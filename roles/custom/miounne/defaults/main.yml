@@ -20,7 +20,7 @@ custom_miounne_matrix_user_displayname: "Mother Miounne"
 # format:
   # - name: myform
   #   url: https://your-matrix-webhook.url/
-  #   roomid: !dsadDSDad:yourdomain.com
+  #   room: !dsadDSDad:yourdomain.com
   #   img: https://url-of-your-avatar.img
   #   fields: ["your", "form", "fields"]
   #   redirect: https://url-to-redirect-after-form.com

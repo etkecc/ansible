@@ -31,7 +31,7 @@ ExecStart=/usr/bin/env docker run --rm --name custom-miounne \
           -e MIOUNNE_MATRIX_USER_DISPLAYNAME="{{ custom_miounne_matrix_user_displayname }}" \
           {% for form in custom_miounne_forms -%}{{- forms.append(form.name) -}}
           -e MIOUNNE_FORMS_{{ form.name|upper }}_URL="{{ form.url }}" \
-          -e MIOUNNE_FORMS_{{ form.name|upper }}_ROOMID="{{ form.roomid }}" \
+          -e MIOUNNE_FORMS_{{ form.name|upper }}_ROOM="{{ form.room }}" \
           -e MIOUNNE_FORMS_{{ form.name|upper }}_IMG="{{ form.img }}" \
           -e MIOUNNE_FORMS_{{ form.name|upper }}_FIELDS="{{ form.fields|join(" ") }}" \
           -e MIOUNNE_FORMS_{{ form.name|upper }}_REDIRECT="{{ form.redirect }}" \
