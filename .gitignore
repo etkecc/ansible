@@ -12,3 +12,5 @@
 !/inventory/scripts
 *.pyc
 /taskell.md
+/.stfolder
+/.stversions
