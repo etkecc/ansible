@@ -3,10 +3,10 @@
 * appservice_slack: release-1.5.0
 * appservice_webhooks: latest
 * bot_go_neb: latest
-* bot_matrix_reminder_bot: release-v0.2.0
+* bot_matrix_reminder_bot: release-v0.2.1
 * bot_mjolnir: v0.1.18
-* client_element: v1.7.32
-* client_hydrogen: v0.2.0
+* client_element: v1.7.33
+* client_hydrogen: v0.2.3
 * corporal: 2.1.1
 * coturn: 4.5.2-r2
 * coturn_container_image_self_build_repo: docker/{{ matrix_coturn_version }}
@@ -14,10 +14,10 @@
 * dynamic_dns: v3.9.1-ls45
 * email2matrix: 1.0.1
 * etherpad: 1.8.12
-* grafana: 8.0.5
+* grafana: 8.0.6
 * heisenbridge: latest
 * jitsi_ldap: '3'
-* jitsi: stable-5765-1
+* jitsi: stable-5963
 * languagetool: 5.3
 * ma1sd: 2.4.0
 * mailer: 4.94.2-r0-2
