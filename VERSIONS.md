@@ -38,7 +38,7 @@
 * mx_puppet_steam: latest
 * mx_puppet_twitter: latest
 * nginx_proxy: 1.21.1-alpine
-* prometheus_node_exporter: v1.1.2
+* prometheus_node_exporter: v1.2.0
 * prometheus_postgres_exporter: v0.9.0
 * prometheus: v2.28.1
 * redis: 6.2.4-alpine
