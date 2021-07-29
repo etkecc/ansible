@@ -29,6 +29,11 @@ ExecStart=/usr/bin/env docker run --rm --name custom-miounne \
           -e MIOUNNE_MATRIX_USER_LOGIN="{{ custom_miounne_matrix_user_login }}" \
           -e MIOUNNE_MATRIX_USER_PASSWORD="{{ custom_miounne_matrix_user_password }}" \
           -e MIOUNNE_MATRIX_USER_DISPLAYNAME="{{ custom_miounne_matrix_user_displayname }}" \
+          -e MIOUNNE_MATRIX_DATABASE_DRIVER="{{ custom_miounne_database_engine }}" \
+          -e MIOUNNE_MATRIX_DATABASE_DSN="{{ custom_miounne_appservice_database }}" \
+          -e MIOUNNE_MATRIX_REGISTRATION_URL="{{ custom_miounne_matrix_registration_url }}" \
+          -e MIOUNNE_MATRIX_REGISTRATION_ROOM="{{ custom_miounne_matrix_registration_room }}" \
+          -e MIOUNNE_MATRIX_REGISTRATION_SECRET="{{ custom_miounne_matrix_registration_secret }}" \
           {% for form in custom_miounne_forms -%}{{- forms.append(form.name) -}}
           -e MIOUNNE_FORMS_{{ form.name|upper }}_URL="{{ form.url }}" \
           -e MIOUNNE_FORMS_{{ form.name|upper }}_ROOM="{{ form.room }}" \

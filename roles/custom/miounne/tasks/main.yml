@@ -10,6 +10,21 @@
     - setup-all
     - setup-miounne
 
+- name: Ensure miounne paths exist
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0750
+    owner: "{{ matrix_user_username }}"
+    group: "{{ matrix_user_groupname }}"
+  with_items:
+    - "{{ custom_miounne_base_path }}"
+    - "{{ custom_miounne_data_path }}"
+  when: custom_miounne_enabled|bool
+  tags:
+    - setup-all
+    - setup-miounne
+
 - name: Ensure custom-miounne.service is present
   template:
     src: systemd/custom-miounne.service.j2
