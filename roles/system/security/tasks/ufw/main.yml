@@ -50,8 +50,13 @@
     owner: "{{ matrix_user_username }}"
     group: "{{ matrix_user_groupname }}"
 
-- name: Apply ufw-docker rules
+- name: Apply ufw-docker patches
   command: ufw-docker install
+
+- name: "Allow {{ item }} external access"
+  command: "ufw-docker allow {{ item }}"
+  with_items: "{{ system_security_ufwdocker_allowed }}"
+  ignore_errors: yes # not all containers may be available
 
 - name: Restart ufw service to load new rules
   service:
