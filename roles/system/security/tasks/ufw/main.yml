@@ -42,6 +42,22 @@
     proto: any
   when: custom_wireguard_enabled|bool
 
+- name: Install ufw-docker
+  copy:
+    src: "{{ role_path }}/files/ufw-docker"
+    dest: /usr/local/bin/ufw-docker
+    mode: 0775
+    owner: "{{ matrix_user_username }}"
+    group: "{{ matrix_user_groupname }}"
+
+- name: Apply ufw-docker rules
+  command: ufw-docker install
+
+- name: Restart ufw service to load new rules
+  service:
+    name: ufw
+    state: restarted
+
 - name: Start ufw
   ufw:
     logging: 'on'
