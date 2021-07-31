@@ -12,7 +12,7 @@ custom_miounne_sentry: ""
 custom_miounne_spam_emails: []
 custom_miounne_spam_hosts: []
 
-custom_miounne_matrix_homeserver: "{{ matrix_domain }}"
+custom_miounne_matrix_homeserver: "{{ matrix_homeserver_container_url }}"
 
 custom_miounne_matrix_user_login: "mother.miounne"
 custom_miounne_matrix_user_password: ""
