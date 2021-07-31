@@ -1,29 +1,20 @@
 ---
-- name: Ensure purge-old-kernels script installed
-  stat:
-    path: "{{ system_maintenance_pok_path }}"
-  register: pok
+- name: Install purge-old-kernels script
+  copy:
+    src: "{{ role_path }}/files/prune-old-kernels"
+    dest: "{{ system_maintenance_pok_path }}"
+    mode: 0775
+    owner: "{{ matrix_user_username }}"
+    group: "{{ matrix_user_groupname }}"
 
-- name: Configure purge-old-kernels script
-  block:
-    - name: Install purge-old-kernels script
-      get_url:
-        url: https://raw.githubusercontent.com/algodelinux/purge-old-kernels/master/purge-old-kernels
-        dest: "{{ system_maintenance_pok_path }}"
-        mode: 0755
-        force: yes
-        owner: "{{ matrix_user_username }}"
-        group: "{{ matrix_user_groupname }}"
-    - name: Modify purge-old-kernels to use it with ansible
-      replace:
-        path: "{{ system_maintenance_pok_path }}"
-        mode: 0755
-        owner: "{{ matrix_user_username }}"
-        group: "{{ matrix_user_groupname }}"
-        regexp: "^APT_OPTS=$"
-        replace: "APT_OPTS=\"-y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew\""
-  when: pok.stat.exists|bool == false
-  ignore_errors: yes
+- name: Modify purge-old-kernels to use it with ansible
+  replace:
+    path: "{{ system_maintenance_pok_path }}"
+    mode: 0755
+    owner: "{{ matrix_user_username }}"
+    group: "{{ matrix_user_groupname }}"
+    regexp: "^APT_OPTS=$"
+    replace: "APT_OPTS=\"-y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew\""
 
 - name: Cleanup old kernels
   command: "{{ system_maintenance_pok_path }} --keep {{ system_maintenance_pok_keep }}"
