@@ -18,7 +18,7 @@
 * heisenbridge: latest
 * jitsi_ldap: '3'
 * jitsi: stable-5963
-* languagetool: 5.3
+* languagetool: 5.4
 * ma1sd: 2.5.0
 * mailer: 4.94.2-r0-2
 * mautrix_facebook: latest
