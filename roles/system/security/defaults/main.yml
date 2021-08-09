@@ -69,11 +69,6 @@ system_security_ufw_rules:
     port: '10000'
     proto: udp
 
-system_security_ufwdocker_allowed:
-  - matrix-nginx-proxy
-  - matrix-coturn
-  - matrix-email2matrix
-
 # email2matrix integration
 matrix_email2matrix_enabled: false
 
