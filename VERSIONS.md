@@ -1,12 +1,12 @@
 * appservice_discord: v1.0.0
-* appservice_irc: release-0.27.0
+* appservice_irc: release-v0.29.0
 * appservice_slack: release-1.5.0
 * appservice_webhooks: latest
 * bot_go_neb: latest
 * bot_matrix_reminder_bot: release-v0.2.1
 * bot_mjolnir: v0.1.18
-* client_element: v1.7.33
-* client_hydrogen: v0.2.3
+* client_element: v1.7.34
+* client_hydrogen: v0.2.5
 * corporal: 2.1.1
 * coturn: 4.5.2-r2
 * coturn_container_image_self_build_repo: docker/{{ matrix_coturn_version }}
@@ -46,4 +46,4 @@
 * sms_bridge: 0.5.7
 * sygnal: v0.9.0
 * synapse_admin: 0.8.1
-* synapse: v1.39.0
+* synapse: v1.40.0
