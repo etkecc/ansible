@@ -5,7 +5,7 @@
 * bot_go_neb: latest
 * bot_matrix_reminder_bot: release-v0.2.1
 * bot_mjolnir: v0.1.18
-* client_element: v1.7.34
+* client_element: v1.8.0
 * client_hydrogen: v0.2.5
 * corporal: 2.1.1
 * coturn: 4.5.2-r2
@@ -15,13 +15,13 @@
 * email2matrix: 1.0.1
 * etherpad: 1.8.12
 * grafana: 8.0.6
-* heisenbridge: latest
+* heisenbridge: 1.0.0
 * jitsi_ldap: '3'
 * jitsi: stable-5963
 * languagetool: 5.4
 * ma1sd: 2.5.0
 * mailer: 4.94.2-r0-2
-* mautrix_facebook: latest
+* mautrix_facebook: v0.3.1
 * mautrix_hangouts: latest
 * mautrix_instagram: latest
 * mautrix_signal_daemon: latest
