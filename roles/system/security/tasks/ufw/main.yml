@@ -42,29 +42,6 @@
     proto: any
   when: custom_wireguard_enabled|bool
 
-# TODO: remove after migration
-- name: Remove ufw-docker
-  file:
-    path: /usr/local/bin/ufw-docker
-    state: absent
-  ignore_errors: yes
-
-# TODO: remove after migration
-- name: Remove ufw-docker patches
-  replace:
-    after: "# BEGIN UFW AND DOCKER"
-    before: "# END UFW AND DOCKER"
-    regexp: ".*"
-    replace: ""
-    path: /etc/ufw/after.rules
-  ignore_errors: yes
-
-# TODO: remove after migration
-- name: Restart ufw service to load new rules
-  service:
-    name: ufw
-    state: restarted
-
 - name: Start ufw
   ufw:
     logging: 'on'
