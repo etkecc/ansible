@@ -25,6 +25,24 @@
     - setup-all
     - system-cleanup
 
+- name: Find old ssl logs
+  find:
+    paths: "{{ matrix_ssl_base_path }}/log"
+    patterns: "*.log.*"
+  register: ssl_logs
+  tags:
+    - setup-all
+    - system-cleanup
+
+- name: Clean up ssl logs
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items: "{{ ssl_logs.files }}"
+  tags:
+    - setup-all
+    - system-cleanup
+
 - name: Clean up thumbnails
   file:
     path: "{{ matrix_synapse_media_store_path }}/{{ item }}"
