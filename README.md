@@ -55,8 +55,8 @@ That repo provides following playbooks:
 
 ```bash
 # clone that repo
-git clone https://gitlab.com/rakshazi/matrix-ansible.git
-cd matrix-ansible
+git clone https://gitlab.com/etke.cc/ansible.git
+cd ansible
 
 # pull the spantaleev/matrix-docker-ansible-deploy repo
 git submodule update --init --recursive

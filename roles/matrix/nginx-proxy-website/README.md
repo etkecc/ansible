@@ -22,7 +22,7 @@ and allow you to put any content you want to website folder
 
 ### matrix_nginx_proxy_website_repo
 
-Your website git url, eg: `https://gitlab.com/rakshazi/rakshazi.me.git`
+Your website git url, eg: `https://gitlab.com/etke.cc/website.git`
 
 ### matrix_nginx_proxy_website_command
 

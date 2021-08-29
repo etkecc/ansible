@@ -6,6 +6,9 @@ system_maintenance_upgrade_type: safe
 # run `docker system prune -a -f --volumes` to remove unused images and containers
 system_maintenance_docker_prune: yes
 
+# remove old certbot logs
+system_maintenance_ssl_prune: yes
+
 # run `journalctl --vacuum-time=7d` to remove old logs
 system_maintenance_journalctl_vacuum: yes
 
