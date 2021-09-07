@@ -9,3 +9,6 @@ custom_wireguard_dns: ['1.1.1.1', '1.0.0.1']
 custom_wireguard_port: '51820'
 custom_wireguard_path: /etc/wireguard
 custom_wireguard_clients: []
+
+# custom/dnsmasq integration
+custom_dnsmasq_enabled: false

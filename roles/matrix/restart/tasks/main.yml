@@ -17,6 +17,7 @@
     - setup-corporal
     - setup-coturn
     - setup-dimension
+    - setup-dnsmasq
     - setup-dynamic-dns
     - setup-email2matrix
     - setup-etherpad
@@ -207,6 +208,17 @@
     - setup-all
     - restart-all
     - setup-dimension
+
+- name: Restart dnsmasq
+  service:
+    enabled: yes
+    state: restarted
+    name: custom-dnsmasq
+  when: custom_dnsmasq_enabled|bool
+  tags:
+    - setup-all
+    - restart-all
+    - setup-dnsmasq
 
 - name: Restart Dynamic DNS
   service:

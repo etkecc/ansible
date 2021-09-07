@@ -42,6 +42,7 @@ That repo provides following playbooks:
 * `roles/matrix/nginx-proxy-website` - used by `play/website.yml`, [documentation](./roles/matrix/nginx-proxy-website/README.md)
 * `roles/matrix/restart` - used by `play/matrix.yml`
 * `roles/custom/wireguard` - used by `play/matrix.yml`, [documentation](./roles/custom/wireguard/README.md)
+* `roles/custom/dnsmasq` - used by `play/matrix.yml`, [documentation](./roles/custom/dnsmasq/README.md)
 * `roles/custom/miniflux` - used by `play/matrix.yml`, [documentation](./roles/custom/miniflux/README.md)
 * `roles/custom/languagetool` - used by `play/matrix.yml`, [documentation](./roles/custom/languagetool/README.md)
 * `roles/integration/uptimerobot` - used by `play/integration`, [documentation](./roles/integration/uptimerobot/README.md)

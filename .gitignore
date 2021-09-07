@@ -4,6 +4,7 @@
 !/roles/custom/miounne
 !/roles/custom/miniflux
 !/roles/custom/wireguard
+!/roles/custom/dnsmasq
 !/roles/custom/languagetool
 !/roles/custom/.gitkeep
 /inventory/hosts

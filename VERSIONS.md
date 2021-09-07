@@ -12,6 +12,7 @@
 * coturn: 4.5.2-r4
 * coturn_container_image_self_build_repo: docker/{{ matrix_coturn_version }}
 * dimension: latest
+* dnsmasq: latest
 * dynamic_dns: v3.9.1-ls45
 * email2matrix: 1.0.1
 * etherpad: 1.8.12
@@ -30,7 +31,7 @@
 * mautrix_telegram: v0.10.1
 * mautrix_whatsapp: latest
 * miniflux: 2.0.32
-* miounne: latest
+* miounne: v1.0.0
 * mx_puppet_discord: latest
 * mx_puppet_groupme: latest
 * mx_puppet_instagram: latest

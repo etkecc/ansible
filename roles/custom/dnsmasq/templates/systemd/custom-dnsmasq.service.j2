@@ -1,0 +1,31 @@
+#jinja2: lstrip_blocks: "True"
+[Unit]
+Description=dnsmasq
+{% for service in custom_dnsmasq_systemd_required_services_list %}
+Requires={{ service }}
+After={{ service }}
+{% endfor %}
+DefaultDependencies=no
+
+[Service]
+Type=simple
+Environment="HOME={{ matrix_systemd_unit_home_path }}"
+ExecStartPre=-/usr/bin/env sh -c '/usr/bin/env docker kill custom-dnsmasq 2>/dev/null'
+ExecStartPre=-/usr/bin/env sh -c '/usr/bin/env docker rm custom-dnsmasq 2>/dev/null'
+
+ExecStart=/usr/bin/env docker run --rm --name custom-dnsmasq \
+          --log-driver=none \
+          --user=dnsmasq:dnsmasq \
+          --cap-drop=ALL \
+          --network={{ matrix_docker_network }} \
+          --publish {{ custom_dnsmasq_port }}:5353/udp \
+          {{ custom_dnsmasq_docker_image }}
+
+ExecStop=-/usr/bin/env sh -c '/usr/bin/env docker kill custom-dnsmasq 2>/dev/null'
+ExecStop=-/usr/bin/env sh -c '/usr/bin/env docker rm custom-dnsmasq 2>/dev/null'
+Restart=always
+RestartSec=30
+SyslogIdentifier=custom-dnsmasq
+
+[Install]
+WantedBy=multi-user.target

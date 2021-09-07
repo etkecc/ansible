@@ -76,3 +76,7 @@ matrix_email2matrix_enabled: false
 custom_wireguard_enabled: false
 custom_wireguard_port: '51820'
 custom_wireguard_interface: wg0
+
+# custom/dnsmasq integration
+custom_dnsmasq_enabled: false
+custom_dnsmasq_port: '53'

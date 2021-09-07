@@ -57,6 +57,7 @@
     # CUSTOM
     - system/swap
     - system/security
+    - custom/dnsmasq
     - custom/miounne
     - custom/miniflux
     - custom/wireguard

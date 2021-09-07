@@ -2,7 +2,11 @@
 
 [Interface]
 Address = {{ custom_wireguard_ipv4_subnet }}.{{ item.0 + 2 }}/32,{{ custom_wireguard_ipv6_subnet}}::{{ item.0 + 2 }}/64
+{% if custom_dnsmasq_enabled|bool %}
+DNS = {{ custom_wireguard_ipv4_subnet }}.1,{{ custom_wireguard_ipv6_subnet }}::1
+{% else %}
 DNS = {{ custom_wireguard_dns|join(',') }}
+{% endif %}
 PrivateKey = {{ client_keys_private.results[item.0].stdout }}
 
 [Peer]
