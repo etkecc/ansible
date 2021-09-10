@@ -31,7 +31,7 @@
 * mautrix_telegram: v0.10.1
 * mautrix_whatsapp: latest
 * miniflux: 2.0.32
-* miounne: v1.0.0
+* miounne: v1.0.1
 * mx_puppet_discord: latest
 * mx_puppet_groupme: latest
 * mx_puppet_instagram: latest

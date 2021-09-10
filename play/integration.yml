@@ -5,3 +5,4 @@
 
   roles:
     - integration/uptimerobot
+    - integration/git2bunny

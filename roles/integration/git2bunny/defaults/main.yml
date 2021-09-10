@@ -1,0 +1,32 @@
+# Enable/Disable role
+integration_git2bunny_enabled: false
+
+# Git repo URL
+integration_git2bunny_repo: ""
+
+# This can be the literal string HEAD, a branch name, a tag name.
+integration_git2bunny_repo_ref: "HEAD"
+
+# BunnyCDN access key
+integration_git2bunny_accesskey: ""
+
+# BunnyCDN storage zone name
+integration_git2bunny_storage: ""
+
+# An arbitrary command to run after git pull, but before BunnyCDN upload
+integration_git2bunny_command: ""
+
+# exact subfolder to upload, it may be empty if you need to copy the content of git root dir
+integration_git2bunny_dist: ""
+#
+# remove following files or dirs from dist folder before upload
+integration_git2bunny_exclude: ['.git']
+
+####
+# DO NOT CHANGE following variables, unless you know what you are doing.
+####
+# temp directory for git pull on host/control machine, note that it's an absolute path
+integration_git2bunny_tmp: "/tmp"
+
+# BunnyCDN host
+integration_git2bunny_host: "storage.bunnycdn.com"
