@@ -26,6 +26,14 @@
     comment: email2matrix
   when: matrix_email2matrix_enabled|bool
 
+- name: Allow heisenbridge identd
+  ufw:
+    rule: allow
+    port: '113'
+    proto: tcp
+    comment: heisenbridge/identd
+  when: matrix_heisenbridge_enabled|bool
+
 - name: Allow wireguard
   ufw:
     rule: allow

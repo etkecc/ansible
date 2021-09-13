@@ -72,6 +72,9 @@ system_security_ufw_rules:
 # email2matrix integration
 matrix_email2matrix_enabled: false
 
+# heisenbridge integration
+matrix_heisenbridge_enabled: false
+
 # custom/wireguard integration
 custom_wireguard_enabled: false
 custom_wireguard_port: '51820'
