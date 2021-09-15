@@ -27,6 +27,7 @@ custom_miounne_matrix_registration_secret: ""
   #   fields: ["your", "form", "fields"]
   #   redirect: https://url-to-redirect-after-form.com
   #   honeypot: honeypot_field_name
+  #   extensions: []
 custom_miounne_forms: []
 
 #
