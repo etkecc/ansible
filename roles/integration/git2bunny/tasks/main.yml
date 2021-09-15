@@ -32,7 +32,7 @@
   when: integration_git2bunny_enabled|bool
   tags:
     - setup-all
-    - setup-website
+    - setup-git2bunny
 
 - name: Get files list
   find:
