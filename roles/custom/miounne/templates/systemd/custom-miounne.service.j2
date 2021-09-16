@@ -33,13 +33,13 @@ ExecStart=/usr/bin/env docker run --rm --name custom-miounne \
           -e MIOUNNE_MATRIX_REGISTRATION_ROOM="{{ custom_miounne_matrix_registration_room }}" \
           -e MIOUNNE_MATRIX_REGISTRATION_SECRET="{{ custom_miounne_matrix_registration_secret }}" \
           {% for form in custom_miounne_forms -%}{{- forms.append(form.name) -}}
-          -e MIOUNNE_FORMS_{{ form.name|upper }}_URL="{{ form.url }}" \
-          -e MIOUNNE_FORMS_{{ form.name|upper }}_ROOM="{{ form.room }}" \
-          -e MIOUNNE_FORMS_{{ form.name|upper }}_IMG="{{ form.img }}" \
-          -e MIOUNNE_FORMS_{{ form.name|upper }}_FIELDS="{{ form.fields|join(" ") }}" \
-          -e MIOUNNE_FORMS_{{ form.name|upper }}_REDIRECT="{{ form.redirect }}" \
-          -e MIOUNNE_FORMS_{{ form.name|upper }}_HONEYPOT="{{ form.honeypot }}" \
-          -e MIOUNNE_FORMS_{{ form.name|upper }}_EXTENSIONS="{{ form.extensions|join(" ") }}" \
+          -e MIOUNNE_FORMS_{{ form.name|upper }}_URL="{{ form.url|default('') }}" \
+          -e MIOUNNE_FORMS_{{ form.name|upper }}_ROOM="{{ form.room|default('') }}" \
+          -e MIOUNNE_FORMS_{{ form.name|upper }}_IMG="{{ form.img|default('') }}" \
+          -e MIOUNNE_FORMS_{{ form.name|upper }}_FIELDS="{{ form.fields|default('')|join(' ') }}" \
+          -e MIOUNNE_FORMS_{{ form.name|upper }}_REDIRECT="{{ form.redirect|default('') }}" \
+          -e MIOUNNE_FORMS_{{ form.name|upper }}_HONEYPOT="{{ form.honeypot|default('') }}" \
+          -e MIOUNNE_FORMS_{{ form.name|upper }}_EXTENSIONS="{{ form.extensions|default('')|join(' ') }}" \
           {% endfor %}
           -e MIOUNNE_FORMS="{{ forms|join(" ") }}" \
           {% for arg in custom_miounne_container_extra_arguments %}
