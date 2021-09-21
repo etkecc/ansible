@@ -1,12 +1,12 @@
 * appservice_discord: v1.0.0
-* appservice_irc: release-0.30.0
+* appservice_irc: release-0.31.0
 * appservice_slack: release-1.5.0
 * appservice_webhooks: latest
 * beeper_linkedin: v0.5.0
 * bot_go_neb: latest
 * bot_matrix_reminder_bot: release-v0.2.1
-* bot_mjolnir: v0.1.19
-* client_element: v1.8.4
+* bot_mjolnir: v1.1.20
+* client_element: v1.8.5
 * client_hydrogen: v0.2.7
 * corporal: 2.1.2
 * coturn: 4.5.2-r4
@@ -16,8 +16,8 @@
 * dynamic_dns: v3.9.1-ls45
 * email2matrix: 1.0.1
 * etherpad: 1.8.12
-* grafana: 8.1.3
-* heisenbridge: 1.0.1
+* grafana: 8.1.4
+* heisenbridge: 1.1.1
 * jitsi_ldap: "3"
 * jitsi: stable-6173
 * languagetool: 5.4
@@ -39,7 +39,7 @@
 * mx_puppet_slack: latest
 * mx_puppet_steam: latest
 * mx_puppet_twitter: latest
-* nginx_proxy: 1.21.1-alpine
+* nginx_proxy: 1.21.3-alpine
 * prometheus_node_exporter: v1.2.2
 * prometheus_postgres_exporter: v0.10.0
 * prometheus: v2.29.2
@@ -48,4 +48,4 @@
 * sms_bridge: 0.5.7
 * sygnal: v0.10.1
 * synapse_admin: 0.8.1
-* synapse: v1.42.0
+* synapse: v1.43.0
