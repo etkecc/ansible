@@ -51,7 +51,7 @@
     src: nginx.conf.j2
     dest: "{{ matrix_nginx_proxy_confd_path }}/matrix-custom-miounne.conf"
     mode: 0644
-  when: custom_miounne_enabled|bool and matrix_nginx_proxy_enabled|bool
+  when: custom_miounne_enabled|bool and matrix_nginx_proxy_enabled|bool and matrix_server_fqn_miounne is defined
   tags:
     - setup-all
     - setup-miounne
