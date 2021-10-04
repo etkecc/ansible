@@ -551,7 +551,6 @@
     - setup-ssl
     - setup-nginx-proxy
 
-
 - name: Restart Proxy (nginx)
   service:
     enabled: yes
