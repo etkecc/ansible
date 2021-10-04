@@ -539,6 +539,19 @@
     - restart-all
     - setup-mx-puppet-twitter
 
+- name: Restart ssl renewal timer
+  service:
+    enabled: yes
+    state: restarted
+    name: matrix-ssl-lets-encrypt-certificates-renew.timer
+  when: matrix_nginx_proxy_enabled|bool
+  tags:
+    - setup-all
+    - restart-all
+    - setup-ssl
+    - setup-nginx-proxy
+
+
 - name: Restart Proxy (nginx)
   service:
     enabled: yes
