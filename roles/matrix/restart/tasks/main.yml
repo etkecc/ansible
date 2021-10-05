@@ -187,6 +187,17 @@
     - restart-all
     - setup-corporal
 
+- name: Restart Coturn (reload timer)
+  service:
+    enabled: yes
+    state: restarted
+    name: matrix-coturn-reload.timer
+  when: matrix_coturn_enabled|bool
+  tags:
+    - setup-all
+    - restart-all
+    - setup-coturn
+
 - name: Restart Coturn
   service:
     enabled: yes
@@ -544,6 +555,18 @@
     enabled: yes
     state: restarted
     name: matrix-ssl-lets-encrypt-certificates-renew.timer
+  when: matrix_nginx_proxy_enabled|bool
+  tags:
+    - setup-all
+    - restart-all
+    - setup-ssl
+    - setup-nginx-proxy
+
+- name: Restart ngix-proxy reload timer
+  service:
+    enabled: yes
+    state: restarted
+    name: matrix-ssl-nginx-proxy-reload.timer
   when: matrix_nginx_proxy_enabled|bool
   tags:
     - setup-all

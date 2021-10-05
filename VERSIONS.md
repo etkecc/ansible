@@ -1,8 +1,9 @@
 * appservice_discord: v1.0.0
 * appservice_irc: release-0.31.0
 * appservice_slack: release-1.5.0
+* appservice_webhooks_container_image_self_build_repo: '{{ ''master'' if matrix_appservice_webhooks_version == ''latest'' else matrix_appservice_webhooks_version }}'
 * appservice_webhooks: latest
-* beeper_linkedin: v0.5.0
+* beeper_linkedin: v0.5.1
 * bot_go_neb: latest
 * bot_matrix_reminder_bot: release-v0.2.1
 * bot_mjolnir: v1.1.20
@@ -17,10 +18,10 @@
 * email2matrix: 1.0.1
 * etherpad: 1.8.12
 * grafana: 8.1.4
-* heisenbridge: 1.2.0
+* heisenbridge: 1.2.1
 * jitsi_ldap: "3"
 * jitsi: stable-6173
-* languagetool: 5.4
+* languagetool: 5.5
 * ma1sd: 2.5.0
 * mailer: 4.94.2-r0-4
 * mautrix_facebook: v0.3.1
@@ -48,4 +49,4 @@
 * sms_bridge: 0.5.7
 * sygnal: v0.10.1
 * synapse_admin: 0.8.1
-* synapse: v1.43.0
+* synapse: v1.44.0
