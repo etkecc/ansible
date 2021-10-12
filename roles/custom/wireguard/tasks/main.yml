@@ -97,45 +97,61 @@
     - setup-all
     - setup-wireguard
 
-- name: Configure clients
-  block:
-    - name: Check if client configuration exists
-      stat:
-        path: "{{ custom_wireguard_path }}/clients/{{ item.1 }}/profile.conf"
-      register: client_profiles
-      with_indexed_items: "{{ custom_wireguard_clients }}"
-
-    - name: Check if client key exists
-      stat:
-        path: "{{ custom_wireguard_path }}/clients/{{ item.1 }}/key"
-      register: client_keys
-      with_indexed_items: "{{ custom_wireguard_clients }}"
-
-    - name: Generate client keys
-      shell: "umask 077; wg genkey | tee \"{{ custom_wireguard_path }}/clients/{{ item.1 }}/key\" | wg pubkey > \"{{ custom_wireguard_path }}/clients/{{ item.1 }}/key.public\""
-      with_indexed_items: "{{ custom_wireguard_clients }}"
-      when: client_keys.results[item.0].stat.exists|bool == false
-
-    - name: Register client private key
-      shell: "cat \"{{ custom_wireguard_path }}/clients/{{ item.1 }}/key\""
-      register: client_keys_private
-      with_indexed_items: "{{ custom_wireguard_clients }}"
-
-    - name: Register client public key
-      shell: "cat \"{{ custom_wireguard_path }}/clients/{{ item.1 }}/key.public\""
-      register: client_keys_public
-      with_indexed_items: "{{ custom_wireguard_clients }}"
-
-    - name: Generate client config
-      template:
-        src: "client.conf.j2"
-        dest: "{{ custom_wireguard_path }}/clients/{{ item.1 }}/profile.conf"
-        owner: root
-        group: root
-        mode: 0600
-      with_indexed_items: "{{ custom_wireguard_clients }}"
-      when: client_profiles.results[item.0].stat.exists|bool == false or custom_wireguard_overwrite|bool
+- name: Check if client configuration exists
+  stat:
+    path: "{{ custom_wireguard_path }}/clients/{{ item.1 }}/profile.conf"
+  register: client_profiles
+  with_indexed_items: "{{ custom_wireguard_clients }}"
   when: custom_wireguard_enabled|bool
+  tags:
+    - setup-all
+    - setup-wireguard
+
+- name: Check if client key exists
+  stat:
+    path: "{{ custom_wireguard_path }}/clients/{{ item.1 }}/key"
+  register: client_keys
+  with_indexed_items: "{{ custom_wireguard_clients }}"
+  when: custom_wireguard_enabled|bool
+  tags:
+    - setup-all
+    - setup-wireguard
+
+- name: Generate client keys
+  shell: "umask 077; wg genkey | tee \"{{ custom_wireguard_path }}/clients/{{ item.1 }}/key\" | wg pubkey > \"{{ custom_wireguard_path }}/clients/{{ item.1 }}/key.public\""
+  with_indexed_items: "{{ custom_wireguard_clients }}"
+  when: custom_wireguard_enabled|bool and client_keys.results[item.0].stat.exists|bool == false
+  tags:
+    - setup-all
+    - setup-wireguard
+
+- name: Register client private key
+  shell: "cat \"{{ custom_wireguard_path }}/clients/{{ item.1 }}/key\""
+  register: client_keys_private
+  with_indexed_items: "{{ custom_wireguard_clients }}"
+  when: custom_wireguard_enabled|bool
+  tags:
+    - setup-all
+    - setup-wireguard
+
+- name: Register client public key
+  shell: "cat \"{{ custom_wireguard_path }}/clients/{{ item.1 }}/key.public\""
+  register: client_keys_public
+  with_indexed_items: "{{ custom_wireguard_clients }}"
+  when: custom_wireguard_enabled|bool
+  tags:
+    - setup-all
+    - setup-wireguard
+
+- name: Generate client config
+  template:
+    src: "client.conf.j2"
+    dest: "{{ custom_wireguard_path }}/clients/{{ item.1 }}/profile.conf"
+    owner: root
+    group: root
+    mode: 0600
+  with_indexed_items: "{{ custom_wireguard_clients }}"
+  when: custom_wireguard_enabled|bool and (client_profiles.results[item.0].stat.exists|bool == false or custom_wireguard_overwrite|bool)
   tags:
     - setup-all
     - setup-wireguard
