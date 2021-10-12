@@ -1,6 +1,6 @@
 * appservice_discord: v1.0.0
 * appservice_irc: release-0.31.0
-* appservice_slack: release-1.5.0
+* appservice_slack: release-1.8.0
 * appservice_webhooks_container_image_self_build_repo: '{{ ''master'' if matrix_appservice_webhooks_version == ''latest'' else matrix_appservice_webhooks_version }}'
 * appservice_webhooks: latest
 * beeper_linkedin: v0.5.1
