@@ -25,6 +25,7 @@
 * ma1sd: 2.5.0
 * mailer: 4.94.2-r0-4
 * mautrix_facebook: v0.3.1
+* mautrix_googlechat: latest
 * mautrix_hangouts: latest
 * mautrix_instagram: latest
 * mautrix_signal_daemon: latest

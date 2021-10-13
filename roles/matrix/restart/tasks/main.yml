@@ -29,6 +29,7 @@
     - setup-mailer
     - setup-matrix-registration
     - setup-mautrix-facebook
+    - setup-mautrix-googlechat
     - setup-mautrix-hangouts
     - setup-mautrix-instagram
     - setup-mautrix-signal
@@ -395,6 +396,17 @@
     - setup-all
     - restart-all
     - setup-mautrix-facebook
+
+- name: Restart Google Chat bridge (mautrix)
+  service:
+    enabled: yes
+    state: restarted
+    name: matrix-mautrix-googlechat
+  when: matrix_mautrix_googlechat_enabled|bool
+  tags:
+    - setup-all
+    - restart-all
+    - setup-mautrix-googlechat
 
 - name: Restart Hangouts bridge (mautrix)
   service:
