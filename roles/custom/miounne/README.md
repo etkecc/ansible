@@ -8,6 +8,8 @@ A bit hacky way to install [Miounne](https://gitlab.com/etke.cc/miounne) with Ma
 
 ```yml
 custom_miounne_enabled: true
+# if do NOT want to use database (means you will not have encrypted chats with miounne), uncomment following line
+custom_miounne_database_engine: none
 custom_miounne_database_password: 'STRONG_SECURE_PASSWORD'
 matrix_server_fqn_miounne: "miounne.{{ matrix_domain }}" # you can use anything you want here, it's just default value
 matrix_nginx_proxy_proxy_miounne_hostname: "{{ matrix_server_fqn_miounne }}" # yep, duplicate, but it's required

@@ -65,5 +65,6 @@ custom_miounne_appservice_database: "{{
 	{
 		'sqlite': custom_miounne_sqlite_database_path_in_container,
 		'postgres': custom_miounne_database_connection_string,
+    'none': '',
 	}[custom_miounne_database_engine]
 }}"
