@@ -54,6 +54,7 @@
     - remote_thumbnail
     - url_cache_thumbnails
   when: system_maintenance_thumbnails_prune|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - system-cleanup

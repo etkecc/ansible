@@ -1,4 +1,6 @@
 ---
+# NOTE: "ignore_errors: yes" used as workaround for bad behavior on low RAM servers
+
 - name: Reload init system before any restart
   service:
     daemon_reload: yes
@@ -62,6 +64,7 @@
     state: restarted
     name: matrix-synapse
   when: matrix_synapse_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -73,6 +76,7 @@
     state: restarted
     name: matrix-postgres
   when: matrix_postgres_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -84,6 +88,7 @@
     state: restarted
     name: matrix-appservice-discord
   when: matrix_appservice_discord_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -95,6 +100,7 @@
     state: restarted
     name: matrix-appservice-irc
   when: matrix_appservice_irc_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -106,6 +112,7 @@
     state: restarted
     name: matrix-appservice-slack
   when: matrix_appservice_slack_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -117,6 +124,7 @@
     state: restarted
     name: matrix-appservice-webhooks
   when: matrix_appservice_webhooks_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -128,6 +136,7 @@
     state: restarted
     name: matrix-bot-go-neb
   when: matrix_bot_go_neb_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -139,6 +148,7 @@
     state: restarted
     name: matrix-bot-matrix-reminder-bot
   when: matrix_bot_matrix_reminder_bot_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -150,6 +160,7 @@
     state: restarted
     name: matrix-bot-mjolnir
   when: matrix_bot_mjolnir_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -161,6 +172,7 @@
     state: restarted
     name: matrix-client-element
   when: matrix_client_element_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -172,6 +184,7 @@
     state: restarted
     name: matrix-client-hydrogen
   when: matrix_client_hydrogen_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -183,6 +196,7 @@
     state: restarted
     name: matrix-corporal
   when: matrix_corporal_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -194,6 +208,7 @@
     state: restarted
     name: matrix-coturn-reload.timer
   when: matrix_coturn_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -205,6 +220,7 @@
     state: restarted
     name: matrix-coturn
   when: matrix_coturn_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -216,6 +232,7 @@
     state: restarted
     name: matrix-dimension
   when: matrix_dimension_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -227,6 +244,7 @@
     state: restarted
     name: custom-dnsmasq
   when: custom_dnsmasq_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -238,6 +256,7 @@
     state: restarted
     name: matrix-dynamic-dns
   when: matrix_dynamic_dns_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -249,6 +268,7 @@
     state: restarted
     name: matrix-email2matrix
   when: matrix_email2matrix_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -260,6 +280,7 @@
     state: restarted
     name: matrix-etherpad
   when: matrix_etherpad_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -271,6 +292,7 @@
     state: restarted
     name: matrix-grafana
   when: matrix_grafana_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -282,6 +304,7 @@
     state: restarted
     name: matrix-heisenbridge
   when: matrix_heisenbridge_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -293,6 +316,7 @@
     state: restarted
     name: matrix-jitsi-jicofo
   when: matrix_jitsi_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -304,6 +328,7 @@
     state: restarted
     name: matrix-jitsi-jvb
   when: matrix_jitsi_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -315,6 +340,7 @@
     state: restarted
     name: matrix-jitsi-prosody
   when: matrix_jitsi_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -326,6 +352,7 @@
     state: restarted
     name: matrix-jitsi-web
   when: matrix_jitsi_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -337,6 +364,7 @@
     state: restarted
     name: custom-languagetool
   when: custom_languagetool_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -348,6 +376,7 @@
     state: restarted
     name: matrix-ma1sd
   when: matrix_ma1sd_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -359,6 +388,7 @@
     state: restarted
     name: matrix-mailer
   when: matrix_mailer_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -370,6 +400,7 @@
     state: restarted
     name: matrix-registration
   when: matrix_registration_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -381,6 +412,7 @@
     state: restarted
     name: matrix-sms-bridge
   when: matrix_sms_bridge_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -392,6 +424,7 @@
     state: restarted
     name: matrix-mautrix-facebook
   when: matrix_mautrix_facebook_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -403,6 +436,7 @@
     state: restarted
     name: matrix-mautrix-googlechat
   when: matrix_mautrix_googlechat_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -414,6 +448,7 @@
     state: restarted
     name: matrix-mautrix-hangouts
   when: matrix_mautrix_hangouts_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -425,6 +460,7 @@
     state: restarted
     name: matrix-mautrix-instagram
   when: matrix_mautrix_instagram_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -436,6 +472,7 @@
     state: restarted
     name: matrix-mautrix-signal
   when: matrix_mautrix_signal_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -447,6 +484,7 @@
     state: restarted
     name: matrix-mautrix-signal-daemon
   when: matrix_mautrix_signal_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -458,6 +496,7 @@
     state: restarted
     name: matrix-mautrix-telegram
   when: matrix_mautrix_telegram_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -469,6 +508,7 @@
     state: restarted
     name: matrix-mautrix-whatsapp
   when: matrix_mautrix_whatsapp_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -480,6 +520,7 @@
     state: restarted
     name: custom-miniflux
   when: custom_miniflux_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -491,6 +532,7 @@
     state: restarted
     name: matrix-mx-puppet-discord
   when: matrix_mx_puppet_discord_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -502,6 +544,7 @@
     state: restarted
     name: matrix-mx-puppet-groupme
   when: matrix_mx_puppet_groupme_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -513,6 +556,7 @@
     state: restarted
     name: matrix-mx-puppet-instagram
   when: matrix_mx_puppet_instagram_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -524,6 +568,7 @@
     state: restarted
     name: matrix-mx-puppet-skype
   when: matrix_mx_puppet_skype_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -535,6 +580,7 @@
     state: restarted
     name: matrix-mx-puppet-slack
   when: matrix_mx_puppet_slack_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -546,6 +592,7 @@
     state: restarted
     name: matrix-mx-puppet-steam
   when: matrix_mx_puppet_steam_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -557,6 +604,7 @@
     state: restarted
     name: matrix-mx-puppet-twitter
   when: matrix_mx_puppet_twitter_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -568,6 +616,7 @@
     state: restarted
     name: matrix-ssl-lets-encrypt-certificates-renew.timer
   when: matrix_nginx_proxy_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -580,6 +629,7 @@
     state: restarted
     name: matrix-ssl-nginx-proxy-reload.timer
   when: matrix_nginx_proxy_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -592,6 +642,7 @@
     state: restarted
     name: matrix-nginx-proxy
   when: matrix_nginx_proxy_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -604,6 +655,7 @@
     state: restarted
     name: matrix-prometheus
   when: matrix_prometheus_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -615,6 +667,7 @@
     state: restarted
     name: matrix-prometheus-node-exporter
   when: matrix_prometheus_node_exporter_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -627,6 +680,7 @@
     state: restarted
     name: matrix-prometheus-postgres-exporter
   when: matrix_prometheus_postgres_exporter_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -639,6 +693,7 @@
     state: restarted
     name: matrix-redis
   when: matrix_redis_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -650,6 +705,7 @@
     state: restarted
     name: matrix-sygnal
   when: matrix_sygnal_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -661,6 +717,7 @@
     state: restarted
     name: matrix-synapse-admin
   when: matrix_synapse_admin_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
@@ -672,6 +729,7 @@
     state: restarted
     name: custom-miounne
   when: custom_miounne_enabled|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - restart-all
