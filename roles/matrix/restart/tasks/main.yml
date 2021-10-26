@@ -11,6 +11,7 @@
     - setup-appservice-irc
     - setup-appservice-slack
     - setup-appservice-webhooks
+    - setup-beeper-linkedin
     - setup-bot-go-neb
     - setup-bot-matrix-reminder-bot
     - setup-bot-mjolnir
@@ -129,6 +130,18 @@
     - setup-all
     - restart-all
     - setup-appservice-webhooks
+
+- name: Restart linkedin bridge (beeper)
+  service:
+    enabled: yes
+    state: restarted
+    name: matrix-beeper-linkedin
+  when: matrix_beeper_linkedin_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-beeper-linkedin
 
 - name: Restart go-neb bot
   service:

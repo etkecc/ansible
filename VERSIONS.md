@@ -7,7 +7,7 @@
 * bot_go_neb: latest
 * bot_matrix_reminder_bot: release-v0.2.1
 * bot_mjolnir: v1.1.20
-* client_element: v1.9.2
+* client_element: v1.9.3
 * client_hydrogen: v0.2.7
 * corporal: 2.1.2
 * coturn: 4.5.2-r4
@@ -18,7 +18,7 @@
 * email2matrix: 1.0.1
 * etherpad: 1.8.12
 * grafana: 8.1.4
-* heisenbridge: 1.2.1
+* heisenbridge: 1.3.0
 * jitsi_ldap: "3"
 * jitsi: stable-6173
 * languagetool: 5.5
@@ -33,7 +33,7 @@
 * mautrix_telegram: v0.10.1
 * mautrix_whatsapp: latest
 * miniflux: 2.0.33
-* miounne: v1.0.2
+* miounne: v2.0.0
 * mx_puppet_discord: latest
 * mx_puppet_groupme: latest
 * mx_puppet_instagram: latest
@@ -50,4 +50,4 @@
 * sms_bridge: 0.5.7
 * sygnal: v0.10.1
 * synapse_admin: 0.8.1
-* synapse: v1.45.0
+* synapse: v1.45.1

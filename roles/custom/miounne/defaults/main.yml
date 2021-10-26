@@ -1,6 +1,6 @@
 ---
 custom_miounne_enabled: false
-custom_miounne_version: v1.0.2
+custom_miounne_version: v2.0.0
 matrix_nginx_proxy_proxy_miounne_hostname: "{{ matrix_server_fqn_miounne }}"
 custom_miounne_docker_image: "registry.gitlab.com/etke.cc/miounne:{{ custom_miounne_version }}"
 custom_miounne_docker_image_force_pull: "{{ custom_miounne_docker_image.endswith(':latest') }}"
@@ -39,32 +39,3 @@ custom_miounne_systemd_required_services_list: ['docker.service']
 
 custom_miounne_base_path: "{{ matrix_base_data_path }}/miounne"
 custom_miounne_data_path: "{{ custom_miounne_base_path }}/data"
-
-# Database-related configuration fields.
-#
-# To use SQLite:
-# - change the engine (`custom_miounne_database_engine: 'sqlite'`)
-# - plan your migration to Postgres, as this bridge does not support SQLite anymore (and neither will the playbook in the future).
-#
-# To use Postgres:
-# - adjust your database credentials via the `custom_miounne_postgres_*` variables
-custom_miounne_database_engine: 'postgres'
-
-custom_miounne_sqlite_database_path_local: "{{ custom_miounne_data_path }}/miounne.db"
-custom_miounne_sqlite_database_path_in_container: "/data/miounne.db"
-
-custom_miounne_database_username: 'custom_miounne'
-custom_miounne_database_password: 'some-password'
-custom_miounne_database_hostname: 'matrix-postgres'
-custom_miounne_database_port: 5432
-custom_miounne_database_name: 'custom_miounne'
-
-custom_miounne_database_connection_string: 'postgres://{{ custom_miounne_database_username }}:{{ custom_miounne_database_password }}@{{ custom_miounne_database_hostname }}:{{ custom_miounne_database_port }}/{{ custom_miounne_database_name }}?sslmode=disable'
-
-custom_miounne_appservice_database: "{{
-	{
-		'sqlite': custom_miounne_sqlite_database_path_in_container,
-		'postgres': custom_miounne_database_connection_string,
-    'none': '',
-	}[custom_miounne_database_engine]
-}}"
