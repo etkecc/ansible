@@ -16,34 +16,36 @@ ExecStartPre=-/usr/bin/env sh -c '/usr/bin/env docker rm custom-miounne 2>/dev/n
 {% set forms = [] %}
 
 ExecStart=/usr/bin/env docker run --rm --name custom-miounne \
-          --log-driver=none \
-          --user=miounne:miounne \
-          --cap-drop=ALL \
-          --network={{ matrix_docker_network }} \
-          -e MIOUNNE_SERVER_PORT={{ custom_miounne_server_port }} \
-          -e MIOUNNE_SPAM_EMAILS="{{ custom_miounne_spam_emails|join(" ") }}" \
-          -e MIOUNNE_SPAM_HOSTS="{{ custom_miounne_spam_hosts|join(" ") }}" \
-          -e MIOUNNE_MATRIX_HOMESERVER="{{ custom_miounne_matrix_homeserver }}" \
-          -e MIOUNNE_MATRIX_USER_LOGIN="{{ custom_miounne_matrix_user_login }}" \
-          -e MIOUNNE_MATRIX_USER_PASSWORD="{{ custom_miounne_matrix_user_password }}" \
-          -e MIOUNNE_MATRIX_USER_DISPLAYNAME="{{ custom_miounne_matrix_user_displayname }}" \
-          -e MIOUNNE_MATRIX_REGISTRATION_URL="{{ custom_miounne_matrix_registration_url }}" \
-          -e MIOUNNE_MATRIX_REGISTRATION_ROOM="{{ custom_miounne_matrix_registration_room }}" \
-          -e MIOUNNE_MATRIX_REGISTRATION_SECRET="{{ custom_miounne_matrix_registration_secret }}" \
-          {% for form in custom_miounne_forms -%}{{- forms.append(form.name) -}}
-          -e MIOUNNE_FORMS_{{ form.name|upper }}_URL="{{ form.url|default('') }}" \
-          -e MIOUNNE_FORMS_{{ form.name|upper }}_ROOM="{{ form.room|default('') }}" \
-          -e MIOUNNE_FORMS_{{ form.name|upper }}_IMG="{{ form.img|default('') }}" \
-          -e MIOUNNE_FORMS_{{ form.name|upper }}_FIELDS="{{ form.fields|default('')|join(' ') }}" \
-          -e MIOUNNE_FORMS_{{ form.name|upper }}_REDIRECT="{{ form.redirect|default('') }}" \
-          -e MIOUNNE_FORMS_{{ form.name|upper }}_HONEYPOT="{{ form.honeypot|default('') }}" \
-          -e MIOUNNE_FORMS_{{ form.name|upper }}_EXTENSIONS="{{ form.extensions|default('')|join(' ') }}" \
-          {% endfor %}
-          -e MIOUNNE_FORMS="{{ forms|join(" ") }}" \
-          {% for arg in custom_miounne_container_extra_arguments %}
-          {{ arg }} \
-          {% endfor %}
-          {{ custom_miounne_docker_image }}
+					--log-driver=none \
+					--user=miounne:miounne \
+					--cap-drop=ALL \
+					--network={{ matrix_docker_network }} \
+					-e MIOUNNE_BMC_ROOM="{{ custom_miounne_bmc_room }}" \
+					-e MIOUNNE_BMC_TOKEN="{{ custom_miounne_bmc_token }}" \
+					-e MIOUNNE_SERVER_PORT={{ custom_miounne_server_port }} \
+					-e MIOUNNE_SPAM_EMAILS="{{ custom_miounne_spam_emails|join(" ") }}" \
+					-e MIOUNNE_SPAM_HOSTS="{{ custom_miounne_spam_hosts|join(" ") }}" \
+					-e MIOUNNE_MATRIX_HOMESERVER="{{ custom_miounne_matrix_homeserver }}" \
+					-e MIOUNNE_MATRIX_USER_LOGIN="{{ custom_miounne_matrix_user_login }}" \
+					-e MIOUNNE_MATRIX_USER_PASSWORD="{{ custom_miounne_matrix_user_password }}" \
+					-e MIOUNNE_MATRIX_USER_DISPLAYNAME="{{ custom_miounne_matrix_user_displayname }}" \
+					-e MIOUNNE_MATRIX_REGISTRATION_URL="{{ custom_miounne_matrix_registration_url }}" \
+					-e MIOUNNE_MATRIX_REGISTRATION_ROOM="{{ custom_miounne_matrix_registration_room }}" \
+					-e MIOUNNE_MATRIX_REGISTRATION_SECRET="{{ custom_miounne_matrix_registration_secret }}" \
+{% for form in custom_miounne_forms -%}{{- forms.append(form.name) -}}
+-e MIOUNNE_FORMS_{{ form.name|upper }}_URL="{{ form.url|default('') }}" \
+		-e MIOUNNE_FORMS_{{ form.name|upper }}_ROOM="{{ form.room|default('') }}" \
+		-e MIOUNNE_FORMS_{{ form.name|upper }}_IMG="{{ form.img|default('') }}" \
+		-e MIOUNNE_FORMS_{{ form.name|upper }}_FIELDS="{{ form.fields|default('')|join(' ') }}" \
+		-e MIOUNNE_FORMS_{{ form.name|upper }}_REDIRECT="{{ form.redirect|default('') }}" \
+		-e MIOUNNE_FORMS_{{ form.name|upper }}_HONEYPOT="{{ form.honeypot|default('') }}" \
+		-e MIOUNNE_FORMS_{{ form.name|upper }}_EXTENSIONS="{{ form.extensions|default('')|join(' ') }}" \
+{% endfor %}
+-e MIOUNNE_FORMS="{{ forms|join(" ") }}" \
+{% for arg in custom_miounne_container_extra_arguments %}
+{{ arg }} \
+{% endfor %}
+{{ custom_miounne_docker_image }}
 
 ExecStop=-/usr/bin/env sh -c '/usr/bin/env docker kill custom-miounne 2>/dev/null'
 ExecStop=-/usr/bin/env sh -c '/usr/bin/env docker rm custom-miounne 2>/dev/null'
@@ -53,3 +55,5 @@ SyslogIdentifier=custom-miounne
 
 [Install]
 WantedBy=multi-user.target
+
+# vim: set syntax=systemd
