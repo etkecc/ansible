@@ -1,5 +1,5 @@
 * appservice_discord: v1.0.0
-* appservice_irc: release-0.31.0
+* appservice_irc: release-0.32.1
 * appservice_slack: release-1.8.0
 * appservice_webhooks_container_image_self_build_repo: '{{ ''master'' if matrix_appservice_webhooks_version == ''latest'' else matrix_appservice_webhooks_version }}'
 * appservice_webhooks: latest
@@ -8,7 +8,7 @@
 * bot_matrix_reminder_bot: release-v0.2.1
 * bot_mjolnir: v1.1.20
 * client_element: v1.9.3
-* client_hydrogen: v0.2.7
+* client_hydrogen: v0.2.19
 * corporal: 2.1.2
 * coturn: 4.5.2-r4
 * coturn_container_image_self_build_repo: docker/{{ matrix_coturn_version }}
@@ -17,8 +17,8 @@
 * dynamic_dns: v3.9.1-ls45
 * email2matrix: 1.0.1
 * etherpad: 1.8.12
-* grafana: 8.1.4
-* heisenbridge: 1.3.0
+* grafana: 8.2.2
+* heisenbridge: 1.4.1
 * jitsi_ldap: "3"
 * jitsi: stable-6173
 * languagetool: 5.5
@@ -33,7 +33,7 @@
 * mautrix_telegram: v0.10.1
 * mautrix_whatsapp: latest
 * miniflux: 2.0.33
-* miounne: v2.0.0
+* miounne: v2.1.0
 * mx_puppet_discord: latest
 * mx_puppet_groupme: latest
 * mx_puppet_instagram: latest
@@ -44,10 +44,10 @@
 * nginx_proxy: 1.21.3-alpine
 * prometheus_node_exporter: v1.2.2
 * prometheus_postgres_exporter: v0.10.0
-* prometheus: v2.29.2
+* prometheus: v2.30.3
 * redis: 6.2.4-alpine
 * registration: v0.7.2
 * sms_bridge: 0.5.7
 * sygnal: v0.10.1
 * synapse_admin: 0.8.1
-* synapse: v1.45.1
+* synapse: v1.46.0

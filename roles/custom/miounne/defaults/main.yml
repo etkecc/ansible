@@ -1,6 +1,6 @@
 ---
 custom_miounne_enabled: false
-custom_miounne_version: v2.0.0
+custom_miounne_version: v2.1.0
 matrix_nginx_proxy_proxy_miounne_hostname: "{{ matrix_server_fqn_miounne }}"
 custom_miounne_docker_image: "registry.gitlab.com/etke.cc/miounne:{{ custom_miounne_version }}"
 custom_miounne_docker_image_force_pull: "{{ custom_miounne_docker_image.endswith(':latest') }}"
@@ -30,6 +30,7 @@ custom_miounne_matrix_registration_secret: ""
   #   img: https://url-of-your-avatar.img
   #   fields: ["your", "form", "fields"]
   #   redirect: https://url-to-redirect-after-form.com
+  #   ratelimit: 1r/m
   #   honeypot: honeypot_field_name
   #   extensions: []
 custom_miounne_forms: []

@@ -39,6 +39,7 @@ ExecStart=/usr/bin/env docker run --rm --name custom-miounne \
 		-e MIOUNNE_FORMS_{{ form.name|upper }}_FIELDS="{{ form.fields|default('')|join(' ') }}" \
 		-e MIOUNNE_FORMS_{{ form.name|upper }}_REDIRECT="{{ form.redirect|default('') }}" \
 		-e MIOUNNE_FORMS_{{ form.name|upper }}_HONEYPOT="{{ form.honeypot|default('') }}" \
+		-e MIOUNNE_FORMS_{{ form.name|upper }}_RATELIMIT="{{ form.ratelimit|default('') }}" \
 		-e MIOUNNE_FORMS_{{ form.name|upper }}_EXTENSIONS="{{ form.extensions|default('')|join(' ') }}" \
 {% endfor %}
 -e MIOUNNE_FORMS="{{ forms|join(" ") }}" \
