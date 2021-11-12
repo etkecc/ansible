@@ -5,6 +5,7 @@ matrix_nginx_proxy_proxy_miounne_hostname: "{{ matrix_server_fqn_miounne }}"
 custom_miounne_docker_image: "registry.gitlab.com/etke.cc/miounne:{{ custom_miounne_version }}"
 custom_miounne_docker_image_force_pull: "{{ custom_miounne_docker_image.endswith(':latest') }}"
 
+custom_miounne_frequency: 10
 custom_miounne_server_port: 8080
 
 custom_miounne_spam_emails: []
@@ -12,6 +13,9 @@ custom_miounne_spam_hosts: []
 
 custom_miounne_bmc_token: ""
 custom_miounne_bmc_room: ""
+custom_miounne_bmc_notify_extras: 0
+custom_miounne_bmc_notify_members: 0
+custom_miounne_bmc_notify_supporters: 0
 
 custom_miounne_matrix_homeserver: "{{ matrix_homeserver_container_url }}"
 
