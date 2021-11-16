@@ -36,6 +36,8 @@ ExecStart=/usr/bin/env docker run --rm --name custom-miounne \
 					-e MIOUNNE_MATRIX_REGISTRATION_URL="{{ custom_miounne_matrix_registration_url }}" \
 					-e MIOUNNE_MATRIX_REGISTRATION_ROOM="{{ custom_miounne_matrix_registration_room }}" \
 					-e MIOUNNE_MATRIX_REGISTRATION_SECRET="{{ custom_miounne_matrix_registration_secret }}" \
+					-e MIOUNNE_MATRIX_REGISTRATION_NOTIFY_NEW="{{ custom_miounne_matrix_registration_notify_new }}" \
+					-e MIOUNNE_MATRIX_REGISTRATION_NOTIFY_USE="{{ custom_miounne_matrix_registration_notify_use }}" \
 {% for form in custom_miounne_forms -%}{{- forms.append(form.name) -}}
 -e MIOUNNE_FORMS_{{ form.name|upper }}_URL="{{ form.url|default('') }}" \
 		-e MIOUNNE_FORMS_{{ form.name|upper }}_ROOM="{{ form.room|default('') }}" \
