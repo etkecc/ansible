@@ -19,7 +19,7 @@ custom_miounne_bmc_notify_supporters: 0
 
 custom_miounne_matrix_homeserver: "{{ matrix_homeserver_container_url }}"
 
-custom_miounne_matrix_user_login: "mother.miounne"
+custom_miounne_matrix_user_login: "miounne"
 custom_miounne_matrix_user_password: ""
 custom_miounne_matrix_user_displayname: "Mother Miounne"
 
