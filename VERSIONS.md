@@ -9,7 +9,7 @@
 * bot_mjolnir: v1.1.20
 * client_element: v1.9.4
 * client_hydrogen: v0.2.19
-* corporal: 2.1.4
+* corporal: 2.2.0
 * coturn: 4.5.2-r4
 * coturn_container_image_self_build_repo: docker/{{ matrix_coturn_version }}
 * dimension: latest
@@ -18,7 +18,7 @@
 * email2matrix: 1.0.1
 * etherpad: 1.8.12
 * grafana: 8.2.2
-* heisenbridge: 1.6.0
+* heisenbridge: 1.7.0
 * jitsi_ldap: "3"
 * jitsi: stable-6173
 * languagetool: 5.5
