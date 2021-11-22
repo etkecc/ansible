@@ -7,9 +7,9 @@
 * bot_go_neb: latest
 * bot_matrix_reminder_bot: release-v0.2.1
 * bot_mjolnir: v1.1.20
-* client_element: v1.9.4
+* client_element: v1.9.5
 * client_hydrogen: v0.2.19
-* corporal: 2.2.0
+* corporal: 2.2.1
 * coturn: 4.5.2-r4
 * coturn_container_image_self_build_repo: docker/{{ matrix_coturn_version }}
 * dimension: latest
@@ -23,7 +23,7 @@
 * jitsi: stable-6173
 * languagetool: 5.5
 * ma1sd: 2.5.0
-* mailer: 4.94.2-r0-4
+* mailer: 4.94.2-r0-5
 * mautrix_facebook: v0.3.2
 * mautrix_googlechat: latest
 * mautrix_hangouts: latest
