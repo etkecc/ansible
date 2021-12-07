@@ -49,6 +49,7 @@
     - setup-mx-puppet-twitter
     - setup-nginx-proxy
     - setup-postgres
+    - setup-postgres-backup
     - setup-prometheus
     - setup-prometheus-node-exporter
     - setup-prometheus-postgres-exporter
@@ -82,6 +83,18 @@
     - setup-all
     - restart-all
     - setup-postgres
+
+- name: Restart Database Backup (postgres-backup)
+  service:
+    enabled: yes
+    state: restarted
+    name: matrix-postgres-backup
+  when: matrix_postgres_backup_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-postgres-backup
 
 - name: Restart Discord bridge (appservice)
   service:
