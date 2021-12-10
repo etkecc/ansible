@@ -5,8 +5,14 @@
     - setup-all
     - system-cleanup
 
-- include_tasks: debian.yml
+- import_tasks: debian.yml
   when: ansible_os_family == "Debian"
+  tags:
+    - setup-all
+    - system-cleanup
+
+- import_tasks: journalctl.yml
+  when: system_maintenance_journalctl_vacuum|bool
   tags:
     - setup-all
     - system-cleanup
@@ -18,12 +24,12 @@
     - setup-all
     - system-cleanup
 
-- name: Clean up matrix logs older that 7 days
-  command: journalctl --vacuum-time=7d
-  when: system_maintenance_journalctl_vacuum|bool
-  tags:
-    - setup-all
-    - system-cleanup
+# - name: Clean up matrix logs older that 7 days
+#   command: journalctl --vacuum-time=7d
+#   when: system_maintenance_journalctl_vacuum|bool
+#   tags:
+#     - setup-all
+#     - system-cleanup
 
 - name: Find old ssl logs
   find:

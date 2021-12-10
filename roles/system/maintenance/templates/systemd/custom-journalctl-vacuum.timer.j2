@@ -1,0 +1,10 @@
+[Unit]
+Description=Run journalctl vacuuum procedure
+
+[Timer]
+Unit=custom-journalctl-vacuum.service
+OnCalendar={{ system_maintenance_journalctl_vacuum_calendar }}
+RandomizedDelaySec=1h
+
+[Install]
+WantedBy=timers.target

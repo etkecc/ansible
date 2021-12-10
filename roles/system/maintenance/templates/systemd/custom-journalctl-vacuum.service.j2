@@ -1,0 +1,6 @@
+[Unit]
+Description=Run journalctl vacuuum procedure
+
+[Service]
+Type=oneshot
+ExecStart=/bin/journalctl --vacuum-time=7d

@@ -11,6 +11,7 @@ system_maintenance_ssl_prune: yes
 
 # run `journalctl --vacuum-time=7d` to remove old logs
 system_maintenance_journalctl_vacuum: yes
+system_maintenance_journalctl_vacuum_calendar: "*-*-* 04:15:00"
 
 # remove synapse media store thumbnails (they will be regenerated on request)
 system_maintenance_thumbnails_prune: yes
