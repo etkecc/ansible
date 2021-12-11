@@ -6,7 +6,7 @@
 * beeper_linkedin: v0.5.1
 * bot_go_neb: latest
 * bot_matrix_reminder_bot: release-v0.2.1
-* bot_mjolnir: v1.1.20
+* bot_mjolnir: v1.2.1
 * client_element: v1.9.6
 * client_hydrogen: v0.2.19
 * corporal: 2.2.2
@@ -17,7 +17,7 @@
 * dynamic_dns: v3.9.1-ls45
 * email2matrix: 1.0.1
 * etherpad: 1.8.12
-* grafana: 8.3.0
+* grafana: 8.3.1
 * heisenbridge: 1.7.1
 * jitsi_ldap: "3"
 * jitsi: stable-6173
