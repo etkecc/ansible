@@ -649,7 +649,7 @@
     - setup-ssl
     - setup-nginx-proxy
 
-- name: Restart ngix-proxy reload timer
+- name: Restart nginx-proxy reload timer
   service:
     enabled: yes
     state: restarted
