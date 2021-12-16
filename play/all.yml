@@ -61,6 +61,7 @@
     - custom/dnsmasq
     - custom/miounne
     - custom/miniflux
+    - custom/honoroit
     - custom/wireguard
     - custom/languagetool
     - integration/uptimerobot

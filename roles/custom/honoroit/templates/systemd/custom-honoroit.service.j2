@@ -1,0 +1,41 @@
+#jinja2: lstrip_blocks: "True"
+[Unit]
+Description=Honoroit
+{% for service in custom_honoroit_systemd_required_services_list %}
+Requires={{ service }}
+After={{ service }}
+{% endfor %}
+DefaultDependencies=no
+
+[Service]
+Type=simple
+Environment="HOME={{ matrix_systemd_unit_home_path }}"
+ExecStartPre=-/usr/bin/env sh -c '/usr/bin/env docker kill custom-honoroit 2>/dev/null'
+ExecStartPre=-/usr/bin/env sh -c '/usr/bin/env docker rm custom-honoroit 2>/dev/null'
+
+{% set forms = [] %}
+
+ExecStart=/usr/bin/env docker run --rm --name custom-honoroit \
+					--log-driver=none \
+					--user=honoroit:honoroit \
+					--cap-drop=ALL \
+					--network={{ matrix_docker_network }} \
+					-e HONOROIT_HOMESERVER="{{ custom_honoroit_homeserver }}" \
+					-e HONOROIT_LOGIN="{{ custom_honoroit_login }}" \
+					-e HONOROIT_PASSWORD="{{ custom_honoroit_password }}" \
+					-e HONOROIT_ROOMID="{{ custom_honoroit_roomid }}" \
+{% for arg in custom_honoroit_container_extra_arguments %}
+{{ arg }} \
+{% endfor %}
+{{ custom_honoroit_docker_image }}
+
+ExecStop=-/usr/bin/env sh -c '/usr/bin/env docker kill custom-honoroit 2>/dev/null'
+ExecStop=-/usr/bin/env sh -c '/usr/bin/env docker rm custom-honoroit 2>/dev/null'
+Restart=always
+RestartSec=30
+SyslogIdentifier=custom-honoroit
+
+[Install]
+WantedBy=multi-user.target
+
+# vim: set syntax=systemd

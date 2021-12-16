@@ -26,6 +26,7 @@
     - setup-etherpad
     - setup-grafana
     - setup-heisenbridge
+    - setup-honoroit
     - setup-jitsi
     - setup-languagetool
     - setup-ma1sd
@@ -335,6 +336,18 @@
     - setup-all
     - restart-all
     - setup-heisenbridge
+
+- name: Restart Honoroit
+  service:
+    enabled: yes
+    state: restarted
+    name: custom-honoroit
+  when: custom_honoroit_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-honoroit
 
 - name: Restart Jitsi Conference Focus
   service:

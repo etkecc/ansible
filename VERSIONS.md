@@ -19,6 +19,7 @@
 * etherpad: 1.8.12
 * grafana: 8.3.1
 * heisenbridge: 1.7.1
+* honoroit: latest
 * jitsi_ldap: "3"
 * jitsi: stable-6726
 * languagetool: 5.5

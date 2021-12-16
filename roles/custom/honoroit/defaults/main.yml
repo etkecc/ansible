@@ -1,0 +1,21 @@
+---
+custom_honoroit_enabled: false
+custom_honoroit_version: latest
+custom_honoroit_docker_image: "registry.gitlab.com/etke.cc/honoroit:{{ custom_honoroit_version }}"
+custom_honoroit_docker_image_force_pull: "{{ custom_honoroit_docker_image.endswith(':latest') }}"
+
+custom_honoroit_homeserver: "{{ matrix_homeserver_container_url }}"
+
+custom_honoroit_login: "honoroit"
+custom_honoroit_password: ""
+custom_honoroit_roomid: ""
+
+#
+# A list of extra arguments to pass to the container
+custom_honoroit_container_extra_arguments: []
+
+# List of systemd services that honoroit.service depends on
+custom_honoroit_systemd_required_services_list: ['docker.service']
+
+custom_honoroit_base_path: "{{ matrix_base_data_path }}/honoroit"
+custom_honoroit_data_path: "{{ custom_honoroit_base_path }}/data"
