@@ -23,6 +23,7 @@ ExecStart=/usr/bin/env docker run --rm --name custom-honoroit \
 					-e HONOROIT_HOMESERVER="{{ custom_honoroit_homeserver }}" \
 					-e HONOROIT_LOGIN="{{ custom_honoroit_login }}" \
 					-e HONOROIT_PASSWORD="{{ custom_honoroit_password }}" \
+					-e HONOROIT_LOGLEVEL="{{ custom_honoroit_loglevel }}" \
 					-e HONOROIT_ROOMID="{{ custom_honoroit_roomid }}" \
 {% for arg in custom_honoroit_container_extra_arguments %}
 {{ arg }} \

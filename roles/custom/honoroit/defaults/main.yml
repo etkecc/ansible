@@ -9,6 +9,7 @@ custom_honoroit_homeserver: "{{ matrix_homeserver_container_url }}"
 custom_honoroit_login: "honoroit"
 custom_honoroit_password: ""
 custom_honoroit_roomid: ""
+custom_honoroit_loglevel: "INFO"
 
 #
 # A list of extra arguments to pass to the container
