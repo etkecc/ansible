@@ -5,6 +5,12 @@
     - setup-all
     - system-cleanup
 
+- import_tasks: ubuntu.yml
+  when: ansible_distribution == "Ubuntu"
+  tags:
+    - setup-all
+    - system-cleanup
+
 - import_tasks: debian.yml
   when: ansible_os_family == "Debian"
   tags:

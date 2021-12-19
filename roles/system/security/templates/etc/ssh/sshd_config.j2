@@ -1,0 +1,25 @@
+## {{ ansible_managed }}
+
+AcceptEnv LANG LC_*
+AllowStreamLocalForwarding no
+AllowTcpForwarding no
+ClientAliveInterval 120
+ChallengeResponseAuthentication no
+Compression no
+GatewayPorts no
+IgnoreRhosts yes
+MaxAuthTries 3
+PasswordAuthentication {% if system_security_ssh_passwordauth|bool %}yes{% else %}no{% endif %}
+
+PermitEmptyPasswords no
+PermitRootLogin {% if system_security_ssh_rootlogin|bool %}yes{% else %}no{% endif %}
+
+PermitTunnel no
+Port {{ system_security_ssh_port }}
+PrintLastLog no
+PrintMotd no
+PubkeyAuthentication yes
+Subsystem	sftp	/usr/lib/openssh/sftp-server
+UseDNS no
+UsePAM yes
+X11Forwarding no

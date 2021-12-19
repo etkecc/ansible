@@ -22,40 +22,13 @@
     - rotate-ssh-keys
 
 - name: Enforce sshd config
-  blockinfile:
-    path: /etc/ssh/sshd_config
-    block: |
-      AllowStreamLocalForwarding no
-      AllowTcpForwarding no
-      Compression no
-      GatewayPorts no
-      IgnoreRhosts yes
-      MaxAuthTries 3
-      PermitEmptyPasswords no
-      PermitTunnel no
-      PrintLastLog no
-      PrintMotd no
-      PubkeyAuthentication yes
-      UseDNS no
-      X11Forwarding no
+  template:
+    src: etc/ssh/sshd_config.j2
+    dest: /etc/ssh/sshd_config
+    mode: 0644
+    owner: root
+    group: root
   register: system_security_sshd_config
-
-- name: Disable ssh password auth
-  lineinfile:
-    path: /etc/ssh/sshd_config
-    line: PasswordAuthentication no
-  when: not system_security_ssh_passwordauth|bool
-
-- name: Disable ssh root login
-  lineinfile:
-    path: /etc/ssh/sshd_config
-    line: PermitRootLogin no
-  when: not system_security_ssh_rootlogin|bool
-
-- name: Set custom ssh port
-  lineinfile:
-    path: /etc/ssh/sshd_config
-    line: "Port {{ system_security_ssh_port }}"
 
 - name: Reload sshd configuration
   service:
