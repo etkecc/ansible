@@ -11,6 +11,15 @@ custom_honoroit_enabled: true
 custom_honoroit_login: honoroit
 custom_honoroit_password: securePassword
 custom_honoroit_roomid: "!backofficeRoomID:your.server"
+custom_honoroit_database_password: 'STRONG_SECURE_PASSWORD'
 ```
 
-2. Run `ansible-playbook play/all.yml -t setup-honoroit,start-honoroit`
+2. Create database:
+
+```sql
+CREATE USER custom_honoroit WITH PASSWORD 'STRONG_SECURE_PASSWORD';
+CREATE DATABASE custom_honoroit;
+GRANT ALL PRIVILEGES ON DATABASE custom_honoroit to custom_honoroit;
+```
+
+3. Run `ansible-playbook play/all.yml -t setup-honoroit,start-honoroit`
