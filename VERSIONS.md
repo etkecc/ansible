@@ -7,21 +7,21 @@
 * bot_go_neb: latest
 * bot_matrix_reminder_bot: release-v0.2.1
 * bot_mjolnir: v1.2.1
-* client_element: v1.9.7
+* client_element: v1.9.8
 * client_hydrogen: v0.2.19
 * corporal: 2.2.2
-* coturn: 4.5.2-r4
+* coturn: 4.5.2-r8
 * coturn_container_image_self_build_repo: docker/{{ matrix_coturn_version }}
 * dimension: latest
 * dnsmasq: latest
 * dynamic_dns: v3.9.1-ls45
 * email2matrix: 1.0.1
 * etherpad: 1.8.12
-* grafana: 8.3.1
+* grafana: 8.3.3
 * heisenbridge: 1.7.1
 * honoroit: latest
 * jitsi_ldap: "3"
-* jitsi: stable-6726
+* jitsi: stable-6726-1
 * languagetool: 5.5
 * ma1sd: 2.5.0
 * mailer: 4.95-r0
@@ -33,7 +33,7 @@
 * mautrix_signal: latest
 * mautrix_telegram: v0.10.2
 * mautrix_whatsapp: latest
-* miniflux: 2.0.33
+* miniflux: 2.0.34
 * miounne: v2.2.1
 * mx_puppet_discord: latest
 * mx_puppet_groupme: latest
@@ -50,5 +50,5 @@
 * registration: v0.7.2
 * sms_bridge: 0.5.7
 * sygnal: v0.10.1
-* synapse_admin: 0.8.1
-* synapse: v1.49.0
+* synapse_admin: 0.8.4
+* synapse: v1.49.1
