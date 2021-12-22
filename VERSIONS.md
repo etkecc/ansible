@@ -32,6 +32,7 @@
 * mautrix_signal_daemon: latest
 * mautrix_signal: latest
 * mautrix_telegram: v0.10.2
+* mautrix_twitter: latest
 * mautrix_whatsapp: latest
 * miniflux: 2.0.34
 * miounne: v2.2.1
