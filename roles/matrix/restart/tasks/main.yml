@@ -38,6 +38,7 @@
     - setup-mautrix-instagram
     - setup-mautrix-signal
     - setup-mautrix-telegram
+    - setup-mautrix-twitter
     - setup-mautrix-whatsapp
     - setup-miniflux
     - setup-miounne
@@ -540,6 +541,18 @@
     - setup-all
     - restart-all
     - setup-mautrix-telegram
+
+- name: Restart Twitter bridge (mautrix)
+  service:
+    enabled: yes
+    state: restarted
+    name: matrix-mautrix-twitter
+  when: matrix_mautrix_twitter_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-mautrix-twitter
 
 - name: Restart WhatsApp bridge (mautrix)
   service:
