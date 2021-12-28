@@ -16,9 +16,9 @@
 * dnsmasq: latest
 * dynamic_dns: v3.9.1-ls45
 * email2matrix: 1.0.1
-* etherpad: 1.8.12
+* etherpad: 1.8.16
 * grafana: 8.3.3
-* heisenbridge: 1.7.1
+* heisenbridge: 1.8.2
 * honoroit: latest
 * jitsi_ldap: "3"
 * jitsi: stable-6726-1
