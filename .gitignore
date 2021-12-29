@@ -1,4 +1,5 @@
 /roles/custom/*
+!/roles/custom/kuma
 !/roles/custom/miounne
 !/roles/custom/honoroit
 !/roles/custom/miniflux

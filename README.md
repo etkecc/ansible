@@ -43,6 +43,7 @@ That repo provides following playbooks:
 * `roles/matrix/restart` - used by `play/matrix.yml`
 * `roles/custom/wireguard` - used by `play/matrix.yml`, [documentation](./roles/custom/wireguard/README.md)
 * `roles/custom/dnsmasq` - used by `play/matrix.yml`, [documentation](./roles/custom/dnsmasq/README.md)
+* `roles/custom/kuma` - used by `play/matrix.yml`, [documentation](./roles/custom/kuma/README.md)
 * `roles/custom/miniflux` - used by `play/matrix.yml`, [documentation](./roles/custom/miniflux/README.md)
 * `roles/custom/miounne` - used by `play/matrix.yml`, [documentation](./roles/custom/miounne/README.md)
 * `roles/custom/honoroit` - used by `play/matrix.yml`, [documentation](./roles/custom/honoroit/README.md)
