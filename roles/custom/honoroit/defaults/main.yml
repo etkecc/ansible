@@ -10,6 +10,7 @@ custom_honoroit_login: "honoroit"
 custom_honoroit_password: ""
 custom_honoroit_roomid: ""
 custom_honoroit_loglevel: "INFO"
+custom_honoroit_sentry: ""
 
 # Database-related configuration fields.
 #

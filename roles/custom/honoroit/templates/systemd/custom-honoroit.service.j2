@@ -25,6 +25,7 @@ ExecStart=/usr/bin/env docker run --rm --name custom-honoroit \
 					-e HONOROIT_LOGIN="{{ custom_honoroit_login }}" \
 					-e HONOROIT_PASSWORD="{{ custom_honoroit_password }}" \
 					-e HONOROIT_LOGLEVEL="{{ custom_honoroit_loglevel }}" \
+					-e HONOROIT_SENTRY="{{ custom_honoroit_sentry }}" \
 					-e HONOROIT_ROOMID="{{ custom_honoroit_roomid }}" \
 					-e HONOROIT_DB_DIALECT="{{ custom_honoroit_db_dialect }}" \
 					-e HONOROIT_DB_DSN="{{ custom_honoroit_appservice_database }}" \
