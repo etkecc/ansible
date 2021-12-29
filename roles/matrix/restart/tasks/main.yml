@@ -28,6 +28,7 @@
     - setup-heisenbridge
     - setup-honoroit
     - setup-jitsi
+    - setup-kuma
     - setup-languagetool
     - setup-ma1sd
     - setup-mailer
@@ -397,6 +398,18 @@
     - setup-all
     - restart-all
     - setup-jitsi
+
+- name: Restart Uptime Kuma
+  service:
+    enabled: yes
+    state: restarted
+    name: custom-kuma
+  when: custom_kuma_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-kuma
 
 - name: Restart LanguageTool
   service:

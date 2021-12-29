@@ -59,6 +59,7 @@
     # CUSTOM
     - system/swap
     - system/security
+    - custom/kuma
     - custom/dnsmasq
     - custom/miounne
     - custom/miniflux
