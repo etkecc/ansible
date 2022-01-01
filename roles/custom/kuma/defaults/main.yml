@@ -3,6 +3,7 @@ custom_kuma_enabled: false
 custom_kuma_version: latest
 custom_kuma_path: "{{ matrix_base_data_path }}/custom-kuma"
 custom_kuma_data_path: "{{ custom_kuma_path }}/data"
+matrix_server_fqn_kuma: "kuma.{{ matrix_domain }}"
 matrix_nginx_proxy_proxy_kuma_hostname: "{{ matrix_server_fqn_kuma }}"
 custom_kuma_docker_image: "registry.gitlab.com/etke.cc/uptime-kuma:{{ custom_kuma_version }}"
 custom_kuma_docker_image_force_pull: "{{ custom_kuma_docker_image.endswith(':latest') }}"

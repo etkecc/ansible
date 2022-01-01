@@ -9,7 +9,6 @@ A bit hacky way to install [Miounne](https://gitlab.com/etke.cc/miounne) with Ma
 ```yml
 custom_miounne_enabled: true
 matrix_server_fqn_miounne: "miounne.{{ matrix_domain }}" # you can use anything you want here, it's just default value
-matrix_nginx_proxy_proxy_miounne_hostname: "{{ matrix_server_fqn_miounne }}" # yep, duplicate, but it's required
 
 matrix_ssl_additional_domains_to_obtain_certificates_for:
   - "{{ matrix_server_fqn_miounne }}"

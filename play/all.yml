@@ -68,6 +68,7 @@
     - custom/languagetool
     - integration/uptimerobot
     - integration/git2bunny
+    - matrix/client-cinny
     - matrix/nginx-proxy-website
     - matrix/nginx-proxy-health
     # END CUSTOM

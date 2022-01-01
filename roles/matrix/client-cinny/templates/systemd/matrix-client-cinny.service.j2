@@ -1,0 +1,37 @@
+#jinja2: lstrip_blocks: "True"
+[Unit]
+Description=cinny
+{% for service in matrix_client_cinny_systemd_required_services_list %}
+Requires={{ service }}
+After={{ service }}
+{% endfor %}
+DefaultDependencies=no
+
+[Service]
+Type=simple
+Environment="HOME={{ matrix_systemd_unit_home_path }}"
+ExecStartPre=-/usr/bin/env sh -c '/usr/bin/env docker kill matrix-client-cinny 2>/dev/null'
+ExecStartPre=-/usr/bin/env sh -c '/usr/bin/env docker rm matrix-client-cinny 2>/dev/null'
+
+ExecStart=/usr/bin/env docker run --rm --name matrix-client-cinny \
+          --log-driver=none \
+          --cap-drop=ALL \
+					--read-only \
+					--user={{ matrix_user_uid }}:{{ matrix_user_gid }} \
+          --network={{ matrix_docker_network }} \
+					--tmpfs=/tmp:rw,noexec,nosuid,size=10m \
+					--mount type=bind,src={{ matrix_client_cinny_config_path }}/nginx.conf,dst=/etc/nginx/nginx.conf,ro \
+					--mount type=bind,src={{ matrix_client_cinny_config_path }}/config.json,dst=/app/config.json,ro \
+          {% for arg in matrix_client_cinny_container_extra_arguments %}
+          {{ arg }} \
+          {% endfor %}
+          {{ matrix_client_cinny_docker_image }}
+
+ExecStop=-/usr/bin/env sh -c '/usr/bin/env docker kill matrix-client-cinny 2>/dev/null'
+ExecStop=-/usr/bin/env sh -c '/usr/bin/env docker rm matrix-client-cinny 2>/dev/null'
+Restart=always
+RestartSec=30
+SyslogIdentifier=matrix-client-cinny
+
+[Install]
+WantedBy=multi-user.target

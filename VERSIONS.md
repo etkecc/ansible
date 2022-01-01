@@ -7,6 +7,7 @@
 * bot_go_neb: latest
 * bot_matrix_reminder_bot: release-v0.2.1
 * bot_mjolnir: v1.2.1
+* client_cinny: v1.6.1
 * client_element: v1.9.8
 * client_hydrogen: v0.2.19
 * corporal: 2.2.2

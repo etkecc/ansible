@@ -15,6 +15,7 @@
     - setup-bot-go-neb
     - setup-bot-matrix-reminder-bot
     - setup-bot-mjolnir
+    - setup-client-cinny
     - setup-client-element
     - setup-client-hydrogen
     - setup-corporal
@@ -194,6 +195,18 @@
     - setup-all
     - restart-all
     - setup-bot-mjolnir
+
+- name: Restart Cinny
+  service:
+    enabled: yes
+    state: restarted
+    name: matrix-client-cinny
+  when: matrix_client_cinny_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-client-cinny
 
 - name: Restart Element
   service:
