@@ -23,7 +23,7 @@
 * honoroit: latest
 * jitsi_ldap: "3"
 * jitsi: stable-6726-1
-* kuma: latest
+* kuma: 1.11.1
 * languagetool: 5.6
 * ma1sd: 2.5.0
 * mailer: 4.95-r0
