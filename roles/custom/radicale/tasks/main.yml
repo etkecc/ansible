@@ -1,0 +1,82 @@
+---
+- name: Ensure radicale image is pulled
+  docker_image:
+    name: "{{ custom_radicale_docker_image }}"
+    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+    force_source: "{{ custom_radicale_docker_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else custom_radicale_docker_image_force_pull }}"
+  when: custom_radicale_enabled|bool
+  tags:
+    - setup-all
+    - setup-radicale
+
+- name: Ensure radicale directory is created
+  file:
+    state: directory
+    mode: 0750
+    owner: "{{ matrix_user_username }}"
+    group: "{{ matrix_user_groupname }}"
+    path: "{{ item }}"
+  with_items:
+    - "{{ custom_radicale_path }}"
+    - "{{ custom_radicale_data_path }}"
+    - "{{ custom_radicale_config_path }}"
+  when: custom_radicale_enabled|bool
+  tags:
+    - setup-all
+    - setup-radicale
+
+- name: Ensure radicale config is created
+  template:
+    src: config.j2
+    dest: "{{ custom_radicale_config_path }}/config"
+    owner: "{{ matrix_user_username }}"
+    group: "{{ matrix_user_groupname }}"
+    mode: 0644
+  when: custom_radicale_enabled|bool
+  tags:
+    - setup-all
+    - setup-radicale
+
+- name: Ensure radicale htpasswd is created
+  template:
+    src: htpasswd.j2
+    dest: "{{ custom_radicale_config_path }}/htpasswd"
+    owner: "{{ matrix_user_username }}"
+    group: "{{ matrix_user_groupname }}"
+    mode: 0644
+  when: custom_radicale_enabled|bool
+  tags:
+    - setup-all
+    - setup-radicale
+
+- name: Ensure custom-radicale.service is present
+  template:
+    src: systemd/custom-radicale.service.j2
+    dest: /etc/systemd/system/custom-radicale.service
+    mode: 0644
+  register: custom_radicale_systemd_service_result
+  when: custom_radicale_enabled|bool
+  tags:
+    - setup-all
+    - setup-radicale
+
+- name: Run custom-radicale.service
+  service:
+    enabled: yes
+    state: restarted
+    name: custom-radicale
+  when: custom_radicale_enabled|bool
+  tags:
+    - start
+    - start-radicale
+
+- name: Ensure Matrix nginx-proxy configuration for radicale domain exists
+  template:
+    src: nginx.conf.j2
+    dest: "{{ matrix_nginx_proxy_confd_path }}/matrix-custom-radicale.conf"
+    mode: 0644
+  when: custom_radicale_enabled|bool and matrix_nginx_proxy_enabled|bool
+  tags:
+    - setup-all
+    - setup-radicale

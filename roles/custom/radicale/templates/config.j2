@@ -1,0 +1,18 @@
+# {{ ansible_managed }}
+
+[server]
+hosts = 0.0.0.0:5232
+max_connections = 1000
+timeout = 60
+
+[auth]
+type = htpasswd
+htpasswd_filename = /config/htpasswd
+realm = protected
+
+[storage]
+filesystem_folder = /data/collections
+
+[logging]
+level = warning
+mask_passwords = True

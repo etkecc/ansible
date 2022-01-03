@@ -35,22 +35,26 @@ That repo provides following playbooks:
 
 ## roles
 
+* `roles/custom/dnsmasq` - used by `play/all.yml`, [documentation](./roles/custom/dnsmasq/README.md)
+* `roles/custom/honoroit` - used by `play/all.yml`, [documentation](./roles/custom/honoroit/README.md)
+* `roles/custom/kuma` - used by `play/all.yml`, [documentation](./roles/custom/kuma/README.md)
+* `roles/custom/languagetool` - used by `play/all.yml`, [documentation](./roles/custom/languagetool/README.md)
+* `roles/custom/miniflux` - used by `play/all.yml`, [documentation](./roles/custom/miniflux/README.md)
+* `roles/custom/miounne` - used by `play/all.yml`, [documentation](./roles/custom/miounne/README.md)
+* `roles/custom/radicale` - used by `play/all.yml`, [documentation](./roles/custom/radicale/README.md)
+* `roles/custom/wireguard` - used by `play/all.yml`, [documentation](./roles/custom/wireguard/README.md)
+
+* `roles/integration/git2bunny` - used by `play/integration`, [documentation](./roles/integration/git2bunny/README.md)
+* `roles/integration/uptimerobot` - used by `play/integration`, [documentation](./roles/integration/uptimerobot/README.md)
+
+* `roles/matrix/client-cinny` - used by `play/all.yml`, [documentation](./roles/matrix/client-cinny/README.md)
+* `roles/matrix/nginx-proxy-health` - used by `play/website.yml`, [documentation](./roles/matrix/nginx-proxy-health/README.md)
+* `roles/matrix/nginx-proxy-website` - used by `play/website.yml`, [documentation](./roles/matrix/nginx-proxy-website/README.md)
+* `roles/matrix/restart` - used by `play/all.yml`
+
 * `roles/system/maintenance` - used by `play/maintenance.yml`, [documentation](./roles/system/maintenance/README.md)
 * `roles/system/security` - used by `play/security.yml`
 * `roles/system/swap` - used by `play/maintenance.yml`, [documentation](./roles/system/swap/README.md)
-* `roles/matrix/client-cinny` - used by `play/matrix.yml`, [documentation](./roles/matrix/client-cinny/README.md)
-* `roles/matrix/nginx-proxy-health` - used by `play/website.yml`, [documentation](./roles/matrix/nginx-proxy-health/README.md)
-* `roles/matrix/nginx-proxy-website` - used by `play/website.yml`, [documentation](./roles/matrix/nginx-proxy-website/README.md)
-* `roles/matrix/restart` - used by `play/matrix.yml`
-* `roles/custom/wireguard` - used by `play/matrix.yml`, [documentation](./roles/custom/wireguard/README.md)
-* `roles/custom/dnsmasq` - used by `play/matrix.yml`, [documentation](./roles/custom/dnsmasq/README.md)
-* `roles/custom/kuma` - used by `play/matrix.yml`, [documentation](./roles/custom/kuma/README.md)
-* `roles/custom/miniflux` - used by `play/matrix.yml`, [documentation](./roles/custom/miniflux/README.md)
-* `roles/custom/miounne` - used by `play/matrix.yml`, [documentation](./roles/custom/miounne/README.md)
-* `roles/custom/honoroit` - used by `play/matrix.yml`, [documentation](./roles/custom/honoroit/README.md)
-* `roles/custom/languagetool` - used by `play/matrix.yml`, [documentation](./roles/custom/languagetool/README.md)
-* `roles/integration/uptimerobot` - used by `play/integration`, [documentation](./roles/integration/uptimerobot/README.md)
-* `roles/integration/git2bunny` - used by `play/integration`, [documentation](./roles/integration/git2bunny/README.md)
 
 # Usage
 

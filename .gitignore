@@ -1,17 +1,24 @@
+# ignore custom roles by default
 /roles/custom/*
-!/roles/custom/kuma
-!/roles/custom/miounne
-!/roles/custom/honoroit
-!/roles/custom/miniflux
-!/roles/custom/wireguard
-!/roles/custom/dnsmasq
-!/roles/custom/languagetool
 !/roles/custom/.gitkeep
+
+# do not ignore following custom roles
+!/roles/custom/dnsmasq
+!/roles/custom/honoroit
+!/roles/custom/kuma
+!/roles/custom/languagetool
+!/roles/custom/miniflux
+!/roles/custom/miounne
+!/roles/custom/radicale
+!/roles/custom/wireguard
+
+# ignore sensitive data by default
 /inventory/hosts
 /inventory/host_vars/*
+
+# do not ignore tools
 !/inventory/host_vars/.gitkeep
 !/inventory/scripts
+
+# python cache
 *.pyc
-/taskell.md
-/.stfolder
-/.stversions

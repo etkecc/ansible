@@ -57,6 +57,7 @@
     - setup-prometheus
     - setup-prometheus-node-exporter
     - setup-prometheus-postgres-exporter
+    - setup-radicale
     - setup-redis
     - setup-sms-bridge
     - setup-ssl
@@ -764,6 +765,18 @@
     - restart-all
     - setup-prometheus
     - setup-prometheus-postgres-exporter
+
+- name: Restart Radicale
+  service:
+    enabled: yes
+    state: restarted
+    name: custom-radicale
+  when: custom_radicale_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-radicale
 
 - name: Restart Redis
   service:

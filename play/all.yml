@@ -59,13 +59,14 @@
     # CUSTOM
     - system/swap
     - system/security
-    - custom/kuma
     - custom/dnsmasq
-    - custom/miounne
-    - custom/miniflux
     - custom/honoroit
-    - custom/wireguard
+    - custom/kuma
     - custom/languagetool
+    - custom/miniflux
+    - custom/miounne
+    - custom/radicale
+    - custom/wireguard
     - integration/uptimerobot
     - integration/git2bunny
     - matrix/client-cinny

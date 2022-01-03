@@ -2,7 +2,7 @@
 
 ## Setup
 
-* Add base domain and contact details into `taskell.md`
+* Add base domain and contact details into `inventory/data.md`
 * _customer's own server_: Add connection details into the `[setup]` section of the `inventory/hosts`
 * _etke.cc hosting_: Add connection details into the `[turnkey]` section of the `inventory/hosts`
 * Add base domain dir into the `inventory/host_vars`
@@ -29,9 +29,9 @@
 * Remove base domain dir and all files inside it from `inventory/host_vars`
 * Remove `DOMAIN | delegation`, `DOMAIN | federation`, `DOMAIN | homeserver` from monitoring
 * Remove `DOMAIN` group from status page
-* Move base domain and contact details to `Done` section of `taskell.md`
+* Move base domain and contact details to `Done` section of `inventory/data.md`
 
 ### If customer subscribed to the maintenance service
 
 * Move connection details from the `[setup]` to the `[subscription]` section of `inventory/hosts`
-* Move base domain and contact details to `Subscription` section of `taskell.md`
+* Move base domain and contact details to `Subscription` section of `inventory/data.md`
