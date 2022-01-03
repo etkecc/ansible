@@ -6,13 +6,14 @@ with additional roles and playbooks, like system maintenance (check the list bel
 **NOTE**: we have [paid service - etke.cc](https://etke.cc/#contact) - that will do all setup, configuration and maintenance for you.
 That service pretty cheap and has 2 purposes - invite new people to matrix and support project.
 
-# Included features & perks
+# Fork differences
 
-## versions
+## Automatic versions
 
-List of used sofrware versions available here: [VERSIONS.md](./VERSIONS.md)
+Used components' version automatically added to the [VERSIONS.md](./VERSIONS.md) file on each commit
 
-that list generated with pre-commit hook:
+<details>
+<summary>How?</summary>
 
 ```bash
 #!/bin/sh
@@ -22,43 +23,49 @@ git add $PWD/VERSIONS.md
 
 > **NOTE**: requires [yq](https://github.com/mikefarah/yq)
 
-## playbooks
+</details>
 
-That repo provides following playbooks:
+## New roles
 
-* `play/maintenance.yml` - add swap, update system packages, clean up space
-* `play/security.yml` - install and configure fail2ban, ufw and sshd to avoid breaches
-* `play/matrix.yml` - symlink to `setup.yml` of [spantaleev/matrix-docker-ansible-deploy](https://github.com/spantaleev/matrix-docker-ansible-deploy)
-* `play/website.yml` - deploy your static website to base domain, [website deploy documentation](./roles/matrix/nginx-proxy-website/README.md), [health report documentation](./roles/matrix/nginx-proxy-health/README.md)
-* `play/integration.yml` - UptimeRobot and BunnyCDN integration
-* `play/all.yml` - run all the stuff above, usefull when configuring new server
+### System
 
-## roles
+> all system roles available in [roles/system](./roles/system).
+> Each role has a README.md file with description and basic how-to.
 
-* `roles/custom/dnsmasq` - used by `play/all.yml`, [documentation](./roles/custom/dnsmasq/README.md)
-* `roles/custom/honoroit` - used by `play/all.yml`, [documentation](./roles/custom/honoroit/README.md)
-* `roles/custom/kuma` - used by `play/all.yml`, [documentation](./roles/custom/kuma/README.md)
-* `roles/custom/languagetool` - used by `play/all.yml`, [documentation](./roles/custom/languagetool/README.md)
-* `roles/custom/miniflux` - used by `play/all.yml`, [documentation](./roles/custom/miniflux/README.md)
-* `roles/custom/miounne` - used by `play/all.yml`, [documentation](./roles/custom/miounne/README.md)
-* `roles/custom/radicale` - used by `play/all.yml`, [documentation](./roles/custom/radicale/README.md)
-* `roles/custom/wireguard` - used by `play/all.yml`, [documentation](./roles/custom/wireguard/README.md)
+* **swap** - automatically create and mount swap partition, based on host RAM
+* **security** - sshd hardening, file2ban and ufw installation, automatic integration with other services/roles.
+* **maintenance** - system package updates, cleanup, etc. The same for matrix components
 
-* `roles/integration/git2bunny` - used by `play/integration`, [documentation](./roles/integration/git2bunny/README.md)
-* `roles/integration/uptimerobot` - used by `play/integration`, [documentation](./roles/integration/uptimerobot/README.md)
+### Matrix
 
-* `roles/matrix/client-cinny` - used by `play/all.yml`, [documentation](./roles/matrix/client-cinny/README.md)
-* `roles/matrix/nginx-proxy-health` - used by `play/website.yml`, [documentation](./roles/matrix/nginx-proxy-health/README.md)
-* `roles/matrix/nginx-proxy-website` - used by `play/website.yml`, [documentation](./roles/matrix/nginx-proxy-website/README.md)
-* `roles/matrix/restart` - used by `play/all.yml`
+> all matrix roles available in [roles/matrix](./roles/matrix).
+> Each role has a README.md file with description and basic how-to.
 
-* `roles/system/maintenance` - used by `play/maintenance.yml`, [documentation](./roles/system/maintenance/README.md)
-* `roles/system/security` - used by `play/security.yml`
-* `roles/system/swap` - used by `play/maintenance.yml`, [documentation](./roles/system/swap/README.md)
+* **cinny** - [cinny.in](https://cinny.in) matrix web client installation
+* <s>nginx-proxy-health</s> - simple healthcheck, based on systemd units. Works pretty bad, don't use it.
+* **nginx-proxy-website** - host a static website on your base domain. Pull it from git repo, run an arbitrary command (like `hugo`) and upload the results to your server
+* **restart** - one-by-one restarts (opposed to the `--tags start` that will stop all the services and start them after that)
+
+### Non-Matrix components
+
+* **dnsmasq** - recursive resolver with adblocker, like pi-hole, but even better! Automatic integration with wireguard
+* **honoroit** - [a helpdesk bot](https://gitlab.com/etke.cc/honoroit) to proxy user messages in 1:1 rooms into one big room with threads (check the link, it has pretty cool screenshots).
+* **kuma** - uptime-kuma monitoring servers. Pretty simple, yet powerful.
+* **languagetool** - "open source grammarly" server
+* **miniflux** - an opinionated RSS reader
+* **miounne** - [an etke.cc back office](https://gitlab.com/etke.cc/miounne)
+* **radicale** - a CalDav/CardDav server, very small and straitforward. It must be in the suckless.org lists!
+* **wireguard** - simple and fast VPN, has automatic integration with dnsmasq
+
+### Integration to 3rdParty services
+
+* **git2bunny** - like the `matrix/nginx-proxy-website`, but target is your BunnyCDN storage
+* <s>uptimerobot</s> - automatically create monitors in UptimeRobot. Works pretty bad, don't use it.
 
 # Usage
 
-## Configure new server
+<details>
+<summary>Quick Start</summary>
 
 1. Decide what the domain name will be used for your matrix server ("pretty" domain, like: "gitlab.com" or "issuperstar.com" so your mxid will be like "@john:issuperstar.com"), replace `DOMAIN` below with that domain name
 2. Run the following commands and read instructions
@@ -106,7 +113,10 @@ ansible-playbook play/matrix.yml -t start
 ansible-playbook play/matrix.yml -t self-check
 ```
 
-## Upgrades & maintenance
+</details>
+
+<details>
+<summary>Upgrades & maintenance</summary>
 
 New versions of matrix-related software releases very often, so to stay up to date, follow these steps:
 
@@ -127,19 +137,8 @@ ansible-playbook play/all.yml -t setup-all
 ansible-playbook play/all.yml -t rust-synapse-compress-state
 ansible-playbook play/all.yml -t run-postgres-vacuum
 ```
+</details>
 
-One-liner with notifications:
+## Supported distros
 
-```bash
-ansible-playbook play/all.yml -l HOST -t setup-all; notify-send ansible "setup done"; ansible-playbook play/all.yml -l HOST -t rust-synapse-compress-state; notify-send ansible "compress state done"; ansible-playbook play/all.yml -l HOST -t run-postgres-vacuum; notify-send ansible "postgres vacuum done"; ansible-playbook play/all.yml -l HOST -t restart-all; notify-send ansible "restarted all the things"
-```
-
-## Supported distributives
-
-[Parent project prerequisites](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/docs/prerequisites.md#prerequisites)
-has a list of supported distributives and versions.
-
-**NOTE**: that repository developing and testing on Ubuntu 18.04 LTS _and following cloud providers: AWS, Digital Ocean, Hetzner_.
-
-I'm trying to avoid distro-specific tools and commands (if such tool/command/module used, it will be called only if `ansible_os_family` allows that),
-but again - all development and testing performed only on Ubuntu 18.04 LTS and I cannot guarantee that my "wrapper" will work as expected on any other distro or version.
+[Parent project prerequisites](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/docs/prerequisites.md#prerequisites) has a list of supported distributives and versions.
