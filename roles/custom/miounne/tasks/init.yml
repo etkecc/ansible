@@ -1,0 +1,4 @@
+---
+- set_fact:
+    matrix_systemd_services_list: "{{ matrix_systemd_services_list + ['custom-miounne.service'] }}"
+  when: custom_miounne_enabled|bool

@@ -1,57 +1,16 @@
 ---
-- name: Ensure miounne image is pulled
-  docker_image:
-    name: "{{ custom_miounne_docker_image }}"
-    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
-    force_source: "{{ custom_miounne_docker_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
-    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else custom_miounne_docker_image_force_pull }}"
+- import_tasks: init.yml
+  tags:
+    - always
+
+- import_tasks: install.yml
   when: custom_miounne_enabled|bool
   tags:
     - setup-all
     - setup-miounne
 
-- name: Ensure miounne paths exist
-  file:
-    path: "{{ item }}"
-    state: directory
-    mode: 0750
-    owner: "{{ matrix_user_username }}"
-    group: "{{ matrix_user_groupname }}"
-  with_items:
-    - "{{ custom_miounne_base_path }}"
-    - "{{ custom_miounne_data_path }}"
-  when: custom_miounne_enabled|bool
-  tags:
-    - setup-all
-    - setup-miounne
-
-- name: Ensure custom-miounne.service is present
-  template:
-    src: systemd/custom-miounne.service.j2
-    dest: /etc/systemd/system/custom-miounne.service
-    mode: 0644
-  register: custom_miounne_systemd_service_result
-  when: custom_miounne_enabled|bool
-  tags:
-    - setup-all
-    - setup-miounne
-
-- name: Run custom-miounne.service
-  service:
-    enabled: yes
-    state: restarted
-    name: custom-miounne
-  when: custom_miounne_enabled|bool
-  tags:
-    - start
-    - start-miounne
-
-- name: Ensure Matrix nginx-proxy configuration for miounne domain exists
-  template:
-    src: nginx.conf.j2
-    dest: "{{ matrix_nginx_proxy_confd_path }}/matrix-custom-miounne.conf"
-    mode: 0644
-  when: custom_miounne_enabled|bool and matrix_nginx_proxy_enabled|bool and matrix_server_fqn_miounne is defined
+- import_tasks: uninstall.yml
+  when: not custom_miounne_enabled|bool
   tags:
     - setup-all
     - setup-miounne

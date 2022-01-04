@@ -1,0 +1,43 @@
+---
+- name: Ensure miounne paths exist
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0750
+    owner: "{{ matrix_user_username }}"
+    group: "{{ matrix_user_groupname }}"
+  with_items:
+    - "{{ custom_miounne_base_path }}"
+    - "{{ custom_miounne_data_path }}"
+
+- name: Ensure miounne image is pulled
+  docker_image:
+    name: "{{ custom_miounne_docker_image }}"
+    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+    force_source: "{{ custom_miounne_docker_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else custom_miounne_docker_image_force_pull }}"
+
+- name: Ensure custom-miounne.service is present
+  template:
+    src: systemd/custom-miounne.service.j2
+    dest: "{{ matrix_systemd_path }}/custom-miounne.service"
+    mode: 0644
+  register: custom_miounne_systemd_service_result
+
+- name: Ensure systemd reloaded after custom-miounne.service installation
+  service:
+    daemon_reload: yes
+  when: custom_miounne_systemd_service_result.changed|bool
+
+- name: Ensure Matrix nginx-proxy configuration for miounne domain exists
+  template:
+    src: nginx.conf.j2
+    dest: "{{ matrix_nginx_proxy_confd_path }}/matrix-custom-miounne.conf"
+    mode: 0644
+  when: matrix_server_fqn_miounne is defined
+
+- name: Ensure Matrix nginx-proxy configuration for miounne domain does not exists
+  file:
+    path: "{{ matrix_nginx_proxy_confd_path }}/matrix-custom-miounne.conf"
+    state: absent
+  when: matrix_server_fqn_miounne is not defined
