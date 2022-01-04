@@ -1,0 +1,40 @@
+---
+- name: Check existence of custom-kuma.service
+  stat:
+    path: "{{ matrix_systemd_path }}/custom-kuma.service"
+  register: custom_kuma_service_stat
+
+- name: Ensure custom-kuma is stopped
+  service:
+    name: custom-kuma
+    state: stopped
+    enabled: no
+    daemon_reload: yes
+  register: stopping_result
+  when: custom_kuma_service_stat.stat.exists|bool
+
+- name: Ensure custom-kuma.service does not exist
+  file:
+    path: "{{ matrix_systemd_path }}/custom-kuma.service"
+    state: absent
+  when: custom_kuma_service_stat.stat.exists|bool
+
+- name: Ensure systemd reloaded after custom-kuma.service removal
+  service:
+    daemon_reload: yes
+  when: custom_kuma_service_stat.stat.exists|bool
+
+- name: Ensure custom-kuma-htpasswd does not exist
+  file:
+    path: "{{ matrix_nginx_proxy_data_path }}/custom-kuma-htpasswd"
+    state: absent
+
+- name: Ensure Matrix nginx-proxy configuration for kuma domain does not exists
+  file:
+    path: "{{ matrix_nginx_proxy_confd_path }}/matrix-custom-kuma.conf"
+    state: absent
+
+- name: Ensure custom-kuma docker image doesn't exist
+  docker_image:
+    name: "{{ custom_kuma_docker_image }}"
+    state: absent
