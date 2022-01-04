@@ -19,7 +19,7 @@
 * email2matrix: 1.0.1
 * etherpad: 1.8.16
 * grafana: 8.3.3
-* heisenbridge: 1.8.2
+* heisenbridge: 1.9.0
 * honoroit: latest
 * jitsi_ldap: "3"
 * jitsi: stable-6726-1
@@ -45,7 +45,7 @@
 * mx_puppet_slack: latest
 * mx_puppet_steam: latest
 * mx_puppet_twitter: latest
-* nginx_proxy: 1.21.4-alpine
+* nginx_proxy: 1.21.5-alpine
 * prometheus_node_exporter: v1.2.2
 * prometheus_postgres_exporter: v0.10.0
 * prometheus: v2.31.1

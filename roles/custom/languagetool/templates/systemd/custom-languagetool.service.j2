@@ -29,8 +29,8 @@ ExecStart=/usr/bin/env docker run --rm --name custom-languagetool \
           {% endfor %}
           {{ custom_languagetool_docker_image }}
 
-ExecStop=-/usr/bin/env sh -c '/usr/bin/env docker kill custom-languagetool 2>/dev/null'
-ExecStop=-/usr/bin/env sh -c '/usr/bin/env docker rm custom-languagetool 2>/dev/null'
+ExecStopPost=-/usr/bin/env sh -c '/usr/bin/env docker kill custom-languagetool 2>/dev/null'
+ExecStopPost=-/usr/bin/env sh -c '/usr/bin/env docker rm custom-languagetool 2>/dev/null'
 Restart=always
 RestartSec=30
 SyslogIdentifier=custom-languagetool

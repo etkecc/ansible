@@ -27,8 +27,8 @@ ExecStart=/usr/bin/env docker run --rm --name matrix-client-cinny \
           {% endfor %}
           {{ matrix_client_cinny_docker_image }}
 
-ExecStop=-/usr/bin/env sh -c '/usr/bin/env docker kill matrix-client-cinny 2>/dev/null'
-ExecStop=-/usr/bin/env sh -c '/usr/bin/env docker rm matrix-client-cinny 2>/dev/null'
+ExecStopPost=-/usr/bin/env sh -c '/usr/bin/env docker kill matrix-client-cinny 2>/dev/null'
+ExecStopPost=-/usr/bin/env sh -c '/usr/bin/env docker rm matrix-client-cinny 2>/dev/null'
 Restart=always
 RestartSec=30
 SyslogIdentifier=matrix-client-cinny
