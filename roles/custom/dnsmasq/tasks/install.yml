@@ -1,0 +1,39 @@
+---
+- name: Ensure dnsmasq image is pulled
+  docker_image:
+    name: "{{ custom_dnsmasq_docker_image }}"
+    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+    force_source: "{{ custom_dnsmasq_docker_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else custom_dnsmasq_docker_image_force_pull }}"
+
+- name: Ensure custom-dnsmasq.service installed
+  template:
+    src: systemd/custom-dnsmasq.service.j2
+    dest: "{{ matrix_systemd_path }}/custom-dnsmasq.service"
+    mode: 0644
+  register: custom_dnsmasq_systemd_service_result
+
+- name: Ensure systemd reloaded after custom-dnsmasq.service installation
+  service:
+    daemon_reload: yes
+  when: custom_dnsmasq_systemd_service_result.changed|bool
+
+- name: Ensure systemd-resolved service stopped
+  service:
+    enabled: no
+    state: stopped
+    name: systemd-resolved
+  ignore_errors: yes #not all distros have it
+
+- name: Ensure resolvconf config is set
+  template:
+    src: etc/resolvconf.conf.j2
+    dest: /etc/resolvconf.conf
+    mode: 0644
+  ignore_errors: yes #not all distros have it
+
+- name: Ensure fallback nameservers are set
+  template:
+    src: etc/resolv.conf.j2
+    dest: /etc/resolv.conf
+    mode: 0644
