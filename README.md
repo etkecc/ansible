@@ -3,14 +3,14 @@
 It's a wrapper around awesome [spantaleev/matrix-docker-ansible-deploy](https://github.com/spantaleev/matrix-docker-ansible-deploy) playbook
 with additional roles and playbooks, like system maintenance (check the list below).
 
-**NOTE**: we have [paid service - etke.cc](https://etke.cc/#contact) - that will do all setup, configuration and maintenance for you.
-That service pretty cheap and has 2 purposes - invite new people to matrix and support project.
+**NOTE**: we have [paid service - etke.cc](https://etke.cc/#contact) - that will do all setup, configuration, and maintenance for you.
+That service is pretty cheap and has 2 purposes - invite new people to matrix and support the project.
 
 # Fork differences
 
 ## Automatic versions
 
-Used components' version automatically added to the [VERSIONS.md](./VERSIONS.md) file on each commit
+Used components' version automatically added to the [VERSIONS.md](./VERSIONS.md) file on each commit.
 
 <details>
 <summary>How?</summary>
@@ -30,10 +30,10 @@ git add $PWD/VERSIONS.md
 ### System
 
 > all system roles available in [roles/system](./roles/system).
-> Each role has a README.md file with description and basic how-to.
+> Each role has a README.md file with a description and basic how-to.
 
 * **swap** - automatically create and mount swap partition, based on host RAM
-* **security** - sshd hardening, file2ban and ufw installation, automatic integration with other services/roles.
+* **security** - sshd hardening, fail2ban and ufw installation, automatic integration with other services/roles.
 * **maintenance** - system package updates, cleanup, etc. The same for matrix components
 
 ### Matrix
@@ -43,7 +43,7 @@ git add $PWD/VERSIONS.md
 
 * **cinny** - [cinny.in](https://cinny.in) matrix web client installation
 * <s>nginx-proxy-health</s> - simple healthcheck, based on systemd units. Works pretty bad, don't use it.
-* **nginx-proxy-website** - host a static website on your base domain. Pull it from git repo, run an arbitrary command (like `hugo`) and upload the results to your server
+* **nginx-proxy-website** - host a static website on your base domain. Pull it from a git repo, run an arbitrary command (like `hugo`) and upload the results to your server
 * **restart** - one-by-one restarts (opposed to the `--tags start` that will stop all the services and start them after that)
 
 ### Non-Matrix components
@@ -51,15 +51,15 @@ git add $PWD/VERSIONS.md
 * **dnsmasq** - recursive resolver with adblocker, like pi-hole, but even better! Automatic integration with wireguard
 * **honoroit** - [a helpdesk bot](https://gitlab.com/etke.cc/honoroit) to proxy user messages in 1:1 rooms into one big room with threads (check the link, it has pretty cool screenshots).
 * **kuma** - uptime-kuma monitoring servers. Pretty simple, yet powerful.
-* **languagetool** - "open source grammarly" server
+* **languagetool** - "open-source grammarly" server
 * **miniflux** - an opinionated RSS reader
 * **miounne** - [an etke.cc back office](https://gitlab.com/etke.cc/miounne)
-* **radicale** - a CalDav/CardDav server, very small and straitforward. It must be in the suckless.org lists!
+* **radicale** - a CalDav/CardDav server, very small and straightforward. It must be in the suckless.org lists!
 * **wireguard** - simple and fast VPN, has automatic integration with dnsmasq
 
 ### Integration to 3rdParty services
 
-* **git2bunny** - like the `matrix/nginx-proxy-website`, but target is your BunnyCDN storage
+* **git2bunny** - like the `matrix/nginx-proxy-website`, but the target is your BunnyCDN storage
 * <s>uptimerobot</s> - automatically create monitors in UptimeRobot. Works pretty bad, don't use it.
 
 # Usage
@@ -67,7 +67,7 @@ git add $PWD/VERSIONS.md
 <details>
 <summary>Quick Start</summary>
 
-1. Decide what the domain name will be used for your matrix server ("pretty" domain, like: "gitlab.com" or "issuperstar.com" so your mxid will be like "@john:issuperstar.com"), replace `DOMAIN` below with that domain name
+1. Decide what the domain name will be used for your matrix server ("pretty" domain, like "gitlab.com" or "issuperstar.com" so your mxid will be like "@john:issuperstar.com"), replace `DOMAIN` below with that domain name
 2. Run the following commands and read instructions
 
 ```bash
@@ -118,15 +118,15 @@ ansible-playbook play/matrix.yml -t self-check
 <details>
 <summary>Upgrades & maintenance</summary>
 
-New versions of matrix-related software releases very often, so to stay up to date, follow these steps:
+New versions of matrix-related software are releaseed very often, so to stay up to date, follow these steps:
 
 * Check parent project's [CHANGELOG](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/CHANGELOG.md) for news
 * Upgrade playbooks and roles with `git pull`
-* **Don't forget to carefuly read changelog**, because it may contains breaking changes!
+* **Don't forget to carefully read the changelog**, because it may contain breaking changes!
 * Run the upgrade: `ansible-playbook play/all.yml -t setup-all,start`
 * Check if it works as expected: `ansible-playbook play/matrix.yml -t self-check`
 
-### Full maintenace cycle:
+### Full maintenance cycle:
 
 1. Run all playbooks (including cleanup tasks)
 2. Run rust-synapse-compress-state
@@ -141,4 +141,4 @@ ansible-playbook play/all.yml -t run-postgres-vacuum
 
 ## Supported distros
 
-[Parent project prerequisites](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/docs/prerequisites.md#prerequisites) has a list of supported distributives and versions.
+[Parent project prerequisites](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/docs/prerequisites.md#prerequisites) have a list of supported distributives and versions.
