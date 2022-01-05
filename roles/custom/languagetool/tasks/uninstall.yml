@@ -1,0 +1,43 @@
+---
+- name: Check existence of custom-languagetool.service
+  stat:
+    path: "{{ matrix_systemd_path }}/custom-languagetool.service"
+  register: custom_languagetool_service_stat
+
+- name: Ensure custom-languagetool is stopped
+  service:
+    name: custom-languagetool
+    state: stopped
+    enabled: no
+    daemon_reload: yes
+  register: stopping_result
+  when: custom_languagetool_service_stat.stat.exists|bool
+
+- name: Ensure custom-languagetool.service does not exists
+  file:
+    path: "{{ matrix_systemd_path }}/custom-languagetool.service"
+    state: absent
+  when: custom_languagetool_service_stat.stat.exists|bool
+
+- name: Ensure systemd reloaded after custom-languagetool.service removal
+  service:
+    daemon_reload: yes
+  when: custom_languagetool_service_stat.stat.exists|bool
+
+- name: Ensure custom-languagetool paths don't exist
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ custom_languagetool_base_path }}"
+    - "{{ custom_languagetool_data_path }}"
+
+- name: Ensure Matrix nginx-proxy configuration for languagetool domain does not exists
+  file:
+    path: "{{ matrix_nginx_proxy_confd_path }}/matrix-custom-languagetool.conf"
+    state: absent
+
+- name: Ensure custom-languagetool docker image doesn't exist
+  docker_image:
+    name: "{{ custom_languagetool_docker_image }}"
+    state: absent

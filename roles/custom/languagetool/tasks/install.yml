@@ -1,0 +1,78 @@
+---
+- name: Ensure languagetool paths exist
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0750
+    owner: "{{ matrix_user_username }}"
+    group: "{{ matrix_user_groupname }}"
+  with_items:
+    - "{{ custom_languagetool_base_path }}"
+    - "{{ custom_languagetool_data_path }}"
+
+- name: Ensure languagetool image is pulled
+  docker_image:
+    name: "{{ custom_languagetool_docker_image }}"
+    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+    force_source: "{{ custom_languagetool_docker_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else custom_languagetool_docker_image_force_pull }}"
+
+- name: Ensure unzip installed
+  package:
+    name: unzip
+    state: present
+  ignore_errors: yes
+  when: custom_languagetool_ngrams_enabled|bool
+
+- name: Check existence of n-grams
+  stat:
+    path: "{{ custom_languagetool_data_path }}/en"
+  register: ngrams
+  when: custom_languagetool_ngrams_enabled|bool
+
+- name: Download n-grams
+  get_url:
+    url: "{{ custom_languagetool_ngrams_url }}"
+    dest: "{{ custom_languagetool_ngrams_tmp }}"
+  when: custom_languagetool_ngrams_enabled|bool and ngrams.stat.exists|bool == false
+
+- name: Ensure custom-languagetool.service is present
+  template:
+    src: systemd/custom-languagetool.service.j2
+    dest: "{{ matrix_systemd_path }}/custom-languagetool.service"
+    mode: 0644
+  register: custom_languagetool_systemd_service_result
+
+- name: Unpack n-grams
+  unarchive:
+    src: "{{ custom_languagetool_ngrams_tmp }}"
+    keep_newer: true
+    remote_src: true
+    dest: "{{ custom_languagetool_data_path }}"
+    owner: "{{ matrix_user_username }}"
+    group: "{{ matrix_user_groupname }}"
+  when: custom_languagetool_ngrams_enabled|bool and ngrams.stat.exists|bool == false
+
+- name: Remove n-rams tmp
+  file:
+    path: "{{ custom_languagetool_ngrams_tmp }}"
+    state: absent
+  when: custom_languagetool_ngrams_enabled|bool and ngrams.stat.exists|bool == false
+
+- name: Ensure systemd reloaded after custom-languagetool.service installation
+  service:
+    daemon_reload: yes
+  when: custom_languagetool_systemd_service_result.changed|bool
+
+- name: Ensure Matrix nginx-proxy configuration for languagetool domain exists
+  template:
+    src: nginx.conf.j2
+    dest: "{{ matrix_nginx_proxy_confd_path }}/matrix-custom-languagetool.conf"
+    mode: 0644
+  when: matrix_server_fqn_languagetool is defined
+
+- name: Ensure Matrix nginx-proxy configuration for languagetool domain does not exists
+  file:
+    path: "{{ matrix_nginx_proxy_confd_path }}/matrix-custom-languagetool.conf"
+    state: absent
+  when: matrix_server_fqn_languagetool is not defined

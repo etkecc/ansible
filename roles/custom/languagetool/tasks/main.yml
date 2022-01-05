@@ -1,104 +1,16 @@
 ---
-- name: Ensure languagetool image is pulled
-  docker_image:
-    name: "{{ custom_languagetool_docker_image }}"
-    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
-    force_source: "{{ custom_languagetool_docker_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
-    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else custom_languagetool_docker_image_force_pull }}"
+- import_tasks: init.yml
+  tags:
+    - always
+
+- import_tasks: install.yml
   when: custom_languagetool_enabled|bool
   tags:
     - setup-all
     - setup-languagetool
 
-- name: Ensure languagetool directory is created
-  file:
-    state: directory
-    mode: 0750
-    owner: "{{ matrix_user_username }}"
-    group: "{{ matrix_user_groupname }}"
-    path: "{{ custom_languagetool_path }}"
-  when: custom_languagetool_enabled|bool
-  tags:
-    - setup-all
-    - setup-languagetool
-
-- name: Check if n-grams already installed
-  stat:
-    path: "{{ custom_languagetool_path }}/en"
-  register: ngrams
-  when: custom_languagetool_enabled|bool and custom_languagetool_ngrams_enabled|bool
-  tags:
-    - setup-all
-    - setup-languagetool
-
-- name: Download n-grams
-  get_url:
-    url: "{{ custom_languagetool_ngrams_url }}"
-    dest: "{{ custom_languagetool_ngrams_tmp }}"
-  when: custom_languagetool_enabled|bool and custom_languagetool_ngrams_enabled|bool and ngrams.stat.exists|bool == false
-  tags:
-    - setup-all
-    - setup-languagetool
-
-- name: Ensure unzip installed
-  package:
-    name: unzip
-    state: present
-  ignore_errors: yes
-  when: custom_languagetool_enabled|bool and custom_languagetool_ngrams_enabled|bool and ngrams.stat.exists|bool == false
-  tags:
-    - setup-all
-    - setup-languagetool
-
-- name: Unpack n-grams
-  unarchive:
-    src: "{{ custom_languagetool_ngrams_tmp }}"
-    keep_newer: true
-    remote_src: true
-    dest: "{{ custom_languagetool_path }}"
-    owner: "{{ matrix_user_username }}"
-    group: "{{ matrix_user_groupname }}"
-  when: custom_languagetool_enabled|bool and custom_languagetool_ngrams_enabled|bool and ngrams.stat.exists|bool == false
-  tags:
-    - setup-all
-    - setup-languagetool
-
-- name: Remove n-rams tmp
-  file:
-    path: "{{ custom_languagetool_ngrams_tmp }}"
-    state: absent
-  when: custom_languagetool_enabled|bool and custom_languagetool_ngrams_enabled|bool and ngrams.stat.exists|bool == false
-  tags:
-    - setup-all
-    - setup-languagetool
-
-- name: Ensure custom-languagetool.service is present
-  template:
-    src: systemd/custom-languagetool.service.j2
-    dest: /etc/systemd/system/custom-languagetool.service
-    mode: 0644
-  register: custom_languagetool_systemd_service_result
-  when: custom_languagetool_enabled|bool
-  tags:
-    - setup-all
-    - setup-languagetool
-
-- name: Run custom-languagetool.service
-  service:
-    enabled: yes
-    state: restarted
-    name: custom-languagetool
-  when: custom_languagetool_enabled|bool
-  tags:
-    - start
-    - start-languagetool
-
-- name: Ensure Matrix nginx-proxy configuration for Languagetool domain exists
-  template:
-    src: nginx.conf.j2
-    dest: "{{ matrix_nginx_proxy_confd_path }}/matrix-custom-languagetool.conf"
-    mode: 0644
-  when: custom_languagetool_enabled|bool and matrix_nginx_proxy_enabled|bool
+- import_tasks: uninstall.yml
+  when: not custom_languagetool_enabled|bool
   tags:
     - setup-all
     - setup-languagetool
