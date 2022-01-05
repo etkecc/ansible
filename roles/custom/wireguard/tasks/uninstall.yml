@@ -1,0 +1,25 @@
+---
+- name: Ensure wireguard service stopped
+  service:
+    name: "wg-quick@{{ custom_wireguard_interface }}"
+    enabled: no
+    state: stopped
+
+- name: Ensure wireguard configuration removed
+  file:
+    path: "{{ custom_wireguard_path }}"
+    state: absent
+
+- name: Ensure wireguard packages removed
+  package:
+    name:
+      - wireguard-tools
+      - wireguard-dkms
+    state: absent
+  when: ansible_kernel is version('5.6', '<')
+
+- name: Ensure wireguard packages removed
+  package:
+    name: wireguard-tools
+    state: absent
+  when: ansible_kernel is version('5.6', '>=')

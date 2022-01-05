@@ -1,47 +1,16 @@
 ---
-- name: Ensure honoroit image is pulled
-  docker_image:
-    name: "{{ custom_honoroit_docker_image }}"
-    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
-    force_source: "{{ custom_honoroit_docker_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
-    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else custom_honoroit_docker_image_force_pull }}"
+- import_tasks: init.yml
+  tags:
+    - always
+
+- import_tasks: install.yml
   when: custom_honoroit_enabled|bool
   tags:
     - setup-all
     - setup-honoroit
 
-- name: Ensure honoroit paths exist
-  file:
-    path: "{{ item }}"
-    state: directory
-    mode: 0750
-    owner: "{{ matrix_user_username }}"
-    group: "{{ matrix_user_groupname }}"
-  with_items:
-    - "{{ custom_honoroit_base_path }}"
-    - "{{ custom_honoroit_data_path }}"
-  when: custom_honoroit_enabled|bool
+- import_tasks: uninstall.yml
+  when: not custom_honoroit_enabled|bool
   tags:
     - setup-all
     - setup-honoroit
-
-- name: Ensure custom-honoroit.service is present
-  template:
-    src: systemd/custom-honoroit.service.j2
-    dest: /etc/systemd/system/custom-honoroit.service
-    mode: 0644
-  register: custom_honoroit_systemd_service_result
-  when: custom_honoroit_enabled|bool
-  tags:
-    - setup-all
-    - setup-honoroit
-
-- name: Run custom-honoroit.service
-  service:
-    enabled: yes
-    state: restarted
-    name: custom-honoroit
-  when: custom_honoroit_enabled|bool
-  tags:
-    - start
-    - start-honoroit

@@ -19,7 +19,7 @@ ExecStart=/usr/bin/env docker run --rm --name custom-languagetool \
           --cap-drop=ALL \
           --network={{ matrix_docker_network }} \
           {% if custom_languagetool_ngrams_enabled %}
-          -v {{ custom_languagetool_path }}:/data:ro \
+          -v {{ custom_languagetool_data_path }}:/data:ro \
           -e langtool_languageModel=/data \
           {% endif %}
           -e Java_Xms={{ custom_languagetool_java_heap_min }} \

@@ -1,0 +1,38 @@
+---
+- name: Check existence of custom-honoroit.service
+  stat:
+    path: "{{ matrix_systemd_path }}/custom-honoroit.service"
+  register: custom_honoroit_service_stat
+
+- name: Ensure custom-honoroit is stopped
+  service:
+    name: custom-honoroit
+    state: stopped
+    enabled: no
+    daemon_reload: yes
+  register: stopping_result
+  when: custom_honoroit_service_stat.stat.exists|bool
+
+- name: Ensure custom-honoroit.service does not exists
+  file:
+    path: "{{ matrix_systemd_path }}/custom-honoroit.service"
+    state: absent
+  when: custom_honoroit_service_stat.stat.exists|bool
+
+- name: Ensure systemd reloaded after custom-honoroit.service removal
+  service:
+    daemon_reload: yes
+  when: custom_honoroit_service_stat.stat.exists|bool
+
+- name: Ensure custom-honoroit paths don't exist
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ custom_honoroit_base_path }}"
+    - "{{ custom_honoroit_data_path }}"
+
+- name: Ensure custom-honoroit docker image doesn't exist
+  docker_image:
+    name: "{{ custom_honoroit_docker_image }}"
+    state: absent

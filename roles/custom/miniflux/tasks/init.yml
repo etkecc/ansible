@@ -1,0 +1,4 @@
+---
+- set_fact:
+    matrix_systemd_services_list: "{{ matrix_systemd_services_list + ['custom-miniflux.service'] }}"
+  when: custom_miniflux_enabled|bool

@@ -54,8 +54,6 @@
     - matrix-etherpad
     - matrix-email2matrix
     - matrix-sygnal
-    - matrix-nginx-proxy
-    - matrix-coturn
     # CUSTOM
     - system/swap
     - system/security
@@ -73,6 +71,8 @@
     - matrix/nginx-proxy-website
     - matrix/nginx-proxy-health
     # END CUSTOM
+    - matrix-nginx-proxy
+    - matrix-coturn
     - matrix-aux
     - matrix-postgres-backup
     - matrix-prometheus-postgres-exporter
