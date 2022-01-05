@@ -1,0 +1,30 @@
+---
+- name: Check existence of custom-radicale.service
+  stat:
+    path: "{{ matrix_systemd_path }}/custom-radicale.service"
+  register: custom_radicale_service_stat
+
+- name: Ensure custom-radicale is stopped
+  service:
+    name: custom-radicale
+    state: stopped
+    enabled: no
+    daemon_reload: yes
+  register: stopping_result
+  when: custom_radicale_service_stat.stat.exists|bool
+
+- name: Ensure custom-radicale.service does not exist
+  file:
+    path: "{{ matrix_systemd_path }}/custom-radicale.service"
+    state: absent
+  when: custom_radicale_service_stat.stat.exists|bool
+
+- name: Ensure systemd reloaded after custom-radicale.service removal
+  service:
+    daemon_reload: yes
+  when: custom_radicale_service_stat.stat.exists|bool
+
+- name: Ensure custom-radicale docker image doesn't exist
+  docker_image:
+    name: "{{ custom_radicale_docker_image }}"
+    state: absent

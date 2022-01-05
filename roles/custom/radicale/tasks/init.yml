@@ -1,0 +1,4 @@
+---
+- set_fact:
+    matrix_systemd_services_list: "{{ matrix_systemd_services_list + ['custom-radicale.service'] }}"
+  when: custom_radicale_enabled|bool
