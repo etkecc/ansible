@@ -1,15 +1,4 @@
 ---
-- name: Ensure miniflux paths exist
-  file:
-    path: "{{ item }}"
-    state: directory
-    mode: 0750
-    owner: "{{ matrix_user_username }}"
-    group: "{{ matrix_user_groupname }}"
-  with_items:
-    - "{{ custom_miniflux_base_path }}"
-    - "{{ custom_miniflux_data_path }}"
-
 - name: Ensure miniflux image is pulled
   docker_image:
     name: "{{ custom_miniflux_docker_image }}"

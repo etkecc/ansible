@@ -4,13 +4,13 @@
     - always
 
 - import_tasks: install.yml
-  when: custom_miounne_enabled|bool
+  when: custom_miniflux_enabled|bool
   tags:
     - setup-all
-    - setup-miounne
+    - setup-miniflux
 
 - import_tasks: uninstall.yml
-  when: not custom_miounne_enabled|bool
+  when: not custom_miniflux_enabled|bool
   tags:
     - setup-all
-    - setup-miounne
+    - setup-miniflux
