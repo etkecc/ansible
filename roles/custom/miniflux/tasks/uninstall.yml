@@ -1,0 +1,43 @@
+---
+- name: Check existence of custom-miniflux.service
+  stat:
+    path: "{{ matrix_systemd_path }}/custom-miniflux.service"
+  register: custom_miniflux_service_stat
+
+- name: Ensure custom-miniflux is stopped
+  service:
+    name: custom-miniflux
+    state: stopped
+    enabled: no
+    daemon_reload: yes
+  register: stopping_result
+  when: custom_miniflux_service_stat.stat.exists|bool
+
+- name: Ensure custom-miniflux.service does not exists
+  file:
+    path: "{{ matrix_systemd_path }}/custom-miniflux.service"
+    state: absent
+  when: custom_miniflux_service_stat.stat.exists|bool
+
+- name: Ensure systemd reloaded after custom-miniflux.service removal
+  service:
+    daemon_reload: yes
+  when: custom_miniflux_service_stat.stat.exists|bool
+
+- name: Ensure custom-miniflux paths don't exist
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ custom_miniflux_base_path }}"
+    - "{{ custom_miniflux_data_path }}"
+
+- name: Ensure Matrix nginx-proxy configuration for miniflux domain does not exists
+  file:
+    path: "{{ matrix_nginx_proxy_confd_path }}/matrix-custom-miniflux.conf"
+    state: absent
+
+- name: Ensure custom-miniflux docker image doesn't exist
+  docker_image:
+    name: "{{ custom_miniflux_docker_image }}"
+    state: absent
