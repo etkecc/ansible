@@ -4,6 +4,7 @@
     name: "wg-quick@{{ custom_wireguard_interface }}"
     enabled: no
     state: stopped
+  ignore_errors: yes # it fails if not installed because of @interface part, seems like different approach to such services on ansible side
 
 - name: Ensure wireguard configuration removed
   file:

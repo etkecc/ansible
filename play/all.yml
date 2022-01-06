@@ -48,6 +48,7 @@
     - matrix-registration
     - matrix-client-element
     - matrix-client-hydrogen
+    - matrix-client-cinny
     - matrix-jitsi
     - matrix-ma1sd
     - matrix-dimension
@@ -67,7 +68,6 @@
     - custom/wireguard
     - integration/uptimerobot
     - integration/git2bunny
-    - matrix/client-cinny
     - matrix/nginx-proxy-website
     - matrix/nginx-proxy-health
     # END CUSTOM
