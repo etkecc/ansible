@@ -21,6 +21,7 @@
     - setup-client-hydrogen
     - setup-corporal
     - setup-coturn
+    - setup-dendrite
     - setup-dimension
     - setup-dnsmasq
     - setup-dynamic-dns
@@ -76,6 +77,18 @@
     - setup-all
     - restart-all
     - setup-synapse
+
+- name: Restart Dendrite
+  service:
+    enabled: yes
+    state: restarted
+    name: matrix-dendrite
+  when: matrix_dendrite_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-dendrite
 
 - name: Restart Database (postgres)
   service:
