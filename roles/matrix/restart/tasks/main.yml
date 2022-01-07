@@ -13,6 +13,7 @@
     - setup-appservice-webhooks
     - setup-beeper-linkedin
     - setup-bot-go-neb
+    - setup-bot-honoroit
     - setup-bot-matrix-reminder-bot
     - setup-bot-mjolnir
     - setup-client-cinny
@@ -27,7 +28,6 @@
     - setup-etherpad
     - setup-grafana
     - setup-heisenbridge
-    - setup-honoroit
     - setup-jitsi
     - setup-kuma
     - setup-languagetool
@@ -172,6 +172,18 @@
     - setup-all
     - restart-all
     - setup-bot-go-neb
+
+- name: Restart Honoroit
+  service:
+    enabled: yes
+    state: restarted
+    name: matrix-bot-honoroit
+  when: matrix_bot_honoroit_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-bot-honoroit
 
 - name: Restart reminder bot
   service:
@@ -352,18 +364,6 @@
     - setup-all
     - restart-all
     - setup-heisenbridge
-
-- name: Restart Honoroit
-  service:
-    enabled: yes
-    state: restarted
-    name: custom-honoroit
-  when: custom_honoroit_enabled|bool
-  ignore_errors: yes
-  tags:
-    - setup-all
-    - restart-all
-    - setup-honoroit
 
 - name: Restart Jitsi Conference Focus
   service:

@@ -38,6 +38,7 @@
     - matrix-bridge-sms
     - matrix-bridge-heisenbridge
     - matrix-bot-matrix-reminder-bot
+    - matrix-bot-honoroit
     - matrix-bot-go-neb
     - matrix-bot-mjolnir
     - matrix-synapse
@@ -59,7 +60,6 @@
     - system/swap
     - system/security
     - custom/dnsmasq
-    - custom/honoroit
     - custom/kuma
     - custom/languagetool
     - custom/miniflux

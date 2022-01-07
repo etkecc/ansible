@@ -5,6 +5,7 @@
 * appservice_webhooks: latest
 * beeper_linkedin: v0.5.1
 * bot_go_neb: latest
+* bot_honoroit: v0.9.0
 * bot_matrix_reminder_bot: release-v0.2.1
 * bot_mjolnir: v1.2.1
 * client_cinny: v1.6.1
@@ -20,7 +21,6 @@
 * etherpad: 1.8.16
 * grafana: 8.3.3
 * heisenbridge: 1.9.0
-* honoroit: latest
 * jitsi_ldap: "3"
 * jitsi: stable-6726-1
 * kuma: 1.11.3

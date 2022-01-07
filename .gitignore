@@ -4,7 +4,6 @@
 
 # do not ignore following custom roles
 !/roles/custom/dnsmasq
-!/roles/custom/honoroit
 !/roles/custom/kuma
 !/roles/custom/languagetool
 !/roles/custom/miniflux

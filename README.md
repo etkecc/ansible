@@ -49,7 +49,7 @@ git add $PWD/VERSIONS.md
 ### Non-Matrix components
 
 * **dnsmasq** - recursive resolver with adblocker, like pi-hole, but even better! Automatic integration with wireguard
-* **honoroit** - [a helpdesk bot](https://gitlab.com/etke.cc/honoroit) to proxy user messages in 1:1 rooms into one big room with threads (check the link, it has pretty cool screenshots).
+* <s>**honoroit** - [a helpdesk bot](https://gitlab.com/etke.cc/honoroit) to proxy user messages in 1:1 rooms into one big room with threads (check the link, it has pretty cool screenshots).</s> uploaded to upstream
 * **kuma** - uptime-kuma monitoring servers. Pretty simple, yet powerful.
 * **languagetool** - "open-source grammarly" server
 * **miniflux** - an opinionated RSS reader
