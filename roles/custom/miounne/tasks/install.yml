@@ -34,10 +34,10 @@
     src: nginx.conf.j2
     dest: "{{ matrix_nginx_proxy_confd_path }}/matrix-custom-miounne.conf"
     mode: 0644
-  when: matrix_server_fqn_miounne is defined
+  when: (custom_miounne_forms | default([])) | length > 0
 
 - name: Ensure Matrix nginx-proxy configuration for miounne domain does not exists
   file:
     path: "{{ matrix_nginx_proxy_confd_path }}/matrix-custom-miounne.conf"
     state: absent
-  when: matrix_server_fqn_miounne is not defined
+  when: (custom_miounne_forms | default([])) | length == 0
