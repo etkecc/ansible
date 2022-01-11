@@ -2,10 +2,10 @@
 * appservice_irc: release-0.32.1
 * appservice_slack: release-1.8.0
 * appservice_webhooks_container_image_self_build_repo: '{{ ''master'' if matrix_appservice_webhooks_version == ''latest'' else matrix_appservice_webhooks_version }}'
-* appservice_webhooks: latest
+* appservice_webhooks: v1.0.2-01
 * beeper_linkedin: v0.5.1
 * bot_go_neb: latest
-* bot_honoroit: v0.9.0
+* bot_honoroit: v0.9.1
 * bot_matrix_reminder_bot: release-v0.2.1
 * bot_mjolnir: v1.2.1
 * client_cinny: v1.6.1
