@@ -10,6 +10,8 @@ matrix_nginx_proxy_website_repo_ref: "HEAD"
 
 # website build command
 matrix_nginx_proxy_website_command: "hugo --i18n-warnings --ignoreCache --path-warnings --minify"
+matrix_nginx_proxy_website_commands:
+  - "{{ matrix_nginx_proxy_website_command }}"
 
 # website build artifact folder, it may be empty if you need to copy the content of git dir
 matrix_nginx_proxy_website_dist: "public"

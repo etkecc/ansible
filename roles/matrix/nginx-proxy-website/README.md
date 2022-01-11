@@ -24,11 +24,11 @@ and allow you to put any content you want to website folder
 
 Your website git url, eg: `https://gitlab.com/etke.cc/website.git`
 
-### matrix_nginx_proxy_website_command
+### matrix_nginx_proxy_website_commands
 
-The command to build website, default value (usable only for hugo sites): `hugo --i18n-warnings --ignoreCache --path-warnings --minify`
+The commands to build website, default value (usable only for hugo sites): `hugo --i18n-warnings --ignoreCache --path-warnings --minify`
 
-NOTE: you can set empty `""` command if you don't need to run anything
+NOTE: you can set empty `[]` commands if you don't need to run anything
 
 ### matrix_nginx_proxy_website_dist
 

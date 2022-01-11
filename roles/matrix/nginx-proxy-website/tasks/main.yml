@@ -19,12 +19,13 @@
     - setup-website
 
 - name: Build website
-  command: "{{ matrix_nginx_proxy_website_command }}"
+  command: "{{ item }}"
   args:
     chdir: "{{ matrix_nginx_proxy_website_tmp_path }}/nginx-proxy-website_{{ inventory_hostname }}"
   delegate_to: 127.0.0.1
   become: no
-  when: matrix_nginx_proxy_website_enabled|bool and matrix_nginx_proxy_website_command != ""
+  when: matrix_nginx_proxy_website_enabled|bool
+  with_items: "{{ matrix_nginx_proxy_website_commands }}"
   tags:
     - setup-all
     - setup-website
