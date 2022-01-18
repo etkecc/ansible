@@ -12,9 +12,9 @@
 ## After setup
 
 * Invite fresh admin user into the `etke.cc` space and `etke.cc | announcements` room
-* Add `DOMAIN | delegation` / `https://DOMAIN/.well-known/matrix/server` into monitoring (retries: 1, redirects: 1)
-* Add `DOMAIN | federation` / `https://matrix.DOMAIN:8448/_matrix/federation/v1/version` into monitoring (retries: 1, redirects: 0)
-* Add `DOMAIN | homeserver` / `https://matrix.DOMAIN/_matrix/client/versions` into monitoring (retries: 1, redirects: 0)
+* Add `DOMAIN | delegation` / `https://DOMAIN/.well-known/matrix/server` into monitoring (retries: 10, redirects: 1)
+* Add `DOMAIN | federation` / `https://matrix.DOMAIN:8448/_matrix/federation/v1/version` into monitoring (retries: 10, redirects: 0)
+* Add `DOMAIN | homeserver` / `https://matrix.DOMAIN/_matrix/client/versions` into monitoring (retries: 10, redirects: 0)
 * Add new status page group `DOMAIN` and include all related monitors in it
 * Send the onboarding list to the customer
 * Increment client counter on website
@@ -29,7 +29,8 @@
 * Remove base domain dir and all files inside it from `inventory/host_vars`
 * Remove `DOMAIN | delegation`, `DOMAIN | federation`, `DOMAIN | homeserver` from monitoring
 * Remove `DOMAIN` group from status page
-* Move base domain and contact details to `Done` section of `inventory/data.md`
+* Remove contact details from the `inventory/data.md`
+* Move base domain to `Done` section of `inventory/data.md`
 
 ### If customer subscribed to the maintenance service
 
