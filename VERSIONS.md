@@ -5,7 +5,7 @@
 * appservice_webhooks: v1.0.3-01
 * beeper_linkedin: v0.5.2
 * bot_go_neb: latest
-* bot_honoroit: v0.9.2
+* bot_honoroit: v0.9.3
 * bot_matrix_reminder_bot: release-v0.2.1
 * bot_mjolnir: v1.2.1
 * client_cinny: v1.6.1
@@ -36,7 +36,7 @@
 * mautrix_telegram: v0.11.1
 * mautrix_twitter: v0.1.3
 * mautrix_whatsapp: v0.2.3
-* miniflux: 2.0.34
+* miniflux: 2.0.35
 * miounne: v2.2.1
 * mx_puppet_discord: latest
 * mx_puppet_groupme: latest
@@ -47,12 +47,12 @@
 * mx_puppet_twitter: latest
 * nginx_proxy: 1.21.5-alpine
 * prometheus_node_exporter: v1.3.1
-* prometheus_postgres_exporter: v0.10.0
+* prometheus_postgres_exporter: v0.10.1
 * prometheus: v2.31.1
-* radicale: 3.1.0.0
+* radicale: 3.1.2.0
 * redis: 6.2.6-alpine
 * registration: v0.7.2
 * sms_bridge: 0.5.7
 * sygnal: v0.11.0
 * synapse_admin: 0.8.4
-* synapse: v1.50.0
+* synapse: v1.51.0
