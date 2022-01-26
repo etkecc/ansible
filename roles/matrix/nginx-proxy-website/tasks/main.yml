@@ -7,7 +7,9 @@
 
 - name: Clone website repo
   git:
+    depth: 1
     force: yes
+    accept_newhostkey: yes
     repo: "{{ matrix_nginx_proxy_website_repo }}"
     dest: "{{ matrix_nginx_proxy_website_tmp_path }}/nginx-proxy-website_{{ inventory_hostname }}"
     version: "{{ matrix_nginx_proxy_website_repo_ref }}"
@@ -42,16 +44,25 @@
     - setup-all
     - setup-website
 
+- name: Create website artifact
+  archive:
+    format: tar
+    force_archive: yes
+    path: "{{ matrix_nginx_proxy_website_tmp_path }}/nginx-proxy-website_{{ inventory_hostname }}/{{ matrix_nginx_proxy_website_dist }}/"
+    dest: "{{ matrix_nginx_proxy_website_tmp_path }}/nginx-proxy-website_{{ inventory_hostname }}/artifact.tar"
+  delegate_to: 127.0.0.1
+  become: no
+  when: matrix_nginx_proxy_website_enabled|bool
+  tags:
+    - setup-all
+    - setup-website
+
 - name: Deploy website
-  copy:
-    src: "{{ matrix_nginx_proxy_website_tmp_path }}/nginx-proxy-website_{{ inventory_hostname }}/{{ matrix_nginx_proxy_website_dist }}/"
+  unarchive:
+    src: "{{ matrix_nginx_proxy_website_tmp_path }}/nginx-proxy-website_{{ inventory_hostname }}/artifact.tar"
     dest: "{{ matrix_nginx_proxy_website_path }}"
-    directory_mode: 0750
-    mode: 0644
     owner: "{{ matrix_user_username }}"
     group: "{{ matrix_user_groupname }}"
-    follow: yes
-    force: yes
   when: matrix_nginx_proxy_website_enabled|bool
   tags:
     - setup-all
