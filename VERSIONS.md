@@ -50,7 +50,7 @@
 * prometheus_node_exporter: v1.3.1
 * prometheus_postgres_exporter: v0.10.1
 * prometheus: v2.31.1
-* radicale: 3.1.2.0
+* radicale: 3.1.3.0
 * redis: 6.2.6-alpine
 * registration: v0.7.2
 * sms_bridge: 0.5.7
