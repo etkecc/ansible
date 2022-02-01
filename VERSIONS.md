@@ -5,13 +5,13 @@
 * appservice_webhooks: v1.0.3-01
 * beeper_linkedin: v0.5.2
 * bot_go_neb: latest
-* bot_honoroit: v0.9.3
+* bot_honoroit: v0.9.4
 * bot_matrix_reminder_bot: release-v0.2.1
-* bot_mjolnir: v1.2.1
-* client_cinny: v1.6.1
-* client_element: v1.9.9
-* client_hydrogen: v0.2.23
-* corporal: 2.2.2
+* bot_mjolnir: v1.3.1
+* client_cinny: v1.7.0
+* client_element: v1.10.1
+* client_hydrogen: v0.2.25
+* corporal: 2.2.3
 * coturn: 4.5.2-r8
 * coturn_container_image_self_build_repo: docker/{{ matrix_coturn_version }}
 * dimension: latest
@@ -21,13 +21,14 @@
 * etherpad: 1.8.16
 * grafana: 8.3.3
 * heisenbridge: 1.10.0
+* hookshot: 1.1.0
 * jitsi_ldap: "3"
 * jitsi: stable-6726-2
 * kuma: 1.11.3
 * languagetool: 5.6
 * ma1sd: 2.5.0
-* mailer: 4.95-r0
-* mautrix_facebook: v0.3.2
+* mailer: 4.95-r0-2
+* mautrix_facebook: v0.3.3
 * mautrix_googlechat: latest
 * mautrix_hangouts: latest
 * mautrix_instagram: v0.1.2
