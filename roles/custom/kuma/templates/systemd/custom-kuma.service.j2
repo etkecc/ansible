@@ -26,8 +26,8 @@ ExecStart=/usr/bin/env docker run --rm --name custom-kuma \
           {{ custom_kuma_docker_image }} \
 					node server/server.js
 
-ExecStopPost=-/usr/bin/env sh -c '/usr/bin/env docker kill custom-kuma 2>/dev/null'
-ExecStopPost=-/usr/bin/env sh -c '/usr/bin/env docker rm custom-kuma 2>/dev/null'
+ExecStop=-/usr/bin/env sh -c '/usr/bin/env docker kill custom-kuma 2>/dev/null'
+ExecStop=-/usr/bin/env sh -c '/usr/bin/env docker rm custom-kuma 2>/dev/null'
 Restart=always
 RestartSec=30
 SyslogIdentifier=custom-kuma

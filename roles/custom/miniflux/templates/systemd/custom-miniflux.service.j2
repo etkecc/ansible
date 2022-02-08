@@ -30,8 +30,8 @@ ExecStart=/usr/bin/env docker run --rm --name custom-miniflux \
           {% endfor %}
           {{ custom_miniflux_docker_image }}
 
-ExecStopPost=-/usr/bin/env sh -c '/usr/bin/env docker kill custom-miniflux 2>/dev/null'
-ExecStopPost=-/usr/bin/env sh -c '/usr/bin/env docker rm custom-miniflux 2>/dev/null'
+ExecStop=-/usr/bin/env sh -c '/usr/bin/env docker kill custom-miniflux 2>/dev/null'
+ExecStop=-/usr/bin/env sh -c '/usr/bin/env docker rm custom-miniflux 2>/dev/null'
 Restart=always
 RestartSec=30
 SyslogIdentifier=custom-miniflux
