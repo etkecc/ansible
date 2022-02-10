@@ -17,6 +17,13 @@ system_security_ssh_passwordauth: no
 # ssh root login: yes - allow, no - block
 system_security_ssh_rootlogin: yes
 
+# Additional configuration variables to pass to the sshd config
+#
+# Example:
+# system_security_ssh_extension: |
+#   Key value
+system_security_ssh_extension: ''
+
 # list of public ssh keys, allowed to connect to the server
 system_security_autorizedkeys: []
 
