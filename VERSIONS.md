@@ -9,8 +9,8 @@
 * bot_matrix_reminder_bot: release-v0.2.1
 * bot_mjolnir: v1.3.1
 * client_cinny: v1.7.0
-* client_element: v1.10.1
-* client_hydrogen: v0.2.25
+* client_element: v1.10.3
+* client_hydrogen: v0.2.26
 * corporal: 2.2.3
 * coturn: 4.5.2-r8
 * coturn_container_image_self_build_repo: docker/{{ matrix_coturn_version }}
@@ -24,7 +24,7 @@
 * hookshot: 1.1.0
 * jitsi_ldap: "3"
 * jitsi: stable-6726-2
-* kuma: 1.11.3
+* kuma: 1.11.4
 * languagetool: 5.6
 * ma1sd: 2.5.0
 * mailer: 4.95-r0-2
@@ -50,7 +50,7 @@
 * prometheus_node_exporter: v1.3.1
 * prometheus_postgres_exporter: v0.10.1
 * prometheus: v2.33.1
-* radicale: 3.1.4.0
+* radicale: 3.1.5.0
 * redis: 6.2.6-alpine
 * registration: v0.7.2
 * sms_bridge: 0.5.7
