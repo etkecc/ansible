@@ -36,7 +36,7 @@
 * mautrix_signal: v0.2.2
 * mautrix_telegram: v0.11.1
 * mautrix_twitter: v0.1.3
-* mautrix_whatsapp: v0.2.3
+* mautrix_whatsapp: v0.2.4
 * miniflux: 2.0.35
 * miounne: v2.2.1
 * mx_puppet_discord: latest
