@@ -30,22 +30,12 @@
     - setup-all
     - system-cleanup
 
-- name: Find old ssl logs
-  find:
-    paths: "{{ matrix_ssl_base_path }}/log"
-    patterns: "*.log.*"
-  register: ssl_logs
-  when: system_maintenance_ssl_prune|bool
-  tags:
-    - setup-all
-    - system-cleanup
-
 - name: Clean up ssl logs
   file:
-    path: "{{ item.path }}"
+    path: "{{ matrix_ssl_base_path }}/log/"
     state: absent
-  with_items: "{{ ssl_logs.files }}"
   when: system_maintenance_ssl_prune|bool
+  ignore_errors: yes
   tags:
     - setup-all
     - system-cleanup
