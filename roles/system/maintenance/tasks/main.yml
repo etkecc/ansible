@@ -53,3 +53,12 @@
   tags:
     - setup-all
     - system-cleanup
+
+- name: Clean up postgres backups
+  file:
+    path: "{{ matrix_postgres_backup_path }}/daily/"
+    state: absent
+  ignore_errors: yes
+  tags:
+    - never
+    - backups-cleanup

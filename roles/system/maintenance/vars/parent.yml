@@ -4,5 +4,6 @@
 matrix_systemd_path: /etc/systemd/system
 matrix_synapse_media_store_path: /matrix/synapse/storage/media-store
 matrix_ssl_base_path: /matrix/ssl
+matrix_postgres_backup_path: "/matrix/postgres-backup"
 matrix_user_username: "matrix"
 matrix_user_groupname: "matrix"
