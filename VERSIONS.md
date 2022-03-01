@@ -5,11 +5,11 @@
 * appservice_webhooks: v1.0.3-01
 * beeper_linkedin: v0.5.2
 * bot_go_neb: latest
-* bot_honoroit: v0.9.4
+* bot_honoroit: v0.9.5
 * bot_matrix_reminder_bot: release-v0.2.1
 * bot_mjolnir: v1.3.1
 * client_cinny: v1.7.0
-* client_element: v1.10.4
+* client_element: v1.10.5
 * client_hydrogen: v0.2.26
 * corporal: 2.2.3
 * coturn: 4.5.2-r8
@@ -23,8 +23,8 @@
 * heisenbridge: 1.10.1
 * hookshot: 1.1.0
 * jitsi_ldap: "3"
-* jitsi: stable-6726-2
-* kuma: 1.11.4
+* jitsi: stable-6865
+* kuma: 1.12.1
 * languagetool: 5.6
 * ma1sd: 2.5.0
 * mailer: 4.95-r0-2
