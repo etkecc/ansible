@@ -7,9 +7,9 @@
 * bot_go_neb: latest
 * bot_honoroit: v0.9.5
 * bot_matrix_reminder_bot: release-v0.2.1
-* bot_mjolnir: v1.3.1
-* client_cinny: v1.7.0
-* client_element: v1.10.5
+* bot_mjolnir: v1.3.2
+* client_cinny: v1.8.0
+* client_element: v1.10.6
 * client_hydrogen: v0.2.26
 * corporal: 2.2.3
 * coturn: 4.5.2-r8
@@ -21,7 +21,7 @@
 * etherpad: 1.8.16
 * grafana: 8.4.1
 * heisenbridge: 1.10.1
-* hookshot: 1.1.0
+* hookshot: 1.2.0
 * jitsi_ldap: "3"
 * jitsi: stable-6865
 * kuma: 1.12.1
@@ -50,10 +50,10 @@
 * prometheus_node_exporter: v1.3.1
 * prometheus_postgres_exporter: v0.10.1
 * prometheus: v2.33.3
-* radicale: 3.1.5.0
+* radicale: 3.1.5.1
 * redis: 6.2.6-alpine
 * registration: v0.7.2
 * sms_bridge: 0.5.7
 * sygnal: v0.11.0
 * synapse_admin: 0.8.5
-* synapse: v1.53.0
+* synapse: v1.54.0
