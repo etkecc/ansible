@@ -8,8 +8,8 @@
 * bot_honoroit: v0.9.5
 * bot_matrix_reminder_bot: release-v0.2.1
 * bot_mjolnir: v1.3.2
-* client_cinny: v1.8.0
-* client_element: v1.10.6
+* client_cinny: v1.8.1
+* client_element: v1.10.7
 * client_hydrogen: v0.2.26
 * corporal: 2.2.3
 * coturn: 4.5.2-r8
