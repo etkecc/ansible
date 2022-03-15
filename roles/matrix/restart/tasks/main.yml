@@ -29,6 +29,7 @@
     - setup-etherpad
     - setup-grafana
     - setup-heisenbridge
+    - setup-hookshot
     - setup-jitsi
     - setup-kuma
     - setup-languagetool
@@ -377,6 +378,18 @@
     - setup-all
     - restart-all
     - setup-heisenbridge
+
+- name: Restart Hookshot bridge
+  service:
+    enabled: yes
+    state: restarted
+    name: matrix-hookshot
+  when: matrix_hookshot_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-hookshot
 
 - name: Restart Jitsi Conference Focus
   service:

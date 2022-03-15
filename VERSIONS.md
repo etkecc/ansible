@@ -37,8 +37,9 @@
 * mautrix_telegram: v0.11.2
 * mautrix_twitter: v0.1.3
 * mautrix_whatsapp: v0.2.4
-* miniflux: 2.0.35
+* miniflux: 2.0.36
 * miounne: v2.2.1
+* mx_puppet_discord_container_image_self_build: '{{ ''main'' if matrix_mx_puppet_discord_version == ''latest'' else matrix_mx_puppet_discord_version }}'
 * mx_puppet_discord: latest
 * mx_puppet_groupme: latest
 * mx_puppet_instagram: latest
