@@ -1,5 +1,5 @@
 * appservice_discord: v1.0.0
-* appservice_irc: release-0.32.1
+* appservice_irc: release-0.33.0
 * appservice_slack: release-1.10.0
 * appservice_webhooks_container_image_self_build_repo: '{{ ''master'' if matrix_appservice_webhooks_version == ''latest'' else matrix_appservice_webhooks_version }}'
 * appservice_webhooks: v1.0.3-01
@@ -8,7 +8,7 @@
 * bot_honoroit: v0.9.5
 * bot_matrix_reminder_bot: release-v0.2.1
 * bot_mjolnir: v1.3.2
-* client_cinny: v1.8.1
+* client_cinny: v1.8.2
 * client_element: v1.10.7
 * client_hydrogen: v0.2.26
 * corporal: 2.2.3
@@ -36,7 +36,7 @@
 * mautrix_signal: v0.2.3
 * mautrix_telegram: v0.11.2
 * mautrix_twitter: v0.1.3
-* mautrix_whatsapp: v0.2.4
+* mautrix_whatsapp: v0.3.0
 * miniflux: 2.0.36
 * miounne: v2.2.1
 * mx_puppet_discord_container_image_self_build: '{{ ''main'' if matrix_mx_puppet_discord_version == ''latest'' else matrix_mx_puppet_discord_version }}'
@@ -44,6 +44,7 @@
 * mx_puppet_groupme: latest
 * mx_puppet_instagram: latest
 * mx_puppet_skype: latest
+* mx_puppet_slack_container_image_self_build: '{{ ''main'' if matrix_mx_puppet_slack_version == ''latest'' else matrix_mx_puppet_slack_version }}'
 * mx_puppet_slack: latest
 * mx_puppet_steam: latest
 * mx_puppet_twitter: latest
@@ -57,4 +58,4 @@
 * sms_bridge: 0.5.7
 * sygnal: v0.11.0
 * synapse_admin: 0.8.5
-* synapse: v1.54.0
+* synapse: v1.55.0
