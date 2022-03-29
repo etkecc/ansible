@@ -19,6 +19,12 @@ ExecStart=/usr/bin/env docker run --rm --name custom-kuma \
 					--entrypoint="/usr/bin/dumb-init" \
           --cap-drop=ALL \
           --network={{ matrix_docker_network }} \
+					--dns=1.1.1.1 \
+					--dns=1.0.0.1 \
+					--dns=8.8.8.8 \
+					--dns=8.8.4.4 \
+					--dns=9.9.9.9 \
+					--dns=149.112.112.112 \
           -v {{ custom_kuma_data_path }}:/app/data \
           {% for arg in custom_kuma_container_extra_arguments %}
           {{ arg }} \
