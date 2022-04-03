@@ -3,6 +3,7 @@
 * appservice_slack: release-1.10.0
 * appservice_webhooks_container_image_self_build_repo: '{{ ''master'' if matrix_appservice_webhooks_version == ''latest'' else matrix_appservice_webhooks_version }}'
 * appservice_webhooks: v1.0.3-01
+* backup_borg: latest
 * beeper_linkedin: v0.5.2
 * cinny: v1.8.2
 * corporal: 2.2.3

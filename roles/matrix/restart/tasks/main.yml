@@ -11,6 +11,7 @@
     - setup-appservice-irc
     - setup-appservice-slack
     - setup-appservice-webhooks
+    - setup-backup-borg
     - setup-beeper-linkedin
     - setup-bot-go-neb
     - setup-bot-honoroit
@@ -162,6 +163,18 @@
     - setup-all
     - restart-all
     - setup-appservice-webhooks
+
+- name: Restart borg backup timer
+  service:
+    enabled: yes
+    state: restarted
+    name: matrix-backup-borg.timer
+  when: matrix_backup_borg_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-backup-borg
 
 - name: Restart linkedin bridge (beeper)
   service:

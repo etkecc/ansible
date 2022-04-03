@@ -73,6 +73,7 @@
     - integration/git2bunny
     - matrix/nginx-proxy-website
     - matrix/nginx-proxy-health
+    - matrix/backup-borg
     # END CUSTOM
     - matrix-coturn
     - matrix-aux
