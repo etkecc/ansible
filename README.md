@@ -44,6 +44,7 @@ git add $PWD/VERSIONS.md
 * <s>**cinny** - [cinny.in](https://cinny.in) matrix web client installation</s> uploaded to upstream
 * <s>nginx-proxy-health</s> - simple healthcheck, based on systemd units. Works pretty bad, don't use it.
 * **nginx-proxy-website** - host a static website on your base domain. Pull it from a git repo, run an arbitrary command (like `hugo`) and upload the results to your server
+* **backup-borg** - automatic borg backups of the matrix server
 * **restart** - one-by-one restarts (opposed to the `--tags start` that will stop all the services and start them after that)
 
 ### Non-Matrix components
@@ -133,9 +134,10 @@ New versions of matrix-related software are releaseed very often, so to stay up 
 3. Run postgres full vacuum.
 
 ```bash
-ansible-playbook play/all.yml -t setup-all
-ansible-playbook play/all.yml -t rust-synapse-compress-state
-ansible-playbook play/all.yml -t run-postgres-vacuum
+ansible-playbook play/all.yml -l DOMAIN -t setup-all
+ansible-playbook play/all.yml -l DOMAIN -t rust-synapse-compress-state -e matrix_synapse_rust_synapse_compress_state_find_rooms_command_wait_time=86400 -e matrix_synapse_rust_synapse_compress_state_compress_room_time=86400 -e matrix_synapse_rust_synapse_compress_state_psql_import_time=86400
+ansible-playbook play/all.yml -l DOMAIN -t run-postgres-vacuum
+ansible-playbook play/all.yml -l DOMAIN -t restart-all
 ```
 </details>
 
