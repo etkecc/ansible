@@ -44,7 +44,7 @@ git add $PWD/VERSIONS.md
 * <s>**cinny** - [cinny.in](https://cinny.in) matrix web client installation</s> uploaded to upstream
 * <s>nginx-proxy-health</s> - simple healthcheck, based on systemd units. Works pretty bad, don't use it.
 * **nginx-proxy-website** - host a static website on your base domain. Pull it from a git repo, run an arbitrary command (like `hugo`) and upload the results to your server
-* **backup-borg** - automatic borg backups of the matrix server
+* <s>**backup-borg** - automatic borg backups of the matrix server</s> uploaded to upstream
 * **restart** - one-by-one restarts (opposed to the `--tags start` that will stop all the services and start them after that)
 
 ### Non-Matrix components

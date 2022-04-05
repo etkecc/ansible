@@ -22,13 +22,13 @@
 * hangouts: latest
 * heisenbridge: 1.10.1
 * honoroit: v0.9.5
-* hookshot: 1.2.0
+* hookshot: 1.3.0
 * hydrogen: v0.2.26
 * instagram: v0.1.2
 * jitsi_ldap: "3"
 * jitsi: stable-6865
 * kuma: 1.13.1
-* languagetool: 5.6
+* languagetool: 5.7
 * ma1sd: 2.5.0
 * mailer: 4.95-r0-2
 * matrix_reminder_bot: release-v0.2.1
@@ -56,7 +56,7 @@
 * sms_bridge: 0.5.7
 * sygnal: v0.11.0
 * synapse_admin: 0.8.5
-* synapse: v1.55.2
+* synapse: v1.56.0
 * telegram: v0.11.2
 * twitter: v0.1.3
 * whatsapp: v0.3.0

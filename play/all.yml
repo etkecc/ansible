@@ -15,6 +15,7 @@
     - matrix-postgres
     - matrix-redis
     - matrix-corporal
+    - matrix-backup-borg
     - matrix-bridge-appservice-discord
     - matrix-bridge-appservice-slack
     - matrix-bridge-appservice-webhooks
@@ -73,7 +74,6 @@
     - integration/git2bunny
     - matrix/nginx-proxy-website
     - matrix/nginx-proxy-health
-    - matrix/backup-borg
     # END CUSTOM
     - matrix-coturn
     - matrix-aux
