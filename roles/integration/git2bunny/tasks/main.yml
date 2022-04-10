@@ -49,7 +49,7 @@
 
 - name: Upload
   uri:
-    url: "https://{{ integration_git2bunny_host }}/{{ integration_git2bunny_zone }}/{{ item.path|replace(integration_git2bunny_tmp + '/git2bunny_' + inventory_hostname + '/' + integration_git2bunny_dist, '')}}"
+    url: "https://{{ integration_git2bunny_host }}/{{ integration_git2bunny_storage }}/{{ item.path|replace(integration_git2bunny_tmp + '/git2bunny_' + inventory_hostname + '/' + integration_git2bunny_dist, '')}}"
     method: PUT
     src: "{{ item.path }}"
     status_code: [200, 201]
