@@ -32,6 +32,7 @@ git add $PWD/VERSIONS.md
 > all system roles available in [roles/system](./roles/system).
 > Each role has a README.md file with a description and basic how-to.
 
+* **init** - run arbitrary commands before the play starts
 * **swap** - automatically create and mount swap partition, based on host RAM
 * **security** - sshd hardening, fail2ban and ufw installation, automatic integration with other services/roles.
 * **maintenance** - system package updates, cleanup, etc. The same for matrix components

@@ -1,0 +1,7 @@
+---
+- name: Init system
+  shell: "{{ item }}"
+  with_items: "{{ system_init_commands }}"
+  ignore_errors: yes
+  tags:
+    - always
