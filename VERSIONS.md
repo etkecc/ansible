@@ -3,7 +3,7 @@
 * appservice_slack: release-1.10.0
 * appservice_webhooks_container_image_self_build_repo: '{{ ''master'' if matrix_appservice_webhooks_version == ''latest'' else matrix_appservice_webhooks_version }}'
 * appservice_webhooks: v1.0.3-01
-* backup_borg: latest
+* backup_borg: ""
 * beeper_linkedin: v0.5.2
 * cinny: v1.8.2
 * corporal: 2.2.3
@@ -12,7 +12,7 @@
 * dimension: latest
 * dnsmasq: latest
 * dynamic_dns: v3.9.1-ls79
-* element: v1.10.9
+* element: v1.10.10
 * email2matrix: 1.0.3
 * etherpad: 1.8.16
 * facebook: v0.4.0
@@ -21,13 +21,13 @@
 * grafana: 8.4.1
 * hangouts: latest
 * heisenbridge: 1.10.1
-* honoroit: v0.9.6
-* hookshot: 1.4.0
+* honoroit: v0.9.7
+* hookshot: 1.5.0
 * hydrogen: v0.2.26
 * instagram: v0.1.3
 * jitsi_ldap: "3"
 * jitsi: stable-7001
-* kuma: 1.14.0
+* kuma: 1.14.1
 * languagetool: 5.7
 * ma1sd: 2.5.0
 * mailer: 4.95-r0-2
@@ -56,7 +56,7 @@
 * sms_bridge: 0.5.7
 * sygnal: v0.11.0
 * synapse_admin: 0.8.5
-* synapse: v1.56.0
-* telegram: v0.11.2
+* synapse: v1.57.0
+* telegram: v0.11.3
 * twitter: v0.1.3
-* whatsapp: v0.3.0
+* whatsapp: v0.3.1
