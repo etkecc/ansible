@@ -3,7 +3,7 @@
 It's a wrapper around awesome [spantaleev/matrix-docker-ansible-deploy](https://github.com/spantaleev/matrix-docker-ansible-deploy) playbook
 with additional roles and playbooks, like system maintenance (check the list below).
 
-**NOTE**: we have [paid service - etke.cc](https://etke.cc/#contact) - that will do all setup, configuration, and maintenance for you.
+**NOTE**: we have [paid service - etke.cc](https://etke.cc/) - that will do all setup, configuration, and maintenance for you.
 That service is pretty cheap and has 2 purposes - invite new people to matrix and support the project.
 
 # Fork differences
@@ -42,27 +42,29 @@ git add $PWD/VERSIONS.md
 > all matrix roles available in [roles/matrix](./roles/matrix).
 > Each role has a README.md file with description and basic how-to.
 
-* <s>**cinny** - [cinny.in](https://cinny.in) matrix web client installation</s> uploaded to upstream
-* <s>nginx-proxy-health</s> - simple healthcheck, based on systemd units. Works pretty bad, don't use it.
 * **nginx-proxy-website** - host a static website on your base domain. Pull it from a git repo, run an arbitrary command (like `hugo`) and upload the results to your server
-* <s>**backup-borg** - automatic borg backups of the matrix server</s> uploaded to upstream
+* **miounne** - deprecated [an old etke.cc back office](https://gitlab.com/etke.cc/miounne)
 * **restart** - one-by-one restarts (opposed to the `--tags start` that will stop all the services and start them after that)
+* <s>**cinny** - [cinny.in](https://cinny.in) matrix web client installation</s> uploaded to upstream
+* <s>**honoroit** - [a helpdesk bot](https://gitlab.com/etke.cc/honoroit) to proxy user messages in 1:1 rooms into one big room with threads (check the link, it has pretty cool screenshots).</s> uploaded to upstream
+* <s>**buscarron** - [a new etke.cc back office](https://gitlab.com/etke.cc/buscarron)</s> uploaded to upstream
+* <s>nginx-proxy-health</s> - deprecated simple healthcheck, based on systemd units. Works pretty bad, don't use it.
 
 ### Non-Matrix components
 
 * **dnsmasq** - recursive resolver with adblocker, like pi-hole, but even better! Automatic integration with wireguard
-* <s>**honoroit** - [a helpdesk bot](https://gitlab.com/etke.cc/honoroit) to proxy user messages in 1:1 rooms into one big room with threads (check the link, it has pretty cool screenshots).</s> uploaded to upstream
 * **kuma** - uptime-kuma monitoring servers. Pretty simple, yet powerful.
 * **languagetool** - "open-source grammarly" server
 * **miniflux** - an opinionated RSS reader
-* **miounne** - [an etke.cc back office](https://gitlab.com/etke.cc/miounne)
 * **radicale** - a CalDav/CardDav server, very small and straightforward. It must be in the suckless.org lists!
+* **soft-serve** - a tasty, self-hostable Git server for the command line
 * **wireguard** - simple and fast VPN, has automatic integration with dnsmasq
+* <s>**backup-borg** - automatic borg backups of the matrix server</s> uploaded to upstream
 
 ### Integration to 3rdParty services
 
 * **git2bunny** - like the `matrix/nginx-proxy-website`, but the target is your BunnyCDN storage
-* <s>uptimerobot</s> - automatically create monitors in UptimeRobot. Works pretty bad, don't use it.
+* <s>uptimerobot</s> - deprecated, automatically create monitors in UptimeRobot. Works pretty bad, don't use it.
 
 # Usage
 

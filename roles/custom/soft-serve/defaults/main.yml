@@ -1,0 +1,32 @@
+custom_softserve_enabled: false
+
+custom_softserve_container_image_self_build: false
+custom_softserve_docker_repo: "https://github.com/charmbracelet/soft-serve.git"
+custom_softserve_docker_src_files_path: "{{ matrix_base_data_path }}/softserve/docker-src"
+
+custom_softserve_version: v0.3.0
+custom_softserve_docker_image: "{{ custom_softserve_docker_image_name_prefix }}charmcli/soft-serve:{{ custom_softserve_version }}"
+custom_softserve_docker_image_name_prefix: "{{ 'localhost/' if custom_softserve_container_image_self_build else matrix_container_global_registry_prefix }}"
+custom_softserve_docker_image_force_pull: "{{ custom_softserve_docker_image.endswith(':latest') }}"
+
+custom_softserve_base_path: "{{ matrix_base_data_path }}/softserve"
+custom_softserve_config_path: "{{ custom_softserve_base_path }}/config"
+custom_softserve_data_path: "{{ custom_softserve_base_path }}/data"
+
+# A list of extra arguments to pass to the container
+custom_softserve_container_extra_arguments: []
+
+# List of systemd services that matrix-bot-buscarron.service depends on
+custom_softserve_systemd_required_services_list: ['docker.service']
+
+# List of systemd services that matrix-bot-buscarron.service wants
+custom_softserve_systemd_wanted_services_list: []
+
+# what port to bind
+custom_softserve_port: 23231
+
+# public url
+custom_softserve_host:
+
+# initial admin's public ssh key
+custom_softserve_pubkey:

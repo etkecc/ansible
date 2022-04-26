@@ -39,6 +39,8 @@
     - matrix-bridge-heisenbridge
     - matrix-bridge-hookshot
     - matrix-bot-matrix-reminder-bot
+    - matrix-bot-matrix-registration-bot
+    - matrix-bot-buscarron
     - matrix-bot-honoroit
     - matrix-bot-go-neb
     - matrix-bot-mjolnir
@@ -68,6 +70,7 @@
     - custom/miniflux
     - custom/miounne
     - custom/radicale
+    - custom/soft-serve
     - custom/wireguard
     - integration/uptimerobot
     - integration/git2bunny

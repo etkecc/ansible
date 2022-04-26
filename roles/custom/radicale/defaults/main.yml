@@ -1,6 +1,6 @@
 ---
 custom_radicale_enabled: false
-custom_radicale_version: 3.1.5.1
+custom_radicale_version: 3.1.7.0
 custom_radicale_base_path: "{{ matrix_base_data_path }}/custom-radicale"
 custom_radicale_data_path: "{{ custom_radicale_base_path }}/data"
 custom_radicale_config_path: "{{ custom_radicale_base_path }}/conf"
@@ -11,6 +11,8 @@ custom_radicale_docker_image_force_pull: "{{ custom_radicale_docker_image.endswi
 
 # generate: htpasswd -nb user password
 custom_radicale_htpasswd: ""
+custom_radicale_htpasswds:
+  - "{{ custom_radicale_htpasswd }}"
 
 # A list of extra arguments to pass to the container
 custom_radicale_container_extra_arguments: []

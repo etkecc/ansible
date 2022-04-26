@@ -7,6 +7,10 @@
   delegate_to: 127.0.0.1
   become: no
   when: integration_git2bunny_enabled|bool
+  register: result
+  retries: 10
+  delay: 10
+  until: result is not failed
   tags:
     - setup-all
     - setup-git2bunny
@@ -59,6 +63,10 @@
   delegate_to: 127.0.0.1
   become: no
   when: integration_git2bunny_enabled|bool and item.isdir|bool == false
+  register: result
+  retries: 10
+  delay: 10
+  until: result is not failed
   tags:
     - setup-all
     - setup-git2bunny

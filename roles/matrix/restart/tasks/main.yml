@@ -13,6 +13,7 @@
     - setup-appservice-webhooks
     - setup-backup-borg
     - setup-beeper-linkedin
+    - setup-bot-buscarron
     - setup-bot-go-neb
     - setup-bot-honoroit
     - setup-bot-matrix-reminder-bot
@@ -63,6 +64,7 @@
     - setup-radicale
     - setup-redis
     - setup-sms-bridge
+    - setup-softserve
     - setup-ssl
     - setup-sygnal
     - setup-synapse
@@ -187,6 +189,18 @@
     - setup-all
     - restart-all
     - setup-beeper-linkedin
+
+- name: Restart Buscarron
+  service:
+    enabled: yes
+    state: restarted
+    name: matrix-bot-buscarron
+  when: matrix_bot_buscarron_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-bot-buscarron
 
 - name: Restart go-neb bot
   service:
@@ -523,6 +537,18 @@
     - setup-all
     - restart-all
     - setup-sms-bridge
+
+- name: Restart Soft-Serve
+  service:
+    enabled: yes
+    state: restarted
+    name: custom-softserve
+  when: custom_softserve_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-softserve
 
 - name: Restart Facebook bridge (mautrix)
   service:

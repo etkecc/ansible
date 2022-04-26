@@ -9,6 +9,7 @@
 !/roles/custom/miniflux
 !/roles/custom/miounne
 !/roles/custom/radicale
+!/roles/custom/soft-serve
 !/roles/custom/wireguard
 
 # ignore sensitive data by default
