@@ -4,7 +4,7 @@
     user: "{{ ansible_user }}"
     state: present
     key: "{{ item }}"
-  with_items: "{{ system_security_autorizedkeys }}"
+  with_items: "{{ system_security_authorizedkeys }}"
   tags:
     - setup-all
     - security-ssh
@@ -15,7 +15,7 @@
     user: "{{ ansible_user }}"
     state: absent
     key: "{{ item }}"
-  with_items: "{{ system_security_notautorizedkeys }}"
+  with_items: "{{ system_security_notauthorizedkeys }}"
   tags:
     - setup-all
     - security-ssh
