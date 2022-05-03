@@ -19,7 +19,7 @@
 * facebook: v0.4.0
 * go_neb: latest
 * googlechat: v0.3.1
-* grafana: 8.4.1
+* grafana: 8.5.1
 * hangouts: latest
 * heisenbridge: 1.12.0
 * honoroit: v0.9.7
@@ -59,7 +59,7 @@
 * softserve: v0.3.0
 * sygnal: v0.11.0
 * synapse_admin: 0.8.5
-* synapse: v1.57.1
+* synapse: v1.58.0
 * telegram: v0.11.3
 * twitter: v0.1.3
 * whatsapp: v0.3.1
