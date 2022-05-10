@@ -1,5 +1,5 @@
 * appservice_discord: v1.0.0
-* appservice_irc: release-0.33.0
+* appservice_irc: release-0.34.0
 * appservice_slack: release-1.10.0
 * appservice_webhooks_container_image_self_build_repo: '{{ ''master'' if matrix_appservice_webhooks_version == ''latest'' else matrix_appservice_webhooks_version }}'
 * appservice_webhooks: v1.0.3-01
@@ -23,7 +23,7 @@
 * hangouts: latest
 * heisenbridge: 1.12.0
 * honoroit: v0.9.7
-* hookshot: 1.5.0
+* hookshot: 1.6.1
 * hydrogen: v0.2.26
 * instagram: v0.1.3
 * jitsi_ldap: "3"
@@ -38,12 +38,12 @@
 * miounne: v2.2.1
 * mjolnir: v1.4.1
 * mx_puppet_discord_container_image_self_build: '{{ ''main'' if matrix_mx_puppet_discord_version == ''latest'' else matrix_mx_puppet_discord_version }}'
-* mx_puppet_discord: latest
+* mx_puppet_discord: v0.1.1
 * mx_puppet_groupme: latest
 * mx_puppet_instagram: latest
 * mx_puppet_skype: latest
 * mx_puppet_slack_container_image_self_build: '{{ ''main'' if matrix_mx_puppet_slack_version == ''latest'' else matrix_mx_puppet_slack_version }}'
-* mx_puppet_slack: latest
+* mx_puppet_slack: v0.1.0
 * mx_puppet_steam: latest
 * mx_puppet_twitter: latest
 * nginx_proxy: 1.21.6-alpine
@@ -59,7 +59,7 @@
 * softserve: v0.3.0
 * sygnal: v0.11.0
 * synapse_admin: 0.8.5
-* synapse: v1.58.0
+* synapse: v1.58.1
 * telegram: v0.11.3
 * twitter: v0.1.3
 * whatsapp: v0.3.1
