@@ -1,12 +1,12 @@
 * appservice_discord: v1.0.0
 * appservice_irc: release-0.34.0
-* appservice_slack: release-1.10.0
+* appservice_slack: release-1.11.0
 * appservice_webhooks_container_image_self_build_repo: '{{ ''master'' if matrix_appservice_webhooks_version == ''latest'' else matrix_appservice_webhooks_version }}'
 * appservice_webhooks: v1.0.3-01
 * backup_borg: ""
 * beeper_linkedin: v0.5.2
 * buscarron: v1.1.0
-* cinny: v2.0.0
+* cinny: v2.0.3
 * corporal: 2.2.3
 * coturn: 4.5.2-r11
 * coturn_container_image_self_build_repo: docker/{{ matrix_coturn_version }}
@@ -43,7 +43,7 @@
 * mx_puppet_instagram: latest
 * mx_puppet_skype: latest
 * mx_puppet_slack_container_image_self_build: '{{ ''main'' if matrix_mx_puppet_slack_version == ''latest'' else matrix_mx_puppet_slack_version }}'
-* mx_puppet_slack: latest
+* mx_puppet_slack: v0.1.2
 * mx_puppet_steam: latest
 * mx_puppet_twitter: latest
 * nginx_proxy: 1.21.6-alpine
@@ -59,7 +59,7 @@
 * softserve: v0.3.0
 * sygnal: v0.11.0
 * synapse_admin: 0.8.5
-* synapse: v1.58.1
+* synapse: v1.59.0
 * telegram: v0.11.3
 * twitter: v0.1.3
 * whatsapp: v0.3.1
