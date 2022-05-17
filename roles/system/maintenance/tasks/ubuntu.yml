@@ -1,4 +1,5 @@
 ---
+# ref: https://github.com/algodelinux/purge-old-kernels/issues/2
 - name: Install purge-old-kernels script
   copy:
     src: "{{ role_path }}/files/prune-old-kernels"
@@ -6,18 +7,11 @@
     mode: 0775
     owner: "{{ matrix_user_username }}"
     group: "{{ matrix_user_groupname }}"
-
-- name: Modify purge-old-kernels to use it with ansible
-  replace:
-    path: "{{ system_maintenance_pok_path }}"
-    mode: 0755
-    owner: "{{ matrix_user_username }}"
-    group: "{{ matrix_user_groupname }}"
-    regexp: "^APT_OPTS=$"
-    replace: "APT_OPTS=\"-y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew\""
+  when: system_maintenance_pok|bool
 
 - name: Cleanup old kernels
   command: "{{ system_maintenance_pok_path }} --keep {{ system_maintenance_pok_keep }}"
   environment:
     DEBIAN_FRONTEND: noninteractive
   ignore_errors: yes
+  when: system_maintenance_pok|bool

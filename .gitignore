@@ -15,11 +15,14 @@
 # ignore sensitive data by default
 /inventory/hosts
 /inventory/host_vars/*
-/upstream.local
 
 # do not ignore tools
 !/inventory/host_vars/.gitkeep
 !/inventory/scripts
+
+# ignore local-only tools
+/upstream.local
+/ansible-injector
 
 # python cache
 *.pyc
