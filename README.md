@@ -8,6 +8,24 @@ That service is pretty cheap and has 2 purposes - invite new people to matrix an
 
 # Fork differences
 
+## Stability
+
+This repository contains different stability branches (git branches and docker tags)
+
+### fresh
+
+* git branch: `fresh`
+* docker tag: `fresh`
+
+Testing branch, with latest updates from the upstream and unstable changes, including new roles
+
+### master
+
+* git branch: `master`
+* docker tag: `latest`
+
+"Stable" branch, deployed and tested at least on 1 homeserver.
+
 ## Automatic versions
 
 Used components' version automatically added to the [VERSIONS.md](./VERSIONS.md) file on each commit.
@@ -43,8 +61,9 @@ git add $PWD/VERSIONS.md
 > Each role has a README.md file with description and basic how-to.
 
 * **nginx-proxy-website** - host a static website on your base domain. Pull it from a git repo, run an arbitrary command (like `hugo`) and upload the results to your server
-* **miounne** - deprecated [an old etke.cc back office](https://gitlab.com/etke.cc/miounne)
 * **restart** - one-by-one restarts (opposed to the `--tags start` that will stop all the services and start them after that)
+* **room-purger** - purge matrix rooms through synapse admin api
+* **miounne** - deprecated [an old etke.cc back office](https://gitlab.com/etke.cc/miounne)
 * <s>**cinny** - [cinny.in](https://cinny.in) matrix web client installation</s> uploaded to upstream
 * <s>**honoroit** - [a helpdesk bot](https://gitlab.com/etke.cc/honoroit) to proxy user messages in 1:1 rooms into one big room with threads (check the link, it has pretty cool screenshots).</s> uploaded to upstream
 * <s>**buscarron** - [a new etke.cc back office](https://gitlab.com/etke.cc/buscarron)</s> uploaded to upstream

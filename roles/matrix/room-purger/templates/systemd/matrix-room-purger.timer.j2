@@ -1,0 +1,10 @@
+[Unit]
+Description=Matrix Room Purger timer
+
+[Timer]
+Unit=matrix-room-purger.service
+OnCalendar={{ matrix_room_purger_schedule }}
+RandomizedDelaySec=2h
+
+[Install]
+WantedBy=timers.target

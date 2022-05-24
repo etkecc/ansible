@@ -1,0 +1,12 @@
+---
+
+- name: Fail if required settings not defined
+  fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`).
+  when: "vars[item] == ''"
+  with_items:
+    - "int_scheduler_password"
+    - "int_scheduler_homeserver"
+    - "int_scheduler_commands"
+    - "int_scheduler_git_repo"

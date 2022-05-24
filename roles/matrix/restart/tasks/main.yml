@@ -32,6 +32,7 @@
     - setup-grafana
     - setup-heisenbridge
     - setup-hookshot
+    - setup-int-scheduler
     - setup-jitsi
     - setup-kuma
     - setup-languagetool
@@ -63,6 +64,7 @@
     - setup-prometheus-postgres-exporter
     - setup-radicale
     - setup-redis
+    - setup-room-purger
     - setup-sms-bridge
     - setup-softserve
     - setup-ssl
@@ -417,6 +419,18 @@
     - setup-all
     - restart-all
     - setup-hookshot
+
+- name: Restart internal scheduler
+  service:
+    enabled: yes
+    state: restarted
+    name: int-scheduler
+  when: int_scheduler_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-int-scheduler
 
 - name: Restart Jitsi Conference Focus
   service:
@@ -880,6 +894,18 @@
     - setup-all
     - restart-all
     - setup-redis
+
+- name: Restart room purger timer
+  service:
+    enabled: yes
+    state: restarted
+    name: matrix-room-purger.timer
+  when: matrix_room_purger_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-room-purger
 
 - name: Restart Sygnal
   service:
