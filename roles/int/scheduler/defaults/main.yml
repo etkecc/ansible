@@ -1,0 +1,58 @@
+---
+# See: https://gitlab.com/etke.cc/int/scheduler
+
+int_scheduler_enabled: false
+
+int_scheduler_container_image_self_build: false
+int_scheduler_docker_repo: "https://gitlab.com/etke.cc/int/scheduler.git"
+int_scheduler_docker_src_files_path: "{{ matrix_base_data_path }}/scheduler/docker-src"
+
+int_scheduler_version: latest
+int_scheduler_docker_image: "{{ int_scheduler_docker_image_name_prefix }}scheduler:{{ int_scheduler_version }}"
+int_scheduler_docker_image_name_prefix: "{{ 'localhost/' if int_scheduler_container_image_self_build else 'registry.gitlab.com/etke.cc/int/' }}"
+int_scheduler_docker_image_force_pull: "{{ int_scheduler_docker_image.endswith(':latest') }}"
+
+int_scheduler_base_path: "{{ matrix_base_data_path }}/scheduler"
+int_scheduler_config_path: "{{ int_scheduler_base_path }}/config"
+int_scheduler_data_path: "{{ int_scheduler_base_path }}/data"
+int_scheduler_git_path: "{{ int_scheduler_data_path }}/inventory"
+int_scheduler_container_mounts: []
+
+# A list of extra arguments to pass to the container
+int_scheduler_container_extra_arguments: []
+
+# List of systemd services that matrix-bot-honoroit.service depends on
+int_scheduler_systemd_required_services_list: ['docker.service']
+
+# List of systemd services that matrix-bot-honoroit.service wants
+int_scheduler_systemd_wanted_services_list: []
+
+int_scheduler_database_path_local: "{{ int_scheduler_data_path }}/scheduler.db"
+int_scheduler_database_path_in_container: "/data/scheduler.db"
+
+int_scheduler_git_repo:
+
+# The bot's username. This user needs to be created manually beforehand.
+# Also see `int_scheduler_password`.
+int_scheduler_login: "scheduler"
+
+# The password that the bot uses to authenticate.
+int_scheduler_password: ''
+
+int_scheduler_homeserver: "{{ matrix_homeserver_container_url }}"
+
+# commands config
+int_scheduler_commands: []
+
+# Sentry DSN
+int_scheduler_sentry: ''
+
+# Log level
+int_scheduler_loglevel: ''
+
+# Additional environment variables to pass to the scheduler container
+#
+# Example:
+# int_scheduler_environment_variables_extension: |
+#   SCHEDULER_LOGLEVEL=TRACE
+int_scheduler_environment_variables_extension: ''

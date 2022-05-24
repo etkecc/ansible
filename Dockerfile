@@ -4,13 +4,13 @@ RUN git clone https://gitlab.com/etke.cc/emm.git && \
 		cd emm && \
 		make build
 
-FROM alpine:edge
+FROM registry.gitlab.com/etke.cc/ansible/base
 
 WORKDIR /playbook
 
 ENTRYPOINT ["/bin/sh"]
 
-RUN apk add --no-cache ca-certificates openssh git ansible py3-dnspython hugo openring make
+RUN apk add --no-cache ca-certificates openssh git hugo openring make
 
 COPY --from=emmbuilder /go/emm/emm /bin
 COPY . /playbook

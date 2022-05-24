@@ -1,0 +1,22 @@
+---
+
+matrix_room_purger_enabled: false
+matrix_room_purger_login: room-purger
+matrix_room_purger_password:
+matrix_room_purger_homeserver: "{{ matrix_homeserver_container_url }}"
+matrix_room_purger_search:
+
+matrix_room_purger_base_path: "{{ matrix_base_data_path }}/room-purger"
+matrix_room_purger_config_path: "{{ matrix_room_purger_base_path }}/config"
+matrix_room_purger_docker_src_files_path: "{{ matrix_room_purger_base_path }}/docker-src"
+
+matrix_room_purger_version: latest
+matrix_room_purger_docker_image: "registry.gitlab.com/etke.cc/room-purger:{{ matrix_room_purger_version }}"
+matrix_room_purger_docker_image_force_pull: "{{ matrix_room_purger_docker_image.endswith(':latest') }}"
+matrix_room_purger_container_image_self_build: false
+
+# List of systemd services that matrix-room-purger.service depends on
+matrix_room_purger_systemd_required_services_list: ['docker.service']
+
+# systemd calendar configuration for backup job
+matrix_room_purger_schedule: "*-*-* 04:00:00"

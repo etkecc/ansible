@@ -1,0 +1,167 @@
+#!/bin/bash
+#
+#    purge-old-kernels - remove old kernel packages
+#    Copyright (C) 2012      Dustin Kirkland <kirkland@ubuntu.com>
+#                  2017-2022 Esteban M. Navas Martín <algodelinux@gmail.com>
+#
+#    Authors: Dustin Kirkland <kirkland@ubuntu.com>
+#             Kees Cook <kees@ubuntu.com>
+#             Esteban M. Navas Martín <algodelinux@gmail.com>
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, version 3 of the License.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+export VERSION=1.2
+
+SCRIPT="$(basename $0)"
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+
+
+# Ensure we're running as root
+if [ "$(id -u)" != 0 ]; then
+	echo -e "${RED}ERROR: This script must run as root.  Hint...${NC}" 1>&2
+	echo "  sudo $0 $@" 1>&2
+	exit 1
+fi
+
+print_version() {
+   echo "$SCRIPT $VERSION"
+}
+
+print_help () {
+   echo "$SCRIPT $VERSION"
+   echo "Purge old kernels tool"
+   echo ""
+   echo "Usage: $SCRIPT [OPTIONS]"
+   echo "Recognized options:"
+   echo "  -h,  --help                       display this help and exit"
+   echo "  -v   --version                    display $SCRIPT version and exit"
+   echo "  -s,  --show-installed-kernels     display installed kernels"
+   echo "  -k,  --keep N                     keep last N kernels"
+   echo "                                    ALWAYS keep the currently running kernel"
+   echo "  -n,  --no-rm-modules              don't remove non installed kernels directories in /lib/modules"
+   echo "  -q,  --quiet                      pass -q option to apt-get"
+   echo "  -y,  --yes                        pass -y option to apt-get"
+   echo "  -o,  --option                     pass extra options to apt-get"
+   echo
+}
+
+parse_options() {
+   TEMP=`getopt -o hvsk:qyno: --long help,version,show-installed-kernels,keep:,quiet,yes,no-rm-modules,option -n 'purge-old-kernels' -- "$@"`
+
+   if [ $? != 0 ] ; then echo "Terminating..." >&2 ; exit 1 ; fi
+
+   eval set -- "$TEMP"
+
+   while true; do
+     case "$1" in
+       -h | --help)
+                 print_help
+                 exit 0
+                 ;;
+       -v | --version)
+                 print_version
+                 exit 0
+                 ;;
+       -s | --show-installed-kernels )
+                 show_installed_kernels
+                 shift
+                 ;;
+       -n | --no-rm-modules )
+                 NO_RM_MODULES=true
+                 shift
+                 ;;
+       -k | --keep )
+                 KEEP="$2"
+                 shift 2
+                 ;;
+       -q | --quiet )
+                 APT_OPTS="$APT_OPTS -q"
+                 shift 1
+                 ;;
+       -y | --yes )
+                 APT_OPTS="$APT_OPTS -y"
+                 shift 1
+                 ;;
+       -o | --option )
+                 APT_OPTS="$APT_OPTS -o $2"
+                 shift 2
+                 ;;
+       -- )
+                 shift
+                 break
+                 ;;
+       * )
+                 echo "Internal error: doesn't recognize argument '$1'"
+                 exit 1
+                 ;;
+     esac
+   done
+}
+
+show_installed_kernels () {
+   INSTALLED_KERNELS=$(ls /boot/vmlinuz-* | sed -e "s/^\/boot\/vmlinuz-//" | awk -F'[.-]' '{print $1"\t"$2"\t"$3"\t"$4"\t"$0}' | sort -k1 -k2 -k3 -k4 -n | cut -f5)
+   echo -e "Installed kernels:"
+   echo -e "${GREEN}$INSTALLED_KERNELS${NC}"
+}
+
+# NOTE: This script will ALWAYS keep the currently running kernel
+# NOTE: Default is to keep 2 more, user overrides with --keep N
+KEEP=2
+APT_OPTS=
+NO_RM_MODULES=false
+
+parse_options "$@"
+
+echo "We keep last $KEEP installed kernels"
+
+# Get kernel type: pve or not
+PVE_KERNEL=$(uname -r|grep pve)
+
+# Build our list of kernel packages to purge
+CANDIDATES=$(ls /boot/vmlinuz-* | sed -e "s/^\/boot\/vmlinuz-//" | awk -F'[.-]' '{print $1"\t"$2"\t"$3"\t"$4"\t"$0}' | sort -k1 -k2 -k3 -k4 -n | cut -f5 | head -n -${KEEP} | grep -v "$(uname -r)$" | grep -oiE '[0-9]+\.[0-9]+\.[0-9]+-[0-9]+')
+
+if [ -z "$PVE_KERNEL" ]; then
+   for c in $CANDIDATES; do
+      PURGE="$PURGE $(dpkg -l | awk '{print $2}' | grep -e ^linux.*$c |  tr "\n" " ")"
+   done
+else
+   for c in $CANDIDATES; do
+      PURGE="$PURGE $(dpkg -l | awk '{print $2}'| grep -e ^pve-.*$c |  tr "\n" " ")"
+   done
+fi
+
+if [ -z "$PURGE" ]; then
+   echo "No kernels are eligible for removal"
+   exit 0
+fi
+
+# Purge old installed kernels
+apt-get $APT_OPTS remove --purge $PURGE
+
+# Build our list of uninstalled kernel packages to purge
+if [ -n "$PVE_KERNEL" ]; then
+   REMOVED=$(dpkg -l| grep ^rc | awk '{print $2}' | grep -e pve-kernel -e pve-keaders)
+else
+   REMOVED=$(dpkg -l| grep ^rc | awk '{print $2}' | grep -e linux-image -e linux-keaders)
+fi
+
+# Purge old uninstalled kernels
+[ -n "$REMOVED" ] && apt-get $APT_OPTS remove --purge $REMOVED
+
+if [ -z "$PVE_KERNEL" ] && [ "$NO_RM_MODULES" = false ]; then
+   # Remove old /lib/modules kernel directories
+   find /lib/modules -mindepth 1 -maxdepth 1 $(dpkg --get-selections | grep 'linux-modules' | grep -v -e 'extra' | awk '{print $1}' | sed 's/linux-modules-/-not -name /' | tr "\n" " ") -exec rm -fr {} \;
+fi

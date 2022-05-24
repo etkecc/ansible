@@ -1,0 +1,40 @@
+#jinja2: lstrip_blocks: "True"
+[Unit]
+Description=Internal Scheduler Bot
+{% for service in int_scheduler_systemd_required_services_list %}
+Requires={{ service }}
+After={{ service }}
+{% endfor %}
+{% for service in int_scheduler_systemd_wanted_services_list %}
+Wants={{ service }}
+{% endfor %}
+DefaultDependencies=no
+
+[Service]
+Type=simple
+Environment="HOME={{ matrix_systemd_unit_home_path }}"
+ExecStartPre=-{{ matrix_host_command_sh }} -c '{{ matrix_host_command_docker }} kill int-scheduler 2>/dev/null || true'
+ExecStartPre=-{{ matrix_host_command_sh }} -c '{{ matrix_host_command_docker }} rm int-scheduler 2>/dev/null || true'
+ExecStart={{ matrix_host_command_docker }} run --rm --name int-scheduler \
+			--log-driver=none \
+			--cap-drop=ALL \
+			--read-only \
+			--user={{ matrix_user_uid }}:{{ matrix_user_gid }} \
+			--network={{ matrix_docker_network }} \
+			--env-file={{ int_scheduler_config_path }}/env \
+			--tmpfs=/.ansible:rw,noexec,nosuid,size=100m \
+			--mount type=bind,src={{ int_scheduler_data_path }},dst=/data \
+			{% for mount in int_scheduler_container_mounts %}
+			--mount type=bind,src={{ mount.src }},dst={{ mount.dest }} \
+			{% endfor %}
+			{% for arg in int_scheduler_container_extra_arguments %}
+			{{ arg }} \
+			{% endfor %}
+			{{ int_scheduler_docker_image }}
+
+ExecStop=-{{ matrix_host_command_sh }} -c '{{ matrix_host_command_docker }} kill int-scheduler 2>/dev/null || true'
+ExecStop=-{{ matrix_host_command_sh }} -c '{{ matrix_host_command_docker }} rm int-scheduler 2>/dev/null || true'
+SyslogIdentifier=int-scheduler
+
+[Install]
+WantedBy=multi-user.target

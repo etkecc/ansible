@@ -1,0 +1,5 @@
+---
+
+- set_fact:
+    matrix_systemd_services_list: "{{ matrix_systemd_services_list + ['int-scheduler.service'] }}"
+  when: int_scheduler_enabled|bool

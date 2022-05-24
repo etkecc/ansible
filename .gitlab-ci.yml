@@ -1,7 +1,35 @@
 stages:
   - release
 
-docker:
+base:
+  stage: release
+  when: manual
+  services:
+    - docker:dind
+  image: jdrouet/docker-with-buildx:stable
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  script:
+    - docker buildx create --use
+    - docker buildx build --platform linux/arm64/v8,linux/amd64 --push -t ${CI_REGISTRY_IMAGE}/base -f Dockerfile.base .
+  tags:
+    - docker
+
+fresh:
+  stage: release
+  only: ['fresh']
+  services:
+    - docker:dind
+  image: jdrouet/docker-with-buildx:stable
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  script:
+    - docker buildx create --use
+    - docker buildx build --platform linux/arm64/v8,linux/amd64 --push -t $CI_REGISTRY_IMAGE:fresh .
+  tags:
+    - docker
+
+stable:
   stage: release
   only: ['master']
   services:
@@ -11,6 +39,6 @@ docker:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
     - docker buildx create --use
-    - docker buildx build --platform linux/arm/v7,linux/arm64/v8,linux/amd64 --push -t $CI_REGISTRY_IMAGE .
+    - docker buildx build --platform linux/arm64/v8,linux/amd64 --push -t $CI_REGISTRY_IMAGE .
   tags:
     - docker

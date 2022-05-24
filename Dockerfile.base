@@ -1,0 +1,8 @@
+FROM alpine:edge
+
+ARG ANSIBLE_CORE=2.12.5
+ARG ANSIBLE=5.7.0
+
+RUN apk --no-cache add alpine-sdk py3-cffi py3-pip && \
+		pip install ansible-core==${ANSIBLE_CORE} ansible==${ANSIBLE} && \
+		pip cache purge

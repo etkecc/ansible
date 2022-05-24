@@ -62,6 +62,7 @@
     - matrix-sygnal
     - matrix-nginx-proxy
     # CUSTOM
+    - int/scheduler
     - system/swap
     - system/security
     - custom/dnsmasq
@@ -76,6 +77,7 @@
     - integration/git2bunny
     - matrix/nginx-proxy-website
     - matrix/nginx-proxy-health
+    - matrix/room-purger
     # END CUSTOM
     - matrix-coturn
     - matrix-aux
