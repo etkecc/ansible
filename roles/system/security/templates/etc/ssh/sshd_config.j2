@@ -9,7 +9,6 @@ ClientAliveInterval 120
 Compression no
 GatewayPorts no
 IgnoreRhosts yes
-Include /etc/ssh/sshd_config.d/*.conf
 MaxAuthTries 3
 PasswordAuthentication {% if system_security_ssh_passwordauth|bool %}yes{% else %}no{% endif %}
 
