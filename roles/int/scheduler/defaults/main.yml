@@ -8,6 +8,7 @@ int_scheduler_docker_repo: "https://gitlab.com/etke.cc/int/scheduler.git"
 int_scheduler_docker_src_files_path: "{{ matrix_base_data_path }}/scheduler/docker-src"
 
 int_scheduler_version: latest
+int_scheduler_docker_timeout: 1800 # 30min
 int_scheduler_docker_image: "{{ int_scheduler_docker_image_name_prefix }}scheduler:{{ int_scheduler_version }}"
 int_scheduler_docker_image_name_prefix: "{{ 'localhost/' if int_scheduler_container_image_self_build else 'registry.gitlab.com/etke.cc/int/' }}"
 int_scheduler_docker_image_force_pull: "{{ int_scheduler_docker_image.endswith(':latest') }}"
@@ -42,13 +43,29 @@ int_scheduler_password: ''
 int_scheduler_homeserver: "{{ matrix_homeserver_container_url }}"
 
 # commands config
+int_scheduler_listcmd:
 int_scheduler_commands: []
 
+# auto recurring config
+int_scheduler_recurring_enabled: false
+int_scheduler_recurring_listcommand:
+int_scheduler_recurring_time:
+int_scheduler_recurring_mxid:
+int_scheduler_recurring_roomid:
+int_scheduler_recurring_eventid:
+int_scheduler_recurring_command:
+
 # Sentry DSN
-int_scheduler_sentry: ''
+int_scheduler_sentry_dsn: ''
+
+# Sentry sample rate, from 0 to 100
+int_scheduler_sentry_rate:
 
 # Log level
 int_scheduler_loglevel: ''
+
+# Environment name
+int_scheduler_env: prod
 
 # Additional environment variables to pass to the scheduler container
 #

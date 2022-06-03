@@ -4,11 +4,12 @@ AcceptEnv LANG LC_*
 AllowStreamLocalForwarding no
 AllowTcpForwarding no
 AuthorizedKeysFile	.ssh/authorized_keys /var/ssh/%u
-ClientAliveInterval 120
 ChallengeResponseAuthentication no
+ClientAliveInterval 120
 Compression no
 GatewayPorts no
 IgnoreRhosts yes
+Include /etc/ssh/sshd_config.d/*.conf
 MaxAuthTries 3
 PasswordAuthentication {% if system_security_ssh_passwordauth|bool %}yes{% else %}no{% endif %}
 

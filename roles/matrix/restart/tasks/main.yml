@@ -420,18 +420,6 @@
     - restart-all
     - setup-hookshot
 
-- name: Restart internal scheduler
-  service:
-    enabled: yes
-    state: restarted
-    name: int-scheduler
-  when: int_scheduler_enabled|bool
-  ignore_errors: yes
-  tags:
-    - setup-all
-    - restart-all
-    - setup-int-scheduler
-
 - name: Restart Jitsi Conference Focus
   service:
     enabled: yes
@@ -942,3 +930,15 @@
     - setup-all
     - restart-all
     - setup-miounne
+
+- name: Restart internal scheduler
+  service:
+    enabled: yes
+    state: restarted
+    name: int-scheduler
+  when: int_scheduler_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-int-scheduler
