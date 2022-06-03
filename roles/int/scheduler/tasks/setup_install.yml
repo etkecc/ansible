@@ -45,6 +45,9 @@
     accept_newhostkey: yes
     key_file: "{{ int_scheduler_config_path }}/sshkey"
   ignore_errors: yes # during the setup it will fail due to ssh key is not allowed yet
+  tags:
+    - setup-int-scheduler
+    - update-int-scheduler
 
 - name: Fix git path permissions
   file:
@@ -53,7 +56,9 @@
     recurse: yes
     owner: "{{ matrix_user_username }}"
     group: "{{ matrix_user_groupname }}"
-
+  tags:
+    - setup-int-scheduler
+    - update-int-scheduler
 
 - name: Ensure scheduler image is pulled
   docker_image:

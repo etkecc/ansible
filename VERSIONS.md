@@ -6,7 +6,7 @@
 * backup_borg: ""
 * beeper_linkedin: v0.5.2
 * buscarron: v1.1.0
-* cinny: v2.0.3
+* cinny: v2.0.4
 * corporal: 2.2.3
 * coturn: 4.5.2-r12
 * coturn_container_image_self_build_repo: docker/{{ matrix_coturn_version }}
@@ -22,19 +22,19 @@
 * grafana: 8.5.3
 * hangouts: latest
 * heisenbridge: 1.13.0
-* honoroit: v0.9.7
+* honoroit: v0.9.9
 * hookshot: 1.7.0
 * hydrogen: v0.2.29
 * instagram: v0.1.3
 * jitsi_ldap: "3"
 * jitsi: stable-7001
-* kuma: 1.15.1
+* kuma: 1.16.1-alpine
 * languagetool: 5.7
 * ma1sd: 2.5.0
 * mailer: 4.95-r0-2
 * matrix_registration_bot: latest
 * matrix_reminder_bot: release-v0.2.1
-* miniflux: 2.0.36
+* miniflux: 2.0.37
 * miounne: v2.2.1
 * mjolnir: v1.4.2
 * mx_puppet_discord_container_image_self_build: '{{ ''main'' if matrix_mx_puppet_discord_version == ''latest'' else matrix_mx_puppet_discord_version }}'
@@ -54,13 +54,14 @@
 * redis: 6.2.6-alpine
 * registration: v0.7.2
 * room_purger: latest
-* signal_daemon: 0.18.1
+* scheduler: latest
+* signal_daemon: 0.18.5
 * signal: v0.3.0
 * sms_bridge: 0.5.7
-* softserve: v0.3.0
+* softserve: v0.3.1
 * sygnal: v0.11.0
 * synapse_admin: 0.8.5
-* synapse: v1.59.1
+* synapse: v1.60.0
 * telegram: v0.11.3
 * twitter: v0.1.4
 * whatsapp: v0.4.0
