@@ -42,9 +42,12 @@ int_scheduler_password: ''
 
 int_scheduler_homeserver: "{{ matrix_homeserver_container_url }}"
 
+# admin room id
+int_scheduler_roomid:
+
 # commands config
-int_scheduler_listcmd:
 int_scheduler_commands: []
+int_scheduler_admin_commands: []
 
 # auto recurring config
 int_scheduler_recurring_enabled: false

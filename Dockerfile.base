@@ -1,4 +1,4 @@
-FROM alpine:edge
+FROM alpine:latest
 
 ARG ANSIBLE_CORE=2.12.5
 ARG ANSIBLE=5.7.0
