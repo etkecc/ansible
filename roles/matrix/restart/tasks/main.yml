@@ -29,6 +29,7 @@
     - setup-dynamic-dns
     - setup-email2matrix
     - setup-etherpad
+    - setup-go-skype-bridge
     - setup-grafana
     - setup-heisenbridge
     - setup-hookshot
@@ -383,6 +384,18 @@
     - setup-all
     - restart-all
     - setup-etherpad
+
+- name: Restart Skype bridge (go)
+  service:
+    enabled: yes
+    state: restarted
+    name: matrix-go-skype-bridge
+  when: matrix_go_skype_bridge_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-go-skype-bridge
 
 - name: Restart Grafana
   service:
