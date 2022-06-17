@@ -7,18 +7,19 @@
 * beeper_linkedin: v0.5.2
 * buscarron: v1.1.0
 * cinny: v2.0.4
-* corporal: 2.2.3
+* corporal: 2.3.0
 * coturn: 4.5.2-r12
 * coturn_container_image_self_build_repo: docker/{{ matrix_coturn_version }}
 * dimension: latest
 * dnsmasq: latest
 * dynamic_dns: v3.9.1-ls89
-* element: v1.10.14
+* element: v1.10.15
 * email2matrix: 1.0.3
 * etherpad: 1.8.18
 * facebook: v0.4.0
 * go_neb: latest
 * googlechat: v0.3.3
+* go_skype_bridge: latest
 * grafana: 8.5.3
 * hangouts: latest
 * heisenbridge: 1.13.0
@@ -58,10 +59,10 @@
 * signal_daemon: 0.18.5
 * signal: v0.3.0
 * sms_bridge: 0.5.7
-* softserve: v0.3.1
+* softserve: v0.3.2
 * sygnal: v0.11.0
 * synapse_admin: 0.8.5
-* synapse: v1.60.0
+* synapse: v1.61.0
 * telegram: v0.11.3
 * twitter: v0.1.4
-* whatsapp: v0.4.0
+* whatsapp: v0.5.0

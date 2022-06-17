@@ -45,6 +45,9 @@ int_scheduler_homeserver: "{{ matrix_homeserver_container_url }}"
 # admin room id
 int_scheduler_roomid:
 
+# workers config
+int_scheduler_workers:
+
 # commands config
 int_scheduler_commands: []
 int_scheduler_admin_commands: []
@@ -52,7 +55,6 @@ int_scheduler_admin_commands: []
 # auto recurring config
 int_scheduler_recurring_enabled: false
 int_scheduler_recurring_listcommand:
-int_scheduler_recurring_time:
 int_scheduler_recurring_mxid:
 int_scheduler_recurring_roomid:
 int_scheduler_recurring_eventid:
