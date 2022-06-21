@@ -5,7 +5,7 @@
 * appservice_webhooks: v1.0.3-01
 * backup_borg: ""
 * beeper_linkedin: v0.5.2
-* buscarron: v1.1.0
+* buscarron: v1.2.0
 * cinny: v2.0.4
 * corporal: 2.3.0
 * coturn: 4.5.2-r12
