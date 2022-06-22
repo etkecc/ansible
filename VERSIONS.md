@@ -29,7 +29,7 @@
 * instagram: v0.1.3
 * jitsi_ldap: "3"
 * jitsi: stable-7001
-* kuma: 1.16.1-alpine
+* kuma: 1.17.0-alpine
 * languagetool: 5.7
 * ma1sd: 2.5.0
 * mailer: 4.95-r0-2
