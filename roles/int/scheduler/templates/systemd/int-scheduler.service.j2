@@ -12,6 +12,7 @@ DefaultDependencies=no
 
 [Service]
 Type=simple
+TimeoutSec={{ int_scheduler_docker_timeout }}
 Environment="HOME={{ matrix_systemd_unit_home_path }}"
 ExecStartPre=-{{ matrix_host_command_sh }} -c '{{ matrix_host_command_docker }} stop -t {{ int_scheduler_docker_timeout }} int-scheduler 2>/dev/null || true'
 ExecStartPre=-{{ matrix_host_command_sh }} -c '{{ matrix_host_command_docker }} rm int-scheduler 2>/dev/null || true'
