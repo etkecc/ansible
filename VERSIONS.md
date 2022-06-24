@@ -5,7 +5,7 @@
 * appservice_webhooks: v1.0.3-01
 * backup_borg: ""
 * beeper_linkedin: v0.5.2
-* buscarron: v1.1.0
+* buscarron: v1.2.0
 * cinny: v2.0.4
 * corporal: 2.3.0
 * coturn: 4.5.2-r12
@@ -29,7 +29,7 @@
 * instagram: v0.1.3
 * jitsi_ldap: "3"
 * jitsi: stable-7001
-* kuma: 1.16.1-alpine
+* kuma: 1.17.1-alpine
 * languagetool: 5.7
 * ma1sd: 2.5.0
 * mailer: 4.95-r0-2

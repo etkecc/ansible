@@ -1,8 +1,4 @@
-FROM registry.gitlab.com/etke.cc/base as emmbuilder
-
-RUN git clone https://gitlab.com/etke.cc/emm.git && \
-		cd emm && \
-		make build
+FROM registry.gitlab.com/etke.cc/base as tools
 
 FROM registry.gitlab.com/etke.cc/ansible/base
 
@@ -10,9 +6,9 @@ WORKDIR /playbook
 
 ENTRYPOINT ["/bin/sh"]
 
-RUN apk add --no-cache ca-certificates openssh git hugo openring make
+RUN apk add --no-cache ca-certificates openssh git hugo make
 
-COPY --from=emmbuilder /go/emm/emm /bin
+COPY --from=tools /bin/emm /bin/emm
 COPY . /playbook
 
 RUN git submodule update --init --recursive
