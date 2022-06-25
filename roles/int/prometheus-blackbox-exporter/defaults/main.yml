@@ -1,0 +1,21 @@
+---
+# int-prometheus-blackbox-exporter is an Prometheus exporter for http probes
+# See: https://prometheus.io/docs/guides/blackbox-exporter/
+
+int_prometheus_blackbox_exporter_enabled: false
+
+int_prometheus_blackbox_exporter_version: v0.21.1
+int_prometheus_blackbox_exporter_docker_image: "{{ matrix_container_global_registry_prefix }}prom/blackbox-exporter:{{ int_prometheus_blackbox_exporter_version }}"
+int_prometheus_blackbox_exporter_docker_image_force_pull: "{{ int_prometheus_blackbox_exporter_docker_image.endswith(':latest') }}"
+
+int_prometheus_blackbox_exporter_base_path: "{{ matrix_base_data_path }}/prometheus-blackbox-exporter"
+int_prometheus_blackbox_exporter_config_path: "{{ int_prometheus_blackbox_exporter_base_path }}/config"
+
+# A list of extra arguments to pass to the container
+int_prometheus_blackbox_exporter_container_extra_arguments: []
+
+# List of systemd services that int-prometheus-blackbox-exporter.service depends on
+int_prometheus_blackbox_exporter_systemd_required_services_list: ['docker.service']
+
+# List of systemd services that int-prometheus-blackbox-exporter.service wants
+int_prometheus_blackbox_exporter_systemd_wanted_services_list: []

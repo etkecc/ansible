@@ -61,6 +61,7 @@
     - setup-postgres
     - setup-postgres-backup
     - setup-prometheus
+    - setup-prometheus-blackbox-exporter
     - setup-prometheus-node-exporter
     - setup-prometheus-postgres-exporter
     - setup-radicale
@@ -845,6 +846,19 @@
     - setup-all
     - restart-all
     - setup-prometheus
+
+- name: Restart Prometheus Blackbox Exporter
+  service:
+    enabled: yes
+    state: restarted
+    name: int-prometheus-blackbox-exporter
+  when: int_prometheus_blackbox_exporter_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-prometheus
+    - setup-prometheus-blackbox-exporter
 
 - name: Restart Prometheus Node Exporter
   service:

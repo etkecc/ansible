@@ -1,0 +1,5 @@
+---
+
+- set_fact:
+    matrix_systemd_services_list: "{{ matrix_systemd_services_list + ['int-prometheus-blackbox-exporter.service'] }}"
+  when: int_prometheus_blackbox_exporter_enabled|bool
