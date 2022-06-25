@@ -20,7 +20,7 @@
 * go_neb: latest
 * googlechat: v0.3.3
 * go_skype_bridge: latest
-* grafana: 8.5.3
+* grafana: 9.0.1
 * hangouts: latest
 * heisenbridge: 1.13.0
 * honoroit: v0.9.9
@@ -32,7 +32,7 @@
 * kuma: 1.17.1-alpine
 * languagetool: 5.7
 * ma1sd: 2.5.0
-* mailer: 4.95-r0-2
+* mailer: 4.95-r0-4
 * matrix_registration_bot: latest
 * matrix_reminder_bot: release-v0.2.1
 * miniflux: 2.0.37
@@ -51,7 +51,7 @@
 * prometheus_blackbox_exporter: v0.21.1
 * prometheus_node_exporter: v1.3.1
 * prometheus_postgres_exporter: v0.10.1
-* prometheus: v2.33.3
+* prometheus: v2.36.2
 * radicale: 3.1.7.0
 * redis: 6.2.6-alpine
 * registration: v0.7.2
