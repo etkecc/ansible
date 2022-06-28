@@ -1,0 +1,41 @@
+#jinja2: lstrip_blocks: "True"
+[Unit]
+Description=int-prometheus-blackbox-exporter
+{% for service in int_prometheus_blackbox_exporter_systemd_required_services_list %}
+Requires={{ service }}
+After={{ service }}
+{% endfor %}
+{% for service in int_prometheus_blackbox_exporter_systemd_wanted_services_list %}
+Wants={{ service }}
+{% endfor %}
+DefaultDependencies=no
+
+[Service]
+Type=simple
+Environment="HOME={{ matrix_systemd_unit_home_path }}"
+ExecStartPre=-{{ matrix_host_command_sh }} -c '{{ matrix_host_command_docker }} kill int-prometheus-blackbox-exporter 2>/dev/null || true'
+ExecStartPre=-{{ matrix_host_command_sh }} -c '{{ matrix_host_command_docker }} rm int-prometheus-blackbox-exporter 2>/dev/null || true'
+
+
+ExecStart={{ matrix_host_command_docker }} run --rm --name int-prometheus-blackbox-exporter \
+			--log-driver=none \
+			--user={{ matrix_user_uid }}:{{ matrix_user_gid }} \
+			--cap-drop=ALL \
+			--read-only \
+			{% for arg in int_prometheus_blackbox_exporter_container_extra_arguments %}
+			{{ arg }} \
+			{% endfor %}
+			--network={{ matrix_docker_network }} \
+			--mount type=bind,src=/,dst=/host,ro,bind-propagation=rslave \
+			--mount type=bind,src={{ int_prometheus_blackbox_exporter_config_path }},dst=/config \
+			{{ int_prometheus_blackbox_exporter_docker_image }} \
+			--config.file=/config/config.yml
+
+ExecStop=-{{ matrix_host_command_sh }} -c '{{ matrix_host_command_docker }} kill int-prometheus-blackbox-exporter 2>/dev/null || true'
+ExecStop=-{{ matrix_host_command_sh }} -c '{{ matrix_host_command_docker }} rm int-prometheus-blackbox-exporter 2>/dev/null || true'
+Restart=always
+RestartSec=30
+SyslogIdentifier=int-prometheus-blackbox-exporter
+
+[Install]
+WantedBy=multi-user.target

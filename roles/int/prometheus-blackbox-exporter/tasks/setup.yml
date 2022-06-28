@@ -1,0 +1,78 @@
+---
+- name: Ensure int-prometheus-blackbox-exporter path exist
+  file:
+    path: "{{ int_prometheus_blackbox_exporter_config_path }}"
+    state: directory
+    mode: 0750
+    owner: "{{ matrix_user_username }}"
+    group: "{{ matrix_user_groupname }}"
+  when: "int_prometheus_blackbox_exporter_enabled|bool"
+
+- name: Ensure int-prometheus-blackbox-exporter config file created
+  template:
+    src: "{{ role_path }}/templates/config.yml.j2"
+    dest: "{{ int_prometheus_blackbox_exporter_config_path }}/config.yml"
+    owner: "{{ matrix_user_username }}"
+    group: "{{ matrix_user_groupname }}"
+    mode: 0640
+  when: "int_prometheus_blackbox_exporter_enabled|bool"
+
+- name: Ensure int-prometheus-blackbox-exporter image is pulled
+  docker_image:
+    name: "{{ int_prometheus_blackbox_exporter_docker_image }}"
+    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+    force_source: "{{ int_prometheus_blackbox_exporter_docker_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else int_prometheus_blackbox_exporter_docker_image_force_pull }}"
+  when: "int_prometheus_blackbox_exporter_enabled|bool"
+  register: result
+  retries: "{{ matrix_container_retries_count }}"
+  delay: "{{ matrix_container_retries_delay }}"
+  until: result is not failed
+
+- name: Ensure int-prometheus-blackbox-exporter.service installed
+  template:
+    src: "{{ role_path }}/templates/systemd/int-prometheus-blackbox-exporter.service.j2"
+    dest: "{{ matrix_systemd_path }}/int-prometheus-blackbox-exporter.service"
+    mode: 0644
+  register: int_prometheus_blackbox_exporter_systemd_service_result
+  when: int_prometheus_blackbox_exporter_enabled|bool
+
+- name: Ensure systemd reloaded after int-prometheus-blackbox-exporter.service installation
+  service:
+    daemon_reload: true
+  when: "int_prometheus_blackbox_exporter_enabled|bool and int_prometheus_blackbox_exporter_systemd_service_result.changed"
+
+#
+# Tasks related to getting rid of int-prometheus-blackbox-exporter (if it was previously enabled)
+#
+
+- name: Check existence of int-prometheus-blackbox-exporter service
+  stat:
+    path: "{{ matrix_systemd_path }}/int-prometheus-blackbox-exporter.service"
+  register: int_prometheus_blackbox_exporter_service_stat
+
+- name: Ensure int-prometheus-blackbox-exporter is stopped
+  service:
+    name: int-prometheus-blackbox-exporter
+    state: stopped
+    enabled: false
+    daemon_reload: true
+  register: stopping_result
+  when: "not int_prometheus_blackbox_exporter_enabled|bool and int_prometheus_blackbox_exporter_service_stat.stat.exists"
+
+- name: Ensure int-prometheus-blackbox-exporter.service doesn't exist
+  file:
+    path: "{{ matrix_systemd_path }}/int-prometheus-blackbox-exporter.service"
+    state: absent
+  when: "not int_prometheus_blackbox_exporter_enabled|bool and int_prometheus_blackbox_exporter_service_stat.stat.exists"
+
+- name: Ensure int-prometheus-blackbox-exporter path doesn't exist
+  file:
+    path: "{{ int_prometheus_blackbox_exporter_base_path }}"
+    state: absent
+  when: "not int_prometheus_blackbox_exporter_enabled|bool and int_prometheus_blackbox_exporter_service_stat.stat.exists"
+
+- name: Ensure systemd reloaded after int-prometheus-blackbox-exporter.service removal
+  service:
+    daemon_reload: true
+  when: "not int_prometheus_blackbox_exporter_enabled|bool and int_prometheus_blackbox_exporter_service_stat.stat.exists"

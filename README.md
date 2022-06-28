@@ -71,6 +71,7 @@ How? [commit-msg.sh](./commit-msg.sh)
 * **radicale** - a CalDav/CardDav server, very small and straightforward. It must be in the suckless.org lists!
 * **soft-serve** - a tasty, self-hostable Git server for the command line
 * **wireguard** - simple and fast VPN, has automatic integration with dnsmasq
+* **prometheus-blackbox-exporter** - blackbox exporter
 * <s>**backup-borg** - automatic borg backups of the matrix server</s> uploaded to upstream
 
 ### Integration to 3rdParty services

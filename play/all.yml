@@ -64,6 +64,7 @@
     - matrix-sygnal
     - matrix-nginx-proxy
     # CUSTOM
+    - int/prometheus-blackbox-exporter
     - int/scheduler
     - system/swap
     - system/security
