@@ -32,7 +32,7 @@
 
 - name: Clean up ssl logs
   file:
-    path: "{{ matrix_ssl_base_path }}/log"
+    path: "{{ matrix_ssl_log_dir_path }}"
     state: absent
   when: system_maintenance_ssl_prune|bool
   ignore_errors: yes
@@ -42,7 +42,7 @@
 
 - name: Re-create ssl logs dir
   file:
-    path: "{{ matrix_ssl_base_path }}/log"
+    path: "{{ matrix_ssl_log_dir_path }}"
     state: directory
     mode: 0770
     owner: "{{ matrix_user_username }}"
