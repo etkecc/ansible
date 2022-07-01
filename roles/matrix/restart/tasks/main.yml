@@ -966,6 +966,4 @@
   when: int_scheduler_enabled|bool
   ignore_errors: yes
   tags:
-    - setup-all
-    - restart-all
     - setup-int-scheduler
