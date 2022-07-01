@@ -3,4 +3,4 @@ help: ## Show this help.
 
 dependencies: ## Initializes this by pulling dependencies
 	git submodule update --init --recursive
-	ansible-galaxy install -r requirements.yml -p galaxy-roles/
+	ansible-galaxy install -r requirements.yml -p roles/galaxy/

@@ -3,8 +3,8 @@
 !/roles/custom/.gitkeep
 
 # ignore roles pulled by ansible-galaxy
-/galaxy-roles/*
-!/galaxy-roles/.gitkeep
+/roles/galaxy/*
+!/roles/galaxy/.gitkeep
 
 # do not ignore following custom roles
 !/roles/custom/dnsmasq
