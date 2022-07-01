@@ -66,7 +66,7 @@
     # CUSTOM
     - int/prometheus-blackbox-exporter
     - int/scheduler
-    - system/swap
+    - galaxy/swap
     - system/security
     - custom/dnsmasq
     - custom/kuma

@@ -41,7 +41,7 @@ How? [commit-msg.sh](./commit-msg.sh)
 ### System
 
 * **[init](https://gitlab.com/etke.cc/roles/init)** - run arbitrary commands before the play starts
-* **swap** - automatically create and mount swap partition, based on host RAM
+* **[swap](https://gitlab.com/etke.cc/roles/swap)** - automatically create and mount swap partition, based on host RAM
 * **security** - sshd hardening, fail2ban and ufw installation, automatic integration with other services/roles.
 * **maintenance** - system package updates, cleanup, etc. The same for matrix components
 
