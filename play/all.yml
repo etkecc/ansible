@@ -8,7 +8,7 @@
     - "{{ playbook_dir }}/../upstream/roles/matrix-synapse/vars/workers.yml"
 
   roles:
-    - system/init
+    - galaxy/init
     - matrix-base
     - matrix-dynamic-dns
     - matrix-mailer
