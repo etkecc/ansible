@@ -93,7 +93,7 @@ git clone https://gitlab.com/etke.cc/ansible.git
 cd ansible
 
 # pull the spantaleev/matrix-docker-ansible-deploy repo and other dependency roles
-make pull-dependencies
+make dependencies
 
 # create directory for your server config
 mkdir inventory/host_vars/DOMAIN
