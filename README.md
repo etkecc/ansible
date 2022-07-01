@@ -40,10 +40,7 @@ How? [commit-msg.sh](./commit-msg.sh)
 
 ### System
 
-> all system roles available in [roles/system](./roles/system).
-> Each role has a README.md file with a description and basic how-to.
-
-* **init** - run arbitrary commands before the play starts
+* **[init](https://gitlab.com/etke.cc/roles/init)** - run arbitrary commands before the play starts
 * **swap** - automatically create and mount swap partition, based on host RAM
 * **security** - sshd hardening, fail2ban and ufw installation, automatic integration with other services/roles.
 * **maintenance** - system package updates, cleanup, etc. The same for matrix components
@@ -76,8 +73,7 @@ How? [commit-msg.sh](./commit-msg.sh)
 
 ### Integration to 3rdParty services
 
-* **git2bunny** - like the `matrix/nginx-proxy-website`, but the target is your BunnyCDN storage
-* <s>uptimerobot</s> - deprecated, automatically create monitors in UptimeRobot. Works pretty bad, don't use it.
+* **[git2bunny](https://gitlab.com/etke.cc/roles/git2bunny)** - like the `matrix/nginx-proxy-website`, but the target is your BunnyCDN storage
 
 # Usage
 

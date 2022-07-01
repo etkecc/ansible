@@ -6,4 +6,6 @@
 # Cloning via https (not ssh), because ssh may not be available in the container.
 
 - src: git+https://gitlab.com/etke.cc/roles/init.git
-  version: master
+  version: main
+- src: git+https://gitlab.com/etke.cc/roles/git2bunny.git
+  version: main

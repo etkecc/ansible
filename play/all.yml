@@ -76,8 +76,7 @@
     - custom/radicale
     - custom/soft-serve
     - custom/wireguard
-    - integration/uptimerobot
-    - integration/git2bunny
+    - galaxy/git2bunny
     - matrix/nginx-proxy-website
     - matrix/nginx-proxy-health
     - matrix/room-purger
