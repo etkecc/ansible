@@ -1,0 +1,3 @@
+# No need to copy this to the container image during building,
+# because the building steps pull this on their own.
+/upstream
