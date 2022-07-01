@@ -1,0 +1,9 @@
+---
+
+# Roles need to be in public repositories
+# or `ansible-galaxy install` as part of container image building will fail.
+#
+# Cloning via https (not ssh), because ssh may not be available in the container.
+
+- src: git+https://gitlab.com/etke.cc/roles/init.git
+  version: master

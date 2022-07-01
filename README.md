@@ -92,8 +92,8 @@ How? [commit-msg.sh](./commit-msg.sh)
 git clone https://gitlab.com/etke.cc/ansible.git
 cd ansible
 
-# pull the spantaleev/matrix-docker-ansible-deploy repo
-git submodule update --init --recursive
+# pull the spantaleev/matrix-docker-ansible-deploy repo and other dependency roles
+make pull-dependencies
 
 # create directory for your server config
 mkdir inventory/host_vars/DOMAIN
