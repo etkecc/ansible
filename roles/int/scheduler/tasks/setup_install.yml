@@ -94,14 +94,18 @@
       pull: true
   when: "int_scheduler_container_image_self_build|bool"
 
-- name: Ensure int-scheduler.service installed
+- name: Ensure scheduler services installed
   template:
-    src: "{{ role_path }}/templates/systemd/int-scheduler.service.j2"
-    dest: "{{ matrix_systemd_path }}/int-scheduler.service"
+    src: "{{ role_path }}/templates/systemd/{{ item }}.j2"
+    dest: "{{ matrix_systemd_path }}/{{ item }}"
     mode: 0644
+  with_items:
+    - int-scheduler.service
+    - int-scheduler-update.service
+    - int-scheduler-update.timer
   register: int_scheduler_systemd_service_result
 
-- name: Ensure systemd reloaded after int-scheduler.service installation
+- name: Ensure systemd reloaded after scheduler services installation
   service:
     daemon_reload: true
   when: "int_scheduler_systemd_service_result.changed|bool"
