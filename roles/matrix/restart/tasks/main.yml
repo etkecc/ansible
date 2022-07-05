@@ -58,6 +58,7 @@
     - setup-mx-puppet-steam
     - setup-mx-puppet-twitter
     - setup-nginx-proxy
+    - setup-ntfy
     - setup-postgres
     - setup-postgres-backup
     - setup-prometheus
@@ -97,6 +98,18 @@
     - setup-all
     - restart-all
     - setup-dendrite
+
+- name: Restart Ntfy
+  service:
+    enabled: yes
+    state: restarted
+    name: matrix-ntfy
+  when: matrix_ntfy_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-ntfy
 
 - name: Restart Database (postgres)
   service:

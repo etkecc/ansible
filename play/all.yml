@@ -62,6 +62,7 @@
     - matrix-etherpad
     - matrix-email2matrix
     - matrix-sygnal
+    - matrix-ntfy
     - matrix-nginx-proxy
     # CUSTOM
     - int/prometheus-blackbox-exporter
