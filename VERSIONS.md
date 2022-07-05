@@ -13,7 +13,7 @@
 * dimension: latest
 * dnsmasq: latest
 * dynamic_dns: v3.9.1-ls89
-* element: v1.10.15
+* element: v1.11.0
 * email2matrix: 1.0.3
 * etherpad: 1.8.18
 * facebook: v0.4.0
@@ -64,7 +64,7 @@
 * softserve: v0.3.2
 * sygnal: v0.11.0
 * synapse_admin: 0.8.5
-* synapse: v1.61.1
+* synapse: v1.62.0
 * telegram: v0.11.3
 * twitter: v0.1.4
 * whatsapp: v0.5.0
