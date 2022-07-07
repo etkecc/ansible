@@ -30,7 +30,7 @@
 * jitsi_ldap: "3"
 * jitsi: stable-7439-2
 * kuma: 1.17.1-alpine
-* languagetool: 5.7
+* languagetool: 5.8
 * ma1sd: 2.5.0
 * mailer: 4.95-r0-4
 * matrix_registration_bot: latest
