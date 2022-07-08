@@ -1,7 +1,0 @@
----
-###
-# DO NOT MODIFY FOLLOWING VARS
-###
-
-integration_uptimerobot_api_format: json
-integration_uptimerobot_monitors_recreate: []

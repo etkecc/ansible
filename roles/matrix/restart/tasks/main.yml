@@ -58,6 +58,7 @@
     - setup-mx-puppet-steam
     - setup-mx-puppet-twitter
     - setup-nginx-proxy
+    - setup-ntfy
     - setup-postgres
     - setup-postgres-backup
     - setup-prometheus
@@ -97,6 +98,18 @@
     - setup-all
     - restart-all
     - setup-dendrite
+
+- name: Restart Ntfy
+  service:
+    enabled: yes
+    state: restarted
+    name: matrix-ntfy
+  when: matrix_ntfy_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-ntfy
 
 - name: Restart Database (postgres)
   service:
@@ -958,6 +971,30 @@
     - restart-all
     - setup-miounne
 
+- name: Restart internal scheduler (inventory updater)
+  service:
+    enabled: yes
+    state: restarted
+    name: int-scheduler-update
+  when: int_scheduler_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-int-scheduler
+
+- name: Restart internal scheduler (inventory updater timer)
+  service:
+    enabled: yes
+    state: restarted
+    name: int-scheduler-update.timer
+  when: int_scheduler_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-int-scheduler
+
 - name: Restart internal scheduler
   service:
     enabled: yes
@@ -966,6 +1003,4 @@
   when: int_scheduler_enabled|bool
   ignore_errors: yes
   tags:
-    - setup-all
-    - restart-all
     - setup-int-scheduler

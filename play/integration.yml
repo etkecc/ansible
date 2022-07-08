@@ -1,8 +1,0 @@
----
-- name: "Integration"
-  hosts: "{{ target if target is defined else 'matrix_servers' }}"
-  become: true
-
-  roles:
-    - integration/uptimerobot
-    - integration/git2bunny

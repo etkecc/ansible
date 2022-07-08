@@ -8,7 +8,7 @@
     - "{{ playbook_dir }}/../upstream/roles/matrix-synapse/vars/workers.yml"
 
   roles:
-    - system/init
+    - galaxy/init
     - matrix-base
     - matrix-dynamic-dns
     - matrix-mailer
@@ -62,12 +62,13 @@
     - matrix-etherpad
     - matrix-email2matrix
     - matrix-sygnal
+    - matrix-ntfy
     - matrix-nginx-proxy
     # CUSTOM
     - int/prometheus-blackbox-exporter
     - int/scheduler
-    - system/swap
-    - system/security
+    - galaxy/swap
+    - galaxy/security
     - custom/dnsmasq
     - custom/kuma
     - custom/languagetool
@@ -76,8 +77,7 @@
     - custom/radicale
     - custom/soft-serve
     - custom/wireguard
-    - integration/uptimerobot
-    - integration/git2bunny
+    - galaxy/git2bunny
     - matrix/nginx-proxy-website
     - matrix/nginx-proxy-health
     - matrix/room-purger

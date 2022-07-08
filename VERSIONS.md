@@ -13,7 +13,7 @@
 * dimension: latest
 * dnsmasq: latest
 * dynamic_dns: v3.9.1-ls89
-* element: v1.10.15
+* element: v1.11.0
 * email2matrix: 1.0.3
 * etherpad: 1.8.18
 * facebook: v0.4.0
@@ -28,9 +28,9 @@
 * hydrogen: v0.2.29
 * instagram: v0.1.3
 * jitsi_ldap: "3"
-* jitsi: stable-7001
+* jitsi: stable-7439-2
 * kuma: 1.17.1-alpine
-* languagetool: 5.7
+* languagetool: 5.8
 * ma1sd: 2.5.0
 * mailer: 4.95-r0-4
 * matrix_registration_bot: latest
@@ -48,6 +48,7 @@
 * mx_puppet_steam: latest
 * mx_puppet_twitter: latest
 * nginx_proxy: 1.21.6-alpine
+* ntfy: v1.27.2
 * prometheus_blackbox_exporter: v0.21.1
 * prometheus_node_exporter: v1.3.1
 * prometheus_postgres_exporter: v0.10.1
@@ -63,7 +64,7 @@
 * softserve: v0.3.2
 * sygnal: v0.11.0
 * synapse_admin: 0.8.5
-* synapse: v1.61.1
+* synapse: v1.62.0
 * telegram: v0.11.3
 * twitter: v0.1.4
 * whatsapp: v0.5.0
