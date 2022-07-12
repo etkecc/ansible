@@ -24,7 +24,7 @@
 * hangouts: latest
 * heisenbridge: 1.13.0
 * honoroit: v0.9.9
-* hookshot: 1.7.3
+* hookshot: 1.8.0
 * hydrogen: v0.2.29
 * instagram: v0.1.3
 * jitsi_ldap: "3"
@@ -37,7 +37,7 @@
 * matrix_reminder_bot: release-v0.2.1
 * miniflux: 2.0.37
 * miounne: v2.2.1
-* mjolnir: v1.4.2
+* mjolnir: v1.5.0
 * mx_puppet_discord_container_image_self_build: '{{ ''main'' if matrix_mx_puppet_discord_version == ''latest'' else matrix_mx_puppet_discord_version }}'
 * mx_puppet_discord: v0.1.1
 * mx_puppet_groupme: latest
