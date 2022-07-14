@@ -42,7 +42,6 @@
 * mx_puppet_discord: v0.1.1
 * mx_puppet_groupme: latest
 * mx_puppet_instagram: latest
-* mx_puppet_skype: latest
 * mx_puppet_slack_container_image_self_build: '{{ ''main'' if matrix_mx_puppet_slack_version == ''latest'' else matrix_mx_puppet_slack_version }}'
 * mx_puppet_slack: v0.1.2
 * mx_puppet_steam: latest
