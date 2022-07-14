@@ -58,7 +58,7 @@
 * registration: v0.7.2
 * room_purger: latest
 * scheduler: latest
-* signal_daemon: 0.18.5
+* signal_daemon: 0.20.0
 * signal: v0.3.0
 * sms_bridge: 0.5.7
 * softserve: v0.3.2
