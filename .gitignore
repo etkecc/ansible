@@ -27,6 +27,7 @@
 # ignore local-only tools
 /upstream.local
 /ansible-injector
+/opml.xml
 
 # python cache
 *.pyc

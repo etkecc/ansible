@@ -59,7 +59,8 @@ def format_feeds_from_git_repos(git_repos):
         elif ('gitlab' in git_repo or 'mau.dev' in git_repo):
             atomFilePath = git_repo.replace('.git', '') + '/-/tags?format=atom'
         else:
-            sys.exit('Unrecognized git repository: %s' % git_repo)
+            print('Unrecognized git repository: %s' % git_repo)
+            continue
 
         feeds[role] = {
             'text': role,
@@ -89,7 +90,7 @@ def dump_opml_file_from_feeds(feeds):
         outline = ET.SubElement(body, 'outline', feed_dict)
 
     tree._setroot(opml)
-    file_name = './release-feeds-%s.xml' % todays_date
+    file_name = 'opml.xml'
     tree.write(file_name, encoding = 'UTF-8', xml_declaration = True)
     print('Generated %s' % file_name)
 

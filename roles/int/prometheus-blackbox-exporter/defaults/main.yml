@@ -1,6 +1,7 @@
 ---
 # int-prometheus-blackbox-exporter is an Prometheus exporter for http probes
 # See: https://prometheus.io/docs/guides/blackbox-exporter/
+# Project source code URL: https://github.com/prometheus/blackbox_exporter
 
 int_prometheus_blackbox_exporter_enabled: false
 

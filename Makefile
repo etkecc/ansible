@@ -11,8 +11,8 @@ roles: ## Pull roles
 
 dependencies: submodules roles ## Initializes this by pulling dependencies
 
-dump-roles-feeds: ## Dumps an OPML file with extracted git feeds for roles
-	python bin/get-releases-feeds-for-roles.py $(PWD) dump
+opml: ## Dumps an OPML file with extracted git feeds for roles
+	python bin/feeds.py . dump
 
-check-roles-feeds: ## Prints roles files for which a GIT feeds couldn't be extracted
-	python bin/get-releases-feeds-for-roles.py $(PWD) check
+print-nofeeds: ## Prints roles files for which a GIT feeds couldn't be extracted
+	python bin/feeds.py . check

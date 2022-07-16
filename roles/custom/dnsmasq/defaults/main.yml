@@ -1,3 +1,6 @@
+---
+# Project source code URL: https://gitlab.com/etke.cc/dnsmasq/
+
 custom_dnsmasq_enabled: false
 custom_dnsmasq_version: latest
 custom_dnsmasq_docker_image: "registry.gitlab.com/etke.cc/dnsmasq:{{ custom_dnsmasq_version }}"
