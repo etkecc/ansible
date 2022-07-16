@@ -1,4 +1,6 @@
 ---
+# Project source code URL: https://github.com/louislam/uptime-kuma
+
 custom_kuma_enabled: false
 custom_kuma_version: 1.17.1-alpine
 custom_kuma_base_path: "{{ matrix_base_data_path }}/custom-kuma"

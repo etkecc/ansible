@@ -30,7 +30,7 @@ Testing branch, with latest updates from the upstream and unstable changes, incl
 
 Used components' version automatically added to the [VERSIONS.md](./VERSIONS.md) file on each commit.
 
-How? [commit-msg.sh](./commit-msg.sh)
+How? [bin/commit-msg.sh](./bin/commit-msg.sh)
 
 > **NOTE**: requires [yq](https://github.com/mikefarah/yq)
 

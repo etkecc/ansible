@@ -10,3 +10,9 @@ roles: ## Pull roles
 	ansible-galaxy install -r requirements.yml -p roles/galaxy/
 
 dependencies: submodules roles ## Initializes this by pulling dependencies
+
+opml: ## Dumps an OPML file with extracted git feeds for roles
+	python bin/feeds.py . dump
+
+print-nofeeds: ## Prints roles files for which a GIT feeds couldn't be extracted
+	python bin/feeds.py . check
