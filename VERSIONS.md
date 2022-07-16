@@ -66,4 +66,4 @@
 * synapse: v1.62.0
 * telegram: v0.11.3
 * twitter: v0.1.4
-* whatsapp: v0.5.0
+* whatsapp: v0.6.0
