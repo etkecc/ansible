@@ -62,9 +62,10 @@ def format_feeds_from_git_repos(git_repos):
             print('Unrecognized git repository: %s' % git_repo)
             continue
 
-        feeds[role] = {
-            'text': role,
-            'title': role,
+        role_name = role.split('/')[3].removeprefix('matrix-bot-').removeprefix('matrix-bridge-').removeprefix('matrix-client-').removeprefix('matrix-')
+        feeds[role_name] = {
+            'text': role_name,
+            'title': role_name,
             'type': 'rss',
             'htmlUrl': git_repo,
             'xmlUrl': atomFilePath
@@ -90,7 +91,7 @@ def dump_opml_file_from_feeds(feeds):
         outline = ET.SubElement(body, 'outline', feed_dict)
 
     tree._setroot(opml)
-    file_name = 'opml.xml'
+    file_name = 'releases.opml'
     tree.write(file_name, encoding = 'UTF-8', xml_declaration = True)
     print('Generated %s' % file_name)
 
