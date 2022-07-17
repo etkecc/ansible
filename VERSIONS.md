@@ -12,7 +12,7 @@
 * coturn_container_image_self_build_repo: docker/{{ matrix_coturn_version }}
 * dimension: latest
 * dnsmasq: latest
-* dynamic_dns: v3.9.1-ls89
+* dynamic_dns: v3.9.1-ls92
 * element: v1.11.0
 * email2matrix: 1.0.3
 * etherpad: 1.8.18
@@ -20,12 +20,12 @@
 * go_neb: latest
 * googlechat: v0.3.3
 * go_skype_bridge: latest
-* grafana: 9.0.2
+* grafana: 9.0.3
 * hangouts: latest
 * heisenbridge: 1.13.0
 * honoroit: v0.9.9
 * hookshot: 1.8.0
-* hydrogen: v0.2.29
+* hydrogen: v0.2.33
 * instagram: v0.1.3
 * jitsi_ldap: "3"
 * jitsi: stable-7439-2
@@ -46,14 +46,14 @@
 * mx_puppet_slack: v0.1.2
 * mx_puppet_steam: latest
 * mx_puppet_twitter: latest
-* nginx_proxy: 1.21.6-alpine
+* nginx_proxy: 1.23.0-alpine
 * ntfy: v1.27.2
 * prometheus_blackbox_exporter: v0.21.1
 * prometheus_node_exporter: v1.3.1
 * prometheus_postgres_exporter: v0.10.1
-* prometheus: v2.36.2
+* prometheus: v2.37.0
 * radicale: 3.1.7.0
-* redis: 6.2.6-alpine
+* redis: 7.0.3-alpine
 * registration: v0.7.2
 * room_purger: latest
 * scheduler: latest
@@ -61,7 +61,7 @@
 * signal: v0.3.0
 * sms_bridge: 0.5.7
 * softserve: v0.3.2
-* sygnal: v0.11.0
+* sygnal: v0.12.0
 * synapse_admin: 0.8.5
 * synapse: v1.62.0
 * telegram: v0.11.3
