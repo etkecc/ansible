@@ -1,15 +1,22 @@
 ---
+- name: Check existence of wg-quick@ service
+  stat:
+    path: "{{ matrix_systemd_path }}/wg-quick@.service"
+  register: custom_wireguard_service_stat
+
 - name: Ensure wireguard service stopped
   service:
     name: "wg-quick@{{ custom_wireguard_interface }}"
     enabled: no
     state: stopped
   ignore_errors: yes # it fails if not installed because of @interface part, seems like different approach to such services on ansible side
+  when: "custom_wireguard_service_stat.stat.exists|bool"
 
 - name: Ensure wireguard configuration removed
   file:
     path: "{{ custom_wireguard_path }}"
     state: absent
+  when: "custom_wireguard_service_stat.stat.exists|bool"
 
 - name: Ensure wireguard packages removed
   package:
@@ -17,10 +24,10 @@
       - wireguard-tools
       - wireguard-dkms
     state: absent
-  when: ansible_kernel is version('5.6', '<')
+  when: ansible_kernel is version('5.6', '<') and custom_wireguard_service_stat.stat.exists|bool
 
 - name: Ensure wireguard packages removed
   package:
     name: wireguard-tools
     state: absent
-  when: ansible_kernel is version('5.6', '>=')
+  when: ansible_kernel is version('5.6', '>=') and custom_wireguard_service_stat.stat.exists|bool
