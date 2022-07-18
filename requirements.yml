@@ -13,3 +13,5 @@
   version: main
 - src: git+https://gitlab.com/etke.cc/roles/security.git
   version: main
+- src: git+https://gitlab.com/etke.cc/roles/cleanup.git
+  version: main

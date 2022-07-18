@@ -43,7 +43,7 @@ How? [bin/commit-msg.sh](./bin/commit-msg.sh)
 * **[init](https://gitlab.com/etke.cc/roles/init)** - run arbitrary commands before the play starts
 * **[swap](https://gitlab.com/etke.cc/roles/swap)** - automatically create and mount swap partition, based on host RAM
 * **[security](https://gitlab.com/etke.cc/roles/security)** - sshd hardening, fail2ban and ufw installation, automatic integration with other services/roles.
-* **maintenance** - system package updates, cleanup, etc. The same for matrix components
+* **[cleanup](https://gitlab.com/etke.cc/roles/cleanup)** - system package updates, cleanup, etc. The same for matrix components
 
 ### Matrix
 

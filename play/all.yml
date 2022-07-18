@@ -88,6 +88,6 @@
     - matrix-common-after
     # CUSTOM
     - matrix/restart
-    - system/maintenance
+    - galaxy/cleanup
     # END CUSTOM
 
