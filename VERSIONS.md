@@ -21,7 +21,7 @@
 * hangouts: latest
 * heisenbridge: 1.13.0
 * honoroit: v0.9.9
-* hookshot: 1.8.0
+* hookshot: 1.8.1
 * hydrogen: v0.2.33
 * instagram: v0.1.3
 * jitsi_ldap: "3"
