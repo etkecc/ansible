@@ -2,7 +2,6 @@
 * appservice_irc: 0.34.0
 * appservice_slack: 1.11.0
 * appservice_webhooks: v1.0.3-01
-* backup_borg_docker_repo: main
 * beeper_linkedin: v0.5.2
 * buscarron: v1.2.0
 * cinny: v2.0.4
