@@ -20,7 +20,7 @@
 * grafana: 9.0.3
 * hangouts: latest
 * heisenbridge: 1.13.0
-* honoroit: v0.9.9
+* honoroit: v0.9.10
 * hookshot: 1.8.1
 * hydrogen: v0.2.33
 * instagram: v0.1.3
@@ -48,7 +48,7 @@
 * prometheus_postgres_exporter: v0.10.1
 * prometheus: v2.37.0
 * radicale: 3.1.7.0
-* redis: 7.0.3-alpine
+* redis: 7.0.4-alpine
 * registration: v0.7.2
 * room_purger: latest
 * scheduler: latest
