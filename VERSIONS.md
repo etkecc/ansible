@@ -6,7 +6,7 @@
 * buscarron: v1.2.0
 * cinny: v2.0.4
 * corporal: 2.3.0
-* coturn: 4.5.2-r12
+* coturn: 4.5.2-r13
 * dimension: latest
 * dnsmasq: latest
 * dynamic_dns: v3.9.1-ls92
