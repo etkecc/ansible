@@ -47,7 +47,7 @@
 * prometheus_node_exporter: v1.3.1
 * prometheus_postgres_exporter: v0.10.1
 * prometheus: v2.37.0
-* radicale: 3.1.7.0
+* radicale: 3.1.8.0
 * redis: 7.0.4-alpine
 * registration: v0.7.2
 * room_purger: latest
