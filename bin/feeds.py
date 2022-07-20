@@ -2,6 +2,7 @@ import os
 import sys
 import argparse
 from datetime import date
+from urllib.parse import urlparse
 import xml.etree.ElementTree as ET
 
 parser = argparse.ArgumentParser(description='Extracts release feeds from roles')
@@ -37,9 +38,15 @@ def get_git_repos_from_files(file_paths, break_on_missing_repos=False):
             if 'docker_repo' in line:
                 # extract the value from a line like this:
                 # something_docker_repo: 'https://github.com/repository/here'
-                docker_repo_val = line.split(': ')[1].strip().replace('\"', '')
+                text = line.split(': ')[1].strip().replace('\"', '')
+                if validate_url(text):
+                    docker_repo_val = text
+                    break
             elif project_source_url_str in line:
-                docker_repo_val = line.split(project_source_url_str)[1].strip()
+                text = line.split(project_source_url_str)[1].strip()
+                if validate_url(text):
+                    docker_repo_val = text
+                    break
 
         if docker_repo_val == '':
             missing_repos.append(file)
@@ -50,6 +57,16 @@ def get_git_repos_from_files(file_paths, break_on_missing_repos=False):
         print('Missing docker_repo var or {0} comment for:\n{1}'.format(project_source_url_str, '\n'.join(missing_repos)))
 
     return git_repos
+
+def validate_url(text):
+    if text == '':
+        return False
+    try:
+        result = urlparse(text)
+        return all([result.scheme, result.netloc])
+    except:
+        return False
+
 
 def format_feeds_from_git_repos(git_repos):
     feeds = {}
