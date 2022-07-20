@@ -107,6 +107,7 @@ def dump_opml_file_from_feeds(feeds):
     for role, feed_dict in feeds.items():
         outline = ET.SubElement(body, 'outline', feed_dict)
 
+    ET.indent(opml)
     tree._setroot(opml)
     file_name = 'releases.opml'
     tree.write(file_name, encoding = 'UTF-8', xml_declaration = True)
