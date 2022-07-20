@@ -17,6 +17,7 @@
     - setup-bot-go-neb
     - setup-bot-honoroit
     - setup-bot-matrix-reminder-bot
+    - setup-bot-maubot
     - setup-bot-mjolnir
     - setup-client-cinny
     - setup-client-element
@@ -253,6 +254,18 @@
     - setup-all
     - restart-all
     - setup-bot-matrix-reminder-bot
+
+- name: Restart maubot
+  service:
+    enabled: yes
+    state: restarted
+    name: matrix-bot-maubot
+  when: matrix_bot_maubot_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-bot-maubot
 
 - name: Restart mjolnir bot
   service:

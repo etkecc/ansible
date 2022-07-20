@@ -21,7 +21,7 @@
 * hangouts: latest
 * heisenbridge: 1.13.0
 * honoroit: v0.9.10
-* hookshot: 1.8.0
+* hookshot: 1.8.1
 * hydrogen: v0.2.33
 * instagram: v0.1.3
 * jitsi_ldap: "3"
@@ -32,6 +32,7 @@
 * mailer: 4.95-r0-4
 * matrix_registration_bot: latest
 * matrix_reminder_bot: release-v0.2.1
+* maubot: v0.3.1
 * miniflux: 2.0.37
 * miounne: v2.2.1
 * mjolnir: v1.5.0
@@ -58,7 +59,7 @@
 * softserve: v0.3.2
 * sygnal: v0.12.0
 * synapse_admin: 0.8.5
-* synapse: v1.63.0
+* synapse: v1.63.1
 * telegram: v0.11.3
 * twitter: v0.1.4
 * whatsapp: v0.6.0
