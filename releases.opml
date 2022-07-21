@@ -2,12 +2,13 @@
 <opml version="1.0">
   <head>
     <title>Release feeds for roles</title>
-    <dateCreated>2022-07-20</dateCreated>
+    <dateCreated>2022-07-21</dateCreated>
   </head>
   <body>
     <outline text="prometheus-blackbox-exporter" title="prometheus-blackbox-exporter" type="rss" htmlUrl="https://github.com/prometheus/blackbox_exporter" xmlUrl="https://github.com/prometheus/blackbox_exporter/tags.atom" />
-    <outline text="scheduler" title="scheduler" type="rss" htmlUrl="https://gitlab.com/etke.cc/int/scheduler.git" xmlUrl="https://gitlab.com/etke.cc/int/scheduler/-/tags?format=atom" />
+    <outline text="scheduler" title="scheduler" type="rss" htmlUrl="https://gitlab.com/etke.cc/int/scheduler" xmlUrl="https://gitlab.com/etke.cc/int/scheduler/-/tags?format=atom" />
     <outline text="radicale" title="radicale" type="rss" htmlUrl="https://github.com/tomsquest/docker-radicale" xmlUrl="https://github.com/tomsquest/docker-radicale/tags.atom" />
+    <outline text="wireguard" title="wireguard" type="rss" htmlUrl="https://git.zx2c4.com/wireguard-linux" xmlUrl="https://git.zx2c4.com/wireguard-linux/atom/" />
     <outline text="miniflux" title="miniflux" type="rss" htmlUrl="https://github.com/miniflux/v2" xmlUrl="https://github.com/miniflux/v2/tags.atom" />
     <outline text="miounne" title="miounne" type="rss" htmlUrl="https://gitlab.com/etke.cc/miounne" xmlUrl="https://gitlab.com/etke.cc/miounne/-/tags?format=atom" />
     <outline text="kuma" title="kuma" type="rss" htmlUrl="https://github.com/louislam/uptime-kuma" xmlUrl="https://github.com/louislam/uptime-kuma/tags.atom" />
