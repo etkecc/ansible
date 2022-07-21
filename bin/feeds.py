@@ -54,7 +54,7 @@ def get_git_repos_from_files(file_paths, break_on_missing_repos=False):
             missing_repos.append(file)
 
     if break_on_missing_repos and len(missing_repos) > 0:
-        print('Missing docker_repo var or {0} comment for:\n{1}'.format(project_source_url_str, '\n'.join(missing_repos)))
+        print('Missing `{0}` comment for:\n{1}'.format(project_source_url_str, '\n'.join(missing_repos)))
 
     return git_repos
 
