@@ -32,28 +32,28 @@ def get_git_repos_from_files(file_paths, break_on_missing_repos=False):
     missing_repos = []
 
     for file in file_paths:
-        docker_repo_val = ''
         file_lines = open(file, 'r').readlines()
+        found_project_repo = False
         for line in file_lines:
-            if 'docker_repo' in line:
+            project_repo_val = ''
+            if project_source_url_str in line:
                 # extract the value from a line like this:
-                # something_docker_repo: 'https://github.com/repository/here'
-                text = line.split(': ')[1].strip().replace('\"', '')
-                if validate_url(text):
-                    docker_repo_val = text
+                # Project source code URL: https://github.com/mautrix/signal
+                project_repo_val = line.split(project_source_url_str)[1].strip()
+                if not validate_url(project_repo_val):
+                    print('Invalid url for line ', line)
                     break
-            elif project_source_url_str in line:
-                text = line.split(project_source_url_str)[1].strip()
-                if validate_url(text):
-                    docker_repo_val = text
-                    break
+            if project_repo_val != '':
+                if file not in git_repos:
+                    git_repos[file] = []
 
-        if docker_repo_val == '':
+                git_repos[file].append(project_repo_val)
+                found_project_repo = True
+
+        if not found_project_repo:
             missing_repos.append(file)
-        else:
-            git_repos[file] = docker_repo_val
 
-    if break_on_missing_repos:
+    if break_on_missing_repos and len(missing_repos) > 0:
         print('Missing docker_repo var or {0} comment for:\n{1}'.format(project_source_url_str, '\n'.join(missing_repos)))
 
     return git_repos
@@ -70,23 +70,31 @@ def validate_url(text):
 
 def format_feeds_from_git_repos(git_repos):
     feeds = {}
-    for role, git_repo in git_repos.items():
-        if 'github' in git_repo:
-            atomFilePath = git_repo.replace('.git', '') + '/tags.atom'
-        elif ('gitlab' in git_repo or 'mau.dev' in git_repo):
-            atomFilePath = git_repo.replace('.git', '') + '/-/tags?format=atom'
-        else:
-            print('Unrecognized git repository: %s' % git_repo)
-            continue
+    for role, git_repos in git_repos.items():
+        for idx, git_repo in enumerate(git_repos):
+            if 'github' in git_repo:
+                atomFilePath = git_repo.replace('.git', '') + '/tags.atom'
+            elif ('gitlab' in git_repo or 'mau.dev' in git_repo):
+                atomFilePath = git_repo.replace('.git', '') + '/-/tags?format=atom'
+            elif 'git.zx2c4.com' in git_repo:
+                atomFilePath = git_repo + '/atom/'
+            else:
+                print('Unrecognized git repository: %s' % git_repo)
+                continue
 
-        role_name = role.split('/')[3].removeprefix('matrix-bot-').removeprefix('matrix-bridge-').removeprefix('matrix-client-').removeprefix('matrix-')
-        feeds[role_name] = {
-            'text': role_name,
-            'title': role_name,
-            'type': 'rss',
-            'htmlUrl': git_repo,
-            'xmlUrl': atomFilePath
-        }
+            role_name = role.split('/')[3].removeprefix('matrix-bot-').removeprefix('matrix-bridge-').removeprefix('matrix-client-').removeprefix('matrix-')
+            if idx > 0:
+                # there is more than 1 project source code for this role
+                role_name += '-' + str(idx+1)
+
+            feeds[role_name] = {
+                'text': role_name,
+                'title': role_name,
+                'type': 'rss',
+                'htmlUrl': git_repo,
+                'xmlUrl': atomFilePath
+            }
+
     return feeds
 
 todays_date = date.today().strftime('%Y-%m-%d')
