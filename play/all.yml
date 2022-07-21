@@ -2,6 +2,8 @@
 - name: "Set up a Matrix server"
   hosts: "{{ target if target is defined else 'matrix_servers' }}"
   become: true
+  vars:
+    matrix_docker_installation_enabled: false # handled by galaxy/docker
 
   # Temporary workaround, ref: https://github.com/spantaleev/matrix-docker-ansible-deploy/issues/895
   vars_files:
@@ -9,6 +11,7 @@
 
   roles:
     - galaxy/init
+    - galaxy/docker
     - matrix-base
     - matrix-dynamic-dns
     - matrix-mailer
