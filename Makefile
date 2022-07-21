@@ -18,6 +18,7 @@ versions: ## Update VERSIONS.md file using the actual versions from roles' files
 commit: opml versions ## Make a commit
 	@git add --all
 	@git commit -S -q -m "$(shell bin/commit-msg.sh)"
+	@echo "Changes have been committed"
 
 
 opml: ## Dumps an OPML file with extracted git feeds for roles
