@@ -1,3 +1,5 @@
+# Project source code URL: https://github.com/charmbracelet/soft-serve.git
+
 custom_softserve_enabled: false
 
 custom_softserve_container_image_self_build: false

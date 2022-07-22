@@ -1,4 +1,6 @@
 ---
+# Project source code URL: https://github.com/Erikvl87/docker-languagetool
+
 custom_languagetool_enabled: false
 custom_languagetool_version: 5.8
 custom_languagetool_base_path: "{{ matrix_base_data_path }}/custom-languagetool"

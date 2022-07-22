@@ -1,4 +1,6 @@
 ---
+# Project source code URL: https://github.com/miniflux/v2
+
 custom_miniflux_enabled: false
 custom_miniflux_version: 2.0.37
 matrix_server_fqn_miniflux: "miniflux.{{ matrix_domain }}"

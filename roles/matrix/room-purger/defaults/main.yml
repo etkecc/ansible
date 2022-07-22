@@ -1,4 +1,5 @@
 ---
+# Project source code URL: https://gitlab.com/etke.cc/room-purger
 
 matrix_room_purger_enabled: false
 matrix_room_purger_login: room-purger

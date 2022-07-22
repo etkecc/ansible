@@ -1,4 +1,6 @@
 ---
+# Project source code URL: https://gitlab.com/etke.cc/miounne
+
 custom_miounne_enabled: false
 custom_miounne_version: v2.2.1
 matrix_server_fqn_miounne: "miounne.{{ matrix_domain }}"

@@ -17,6 +17,7 @@
     - setup-bot-go-neb
     - setup-bot-honoroit
     - setup-bot-matrix-reminder-bot
+    - setup-bot-maubot
     - setup-bot-mjolnir
     - setup-client-cinny
     - setup-client-element
@@ -53,7 +54,6 @@
     - setup-mx-puppet-discord
     - setup-mx-puppet-groupme
     - setup-mx-puppet-instagram
-    - setup-mx-puppet-skype
     - setup-mx-puppet-slack
     - setup-mx-puppet-steam
     - setup-mx-puppet-twitter
@@ -254,6 +254,18 @@
     - setup-all
     - restart-all
     - setup-bot-matrix-reminder-bot
+
+- name: Restart maubot
+  service:
+    enabled: yes
+    state: restarted
+    name: matrix-bot-maubot
+  when: matrix_bot_maubot_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-bot-maubot
 
 - name: Restart mjolnir bot
   service:
@@ -734,18 +746,6 @@
     - setup-all
     - restart-all
     - setup-mx-puppet-instagram
-
-- name: Restart Skype bridge (mx-puppet)
-  service:
-    enabled: yes
-    state: restarted
-    name: matrix-mx-puppet-skype
-  when: matrix_mx_puppet_skype_enabled|bool
-  ignore_errors: yes
-  tags:
-    - setup-all
-    - restart-all
-    - setup-mx-puppet-skype
 
 - name: Restart Slack bridge (mx-puppet)
   service:

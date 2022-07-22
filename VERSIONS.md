@@ -1,18 +1,15 @@
 * appservice_discord: v1.0.0
-* appservice_irc: release-0.34.0
-* appservice_slack: release-1.11.0
-* appservice_webhooks_container_image_self_build_repo: '{{ ''master'' if matrix_appservice_webhooks_version == ''latest'' else matrix_appservice_webhooks_version }}'
+* appservice_irc: 0.34.0
+* appservice_slack: 1.11.0
 * appservice_webhooks: v1.0.3-01
-* backup_borg: ""
 * beeper_linkedin: v0.5.2
 * buscarron: v1.2.0
 * cinny: v2.0.4
 * corporal: 2.3.0
-* coturn: 4.5.2-r12
-* coturn_container_image_self_build_repo: docker/{{ matrix_coturn_version }}
+* coturn: 4.5.2-r13
 * dimension: latest
 * dnsmasq: latest
-* dynamic_dns: v3.9.1-ls89
+* dynamic_dns: v3.9.1-ls92
 * element: v1.11.0
 * email2matrix: 1.0.3
 * etherpad: 1.8.18
@@ -20,12 +17,12 @@
 * go_neb: latest
 * googlechat: v0.3.3
 * go_skype_bridge: latest
-* grafana: 9.0.2
+* grafana: 9.0.4
 * hangouts: latest
-* heisenbridge: 1.13.0
-* honoroit: v0.9.9
-* hookshot: 1.8.0
-* hydrogen: v0.2.29
+* heisenbridge: 1.13.1
+* honoroit: v0.9.10
+* hookshot: 1.8.1
+* hydrogen: v0.2.33
 * instagram: v0.1.3
 * jitsi_ldap: "3"
 * jitsi: stable-7439-2
@@ -35,25 +32,24 @@
 * mailer: 4.95-r0-4
 * matrix_registration_bot: latest
 * matrix_reminder_bot: release-v0.2.1
+* maubot: v0.3.1
 * miniflux: 2.0.37
 * miounne: v2.2.1
 * mjolnir: v1.5.0
-* mx_puppet_discord_container_image_self_build: '{{ ''main'' if matrix_mx_puppet_discord_version == ''latest'' else matrix_mx_puppet_discord_version }}'
 * mx_puppet_discord: v0.1.1
 * mx_puppet_groupme: latest
 * mx_puppet_instagram: latest
-* mx_puppet_slack_container_image_self_build: '{{ ''main'' if matrix_mx_puppet_slack_version == ''latest'' else matrix_mx_puppet_slack_version }}'
 * mx_puppet_slack: v0.1.2
 * mx_puppet_steam: latest
 * mx_puppet_twitter: latest
-* nginx_proxy: 1.21.6-alpine
+* nginx_proxy: 1.23.0-alpine
 * ntfy: v1.27.2
 * prometheus_blackbox_exporter: v0.21.1
 * prometheus_node_exporter: v1.3.1
 * prometheus_postgres_exporter: v0.10.1
-* prometheus: v2.36.2
-* radicale: 3.1.7.0
-* redis: 6.2.6-alpine
+* prometheus: v2.37.0
+* radicale: 3.1.8.0
+* redis: 7.0.4-alpine
 * registration: v0.7.2
 * room_purger: latest
 * scheduler: latest
@@ -61,9 +57,9 @@
 * signal: v0.3.0
 * sms_bridge: 0.5.7
 * softserve: v0.3.2
-* sygnal: v0.11.0
+* sygnal: v0.12.0
 * synapse_admin: 0.8.5
-* synapse: v1.62.0
+* synapse: v1.63.1
 * telegram: v0.11.3
 * twitter: v0.1.4
-* whatsapp: v0.5.0
+* whatsapp: v0.6.0
