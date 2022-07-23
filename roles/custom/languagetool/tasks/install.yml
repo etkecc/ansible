@@ -24,17 +24,10 @@
   ignore_errors: yes
   when: custom_languagetool_ngrams_enabled|bool
 
-- name: Check existence of n-grams
-  stat:
-    path: "{{ custom_languagetool_data_path }}/en"
-  register: ngrams
+- name: Install n-grams
+  include_tasks: ngrams.yml
+  with_items: "{{ custom_languagetool_ngrams_langs_enabled }}"
   when: custom_languagetool_ngrams_enabled|bool
-
-- name: Download n-grams
-  get_url:
-    url: "{{ custom_languagetool_ngrams_url }}"
-    dest: "{{ custom_languagetool_ngrams_tmp }}"
-  when: custom_languagetool_ngrams_enabled|bool and ngrams.stat.exists|bool == false
 
 - name: Ensure custom-languagetool.service is present
   template:
@@ -42,22 +35,6 @@
     dest: "{{ matrix_systemd_path }}/custom-languagetool.service"
     mode: 0644
   register: custom_languagetool_systemd_service_result
-
-- name: Unpack n-grams
-  unarchive:
-    src: "{{ custom_languagetool_ngrams_tmp }}"
-    keep_newer: true
-    remote_src: true
-    dest: "{{ custom_languagetool_data_path }}"
-    owner: "{{ matrix_user_username }}"
-    group: "{{ matrix_user_groupname }}"
-  when: custom_languagetool_ngrams_enabled|bool and ngrams.stat.exists|bool == false
-
-- name: Remove n-rams tmp
-  file:
-    path: "{{ custom_languagetool_ngrams_tmp }}"
-    state: absent
-  when: custom_languagetool_ngrams_enabled|bool and ngrams.stat.exists|bool == false
 
 - name: Ensure systemd reloaded after custom-languagetool.service installation
   service:

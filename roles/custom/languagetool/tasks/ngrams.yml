@@ -1,0 +1,27 @@
+---
+- name: Check existence of n-grams
+  stat:
+    path: "{{ custom_languagetool_data_path }}/{{ item }}"
+  register: ngrams
+
+- name: Download n-grams
+  get_url:
+    url: "{{ custom_languagetool_ngrams_langs[item] }}"
+    dest: "{{ custom_languagetool_ngrams_tmp }}/{{ item }}.zip"
+  when: ngrams.stat.exists|bool == false
+
+- name: Unpack n-grams
+  unarchive:
+    src: "{{ custom_languagetool_ngrams_tmp }}/{{ item }}.zip"
+    keep_newer: true
+    remote_src: true
+    dest: "{{ custom_languagetool_data_path }}"
+    owner: "{{ matrix_user_username }}"
+    group: "{{ matrix_user_groupname }}"
+  when: ngrams.stat.exists|bool == false
+
+- name: Remove n-rams tmp
+  file:
+    path: "{{ custom_languagetool_ngrams_tmp }}/{{ item }}.zip"
+    state: absent
+  when: ngrams.stat.exists|bool == false
