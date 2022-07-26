@@ -9,7 +9,7 @@
 * coturn: 4.5.2-r13
 * dimension: latest
 * dnsmasq: latest
-* dynamic_dns: v3.9.1-ls92
+* dynamic_dns: v3.9.1-ls93
 * element: v1.11.0
 * email2matrix: 1.0.3
 * etherpad: 1.8.18
@@ -37,7 +37,7 @@
 * miounne: v2.2.1
 * mjolnir: v1.5.0
 * mx_puppet_discord: v0.1.1
-* mx_puppet_groupme: latest
+* mx_puppet_groupme: 533cccc8
 * mx_puppet_instagram: latest
 * mx_puppet_slack: v0.1.2
 * mx_puppet_steam: latest
