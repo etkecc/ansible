@@ -9,6 +9,7 @@
     - restart-all
     - setup-appservice-discord
     - setup-appservice-irc
+    - setup-appservice-kakaotalk
     - setup-appservice-slack
     - setup-appservice-webhooks
     - setup-backup-borg
@@ -158,6 +159,30 @@
     - setup-all
     - restart-all
     - setup-appservice-irc
+
+- name: Restart Kakaotalk bridge
+  service:
+    enabled: yes
+    state: restarted
+    name: matrix-appservice-kakaotalk
+  when: matrix_appservice_kakaotalk_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-appservice-kakaotalk
+
+- name: Restart Kakaotalk node
+  service:
+    enabled: yes
+    state: restarted
+    name: matrix-appservice-kakaotalk-node
+  when: matrix_appservice_kakaotalk_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-appservice-kakaotalk
 
 - name: Restart Slack bridge (appservice)
   service:

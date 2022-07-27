@@ -1,5 +1,6 @@
 * appservice_discord: v1.0.0
 * appservice_irc: 0.34.0
+* appservice_kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * appservice_slack: 1.11.0
 * appservice_webhooks: v1.0.3-01
 * beeper_linkedin: v0.5.2
