@@ -1,5 +1,6 @@
 * appservice_discord: v1.0.0
 * appservice_irc: 0.34.0
+* appservice_kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * appservice_slack: 1.11.0
 * appservice_webhooks: v1.0.3-01
 * beeper_linkedin: v0.5.2
@@ -8,16 +9,17 @@
 * corporal: 2.3.0
 * coturn: 4.5.2-r13
 * dimension: latest
+* discord: latest
 * dnsmasq: latest
-* dynamic_dns: v3.9.1-ls92
-* element: v1.11.0
+* dynamic_dns: v3.9.1-ls93
+* element: v1.11.1
 * email2matrix: 1.0.3
 * etherpad: 1.8.18
 * facebook: v0.4.0
 * go_neb: latest
 * googlechat: v0.3.3
 * go_skype_bridge: latest
-* grafana: 9.0.4
+* grafana: 9.0.5
 * hangouts: latest
 * heisenbridge: 1.13.1
 * honoroit: v0.9.10
@@ -37,7 +39,7 @@
 * miounne: v2.2.1
 * mjolnir: v1.5.0
 * mx_puppet_discord: v0.1.1
-* mx_puppet_groupme: latest
+* mx_puppet_groupme: 533cccc8
 * mx_puppet_instagram: latest
 * mx_puppet_slack: v0.1.2
 * mx_puppet_steam: latest
@@ -46,7 +48,7 @@
 * ntfy: v1.27.2
 * prometheus_blackbox_exporter: v0.21.1
 * prometheus_node_exporter: v1.3.1
-* prometheus_postgres_exporter: v0.10.1
+* prometheus_postgres_exporter: v0.11.0
 * prometheus: v2.37.0
 * radicale: 3.1.8.0
 * redis: 7.0.4-alpine

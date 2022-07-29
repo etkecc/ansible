@@ -12,8 +12,11 @@ args = parser.parse_args()
 if args.action not in ['check', 'dump']:
     sys.exit('Error: possible arguments are "check" or "dump"')
 
-# full path is expected for excluded_roles, ex. '/ansible/roles/matrix/room-purger/defaults/main.yml'
-excluded_roles = []
+excluded_paths = [
+    # appservice-kakaotalk defines a Project URL, but that Gitea repository does not have an Atom/RSS feed.
+    # It doesn't have any tags anyway.
+    './upstream/roles/matrix-bridge-appservice-kakaotalk/defaults',
+]
 project_source_url_str = '# Project source code URL:'
 
 def get_roles_files_from_dir(root_dir):
@@ -22,7 +25,7 @@ def get_roles_files_from_dir(root_dir):
         for file_name in file_list:
             if not dir_name.endswith('defaults') or file_name != 'main.yml':
                 continue
-            if dir_name in excluded_roles:
+            if dir_name in excluded_paths:
                 continue
             file_paths.append(os.path.join(dir_name, file_name))
     return file_paths

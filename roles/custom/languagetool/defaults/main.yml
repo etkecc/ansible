@@ -12,8 +12,19 @@ custom_languagetool_docker_image_force_pull: "{{ custom_languagetool_docker_imag
 
 # n-grams
 custom_languagetool_ngrams_enabled: false
-custom_languagetool_ngrams_url: https://languagetool.org/download/ngram-data/ngrams-en-20150817.zip
-custom_languagetool_ngrams_tmp: /tmp/custom-languagetool-ngrams.zip
+custom_languagetool_ngrams_tmp: /tmp/
+custom_languagetool_ngrams_langs_enabled: ['en']
+custom_languagetool_ngrams_langs:
+  de: https://languagetool.org/download/ngram-data/ngrams-de-20150819.zip
+  en: https://languagetool.org/download/ngram-data/ngrams-en-20150817.zip
+  es: https://languagetool.org/download/ngram-data/ngrams-es-20150915.zip
+  fr: https://languagetool.org/download/ngram-data/ngrams-fr-20150913.zip
+  he: https://languagetool.org/download/ngram-data/untested/ngram-he-20150916.zip
+  it: https://languagetool.org/download/ngram-data/untested/ngram-it-20150915.zip
+  nl: https://languagetool.org/download/ngram-data/ngrams-nl-20181229.zip
+  ru: https://languagetool.org/download/ngram-data/untested/ngram-ru-20150914.zip
+  zh: https://languagetool.org/download/ngram-data/untested/ngram-zh-20150916.zip
+
 
 custom_languagetool_java_heap_min: 256m
 custom_languagetool_java_heap_max: 512m

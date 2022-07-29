@@ -9,6 +9,7 @@
     - restart-all
     - setup-appservice-discord
     - setup-appservice-irc
+    - setup-appservice-kakaotalk
     - setup-appservice-slack
     - setup-appservice-webhooks
     - setup-backup-borg
@@ -41,6 +42,7 @@
     - setup-ma1sd
     - setup-mailer
     - setup-matrix-registration
+    - setup-mautrix-discord
     - setup-mautrix-facebook
     - setup-mautrix-googlechat
     - setup-mautrix-hangouts
@@ -158,6 +160,30 @@
     - setup-all
     - restart-all
     - setup-appservice-irc
+
+- name: Restart Kakaotalk bridge
+  service:
+    enabled: yes
+    state: restarted
+    name: matrix-appservice-kakaotalk
+  when: matrix_appservice_kakaotalk_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-appservice-kakaotalk
+
+- name: Restart Kakaotalk node
+  service:
+    enabled: yes
+    state: restarted
+    name: matrix-appservice-kakaotalk-node
+  when: matrix_appservice_kakaotalk_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-appservice-kakaotalk
 
 - name: Restart Slack bridge (appservice)
   service:
@@ -590,6 +616,18 @@
     - setup-all
     - restart-all
     - setup-softserve
+
+- name: Restart Discord bridge (mautrix)
+  service:
+    enabled: yes
+    state: restarted
+    name: matrix-mautrix-discord
+  when: matrix_mautrix_discord_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-mautrix-discord
 
 - name: Restart Facebook bridge (mautrix)
   service:

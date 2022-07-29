@@ -2,7 +2,7 @@
 <opml version="1.0">
   <head>
     <title>Release feeds for roles</title>
-    <dateCreated>2022-07-21</dateCreated>
+    <dateCreated>2022-07-29</dateCreated>
   </head>
   <body>
     <outline text="prometheus-blackbox-exporter" title="prometheus-blackbox-exporter" type="rss" htmlUrl="https://github.com/prometheus/blackbox_exporter" xmlUrl="https://github.com/prometheus/blackbox_exporter/tags.atom" />
@@ -30,9 +30,10 @@
     <outline text="jitsi" title="jitsi" type="rss" htmlUrl="https://github.com/jitsi/docker-jitsi-meet" xmlUrl="https://github.com/jitsi/docker-jitsi-meet/tags.atom" />
     <outline text="hookshot" title="hookshot" type="rss" htmlUrl="https://github.com/matrix-org/matrix-hookshot" xmlUrl="https://github.com/matrix-org/matrix-hookshot/tags.atom" />
     <outline text="sms" title="sms" type="rss" htmlUrl="https://github.com/benkuly/matrix-sms-bridge" xmlUrl="https://github.com/benkuly/matrix-sms-bridge/tags.atom" />
+    <outline text="mautrix-discord" title="mautrix-discord" type="rss" htmlUrl="https://github.com/mautrix/discord" xmlUrl="https://github.com/mautrix/discord/tags.atom" />
     <outline text="mautrix-twitter" title="mautrix-twitter" type="rss" htmlUrl="https://github.com/mautrix/twitter" xmlUrl="https://github.com/mautrix/twitter/tags.atom" />
     <outline text="redis" title="redis" type="rss" htmlUrl="https://github.com/redis/redis" xmlUrl="https://github.com/redis/redis/tags.atom" />
-    <outline text="mx-puppet-groupme" title="mx-puppet-groupme" type="rss" htmlUrl="https://gitlab.com/robintown/mx-puppet-groupme" xmlUrl="https://gitlab.com/robintown/mx-puppet-groupme/-/tags?format=atom" />
+    <outline text="mx-puppet-groupme" title="mx-puppet-groupme" type="rss" htmlUrl="https://gitlab.com/xangelix-pub/matrix/mx-puppet-groupme" xmlUrl="https://gitlab.com/xangelix-pub/matrix/mx-puppet-groupme/-/tags?format=atom" />
     <outline text="dimension" title="dimension" type="rss" htmlUrl="https://github.com/turt2live/matrix-dimension" xmlUrl="https://github.com/turt2live/matrix-dimension/tags.atom" />
     <outline text="go-neb" title="go-neb" type="rss" htmlUrl="https://github.com/matrix-org/go-neb" xmlUrl="https://github.com/matrix-org/go-neb/tags.atom" />
     <outline text="ntfy" title="ntfy" type="rss" htmlUrl="https://github.com/binwiederhier/ntfy" xmlUrl="https://github.com/binwiederhier/ntfy/tags.atom" />
