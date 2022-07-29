@@ -42,6 +42,7 @@
     - setup-ma1sd
     - setup-mailer
     - setup-matrix-registration
+    - setup-mautrix-discord
     - setup-mautrix-facebook
     - setup-mautrix-googlechat
     - setup-mautrix-hangouts
@@ -615,6 +616,18 @@
     - setup-all
     - restart-all
     - setup-softserve
+
+- name: Restart Discord bridge (mautrix)
+  service:
+    enabled: yes
+    state: restarted
+    name: matrix-mautrix-discord
+  when: matrix_mautrix_discord_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-mautrix-discord
 
 - name: Restart Facebook bridge (mautrix)
   service:
