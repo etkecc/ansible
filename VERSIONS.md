@@ -12,7 +12,7 @@
 * discord: latest
 * dnsmasq: latest
 * dynamic_dns: v3.9.1-ls94
-* element: v1.11.1
+* element: v1.11.2
 * email2matrix: 1.0.3
 * etherpad: 1.8.18
 * facebook: v0.4.0
@@ -58,7 +58,7 @@
 * signal_daemon: 0.20.0
 * signal: v0.3.0
 * sms_bridge: 0.5.7
-* softserve: v0.3.2
+* softserve: v0.3.3
 * sygnal: v0.12.0
 * synapse_admin: 0.8.5
 * synapse: v1.64.0
