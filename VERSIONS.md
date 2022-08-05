@@ -22,7 +22,7 @@
 * grafana: 9.0.6
 * hangouts: latest
 * heisenbridge: 1.13.1
-* honoroit: v0.9.11
+* honoroit: v0.9.12
 * hookshot: 1.8.1
 * hydrogen: v0.3.1
 * instagram: v0.1.3
