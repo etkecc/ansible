@@ -5,7 +5,7 @@
 * appservice_webhooks: v1.0.3-01
 * beeper_linkedin: v0.5.2
 * buscarron: v1.2.0
-* cinny: v2.0.4
+* cinny: v2.1.1
 * corporal: 2.3.0
 * coturn: 4.5.2-r13
 * dimension: latest
@@ -27,7 +27,7 @@
 * hydrogen: v0.3.1
 * instagram: v0.1.3
 * jitsi_ldap: "3"
-* jitsi: stable-7439-2
+* jitsi: stable-7577
 * kuma: 1.17.1-alpine
 * languagetool: 5.8
 * ma1sd: 2.5.0

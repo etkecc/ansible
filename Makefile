@@ -6,6 +6,10 @@ help: ## Show this help.
 submodules: ## Initialize upstream with pinned commit
 	git submodule update --init --recursive
 
+upstream: ## Update upstream and generate VERSIONS.md diff
+	@cd ./upstream; git pull
+	$(MAKE) versions
+
 roles: ## Pull roles
 	ansible-galaxy install -r requirements.yml -p roles/galaxy/
 
