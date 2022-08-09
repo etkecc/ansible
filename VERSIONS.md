@@ -13,7 +13,7 @@
 * dnsmasq: latest
 * dynamic_dns: v3.9.1-ls94
 * element: v1.11.2
-* email2matrix: 1.0.3
+* email2matrix: 1.1.0
 * etherpad: 1.8.18
 * facebook: v0.4.0
 * go_neb: latest
