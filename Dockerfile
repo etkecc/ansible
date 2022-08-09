@@ -17,6 +17,6 @@ RUN apk --no-cache add git make && \
 FROM registry.gitlab.com/etke.cc/ansible/base
 WORKDIR /playbook
 ENTRYPOINT ["/bin/sh"]
-RUN apk add --no-cache ca-certificates openssh git hugo make
+RUN apk add --no-cache ca-certificates openssh git npm hugo make
 COPY --from=playbook /playbook /playbook
 COPY --from=tools /bin/emm /bin/emm
