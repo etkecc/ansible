@@ -7,7 +7,7 @@
 * buscarron: v1.2.0
 * cinny: v2.1.1
 * corporal: 2.3.0
-* coturn: 4.5.2-r13
+* coturn: 4.5.2-r14
 * dimension: latest
 * discord: latest
 * dnsmasq: latest
