@@ -5,7 +5,7 @@
 * appservice_webhooks: v1.0.3-01
 * beeper_linkedin: v0.5.2
 * buscarron: v1.2.0
-* cinny: v2.1.1
+* cinny: v2.1.2
 * corporal: 2.3.0
 * coturn: 4.5.2-r14
 * dimension: latest
@@ -19,7 +19,7 @@
 * go_neb: latest
 * googlechat: v0.3.3
 * go_skype_bridge: latest
-* grafana: 9.0.6
+* grafana: 9.0.7
 * hangouts: latest
 * heisenbridge: 1.13.1
 * honoroit: v0.9.12
