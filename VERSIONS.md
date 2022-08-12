@@ -1,4 +1,4 @@
-* appservice_discord: v1.0.0
+* appservice_discord: v3.0.0
 * appservice_irc: 0.34.0
 * appservice_kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * appservice_slack: 1.11.0
@@ -44,7 +44,7 @@
 * mx_puppet_slack: v0.1.2
 * mx_puppet_steam: latest
 * mx_puppet_twitter: latest
-* nginx_proxy: 1.23.0-alpine
+* nginx_proxy: 1.23.1-alpine
 * ntfy: v1.27.2
 * prometheus_blackbox_exporter: v0.22.0
 * prometheus_node_exporter: v1.3.1
@@ -55,7 +55,7 @@
 * registration: v0.7.2
 * room_purger: latest
 * scheduler: latest
-* signal_daemon: 0.20.0
+* signal_daemon: 0.21.0
 * signal: v0.3.0
 * sms_bridge: 0.5.7
 * softserve: v0.4.0
