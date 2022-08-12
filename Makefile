@@ -1,10 +1,14 @@
-.PHONY: help upstream roles dependencies versions commit-msg commit opml print-nofeeds
+.PHONY: help upstream roles dependencies versions commit-msg upstream commit opml print-nofeeds
 
 help: ## Show this help.
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
 submodules: ## Initialize upstream with pinned commit
 	git submodule update --init --recursive
+
+upstream: ## Update upstream and generate VERSIONS.md diff
+	@cd ./upstream; git pull
+	$(MAKE) versions
 
 roles: ## Pull roles
 	ansible-galaxy install -r requirements.yml -p roles/galaxy/

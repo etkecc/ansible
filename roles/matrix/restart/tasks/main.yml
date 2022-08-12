@@ -23,6 +23,7 @@
     - setup-client-cinny
     - setup-client-element
     - setup-client-hydrogen
+    - setup-conduit
     - setup-corporal
     - setup-coturn
     - setup-dendrite
@@ -340,6 +341,18 @@
     - setup-all
     - restart-all
     - setup-client-hydrogen
+
+- name: Restart Conduit
+  service:
+    enabled: yes
+    state: restarted
+    name: matrix-conduit
+  when: matrix_conduit_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-conduit
 
 - name: Restart Corporal
   service:
