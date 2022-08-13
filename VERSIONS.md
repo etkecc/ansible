@@ -27,7 +27,7 @@
 * hydrogen: v0.3.1
 * instagram: v0.1.3
 * jitsi_ldap: "3"
-* jitsi: stable-7577-2
+* jitsi: stable-7648
 * kuma: 1.17.1-alpine
 * languagetool: 5.8
 * ma1sd: 2.5.0
