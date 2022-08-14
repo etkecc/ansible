@@ -35,7 +35,7 @@
 * matrix_registration_bot: latest
 * matrix_reminder_bot: release-v0.2.1
 * maubot: v0.3.1
-* miniflux: 2.0.37
+* miniflux: 2.0.38
 * miounne: v2.2.1
 * mjolnir: v1.5.0
 * mx_puppet_discord: v0.1.1
