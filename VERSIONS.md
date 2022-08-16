@@ -11,7 +11,7 @@
 * dimension: latest
 * discord: latest
 * dnsmasq: latest
-* dynamic_dns: v3.9.1-ls94
+* dynamic_dns: v3.9.1-ls95
 * element: v1.11.2
 * email2matrix: 1.1.0
 * etherpad: 1.8.18
