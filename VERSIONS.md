@@ -48,7 +48,7 @@
 * ntfy: v1.27.2
 * prometheus_blackbox_exporter: v0.22.0
 * prometheus_node_exporter: v1.3.1
-* prometheus_postgres_exporter: v0.11.0
+* prometheus_postgres_exporter: v0.11.1
 * prometheus: v2.38.0
 * radicale: 3.1.8.0
 * redis: 7.0.4-alpine
