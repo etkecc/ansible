@@ -3,7 +3,7 @@
 * appservice_kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * appservice_slack: 1.11.0
 * appservice_webhooks: v1.0.3-01
-* beeper_linkedin: v0.5.2
+* beeper_linkedin: v0.5.3
 * buscarron: v1.2.0
 * cinny: v2.1.2
 * corporal: 2.3.0
@@ -21,7 +21,7 @@
 * go_skype_bridge: latest
 * grafana: 9.1.0
 * hangouts: latest
-* heisenbridge: 1.13.1
+* heisenbridge: 1.14.0
 * honoroit: v0.9.12
 * hookshot: 1.8.1
 * hydrogen: v0.3.1

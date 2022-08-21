@@ -2,7 +2,7 @@
 <opml version="1.0">
   <head>
     <title>Release feeds for roles</title>
-    <dateCreated>2022-08-19</dateCreated>
+    <dateCreated>2022-08-21</dateCreated>
   </head>
   <body>
     <outline text="prometheus-blackbox-exporter" title="prometheus-blackbox-exporter" type="rss" htmlUrl="https://github.com/prometheus/blackbox_exporter" xmlUrl="https://github.com/prometheus/blackbox_exporter/tags.atom" />
@@ -38,7 +38,7 @@
     <outline text="go-neb" title="go-neb" type="rss" htmlUrl="https://github.com/matrix-org/go-neb" xmlUrl="https://github.com/matrix-org/go-neb/tags.atom" />
     <outline text="ntfy" title="ntfy" type="rss" htmlUrl="https://github.com/binwiederhier/ntfy" xmlUrl="https://github.com/binwiederhier/ntfy/tags.atom" />
     <outline text="mx-puppet-slack" title="mx-puppet-slack" type="rss" htmlUrl="https://gitlab.com/mx-puppet/slack/mx-puppet-slack" xmlUrl="https://gitlab.com/mx-puppet/slack/mx-puppet-slack/-/tags?format=atom" />
-    <outline text="beeper-linkedin" title="beeper-linkedin" type="rss" htmlUrl="https://gitlab.com/beeper/linkedin" xmlUrl="https://gitlab.com/beeper/linkedin/-/tags?format=atom" />
+    <outline text="beeper-linkedin" title="beeper-linkedin" type="rss" htmlUrl="https://github.com/beeper/linkedin" xmlUrl="https://github.com/beeper/linkedin/tags.atom" />
     <outline text="mautrix-googlechat" title="mautrix-googlechat" type="rss" htmlUrl="https://github.com/mautrix/googlechat" xmlUrl="https://github.com/mautrix/googlechat/tags.atom" />
     <outline text="cinny" title="cinny" type="rss" htmlUrl="https://github.com/ajbura/cinny" xmlUrl="https://github.com/ajbura/cinny/tags.atom" />
     <outline text="appservice-webhooks" title="appservice-webhooks" type="rss" htmlUrl="https://github.com/redoonetworks/matrix-appservice-webhooks" xmlUrl="https://github.com/redoonetworks/matrix-appservice-webhooks/tags.atom" />
