@@ -20,6 +20,7 @@
     - setup-bot-matrix-reminder-bot
     - setup-bot-maubot
     - setup-bot-mjolnir
+    - setup-bot-postmoogle
     - setup-client-cinny
     - setup-client-element
     - setup-client-hydrogen
@@ -305,6 +306,18 @@
     - setup-all
     - restart-all
     - setup-bot-mjolnir
+
+- name: Restart Postmoogle bot
+  service:
+    enabled: yes
+    state: restarted
+    name: matrix-bot-postmoogle
+  when: matrix_bot_postmoogle_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-bot-postmoogle
 
 - name: Restart Cinny
   service:
