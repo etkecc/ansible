@@ -4,7 +4,7 @@
 * appservice_slack: 1.11.0
 * appservice_webhooks: v1.0.3-01
 * beeper_linkedin: v0.5.3
-* buscarron: v1.2.0
+* buscarron: v1.2.1
 * cinny: v2.1.2
 * corporal: 2.3.0
 * coturn: 4.5.2-r14
@@ -22,7 +22,7 @@
 * grafana: 9.1.0
 * hangouts: latest
 * heisenbridge: 1.14.0
-* honoroit: v0.9.12
+* honoroit: v0.9.13
 * hookshot: 2.0.1
 * hydrogen: v0.3.1
 * instagram: v0.1.3
