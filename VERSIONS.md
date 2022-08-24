@@ -19,7 +19,7 @@
 * go_neb: latest
 * googlechat: v0.3.3
 * go_skype_bridge: latest
-* grafana: 9.1.0
+* grafana: 9.1.1
 * hangouts: latest
 * heisenbridge: 1.14.0
 * honoroit: v0.9.13
@@ -64,5 +64,5 @@
 * synapse_admin: 0.8.5
 * synapse: v1.65.0
 * telegram: v0.11.3
-* twitter: v0.1.4
+* twitter: v0.1.5
 * whatsapp: v0.6.1
