@@ -33,7 +33,7 @@ for item in "${!CHANGES[@]}"; do
 done
 
 if [[ -z "$MESSAGE" ]]; then
-	MESSAGE="update without version changes"
+	MESSAGE="[skip ci] update without version changes"
 fi
 
 echo $MESSAGE
