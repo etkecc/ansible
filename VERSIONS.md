@@ -24,10 +24,10 @@
 * heisenbridge: 1.14.0
 * honoroit: v0.9.13
 * hookshot: 2.0.1
-* hydrogen: v0.3.1
-* instagram: v0.1.3
+* hydrogen: v0.3.2
+* instagram: v0.2.0
 * jitsi_ldap: "3"
-* jitsi: stable-7648-3
+* jitsi: stable-7648-4
 * kuma: 1.17.1-alpine
 * languagetool: 5.8
 * ma1sd: 2.5.0
@@ -63,6 +63,6 @@
 * sygnal: v0.12.0
 * synapse_admin: 0.8.5
 * synapse: v1.65.0
-* telegram: v0.11.3
+* telegram: v0.12.0
 * twitter: v0.1.5
 * whatsapp: v0.6.1
