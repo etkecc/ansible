@@ -11,7 +11,7 @@
 * dimension: latest
 * discord: latest
 * dnsmasq: latest
-* dynamic_dns: v3.9.1-ls96
+* dynamic_dns: v3.9.1-ls97
 * element: v1.11.3
 * email2matrix: 1.1.0
 * etherpad: 1.8.18
@@ -19,7 +19,7 @@
 * go_neb: latest
 * googlechat: v0.3.3
 * go_skype_bridge: latest
-* grafana: 9.1.1
+* grafana: 9.1.2
 * hangouts: latest
 * heisenbridge: 1.14.0
 * honoroit: v0.9.13
@@ -46,7 +46,7 @@
 * mx_puppet_twitter: latest
 * nginx_proxy: 1.23.1-alpine
 * ntfy: v1.27.2
-* postmoogle: latest
+* postmoogle: v0.9.0
 * prometheus_blackbox_exporter: v0.22.0
 * prometheus_node_exporter: v1.3.1
 * prometheus_postgres_exporter: v0.11.1
@@ -62,7 +62,7 @@
 * softserve: v0.4.0
 * sygnal: v0.12.0
 * synapse_admin: 0.8.5
-* synapse: v1.65.0
+* synapse: v1.66.0
 * telegram: v0.12.0
 * twitter: v0.1.5
 * whatsapp: v0.6.1
