@@ -5,14 +5,14 @@
 * appservice_webhooks: v1.0.3-01
 * beeper_linkedin: v0.5.3
 * buscarron: v1.2.1
-* cinny: v2.1.2
+* cinny: v2.1.3
 * corporal: 2.3.0
 * coturn: 4.5.2-r14
 * dimension: latest
 * discord: latest
 * dnsmasq: latest
 * dynamic_dns: v3.9.1-ls97
-* element: v1.11.3
+* element: v1.11.4
 * email2matrix: 1.1.0
 * etherpad: 1.8.18
 * facebook: v0.4.0
