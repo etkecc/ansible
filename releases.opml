@@ -2,7 +2,7 @@
 <opml version="1.0">
   <head>
     <title>Release feeds for roles</title>
-    <dateCreated>2022-09-02</dateCreated>
+    <dateCreated>2022-09-04</dateCreated>
   </head>
   <body>
     <outline text="prometheus-blackbox-exporter" title="prometheus-blackbox-exporter" type="rss" htmlUrl="https://github.com/prometheus/blackbox_exporter" xmlUrl="https://github.com/prometheus/blackbox_exporter/tags.atom" />
