@@ -11,7 +11,7 @@
 * dimension: latest
 * discord: latest
 * dnsmasq: latest
-* dynamic_dns: v3.9.1-ls97
+* dynamic_dns: v3.9.1-ls98
 * element: v1.11.4
 * email2matrix: 1.1.0
 * etherpad: 1.8.18
@@ -19,7 +19,7 @@
 * go_neb: latest
 * googlechat: v0.3.3
 * go_skype_bridge: latest
-* grafana: 9.1.2
+* grafana: 9.1.3
 * hangouts: latest
 * heisenbridge: 1.14.0
 * honoroit: v0.9.13
