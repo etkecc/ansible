@@ -21,6 +21,7 @@
     - setup-bot-maubot
     - setup-bot-mjolnir
     - setup-bot-postmoogle
+    - setup-cactus-comments
     - setup-client-cinny
     - setup-client-element
     - setup-client-hydrogen
@@ -318,6 +319,18 @@
     - setup-all
     - restart-all
     - setup-bot-postmoogle
+
+- name: Restart Cactus Comments
+  service:
+    enabled: yes
+    state: restarted
+    name: matrix-cactus-comments.service
+  when: matrix_cactus_comments_enabled|bool
+  ignore_errors: yes
+  tags:
+    - setup-all
+    - restart-all
+    - setup-cactus-comments
 
 - name: Restart Cinny
   service:
