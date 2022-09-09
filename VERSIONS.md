@@ -5,6 +5,8 @@
 * appservice_webhooks: v1.0.3-01
 * beeper_linkedin: v0.5.3
 * buscarron: v1.2.1
+* cactus_comments: 0.9.0
+* cactus_comments_client: 0.13.0
 * cinny: v2.1.3
 * corporal: 2.3.0
 * coturn: 4.5.2-r14
