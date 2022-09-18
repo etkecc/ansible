@@ -24,7 +24,7 @@
 * grafana: 9.1.5
 * hangouts: latest
 * heisenbridge: 1.14.0
-* honoroit: v0.9.13
+* honoroit: v0.9.14
 * hookshot: 2.2.0
 * hydrogen: v0.3.2
 * instagram: v0.2.0
@@ -59,7 +59,7 @@
 * room_purger: latest
 * scheduler: latest
 * signal_daemon: 0.21.1
-* signal: v0.3.0
+* signal: v0.4.0
 * sms_bridge: 0.5.7
 * softserve: v0.4.0
 * sygnal: v0.12.0
