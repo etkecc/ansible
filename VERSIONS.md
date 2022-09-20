@@ -13,7 +13,7 @@
 * dimension: latest
 * discord: latest
 * dnsmasq: latest
-* dynamic_dns: v3.9.1-ls98
+* dynamic_dns: v3.9.1-ls99
 * element: v1.11.5
 * email2matrix: 1.1.0
 * etherpad: 1.8.18
@@ -27,7 +27,7 @@
 * honoroit: v0.9.14
 * hookshot: 2.2.0
 * hydrogen: v0.3.2
-* instagram: v0.2.0
+* instagram: v0.2.1
 * jitsi_ldap: "3"
 * jitsi: stable-7648-4
 * kuma: 1.18.0-alpine
