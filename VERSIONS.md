@@ -21,10 +21,10 @@
 * go_neb: latest
 * googlechat: v0.3.3
 * go_skype_bridge: latest
-* grafana: 9.1.5
+* grafana: 9.1.6
 * hangouts: latest
 * heisenbridge: 1.14.0
-* honoroit: v0.9.14
+* honoroit: v0.9.15
 * hookshot: 2.2.0
 * hydrogen: v0.3.2
 * instagram: v0.2.1
@@ -48,7 +48,7 @@
 * mx_puppet_twitter: latest
 * nginx_proxy: 1.23.1-alpine
 * ntfy: v1.27.2
-* postmoogle: v0.9.2
+* postmoogle: v0.9.3
 * prometheus_blackbox_exporter: v0.22.0
 * prometheus_node_exporter: v1.3.1
 * prometheus_postgres_exporter: v0.11.1
