@@ -1,5 +1,5 @@
 * appservice_discord: v3.0.0
-* appservice_irc: 0.35.0
+* appservice_irc: 0.35.1
 * appservice_kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * appservice_slack: 1.11.0
 * appservice_webhooks: v1.0.3-01
@@ -48,7 +48,7 @@
 * mx_puppet_twitter: latest
 * nginx_proxy: 1.23.1-alpine
 * ntfy: v1.27.2
-* postmoogle: v0.9.3
+* postmoogle: v0.9.4
 * prometheus_blackbox_exporter: v0.22.0
 * prometheus_node_exporter: v1.3.1
 * prometheus_postgres_exporter: v0.11.1
