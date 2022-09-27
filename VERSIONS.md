@@ -50,7 +50,7 @@
 * ntfy: v1.27.2
 * postmoogle: v0.9.4
 * prometheus_blackbox_exporter: v0.22.0
-* prometheus_node_exporter: v1.3.1
+* prometheus_node_exporter: v1.4.0
 * prometheus_postgres_exporter: v0.11.1
 * prometheus: v2.38.0
 * radicale: 3.1.8.0
@@ -65,6 +65,6 @@
 * sygnal: v0.12.0
 * synapse_admin: 0.8.5
 * synapse: v1.67.0
-* telegram: v0.12.0
+* telegram: v0.12.1
 * twitter: v0.1.5
 * whatsapp: v0.7.0
