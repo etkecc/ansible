@@ -7,7 +7,7 @@
 * buscarron: v1.2.1
 * cactus_comments: 0.9.0
 * cactus_comments_client: 0.13.0
-* cinny: v2.2.0
+* cinny: v2.2.1
 * corporal: 2.3.0
 * coturn: 4.6.0-r0
 * dimension: latest
