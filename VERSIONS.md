@@ -8,7 +8,7 @@
 * cactus_comments: 0.9.0
 * cactus_comments_client: 0.13.0
 * cinny: v2.2.2
-* corporal: 2.3.1
+* corporal: 2.3.2
 * coturn: 4.6.0-r0
 * dimension: latest
 * discord: latest
@@ -32,6 +32,7 @@
 * jitsi: stable-7830
 * kuma: 1.18.0-alpine
 * languagetool: 5.9
+* ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * ma1sd: 2.5.0
 * mailer: 4.95-r0-4
 * matrix_registration_bot: latest

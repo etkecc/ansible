@@ -2,7 +2,7 @@
 <opml version="1.0">
   <head>
     <title>Release feeds for roles</title>
-    <dateCreated>2022-09-30</dateCreated>
+    <dateCreated>2022-10-02</dateCreated>
   </head>
   <body>
     <outline text="prometheus-blackbox-exporter" title="prometheus-blackbox-exporter" type="rss" htmlUrl="https://github.com/prometheus/blackbox_exporter" xmlUrl="https://github.com/prometheus/blackbox_exporter/tags.atom" />
@@ -19,6 +19,7 @@
     <outline text="mx-puppet-steam" title="mx-puppet-steam" type="rss" htmlUrl="https://github.com/icewind1991/mx-puppet-steam" xmlUrl="https://github.com/icewind1991/mx-puppet-steam/tags.atom" />
     <outline text="buscarron" title="buscarron" type="rss" htmlUrl="https://gitlab.com/etke.cc/buscarron" xmlUrl="https://gitlab.com/etke.cc/buscarron/-/tags?format=atom" />
     <outline text="appservice-slack" title="appservice-slack" type="rss" htmlUrl="https://github.com/matrix-org/matrix-appservice-slack" xmlUrl="https://github.com/matrix-org/matrix-appservice-slack/tags.atom" />
+    <outline text="ldap-registration-proxy" title="ldap-registration-proxy" type="rss" htmlUrl="https://gitlab.com/activism.international/matrix_ldap_registration_proxy" xmlUrl="https://gitlab.com/activism.international/matrix_ldap_registration_proxy/-/tags?format=atom" />
     <outline text="heisenbridge" title="heisenbridge" type="rss" htmlUrl="https://github.com/hifi/heisenbridge" xmlUrl="https://github.com/hifi/heisenbridge/tags.atom" />
     <outline text="email2matrix" title="email2matrix" type="rss" htmlUrl="https://github.com/devture/email2matrix" xmlUrl="https://github.com/devture/email2matrix/tags.atom" />
     <outline text="cactus-comments" title="cactus-comments" type="rss" htmlUrl="https://gitlab.com/cactus-comments/cactus-appservice" xmlUrl="https://gitlab.com/cactus-comments/cactus-appservice/-/tags?format=atom" />
