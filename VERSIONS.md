@@ -30,7 +30,7 @@
 * instagram: v0.2.1
 * jitsi_ldap: "3"
 * jitsi: stable-7830
-* kuma: 1.18.1-alpine
+* kuma: 1.18.2-alpine
 * languagetool: 5.9
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * ma1sd: 2.5.0
