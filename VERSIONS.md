@@ -53,7 +53,7 @@
 * prometheus_blackbox_exporter: v0.22.0
 * prometheus_node_exporter: v1.4.0
 * prometheus_postgres_exporter: v0.11.1
-* prometheus: v2.38.0
+* prometheus: v2.39.0
 * radicale: 3.1.8.0
 * redis: 7.0.4-alpine
 * registration: v0.7.2
