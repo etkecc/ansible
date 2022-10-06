@@ -25,7 +25,7 @@
 * hangouts: latest
 * heisenbridge: 1.14.0
 * honoroit: v0.9.15
-* hookshot: 2.2.0
+* hookshot: 2.3.0
 * hydrogen: v0.3.2
 * instagram: v0.2.1
 * jitsi_ldap: "3"
@@ -59,7 +59,7 @@
 * registration: v0.7.2
 * room_purger: latest
 * scheduler: latest
-* signal_daemon: 0.21.1
+* signal_daemon: 0.22.2
 * signal: v0.4.0
 * sms_bridge: 0.5.7
 * softserve: v0.4.0
