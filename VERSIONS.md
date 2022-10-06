@@ -1,7 +1,7 @@
 * appservice_discord: v3.0.0
 * appservice_irc: 0.35.1
 * appservice_kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
-* appservice_slack: 1.11.0
+* appservice_slack: 2.0.1
 * appservice_webhooks: v1.0.3-01
 * beeper_linkedin: v0.5.3
 * buscarron: v1.2.1
@@ -30,7 +30,7 @@
 * instagram: v0.2.1
 * jitsi_ldap: "3"
 * jitsi: stable-7830
-* kuma: 1.18.2-alpine
+* kuma: 1.18.3-alpine
 * languagetool: 5.9
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * ma1sd: 2.5.0
