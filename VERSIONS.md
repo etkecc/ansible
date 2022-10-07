@@ -49,7 +49,7 @@
 * mx_puppet_twitter: latest
 * nginx_proxy: 1.23.1-alpine
 * ntfy: v1.28.0
-* postmoogle: v0.9.4
+* postmoogle: v0.9.5
 * prometheus_blackbox_exporter: v0.22.0
 * prometheus_node_exporter: v1.4.0
 * prometheus_postgres_exporter: v0.11.1
