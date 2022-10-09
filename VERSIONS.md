@@ -29,7 +29,7 @@
 * hydrogen: v0.3.2
 * instagram: v0.2.1
 * jitsi_ldap: "3"
-* jitsi: stable-7830
+* jitsi: stable-7882
 * kuma: 1.18.4-alpine
 * languagetool: 5.9
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
