@@ -30,7 +30,7 @@
 * instagram: v0.2.1
 * jitsi_ldap: "3"
 * jitsi: stable-7830
-* kuma: 1.18.3-alpine
+* kuma: 1.18.4-alpine
 * languagetool: 5.9
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * ma1sd: 2.5.0
@@ -53,7 +53,7 @@
 * prometheus_blackbox_exporter: v0.22.0
 * prometheus_node_exporter: v1.4.0
 * prometheus_postgres_exporter: v0.11.1
-* prometheus: v2.39.0
+* prometheus: v2.39.1
 * radicale: 3.1.8.0
 * redis: 7.0.4-alpine
 * registration: v0.7.2
