@@ -2,7 +2,7 @@
 <opml version="1.0">
   <head>
     <title>Release feeds for roles</title>
-    <dateCreated>2022-10-12</dateCreated>
+    <dateCreated>2022-10-14</dateCreated>
   </head>
   <body>
     <outline text="prometheus-blackbox-exporter" title="prometheus-blackbox-exporter" type="rss" htmlUrl="https://github.com/prometheus/blackbox_exporter" xmlUrl="https://github.com/prometheus/blackbox_exporter/tags.atom" />
@@ -10,12 +10,10 @@
     <outline text="radicale" title="radicale" type="rss" htmlUrl="https://github.com/tomsquest/docker-radicale" xmlUrl="https://github.com/tomsquest/docker-radicale/tags.atom" />
     <outline text="wireguard" title="wireguard" type="rss" htmlUrl="https://git.zx2c4.com/wireguard-linux" xmlUrl="https://git.zx2c4.com/wireguard-linux/atom/" />
     <outline text="miniflux" title="miniflux" type="rss" htmlUrl="https://github.com/miniflux/v2" xmlUrl="https://github.com/miniflux/v2/tags.atom" />
-    <outline text="miounne" title="miounne" type="rss" htmlUrl="https://gitlab.com/etke.cc/miounne" xmlUrl="https://gitlab.com/etke.cc/miounne/-/tags?format=atom" />
     <outline text="kuma" title="kuma" type="rss" htmlUrl="https://github.com/louislam/uptime-kuma" xmlUrl="https://github.com/louislam/uptime-kuma/tags.atom" />
     <outline text="dnsmasq" title="dnsmasq" type="rss" htmlUrl="https://gitlab.com/etke.cc/dnsmasq" xmlUrl="https://gitlab.com/etke.cc/dnsmasq/-/tags?format=atom" />
     <outline text="soft-serve" title="soft-serve" type="rss" htmlUrl="https://github.com/charmbracelet/soft-serve.git" xmlUrl="https://github.com/charmbracelet/soft-serve/tags.atom" />
     <outline text="languagetool" title="languagetool" type="rss" htmlUrl="https://github.com/Erikvl87/docker-languagetool" xmlUrl="https://github.com/Erikvl87/docker-languagetool/tags.atom" />
-    <outline text="room-purger" title="room-purger" type="rss" htmlUrl="https://gitlab.com/etke.cc/room-purger" xmlUrl="https://gitlab.com/etke.cc/room-purger/-/tags?format=atom" />
     <outline text="mx-puppet-steam" title="mx-puppet-steam" type="rss" htmlUrl="https://github.com/icewind1991/mx-puppet-steam" xmlUrl="https://github.com/icewind1991/mx-puppet-steam/tags.atom" />
     <outline text="buscarron" title="buscarron" type="rss" htmlUrl="https://gitlab.com/etke.cc/buscarron" xmlUrl="https://gitlab.com/etke.cc/buscarron/-/tags?format=atom" />
     <outline text="appservice-slack" title="appservice-slack" type="rss" htmlUrl="https://github.com/matrix-org/matrix-appservice-slack" xmlUrl="https://github.com/matrix-org/matrix-appservice-slack/tags.atom" />
