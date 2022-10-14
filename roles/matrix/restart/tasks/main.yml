@@ -55,7 +55,6 @@
     - setup-mautrix-twitter
     - setup-mautrix-whatsapp
     - setup-miniflux
-    - setup-miounne
     - setup-mx-puppet-discord
     - setup-mx-puppet-groupme
     - setup-mx-puppet-instagram
@@ -72,7 +71,6 @@
     - setup-prometheus-postgres-exporter
     - setup-radicale
     - setup-redis
-    - setup-room-purger
     - setup-sms-bridge
     - setup-softserve
     - setup-ssl
@@ -1000,18 +998,6 @@
     - restart-all
     - setup-redis
 
-- name: Restart room purger timer
-  service:
-    enabled: yes
-    state: restarted
-    name: matrix-room-purger.timer
-  when: matrix_room_purger_enabled|bool
-  ignore_errors: yes
-  tags:
-    - setup-all
-    - restart-all
-    - setup-room-purger
-
 - name: Restart Sygnal
   service:
     enabled: yes
@@ -1035,18 +1021,6 @@
     - setup-all
     - restart-all
     - setup-synapse-admin
-
-- name: Restart Miounne
-  service:
-    enabled: yes
-    state: restarted
-    name: custom-miounne
-  when: custom_miounne_enabled|bool
-  ignore_errors: yes
-  tags:
-    - setup-all
-    - restart-all
-    - setup-miounne
 
 - name: Restart internal scheduler (inventory updater)
   service:

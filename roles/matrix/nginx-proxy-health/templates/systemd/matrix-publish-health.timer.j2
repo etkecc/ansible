@@ -1,9 +1,0 @@
-[Unit]
-Description=Publish Matrix Services status to html report periodically
-
-[Timer]
-Unit=matrix-publish-health.service
-OnCalendar=*:0/{{ matrix_nginx_proxy_health_timer }}
-
-[Install]
-WantedBy=timers.target

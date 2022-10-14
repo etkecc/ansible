@@ -81,14 +81,11 @@
     - custom/kuma
     - custom/languagetool
     - custom/miniflux
-    - custom/miounne
     - custom/radicale
     - custom/soft-serve
     - custom/wireguard
     - galaxy/git2bunny
     - matrix/nginx-proxy-website
-    - matrix/nginx-proxy-health
-    - matrix/room-purger
     # END CUSTOM
     - matrix-coturn
     - matrix-aux

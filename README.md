@@ -52,12 +52,12 @@ How? [bin/commit-msg.sh](./bin/commit-msg.sh)
 
 * **nginx-proxy-website** - host a static website on your base domain. Pull it from a git repo, run an arbitrary command (like `hugo`) and upload the results to your server
 * **restart** - one-by-one restarts (opposed to the `--tags start` that will stop all the services and start them after that)
-* **room-purger** - purge matrix rooms through synapse admin api
-* **miounne** - deprecated [an old etke.cc back office](https://gitlab.com/etke.cc/miounne)
+* <s>**room-purger** - purge matrix rooms through synapse admin api</s> removed
+* <s>**miounne** - deprecated [an old etke.cc back office](https://gitlab.com/etke.cc/miounne)</s> removed
 * <s>**cinny** - [cinny.in](https://cinny.in) matrix web client installation</s> uploaded to upstream
 * <s>**honoroit** - [a helpdesk bot](https://gitlab.com/etke.cc/honoroit) to proxy user messages in 1:1 rooms into one big room with threads (check the link, it has pretty cool screenshots).</s> uploaded to upstream
 * <s>**buscarron** - [a new etke.cc back office](https://gitlab.com/etke.cc/buscarron)</s> uploaded to upstream
-* <s>nginx-proxy-health</s> - deprecated simple healthcheck, based on systemd units. Works pretty bad, don't use it.
+* <s>nginx-proxy-health - deprecated simple healthcheck, based on systemd units. Works pretty bad, don't use it.</s> removed
 
 ### Non-Matrix components
 

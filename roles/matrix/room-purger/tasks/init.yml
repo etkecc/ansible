@@ -1,4 +1,0 @@
----
-- set_fact:
-    matrix_systemd_services_list: "{{ matrix_systemd_services_list + ['matrix-room-purger.timer'] }}"
-  when: matrix_room_purger_enabled|bool

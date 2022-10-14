@@ -1,8 +1,0 @@
----
-- name: "Website"
-  hosts: "{{ target if target is defined else 'matrix_servers' }}"
-  become: true
-
-  roles:
-    - matrix/nginx-proxy-website
-    - matrix/nginx-proxy-health
