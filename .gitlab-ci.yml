@@ -24,8 +24,10 @@ fresh:
   before_script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
-    - docker buildx create --use
-    - docker buildx build --platform linux/arm64/v8,linux/amd64 --push -t $CI_REGISTRY_IMAGE:fresh .
+    - docker build -t $CI_REGISTRY_IMAGE:fresh .
+    - docker push $CI_REGISTRY_IMAGE:fresh
+    # - docker buildx create --use
+    # - docker buildx build --platform linux/arm64/v8,linux/amd64 --push -t $CI_REGISTRY_IMAGE:fresh .
   tags:
     - docker
 
@@ -38,7 +40,9 @@ stable:
   before_script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
-    - docker buildx create --use
-    - docker buildx build --platform linux/arm64/v8,linux/amd64 --push -t $CI_REGISTRY_IMAGE .
+    - docker build -t $CI_REGISTRY_IMAGE:fresh .
+    - docker push $CI_REGISTRY_IMAGE:fresh
+    # - docker buildx create --use
+    # - docker buildx build --platform linux/arm64/v8,linux/amd64 --push -t $CI_REGISTRY_IMAGE .
   tags:
     - docker
