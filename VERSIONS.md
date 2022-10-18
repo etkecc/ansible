@@ -21,7 +21,7 @@
 * go_neb: latest
 * googlechat: v0.3.3
 * go_skype_bridge: latest
-* grafana: 9.2.0
+* grafana: 9.2.1
 * hangouts: latest
 * heisenbridge: 1.14.0
 * honoroit: v0.9.15
