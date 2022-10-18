@@ -19,7 +19,7 @@ versions: ## Update VERSIONS.md file using the actual versions from roles' files
 	@bash bin/versions.sh
 	@git --no-pager diff --no-ext-diff VERSIONS.md
 
-commit: opml versions ## Make a commit
+commit: opml hookshot versions ## Make a commit
 	@git add --all
 	@git commit -S -q -m "$(shell bin/commit-msg.sh)"
 	@echo "Changes have been committed"
@@ -27,6 +27,9 @@ commit: opml versions ## Make a commit
 
 opml: ## Dumps an OPML file with extracted git feeds for roles
 	@python bin/feeds.py . dump
+
+hookshot: ## Dumps a file with list of hookshot commands with extracted git feeds for roles
+	@python bin/feeds.py . hookshot
 
 print-nofeeds: ## Prints roles files for which a GIT feeds couldn't be extracted
 	@python bin/feeds.py . check
