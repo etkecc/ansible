@@ -127,7 +127,7 @@ def dump_opml_file_from_feeds(feeds):
 
 def dump_hookshot_commands(feeds):
     file_name = 'releases.hookshot.txt'
-    f = open(file_name, 'a')
+    f = open(file_name, 'w')
     for role, feed_dict in feeds.items():
         f.write('!hookshot feed %s %s\n' % (feed_dict['xmlUrl'], role))
     f.close()
