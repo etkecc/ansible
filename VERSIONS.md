@@ -13,7 +13,7 @@
 * dimension: latest
 * discord: latest
 * dnsmasq: latest
-* dynamic_dns: v3.9.1-ls100
+* dynamic_dns: v3.10.0-ls102
 * element: v1.11.10
 * email2matrix: 1.1.0
 * etherpad: 1.8.18
@@ -46,7 +46,7 @@
 * mx_puppet_slack: v0.1.2
 * mx_puppet_steam: latest
 * mx_puppet_twitter: latest
-* nginx_proxy: 1.23.1-alpine
+* nginx_proxy: 1.23.2-alpine
 * ntfy: v1.28.0
 * postmoogle: v0.9.7
 * prometheus_blackbox_exporter: v0.22.0
