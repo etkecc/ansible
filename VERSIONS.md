@@ -1,5 +1,5 @@
 * appservice_discord: v3.0.0
-* appservice_irc: 0.35.1
+* appservice_irc: 0.36.0
 * appservice_kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * appservice_slack: 2.0.1
 * appservice_webhooks: v1.0.3-01
@@ -21,7 +21,7 @@
 * go_neb: latest
 * googlechat: v0.3.3
 * go_skype_bridge: latest
-* grafana: 9.2.1
+* grafana: 9.2.2
 * hangouts: latest
 * heisenbridge: 1.14.0
 * honoroit: v0.9.15
