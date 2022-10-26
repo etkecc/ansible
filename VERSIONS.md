@@ -4,7 +4,7 @@
 * appservice_slack: 2.0.1
 * appservice_webhooks: v1.0.3-01
 * beeper_linkedin: v0.5.3
-* buscarron: v1.2.1
+* buscarron: v1.3.0
 * cactus_comments: 0.9.0
 * cactus_comments_client: 0.13.0
 * cinny: v2.2.2
@@ -14,7 +14,7 @@
 * discord: latest
 * dnsmasq: latest
 * dynamic_dns: v3.10.0-ls102
-* element: v1.11.10
+* element: v1.11.11
 * email2matrix: 1.1.0
 * etherpad: 1.8.18
 * facebook: v0.4.0
@@ -24,7 +24,7 @@
 * grafana: 9.2.2
 * hangouts: latest
 * heisenbridge: 1.14.0
-* honoroit: v0.9.15
+* honoroit: v0.9.16
 * hookshot: 2.4.0
 * hydrogen: v0.3.2
 * instagram: latest
@@ -48,7 +48,7 @@
 * mx_puppet_twitter: latest
 * nginx_proxy: 1.23.2-alpine
 * ntfy: v1.28.0
-* postmoogle: v0.9.7
+* postmoogle: v0.9.8
 * prometheus_blackbox_exporter: v0.22.0
 * prometheus_node_exporter: v1.4.0
 * prometheus_postgres_exporter: v0.11.1
