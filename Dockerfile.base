@@ -1,6 +1,6 @@
-FROM alpine:3.16.1
-ARG ANSIBLE_CORE=2.13.2
-ARG ANSIBLE=6.1.0
+FROM alpine:3.16.2
+ARG ANSIBLE_CORE=2.13.5
+ARG ANSIBLE=6.5.0
 
 RUN apk --no-cache add python3 && \
 		apk --no-cache add --virtual builddeps alpine-sdk py3-cffi py3-pip && \
