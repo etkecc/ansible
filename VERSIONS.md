@@ -57,7 +57,7 @@
 * redis: 7.0.4-alpine
 * registration: v0.7.2
 * scheduler: latest
-* signal_daemon: 0.22.2
+* signal_daemon: 0.23.0
 * signal: v0.4.0
 * sms_bridge: 0.5.7
 * softserve: v0.4.0
