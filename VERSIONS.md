@@ -27,7 +27,7 @@
 * honoroit: v0.9.16
 * hookshot: 2.4.0
 * hydrogen: v0.3.2
-* instagram: latest
+* instagram: v0.2.2
 * jitsi_ldap: "3"
 * jitsi: stable-7882
 * kuma: 1.18.5-alpine
