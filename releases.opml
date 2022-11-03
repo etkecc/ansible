@@ -17,7 +17,7 @@
     <outline text="cinny" title="cinny" type="rss" htmlUrl="https://github.com/ajbura/cinny" xmlUrl="https://github.com/ajbura/cinny/tags.atom" />
     <outline text="corporal" title="corporal" type="rss" htmlUrl="https://github.com/devture/matrix-corporal" xmlUrl="https://github.com/devture/matrix-corporal/tags.atom" />
     <outline text="coturn" title="coturn" type="rss" htmlUrl="https://github.com/coturn/coturn" xmlUrl="https://github.com/coturn/coturn/tags.atom" />
-    <outline text="defaults" title="defaults" type="rss" htmlUrl="https://github.com/prometheus/blackbox_exporter" xmlUrl="https://github.com/prometheus/blackbox_exporter/tags.atom" />
+    <outline text="defaults" title="defaults" type="rss" htmlUrl="https://github.com/Erikvl87/docker-languagetool" xmlUrl="https://github.com/Erikvl87/docker-languagetool/tags.atom" />
     <outline text="dendrite" title="dendrite" type="rss" htmlUrl="https://github.com/matrix-org/dendrite" xmlUrl="https://github.com/matrix-org/dendrite/tags.atom" />
     <outline text="dimension" title="dimension" type="rss" htmlUrl="https://github.com/turt2live/matrix-dimension" xmlUrl="https://github.com/turt2live/matrix-dimension/tags.atom" />
     <outline text="dynamic-dns" title="dynamic-dns" type="rss" htmlUrl="https://github.com/linuxserver/docker-ddclient" xmlUrl="https://github.com/linuxserver/docker-ddclient/tags.atom" />

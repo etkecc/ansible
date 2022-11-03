@@ -1,4 +1,4 @@
-* appservice_discord: v3.0.0
+* appservice_discord: v3.1.0
 * appservice_irc: 0.36.0
 * appservice_kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * appservice_slack: 2.0.1

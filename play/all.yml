@@ -10,8 +10,10 @@
     - "{{ playbook_dir }}/../upstream/roles/custom/matrix-synapse/vars/workers.yml"
 
   roles:
+    # CUSTOM
     - galaxy/init
     - galaxy/docker
+    # END CUSTOM
 
     # MATRIX
     - custom/matrix-base
