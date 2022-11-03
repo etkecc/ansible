@@ -1,7 +1,6 @@
 import os
 import sys
 import argparse
-from datetime import date
 from urllib.parse import urlparse
 import xml.etree.ElementTree as ET
 
@@ -104,8 +103,6 @@ def format_feeds_from_git_repos(git_repos):
     feeds = {key: val for key, val in sorted(feeds.items(), key = lambda item: item[0])}
     return feeds
 
-todays_date = date.today().strftime('%Y-%m-%d')
-
 def dump_opml_file_from_feeds(feeds):
     tree = ET.ElementTree('tree')
 
@@ -114,9 +111,6 @@ def dump_opml_file_from_feeds(feeds):
 
     title = ET.SubElement(head, 'title')
     title.text = 'Release feeds for roles'
-
-    dateCreated = ET.SubElement(head, 'dateCreated')
-    dateCreated.text = todays_date
 
     body = ET.SubElement(opml, 'body')
     for role, feed_dict in feeds.items():
