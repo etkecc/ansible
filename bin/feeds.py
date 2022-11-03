@@ -85,7 +85,10 @@ def format_feeds_from_git_repos(git_repos):
                 print('Unrecognized git repository: %s' % git_repo)
                 continue
 
-            role_name = role.split('/')[4].removeprefix('matrix-bot-').removeprefix('matrix-bridge-').removeprefix('matrix-client-').removeprefix('matrix-')
+            role_name = role.split('/')[4]
+            if role_name == 'defaults':
+                role_name = role.split('/')[3]
+            role_name = role_name.removeprefix('matrix-bot-').removeprefix('matrix-bridge-').removeprefix('matrix-client-').removeprefix('matrix-')
             if idx > 0:
                 # there is more than 1 project source code for this role
                 role_name += '-' + str(idx+1)
