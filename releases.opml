@@ -2,7 +2,7 @@
 <opml version="1.0">
   <head>
     <title>Release feeds for roles</title>
-    <dateCreated>2022-11-02</dateCreated>
+    <dateCreated>2022-11-03</dateCreated>
   </head>
   <body>
     <outline text="appservice-discord" title="appservice-discord" type="rss" htmlUrl="https://github.com/Half-Shot/matrix-appservice-discord" xmlUrl="https://github.com/Half-Shot/matrix-appservice-discord/tags.atom" />
@@ -17,9 +17,9 @@
     <outline text="cinny" title="cinny" type="rss" htmlUrl="https://github.com/ajbura/cinny" xmlUrl="https://github.com/ajbura/cinny/tags.atom" />
     <outline text="corporal" title="corporal" type="rss" htmlUrl="https://github.com/devture/matrix-corporal" xmlUrl="https://github.com/devture/matrix-corporal/tags.atom" />
     <outline text="coturn" title="coturn" type="rss" htmlUrl="https://github.com/coturn/coturn" xmlUrl="https://github.com/coturn/coturn/tags.atom" />
+    <outline text="defaults" title="defaults" type="rss" htmlUrl="https://github.com/prometheus/blackbox_exporter" xmlUrl="https://github.com/prometheus/blackbox_exporter/tags.atom" />
     <outline text="dendrite" title="dendrite" type="rss" htmlUrl="https://github.com/matrix-org/dendrite" xmlUrl="https://github.com/matrix-org/dendrite/tags.atom" />
     <outline text="dimension" title="dimension" type="rss" htmlUrl="https://github.com/turt2live/matrix-dimension" xmlUrl="https://github.com/turt2live/matrix-dimension/tags.atom" />
-    <outline text="dnsmasq" title="dnsmasq" type="rss" htmlUrl="https://gitlab.com/etke.cc/dnsmasq" xmlUrl="https://gitlab.com/etke.cc/dnsmasq/-/tags?format=atom" />
     <outline text="dynamic-dns" title="dynamic-dns" type="rss" htmlUrl="https://github.com/linuxserver/docker-ddclient" xmlUrl="https://github.com/linuxserver/docker-ddclient/tags.atom" />
     <outline text="element" title="element" type="rss" htmlUrl="https://github.com/vector-im/element-web" xmlUrl="https://github.com/vector-im/element-web/tags.atom" />
     <outline text="email2matrix" title="email2matrix" type="rss" htmlUrl="https://github.com/devture/email2matrix" xmlUrl="https://github.com/devture/email2matrix/tags.atom" />
@@ -32,8 +32,6 @@
     <outline text="hookshot" title="hookshot" type="rss" htmlUrl="https://github.com/matrix-org/matrix-hookshot" xmlUrl="https://github.com/matrix-org/matrix-hookshot/tags.atom" />
     <outline text="hydrogen" title="hydrogen" type="rss" htmlUrl="https://github.com/vector-im/hydrogen-web" xmlUrl="https://github.com/vector-im/hydrogen-web/tags.atom" />
     <outline text="jitsi" title="jitsi" type="rss" htmlUrl="https://github.com/jitsi/docker-jitsi-meet" xmlUrl="https://github.com/jitsi/docker-jitsi-meet/tags.atom" />
-    <outline text="kuma" title="kuma" type="rss" htmlUrl="https://github.com/louislam/uptime-kuma" xmlUrl="https://github.com/louislam/uptime-kuma/tags.atom" />
-    <outline text="languagetool" title="languagetool" type="rss" htmlUrl="https://github.com/Erikvl87/docker-languagetool" xmlUrl="https://github.com/Erikvl87/docker-languagetool/tags.atom" />
     <outline text="ldap-registration-proxy" title="ldap-registration-proxy" type="rss" htmlUrl="https://gitlab.com/activism.international/matrix_ldap_registration_proxy" xmlUrl="https://gitlab.com/activism.international/matrix_ldap_registration_proxy/-/tags?format=atom" />
     <outline text="ma1sd" title="ma1sd" type="rss" htmlUrl="https://github.com/ma1uta/ma1sd" xmlUrl="https://github.com/ma1uta/ma1sd/tags.atom" />
     <outline text="mailer" title="mailer" type="rss" htmlUrl="https://github.com/devture/exim-relay" xmlUrl="https://github.com/devture/exim-relay/tags.atom" />
@@ -47,7 +45,6 @@
     <outline text="mautrix-telegram" title="mautrix-telegram" type="rss" htmlUrl="https://github.com/mautrix/telegram" xmlUrl="https://github.com/mautrix/telegram/tags.atom" />
     <outline text="mautrix-twitter" title="mautrix-twitter" type="rss" htmlUrl="https://github.com/mautrix/twitter" xmlUrl="https://github.com/mautrix/twitter/tags.atom" />
     <outline text="mautrix-whatsapp" title="mautrix-whatsapp" type="rss" htmlUrl="https://github.com/mautrix/whatsapp" xmlUrl="https://github.com/mautrix/whatsapp/tags.atom" />
-    <outline text="miniflux" title="miniflux" type="rss" htmlUrl="https://github.com/miniflux/v2" xmlUrl="https://github.com/miniflux/v2/tags.atom" />
     <outline text="mjolnir" title="mjolnir" type="rss" htmlUrl="https://github.com/matrix-org/mjolnir" xmlUrl="https://github.com/matrix-org/mjolnir/tags.atom" />
     <outline text="mx-puppet-discord" title="mx-puppet-discord" type="rss" htmlUrl="https://gitlab.com/mx-puppet/discord/mx-puppet-discord" xmlUrl="https://gitlab.com/mx-puppet/discord/mx-puppet-discord/-/tags?format=atom" />
     <outline text="mx-puppet-groupme" title="mx-puppet-groupme" type="rss" htmlUrl="https://gitlab.com/xangelix-pub/matrix/mx-puppet-groupme" xmlUrl="https://gitlab.com/xangelix-pub/matrix/mx-puppet-groupme/-/tags?format=atom" />
@@ -61,20 +58,15 @@
     <outline text="postgres-backup" title="postgres-backup" type="rss" htmlUrl="https://github.com/prodrigestivill/docker-postgres-backup-local" xmlUrl="https://github.com/prodrigestivill/docker-postgres-backup-local/tags.atom" />
     <outline text="postmoogle" title="postmoogle" type="rss" htmlUrl="https://gitlab.com/etke.cc/postmoogle" xmlUrl="https://gitlab.com/etke.cc/postmoogle/-/tags?format=atom" />
     <outline text="prometheus" title="prometheus" type="rss" htmlUrl="https://github.com/prometheus/prometheus" xmlUrl="https://github.com/prometheus/prometheus/tags.atom" />
-    <outline text="prometheus-blackbox-exporter" title="prometheus-blackbox-exporter" type="rss" htmlUrl="https://github.com/prometheus/blackbox_exporter" xmlUrl="https://github.com/prometheus/blackbox_exporter/tags.atom" />
     <outline text="prometheus-node-exporter" title="prometheus-node-exporter" type="rss" htmlUrl="https://github.com/prometheus/node_exporter" xmlUrl="https://github.com/prometheus/node_exporter/tags.atom" />
     <outline text="prometheus-postgres-exporter" title="prometheus-postgres-exporter" type="rss" htmlUrl="https://github.com/prometheus-community/postgres_exporter" xmlUrl="https://github.com/prometheus-community/postgres_exporter/tags.atom" />
-    <outline text="radicale" title="radicale" type="rss" htmlUrl="https://github.com/tomsquest/docker-radicale" xmlUrl="https://github.com/tomsquest/docker-radicale/tags.atom" />
     <outline text="redis" title="redis" type="rss" htmlUrl="https://github.com/redis/redis" xmlUrl="https://github.com/redis/redis/tags.atom" />
     <outline text="registration" title="registration" type="rss" htmlUrl="https://github.com/ZerataX/matrix-registration" xmlUrl="https://github.com/ZerataX/matrix-registration/tags.atom" />
     <outline text="registration-bot" title="registration-bot" type="rss" htmlUrl="https://github.com/moan0s/matrix-registration-bot" xmlUrl="https://github.com/moan0s/matrix-registration-bot/tags.atom" />
     <outline text="reminder-bot" title="reminder-bot" type="rss" htmlUrl="https://github.com/anoadragon453/matrix-reminder-bot" xmlUrl="https://github.com/anoadragon453/matrix-reminder-bot/tags.atom" />
-    <outline text="scheduler" title="scheduler" type="rss" htmlUrl="https://gitlab.com/etke.cc/int/scheduler" xmlUrl="https://gitlab.com/etke.cc/int/scheduler/-/tags?format=atom" />
     <outline text="sms" title="sms" type="rss" htmlUrl="https://github.com/benkuly/matrix-sms-bridge" xmlUrl="https://github.com/benkuly/matrix-sms-bridge/tags.atom" />
-    <outline text="soft-serve" title="soft-serve" type="rss" htmlUrl="https://github.com/charmbracelet/soft-serve.git" xmlUrl="https://github.com/charmbracelet/soft-serve/tags.atom" />
     <outline text="sygnal" title="sygnal" type="rss" htmlUrl="https://github.com/matrix-org/sygnal" xmlUrl="https://github.com/matrix-org/sygnal/tags.atom" />
     <outline text="synapse" title="synapse" type="rss" htmlUrl="https://github.com/matrix-org/synapse" xmlUrl="https://github.com/matrix-org/synapse/tags.atom" />
     <outline text="synapse-admin" title="synapse-admin" type="rss" htmlUrl="https://github.com/Awesome-Technologies/synapse-admin" xmlUrl="https://github.com/Awesome-Technologies/synapse-admin/tags.atom" />
-    <outline text="wireguard" title="wireguard" type="rss" htmlUrl="https://git.zx2c4.com/wireguard-linux" xmlUrl="https://git.zx2c4.com/wireguard-linux/atom/" />
   </body>
 </opml>
