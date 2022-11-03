@@ -15,7 +15,7 @@ if args.action not in ['check', 'dump', 'hookshot']:
 excluded_paths = [
     # appservice-kakaotalk defines a Project URL, but that Gitea repository does not have an Atom/RSS feed.
     # It doesn't have any tags anyway.
-    './upstream/roles/matrix-bridge-appservice-kakaotalk/defaults',
+    './upstream/roles/custom/matrix-bridge-appservice-kakaotalk/defaults',
 ]
 project_source_url_str = '# Project source code URL:'
 
@@ -85,7 +85,7 @@ def format_feeds_from_git_repos(git_repos):
                 print('Unrecognized git repository: %s' % git_repo)
                 continue
 
-            role_name = role.split('/')[3].removeprefix('matrix-bot-').removeprefix('matrix-bridge-').removeprefix('matrix-client-').removeprefix('matrix-')
+            role_name = role.split('/')[4].removeprefix('matrix-bot-').removeprefix('matrix-bridge-').removeprefix('matrix-client-').removeprefix('matrix-')
             if idx > 0:
                 # there is more than 1 project source code for this role
                 role_name += '-' + str(idx+1)
