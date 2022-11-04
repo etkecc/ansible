@@ -2,7 +2,7 @@
 
 - name: Check existence of int-scheduler service
   stat:
-    path: "{{ matrix_systemd_path }}/int-scheduler.service"
+    path: "{{ devture_systemd_docker_base_systemd_path }}/int-scheduler.service"
   register: int_scheduler_service_stat
 
 - name: Ensure int-scheduler is stopped
@@ -16,7 +16,7 @@
 
 - name: Ensure int-scheduler.service doesn't exist
   file:
-    path: "{{ matrix_systemd_path }}/int-scheduler.service"
+    path: "{{ devture_systemd_docker_base_systemd_path }}/int-scheduler.service"
     state: absent
   when: "int_scheduler_service_stat.stat.exists|bool"
 

@@ -9,7 +9,7 @@
 - name: Ensure custom-miniflux.service is present
   template:
     src: systemd/custom-miniflux.service.j2
-    dest: "{{ matrix_systemd_path }}/custom-miniflux.service"
+    dest: "{{ devture_systemd_docker_base_systemd_path }}/custom-miniflux.service"
     mode: 0644
   register: custom_miniflux_systemd_service_result
 

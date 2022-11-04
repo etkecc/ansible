@@ -13,10 +13,10 @@ DefaultDependencies=no
 [Service]
 Type=simple
 TimeoutSec={{ int_scheduler_docker_timeout }}
-Environment="HOME={{ matrix_systemd_unit_home_path }}"
-ExecStartPre=-{{ matrix_host_command_sh }} -c '{{ matrix_host_command_docker }} stop -t {{ int_scheduler_docker_timeout }} int-scheduler 2>/dev/null || true'
-ExecStartPre=-{{ matrix_host_command_sh }} -c '{{ matrix_host_command_docker }} rm int-scheduler 2>/dev/null || true'
-ExecStart={{ matrix_host_command_docker }} run --rm --name int-scheduler \
+Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ int_scheduler_docker_timeout }} int-scheduler 2>/dev/null || true'
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm int-scheduler 2>/dev/null || true'
+ExecStart={{ devture_systemd_docker_base_host_command_docker }} run --rm --name int-scheduler \
 			--log-driver=none \
 			--cap-drop=ALL \
 			--read-only \
@@ -33,8 +33,8 @@ ExecStart={{ matrix_host_command_docker }} run --rm --name int-scheduler \
 			{% endfor %}
 			{{ int_scheduler_docker_image }}
 
-ExecStop=-{{ matrix_host_command_sh }} -c '{{ matrix_host_command_docker }} stop -t {{ int_scheduler_docker_timeout }} int-scheduler 2>/dev/null || true'
-ExecStop=-{{ matrix_host_command_sh }} -c '{{ matrix_host_command_docker }} rm int-scheduler 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ int_scheduler_docker_timeout }} int-scheduler 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm int-scheduler 2>/dev/null || true'
 SyslogIdentifier=int-scheduler
 
 [Install]

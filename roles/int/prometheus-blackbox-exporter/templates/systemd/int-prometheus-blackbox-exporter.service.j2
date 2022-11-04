@@ -12,12 +12,12 @@ DefaultDependencies=no
 
 [Service]
 Type=simple
-Environment="HOME={{ matrix_systemd_unit_home_path }}"
-ExecStartPre=-{{ matrix_host_command_sh }} -c '{{ matrix_host_command_docker }} kill int-prometheus-blackbox-exporter 2>/dev/null || true'
-ExecStartPre=-{{ matrix_host_command_sh }} -c '{{ matrix_host_command_docker }} rm int-prometheus-blackbox-exporter 2>/dev/null || true'
+Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} kill int-prometheus-blackbox-exporter 2>/dev/null || true'
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm int-prometheus-blackbox-exporter 2>/dev/null || true'
 
 
-ExecStart={{ matrix_host_command_docker }} run --rm --name int-prometheus-blackbox-exporter \
+ExecStart={{ devture_systemd_docker_base_host_command_docker }} run --rm --name int-prometheus-blackbox-exporter \
 			--log-driver=none \
 			--user={{ matrix_user_uid }}:{{ matrix_user_gid }} \
 			--cap-drop=ALL \
@@ -31,8 +31,8 @@ ExecStart={{ matrix_host_command_docker }} run --rm --name int-prometheus-blackb
 			{{ int_prometheus_blackbox_exporter_docker_image }} \
 			--config.file=/config/config.yml
 
-ExecStop=-{{ matrix_host_command_sh }} -c '{{ matrix_host_command_docker }} kill int-prometheus-blackbox-exporter 2>/dev/null || true'
-ExecStop=-{{ matrix_host_command_sh }} -c '{{ matrix_host_command_docker }} rm int-prometheus-blackbox-exporter 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} kill int-prometheus-blackbox-exporter 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm int-prometheus-blackbox-exporter 2>/dev/null || true'
 Restart=always
 RestartSec=30
 SyslogIdentifier=int-prometheus-blackbox-exporter

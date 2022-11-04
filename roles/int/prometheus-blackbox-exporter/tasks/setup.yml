@@ -25,14 +25,14 @@
     force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else int_prometheus_blackbox_exporter_docker_image_force_pull }}"
   when: "int_prometheus_blackbox_exporter_enabled|bool"
   register: result
-  retries: "{{ matrix_container_retries_count }}"
-  delay: "{{ matrix_container_retries_delay }}"
+  retries: "{{ devture_playbook_help_container_retries_count }}"
+  delay: "{{ devture_playbook_help_container_retries_delay }}"
   until: result is not failed
 
 - name: Ensure int-prometheus-blackbox-exporter.service installed
   template:
     src: "{{ role_path }}/templates/systemd/int-prometheus-blackbox-exporter.service.j2"
-    dest: "{{ matrix_systemd_path }}/int-prometheus-blackbox-exporter.service"
+    dest: "{{ devture_systemd_docker_base_systemd_path }}/int-prometheus-blackbox-exporter.service"
     mode: 0644
   register: int_prometheus_blackbox_exporter_systemd_service_result
   when: int_prometheus_blackbox_exporter_enabled|bool
@@ -48,7 +48,7 @@
 
 - name: Check existence of int-prometheus-blackbox-exporter service
   stat:
-    path: "{{ matrix_systemd_path }}/int-prometheus-blackbox-exporter.service"
+    path: "{{ devture_systemd_docker_base_systemd_path }}/int-prometheus-blackbox-exporter.service"
   register: int_prometheus_blackbox_exporter_service_stat
 
 - name: Ensure int-prometheus-blackbox-exporter is stopped
@@ -62,7 +62,7 @@
 
 - name: Ensure int-prometheus-blackbox-exporter.service doesn't exist
   file:
-    path: "{{ matrix_systemd_path }}/int-prometheus-blackbox-exporter.service"
+    path: "{{ devture_systemd_docker_base_systemd_path }}/int-prometheus-blackbox-exporter.service"
     state: absent
   when: "not int_prometheus_blackbox_exporter_enabled|bool and int_prometheus_blackbox_exporter_service_stat.stat.exists"
 

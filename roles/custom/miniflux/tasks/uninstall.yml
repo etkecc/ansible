@@ -1,7 +1,7 @@
 ---
 - name: Check existence of custom-miniflux.service
   stat:
-    path: "{{ matrix_systemd_path }}/custom-miniflux.service"
+    path: "{{ devture_systemd_docker_base_systemd_path }}/custom-miniflux.service"
   register: custom_miniflux_service_stat
 
 - name: Ensure custom-miniflux is stopped
@@ -15,7 +15,7 @@
 
 - name: Ensure custom-miniflux.service does not exists
   file:
-    path: "{{ matrix_systemd_path }}/custom-miniflux.service"
+    path: "{{ devture_systemd_docker_base_systemd_path }}/custom-miniflux.service"
     state: absent
   when: custom_miniflux_service_stat.stat.exists|bool
 

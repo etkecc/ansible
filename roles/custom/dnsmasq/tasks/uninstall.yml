@@ -1,7 +1,7 @@
 ---
 - name: Check existence of custom-dnsmasq.service
   stat:
-    path: "{{ matrix_systemd_path }}/custom-dnsmasq.service"
+    path: "{{ devture_systemd_docker_base_systemd_path }}/custom-dnsmasq.service"
   register: custom_dnsmasq_service_stat
 
 - name: Ensure custom-dnsmasq is stopped
@@ -15,7 +15,7 @@
 
 - name: Ensure custom-dnsmasq.service does not exists
   file:
-    path: "{{ matrix_systemd_path }}/custom-dnsmasq.service"
+    path: "{{ devture_systemd_docker_base_systemd_path }}/custom-dnsmasq.service"
     state: absent
   when: custom_dnsmasq_service_stat.stat.exists|bool
 

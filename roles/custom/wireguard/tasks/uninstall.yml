@@ -1,7 +1,7 @@
 ---
 - name: Check existence of wg-quick@ service
   stat:
-    path: "{{ matrix_systemd_path }}/wg-quick@.service"
+    path: "{{ devture_systemd_docker_base_systemd_path }}/wg-quick@.service"
   register: custom_wireguard_service_stat
 
 - name: Ensure wireguard service stopped

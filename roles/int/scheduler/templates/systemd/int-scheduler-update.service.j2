@@ -5,7 +5,7 @@ DefaultDependencies=no
 
 [Service]
 Type=oneshot
-Environment="HOME={{ matrix_systemd_unit_home_path }}"
+Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
 WorkingDirectory={{ int_scheduler_git_path }}
 ExecStartPre=git config --local core.sshCommand "ssh -i {{ int_scheduler_config_path }}/sshkey -o StrictHostKeyChecking=accept-new"
 ExecStart=git fetch --depth 1 origin main

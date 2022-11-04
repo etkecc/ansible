@@ -1,7 +1,7 @@
 ---
 - name: Check existence of custom-radicale.service
   stat:
-    path: "{{ matrix_systemd_path }}/custom-radicale.service"
+    path: "{{ devture_systemd_docker_base_systemd_path }}/custom-radicale.service"
   register: custom_radicale_service_stat
 
 - name: Ensure custom-radicale is stopped
@@ -15,7 +15,7 @@
 
 - name: Ensure custom-radicale.service does not exist
   file:
-    path: "{{ matrix_systemd_path }}/custom-radicale.service"
+    path: "{{ devture_systemd_docker_base_systemd_path }}/custom-radicale.service"
     state: absent
   when: custom_radicale_service_stat.stat.exists|bool
 

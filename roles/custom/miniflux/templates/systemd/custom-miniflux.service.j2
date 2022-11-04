@@ -9,7 +9,7 @@ DefaultDependencies=no
 
 [Service]
 Type=simple
-Environment="HOME={{ matrix_systemd_unit_home_path }}"
+Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
 ExecStartPre=-/usr/bin/env sh -c '/usr/bin/env docker kill custom-miniflux 2>/dev/null'
 ExecStartPre=-/usr/bin/env sh -c '/usr/bin/env docker rm custom-miniflux 2>/dev/null'
 

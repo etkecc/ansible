@@ -2,7 +2,7 @@
 
 - name: Check existence of custom-softserve service
   stat:
-    path: "{{ matrix_systemd_path }}/custom-softserve.service"
+    path: "{{ devture_systemd_docker_base_systemd_path }}/custom-softserve.service"
   register: custom_softserve_service_stat
 
 - name: Ensure custom-softserve is stopped
@@ -16,7 +16,7 @@
 
 - name: Ensure custom-softserve.service doesn't exist
   file:
-    path: "{{ matrix_systemd_path }}/custom-softserve.service"
+    path: "{{ devture_systemd_docker_base_systemd_path }}/custom-softserve.service"
     state: absent
   when: "custom_softserve_service_stat.stat.exists|bool"
 

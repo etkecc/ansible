@@ -32,7 +32,7 @@
 - name: Ensure custom-languagetool.service is present
   template:
     src: systemd/custom-languagetool.service.j2
-    dest: "{{ matrix_systemd_path }}/custom-languagetool.service"
+    dest: "{{ devture_systemd_docker_base_systemd_path }}/custom-languagetool.service"
     mode: 0644
   register: custom_languagetool_systemd_service_result
 

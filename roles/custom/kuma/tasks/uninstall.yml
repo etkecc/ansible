@@ -1,7 +1,7 @@
 ---
 - name: Check existence of custom-kuma.service
   stat:
-    path: "{{ matrix_systemd_path }}/custom-kuma.service"
+    path: "{{ devture_systemd_docker_base_systemd_path }}/custom-kuma.service"
   register: custom_kuma_service_stat
 
 - name: Ensure custom-kuma is stopped
@@ -15,7 +15,7 @@
 
 - name: Ensure custom-kuma.service does not exist
   file:
-    path: "{{ matrix_systemd_path }}/custom-kuma.service"
+    path: "{{ devture_systemd_docker_base_systemd_path }}/custom-kuma.service"
     state: absent
   when: custom_kuma_service_stat.stat.exists|bool
 
