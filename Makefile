@@ -5,9 +5,10 @@ help: ## Show this help.
 
 submodules: ## Initialize upstream with pinned commit
 	git submodule update --init --recursive
+	/bin/sh -c 'cd upstream && make roles'
 
 upstream: ## Update upstream and generate VERSIONS.md diff
-	@cd ./upstream; git pull
+	@cd ./upstream; git pull; make roles
 	$(MAKE) versions
 
 roles: ## Pull roles
@@ -23,7 +24,6 @@ commit: opml hookshot versions ## Make a commit
 	@git add --all
 	@git commit -S -q -m "$(shell bin/commit-msg.sh)"
 	@echo "Changes have been committed"
-
 
 opml: ## Dumps an OPML file with extracted git feeds for roles
 	@python bin/feeds.py . dump
