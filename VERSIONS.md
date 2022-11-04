@@ -60,7 +60,7 @@
 * signal_daemon: 0.23.0
 * signal: v0.4.1
 * sms_bridge: 0.5.7
-* softserve: v0.4.0
+* softserve: v0.4.1
 * sygnal: v0.12.0
 * synapse_admin: 0.8.5
 * synapse: v1.70.1
