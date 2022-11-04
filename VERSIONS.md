@@ -26,7 +26,7 @@
 * heisenbridge: 1.14.0
 * honoroit: v0.9.16
 * hookshot: 2.4.0
-* hydrogen: v0.3.2
+* hydrogen: v0.3.3
 * instagram: v0.2.2
 * jitsi_ldap: "3"
 * jitsi: stable-7882
