@@ -5,10 +5,6 @@
   vars:
     matrix_docker_installation_enabled: false # handled by galaxy/docker
 
-  # Temporary workaround, ref: https://github.com/spantaleev/matrix-docker-ansible-deploy/issues/895
-  vars_files:
-    - "{{ playbook_dir }}/../upstream/roles/custom/matrix-synapse/vars/workers.yml"
-
   roles:
     # CUSTOM
     - galaxy/docker
