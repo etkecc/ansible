@@ -11,7 +11,8 @@ upstream: ## Update upstream and generate VERSIONS.md diff
 	$(MAKE) versions
 
 roles: ## Pull roles
-	ansible-galaxy install -r requirements.yml -r upstream/requirements.yml -p roles/galaxy/
+	ansible-galaxy install -r requirements.yml -p roles/galaxy/
+	ansible-galaxy install -r upstream/requirements.yml -p roles/galaxy/
 
 dependencies: submodules roles ## Initializes this by pulling dependencies
 
