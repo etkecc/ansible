@@ -1,37 +1,37 @@
 ---
 - name: Check existence of custom-dnsmasq.service
-  stat:
+  ansible.builtin.stat:
     path: "{{ devture_systemd_docker_base_systemd_path }}/custom-dnsmasq.service"
   register: custom_dnsmasq_service_stat
 
 - name: Ensure custom-dnsmasq is stopped
-  service:
+  ansible.builtin.service:
     name: custom-dnsmasq
     state: stopped
-    enabled: no
-    daemon_reload: yes
+    enabled: false
+    daemon_reload: true
   register: stopping_result
   when: custom_dnsmasq_service_stat.stat.exists|bool
 
 - name: Ensure custom-dnsmasq.service does not exists
-  file:
+  ansible.builtin.file:
     path: "{{ devture_systemd_docker_base_systemd_path }}/custom-dnsmasq.service"
     state: absent
   when: custom_dnsmasq_service_stat.stat.exists|bool
 
 - name: Ensure systemd reloaded after custom-dnsmasq.service removal
-  service:
-    daemon_reload: yes
+  ansible.builtin.service:
+    daemon_reload: true
   when: custom_dnsmasq_service_stat.stat.exists|bool
 
 - name: Ensure systemd-resolved service started
-  service:
-    enabled: yes
+  ansible.builtin.service:
+    enabled: true
     state: started
     name: systemd-resolved
-  ignore_errors: yes #not all distros have it
+  ignore_errors: true # not all distros have it
 
 - name: Ensure custom-dnsmasq docker image doesn't exist
-  docker_image:
+  community.docker.docker_image:
     name: "{{ custom_dnsmasq_docker_image }}"
     state: absent

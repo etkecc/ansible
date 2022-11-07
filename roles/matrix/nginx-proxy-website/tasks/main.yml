@@ -1,31 +1,32 @@
 ---
-- include_vars: parent.yml
+- name: Assume parent's defaults from a predefined file
+  ansible.builtin.include_vars: parent.yml
   when: matrix_nginx_proxy_website_enabled|bool and matrix_nginx_proxy_base_path is not defined
   tags:
     - setup-all
     - setup-website
 
 - name: Clone website repo
-  git:
+  ansible.builtin.git:
     depth: 1
-    force: yes
-    accept_newhostkey: yes
+    force: true
+    accept_newhostkey: true
     repo: "{{ matrix_nginx_proxy_website_repo }}"
     dest: "{{ matrix_nginx_proxy_website_tmp_path }}/nginx-proxy-website_{{ inventory_hostname }}"
     version: "{{ matrix_nginx_proxy_website_repo_ref }}"
   delegate_to: 127.0.0.1
-  become: no
+  become: false
   when: matrix_nginx_proxy_website_enabled|bool
   tags:
     - setup-all
     - setup-website
 
 - name: Build website
-  command: "{{ item }}"
+  ansible.builtin.command: "{{ item }}"
   args:
     chdir: "{{ matrix_nginx_proxy_website_tmp_path }}/nginx-proxy-website_{{ inventory_hostname }}"
   delegate_to: 127.0.0.1
-  become: no
+  become: false
   when: matrix_nginx_proxy_website_enabled|bool
   with_items: "{{ matrix_nginx_proxy_website_commands }}"
   tags:
@@ -33,32 +34,33 @@
     - setup-website
 
 - name: Cleanup build directory before deploy
-  file:
+  ansible.builtin.file:
     state: absent
     path: "{{ matrix_nginx_proxy_website_tmp_path }}/nginx-proxy-website_{{ inventory_hostname }}/{{ matrix_nginx_proxy_website_dist }}/{{ item }}"
   with_items: "{{ matrix_nginx_proxy_website_exclude }}"
   delegate_to: 127.0.0.1
-  become: no
+  become: false
   when: matrix_nginx_proxy_website_enabled|bool
   tags:
     - setup-all
     - setup-website
 
 - name: Create website artifact
-  archive:
+  community.general.archive:
     format: tar
-    force_archive: yes
+    force_archive: true
     path: "{{ matrix_nginx_proxy_website_tmp_path }}/nginx-proxy-website_{{ inventory_hostname }}/{{ matrix_nginx_proxy_website_dist }}/"
     dest: "{{ matrix_nginx_proxy_website_tmp_path }}/nginx-proxy-website_{{ inventory_hostname }}/artifact.tar"
+    mode: 0644
   delegate_to: 127.0.0.1
-  become: no
+  become: false
   when: matrix_nginx_proxy_website_enabled|bool
   tags:
     - setup-all
     - setup-website
 
 - name: Deploy website
-  unarchive:
+  ansible.builtin.unarchive:
     src: "{{ matrix_nginx_proxy_website_tmp_path }}/nginx-proxy-website_{{ inventory_hostname }}/artifact.tar"
     dest: "{{ matrix_nginx_proxy_website_path }}"
     owner: "{{ matrix_user_username }}"
@@ -69,11 +71,11 @@
     - setup-website
 
 - name: Remove temporary build dir
-  file:
+  ansible.builtin.file:
     state: absent
     path: "{{ matrix_nginx_proxy_website_tmp_path }}/nginx-proxy-website_{{ inventory_hostname }}"
   delegate_to: 127.0.0.1
-  become: no
+  become: false
   when: matrix_nginx_proxy_website_enabled|bool
   tags:
     - setup-all

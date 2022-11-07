@@ -1,15 +1,15 @@
 ---
-- import_tasks: init.yml
+- ansible.builtin.import_tasks: init.yml
   tags:
     - always
 
-- import_tasks: install.yml
+- ansible.builtin.import_tasks: install.yml
   when: custom_miniflux_enabled|bool
   tags:
     - setup-all
     - setup-miniflux
 
-- import_tasks: uninstall.yml
+- ansible.builtin.import_tasks: uninstall.yml
   when: not custom_miniflux_enabled|bool
   tags:
     - setup-all

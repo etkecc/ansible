@@ -1,35 +1,35 @@
 ---
 - name: Ensure wireguard packages installed
-  package:
+  ansible.builtin.package:
     name:
       - wireguard-tools
       - wireguard-dkms
   when: ansible_kernel is version('5.6', '<')
 
 - name: Ensure wireguard packages installed
-  package:
+  ansible.builtin.package:
     name: wireguard-tools
   when: ansible_kernel is version('5.6', '>=')
 
 - name: Check existence of wireguard server config
-  stat:
+  ansible.builtin.stat:
     path: "{{ custom_wireguard_path }}/{{ custom_wireguard_interface }}.conf"
   register: server_conf
 
 - name: Ensure IPv4 forwarding enabled
-  sysctl:
+  ansible.posix.sysctl:
     name: net.ipv4.ip_forward
     value: '1'
     state: present
 
 - name: Ensure IPv6 forwarding enabled
-  sysctl:
+  ansible.posix.sysctl:
     name: net.ipv6.conf.all.forwarding
     value: '1'
     state: present
 
 - name: Ensure wireguard directories created
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     mode: 0600
     state: directory
@@ -41,7 +41,7 @@
   when: not server_conf.stat.exists|bool
 
 - name: Ensure wireguard clients directories created
-  file:
+  ansible.builtin.file:
     path: "{{ custom_wireguard_path }}/clients/{{ item }}"
     mode: 0600
     state: directory
@@ -51,46 +51,46 @@
   when: not server_conf.stat.exists|bool
 
 - name: Generate wireguard server private key
-  shell: "umask 077; wg genkey | tee {{ custom_wireguard_path }}/key | wg pubkey > {{ custom_wireguard_path }}/key.public"
+  ansible.builtin.shell: "umask 077; wg genkey | tee {{ custom_wireguard_path }}/key | wg pubkey > {{ custom_wireguard_path }}/key.public"
   when: not server_conf.stat.exists|bool
 
 - name: Register server private key contents
-  shell: "cat {{ custom_wireguard_path }}/key"
+  ansible.builtin.shell: "cat {{ custom_wireguard_path }}/key"
   register: server_key_private
 
 - name: Register server public key contents
-  shell: "cat {{ custom_wireguard_path }}/key.public"
+  ansible.builtin.shell: "cat {{ custom_wireguard_path }}/key.public"
   register: server_key_public
 
 - name: Check existence of wireguard client configuration
-  stat:
+  ansible.builtin.stat:
     path: "{{ custom_wireguard_path }}/clients/{{ item.1 }}/profile.conf"
   register: client_profiles
   with_indexed_items: "{{ custom_wireguard_clients }}"
 
 - name: Check existence of wireguard client key
-  stat:
+  ansible.builtin.stat:
     path: "{{ custom_wireguard_path }}/clients/{{ item.1 }}/key"
   register: client_keys
   with_indexed_items: "{{ custom_wireguard_clients }}"
 
 - name: Generate client keys
-  shell: "umask 077; wg genkey | tee \"{{ custom_wireguard_path }}/clients/{{ item.1 }}/key\" | wg pubkey > \"{{ custom_wireguard_path }}/clients/{{ item.1 }}/key.public\""
+  ansible.builtin.shell: "umask 077; wg genkey | tee \"{{ custom_wireguard_path }}/clients/{{ item.1 }}/key\" | wg pubkey > \"{{ custom_wireguard_path }}/clients/{{ item.1 }}/key.public\""
   with_indexed_items: "{{ custom_wireguard_clients }}"
   when: not client_keys.results[item.0].stat.exists|bool
 
 - name: Register client private key
-  shell: "cat \"{{ custom_wireguard_path }}/clients/{{ item.1 }}/key\""
+  ansible.builtin.shell: "cat \"{{ custom_wireguard_path }}/clients/{{ item.1 }}/key\""
   register: client_keys_private
   with_indexed_items: "{{ custom_wireguard_clients }}"
 
 - name: Register client public key
-  shell: "cat \"{{ custom_wireguard_path }}/clients/{{ item.1 }}/key.public\""
+  ansible.builtin.shell: "cat \"{{ custom_wireguard_path }}/clients/{{ item.1 }}/key.public\""
   register: client_keys_public
   with_indexed_items: "{{ custom_wireguard_clients }}"
 
 - name: Ensure wireguard client config created
-  template:
+  ansible.builtin.template:
     src: "client.conf.j2"
     dest: "{{ custom_wireguard_path }}/clients/{{ item.1 }}/profile.conf"
     owner: root
@@ -100,7 +100,7 @@
   when: not client_profiles.results[item.0].stat.exists|bool or custom_wireguard_overwrite|bool
 
 - name: Ensure wireguard server config created
-  template:
+  ansible.builtin.template:
     src: "server.conf.j2"
     dest: "{{ custom_wireguard_path }}/{{ custom_wireguard_interface }}.conf"
     owner: root
@@ -109,12 +109,12 @@
   when: not server_conf.stat.exists|bool or custom_wireguard_overwrite|bool
 
 - name: Start wireguard service
-  service:
+  ansible.builtin.service:
     name: "wg-quick@{{ custom_wireguard_interface }}"
-    enabled: yes
+    enabled: true
     state: started
 
 - name: Ensure wireguard server reloaded
-  shell: "wg syncconf {{ custom_wireguard_interface }} <(wg-quick strip {{ custom_wireguard_interface }})"
+  ansible.builtin.shell: "wg syncconf {{ custom_wireguard_interface }} <(wg-quick strip {{ custom_wireguard_interface }})"
   args:
     executable: /bin/bash

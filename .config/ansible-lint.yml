@@ -1,0 +1,13 @@
+---
+use_default_rules: true
+offline: false
+
+skip_list:
+  - command-instead-of-shell
+  - ignore-errors
+  - latest[git]
+  - name[missing]
+  - no-changed-when
+  - no-handler
+  - risky-shell-pipe
+  - yaml[line-length]

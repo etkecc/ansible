@@ -1,6 +1,6 @@
 ---
 - name: Ensure int-prometheus-blackbox-exporter path exist
-  file:
+  ansible.builtin.file:
     path: "{{ int_prometheus_blackbox_exporter_config_path }}"
     state: directory
     mode: 0750
@@ -9,7 +9,7 @@
   when: "int_prometheus_blackbox_exporter_enabled|bool"
 
 - name: Ensure int-prometheus-blackbox-exporter config file created
-  template:
+  ansible.builtin.template:
     src: "{{ role_path }}/templates/config.yml.j2"
     dest: "{{ int_prometheus_blackbox_exporter_config_path }}/config.yml"
     owner: "{{ matrix_user_username }}"
@@ -18,7 +18,7 @@
   when: "int_prometheus_blackbox_exporter_enabled|bool"
 
 - name: Ensure int-prometheus-blackbox-exporter image is pulled
-  docker_image:
+  community.docker.docker_image:
     name: "{{ int_prometheus_blackbox_exporter_docker_image }}"
     source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
     force_source: "{{ int_prometheus_blackbox_exporter_docker_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
@@ -30,7 +30,7 @@
   until: result is not failed
 
 - name: Ensure int-prometheus-blackbox-exporter.service installed
-  template:
+  ansible.builtin.template:
     src: "{{ role_path }}/templates/systemd/int-prometheus-blackbox-exporter.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/int-prometheus-blackbox-exporter.service"
     mode: 0644
@@ -38,7 +38,7 @@
   when: int_prometheus_blackbox_exporter_enabled|bool
 
 - name: Ensure systemd reloaded after int-prometheus-blackbox-exporter.service installation
-  service:
+  ansible.builtin.service:
     daemon_reload: true
   when: "int_prometheus_blackbox_exporter_enabled|bool and int_prometheus_blackbox_exporter_systemd_service_result.changed"
 
@@ -47,12 +47,12 @@
 #
 
 - name: Check existence of int-prometheus-blackbox-exporter service
-  stat:
+  ansible.builtin.stat:
     path: "{{ devture_systemd_docker_base_systemd_path }}/int-prometheus-blackbox-exporter.service"
   register: int_prometheus_blackbox_exporter_service_stat
 
 - name: Ensure int-prometheus-blackbox-exporter is stopped
-  service:
+  ansible.builtin.service:
     name: int-prometheus-blackbox-exporter
     state: stopped
     enabled: false
@@ -61,18 +61,18 @@
   when: "not int_prometheus_blackbox_exporter_enabled|bool and int_prometheus_blackbox_exporter_service_stat.stat.exists"
 
 - name: Ensure int-prometheus-blackbox-exporter.service doesn't exist
-  file:
+  ansible.builtin.file:
     path: "{{ devture_systemd_docker_base_systemd_path }}/int-prometheus-blackbox-exporter.service"
     state: absent
   when: "not int_prometheus_blackbox_exporter_enabled|bool and int_prometheus_blackbox_exporter_service_stat.stat.exists"
 
 - name: Ensure int-prometheus-blackbox-exporter path doesn't exist
-  file:
+  ansible.builtin.file:
     path: "{{ int_prometheus_blackbox_exporter_base_path }}"
     state: absent
   when: "not int_prometheus_blackbox_exporter_enabled|bool and int_prometheus_blackbox_exporter_service_stat.stat.exists"
 
 - name: Ensure systemd reloaded after int-prometheus-blackbox-exporter.service removal
-  service:
+  ansible.builtin.service:
     daemon_reload: true
   when: "not int_prometheus_blackbox_exporter_enabled|bool and int_prometheus_blackbox_exporter_service_stat.stat.exists"

@@ -1,27 +1,28 @@
 ---
 - name: Check existence of n-grams
-  stat:
+  ansible.builtin.stat:
     path: "{{ custom_languagetool_data_path }}/{{ item }}"
   register: ngrams
 
 - name: Download n-grams
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ custom_languagetool_ngrams_langs[item] }}"
     dest: "{{ custom_languagetool_ngrams_tmp }}/{{ item }}.zip"
-  when: ngrams.stat.exists|bool == false
+    mode: 0644
+  when: not ngrams.stat.exists|bool
 
 - name: Unpack n-grams
-  unarchive:
+  ansible.builtin.unarchive:
     src: "{{ custom_languagetool_ngrams_tmp }}/{{ item }}.zip"
     keep_newer: true
     remote_src: true
     dest: "{{ custom_languagetool_data_path }}"
     owner: "{{ matrix_user_username }}"
     group: "{{ matrix_user_groupname }}"
-  when: ngrams.stat.exists|bool == false
+  when: not ngrams.stat.exists|bool
 
 - name: Remove n-rams tmp
-  file:
+  ansible.builtin.file:
     path: "{{ custom_languagetool_ngrams_tmp }}/{{ item }}.zip"
     state: absent
-  when: ngrams.stat.exists|bool == false
+  when: not ngrams.stat.exists|bool

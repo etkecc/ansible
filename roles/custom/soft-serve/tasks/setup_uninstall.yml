@@ -1,12 +1,12 @@
 ---
 
 - name: Check existence of custom-softserve service
-  stat:
+  ansible.builtin.stat:
     path: "{{ devture_systemd_docker_base_systemd_path }}/custom-softserve.service"
   register: custom_softserve_service_stat
 
 - name: Ensure custom-softserve is stopped
-  service:
+  ansible.builtin.service:
     name: custom-softserve
     state: stopped
     enabled: false
@@ -15,22 +15,22 @@
   when: "custom_softserve_service_stat.stat.exists|bool"
 
 - name: Ensure custom-softserve.service doesn't exist
-  file:
+  ansible.builtin.file:
     path: "{{ devture_systemd_docker_base_systemd_path }}/custom-softserve.service"
     state: absent
   when: "custom_softserve_service_stat.stat.exists|bool"
 
 - name: Ensure systemd reloaded after custom-softserve.service removal
-  service:
+  ansible.builtin.service:
     daemon_reload: true
   when: "custom_softserve_service_stat.stat.exists|bool"
 
 - name: Ensure soft-serve paths don't exist
-  file:
+  ansible.builtin.file:
     path: "{{ custom_softserve_base_path }}"
     state: absent
 
 - name: Ensure soft-serve Docker image doesn't exist
-  docker_image:
+  community.docker.docker_image:
     name: "{{ custom_softserve_docker_image }}"
     state: absent

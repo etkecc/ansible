@@ -1,30 +1,30 @@
 ---
 - name: Check existence of custom-radicale.service
-  stat:
+  ansible.builtin.stat:
     path: "{{ devture_systemd_docker_base_systemd_path }}/custom-radicale.service"
   register: custom_radicale_service_stat
 
 - name: Ensure custom-radicale is stopped
-  service:
+  ansible.builtin.service:
     name: custom-radicale
     state: stopped
-    enabled: no
-    daemon_reload: yes
+    enabled: false
+    daemon_reload: true
   register: stopping_result
   when: custom_radicale_service_stat.stat.exists|bool
 
 - name: Ensure custom-radicale.service does not exist
-  file:
+  ansible.builtin.file:
     path: "{{ devture_systemd_docker_base_systemd_path }}/custom-radicale.service"
     state: absent
   when: custom_radicale_service_stat.stat.exists|bool
 
 - name: Ensure systemd reloaded after custom-radicale.service removal
-  service:
-    daemon_reload: yes
+  ansible.builtin.service:
+    daemon_reload: true
   when: custom_radicale_service_stat.stat.exists|bool
 
 - name: Ensure custom-radicale docker image doesn't exist
-  docker_image:
+  community.docker.docker_image:
     name: "{{ custom_radicale_docker_image }}"
     state: absent

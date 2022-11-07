@@ -1,6 +1,6 @@
 ---
 - name: Ensure radicale paths exist
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     mode: 0750
@@ -12,26 +12,26 @@
     - "{{ custom_radicale_data_path }}"
 
 - name: Ensure radicale image is pulled
-  docker_image:
+  community.docker.docker_image:
     name: "{{ custom_radicale_docker_image }}"
     source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
     force_source: "{{ custom_radicale_docker_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
     force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else custom_radicale_docker_image_force_pull }}"
 
 - name: Ensure custom-radicale.service is present
-  template:
+  ansible.builtin.template:
     src: systemd/custom-radicale.service.j2
     dest: "{{ devture_systemd_docker_base_systemd_path }}/custom-radicale.service"
     mode: 0644
   register: custom_radicale_systemd_service_result
 
 - name: Ensure systemd reloaded after custom-radicale.service installation
-  service:
-    daemon_reload: yes
+  ansible.builtin.service:
+    daemon_reload: true
   when: custom_radicale_systemd_service_result.changed|bool
 
 - name: Ensure radicale config is present
-  template:
+  ansible.builtin.template:
     src: config.j2
     dest: "{{ custom_radicale_config_path }}/config"
     owner: "{{ matrix_user_username }}"
@@ -39,7 +39,7 @@
     mode: 0644
 
 - name: Ensure radicale htpasswd is present
-  template:
+  ansible.builtin.template:
     src: htpasswd.j2
     dest: "{{ custom_radicale_config_path }}/htpasswd"
     owner: "{{ matrix_user_username }}"
@@ -47,7 +47,7 @@
     mode: 0644
 
 - name: Ensure Matrix nginx-proxy configuration for radicale domain exists
-  template:
+  ansible.builtin.template:
     src: nginx.conf.j2
     dest: "{{ matrix_nginx_proxy_confd_path }}/matrix-custom-radicale.conf"
     mode: 0644

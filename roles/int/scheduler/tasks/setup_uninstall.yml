@@ -1,12 +1,12 @@
 ---
 
 - name: Check existence of int-scheduler service
-  stat:
+  ansible.builtin.stat:
     path: "{{ devture_systemd_docker_base_systemd_path }}/int-scheduler.service"
   register: int_scheduler_service_stat
 
 - name: Ensure int-scheduler is stopped
-  service:
+  ansible.builtin.service:
     name: int-scheduler
     state: stopped
     enabled: false
@@ -15,22 +15,22 @@
   when: "int_scheduler_service_stat.stat.exists|bool"
 
 - name: Ensure int-scheduler.service doesn't exist
-  file:
+  ansible.builtin.file:
     path: "{{ devture_systemd_docker_base_systemd_path }}/int-scheduler.service"
     state: absent
   when: "int_scheduler_service_stat.stat.exists|bool"
 
 - name: Ensure systemd reloaded after int-scheduler.service removal
-  service:
+  ansible.builtin.service:
     daemon_reload: true
   when: "int_scheduler_service_stat.stat.exists|bool"
 
 - name: Ensure int-scheduler paths don't exist
-  file:
+  ansible.builtin.file:
     path: "{{ int_scheduler_base_path }}"
     state: absent
 
 - name: Ensure int-scheduler Docker image doesn't exist
-  docker_image:
+  community.docker.docker_image:
     name: "{{ int_scheduler_docker_image }}"
     state: absent

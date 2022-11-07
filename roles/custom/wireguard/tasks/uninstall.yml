@@ -1,25 +1,25 @@
 ---
 - name: Check existence of wg-quick@ service
-  stat:
+  ansible.builtin.stat:
     path: "{{ devture_systemd_docker_base_systemd_path }}/wg-quick@.service"
   register: custom_wireguard_service_stat
 
 - name: Ensure wireguard service stopped
-  service:
+  ansible.builtin.service:
     name: "wg-quick@{{ custom_wireguard_interface }}"
-    enabled: no
+    enabled: false
     state: stopped
-  ignore_errors: yes # it fails if not installed because of @interface part, seems like different approach to such services on ansible side
+  ignore_errors: true # it fails if not installed because of @interface part, seems like different approach to such services on ansible side
   when: "custom_wireguard_service_stat.stat.exists|bool"
 
 - name: Ensure wireguard configuration removed
-  file:
+  ansible.builtin.file:
     path: "{{ custom_wireguard_path }}"
     state: absent
   when: "custom_wireguard_service_stat.stat.exists|bool"
 
 - name: Ensure wireguard packages removed
-  package:
+  ansible.builtin.package:
     name:
       - wireguard-tools
       - wireguard-dkms
@@ -27,7 +27,7 @@
   when: ansible_kernel is version('5.6', '<') and custom_wireguard_service_stat.stat.exists|bool
 
 - name: Ensure wireguard packages removed
-  package:
+  ansible.builtin.package:
     name: wireguard-tools
     state: absent
   when: ansible_kernel is version('5.6', '>=') and custom_wireguard_service_stat.stat.exists|bool

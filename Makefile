@@ -25,6 +25,9 @@ commit: opml hookshot versions ## Make a commit
 	@git commit -S -q -m "$(shell bin/commit-msg.sh)"
 	@echo "Changes have been committed"
 
+lint: ## Run ansible-lint
+	@ansible-lint --project-dir . --exclude upstream
+
 opml: ## Dumps an OPML file with extracted git feeds for roles
 	@python bin/feeds.py . dump
 

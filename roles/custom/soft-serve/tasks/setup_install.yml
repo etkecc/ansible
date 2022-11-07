@@ -1,9 +1,9 @@
 ---
-- set_fact:
+- ansible.builtin.set_fact:
     custom_softserve_requires_restart: false
 
 - name: Ensure soft-serve paths exist
-  file:
+  ansible.builtin.file:
     path: "{{ item.path }}"
     state: directory
     mode: 0750
@@ -16,7 +16,7 @@
   when: "item.when|bool"
 
 - name: Ensure soft-serve environment variables file created
-  template:
+  ansible.builtin.template:
     src: "{{ role_path }}/templates/env.j2"
     dest: "{{ custom_softserve_config_path }}/env"
     owner: "{{ matrix_user_username }}"
@@ -24,7 +24,7 @@
     mode: 0640
 
 - name: Ensure soft-serve image is pulled
-  docker_image:
+  community.docker.docker_image:
     name: "{{ custom_softserve_docker_image }}"
     source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
     force_source: "{{ custom_softserve_docker_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
@@ -36,7 +36,7 @@
   until: result is not failed
 
 - name: Ensure soft-serve repository is present on self-build
-  git:
+  ansible.builtin.git:
     repo: "{{ custom_softserve_docker_repo }}"
     dest: "{{ custom_softserve_docker_src_files_path }}"
     force: "yes"
@@ -46,7 +46,7 @@
   when: "custom_softserve_container_image_self_build|bool"
 
 - name: Ensure soft-serve image is built
-  docker_image:
+  community.docker.docker_image:
     name: "{{ custom_softserve_docker_image }}"
     source: build
     force_source: "{{ custom_softserve_git_pull_results.changed if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
@@ -58,19 +58,19 @@
   when: "custom_softserve_container_image_self_build|bool"
 
 - name: Ensure custom-softserve.service installed
-  template:
+  ansible.builtin.template:
     src: "{{ role_path }}/templates/systemd/custom-softserve.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/custom-softserve.service"
     mode: 0644
   register: custom_softserve_systemd_service_result
 
 - name: Ensure systemd reloaded after custom-softserve.service installation
-  service:
+  ansible.builtin.service:
     daemon_reload: true
   when: "custom_softserve_systemd_service_result.changed|bool"
 
 - name: Ensure custom-softserve.service restarted, if necessary
-  service:
+  ansible.builtin.service:
     name: "custom-softserve.service"
     state: restarted
   when: "custom_softserve_requires_restart|bool"

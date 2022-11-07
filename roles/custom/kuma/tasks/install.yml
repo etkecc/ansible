@@ -1,6 +1,6 @@
 ---
 - name: Ensure kuma paths exist
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     mode: 0750
@@ -11,26 +11,26 @@
     - "{{ custom_kuma_data_path }}"
 
 - name: Ensure kuma image is pulled
-  docker_image:
+  community.docker.docker_image:
     name: "{{ custom_kuma_docker_image }}"
     source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
     force_source: "{{ custom_kuma_docker_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
     force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else custom_kuma_docker_image_force_pull }}"
 
 - name: Ensure custom-kuma.service is present
-  template:
+  ansible.builtin.template:
     src: systemd/custom-kuma.service.j2
     dest: "{{ devture_systemd_docker_base_systemd_path }}/custom-kuma.service"
     mode: 0644
   register: custom_kuma_systemd_service_result
 
 - name: Ensure systemd reloaded after custom-kuma.service installation
-  service:
-    daemon_reload: yes
+  ansible.builtin.service:
+    daemon_reload: true
   when: custom_kuma_systemd_service_result.changed|bool
 
 - name: Ensure custom-kuma-htpasswd is present (protecting /status URI)
-  template:
+  ansible.builtin.template:
     src: htpasswd.j2
     dest: "{{ matrix_nginx_proxy_data_path }}/custom-kuma-htpasswd"
     owner: "{{ matrix_user_username }}"
@@ -39,7 +39,7 @@
   when: custom_kuma_htpasswd != ""
 
 - name: Ensure Matrix nginx-proxy configuration for kuma domain exists
-  template:
+  ansible.builtin.template:
     src: nginx.conf.j2
     dest: "{{ matrix_nginx_proxy_confd_path }}/matrix-custom-kuma.conf"
     mode: 0644

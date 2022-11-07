@@ -1,15 +1,18 @@
 ---
-- import_tasks: init.yml
+- name: Init
+  ansible.builtin.import_tasks: init.yml
   tags:
     - always
 
-- import_tasks: install.yml
+- name: Install
+  ansible.builtin.import_tasks: install.yml
   when: custom_wireguard_enabled|bool
   tags:
     - setup-all
     - setup-wireguard
 
-- import_tasks: uninstall.yml
+- name: Uninstall
+  ansible.builtin.import_tasks: uninstall.yml
   when: not custom_wireguard_enabled|bool
   tags:
     - setup-all

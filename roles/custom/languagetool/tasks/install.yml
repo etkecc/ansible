@@ -1,6 +1,6 @@
 ---
 - name: Ensure languagetool paths exist
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     mode: 0750
@@ -11,45 +11,45 @@
     - "{{ custom_languagetool_data_path }}"
 
 - name: Ensure languagetool image is pulled
-  docker_image:
+  community.docker.docker_image:
     name: "{{ custom_languagetool_docker_image }}"
     source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
     force_source: "{{ custom_languagetool_docker_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
     force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else custom_languagetool_docker_image_force_pull }}"
 
 - name: Ensure unzip installed
-  package:
+  ansible.builtin.package:
     name: unzip
     state: present
-  ignore_errors: yes
+  ignore_errors: true
   when: custom_languagetool_ngrams_enabled|bool
 
 - name: Install n-grams
-  include_tasks: ngrams.yml
+  ansible.builtin.include_tasks: ngrams.yml
   with_items: "{{ custom_languagetool_ngrams_langs_enabled }}"
   when: custom_languagetool_ngrams_enabled|bool
 
 - name: Ensure custom-languagetool.service is present
-  template:
+  ansible.builtin.template:
     src: systemd/custom-languagetool.service.j2
     dest: "{{ devture_systemd_docker_base_systemd_path }}/custom-languagetool.service"
     mode: 0644
   register: custom_languagetool_systemd_service_result
 
 - name: Ensure systemd reloaded after custom-languagetool.service installation
-  service:
-    daemon_reload: yes
+  ansible.builtin.service:
+    daemon_reload: true
   when: custom_languagetool_systemd_service_result.changed|bool
 
 - name: Ensure Matrix nginx-proxy configuration for languagetool domain exists
-  template:
+  ansible.builtin.template:
     src: nginx.conf.j2
     dest: "{{ matrix_nginx_proxy_confd_path }}/matrix-custom-languagetool.conf"
     mode: 0644
   when: matrix_server_fqn_languagetool is defined
 
 - name: Ensure Matrix nginx-proxy configuration for languagetool domain does not exists
-  file:
+  ansible.builtin.file:
     path: "{{ matrix_nginx_proxy_confd_path }}/matrix-custom-languagetool.conf"
     state: absent
   when: matrix_server_fqn_languagetool is not defined

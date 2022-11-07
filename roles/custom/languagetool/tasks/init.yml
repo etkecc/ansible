@@ -1,4 +1,4 @@
 ---
-- set_fact:
+- ansible.builtin.set_fact:
     matrix_systemd_services_list: "{{ matrix_systemd_services_list + ['custom-languagetool.service'] }}"
   when: custom_languagetool_enabled|bool
