@@ -21,7 +21,7 @@
 * go_neb: latest
 * googlechat: v0.3.3
 * go_skype_bridge: latest
-* grafana: 9.2.3
+* grafana: 9.2.4
 * hangouts: latest
 * heisenbridge: 1.14.0
 * honoroit: v0.9.16
@@ -52,7 +52,7 @@
 * prometheus_blackbox_exporter: v0.22.0
 * prometheus_node_exporter: v1.4.0
 * prometheus_postgres_exporter: v0.11.1
-* prometheus: v2.39.1
+* prometheus: v2.40.0
 * radicale: 3.1.8.0
 * redis: 7.0.4-alpine
 * registration: v0.7.2
