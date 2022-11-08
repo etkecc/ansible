@@ -63,7 +63,7 @@
 * softserve: v0.4.1
 * sygnal: v0.12.0
 * synapse_admin: 0.8.5
-* synapse: v1.70.1
+* synapse: v1.71.0
 * telegram: v0.12.1
 * twitter: v0.1.5
 * whatsapp: v0.7.1
