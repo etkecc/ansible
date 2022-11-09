@@ -8,6 +8,7 @@ ENV PATH="/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin"
 RUN apk --no-cache add python3 && \
 		apk --no-cache add --virtual builddeps alpine-sdk py3-cffi py3-pip && \
 		ln -s /bin/uname /usr/local/bin/uname && \
+		ln -s /bin/rm /usr/sbin/rm && \
 		pip install --upgrade pip && \
 		pip install ansible-core==${ANSIBLE_CORE} ansible==${ANSIBLE} && \
 		pip cache purge && \
