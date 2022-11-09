@@ -4,6 +4,7 @@ ARG ANSIBLE=6.6.0
 
 RUN apk --no-cache add python3 && \
 		apk --no-cache add --virtual builddeps alpine-sdk py3-cffi py3-pip && \
+		pip install --upgrade pip && \
 		pip install ansible-core==${ANSIBLE_CORE} ansible==${ANSIBLE} && \
 		pip cache purge && \
 		apk del builddeps && \
