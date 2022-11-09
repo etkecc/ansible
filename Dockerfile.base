@@ -2,8 +2,12 @@ FROM alpine:3.16.2
 ARG ANSIBLE_CORE=2.13.6
 ARG ANSIBLE=6.6.0
 
+ENV PATH="/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+
 RUN apk --no-cache add python3 && \
 		apk --no-cache add --virtual builddeps alpine-sdk py3-cffi py3-pip && \
+		ln -s /bin/uname /usr/local/bin/uname && \
 		pip install --upgrade pip && \
 		pip install ansible-core==${ANSIBLE_CORE} ansible==${ANSIBLE} && \
 		pip cache purge && \
