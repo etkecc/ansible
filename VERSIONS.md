@@ -38,7 +38,7 @@
 * matrix_registration_bot: latest
 * matrix_reminder_bot: release-v0.2.1
 * maubot: v0.3.1
-* miniflux: 2.0.39
+* miniflux: 2.0.40
 * mjolnir: v1.5.0
 * mx_puppet_discord: v0.1.1
 * mx_puppet_groupme: 533cccc8
