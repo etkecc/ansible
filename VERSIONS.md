@@ -17,7 +17,7 @@
 * element: v1.11.14
 * email2matrix: 1.1.0
 * etherpad: 1.8.18
-* facebook: v0.4.0
+* facebook: v0.4.1
 * go_neb: latest
 * googlechat: v0.3.3
 * go_skype_bridge: latest
@@ -29,7 +29,7 @@
 * hydrogen: v0.3.4
 * instagram: v0.2.2
 * jitsi_ldap: "3"
-* jitsi: stable-7882
+* jitsi: stable-8044
 * kuma: 1.18.5-alpine
 * languagetool: 5.9
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
