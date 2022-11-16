@@ -19,7 +19,7 @@
 * etherpad: 1.8.18
 * facebook: v0.4.1
 * go_neb: latest
-* googlechat: v0.3.3
+* googlechat: v0.4.0
 * go_skype_bridge: latest
 * grafana: 9.2.4
 * hangouts: latest
