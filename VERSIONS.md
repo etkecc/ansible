@@ -63,6 +63,7 @@
 * softserve: v0.4.4
 * sygnal: v0.12.0
 * synapse_admin: 0.8.5
+* synapse_reverse_proxy_companion: 1.23.2-alpine
 * synapse: v1.71.0
 * telegram: v0.12.1
 * twitter: v0.1.5
