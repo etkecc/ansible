@@ -76,6 +76,7 @@
     - setup-ssl
     - setup-sygnal
     - setup-synapse
+    - setup-synapse-reverse-proxy-companion
     - setup-synapse-admin
 
 - name: Ensure Synapse restarted
@@ -89,6 +90,19 @@
     - setup-all
     - restart-all
     - setup-synapse
+
+- name: Ensure synapse-reverse-proxy-companion restarted
+  ansible.builtin.service:
+    enabled: true
+    state: restarted
+    name: matrix-synapse-reverse-proxy-companion
+  when: matrix_synapse_reverse_proxy_companion_enabled|bool
+  ignore_errors: true
+  tags:
+    - setup-all
+    - restart-all
+    - setup-synapse
+    - setup-synapse-reverse-proxy-companion
 
 - name: Ensure Dendrite restarted
   ansible.builtin.service:
