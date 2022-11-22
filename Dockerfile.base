@@ -10,6 +10,7 @@ RUN apk --no-cache add python3 && \
 		ln -s /bin/uname /usr/local/bin/uname && \
 		ln -s /bin/rm /usr/local/bin/rm && \
 		pip install --upgrade pip && \
+		pip install passlib && \
 		pip install ansible-core==${ANSIBLE_CORE} ansible==${ANSIBLE} && \
 		pip cache purge && \
 		apk del builddeps && \
