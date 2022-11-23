@@ -1,4 +1,0 @@
----
-- ansible.builtin.set_fact:
-    matrix_systemd_services_list: "{{ matrix_systemd_services_list + ['wg-quick@{{ custom_wireguard_interface }}'] }}"
-  when: custom_wireguard_enabled|bool

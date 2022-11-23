@@ -1,4 +1,4 @@
-FROM alpine:3.16.2
+FROM alpine:3.17.0
 ARG ANSIBLE_CORE=2.13.6
 ARG ANSIBLE=6.6.0
 

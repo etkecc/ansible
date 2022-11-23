@@ -1,6 +1,6 @@
 ---
 - name: "Set up a Matrix server"
-  hosts: "{{ target if target is defined else 'matrix_servers' }}"
+  hosts: "{{ target if target is defined else 'etke_servers' }}"
   become: true
   vars:
     matrix_playbook_docker_installation_enabled: false # handled by galaxy/docker
@@ -110,10 +110,12 @@
     - custom/matrix-backup-borg
     - custom/matrix-user-creator
     - custom/matrix-common-after
+
+    - when: devture_systemd_service_manager_enabled | bool
+      role: galaxy/com.devture.ansible.role.systemd_service_manager
     # END MATRIX
 
     # CUSTOM
-    - matrix/restart
     - galaxy/cleanup
     - galaxy/git2bunny
     # END CUSTOM
