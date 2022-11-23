@@ -110,7 +110,6 @@
     - custom/matrix-backup-borg
     - custom/matrix-user-creator
     - custom/matrix-common-after
-
     - when: devture_systemd_service_manager_enabled | bool
       role: galaxy/com.devture.ansible.role.systemd_service_manager
     # END MATRIX
@@ -121,6 +120,6 @@
     # END CUSTOM
 
     # MATRIX
-    # - galaxy/com.devture.ansible.role.playbook_state_preserver # we intentionally skip it here
+    # - galaxy/com.devture.ansible.role.playbook_state_preserver # unused
     - galaxy/com.devture.ansible.role.playbook_runtime_messages
     # END MATRIX
