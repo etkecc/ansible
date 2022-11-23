@@ -1,7 +1,4 @@
 ---
-- ansible.builtin.import_tasks: init.yml
-  tags:
-    - always
 
 - ansible.builtin.import_tasks: install.yml
   when: custom_dnsmasq_enabled|bool

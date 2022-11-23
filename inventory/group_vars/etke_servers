@@ -1,0 +1,43 @@
+---
+
+########################################################################
+#                                                                      #
+# com.devture.ansible.role.systemd_service_manager                     #
+#                                                                      #
+########################################################################
+
+# Restarting services one by one leads to less downtime
+devture_systemd_service_manager_service_restart_mode: one-by-one
+
+# We don't verify that services managed to start to decrease playbook runtime.
+# Prometheus will notify us about service failure.
+devture_systemd_service_manager_up_verification_enabled: false
+
+devture_systemd_service_manager_services_list_additional: |
+  {{
+    ([{'name': 'custom-dnsmasq.service', 'priority': 5000, 'groups': ['etke', 'dnsmasq']}] if custom_dnsmasq_enabled else [])
+    +
+    ([{'name': 'custom-kuma.service', 'priority': 5000, 'groups': ['etke', 'kuma']}] if custom_kuma_enabled else [])
+    +
+    ([{'name': 'custom-languagetool.service', 'priority': 5000, 'groups': ['etke', 'languagetool']}] if custom_languagetool_enabled else [])
+    +
+    ([{'name': 'custom-miniflux.service', 'priority': 5000, 'groups': ['etke', 'miniflux']}] if custom_miniflux_enabled else [])
+    +
+    ([{'name': 'custom-radicale.service', 'priority': 5000, 'groups': ['etke', 'radicale']}] if custom_radicale_enabled else [])
+    +
+    ([{'name': 'custom-softserve.service', 'priority': 5000, 'groups': ['etke', 'softserve']}] if custom_softserve_enabled else [])
+    +
+    ([{'name': ('wg-quick@' + custom_wireguard_interface + '.service'), 'priority': 5000, 'groups': ['etke', 'wireguard']}] if custom_wireguard_enabled else [])
+    +
+    ([{'name': 'int-prometheus-blackbox-exporter.service', 'priority': 3900, 'groups': ['etke', 'monitoring', 'prometheus', 'prometheus-node-exporters']}] if int_prometheus_blackbox_exporter_enabled else [])
+    +
+    ([{'name': 'int-scheduler.service', 'priority': 5000, 'groups': ['etke', 'scheduler']}] if int_scheduler_enabled else [])
+    +
+    ([{'name': 'int-scheduler-update.timer', 'priority': 5000, 'groups': ['etke', 'scheduler']}] if int_scheduler_enabled else [])
+  }}
+
+########################################################################
+#                                                                      #
+# /com.devture.ansible.role.systemd_service_manager                    #
+#                                                                      #
+########################################################################
