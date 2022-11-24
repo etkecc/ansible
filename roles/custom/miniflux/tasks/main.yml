@@ -1,16 +1,17 @@
 ---
-- ansible.builtin.import_tasks: init.yml
+
+- block:
+    - when: custom_miniflux_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/init.yml"
   tags:
     - always
 
-- ansible.builtin.import_tasks: install.yml
-  when: custom_miniflux_enabled|bool
-  tags:
-    - setup-all
-    - setup-miniflux
+- block:
+    - when: custom_miniflux_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
-- ansible.builtin.import_tasks: uninstall.yml
-  when: not custom_miniflux_enabled|bool
+    - when: not custom_miniflux_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
   tags:
     - setup-all
     - setup-miniflux
