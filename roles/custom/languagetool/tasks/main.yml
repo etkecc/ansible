@@ -1,13 +1,11 @@
 ---
 
-- ansible.builtin.import_tasks: install.yml
-  when: custom_languagetool_enabled|bool
-  tags:
-    - setup-all
-    - setup-languagetool
+- block:
+    - when: custom_languagetool_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
-- ansible.builtin.import_tasks: uninstall.yml
-  when: not custom_languagetool_enabled|bool
+    - when: not custom_languagetool_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
   tags:
     - setup-all
     - setup-languagetool
