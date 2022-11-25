@@ -3,7 +3,13 @@
 - block:
     - when: custom_kuma_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+  tags:
+    - setup-all
+    - setup-kuma
+    - install-all
+    - install-kuma
 
+- block:
     - when: not custom_kuma_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
   tags:

@@ -5,6 +5,8 @@
   tags:
     - setup-all
     - setup-website
+    - install-all
+    - install-website
 
 - name: Clone website repo
   ansible.builtin.git:
@@ -20,6 +22,8 @@
   tags:
     - setup-all
     - setup-website
+    - install-all
+    - install-website
 
 - name: Build website
   ansible.builtin.command: "{{ item }}"
@@ -32,6 +36,8 @@
   tags:
     - setup-all
     - setup-website
+    - install-all
+    - install-website
 
 - name: Cleanup build directory before deploy
   ansible.builtin.file:
@@ -44,6 +50,8 @@
   tags:
     - setup-all
     - setup-website
+    - install-all
+    - install-website
 
 - name: Create website artifact
   community.general.archive:
@@ -58,6 +66,8 @@
   tags:
     - setup-all
     - setup-website
+    - install-all
+    - install-website
 
 - name: Deploy website
   ansible.builtin.unarchive:
@@ -69,6 +79,8 @@
   tags:
     - setup-all
     - setup-website
+    - install-all
+    - install-website
 
 - name: Remove temporary build dir
   ansible.builtin.file:
@@ -80,3 +92,5 @@
   tags:
     - setup-all
     - setup-website
+    - install-all
+    - install-website

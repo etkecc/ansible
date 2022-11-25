@@ -3,7 +3,13 @@
 - block:
     - when: custom_dnsmasq_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+  tags:
+    - setup-all
+    - setup-dnsmasq
+    - install-all
+    - install-dnsmasq
 
+- block:
     - when: not custom_dnsmasq_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
   tags:

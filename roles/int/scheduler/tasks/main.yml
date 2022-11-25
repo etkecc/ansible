@@ -6,7 +6,13 @@
 
     - when: int_scheduler_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/setup_install.yml"
+  tags:
+    - setup-all
+    - setup-int-scheduler
+    - install-all
+    - install-int-scheduler
 
+- block:
     - when: not int_scheduler_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/setup_uninstall.yml"
   tags:
