@@ -1,7 +1,7 @@
 .PHONY: help upstream roles dependencies versions commit-msg upstream commit opml print-nofeeds
 
 help: ## Show this help.
-	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
+	@grep -F -h "##" $(MAKEFILE_LIST) | grep -v grep | sed -e 's/\\$$//' | sed -e 's/##//'
 
 submodules: ## Initialize upstream with pinned commit
 	git submodule update --init --recursive
