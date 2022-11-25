@@ -61,10 +61,16 @@ int_scheduler_recurring_eventid:
 int_scheduler_recurring_command:
 
 # Sentry DSN
-int_scheduler_sentry_dsn: ''
+int_scheduler_monitoring_sentry_dsn: ''
 
 # Sentry sample rate, from 0 to 100
-int_scheduler_sentry_rate:
+int_scheduler_monitoring_sentry_rate:
+
+# Healthchecks UUID
+int_scheduler_monitoring_healthchecks_uuid: ''
+
+# Healthchecks duration (between checks) in seconds
+int_scheduler_monitoring_healthchecks_duration: 5
 
 # Log level
 int_scheduler_loglevel: ''
