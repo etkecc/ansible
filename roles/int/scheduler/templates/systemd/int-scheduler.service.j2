@@ -35,6 +35,8 @@ ExecStart={{ devture_systemd_docker_base_host_command_docker }} run --rm --name 
 
 ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ int_scheduler_docker_timeout }} int-scheduler 2>/dev/null || true'
 ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm int-scheduler 2>/dev/null || true'
+Restart=always
+RestartSec=30
 SyslogIdentifier=int-scheduler
 
 [Install]
