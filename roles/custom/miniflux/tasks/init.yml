@@ -1,9 +1,9 @@
 ---
 
 - ansible.builtin.set_fact:
-    matrix_postgres_additional_databases: |
+    devture_postgres_additional_databases: |
       {{
-        matrix_postgres_additional_databases
+        devture_postgres_additional_databases
         +
         [{
           'name': custom_miniflux_database_name,
