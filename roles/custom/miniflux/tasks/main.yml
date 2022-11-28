@@ -1,11 +1,4 @@
 ---
-
-- block:
-    - when: custom_miniflux_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/init.yml"
-  tags:
-    - always
-
 - block:
     - when: custom_miniflux_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
