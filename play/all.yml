@@ -27,7 +27,7 @@
     - custom/matrix-base
     # - custom/matrix-dynamic-dns # unused
     - custom/matrix-mailer
-    - custom/matrix-postgres
+    - galaxy/com.devture.ansible.role.postgres
     - custom/matrix-redis
     # - custom/matrix-corporal # unused
     - custom/matrix-bridge-appservice-discord
