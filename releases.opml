@@ -14,6 +14,7 @@
     <outline text="cactus-comments" title="cactus-comments" type="rss" htmlUrl="https://gitlab.com/cactus-comments/cactus-appservice" xmlUrl="https://gitlab.com/cactus-comments/cactus-appservice/-/tags?format=atom" />
     <outline text="cactus-comments-2" title="cactus-comments-2" type="rss" htmlUrl="https://gitlab.com/cactus-comments/cactus-client" xmlUrl="https://gitlab.com/cactus-comments/cactus-client/-/tags?format=atom" />
     <outline text="cinny" title="cinny" type="rss" htmlUrl="https://github.com/ajbura/cinny" xmlUrl="https://github.com/ajbura/cinny/tags.atom" />
+    <outline text="com.devture.ansible.role.postgres" title="com.devture.ansible.role.postgres" type="rss" htmlUrl="https://github.com/postgres/postgres" xmlUrl="https://github.com/postgres/postgres/tags.atom" />
     <outline text="corporal" title="corporal" type="rss" htmlUrl="https://github.com/devture/matrix-corporal" xmlUrl="https://github.com/devture/matrix-corporal/tags.atom" />
     <outline text="coturn" title="coturn" type="rss" htmlUrl="https://github.com/coturn/coturn" xmlUrl="https://github.com/coturn/coturn/tags.atom" />
     <outline text="dendrite" title="dendrite" type="rss" htmlUrl="https://github.com/matrix-org/dendrite" xmlUrl="https://github.com/matrix-org/dendrite/tags.atom" />
@@ -56,7 +57,6 @@
     <outline text="mx-puppet-twitter" title="mx-puppet-twitter" type="rss" htmlUrl="https://github.com/Sorunome/mx-puppet-twitter" xmlUrl="https://github.com/Sorunome/mx-puppet-twitter/tags.atom" />
     <outline text="nginx-proxy" title="nginx-proxy" type="rss" htmlUrl="https://github.com/nginx/nginx" xmlUrl="https://github.com/nginx/nginx/tags.atom" />
     <outline text="ntfy" title="ntfy" type="rss" htmlUrl="https://github.com/binwiederhier/ntfy" xmlUrl="https://github.com/binwiederhier/ntfy/tags.atom" />
-    <outline text="postgres" title="postgres" type="rss" htmlUrl="https://github.com/postgres/postgres" xmlUrl="https://github.com/postgres/postgres/tags.atom" />
     <outline text="postgres-backup" title="postgres-backup" type="rss" htmlUrl="https://github.com/prodrigestivill/docker-postgres-backup-local" xmlUrl="https://github.com/prodrigestivill/docker-postgres-backup-local/tags.atom" />
     <outline text="postmoogle" title="postmoogle" type="rss" htmlUrl="https://gitlab.com/etke.cc/postmoogle" xmlUrl="https://gitlab.com/etke.cc/postmoogle/-/tags?format=atom" />
     <outline text="prometheus" title="prometheus" type="rss" htmlUrl="https://github.com/prometheus/prometheus" xmlUrl="https://github.com/prometheus/prometheus/tags.atom" />

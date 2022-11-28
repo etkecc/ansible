@@ -50,7 +50,6 @@
 !hookshot feed https://github.com/Sorunome/mx-puppet-twitter/tags.atom mx-puppet-twitter
 !hookshot feed https://github.com/nginx/nginx/tags.atom nginx-proxy
 !hookshot feed https://github.com/binwiederhier/ntfy/tags.atom ntfy
-!hookshot feed https://github.com/postgres/postgres/tags.atom postgres
 !hookshot feed https://github.com/prodrigestivill/docker-postgres-backup-local/tags.atom postgres-backup
 !hookshot feed https://gitlab.com/etke.cc/postmoogle/-/tags?format=atom postmoogle
 !hookshot feed https://github.com/prometheus/prometheus/tags.atom prometheus
