@@ -106,8 +106,11 @@
     # MATRIX
     - custom/matrix-coturn
     - custom/matrix-aux
-    - custom/matrix-postgres-backup
+
+    - role: galaxy/com.devture.ansible.role.postgres_backup
+
     - custom/matrix-backup-borg
+
     - custom/matrix-user-creator
     - custom/matrix-common-after
     - when: devture_systemd_service_manager_enabled | bool
