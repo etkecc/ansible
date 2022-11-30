@@ -8,6 +8,7 @@
 !hookshot feed https://gitlab.com/cactus-comments/cactus-appservice/-/tags?format=atom cactus-comments
 !hookshot feed https://gitlab.com/cactus-comments/cactus-client/-/tags?format=atom cactus-comments-2
 !hookshot feed https://github.com/ajbura/cinny/tags.atom cinny
+!hookshot feed https://github.com/postgres/postgres/tags.atom com.devture.ansible.role.postgres
 !hookshot feed https://github.com/devture/matrix-corporal/tags.atom corporal
 !hookshot feed https://github.com/coturn/coturn/tags.atom coturn
 !hookshot feed https://github.com/matrix-org/dendrite/tags.atom dendrite
