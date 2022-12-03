@@ -58,7 +58,7 @@
 * registration: v0.7.2
 * scheduler: latest
 * signal_daemon: 0.23.0
-* signal: v0.4.1
+* signal: v0.4.2
 * sms_bridge: 0.5.7
 * softserve: v0.4.4
 * sygnal: v0.12.0
