@@ -9,7 +9,7 @@
 * cactus_comments_client: 0.13.0
 * cinny: v2.2.2
 * corporal: 2.4.0
-* coturn: 4.6.0-r0
+* coturn: 4.6.1-r0
 * dimension: latest
 * discord: latest
 * dnsmasq: latest
