@@ -8,7 +8,7 @@
 * cactus_comments: 0.9.0
 * cactus_comments_client: 0.13.0
 * cinny: v2.2.2
-* corporal: 2.4.0
+* corporal: 2.5.0
 * coturn: 4.6.1-r0
 * dimension: latest
 * discord: latest
@@ -34,11 +34,11 @@
 * languagetool: 5.9
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * ma1sd: 2.5.0
-* mailer: 4.95-r0-4
+* mailer: 4.96-r1-0
 * matrix_registration_bot: latest
 * matrix_reminder_bot: release-v0.2.1
 * maubot: v0.3.1
-* miniflux: 2.0.40
+* miniflux: 2.0.41
 * mjolnir: v1.5.0
 * mx_puppet_discord: v0.1.1
 * mx_puppet_groupme: 533cccc8
@@ -53,7 +53,7 @@
 * prometheus_nginxlog_exporter: v1.10.0
 * prometheus_node_exporter: v1.5.0
 * prometheus_postgres_exporter: v0.11.1
-* prometheus: v2.40.5
+* prometheus: v2.40.6
 * radicale: 3.1.8.0
 * redis: 7.0.4-alpine
 * registration: v0.7.2
