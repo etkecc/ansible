@@ -29,7 +29,7 @@
 * hydrogen: v0.3.5
 * instagram: v0.2.2
 * jitsi_ldap: "3"
-* jitsi: stable-8044
+* jitsi: stable-8138
 * kuma: 1.18.5-alpine
 * languagetool: 5.9
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
@@ -55,7 +55,7 @@
 * prometheus_postgres_exporter: v0.11.1
 * prometheus: v2.40.6
 * radicale: 3.1.8.0
-* redis: 7.0.4-alpine
+* redis: 7.0.5-alpine
 * registration: v0.7.2
 * scheduler: latest
 * signal_daemon: 0.23.0
