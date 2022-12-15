@@ -27,9 +27,9 @@
 * honoroit: v0.9.16
 * hookshot: 2.5.0
 * hydrogen: v0.3.5
-* instagram: v0.2.2
+* instagram: v0.2.3
 * jitsi_ldap: "3"
-* jitsi: stable-8138
+* jitsi: stable-8138-1
 * kuma: 1.18.5-alpine
 * languagetool: 5.9
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
@@ -53,9 +53,9 @@
 * prometheus_nginxlog_exporter: v1.10.0
 * prometheus_node_exporter: v1.5.0
 * prometheus_postgres_exporter: v0.11.1
-* prometheus: v2.40.6
+* prometheus: v2.40.7
 * radicale: 3.1.8.0
-* redis: 7.0.5-alpine
+* redis: 7.0.6-alpine
 * registration: v0.7.2
 * scheduler: latest
 * signal_daemon: 0.23.0
