@@ -46,7 +46,7 @@
 * mx_puppet_slack: v0.1.2
 * mx_puppet_steam: latest
 * mx_puppet_twitter: latest
-* nginx_proxy: 1.23.2-alpine
+* nginx_proxy: 1.23.3-alpine
 * ntfy: v1.29.1
 * postmoogle: v0.9.10
 * prometheus_blackbox_exporter: v0.22.0
@@ -64,7 +64,7 @@
 * softserve: v0.4.4
 * sygnal: v0.12.0
 * synapse_admin: 0.8.5
-* synapse_reverse_proxy_companion: 1.23.2-alpine
+* synapse_reverse_proxy_companion: 1.23.3-alpine
 * synapse: v1.73.0
 * telegram: v0.12.2
 * twitter: v0.1.5
