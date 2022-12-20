@@ -39,7 +39,7 @@
 * matrix_reminder_bot: release-v0.2.1
 * maubot: v0.3.1
 * miniflux: 2.0.41
-* mjolnir: v1.5.0
+* mjolnir: v1.6.1
 * mx_puppet_discord: v0.1.1
 * mx_puppet_groupme: 533cccc8
 * mx_puppet_instagram: latest
