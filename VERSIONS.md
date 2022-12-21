@@ -14,7 +14,7 @@
 * discord: latest
 * dnsmasq: latest
 * dynamic_dns: v3.10.0-ls106
-* element: v1.11.16
+* element: v1.11.17
 * email2matrix: 1.1.0
 * etherpad: 1.8.18
 * facebook: v0.4.1
