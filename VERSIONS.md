@@ -3,7 +3,7 @@
 * appservice_kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * appservice_slack: 2.0.2
 * appservice_webhooks: v1.0.3-01
-* beeper_linkedin: v0.5.3
+* beeper_linkedin: v0.5.4
 * buscarron: v1.3.0
 * cactus_comments: 0.9.0
 * cactus_comments_client: 0.13.0
@@ -30,7 +30,7 @@
 * instagram: v0.2.3
 * jitsi_ldap: "3"
 * jitsi: stable-8138-1
-* kuma: 1.18.5-alpine
+* kuma: 1.19.0-alpine
 * languagetool: 5.9
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * ma1sd: 2.5.0
