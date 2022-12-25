@@ -6,6 +6,9 @@
 #                                                                      #
 ########################################################################
 
+# linkedin hotfix
+matrix_beeper_linkedin_version: v0.5.4
+
 # etherpad with plugins and libreoffice
 matrix_etherpad_docker_image: registry.gitlab.com/etke.cc/etherpad:{{ matrix_etherpad_version }}
 matrix_etherpad_soffice: /usr/bin/soffice
