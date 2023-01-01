@@ -31,7 +31,7 @@
 * jitsi_ldap: "3"
 * jitsi: stable-8138-1
 * kuma: 1.19.2-alpine
-* languagetool: 5.9
+* languagetool: 6.0
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * ma1sd: 2.5.0
 * mailer: 4.96-r1-0
