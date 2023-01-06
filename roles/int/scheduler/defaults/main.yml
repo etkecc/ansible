@@ -42,6 +42,10 @@ int_scheduler_password: ''
 
 int_scheduler_homeserver: "{{ matrix_homeserver_container_url }}"
 
+int_scheduler_http_port: '8080'
+int_scheduler_http_user:
+int_scheduler_http_password:
+
 # admin room id
 int_scheduler_roomid:
 
@@ -77,6 +81,9 @@ int_scheduler_loglevel: ''
 
 # Environment name
 int_scheduler_env: prod
+
+matrix_server_fqn_scheduler: "scheduler.{{ matrix_domain }}"
+matrix_nginx_proxy_proxy_scheduler_hostname: "{{ matrix_server_fqn_scheduler }}"
 
 # Additional environment variables to pass to the scheduler container
 #

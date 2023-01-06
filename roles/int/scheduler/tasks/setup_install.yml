@@ -103,3 +103,9 @@
     - int-scheduler.service
     - int-scheduler-update.service
     - int-scheduler-update.timer
+
+- name: Ensure Matrix nginx-proxy configuration for int-scheduler domain exists
+  ansible.builtin.template:
+    src: nginx.conf.j2
+    dest: "{{ matrix_nginx_proxy_confd_path }}/int-scheduler.conf"
+    mode: 0644
