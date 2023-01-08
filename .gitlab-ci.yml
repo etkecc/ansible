@@ -11,7 +11,7 @@ base:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
     - docker buildx create --use
-    - docker buildx build --platform linux/arm64/v8,linux/amd64 --push -t ${CI_REGISTRY_IMAGE}/base -f Dockerfile.base .
+    - docker buildx build --platform linux/arm64/v8,linux/amd64 --push -t ${CI_REGISTRY_IMAGE}/base -t registry.etke.cc/etke.cc/ansible/base -f Dockerfile.base .
   tags:
     - docker
 
@@ -25,7 +25,7 @@ fresh:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
     - docker buildx create --use
-    - docker buildx build --platform linux/arm64/v8,linux/amd64 --push -t $CI_REGISTRY_IMAGE:fresh .
+    - docker buildx build --platform linux/arm64/v8,linux/amd64 --push -t $CI_REGISTRY_IMAGE:fresh -t registry.etke.cc/etke.cc/ansible:fresh .
   tags:
     - docker
 
@@ -39,6 +39,6 @@ stable:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
     - docker buildx create --use
-    - docker buildx build --platform linux/arm64/v8,linux/amd64 --push -t $CI_REGISTRY_IMAGE .
+    - docker buildx build --platform linux/arm64/v8,linux/amd64 --push -t $CI_REGISTRY_IMAGE -t registry.etke.cc/etke.cc/ansible .
   tags:
     - docker
