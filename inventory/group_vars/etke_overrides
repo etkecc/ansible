@@ -2,16 +2,29 @@
 
 ########################################################################
 #                                                                      #
+# registry overrides                                                   #
+#                                                                      #
+########################################################################
+
+custom_dnsmasq_docker_image: "registry.etke.cc/etke.cc/dnsmasq:{{ custom_dnsmasq_version }}"
+matrix_client_element_docker_image: "registry.etke.cc/etke.cc/app:{{ matrix_client_element_version }}"
+matrix_etherpad_docker_image: "registry.etke.cc/etke.cc/etherpad:{{ matrix_etherpad_version }}"
+int_scheduler_docker_image_name_prefix: registry.etke.cc/
+matrix_backup_borg_docker_image_name_prefix: registry.etke.cc/
+matrix_bot_buscarron_docker_image_name_prefix: registry.etke.cc/etke.cc/
+matrix_bot_honoroit_docker_image_name_prefix: registry.etke.cc/etke.cc/
+matrix_bot_postmoogle_docker_image_name_prefix: registry.etke.cc/etke.cc/
+
+########################################################################
+#                                                                      #
 # customization                                                        #
 #                                                                      #
 ########################################################################
 
-# etherpad with plugins and libreoffice
-matrix_etherpad_docker_image: registry.gitlab.com/etke.cc/etherpad:{{ matrix_etherpad_version }}
+# etherpad libreoffice
 matrix_etherpad_soffice: /usr/bin/soffice
 
-# element with features enabled
-matrix_client_element_docker_image: registry.gitlab.com/etke.cc/app:{{ matrix_client_element_version }}
+# element branding
 matrix_client_element_branding_authFooterLinks:
   - text: Managed by etke.cc
     url: https://etke.cc
