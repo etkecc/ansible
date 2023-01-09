@@ -1,5 +1,14 @@
-[matrix_servers:children]
-etke_servers
-
 [etke_servers]
+[etke_servers:children]
+matrix_servers
+etke_overrides
+[etke_hosts]
+[matrix_servers:children]
+etke_hosts
+[etke_overrides:children]
+etke_hosts
+[etke_overrides:vars]
+ansible_group_priority=10
+
+[etke_hosts]
 localhost ansible_connection=local become=no
