@@ -4,6 +4,7 @@
   set_fact:
     custom_skopeo_sources: []
     custom_skopeo_targets: {}
+    custom_skopeo_final: {}
 
 - name: Populate source images list
   set_fact:
@@ -30,9 +31,18 @@
   loop: "{{ custom_skopeo_sources }}"
   register: custom_skopeo_status
 
-- name: Sync image between registries
-  shell: "skopeo copy --all --preserve-digests docker://{{ item.item }} docker://{{ custom_skopeo_targets[item.item] }}"
+- name: Populate final images dict
+  set_fact:
+    custom_skopeo_final: "{{ custom_skopeo_final | combine({ item.item : custom_skopeo_targets[item.item] }) }}"
   when: custom_skopeo_ignore not in item.item and item.status | default(-1) != 200
   loop: "{{ custom_skopeo_status.results }}"
+
+- name: Final list of images to sync
+  debug:
+    msg: "{{ custom_skopeo_final }}"
+
+- name: Sync image between registries
+  shell: "skopeo copy --all --preserve-digests docker://{{ item.key }} docker://{{ item.value }}"
+  loop: "{{ custom_skopeo_final | dict2items }}"
   become: false
   delegate_to: 127.0.0.1
