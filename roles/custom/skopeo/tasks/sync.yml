@@ -1,17 +1,38 @@
 ---
 
-- name: Initialize images list
+- name: Initialize images vars
   set_fact:
-    custom_skopeo_images: []
+    custom_skopeo_sources: []
+    custom_skopeo_targets: {}
 
-- name: Populate images list
+- name: Populate source images list
   set_fact:
-    custom_skopeo_images: "{{ custom_skopeo_images + [lookup('vars', item)] }}"
+    custom_skopeo_sources: "{{ custom_skopeo_sources + [lookup('vars', item)] }}"
   loop: "{{ query('varnames', '^.*_(docker|container)_image(_v[0-9]+|_latest)?$') }}"
 
-- name: Sync images between registries
-  shell: "skopeo copy --all --preserve-digests docker://{{ item }} docker://{{ custom_skopeo_target }}{{ item | regex_search('\/.*') }}"
+- name: Unique source images list
+  set_fact:
+    custom_skopeo_sources: "{{ custom_skopeo_sources | unique | sort }}"
+
+- name: Populate target images dict
+  set_fact:
+    custom_skopeo_targets: "{{ custom_skopeo_targets | combine({ item : custom_skopeo_target + item | regex_search('\/.*') }) }}"
   when: 'custom_skopeo_ignore not in item'
-  loop: "{{ custom_skopeo_images }}"
+  loop: "{{ custom_skopeo_sources }}"
+
+- name: Check image status
+  uri:
+    url: "https://{{ custom_skopeo_target }}/v2{{ item | regex_search('\/.*') | replace(':', '/manifests/') }}"
+    method: GET
+    status_code: [200, 404]
+  when: 'custom_skopeo_ignore not in item'
+  failed_when: false
+  loop: "{{ custom_skopeo_sources }}"
+  register: custom_skopeo_status
+
+- name: Sync image between registries
+  shell: "skopeo copy --all --preserve-digests docker://{{ item.item }} docker://{{ custom_skopeo_targets[item.item] }}"
+  when: custom_skopeo_ignore not in item.item and item.status | default(-1) != 200
+  loop: "{{ custom_skopeo_status.results }}"
   become: false
   delegate_to: 127.0.0.1
