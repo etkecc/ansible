@@ -1,5 +1,5 @@
 [matrix_servers:children]
-etke_hosts
+etke_servers
 
-[etke_hosts]
+[etke_servers]
 localhost ansible_connection=local become=no
