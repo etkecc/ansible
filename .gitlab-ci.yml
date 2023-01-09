@@ -29,6 +29,18 @@ fresh:
   tags:
     - docker
 
+sync images:
+  stage: release
+  only: ['fresh']
+  needs: ['fresh']
+  dependencies: ['fresh']
+  image: $CI_REGISTRY_IMAGE:fresh
+  before_script:
+    - cp -r /playbook/inventory /
+  script:
+    - cd /playbook; ansible-playbook play/all.yml -l localhost -t skopeo
+  allow_failure: true
+
 stable:
   stage: release
   only: ['master']
