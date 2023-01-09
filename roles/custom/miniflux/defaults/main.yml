@@ -5,7 +5,7 @@ custom_miniflux_enabled: false
 custom_miniflux_version: 2.0.41
 matrix_server_fqn_miniflux: "miniflux.{{ matrix_domain }}"
 matrix_nginx_proxy_proxy_miniflux_hostname: "{{ matrix_server_fqn_miniflux }}"
-custom_miniflux_docker_image: "miniflux/miniflux:{{ custom_miniflux_version }}"
+custom_miniflux_docker_image: "docker.io/miniflux/miniflux:{{ custom_miniflux_version }}"
 custom_miniflux_docker_image_force_pull: "{{ custom_miniflux_docker_image.endswith(':latest') }}"
 #
 # A list of extra arguments to pass to the container

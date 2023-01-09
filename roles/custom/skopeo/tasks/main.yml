@@ -1,0 +1,5 @@
+---
+
+- ansible.builtin.import_tasks: sync.yml
+  tags:
+    - skopeo

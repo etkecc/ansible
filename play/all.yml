@@ -121,6 +121,7 @@
     # CUSTOM
     - galaxy/cleanup
     - galaxy/git2bunny
+    - custom/skopeo
     # END CUSTOM
 
     # MATRIX

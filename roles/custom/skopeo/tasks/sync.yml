@@ -1,0 +1,17 @@
+---
+
+- name: Initialize images list
+  set_fact:
+    custom_skopeo_images: []
+
+- name: Populate images list
+  set_fact:
+    custom_skopeo_images: "{{ custom_skopeo_images + [lookup('vars', item)] }}"
+  loop: "{{ query('varnames', '^.*_(docker|container)_image(_v[0-9]+|_latest)?$') }}"
+
+- name: Sync images between registries
+  shell: "skopeo copy --all --preserve-digests docker://{{ item }} docker://{{ custom_skopeo_target }}{{ item | regex_search('\/.*') }}"
+  when: 'custom_skopeo_ignore not in item'
+  loop: "{{ custom_skopeo_images }}"
+  become: false
+  delegate_to: 127.0.0.1

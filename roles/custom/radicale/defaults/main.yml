@@ -8,7 +8,7 @@ custom_radicale_data_path: "{{ custom_radicale_base_path }}/data"
 custom_radicale_config_path: "{{ custom_radicale_base_path }}/conf"
 matrix_server_fqn_radicale: "radicale.{{ matrix_domain }}"
 matrix_nginx_proxy_proxy_radicale_hostname: "{{ matrix_server_fqn_radicale }}"
-custom_radicale_docker_image: "tomsquest/docker-radicale:{{ custom_radicale_version }}"
+custom_radicale_docker_image: "docker.io/tomsquest/docker-radicale:{{ custom_radicale_version }}"
 custom_radicale_docker_image_force_pull: "{{ custom_radicale_docker_image.endswith(':latest') }}"
 
 # generate: htpasswd -nb user password

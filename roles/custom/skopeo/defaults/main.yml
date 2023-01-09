@@ -1,0 +1,3 @@
+---
+custom_skopeo_target: registry.etke.cc
+custom_skopeo_ignore: etke.cc
