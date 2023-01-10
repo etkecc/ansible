@@ -1,7 +1,3 @@
-CI_REGISTRY_IMAGE := env_var_or_default("CI_REGISTRY_IMAGE", "registry.gitlab.com/etke.cc/int/scheduler")
-REGISTRY_IMAGE := env_var_or_default("REGISTRY_IMAGE", "registry.etke.cc/etke.cc/int/scheduler")
-CI_COMMIT_TAG := if env_var_or_default("CI_COMMIT_TAG", "main") == "main" { "latest" } else { env_var_or_default("CI_COMMIT_TAG", "latest") }
-
 # show help by default
 default:
     @just --list --justfile {{ justfile() }}
@@ -18,6 +14,9 @@ upstream: && versions
 roles:
     ansible-galaxy install -r requirements.yml -p roles/galaxy/ --force
     ansible-galaxy install -r upstream/requirements.yml -p roles/galaxy/ --force
+
+# pull dependencies
+dependencies: submodules roles
 
 # update VERSIONS.md file using the actual versions from roles' files
 versions:
