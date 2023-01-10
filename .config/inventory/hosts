@@ -1,0 +1,2 @@
+[matrix_servers]
+localhost ansible_connection=local become=no

@@ -19,7 +19,6 @@
 
 # ignore sensitive data by default
 /inventory/host_vars/*
-!/inventory/host_vars/localhost
 
 # do not ignore tools
 !/inventory/host_vars/.gitkeep

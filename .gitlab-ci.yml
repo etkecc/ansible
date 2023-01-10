@@ -36,7 +36,7 @@ sync images:
   dependencies: ['fresh']
   image: $CI_REGISTRY_IMAGE:fresh
   before_script:
-    - cp -r /playbook/inventory /
+    - cp -r /playbook/.config/inventory /
   script:
     - cd /playbook; ansible-playbook play/all.yml -l localhost -t skopeo
   allow_failure: true
