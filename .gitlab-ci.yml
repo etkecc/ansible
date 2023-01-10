@@ -38,7 +38,7 @@ sync images:
   before_script:
     - cp -r /playbook/.config/inventory /
   script:
-    - cd /playbook; ansible-playbook play/all.yml -l localhost -t skopeo
+    - cd /playbook; ansible-playbook play/all.yml -l localhost -t skopeo -e target=localhost
   allow_failure: true
 
 stable:
