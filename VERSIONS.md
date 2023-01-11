@@ -7,7 +7,7 @@
 * buscarron: v1.3.0
 * cactus_comments: 0.9.0
 * cactus_comments_client: 0.13.0
-* chatgpt: 1.2.1
+* chatgpt: 1.2.2
 * cinny: v2.2.2
 * corporal: 2.5.1
 * coturn: 4.6.1-r0
@@ -40,7 +40,7 @@
 * matrix_reminder_bot: release-v0.2.1
 * maubot: v0.3.1
 * miniflux: 2.0.41
-* mjolnir: v1.6.1
+* mjolnir: v1.6.4
 * mx_puppet_discord: v0.1.1
 * mx_puppet_groupme: 533cccc8
 * mx_puppet_instagram: latest
