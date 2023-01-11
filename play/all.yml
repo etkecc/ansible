@@ -19,11 +19,15 @@
       tags:
         - setup-docker
         - setup-all
+        - install-docker
+        - install-all
     - when: devture_timesync_installation_enabled | bool
       role: galaxy/com.devture.ansible.role.timesync
       tags:
         - setup-timesync
         - setup-all
+        - install-timesync
+        - install-all
     - custom/matrix-base
     # - custom/matrix-dynamic-dns # unused
     - custom/matrix-mailer
@@ -46,6 +50,7 @@
     - custom/matrix-bridge-mautrix-telegram
     - custom/matrix-bridge-mautrix-whatsapp
     - custom/matrix-bridge-mautrix-discord
+    - custom/matrix-bridge-mautrix-slack
     - custom/matrix-bridge-mx-puppet-discord
     - custom/matrix-bridge-mx-puppet-groupme
     - custom/matrix-bridge-mx-puppet-steam
@@ -63,6 +68,7 @@
     - custom/matrix-bot-postmoogle
     # - custom/matrix-bot-go-neb # unused
     # - custom/matrix-bot-mjolnir # unused
+    # - custom/matrix-bot-chatgpt # unused
     # - custom/matrix-cactus-comments # unused
     - custom/matrix-synapse
     - custom/matrix-synapse-reverse-proxy-companion

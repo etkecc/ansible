@@ -13,6 +13,7 @@
     <outline text="buscarron" title="buscarron" type="rss" htmlUrl="https://gitlab.com/etke.cc/buscarron" xmlUrl="https://gitlab.com/etke.cc/buscarron/-/tags?format=atom" />
     <outline text="cactus-comments" title="cactus-comments" type="rss" htmlUrl="https://gitlab.com/cactus-comments/cactus-appservice" xmlUrl="https://gitlab.com/cactus-comments/cactus-appservice/-/tags?format=atom" />
     <outline text="cactus-comments-2" title="cactus-comments-2" type="rss" htmlUrl="https://gitlab.com/cactus-comments/cactus-client" xmlUrl="https://gitlab.com/cactus-comments/cactus-client/-/tags?format=atom" />
+    <outline text="chatgpt" title="chatgpt" type="rss" htmlUrl="https://github.com/matrixgpt/matrix-chatgpt-bot" xmlUrl="https://github.com/matrixgpt/matrix-chatgpt-bot/tags.atom" />
     <outline text="cinny" title="cinny" type="rss" htmlUrl="https://github.com/ajbura/cinny" xmlUrl="https://github.com/ajbura/cinny/tags.atom" />
     <outline text="com.devture.ansible.role.postgres" title="com.devture.ansible.role.postgres" type="rss" htmlUrl="https://github.com/postgres/postgres" xmlUrl="https://github.com/postgres/postgres/tags.atom" />
     <outline text="com.devture.ansible.role.postgres_backup" title="com.devture.ansible.role.postgres_backup" type="rss" htmlUrl="https://github.com/prodrigestivill/docker-postgres-backup-local" xmlUrl="https://github.com/prodrigestivill/docker-postgres-backup-local/tags.atom" />
@@ -45,6 +46,7 @@
     <outline text="mautrix-hangouts" title="mautrix-hangouts" type="rss" htmlUrl="https://github.com/mautrix/hangouts" xmlUrl="https://github.com/mautrix/hangouts/tags.atom" />
     <outline text="mautrix-instagram" title="mautrix-instagram" type="rss" htmlUrl="https://github.com/mautrix/instagram" xmlUrl="https://github.com/mautrix/instagram/tags.atom" />
     <outline text="mautrix-signal" title="mautrix-signal" type="rss" htmlUrl="https://github.com/mautrix/signal" xmlUrl="https://github.com/mautrix/signal/tags.atom" />
+    <outline text="mautrix-slack" title="mautrix-slack" type="rss" htmlUrl="https://github.com/mautrix/slack" xmlUrl="https://github.com/mautrix/slack/tags.atom" />
     <outline text="mautrix-telegram" title="mautrix-telegram" type="rss" htmlUrl="https://github.com/mautrix/telegram" xmlUrl="https://github.com/mautrix/telegram/tags.atom" />
     <outline text="mautrix-twitter" title="mautrix-twitter" type="rss" htmlUrl="https://github.com/mautrix/twitter" xmlUrl="https://github.com/mautrix/twitter/tags.atom" />
     <outline text="mautrix-whatsapp" title="mautrix-whatsapp" type="rss" htmlUrl="https://github.com/mautrix/whatsapp" xmlUrl="https://github.com/mautrix/whatsapp/tags.atom" />

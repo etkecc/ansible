@@ -7,6 +7,7 @@
 * buscarron: v1.3.0
 * cactus_comments: 0.9.0
 * cactus_comments_client: 0.13.0
+* chatgpt: 1.2.1
 * cinny: v2.2.2
 * corporal: 2.5.1
 * coturn: 4.6.1-r0
@@ -60,6 +61,7 @@
 * scheduler: latest
 * signal_daemon: 0.23.1
 * signal: v0.4.2
+* slack: latest
 * sms_bridge: 0.5.7
 * softserve: v0.4.4
 * sygnal: v0.12.0
