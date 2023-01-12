@@ -1,28 +1,28 @@
 ---
 
 - name: Initialize images vars
-  set_fact:
+  ansible.builtin.set_fact:
     custom_skopeo_sources: []
     custom_skopeo_targets: {}
     custom_skopeo_final: {}
 
 - name: Populate source images list
-  set_fact:
+  ansible.builtin.set_fact:
     custom_skopeo_sources: "{{ custom_skopeo_sources + [lookup('vars', item)] }}"
   loop: "{{ query('varnames', '^.*_(docker|container)_image(_v[0-9]+|_latest)?$') }}"
 
 - name: Unique source images list
-  set_fact:
+  ansible.builtin.set_fact:
     custom_skopeo_sources: "{{ custom_skopeo_sources | unique | sort }}"
 
 - name: Populate target images dict
-  set_fact:
-    custom_skopeo_targets: "{{ custom_skopeo_targets | combine({ item : custom_skopeo_target + item | regex_search('\/.*') }) }}"
+  ansible.builtin.set_fact:
+    custom_skopeo_targets: "{{ custom_skopeo_targets | combine({item: custom_skopeo_target + item | regex_search('/.*')}) }}"
   when: 'custom_skopeo_ignore not in item'
   loop: "{{ custom_skopeo_sources }}"
 
 - name: Check image status
-  uri:
+  ansible.builtin.uri:
     url: "https://{{ custom_skopeo_target }}/v2{{ item | regex_search('\/.*') | replace(':', '/manifests/') }}"
     method: GET
     status_code: [200, 404]
@@ -32,17 +32,17 @@
   register: custom_skopeo_status
 
 - name: Populate final images dict
-  set_fact:
-    custom_skopeo_final: "{{ custom_skopeo_final | combine({ item.item : custom_skopeo_targets[item.item] }) }}"
+  ansible.builtin.set_fact:
+    custom_skopeo_final: "{{ custom_skopeo_final | combine({item.item: custom_skopeo_targets[item.item]}) }}"
   when: custom_skopeo_ignore not in item.item and item.status | default(-1) != 200
   loop: "{{ custom_skopeo_status.results }}"
 
 - name: Final list of images to sync
-  debug:
+  ansible.builtin.debug:
     msg: "{{ custom_skopeo_final }}"
 
 - name: Sync image between registries
-  shell: "skopeo copy --all --preserve-digests docker://{{ item.key }} docker://{{ item.value }}"
+  ansible.builtin.shell: "skopeo copy --all --preserve-digests docker://{{ item.key }} docker://{{ item.value }}"
   loop: "{{ custom_skopeo_final | dict2items }}"
   become: false
   delegate_to: 127.0.0.1
