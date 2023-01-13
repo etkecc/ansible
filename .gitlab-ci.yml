@@ -34,8 +34,9 @@ sync images:
   only: ['fresh']
   needs: ['fresh']
   dependencies: ['fresh']
-  image: $CI_REGISTRY_IMAGE:fresh
-  entrypoint: [""]
+  image:
+    name: $CI_REGISTRY_IMAGE:fresh
+    entrypoint: [""]
   before_script:
     - cp -r /playbook/.config/inventory /
   script:
