@@ -16,6 +16,7 @@ RUN apk --no-cache add git just && \
 
 FROM registry.gitlab.com/etke.cc/ansible/base
 WORKDIR /playbook
+ENTRYPOINT ["/bin/sh"]
 RUN apk add --no-cache ca-certificates openssh git hugo make just skopeo
 COPY --from=playbook /playbook /playbook
 COPY --from=tools /bin/emm /bin/emm
