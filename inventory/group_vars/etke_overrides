@@ -18,6 +18,7 @@ matrix_beeper_linkedin_docker_image_name_prefix: "{{ 'localhost/' if matrix_beep
 matrix_bot_buscarron_docker_image_name_prefix: "{{ 'localhost/' if matrix_bot_buscarron_container_image_self_build else matrix_registry_prefix }}"
 matrix_bot_chatgpt_docker_image_name_prefix: "{{ 'localhost/' if matrix_bot_chatgpt_container_image_self_build else matrix_registry_prefix }}"
 matrix_bot_honoroit_docker_image_name_prefix: "{{ 'localhost/' if matrix_bot_honoroit_container_image_self_build else matrix_registry_prefix }}"
+matrix_bot_maubot_docker_image_name_prefix: "{{ 'localhost/' if matrix_bot_maubot_container_image_self_build else matrix_registry_prefix }}"
 matrix_bot_postmoogle_docker_image_name_prefix: "{{ 'localhost/' if matrix_bot_postmoogle_container_image_self_build else matrix_registry_prefix }}"
 matrix_client_hydrogen_docker_image_name_prefix: "{{ 'localhost/' if matrix_client_hydrogen_container_image_self_build else matrix_registry_prefix }}"
 matrix_conduit_docker_image_name_prefix: "{{ matrix_registry_prefix }}"
@@ -28,13 +29,19 @@ matrix_mautrix_facebook_docker_image_name_prefix: "{{ 'localhost/' if matrix_mau
 matrix_mautrix_googlechat_docker_image_name_prefix: "{{ 'localhost/' if matrix_mautrix_googlechat_container_image_self_build else matrix_registry_prefix }}"
 matrix_mautrix_hangouts_docker_image_name_prefix: "{{ 'localhost/' if matrix_mautrix_hangouts_container_image_self_build else matrix_registry_prefix }}"
 matrix_mautrix_instagram_docker_image_name_prefix: "{{ 'localhost/' if matrix_mautrix_instagram_container_image_self_build else matrix_registry_prefix }}"
+matrix_mautrix_signal_daemon_docker_image_name_prefix: "{{ matrix_registry_prefix }}"
 matrix_mautrix_slack_docker_image_name_prefix: "{{ 'localhost/' if matrix_mautrix_slack_container_image_self_build else matrix_registry_prefix }}"
+matrix_mautrix_telegram_docker_image_name_prefix: "{{ 'localhost/' if matrix_mautrix_telegram_container_image_self_build else matrix_registry_prefix }}"
 matrix_mautrix_twitter_docker_image_name_prefix: "{{ 'localhost/' if matrix_mautrix_twitter_container_image_self_build else matrix_registry_prefix }}"
 matrix_mautrix_whatsapp_docker_image_name_prefix: "{{ 'localhost/' if matrix_mautrix_whatsapp_container_image_self_build else matrix_registry_prefix }}"
 matrix_mx_puppet_discord_docker_image_name_prefix: "{{ 'localhost/' if matrix_mx_puppet_discord_container_image_self_build else matrix_registry_prefix }}"
 matrix_mx_puppet_groupme_docker_image_name_prefix: "{{ 'localhost/' if matrix_mx_puppet_groupme_container_image_self_build else matrix_registry_prefix }}"
 matrix_mx_puppet_slack_docker_image_name_prefix: "{{ 'localhost/' if matrix_mx_puppet_slack_container_image_self_build else matrix_registry_prefix }}"
 matrix_prometheus_nginxlog_exporter_docker_image_name_prefix: "{{ matrix_registry_prefix }}martin-helmich/"
+matrix_prometheus_postgres_exporter_docker_image_name_prefix: "{{ matrix_registry_prefix }}"
+matrix_s3_goofys_docker_image_name_prefix: "{{ matrix_registry_prefix }}"
+matrix_synapse_rust_synapse_compress_state_docker_image_name_prefix: "{{ matrix_registry_prefix }}"
+matrix_telegram_lottieconverter_docker_image_name_prefix: "{{ 'localhost/' if matrix_telegram_lottieconverter_container_image_self_build else matrix_registry_prefix }}"
 
 ########################################################################
 #                                                                      #
