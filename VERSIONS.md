@@ -3,6 +3,8 @@
 * appservice_kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * appservice_slack: 2.0.2
 * appservice_webhooks: v1.0.3-01
+* backup_borg_borg: 1.2.3
+* backup_borg_borgmatic: 1.7.5
 * beeper_linkedin: v0.5.4
 * buscarron: v1.3.0
 * cactus_comments: 0.9.0
