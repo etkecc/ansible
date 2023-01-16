@@ -1,3 +1,5 @@
 ---
 custom_skopeo_target: registry.etke.cc
 custom_skopeo_ignore: etke.cc
+custom_skopeo_static:
+  - dock.mau.dev/mautrix/instagram:latest

@@ -8,7 +8,7 @@
 * cactus_comments: 0.9.0
 * cactus_comments_client: 0.13.0
 * chatgpt: 1.2.3
-* cinny: v2.2.2
+* cinny: v2.2.3
 * corporal: 2.5.1
 * coturn: 4.6.1-r0
 * dimension: latest

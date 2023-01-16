@@ -2,7 +2,7 @@
 
 - name: Initialize images vars
   ansible.builtin.set_fact:
-    custom_skopeo_sources: []
+    custom_skopeo_sources: "{{ custom_skopeo_static }}"
     custom_skopeo_targets: {}
     custom_skopeo_final: {}
 
@@ -34,7 +34,7 @@
 - name: Populate final images dict
   ansible.builtin.set_fact:
     custom_skopeo_final: "{{ custom_skopeo_final | combine({item.item: custom_skopeo_targets[item.item]}) }}"
-  when: custom_skopeo_ignore not in item.item and item.status | default(-1) != 200
+  when: custom_skopeo_ignore not in item.item and (item.status | default(-1) != 200 or item.item.endswith(':latest'))
   loop: "{{ custom_skopeo_status.results }}"
 
 - name: Final list of images to sync
