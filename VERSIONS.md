@@ -69,7 +69,7 @@
 * sygnal: v0.12.0
 * synapse_admin: 0.8.5
 * synapse_reverse_proxy_companion: 1.23.3-alpine
-* synapse: v1.74.0
+* synapse: v1.75.0
 * telegram: v0.12.2
 * twitter: v0.1.5
 * whatsapp: v0.8.1
