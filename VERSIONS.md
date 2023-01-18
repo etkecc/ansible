@@ -6,7 +6,7 @@
 * backup_borg_borg: 1.2.3
 * backup_borg_borgmatic: 1.7.5
 * beeper_linkedin: v0.5.4
-* buscarron: v1.3.0
+* buscarron: v1.3.1
 * cactus_comments: 0.9.0
 * cactus_comments_client: 0.13.0
 * chatgpt: 1.2.3
@@ -51,7 +51,7 @@
 * mx_puppet_twitter: latest
 * nginx_proxy: 1.23.3-alpine
 * ntfy: v1.30.1
-* postmoogle: v0.9.10
+* postmoogle: v0.9.11
 * prometheus_blackbox_exporter: v0.22.0
 * prometheus_nginxlog_exporter: v1.10.0
 * prometheus_node_exporter: v1.5.0
