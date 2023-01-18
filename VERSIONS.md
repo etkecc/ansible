@@ -17,7 +17,7 @@
 * discord: latest
 * dnsmasq: latest
 * dynamic_dns: v3.10.0-ls106
-* element: v1.11.17
+* element: v1.11.18
 * email2matrix: 1.1.0
 * etherpad: 1.8.18
 * facebook: v0.4.1
@@ -33,7 +33,7 @@
 * instagram: v0.2.3
 * jitsi_ldap: "3"
 * jitsi: stable-8218
-* kuma: 1.19.5-alpine
+* kuma: 1.19.6-alpine
 * languagetool: 6.0-dockerupdate-2
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * ma1sd: 2.5.0
