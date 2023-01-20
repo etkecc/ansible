@@ -17,7 +17,7 @@
 * discord: latest
 * dnsmasq: latest
 * dynamic_dns: v3.10.0-ls106
-* element: v1.11.19
+* element: v1.11.20
 * email2matrix: 1.1.0
 * etherpad: 1.8.18
 * facebook: v0.4.1
@@ -28,7 +28,7 @@
 * hangouts: latest
 * heisenbridge: 1.14.1
 * honoroit: v0.9.16
-* hookshot: 2.6.1
+* hookshot: 2.7.0
 * hydrogen: v0.3.6
 * instagram: v0.2.3
 * jitsi_ldap: "3"
