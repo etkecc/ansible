@@ -74,19 +74,19 @@ matrix_conduit_max_request_size: 20_000_000
 ########################################################################
 
 matrix_nginx_proxy_proxy_matrix_metrics_enabled: yes
-matrix_prometheus_node_exporter_metrics_proxying_enabled: yes
+matrix_prometheus_services_proxy_connect_prometheus_node_exporter_metrics_proxying_enabled: yes
 matrix_nginx_proxy_proxy_matrix_metrics_basic_auth_enabled: yes
 matrix_nginx_proxy_proxy_matrix_metrics_basic_auth_username: "{{ '%s' | format(matrix_homeserver_generic_secret_key) | password_hash('sha512', 'metrics.username', rounds=655555) | to_uuid }}"
 matrix_nginx_proxy_proxy_matrix_metrics_basic_auth_password: "{{ '%s' | format(matrix_homeserver_generic_secret_key) | password_hash('sha512', 'metrics.password', rounds=655555) | to_uuid }}"
-matrix_prometheus_node_exporter_enabled: yes
-matrix_prometheus_node_exporter_process_extra_arguments:
+prometheus_node_exporter_enabled: yes
+prometheus_node_exporter_process_extra_arguments:
   - "--collector.disable-defaults"
   - "--collector.cpu"
   - "--collector.filesystem"
   - "--collector.meminfo"
   - "--collector.systemd"
   - "--collector.uname"
-matrix_prometheus_node_exporter_container_extra_arguments:
+prometheus_node_exporter_container_extra_arguments:
   - "--security-opt apparmor=unconfined"
   - "--mount type=bind,src=/var/run/dbus/system_bus_socket,dst=/var/run/dbus/system_bus_socket,ro,bind-propagation=rslave"
 

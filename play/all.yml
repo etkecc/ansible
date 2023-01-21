@@ -75,11 +75,12 @@
     # - custom/matrix-dendrite # unused
     # - custom/matrix-conduit # unused
     - custom/matrix-synapse-admin
-    - custom/matrix-prometheus-node-exporter
+    - galaxy/prometheus_node_exporter
     - custom/matrix-prometheus-postgres-exporter
     - custom/matrix-prometheus-nginxlog-exporter # unused, but keeping for compatibility
     - custom/matrix-prometheus
     - custom/matrix-grafana
+    - custom/matrix-prometheus-services-proxy-connect
     - custom/matrix-registration
     - custom/matrix-client-element
     - custom/matrix-client-hydrogen
