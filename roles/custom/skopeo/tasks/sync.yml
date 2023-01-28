@@ -26,6 +26,8 @@
     url: "https://{{ custom_skopeo_target }}/v2{{ item | regex_search('\/.*') | replace(':', '/manifests/') }}"
     method: GET
     status_code: [200, 404]
+    headers:
+      Accept: application/vnd.docker.distribution.manifest.list.v2+json, application/vnd.oci.image.index.v1+json
   when: custom_skopeo_ignore_text not in item and item not in custom_skopeo_ignore_images
   failed_when: false
   loop: "{{ custom_skopeo_sources }}"
