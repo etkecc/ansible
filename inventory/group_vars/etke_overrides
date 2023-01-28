@@ -10,7 +10,6 @@ matrix_registry_prefix: registry.etke.cc/
 custom_dnsmasq_docker_image: "{{ matrix_registry_prefix }}etke.cc/dnsmasq:{{ custom_dnsmasq_version }}"
 matrix_client_element_docker_image: "{{ matrix_registry_prefix }}etke.cc/app:{{ matrix_client_element_version }}"
 matrix_etherpad_docker_image: "{{ matrix_registry_prefix }}etke.cc/etherpad:{{ matrix_etherpad_version }}"
-matrix_synapse_admin_docker_image: "{{ matrix_registry_prefix }}etke.cc/synapse-admin:{{ matrix_synapse_admin_version }}"
 docker_postgres_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
 int_scheduler_docker_image_name_prefix: "{{ matrix_registry_prefix }}"
 matrix_appservice_discord_docker_image_name_prefix: "{{ 'localhost/' if matrix_appservice_discord_container_image_self_build else matrix_registry_prefix }}"

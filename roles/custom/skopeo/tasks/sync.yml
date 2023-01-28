@@ -18,7 +18,7 @@
 - name: Populate target images dict
   ansible.builtin.set_fact:
     custom_skopeo_targets: "{{ custom_skopeo_targets | combine({item: custom_skopeo_target + item | regex_search('/.*')}) }}"
-  when: 'custom_skopeo_ignore not in item'
+  when: custom_skopeo_ignore_text not in item and item not in custom_skopeo_ignore_images
   loop: "{{ custom_skopeo_sources }}"
 
 - name: Check image status
@@ -26,7 +26,7 @@
     url: "https://{{ custom_skopeo_target }}/v2{{ item | regex_search('\/.*') | replace(':', '/manifests/') }}"
     method: GET
     status_code: [200, 404]
-  when: 'custom_skopeo_ignore not in item'
+  when: custom_skopeo_ignore_text not in item and item not in custom_skopeo_ignore_images
   failed_when: false
   loop: "{{ custom_skopeo_sources }}"
   register: custom_skopeo_status
@@ -34,7 +34,7 @@
 - name: Populate final images dict
   ansible.builtin.set_fact:
     custom_skopeo_final: "{{ custom_skopeo_final | combine({item.item: custom_skopeo_targets[item.item]}) }}"
-  when: custom_skopeo_ignore not in item.item and (item.status | default(-1) != 200 or item.item.endswith(':latest'))
+  when: custom_skopeo_ignore_text not in item.item and item.item not in custom_skopeo_ignore_images and (item.status | default(-1) != 200 or item.item.endswith(':latest'))
   loop: "{{ custom_skopeo_status.results }}"
 
 - name: Final list of images to sync
