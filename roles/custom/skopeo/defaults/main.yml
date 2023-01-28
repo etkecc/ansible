@@ -4,3 +4,4 @@ custom_skopeo_ignore: etke.cc
 custom_skopeo_static:
   - dock.mau.dev/mautrix/instagram:latest
   - dock.mau.dev/mautrix/googlechat:latest
+  - docker.io/matrixdotorg/synapse:v1.50.0
