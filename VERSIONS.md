@@ -4,7 +4,7 @@
 * appservice_slack: 2.0.2
 * appservice_webhooks: v1.0.3-01
 * backup_borg_borg: 1.2.3
-* backup_borg_borgmatic: 1.7.5
+* backup_borg_borgmatic: 1.7.6
 * beeper_linkedin: v0.5.4
 * buscarron: v1.3.1
 * cactus_comments: 0.9.0
@@ -13,7 +13,7 @@
 * corporal: 2.5.1
 * coturn: 4.6.1-r0
 * dimension: latest
-* discord: latest
+* discord: v0.1.0
 * dnsmasq: latest
 * dynamic_dns: v3.10.0-ls106
 * element: v1.11.20
@@ -39,7 +39,7 @@
 * mailer: 4.96-r1-0
 * matrix_registration_bot: latest
 * matrix_reminder_bot: release-v0.2.1
-* maubot: v0.3.1
+* maubot: v0.4.0
 * miniflux: 2.0.41
 * mjolnir: v1.6.4
 * mx_puppet_discord: v0.1.1
