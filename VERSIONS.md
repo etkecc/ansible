@@ -64,7 +64,7 @@
 * signal: v0.4.2
 * slack: latest
 * sms_bridge: 0.5.7
-* softserve: v0.4.4
+* softserve: v0.4.5
 * sygnal: v0.12.0
 * synapse_admin: 0.8.6
 * synapse_reverse_proxy_companion: 1.23.3-alpine
