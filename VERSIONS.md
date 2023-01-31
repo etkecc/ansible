@@ -11,12 +11,12 @@
 * chatgpt: 1.4.1
 * cinny: v2.2.4
 * corporal: 2.5.1
-* coturn: 4.6.1-r0
+* coturn: 4.6.1-r1
 * dimension: latest
 * discord: v0.1.0
 * dnsmasq: latest
 * dynamic_dns: v3.10.0-ls106
-* element: v1.11.20
+* element: v1.11.21
 * email2matrix: 1.1.0
 * etherpad: 1.8.18
 * facebook: v0.4.1
@@ -31,7 +31,7 @@
 * hydrogen: v0.3.6
 * instagram: v0.2.3
 * jitsi_ldap: "3"
-* jitsi: stable-8218
+* jitsi: stable-8252
 * kuma: 1.19.6-alpine
 * languagetool: 6.0-dockerupdate-2
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
