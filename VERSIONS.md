@@ -16,7 +16,7 @@
 * discord: v0.1.0
 * dnsmasq: latest
 * dynamic_dns: v3.10.0-ls106
-* element: v1.11.21
+* element: v1.11.22
 * email2matrix: 1.1.0
 * etherpad: 1.8.18
 * facebook: v0.4.1
@@ -55,7 +55,7 @@
 * prometheus_nginxlog_exporter: v1.10.0
 * prometheus_node_exporter: v1.5.0
 * prometheus_postgres_exporter: v0.11.1
-* prometheus: v2.41.0
+* prometheus: v2.42.0
 * radicale: 3.1.8.0
 * redis: 7.0.7-alpine
 * registration: v0.7.2
@@ -68,7 +68,7 @@
 * sygnal: v0.12.0
 * synapse_admin: 0.8.6
 * synapse_reverse_proxy_companion: 1.23.3-alpine
-* synapse: v1.75.0
+* synapse: v1.76.0
 * telegram: v0.12.2
 * twitter: v0.1.5
 * whatsapp: v0.8.1
