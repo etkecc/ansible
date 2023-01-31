@@ -49,6 +49,9 @@ matrix_telegram_lottieconverter_docker_image_name_prefix: "{{ 'localhost/' if ma
 #                                                                      #
 ########################################################################
 
+# ref: https://github.com/spantaleev/matrix-docker-ansible-deploy/pull/2440
+matrix_synapse_in_container_python_packages_path: "/usr/local/lib/python3.11/site-packages"
+
 # etherpad libreoffice
 matrix_etherpad_soffice: /usr/bin/soffice
 
