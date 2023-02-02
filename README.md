@@ -73,7 +73,7 @@ How? [bin/commit-msg.sh](./bin/commit-msg.sh)
 
 ### Integration to 3rdParty services
 
-* **[git2bunny](https://gitlab.com/etke.cc/roles/git2bunny)** - like the `matrix/nginx-proxy-website`, but the target is your BunnyCDN storage
+* <s>**[git2bunny](https://gitlab.com/etke.cc/roles/git2bunny)** - like the `matrix/nginx-proxy-website`, but the target is your BunnyCDN storage</s> excluded
 
 # Usage
 

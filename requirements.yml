@@ -7,8 +7,6 @@
 
 - src: git+https://gitlab.com/etke.cc/roles/docker.git
   version: main
-- src: git+https://gitlab.com/etke.cc/roles/git2bunny.git
-  version: main
 - src: git+https://gitlab.com/etke.cc/roles/swap.git
   version: main
 - src: git+https://gitlab.com/etke.cc/roles/security.git

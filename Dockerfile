@@ -1,6 +1,3 @@
-FROM registry.gitlab.com/etke.cc/base as tools
-
-
 FROM registry.gitlab.com/etke.cc/ansible/base AS playbook
 WORKDIR /playbook
 COPY . /playbook
@@ -19,4 +16,3 @@ WORKDIR /playbook
 ENTRYPOINT ["/bin/sh"]
 RUN apk add --no-cache ca-certificates openssh git hugo make just skopeo
 COPY --from=playbook /playbook /playbook
-COPY --from=tools /bin/emm /bin/emm
