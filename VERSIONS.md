@@ -66,7 +66,7 @@
 * sms_bridge: 0.5.7
 * softserve: v0.4.5
 * sygnal: v0.12.0
-* synapse_admin: 0.8.6
+* synapse_admin: 0.8.7
 * synapse_reverse_proxy_companion: 1.23.3-alpine
 * synapse: v1.76.0
 * telegram: v0.12.2
