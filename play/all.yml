@@ -76,7 +76,7 @@
     # - custom/matrix-conduit # unused
     - custom/matrix-synapse-admin
     - galaxy/prometheus_node_exporter
-    - custom/matrix-prometheus-postgres-exporter
+    - galaxy/prometheus_postgres_exporter
     - custom/matrix-prometheus-nginxlog-exporter # unused, but keeping for compatibility
     - custom/matrix-prometheus
     - custom/matrix-grafana
