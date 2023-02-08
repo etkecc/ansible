@@ -25,7 +25,7 @@
 * go_skype_bridge: latest
 * grafana: 9.3.6
 * hangouts: latest
-* heisenbridge: 1.14.1
+* heisenbridge: 1.14.2
 * honoroit: v0.9.16
 * hookshot: 2.7.0
 * hydrogen: v0.3.6
