@@ -34,8 +34,7 @@ fresh:
 sync images:
   stage: postrelease
   rules:
-    - if: $CI_COMMIT_REF_NAME == 'fresh'
-    - if: $CI_COMMIT_REF_NAME == 'fresh' && $CI_PIPELINE_SOURCE == 'schedule'
+    - if: $CI_COMMIT_REF_NAME == 'fresh' && ($CI_PIPELINE_SOURCE == 'schedule' || $CI_PIPELINE_SOURCE == 'push' || $CI_PIPELINE_SOURCE == 'merge_request_event')
   image:
     name: $CI_REGISTRY_IMAGE:fresh
     entrypoint: [""]
