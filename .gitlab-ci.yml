@@ -18,8 +18,8 @@ base:
 
 fresh:
   stage: release
-  rules:
-    - if: $CI_COMMIT_REF_NAME == 'fresh' && $CI_PIPELINE_SOURCE != 'schedule'
+  only: ['fresh']
+  except: ['schedules']
   services:
     - docker:dind
   image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/jdrouet/docker-with-buildx:stable
@@ -33,8 +33,7 @@ fresh:
 
 sync images:
   stage: postrelease
-  rules:
-    - if: $CI_COMMIT_REF_NAME == 'fresh' && ($CI_PIPELINE_SOURCE == 'schedule' || $CI_PIPELINE_SOURCE == 'push' || $CI_PIPELINE_SOURCE == 'merge_request_event')
+  only: ['fresh', 'schedules']
   image:
     name: $CI_REGISTRY_IMAGE:fresh
     entrypoint: [""]
@@ -46,8 +45,7 @@ sync images:
 
 stable:
   stage: release
-  rules:
-    - if: $CI_COMMIT_REF_NAME == 'master'
+  only: ['master']
   services:
     - docker:dind
   image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/jdrouet/docker-with-buildx:stable
