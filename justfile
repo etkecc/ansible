@@ -44,3 +44,11 @@ hookshot:
 # prints roles files for which a GIT feeds couldn't be extracted
 nofeeds:
     python bin/feeds.py . check
+
+# Runs the playbook with the given list of arguments
+run +extra_args:
+    time ansible-playbook play/all.yml {{ extra_args }}
+
+# Runs the playbook with the given list of comma-separated tags and optional arguments
+run-tags tags *extra_args:
+    just --justfile {{ justfile() }} run --tags={{ tags }} {{ extra_args }}
