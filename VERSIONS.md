@@ -32,6 +32,7 @@
 * hydrogen: v0.3.6
 * instagram: v0.2.3
 * jitsi_ldap: "3"
+* jitsi_prosody_auth_matrix_user_verification_repo: 2839499cb03894d8cfc3e5b2219441427cb133d8 # v1.8.0
 * jitsi: stable-8252
 * kuma: 1.19.6-alpine
 * languagetool: 6.0-dockerupdate-2
@@ -72,4 +73,5 @@
 * synapse: v1.76.0
 * telegram: v0.12.2
 * twitter: v0.1.5
+* user_verification_service: v2.0.0
 * whatsapp: v0.8.1
