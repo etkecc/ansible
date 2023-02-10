@@ -8,13 +8,14 @@
 * beeper_linkedin: v0.5.4
 * buscarron: v1.3.1
 * cactus_comments: 0.9.0
-* chatgpt: 1.4.1
+* chatgpt: 2.2.1
 * cinny: v2.2.4
 * corporal: 2.5.1
 * coturn: 4.6.1-r1
 * dimension: latest
 * discord: v0.1.0
 * dnsmasq: latest
+* draupnir: v1.80.0-beta.0
 * dynamic_dns: v3.10.0-ls106
 * element: v1.11.22
 * email2matrix: 1.1.0

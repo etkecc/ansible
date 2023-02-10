@@ -68,6 +68,7 @@
     - custom/matrix-bot-postmoogle
     # - custom/matrix-bot-go-neb # unused
     # - custom/matrix-bot-mjolnir # unused
+    # - custom/matrix-bot-draupnir # unused
     # - custom/matrix-bot-chatgpt # unused
     # - custom/matrix-cactus-comments # unused
     - custom/matrix-synapse
@@ -77,7 +78,7 @@
     - custom/matrix-synapse-admin
     - galaxy/prometheus_node_exporter
     - galaxy/prometheus_postgres_exporter
-    - custom/matrix-prometheus-nginxlog-exporter # unused, but keeping for compatibility
+    - custom/matrix-prometheus-nginxlog-exporter
     - custom/matrix-prometheus
     - custom/matrix-grafana
     - custom/matrix-prometheus-services-proxy-connect
