@@ -37,6 +37,8 @@
   ansible.builtin.set_fact:
     custom_skopeo_final: "{{ custom_skopeo_final | combine({item.item: custom_skopeo_targets[item.item]}) }}"
   when: custom_skopeo_ignore_text not in item.item and item.item not in custom_skopeo_ignore_images and (item.status | default(-1) != 200 or item.item.endswith(':latest'))
+  loop_control:
+    label: "{{ item.item }}"
   loop: "{{ custom_skopeo_status.results }}"
 
 - name: Final list of images to sync

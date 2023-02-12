@@ -33,6 +33,10 @@ class CallbackModule(CallbackBase):
     CALLBACK_TYPE = 'stdout'
     CALLBACK_NAME = 'etkeline'
 
+    def __init__(self):
+        self._last_task_banner = None
+        super(CallbackModule, self).__init__()
+
     def _command_generic_msg(self, hostname, result, caption):
         stdout = result.get('stdout', '').replace('\n', '\\n').replace('\r', '\\r')
         task_name = result._task.get_name().strip()
@@ -51,6 +55,9 @@ class CallbackModule(CallbackBase):
                 self._display.display(msg, color=C.COLOR_ERROR)
 
         self._clean_results(result._result, result._task.action)
+        if self._last_task_banner == result._task._uuid:
+            return
+        self._last_task_banner = result._task._uuid
         self._display.display("[%s] x | %s => %s" % (result._host.get_name(), result._task.get_name().strip(), self._dump_results(result._result, indent=2).replace("\\\\r\\\\n", "\n")), color=C.COLOR_ERROR)
 
     def v2_runner_on_ok(self, result):
@@ -65,10 +72,16 @@ class CallbackModule(CallbackBase):
         if self._run_is_verbose(result):
             msg += " => %s" % (self._dump_results(result._result, indent=2))
         self._clean_results(result._result, result._task.action)
+        if self._last_task_banner == result._task._uuid:
+            return
+        self._last_task_banner = result._task._uuid
         self._display.display(msg, color=color)
 
     def v2_runner_on_unreachable(self, result):
         self._clean_results(result._result, result._task.action)
+        if self._last_task_banner == result._task._uuid:
+            return
+        self._last_task_banner = result._task._uuid
         self._display.display("[%s] ☠ => %s" % (result._host.get_name(), result._result.get('msg', '')), color=C.COLOR_UNREACHABLE)
 
     def v2_runner_on_skipped(self, result):
@@ -91,6 +104,8 @@ class CallbackModule(CallbackBase):
         if self._run_is_verbose(result):
             msg += " => %s" % (self._dump_results(result._result, indent=2))
         self._clean_results(result._result, result._task.action)
+        if self._last_task_banner != result._task._uuid:
+            self.v2_runner_on_ok(result)
         self._display.display(msg, color=color)
 
     def v2_runner_item_on_failed(self, result, ignore_errors=False):
@@ -101,9 +116,17 @@ class CallbackModule(CallbackBase):
             else:
                 self._display.display(msg, color=C.COLOR_ERROR)
 
-        msg = "%s => %s" % (self.__item_line(state, result), self._dump_results(result._result, indent=2).replace("\\\\r\\\\n", "\n"))
+        msg = "%s => %s" % (self.__item_line("x", result), self._dump_results(result._result, indent=2).replace("\\\\r\\\\n", "\n"))
         self._clean_results(result._result, result._task.action)
+        if self._last_task_banner != result._task._uuid:
+            self.v2_runner_on_failed(result)
         self._display.display(msg, color=C.COLOR_ERROR)
+
+    def v2_playbook_on_no_hosts_matched(self):
+        self._display.display("skipping: no hosts matched", color=C.COLOR_SKIP)
+
+    def v2_playbook_on_no_hosts_remaining(self):
+        self._display.banner("NO MORE HOSTS LEFT")
 
     def v2_playbook_on_stats(self, stats):
         self._display.banner("PLAY RECAP")
