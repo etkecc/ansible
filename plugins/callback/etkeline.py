@@ -44,23 +44,16 @@ class CallbackModule(CallbackBase):
 
     def v2_runner_on_failed(self, result, ignore_errors=False):
         if 'exception' in result._result:
-            if self._display.verbosity < 3:
-                # extract just the actual error message from the exception text
-                error = result._result['exception'].strip().split('\n')[-1]
-                msg = "An exception occurred during task execution. To see the full traceback, use -vvv. The error was: %s" % error
-            else:
-                msg = "An exception occurred during task execution. The full traceback is:\n" + result._result['exception'].replace('\n', '')
-
+            msg = "An exception occurred during task execution. The full traceback is:\n" + result._result['exception'].replace('\n', '')
             if result._task.action in C.MODULE_NO_JSON and 'module_stderr' not in result._result:
                 self._display.display(self._command_generic_msg(result._host.get_name(), result._result, '✖'), color=C.COLOR_ERROR)
             else:
                 self._display.display(msg, color=C.COLOR_ERROR)
 
-        self._display.display("[%s] x | %s => %s" % (result._host.get_name(), result._task.get_name().strip(), self._dump_results(result._result, indent=2).replace("\\\\r\\\\n", "\n")),
-                              color=C.COLOR_ERROR)
+        self._clean_results(result._result, result._task.action)
+        self._display.display("[%s] x | %s => %s" % (result._host.get_name(), result._task.get_name().strip(), self._dump_results(result._result, indent=2).replace("\\\\r\\\\n", "\n")), color=C.COLOR_ERROR)
 
     def v2_runner_on_ok(self, result):
-
         if result._result.get('changed', False):
             color = C.COLOR_CHANGED
             state = '+'
@@ -71,13 +64,46 @@ class CallbackModule(CallbackBase):
         msg = "[%s] %s | %s" % (result._host.get_name(), state, result._task.get_name().strip())
         if self._run_is_verbose(result):
             msg += " => %s" % (self._dump_results(result._result, indent=2))
+        self._clean_results(result._result, result._task.action)
         self._display.display(msg, color=color)
 
     def v2_runner_on_unreachable(self, result):
+        self._clean_results(result._result, result._task.action)
         self._display.display("[%s] ☠ => %s" % (result._host.get_name(), result._result.get('msg', '')), color=C.COLOR_UNREACHABLE)
 
     def v2_runner_on_skipped(self, result):
         pass
+
+    def __item_line(self, state, result):
+        length = len("[%s]" % (result._host.get_name()))
+        return "%s %s | %s" % (" " * length, state, self._get_item_label(result._result))
+
+
+    def v2_runner_item_on_ok(self, result):
+        if result._result.get('changed', False):
+            color = C.COLOR_CHANGED
+            state = '+'
+        else:
+            color = C.COLOR_OK
+            state = '✓'
+
+        msg = self.__item_line(state, result)
+        if self._run_is_verbose(result):
+            msg += " => %s" % (self._dump_results(result._result, indent=2))
+        self._clean_results(result._result, result._task.action)
+        self._display.display(msg, color=color)
+
+    def v2_runner_item_on_failed(self, result, ignore_errors=False):
+        if 'exception' in result._result:
+            msg = "An exception occurred during task execution. The full traceback is:\n" + result._result['exception'].replace('\n', '')
+            if result._task.action in C.MODULE_NO_JSON and 'module_stderr' not in result._result:
+                self._display.display(self._command_generic_msg(result._host.get_name(), result._result, '✖'), color=C.COLOR_ERROR)
+            else:
+                self._display.display(msg, color=C.COLOR_ERROR)
+
+        msg = "%s => %s" % (self.__item_line(state, result), self._dump_results(result._result, indent=2).replace("\\\\r\\\\n", "\n"))
+        self._clean_results(result._result, result._task.action)
+        self._display.display(msg, color=C.COLOR_ERROR)
 
     def v2_playbook_on_stats(self, stats):
         self._display.banner("PLAY RECAP")
