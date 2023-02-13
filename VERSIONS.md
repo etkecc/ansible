@@ -15,7 +15,7 @@
 * dimension: latest
 * discord: v0.1.0
 * dnsmasq: latest
-* draupnir: v1.80.0-beta.0
+* draupnir: v1.80.0
 * dynamic_dns: v3.10.0-ls106
 * element: v1.11.22
 * email2matrix: 1.1.0
@@ -29,12 +29,12 @@
 * heisenbridge: 1.14.2
 * honoroit: v0.9.16
 * hookshot: 2.7.0
-* hydrogen: v0.3.6
+* hydrogen: v0.3.7
 * instagram: v0.2.3
 * jitsi_ldap: "3"
 * jitsi_prosody_auth_matrix_user_verification_repo: 2839499cb03894d8cfc3e5b2219441427cb133d8 # v1.8.0
 * jitsi: stable-8252
-* kuma: 1.19.6-alpine
+* kuma: 1.20.0-alpine
 * languagetool: 6.0-dockerupdate-2
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * ma1sd: 2.5.0
