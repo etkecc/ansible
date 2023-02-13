@@ -1,11 +1,11 @@
-FROM alpine:3.17.1
-ARG ANSIBLE_CORE=2.13.6
-ARG ANSIBLE=6.6.0
+FROM alpine:3.17.2
+ARG ANSIBLE_CORE=2.13.7
+ARG ANSIBLE=6.7.0
 
 ENV PATH="/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 
-RUN apk --no-cache add python3 && \
+RUN apk --no-cache add python3 ca-certificates git just openssh skopeo && \
 		apk --no-cache add --virtual builddeps alpine-sdk py3-cffi py3-pip && \
 		ln -s /bin/uname /usr/local/bin/uname && \
 		ln -s /bin/rm /usr/local/bin/rm && \
