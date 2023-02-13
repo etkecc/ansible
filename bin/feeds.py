@@ -71,7 +71,22 @@ def validate_url(text):
 
 
 def format_feeds_from_git_repos(git_repos):
-    feeds = {}
+    feeds = {
+        'ansible': {
+            'text': 'ansible',
+            'title': 'ansible',
+            'type': 'rss',
+            'htmlUrl': 'https://pypi.org/project/ansible/#history',
+            'xmlUrl': 'https://pypi.org/rss/project/ansible/releases.xml'
+        },
+        'ansible-core': {
+            'text': 'ansible-core',
+            'title': 'ansible-core',
+            'type': 'rss',
+            'htmlUrl': 'https://pypi.org/project/ansible-core/#history',
+            'xmlUrl': 'https://pypi.org/rss/project/ansible-core/releases.xml'
+        }
+    }
     for role, git_repos in git_repos.items():
         for idx, git_repo in enumerate(git_repos):
             if 'github' in git_repo:

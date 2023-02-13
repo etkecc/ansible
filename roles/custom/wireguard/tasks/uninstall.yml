@@ -20,14 +20,6 @@
 
 - name: Ensure wireguard packages removed
   ansible.builtin.package:
-    name:
-      - wireguard-tools
-      - wireguard-dkms
-    state: absent
-  when: ansible_kernel is version('5.6', '<') and custom_wireguard_service_stat.stat.exists|bool
-
-- name: Ensure wireguard packages removed
-  ansible.builtin.package:
     name: wireguard-tools
     state: absent
-  when: ansible_kernel is version('5.6', '>=') and custom_wireguard_service_stat.stat.exists|bool
+  when: custom_wireguard_service_stat.stat.exists|bool

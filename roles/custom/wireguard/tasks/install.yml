@@ -1,15 +1,7 @@
 ---
 - name: Ensure wireguard packages installed
   ansible.builtin.package:
-    name:
-      - wireguard-tools
-      - wireguard-dkms
-  when: ansible_kernel is version('5.6', '<')
-
-- name: Ensure wireguard packages installed
-  ansible.builtin.package:
     name: wireguard-tools
-  when: ansible_kernel is version('5.6', '>=')
 
 - name: Check existence of wireguard server config
   ansible.builtin.stat:
