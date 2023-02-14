@@ -17,7 +17,7 @@
 * dnsmasq: latest
 * draupnir: v1.80.0
 * dynamic_dns: v3.10.0-ls106
-* element: v1.11.22
+* element: v1.11.23
 * email2matrix: 1.1.0
 * etherpad: 1.8.18
 * facebook: v0.4.1
@@ -29,7 +29,7 @@
 * heisenbridge: 1.14.2
 * honoroit: v0.9.16
 * hookshot: 2.7.0
-* hydrogen: v0.3.7
+* hydrogen: v0.3.8
 * instagram: v0.2.3
 * jitsi_ldap: "3"
 * jitsi_prosody_auth_matrix_user_verification_repo: 2839499cb03894d8cfc3e5b2219441427cb133d8 # v1.8.0
@@ -70,7 +70,7 @@
 * sygnal: v0.12.0
 * synapse_admin: 0.8.7
 * synapse_reverse_proxy_companion: 1.23.3-alpine
-* synapse: v1.76.0
+* synapse: v1.77.0
 * telegram: v0.12.2
 * twitter: v0.1.5
 * user_verification_service: v2.0.0
