@@ -15,6 +15,7 @@
 * dimension: latest
 * discord: v0.1.0
 * dnsmasq: latest
+* docker_compose: v2.11.1
 * draupnir: v1.80.0
 * dynamic_dns: v3.10.0-ls106
 * element: v1.11.23
@@ -51,7 +52,7 @@
 * mx_puppet_steam: latest
 * mx_puppet_twitter: latest
 * nginx_proxy: 1.23.3-alpine
-* ntfy: v1.30.1
+* ntfy: v1.31.0
 * postmoogle: v0.9.14
 * prometheus_blackbox_exporter: v0.22.0
 * prometheus_nginxlog_exporter: v1.10.0
@@ -72,6 +73,7 @@
 * synapse_reverse_proxy_companion: 1.23.3-alpine
 * synapse: v1.77.0
 * telegram: v0.12.2
+* traefik_certs_dumper: v2.8.1
 * twitter: v0.1.5
 * user_verification_service: v2.0.0
 * whatsapp: v0.8.1

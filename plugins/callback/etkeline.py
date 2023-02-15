@@ -48,7 +48,7 @@ class CallbackModule(CallbackBase):
 
     def v2_runner_on_failed(self, result, ignore_errors=False):
         if 'exception' in result._result:
-            msg = "An exception occurred during task execution. The full traceback is:\n" + result._result['exception'].replace('\n', '')
+            msg = "An exception occurred during task execution. The full traceback is:\n" + result._result['exception']
             if result._task.action in C.MODULE_NO_JSON and 'module_stderr' not in result._result:
                 self._display.display(self._command_generic_msg(result._host.get_name(), result._result, '✖'), color=C.COLOR_ERROR)
             else:
@@ -110,7 +110,7 @@ class CallbackModule(CallbackBase):
 
     def v2_runner_item_on_failed(self, result, ignore_errors=False):
         if 'exception' in result._result:
-            msg = "An exception occurred during task execution. The full traceback is:\n" + result._result['exception'].replace('\n', '')
+            msg = "An exception occurred during task execution. The full traceback is:\n" + result._result['exception']
             if result._task.action in C.MODULE_NO_JSON and 'module_stderr' not in result._result:
                 self._display.display(self._command_generic_msg(result._host.get_name(), result._result, '✖'), color=C.COLOR_ERROR)
             else:
