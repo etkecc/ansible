@@ -13,7 +13,7 @@
 * corporal: 2.5.1
 * coturn: 4.6.1-r2
 * dimension: latest
-* discord: v0.1.0
+* discord: v0.1.1
 * dnsmasq: latest
 * docker_compose: v2.11.1
 * draupnir: v1.80.0
@@ -76,4 +76,4 @@
 * traefik_certs_dumper: v2.8.1
 * twitter: v0.1.5
 * user_verification_service: v2.0.0
-* whatsapp: v0.8.1
+* whatsapp: v0.8.2
