@@ -52,7 +52,7 @@
 * mx_puppet_steam: latest
 * mx_puppet_twitter: latest
 * nginx_proxy: 1.23.3-alpine
-* ntfy: v1.31.0
+* ntfy: v2.0.0
 * postmoogle: v0.9.14
 * prometheus_blackbox_exporter: v0.22.0
 * prometheus_nginxlog_exporter: v1.10.0
@@ -60,7 +60,7 @@
 * prometheus_postgres_exporter: v0.11.1
 * prometheus: v2.42.0
 * radicale: 3.1.8.0
-* redis: 7.0.7-alpine
+* redis: 7.0.7
 * registration: v0.7.2
 * scheduler: latest
 * signal_daemon: 0.23.1

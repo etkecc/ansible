@@ -32,7 +32,7 @@
     # - custom/matrix-dynamic-dns # unused
     - custom/matrix-mailer
     - galaxy/com.devture.ansible.role.postgres
-    - custom/matrix-redis
+    - galaxy/redis
     # - custom/matrix-corporal # unused
     - custom/matrix-bridge-appservice-discord
     # - custom/matrix-bridge-appservice-slack # unused
@@ -94,7 +94,7 @@
     - custom/matrix-etherpad
     - custom/matrix-email2matrix
     - custom/matrix-sygnal
-    - custom/matrix-ntfy
+    - galaxy/ntfy
     - custom/matrix-nginx-proxy
     # END MATRIX
 

@@ -10,6 +10,7 @@ matrix_registry_prefix: registry.etke.cc/
 custom_dnsmasq_docker_image: "{{ matrix_registry_prefix }}etke.cc/dnsmasq:{{ custom_dnsmasq_version }}"
 matrix_client_element_docker_image: "{{ matrix_registry_prefix }}etke.cc/app:{{ matrix_client_element_version }}"
 matrix_etherpad_docker_image: "{{ matrix_registry_prefix }}etke.cc/etherpad:{{ matrix_etherpad_version }}"
+
 backup_borg_docker_image_name_prefix: "{{ 'localhost/' if backup_borg_container_image_self_build else matrix_registry_prefix }}"
 docker_postgres_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
 grafana_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
@@ -42,8 +43,10 @@ matrix_prometheus_nginxlog_exporter_docker_image_name_prefix: "{{ matrix_registr
 matrix_s3_goofys_docker_image_name_prefix: "{{ matrix_registry_prefix }}"
 matrix_synapse_rust_synapse_compress_state_docker_image_name_prefix: "{{ matrix_registry_prefix }}"
 matrix_telegram_lottieconverter_docker_image_name_prefix: "{{ 'localhost/' if matrix_telegram_lottieconverter_container_image_self_build else matrix_registry_prefix }}"
+ntfy_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
 prometheus_node_exporter_docker_image_name_prefix: "{{ matrix_registry_prefix }}"
 prometheus_postgres_exporter_docker_image_name_prefix: "{{ matrix_registry_prefix }}"
+redis_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
 
 ########################################################################
 #                                                                      #
