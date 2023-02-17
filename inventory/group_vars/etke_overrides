@@ -12,7 +12,7 @@ matrix_client_element_docker_image: "{{ matrix_registry_prefix }}etke.cc/app:{{ 
 matrix_etherpad_docker_image: "{{ matrix_registry_prefix }}etke.cc/etherpad:{{ matrix_etherpad_version }}"
 backup_borg_docker_image_name_prefix: "{{ 'localhost/' if backup_borg_container_image_self_build else matrix_registry_prefix }}"
 docker_postgres_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
-# grafana_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
+grafana_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
 int_scheduler_docker_image_name_prefix: "{{ matrix_registry_prefix }}"
 matrix_appservice_discord_docker_image_name_prefix: "{{ 'localhost/' if matrix_appservice_discord_container_image_self_build else matrix_registry_prefix }}"
 matrix_beeper_linkedin_docker_image_name_prefix: "{{ 'localhost/' if matrix_beeper_linkedin_container_image_self_build else matrix_registry_prefix }}"
