@@ -4,11 +4,13 @@
     <title>Release feeds for roles</title>
   </head>
   <body>
+    <outline text="ansible" title="ansible" type="rss" htmlUrl="https://pypi.org/project/ansible/#history" xmlUrl="https://pypi.org/rss/project/ansible/releases.xml" />
+    <outline text="ansible-core" title="ansible-core" type="rss" htmlUrl="https://pypi.org/project/ansible-core/#history" xmlUrl="https://pypi.org/rss/project/ansible-core/releases.xml" />
     <outline text="appservice-discord" title="appservice-discord" type="rss" htmlUrl="https://github.com/Half-Shot/matrix-appservice-discord" xmlUrl="https://github.com/Half-Shot/matrix-appservice-discord/tags.atom" />
     <outline text="appservice-irc" title="appservice-irc" type="rss" htmlUrl="https://github.com/matrix-org/matrix-appservice-irc" xmlUrl="https://github.com/matrix-org/matrix-appservice-irc/tags.atom" />
     <outline text="appservice-slack" title="appservice-slack" type="rss" htmlUrl="https://github.com/matrix-org/matrix-appservice-slack" xmlUrl="https://github.com/matrix-org/matrix-appservice-slack/tags.atom" />
     <outline text="appservice-webhooks" title="appservice-webhooks" type="rss" htmlUrl="https://github.com/redoonetworks/matrix-appservice-webhooks" xmlUrl="https://github.com/redoonetworks/matrix-appservice-webhooks/tags.atom" />
-    <outline text="backup-borg" title="backup-borg" type="rss" htmlUrl="https://gitlab.com/etke.cc/borgmatic" xmlUrl="https://gitlab.com/etke.cc/borgmatic/-/tags?format=atom" />
+    <outline text="backup_borg" title="backup_borg" type="rss" htmlUrl="https://gitlab.com/etke.cc/borgmatic" xmlUrl="https://gitlab.com/etke.cc/borgmatic/-/tags?format=atom" />
     <outline text="beeper-linkedin" title="beeper-linkedin" type="rss" htmlUrl="https://github.com/beeper/linkedin" xmlUrl="https://github.com/beeper/linkedin/tags.atom" />
     <outline text="buscarron" title="buscarron" type="rss" htmlUrl="https://gitlab.com/etke.cc/buscarron" xmlUrl="https://gitlab.com/etke.cc/buscarron/-/tags?format=atom" />
     <outline text="cactus-comments" title="cactus-comments" type="rss" htmlUrl="https://gitlab.com/cactus-comments/cactus-appservice" xmlUrl="https://gitlab.com/cactus-comments/cactus-appservice/-/tags?format=atom" />
@@ -17,11 +19,14 @@
     <outline text="cinny" title="cinny" type="rss" htmlUrl="https://github.com/ajbura/cinny" xmlUrl="https://github.com/ajbura/cinny/tags.atom" />
     <outline text="com.devture.ansible.role.postgres" title="com.devture.ansible.role.postgres" type="rss" htmlUrl="https://github.com/postgres/postgres" xmlUrl="https://github.com/postgres/postgres/tags.atom" />
     <outline text="com.devture.ansible.role.postgres_backup" title="com.devture.ansible.role.postgres_backup" type="rss" htmlUrl="https://github.com/prodrigestivill/docker-postgres-backup-local" xmlUrl="https://github.com/prodrigestivill/docker-postgres-backup-local/tags.atom" />
+    <outline text="com.devture.ansible.role.traefik" title="com.devture.ansible.role.traefik" type="rss" htmlUrl="https://github.com/traefik/traefik" xmlUrl="https://github.com/traefik/traefik/tags.atom" />
+    <outline text="com.devture.ansible.role.traefik_certs_dumper" title="com.devture.ansible.role.traefik_certs_dumper" type="rss" htmlUrl="https://github.com/ldez/traefik-certs-dumper" xmlUrl="https://github.com/ldez/traefik-certs-dumper/tags.atom" />
     <outline text="corporal" title="corporal" type="rss" htmlUrl="https://github.com/devture/matrix-corporal" xmlUrl="https://github.com/devture/matrix-corporal/tags.atom" />
     <outline text="coturn" title="coturn" type="rss" htmlUrl="https://github.com/coturn/coturn" xmlUrl="https://github.com/coturn/coturn/tags.atom" />
     <outline text="dendrite" title="dendrite" type="rss" htmlUrl="https://github.com/matrix-org/dendrite" xmlUrl="https://github.com/matrix-org/dendrite/tags.atom" />
     <outline text="dimension" title="dimension" type="rss" htmlUrl="https://github.com/turt2live/matrix-dimension" xmlUrl="https://github.com/turt2live/matrix-dimension/tags.atom" />
     <outline text="dnsmasq" title="dnsmasq" type="rss" htmlUrl="https://gitlab.com/etke.cc/dnsmasq" xmlUrl="https://gitlab.com/etke.cc/dnsmasq/-/tags?format=atom" />
+    <outline text="draupnir" title="draupnir" type="rss" htmlUrl="https://github.com/Gnuxie/Draupnir" xmlUrl="https://github.com/Gnuxie/Draupnir/tags.atom" />
     <outline text="dynamic-dns" title="dynamic-dns" type="rss" htmlUrl="https://github.com/linuxserver/docker-ddclient" xmlUrl="https://github.com/linuxserver/docker-ddclient/tags.atom" />
     <outline text="element" title="element" type="rss" htmlUrl="https://github.com/vector-im/element-web" xmlUrl="https://github.com/vector-im/element-web/tags.atom" />
     <outline text="email2matrix" title="email2matrix" type="rss" htmlUrl="https://github.com/devture/email2matrix" xmlUrl="https://github.com/devture/email2matrix/tags.atom" />
@@ -63,8 +68,8 @@
     <outline text="postmoogle" title="postmoogle" type="rss" htmlUrl="https://gitlab.com/etke.cc/postmoogle" xmlUrl="https://gitlab.com/etke.cc/postmoogle/-/tags?format=atom" />
     <outline text="prometheus" title="prometheus" type="rss" htmlUrl="https://github.com/prometheus/prometheus" xmlUrl="https://github.com/prometheus/prometheus/tags.atom" />
     <outline text="prometheus-blackbox-exporter" title="prometheus-blackbox-exporter" type="rss" htmlUrl="https://github.com/prometheus/blackbox_exporter" xmlUrl="https://github.com/prometheus/blackbox_exporter/tags.atom" />
-    <outline text="prometheus-postgres-exporter" title="prometheus-postgres-exporter" type="rss" htmlUrl="https://github.com/prometheus-community/postgres_exporter" xmlUrl="https://github.com/prometheus-community/postgres_exporter/tags.atom" />
     <outline text="prometheus_node_exporter" title="prometheus_node_exporter" type="rss" htmlUrl="https://github.com/prometheus/node_exporter" xmlUrl="https://github.com/prometheus/node_exporter/tags.atom" />
+    <outline text="prometheus_postgres_exporter" title="prometheus_postgres_exporter" type="rss" htmlUrl="https://github.com/prometheus-community/postgres_exporter" xmlUrl="https://github.com/prometheus-community/postgres_exporter/tags.atom" />
     <outline text="radicale" title="radicale" type="rss" htmlUrl="https://github.com/tomsquest/docker-radicale" xmlUrl="https://github.com/tomsquest/docker-radicale/tags.atom" />
     <outline text="redis" title="redis" type="rss" htmlUrl="https://github.com/redis/redis" xmlUrl="https://github.com/redis/redis/tags.atom" />
     <outline text="registration" title="registration" type="rss" htmlUrl="https://github.com/ZerataX/matrix-registration" xmlUrl="https://github.com/ZerataX/matrix-registration/tags.atom" />
