@@ -4,7 +4,7 @@
 * appservice_slack: 2.0.2
 * appservice_webhooks: v1.0.3-01
 * backup_borg_borg: 1.2.3
-* backup_borg_borgmatic: 1.7.6
+* backup_borg_borgmatic: 1.7.7
 * beeper_linkedin: v0.5.4
 * buscarron: v1.3.1
 * cactus_comments: 0.9.0
@@ -16,8 +16,8 @@
 * discord: v0.1.1
 * dnsmasq: latest
 * docker_compose: v2.11.1
-* draupnir: v1.80.0
-* dynamic_dns: v3.10.0-ls106
+* draupnir: v1.80.1
+* dynamic_dns: v3.10.0-ls110
 * element: v1.11.23
 * email2matrix: 1.1.0
 * etherpad: 1.8.18
