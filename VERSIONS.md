@@ -59,7 +59,7 @@
 * prometheus_node_exporter: v1.5.0
 * prometheus_postgres_exporter: v0.11.1
 * prometheus: v2.42.0
-* radicale: 3.1.8.0
+* radicale: 3.1.8.1
 * redis: 7.0.7
 * registration: v0.7.2
 * scheduler: latest
@@ -67,7 +67,7 @@
 * signal: v0.4.2
 * slack: latest
 * sms_bridge: 0.5.7
-* softserve: v0.4.5
+* softserve: v0.4.6
 * sygnal: v0.12.0
 * synapse_admin: 0.8.7
 * synapse_reverse_proxy_companion: 1.23.3-alpine
