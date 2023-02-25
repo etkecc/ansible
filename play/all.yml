@@ -71,6 +71,7 @@
     # - custom/matrix-bot-draupnir # unused
     # - custom/matrix-bot-chatgpt # unused
     # - custom/matrix-cactus-comments # unused
+    # - custom/matrix-rageshake
     - custom/matrix-synapse
     - custom/matrix-synapse-reverse-proxy-companion
     # - custom/matrix-dendrite # unused

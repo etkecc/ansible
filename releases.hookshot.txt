@@ -65,6 +65,7 @@
 !hookshot feed https://github.com/prometheus/node_exporter/tags.atom prometheus_node_exporter
 !hookshot feed https://github.com/prometheus-community/postgres_exporter/tags.atom prometheus_postgres_exporter
 !hookshot feed https://github.com/tomsquest/docker-radicale/tags.atom radicale
+!hookshot feed https://github.com/matrix-org/rageshake//tags.atom rageshake
 !hookshot feed https://github.com/redis/redis/tags.atom redis
 !hookshot feed https://github.com/ZerataX/matrix-registration/tags.atom registration
 !hookshot feed https://github.com/moan0s/matrix-registration-bot/tags.atom registration-bot
