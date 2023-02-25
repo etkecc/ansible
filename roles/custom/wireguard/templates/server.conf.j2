@@ -1,16 +1,18 @@
 # {{ ansible_managed }}
 
 [Interface]
-Address = {{ custom_wireguard_ipv4_subnet }}.1/24,{{ custom_wireguard_ipv6_subnet}}::1/64
+Address = {{ custom_wireguard_ipv4_subnet }}.1/24{% if custom_wireguard_ipv6_enabled|bool %},{{ custom_wireguard_ipv6_subnet}}::1/64{% endif %}
+
 SaveConfig = false
 ListenPort = {{ custom_wireguard_port }}
 PrivateKey = {{ server_key_private.stdout }}
-PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -t nat -A POSTROUTING -o {{ custom_wireguard_interface_net }} -j MASQUERADE; ip6tables -A FORWARD -i %i -j ACCEPT; ip6tables -t nat -A POSTROUTING -o {{ custom_wireguard_interface_net }} -j MASQUERADE
-PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -t nat -D POSTROUTING -o {{ custom_wireguard_interface_net }} -j MASQUERADE; ip6tables -D FORWARD -i %i -j ACCEPT; ip6tables -t nat -D POSTROUTING -o {{ custom_wireguard_interface_net }} -j MASQUERADE
+PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -t nat -A POSTROUTING -o {{ custom_wireguard_interface_net }} -j MASQUERADE{% if custom_wireguard_ipv6_enabled|bool %}; ip6tables -A FORWARD -i %i -j ACCEPT; ip6tables -t nat -A POSTROUTING -o {{ custom_wireguard_interface_net }} -j MASQUERADE{% endif %}
+
+PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -t nat -D POSTROUTING -o {{ custom_wireguard_interface_net }} -j MASQUERADE{% if custom_wireguard_ipv6_enabled|bool %}; ip6tables -D FORWARD -i %i -j ACCEPT; ip6tables -t nat -D POSTROUTING -o {{ custom_wireguard_interface_net }} -j MASQUERADE{% endif %}
 
 {% for client in custom_wireguard_clients %}
 
 [Peer]
 PublicKey = {{ client_keys_public.results[loop.index0].stdout }}
-AllowedIPs = {{ custom_wireguard_ipv4_subnet }}.{{ loop.index + 1 }}/32,{{ custom_wireguard_ipv6_subnet}}::{{ loop.index + 1 }}/128
+AllowedIPs = {{ custom_wireguard_ipv4_subnet }}.{{ loop.index + 1 }}/32{% if custom_wireguard_ipv6_enabled|bool %},{{ custom_wireguard_ipv6_subnet}}::{{ loop.index + 1 }}/128{% endif %}
 {% endfor %}

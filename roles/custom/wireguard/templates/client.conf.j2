@@ -1,12 +1,14 @@
 # {{ ansible_managed }}
 
 [Interface]
-Address = {{ custom_wireguard_ipv4_subnet }}.{{ item.0 + 2 }}/32,{{ custom_wireguard_ipv6_subnet}}::{{ item.0 + 2 }}/64
+Address = {{ custom_wireguard_ipv4_subnet }}.{{ item.0 + 2 }}/32{% if custom_wireguard_ipv6_enabled|bool %},{{ custom_wireguard_ipv6_subnet}}::{{ item.0 + 2 }}/64{% endif %}
+
 {% if custom_dnsmasq_enabled|bool %}
-DNS = {{ custom_wireguard_ipv4_subnet }}.1,{{ custom_wireguard_ipv6_subnet }}::1
+DNS = {{ custom_wireguard_ipv4_subnet }}.1{% if custom_wireguard_ipv6_enabled|bool %},{{ custom_wireguard_ipv6_subnet }}::1{% endif %}
 {% else %}
 DNS = {{ custom_wireguard_dns|join(',') }}
 {% endif %}
+
 PrivateKey = {{ client_keys_private.results[item.0].stdout }}
 
 [Peer]
