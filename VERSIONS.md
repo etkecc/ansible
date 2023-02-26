@@ -72,7 +72,7 @@
 * synapse_admin: 0.8.7
 * synapse_reverse_proxy_companion: 1.23.3-alpine
 * synapse: v1.77.0
-* telegram: v0.12.2
+* telegram: v0.13.0
 * traefik_certs_dumper: v2.8.1
 * twitter: v0.1.5
 * user_verification_service: v2.0.0

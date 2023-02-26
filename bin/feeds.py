@@ -90,7 +90,7 @@ def format_feeds_from_git_repos(git_repos):
     for role, git_repos in git_repos.items():
         for idx, git_repo in enumerate(git_repos):
             if 'github' in git_repo:
-                atomFilePath = git_repo.replace('.git', '') + '/tags.atom'
+                atomFilePath = git_repo.replace('.git', '') + '/releases.atom'
             elif ('gitlab' in git_repo or 'mau.dev' in git_repo):
                 atomFilePath = git_repo.replace('.git', '') + '/-/tags?format=atom'
             elif 'git.zx2c4.com' in git_repo:
