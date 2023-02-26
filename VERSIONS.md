@@ -35,7 +35,7 @@
 * jitsi_ldap: "3"
 * jitsi_prosody_auth_matrix_user_verification_repo: 2839499cb03894d8cfc3e5b2219441427cb133d8 # v1.8.0
 * jitsi: stable-8252
-* kuma: 1.20.1-alpine
+* kuma: 1.20.2-alpine
 * languagetool: 6.0-dockerupdate-3
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * ma1sd: 2.5.0
