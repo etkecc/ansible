@@ -101,6 +101,42 @@ prometheus_node_exporter_container_extra_arguments:
 
 ########################################################################
 #                                                                      #
+# languagetool                                                         #
+#                                                                      #
+########################################################################
+
+languagetool_enabled: false
+
+languagetool_identifier: custom-languagetool
+
+# Base path and data path are the same. This is an old bug. We're keeping compatibility for it.
+languagetool_base_path: "{{ matrix_base_data_path }}/custom-languagetool"
+languagetool_data_path: "{{ matrix_base_data_path }}/custom-languagetool"
+
+languagetool_uid: "{{ matrix_user_uid }}"
+languagetool_gid: "{{ matrix_user_gid }}"
+
+languagetool_hostname: "{{ matrix_server_fqn_languagetool }}"
+
+languagetool_container_network: "{{ matrix_nginx_proxy_container_network if matrix_playbook_reverse_proxy_type != 'playbook-managed-traefik' else languagetool_identifier }}"
+
+languagetool_container_additional_networks: "{{ [matrix_playbook_reverse_proxyable_services_additional_network] if matrix_playbook_reverse_proxyable_services_additional_network else [] }}"
+
+languagetool_container_labels_traefik_enabled: "{{ matrix_playbook_traefik_labels_enabled }}"
+languagetool_container_labels_traefik_docker_network: "{{ matrix_playbook_reverse_proxyable_services_additional_network }}"
+languagetool_container_labels_traefik_entrypoints: "{{ devture_traefik_entrypoint_primary }}"
+
+########################################################################
+#                                                                      #
+# nginx-migration                                                      #
+#                                                                      #
+########################################################################
+
+nginx_migration_languagetool_enabled: "{{ languagetool_enabled and matrix_playbook_reverse_proxy_type == 'playbook-managed-nginx' }}"
+nginx_migration_languagetool_hostname: "{{ languagetool_hostname }}"
+
+########################################################################
+#                                                                      #
 # com.devture.ansible.role.systemd_service_manager                     #
 #                                                                      #
 ########################################################################
@@ -118,7 +154,7 @@ devture_systemd_service_manager_services_list_additional: |
     +
     ([{'name': 'custom-kuma.service', 'priority': 5000, 'groups': ['etke', 'kuma']}] if custom_kuma_enabled else [])
     +
-    ([{'name': 'custom-languagetool.service', 'priority': 5000, 'groups': ['etke', 'languagetool']}] if custom_languagetool_enabled else [])
+    ([{'name': (languagetool_identifier + '.service'), 'priority': 5000, 'groups': ['etke', 'languagetool']}] if languagetool_enabled else [])
     +
     ([{'name': 'custom-miniflux.service', 'priority': 5000, 'groups': ['etke', 'miniflux']}] if custom_miniflux_enabled else [])
     +
