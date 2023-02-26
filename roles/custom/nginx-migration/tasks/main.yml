@@ -1,0 +1,17 @@
+---
+
+- block:
+    - when: nginx_migration_languagetool_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/languagetool/install.yml"
+  tags:
+    - setup-all
+    - setup-languagetool
+    - install-all
+    - install-languagetool
+
+- block:
+    - when: not nginx_migration_languagetool_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/languagetool/uninstall.yml"
+  tags:
+    - setup-all
+    - setup-languagetool

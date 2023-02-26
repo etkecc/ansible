@@ -106,7 +106,8 @@
     - galaxy/security
     - custom/dnsmasq
     - custom/kuma
-    - custom/languagetool
+    - galaxy/languagetool
+    - custom/nginx-migration
     - custom/miniflux
     - custom/radicale
     - custom/soft-serve
