@@ -1,0 +1,4 @@
+---
+
+nginx_migration_languagetool_enabled: false
+nginx_migration_languagetool_hostname: ''
