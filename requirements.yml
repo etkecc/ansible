@@ -14,4 +14,4 @@
 - src: git+https://gitlab.com/etke.cc/roles/cleanup.git
   version: main
 - src: git+https://gitlab.com/etke.cc/roles/languagetool.git
-  version: v6.0-0
+  version: v6.0-1
