@@ -12,8 +12,8 @@ upstream: && versions
 
 # pull roles
 roles:
-    ansible-galaxy install -r requirements.yml -p roles/galaxy/ --force
     ansible-galaxy install -r upstream/requirements.yml -p roles/galaxy/ --force
+    ansible-galaxy install -r requirements.yml -p roles/galaxy/ --force
 
 # pull dependencies
 dependencies: submodules roles
