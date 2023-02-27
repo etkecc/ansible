@@ -7,7 +7,7 @@ submodules:
     git submodule update --init --recursive
 
 # pull new upstream changes
-upstream: && versions
+upstream:
     @cd ./upstream && git pull
 
 # pull roles
@@ -17,6 +17,9 @@ roles:
 
 # pull dependencies
 dependencies: submodules roles
+
+# pull all updates
+update: upstream roles opml hookshot versions
 
 # update VERSIONS.md file using the actual versions from roles' files
 versions:
