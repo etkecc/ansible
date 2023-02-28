@@ -59,6 +59,9 @@ languagetool_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
 # enforce nginx reverse proxy to allow proper per-host migration
 matrix_playbook_reverse_proxy_type: playbook-managed-nginx
 
+# ntfy web app
+ntfy_web_root: app
+
 # etherpad libreoffice
 matrix_etherpad_soffice: /usr/bin/soffice
 
