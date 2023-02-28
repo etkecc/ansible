@@ -100,6 +100,7 @@
     # END MATRIX
 
     # CUSTOM
+    - matrix/synapse-auto-compressor
     - int/prometheus-blackbox-exporter
     - int/scheduler
     - galaxy/swap

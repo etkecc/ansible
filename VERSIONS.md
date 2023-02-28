@@ -70,6 +70,7 @@
 * softserve: v0.4.6
 * sygnal: v0.12.0
 * synapse_admin: 0.8.7
+* synapse_auto_compressor: v0.1.3
 * synapse_reverse_proxy_companion: 1.23.3-alpine
 * synapse: v1.77.0
 * telegram: v0.13.0

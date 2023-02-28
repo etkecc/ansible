@@ -82,6 +82,7 @@
     <outline text="sygnal" title="sygnal" type="rss" htmlUrl="https://github.com/matrix-org/sygnal" xmlUrl="https://github.com/matrix-org/sygnal/releases.atom" />
     <outline text="synapse" title="synapse" type="rss" htmlUrl="https://github.com/matrix-org/synapse" xmlUrl="https://github.com/matrix-org/synapse/releases.atom" />
     <outline text="synapse-admin" title="synapse-admin" type="rss" htmlUrl="https://github.com/Awesome-Technologies/synapse-admin" xmlUrl="https://github.com/Awesome-Technologies/synapse-admin/releases.atom" />
+    <outline text="synapse-auto-compressor" title="synapse-auto-compressor" type="rss" htmlUrl="https://github.com/matrix-org/rust-synapse-compress-state" xmlUrl="https://github.com/matrix-org/rust-synapse-compress-state/releases.atom" />
     <outline text="wireguard" title="wireguard" type="rss" htmlUrl="https://git.zx2c4.com/wireguard-linux" xmlUrl="https://git.zx2c4.com/wireguard-linux/atom/" />
   </body>
 </opml>

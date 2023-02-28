@@ -15,6 +15,7 @@ backup_borg_docker_image_name_prefix: "{{ 'localhost/' if backup_borg_container_
 docker_postgres_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
 grafana_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
 int_scheduler_docker_image_name_prefix: "{{ matrix_registry_prefix }}"
+languagetool_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
 matrix_appservice_discord_docker_image_name_prefix: "{{ 'localhost/' if matrix_appservice_discord_container_image_self_build else matrix_registry_prefix }}"
 matrix_beeper_linkedin_docker_image_name_prefix: "{{ 'localhost/' if matrix_beeper_linkedin_container_image_self_build else matrix_registry_prefix }}"
 matrix_bot_buscarron_docker_image_name_prefix: "{{ 'localhost/' if matrix_bot_buscarron_container_image_self_build else matrix_registry_prefix }}"
@@ -42,13 +43,13 @@ matrix_mx_puppet_slack_docker_image_name_prefix: "{{ 'localhost/' if matrix_mx_p
 matrix_prometheus_nginxlog_exporter_docker_image_name_prefix: "{{ matrix_registry_prefix }}martin-helmich/"
 matrix_rageshake_container_image_name_prefix: "{{ 'localhost/' if matrix_rageshake_container_image_self_build else matrix_registry_prefix }}"
 matrix_s3_goofys_docker_image_name_prefix: "{{ matrix_registry_prefix }}"
+matrix_synapse_auto_compressor_docker_image_name_prefix: "{{ 'localhost/' if matrix_synapse_auto_compressor_container_image_self_build else matrix_registry_prefix }}"
 matrix_synapse_rust_synapse_compress_state_docker_image_name_prefix: "{{ matrix_registry_prefix }}"
 matrix_telegram_lottieconverter_docker_image_name_prefix: "{{ 'localhost/' if matrix_telegram_lottieconverter_container_image_self_build else matrix_registry_prefix }}"
 ntfy_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
 prometheus_node_exporter_docker_image_name_prefix: "{{ matrix_registry_prefix }}"
 prometheus_postgres_exporter_docker_image_name_prefix: "{{ matrix_registry_prefix }}"
 redis_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
-languagetool_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
 
 ########################################################################
 #                                                                      #
@@ -132,6 +133,21 @@ languagetool_container_labels_traefik_entrypoints: "{{ devture_traefik_entrypoin
 
 ########################################################################
 #                                                                      #
+# matrix/synapse-auto-compressor                                       #
+#                                                                      #
+########################################################################
+
+matrix_synapse_auto_compressor_enabled: false
+matrix_synapse_auto_compressor_synapse_database: 'postgres://{{ matrix_synapse_database_user | urlencode() }}:{{ matrix_synapse_database_password | urlencode() }}@{{ matrix_synapse_database_host }}:{{ matrix_synapse_auto_compressor_database_port }}/{{ matrix_synapse_database_database }}'
+matrix_synapse_auto_compressor_systemd_required_services_list: |
+  {{
+    ['docker.service']
+    +
+    ([devture_postgres_identifier ~ '.service'] if devture_postgres_enabled else [])
+  }}
+
+########################################################################
+#                                                                      #
 # nginx-migration                                                      #
 #                                                                      #
 ########################################################################
@@ -154,6 +170,8 @@ devture_systemd_service_manager_up_verification_enabled: false
 
 devture_systemd_service_manager_services_list_additional: |
   {{
+    ([{'name': 'matrix-synapse-auto-compressor.timer', 'priority': 5000, 'groups': ['matrix', 'synapse-auto-compressor']}] if matrix_synapse_auto_compressor_enabled else [])
+    +
     ([{'name': 'custom-dnsmasq.service', 'priority': 5000, 'groups': ['etke', 'dnsmasq']}] if custom_dnsmasq_enabled else [])
     +
     ([{'name': 'custom-kuma.service', 'priority': 5000, 'groups': ['etke', 'kuma']}] if custom_kuma_enabled else [])
