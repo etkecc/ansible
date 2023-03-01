@@ -47,7 +47,7 @@ matrix_mx_puppet_slack_docker_image_name_prefix: "{{ 'localhost/' if matrix_mx_p
 matrix_prometheus_nginxlog_exporter_docker_image_name_prefix: "{{ matrix_registry_prefix }}martin-helmich/"
 matrix_rageshake_container_image_name_prefix: "{{ 'localhost/' if matrix_rageshake_container_image_self_build else matrix_registry_prefix }}"
 matrix_s3_goofys_docker_image_name_prefix: "{{ matrix_registry_prefix }}"
-matrix_synapse_auto_compressor_docker_image_name_prefix: "{{ 'localhost/' if matrix_synapse_auto_compressor_container_image_self_build else matrix_registry_prefix }}"
+matrix_synapse_auto_compressor_container_image_name_prefix: "{{ 'localhost/' if matrix_synapse_auto_compressor_container_image_self_build else matrix_registry_prefix }}"
 matrix_synapse_rust_synapse_compress_state_docker_image_name_prefix: "{{ matrix_registry_prefix }}"
 matrix_telegram_lottieconverter_docker_image_name_prefix: "{{ 'localhost/' if matrix_telegram_lottieconverter_container_image_self_build else matrix_registry_prefix }}"
 ntfy_container_image_registry_prefix: "{{ matrix_registry_prefix }}"

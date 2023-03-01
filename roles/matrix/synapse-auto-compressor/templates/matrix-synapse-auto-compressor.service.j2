@@ -24,7 +24,7 @@ ExecStart={{ devture_systemd_docker_base_host_command_docker }} run --rm --name 
 			{% for arg in matrix_synapse_auto_compressor_container_extra_arguments %}
 			{{ arg }} \
 			{% endfor %}
-			{{ matrix_synapse_auto_compressor_docker_image }} \
+			{{ matrix_synapse_auto_compressor_container_image }} \
 			{{ matrix_synapse_auto_compressor_command }}
 
 ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} kill matrix-synapse-auto-compressor 2>/dev/null || true'
