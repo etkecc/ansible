@@ -17,7 +17,7 @@
 * dnsmasq: latest
 * docker_compose: v2.11.1
 * draupnir: v1.80.1
-* dynamic_dns: v3.10.0-ls110
+* dynamic_dns: v3.10.0-ls111
 * element: v1.11.24
 * email2matrix: 1.1.0
 * etherpad: 1.8.18
@@ -60,7 +60,7 @@
 * prometheus_postgres_exporter: v0.11.1
 * prometheus: v2.42.0
 * radicale: 3.1.8.1
-* redis: 7.0.7
+* redis: 7.0.9
 * registration: v0.7.2
 * scheduler: latest
 * signal_daemon: 0.23.1
@@ -72,7 +72,7 @@
 * synapse_admin: 0.8.7
 * synapse_auto_compressor: v0.1.3
 * synapse_reverse_proxy_companion: 1.23.3-alpine
-* synapse: v1.77.0
+* synapse: v1.78.0
 * telegram: v0.13.0
 * traefik_certs_dumper: v2.8.1
 * twitter: v0.1.5
