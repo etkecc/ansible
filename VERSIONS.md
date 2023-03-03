@@ -25,7 +25,7 @@
 * go_neb: latest
 * googlechat: v0.4.0
 * go_skype_bridge: latest
-* grafana: 9.4.1
+* grafana: 9.4.2
 * hangouts: latest
 * heisenbridge: 1.14.2
 * honoroit: v0.9.16
@@ -52,7 +52,7 @@
 * mx_puppet_steam: latest
 * mx_puppet_twitter: latest
 * nginx_proxy: 1.23.3-alpine
-* ntfy: v2.1.0
+* ntfy: v2.1.1
 * postmoogle: v0.9.14
 * prometheus_blackbox_exporter: v0.22.0
 * prometheus_nginxlog_exporter: v1.10.0

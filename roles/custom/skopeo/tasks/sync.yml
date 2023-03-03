@@ -15,6 +15,10 @@
   ansible.builtin.set_fact:
     custom_skopeo_sources: "{{ custom_skopeo_sources | unique | sort }}"
 
+- name: Print list of source images
+  debug:
+    msg: "{{ custom_skopeo_sources }}"
+
 - name: Populate target images dict
   ansible.builtin.set_fact:
     custom_skopeo_targets: "{{ custom_skopeo_targets | combine({item: custom_skopeo_target + item | regex_search('/.*')}) }}"

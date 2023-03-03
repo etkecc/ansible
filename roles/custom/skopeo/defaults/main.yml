@@ -2,7 +2,7 @@
 custom_skopeo_target: registry.etke.cc
 custom_skopeo_ignore_text: etke.cc
 custom_skopeo_ignore_images:
-  - "{{ matrix_etherpad_docker_image }}"
+  - "{{ etherpad_container_image }}"
   - "{{ matrix_email2matrix_docker_image }}"
   - "{{ matrix_client_element_docker_image }}"
 custom_skopeo_static:

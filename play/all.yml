@@ -92,7 +92,7 @@
     # - custom/matrix-ldap-registration-proxy # unused
     - custom/matrix-ma1sd
     - custom/matrix-dimension
-    - custom/matrix-etherpad
+    - galaxy/etherpad
     - custom/matrix-email2matrix
     - custom/matrix-sygnal
     - galaxy/ntfy
