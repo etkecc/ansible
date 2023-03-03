@@ -4,7 +4,7 @@
 * appservice_slack: 2.0.2
 * appservice_webhooks: v1.0.3-01
 * backup_borg_borg: 1.2.3
-* backup_borg_borgmatic: 1.7.7
+* backup_borg_borgmatic: 1.7.8
 * beeper_linkedin: v0.5.4
 * buscarron: v1.3.1
 * cactus_comments: 0.9.0
@@ -25,7 +25,7 @@
 * go_neb: latest
 * googlechat: v0.4.0
 * go_skype_bridge: latest
-* grafana: 9.4.2
+* grafana: 9.4.3
 * hangouts: latest
 * heisenbridge: 1.14.2
 * honoroit: v0.9.16
@@ -75,6 +75,7 @@
 * synapse: v1.78.0
 * telegram: v0.13.0
 * traefik_certs_dumper: v2.8.1
+* traefik: v2.9.8
 * twitter: v0.1.5
 * user_verification_service: v2.0.0
 * whatsapp: v0.8.2
