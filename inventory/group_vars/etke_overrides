@@ -146,7 +146,7 @@ languagetool_container_labels_traefik_entrypoints: "{{ devture_traefik_entrypoin
 ########################################################################
 
 # enabled by default for etke.cc on purpose
-matrix_synapse_auto_compressor_enabled: true
+matrix_synapse_auto_compressor_enabled: "{{ matrix_synapse_enabled | bool }}"
 matrix_synapse_auto_compressor_synapse_database: 'postgres://{{ matrix_synapse_database_user | urlencode() }}:{{ matrix_synapse_database_password | urlencode() }}@{{ matrix_synapse_database_host }}:{{ matrix_synapse_auto_compressor_database_port }}/{{ matrix_synapse_database_database }}'
 matrix_synapse_auto_compressor_systemd_required_services_list: |
   {{
