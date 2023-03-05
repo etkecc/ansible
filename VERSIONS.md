@@ -52,7 +52,7 @@
 * mx_puppet_steam: latest
 * mx_puppet_twitter: latest
 * nginx_proxy: 1.23.3-alpine
-* ntfy: v2.1.1
+* ntfy: v2.1.2
 * postmoogle: v0.9.14
 * prometheus_blackbox_exporter: v0.22.0
 * prometheus_nginxlog_exporter: v1.10.0
