@@ -94,6 +94,7 @@
     - custom/matrix-dimension
     - galaxy/etherpad
     - custom/etherpad-proxy-connect
+    # - custom/matrix-sliding-sync # unused
     - custom/matrix-email2matrix
     - custom/matrix-sygnal
     - galaxy/ntfy
@@ -120,14 +121,15 @@
     # MATRIX
     - custom/matrix-coturn
     - custom/matrix-aux
-    - role: galaxy/com.devture.ansible.role.postgres_backup
+    - galaxy/com.devture.ansible.role.postgres_backup
     - galaxy/backup_borg
     - custom/matrix-user-creator
     - custom/matrix-common-after
-    - when: matrix_playbook_traefik_role_enabled | bool
-      role: galaxy/com.devture.ansible.role.traefik
-    - when: devture_traefik_certs_dumper_enabled | bool
-      role: galaxy/com.devture.ansible.role.traefik_certs_dumper
+    # - galaxy/com.devture.ansible.role.container_socket_proxy # unused
+    # - when: devture_traefik_enabled | bool # unused
+    #   role: galaxy/com.devture.ansible.role.traefik # unused
+    # - when: devture_traefik_certs_dumper_enabled | bool # unused
+    #   role: galaxy/com.devture.ansible.role.traefik_certs_dumper # unused
     - when: devture_systemd_service_manager_enabled | bool
       role: galaxy/com.devture.ansible.role.systemd_service_manager
     # END MATRIX

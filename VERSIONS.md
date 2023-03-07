@@ -10,6 +10,7 @@
 * cactus_comments: 0.9.0
 * chatgpt: 2.2.1
 * cinny: v2.2.4
+* container_socket_proxy: 0.1.1
 * corporal: 2.5.1
 * coturn: 4.6.1-r2
 * dimension: latest
@@ -34,7 +35,7 @@
 * instagram: v0.2.3
 * jitsi_ldap: "3"
 * jitsi_prosody_auth_matrix_user_verification_repo: 2839499cb03894d8cfc3e5b2219441427cb133d8 # v1.8.0
-* jitsi: stable-8252
+* jitsi: stable-8319
 * kuma: 1.20.2-alpine
 * languagetool: 6.0-dockerupdate-3
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
@@ -66,6 +67,7 @@
 * signal_daemon: 0.23.1
 * signal: v0.4.2
 * slack: latest
+* sliding_sync: v0.99.1
 * sms_bridge: 0.5.7
 * softserve: v0.4.6
 * sygnal: v0.12.0

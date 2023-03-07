@@ -11,6 +11,7 @@
 !hookshot feed https://gitlab.com/cactus-comments/cactus-client/-/tags?format=atom cactus-comments-2
 !hookshot feed https://github.com/matrixgpt/matrix-chatgpt-bot/releases.atom chatgpt
 !hookshot feed https://github.com/ajbura/cinny/releases.atom cinny
+!hookshot feed https://github.com/Tecnativa/docker-socket-proxy/releases.atom com.devture.ansible.role.container_socket_proxy
 !hookshot feed https://github.com/postgres/postgres/releases.atom com.devture.ansible.role.postgres
 !hookshot feed https://github.com/prodrigestivill/docker-postgres-backup-local/releases.atom com.devture.ansible.role.postgres_backup
 !hookshot feed https://github.com/traefik/traefik/releases.atom com.devture.ansible.role.traefik
