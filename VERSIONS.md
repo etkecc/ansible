@@ -8,7 +8,7 @@
 * beeper_linkedin: v0.5.4
 * buscarron: v1.3.1
 * cactus_comments: 0.9.0
-* chatgpt: 2.2.1
+* chatgpt: 3.0.0
 * cinny: v2.2.4
 * container_socket_proxy: 0.1.1
 * corporal: 2.5.1

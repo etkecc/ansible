@@ -25,6 +25,11 @@ ExecStart=/usr/bin/env docker run --rm --name custom-miniflux \
           -e "BASE_URL=https://{{ matrix_server_fqn_miniflux }}" \
           -e "ROOT_URL=https://{{ matrix_server_fqn_miniflux }}" \
           -e "RUN_MIGRATIONS=1" \
+					{% if custom_miniflux_admin_login %}
+					-e "CREATE_ADMIN=1" \
+					-e "ADMIN_USERNAME={{ custom_miniflux_admin_login }}" \
+					-e "ADMIN_PASSWORD={{ custom_miniflux_admin_password }}" \
+					{% endif %}
           {% for arg in custom_miniflux_container_extra_arguments %}
           {{ arg }} \
           {% endfor %}

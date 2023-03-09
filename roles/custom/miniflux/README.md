@@ -12,6 +12,9 @@ matrix_server_fqn_miniflux: "miniflux.{{ matrix_domain }}" # you can use anythin
 matrix_nginx_proxy_proxy_miniflux_hostname: "{{ matrix_server_fqn_miniflux }}" # yep, duplicate, but it's required
 custom_miniflux_database_password: "Generate strong password with `pwgen -s 64 1`"
 
+custom_miniflux_admin_login: "admin"
+custom_miniflux_admin_password: "Generate strong password with `pwgen -s 64 1`"
+
 matrix_ssl_additional_domains_to_obtain_certificates_for:
   - "{{ matrix_server_fqn_miniflux }}"
 ```

@@ -7,7 +7,10 @@ matrix_server_fqn_miniflux: "miniflux.{{ matrix_domain }}"
 matrix_nginx_proxy_proxy_miniflux_hostname: "{{ matrix_server_fqn_miniflux }}"
 custom_miniflux_docker_image: "docker.io/miniflux/miniflux:{{ custom_miniflux_version }}"
 custom_miniflux_docker_image_force_pull: "{{ custom_miniflux_docker_image.endswith(':latest') }}"
-#
+
+custom_miniflux_admin_login: ''
+custom_miniflux_admin_password: ''
+
 # A list of extra arguments to pass to the container
 custom_miniflux_container_extra_arguments: []
 
