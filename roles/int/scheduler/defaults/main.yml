@@ -46,8 +46,8 @@ int_scheduler_http_port: '8080'
 int_scheduler_http_user:
 int_scheduler_http_password:
 
-# admin room id
-int_scheduler_roomid:
+int_scheduler_roomid_admin: ''
+int_scheduler_roomid_alert: ''
 
 # workers config
 int_scheduler_workers:

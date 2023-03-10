@@ -125,11 +125,11 @@
     - galaxy/backup_borg
     - custom/matrix-user-creator
     - custom/matrix-common-after
-    # - galaxy/com.devture.ansible.role.container_socket_proxy # unused
-    # - when: devture_traefik_enabled | bool # unused
-    #   role: galaxy/com.devture.ansible.role.traefik # unused
-    # - when: devture_traefik_certs_dumper_enabled | bool # unused
-    #   role: galaxy/com.devture.ansible.role.traefik_certs_dumper # unused
+    - galaxy/com.devture.ansible.role.container_socket_proxy
+    - when: devture_traefik_enabled | bool
+      role: galaxy/com.devture.ansible.role.traefik
+    - when: devture_traefik_certs_dumper_enabled | bool
+      role: galaxy/com.devture.ansible.role.traefik_certs_dumper
     - when: devture_systemd_service_manager_enabled | bool
       role: galaxy/com.devture.ansible.role.systemd_service_manager
     # END MATRIX
