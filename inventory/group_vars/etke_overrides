@@ -223,7 +223,7 @@ devture_systemd_service_manager_services_list_additional: |
     +
     ([{'name': (languagetool_identifier + '.service'), 'priority': 5000, 'groups': ['etke', 'languagetool']}] if languagetool_enabled else [])
     +
-    ([{'name': (miniflux_identifier + 'miniflux.service'), 'priority': 5000, 'groups': ['etke', 'miniflux']}] if miniflux_enabled else [])
+    ([{'name': (miniflux_identifier + '.service'), 'priority': 5000, 'groups': ['etke', 'miniflux']}] if miniflux_enabled else [])
     +
     ([{'name': 'custom-radicale.service', 'priority': 5000, 'groups': ['etke', 'radicale']}] if custom_radicale_enabled else [])
     +
