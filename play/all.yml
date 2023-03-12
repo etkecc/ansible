@@ -73,6 +73,7 @@
     # - custom/matrix-cactus-comments # unused
     # - custom/matrix-rageshake
     - custom/matrix-synapse
+    - custom/matrix-synapse-auto-compressor
     - custom/matrix-synapse-reverse-proxy-companion
     # - custom/matrix-dendrite # unused
     # - custom/matrix-conduit # unused
@@ -102,7 +103,6 @@
     # END MATRIX
 
     # CUSTOM
-    - matrix/synapse-auto-compressor
     - int/prometheus-blackbox-exporter
     - int/scheduler
     - galaxy/swap
