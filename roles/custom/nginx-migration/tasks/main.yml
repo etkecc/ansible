@@ -15,3 +15,19 @@
   tags:
     - setup-all
     - setup-languagetool
+
+- block:
+    - when: nginx_migration_miniflux_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/miniflux/install.yml"
+  tags:
+    - setup-all
+    - setup-miniflux
+    - install-all
+    - install-miniflux
+
+- block:
+    - when: not nginx_migration_miniflux_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/miniflux/uninstall.yml"
+  tags:
+    - setup-all
+    - setup-miniflux

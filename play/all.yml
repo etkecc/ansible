@@ -111,7 +111,7 @@
     - custom/kuma
     - galaxy/languagetool
     - custom/nginx-migration
-    - custom/miniflux
+    - galaxy/miniflux
     - custom/radicale
     - custom/soft-serve
     - custom/wireguard

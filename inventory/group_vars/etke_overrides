@@ -11,8 +11,8 @@ matrix_container_global_registry_prefix: "{{ matrix_registry_prefix }}"
 
 custom_dnsmasq_docker_image: "{{ matrix_registry_prefix }}etke.cc/dnsmasq:{{ custom_dnsmasq_version }}"
 custom_kuma_docker_image: "{{ matrix_registry_prefix }}louislam/uptime-kuma:{{ custom_kuma_version }}"
-custom_miniflux_docker_image: "{{ matrix_registry_prefix }}miniflux/miniflux:{{ custom_miniflux_version }}"
 custom_radicale_docker_image: "{{ matrix_registry_prefix }}tomsquest/docker-radicale:{{ custom_radicale_version }}"
+
 matrix_client_element_docker_image: "{{ matrix_registry_prefix }}etke.cc/app:{{ matrix_client_element_version }}"
 
 backup_borg_docker_image_name_prefix: "{{ 'localhost/' if backup_borg_container_image_self_build else matrix_registry_prefix }}"
@@ -23,6 +23,7 @@ docker_postgres_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
 grafana_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
 int_scheduler_docker_image_name_prefix: "{{ matrix_registry_prefix }}"
 languagetool_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
+miniflux_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
 matrix_appservice_discord_docker_image_name_prefix: "{{ 'localhost/' if matrix_appservice_discord_container_image_self_build else matrix_registry_prefix }}"
 matrix_beeper_linkedin_docker_image_name_prefix: "{{ 'localhost/' if matrix_beeper_linkedin_container_image_self_build else matrix_registry_prefix }}"
 matrix_bot_buscarron_docker_image_name_prefix: "{{ 'localhost/' if matrix_bot_buscarron_container_image_self_build else matrix_registry_prefix }}"
@@ -141,6 +142,38 @@ languagetool_container_labels_traefik_entrypoints: "{{ devture_traefik_entrypoin
 
 ########################################################################
 #                                                                      #
+# miniflux                                                             #
+#                                                                      #
+########################################################################
+
+miniflux_enabled: false
+
+miniflux_identifier: custom-miniflux
+
+miniflux_base_path: "{{ matrix_base_data_path }}/custom-miniflux"
+
+miniflux_uid: "{{ matrix_user_uid }}"
+miniflux_gid: "{{ matrix_user_gid }}"
+
+miniflux_container_network: "{{ matrix_nginx_proxy_container_network if matrix_playbook_reverse_proxy_type != 'playbook-managed-traefik' else miniflux_identifier }}"
+
+miniflux_container_additional_networks: |
+  {{
+    ([matrix_playbook_reverse_proxyable_services_additional_network] if matrix_playbook_reverse_proxyable_services_additional_network else [])
+    +
+    ([devture_postgres_container_network] if devture_postgres_enabled and miniflux_database_hostname == devture_postgres_identifier and devture_postgres_container_network != miniflux_container_network else [])
+  }}
+
+miniflux_container_labels_traefik_enabled: "{{ matrix_playbook_reverse_proxy_type in ['playbook-managed-traefik', 'other-traefik-container'] }}"
+miniflux_container_labels_traefik_docker_network: "{{ matrix_playbook_reverse_proxyable_services_additional_network }}"
+miniflux_container_labels_traefik_entrypoints: "{{ devture_traefik_entrypoint_primary }}"
+miniflux_container_labels_traefik_tls_certResolver: "{{ devture_traefik_certResolver_primary }}"
+
+miniflux_database_hostname: "{{ devture_postgres_connection_hostname if devture_postgres_enabled else '' }}"
+miniflux_database_password: "{{ '%s' | format(matrix_homeserver_generic_secret_key) | password_hash('sha512', 'miniflux.db', rounds=655555) | to_uuid }}"
+
+########################################################################
+#                                                                      #
 # matrix/synapse-auto-compressor                                       #
 #                                                                      #
 ########################################################################
@@ -163,6 +196,9 @@ matrix_synapse_auto_compressor_systemd_required_services_list: |
 
 nginx_migration_languagetool_enabled: "{{ languagetool_enabled and matrix_playbook_reverse_proxy_type == 'playbook-managed-nginx' }}"
 nginx_migration_languagetool_hostname: "{{ languagetool_hostname }}"
+
+nginx_migration_miniflux_enabled: "{{ miniflux_enabled and matrix_playbook_reverse_proxy_type == 'playbook-managed-nginx' }}"
+nginx_migration_miniflux_hostname: "{{ miniflux_hostname }}"
 
 ########################################################################
 #                                                                      #
@@ -187,7 +223,7 @@ devture_systemd_service_manager_services_list_additional: |
     +
     ([{'name': (languagetool_identifier + '.service'), 'priority': 5000, 'groups': ['etke', 'languagetool']}] if languagetool_enabled else [])
     +
-    ([{'name': 'custom-miniflux.service', 'priority': 5000, 'groups': ['etke', 'miniflux']}] if custom_miniflux_enabled else [])
+    ([{'name': (miniflux_identifier + 'miniflux.service'), 'priority': 5000, 'groups': ['etke', 'miniflux']}] if miniflux_enabled else [])
     +
     ([{'name': 'custom-radicale.service', 'priority': 5000, 'groups': ['etke', 'radicale']}] if custom_radicale_enabled else [])
     +
@@ -205,5 +241,27 @@ devture_systemd_service_manager_services_list_additional: |
 ########################################################################
 #                                                                      #
 # /com.devture.ansible.role.systemd_service_manager                    #
+#                                                                      #
+########################################################################
+
+
+########################################################################
+#                                                                      #
+# com.devture.ansible.role.postgres                                    #
+#                                                                      #
+########################################################################
+
+devture_postgres_managed_databases_additional: |
+  {{
+    ([{
+      'name': miniflux_database_name,
+      'username': miniflux_database_username,
+      'password': miniflux_database_password,
+    }] if miniflux_enabled else [])
+  }}
+
+########################################################################
+#                                                                      #
+# /com.devture.ansible.role.postgres                                   #
 #                                                                      #
 ########################################################################
