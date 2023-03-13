@@ -11,7 +11,8 @@ matrix_container_global_registry_prefix: "{{ matrix_registry_prefix }}"
 
 custom_dnsmasq_docker_image: "{{ matrix_registry_prefix }}etke.cc/dnsmasq:{{ custom_dnsmasq_version }}"
 custom_kuma_docker_image: "{{ matrix_registry_prefix }}louislam/uptime-kuma:{{ custom_kuma_version }}"
-custom_radicale_docker_image: "{{ matrix_registry_prefix }}tomsquest/docker-radicale:{{ custom_radicale_version }}"
+
+radicale_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
 
 matrix_client_element_docker_image: "{{ matrix_registry_prefix }}etke.cc/app:{{ matrix_client_element_version }}"
 
