@@ -108,7 +108,7 @@
     - galaxy/swap
     - galaxy/security
     - custom/dnsmasq
-    - custom/kuma
+    - galaxy/uptime_kuma
     - galaxy/languagetool
     - custom/nginx-migration
     - galaxy/miniflux

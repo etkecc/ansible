@@ -47,3 +47,19 @@
   tags:
     - setup-all
     - setup-radicale
+
+- block:
+    - when: nginx_migration_uptime_kuma_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uptime-kuma/install.yml"
+  tags:
+    - setup-all
+    - setup-radicale
+    - install-all
+    - install-radicale
+
+- block:
+    - when: not nginx_migration_uptime_kuma_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uptime-kuma/uninstall.yml"
+  tags:
+    - setup-all
+    - setup-radicale

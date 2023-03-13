@@ -19,3 +19,5 @@
   version: v2.0.42-0
 - src: git+https://gitlab.com/etke.cc/roles/radicale.git
   version: v3.1.8.1-0
+- src: git+https://gitlab.com/etke.cc/roles/uptime_kuma.git
+  version: v1.20.2-0

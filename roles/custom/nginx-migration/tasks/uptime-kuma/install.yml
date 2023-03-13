@@ -1,0 +1,7 @@
+---
+
+- name: Ensure Matrix nginx-proxy configuration for uptime-kuma domain exists
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/matrix-custom-kuma.conf.j2"
+    dest: "{{ matrix_nginx_proxy_confd_path }}/matrix-custom-kuma.conf"
+    mode: 0644
