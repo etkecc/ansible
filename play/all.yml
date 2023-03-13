@@ -137,6 +137,7 @@
     # CUSTOM
     - galaxy/cleanup
     - custom/skopeo
+    - custom/moncfg
     # END CUSTOM
 
     # MATRIX

@@ -1,0 +1,14 @@
+---
+
+- ansible.builtin.import_tasks: host.yml
+  become: false
+  delegate_to: 127.0.0.1
+  tags:
+    - moncfg
+
+- ansible.builtin.import_tasks: prometheus.yml
+  when: moncfg_export_full | bool
+  become: false
+  delegate_to: 127.0.0.1
+  tags:
+    - moncfg-full
