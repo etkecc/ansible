@@ -112,7 +112,7 @@
     - galaxy/languagetool
     - custom/nginx-migration
     - galaxy/miniflux
-    - custom/radicale
+    - galaxy/radicale
     - custom/soft-serve
     - custom/wireguard
     - matrix/nginx-proxy-website

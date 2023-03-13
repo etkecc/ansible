@@ -31,3 +31,19 @@
   tags:
     - setup-all
     - setup-miniflux
+
+- block:
+    - when: nginx_migration_radicale_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/radicale/install.yml"
+  tags:
+    - setup-all
+    - setup-radicale
+    - install-all
+    - install-radicale
+
+- block:
+    - when: not nginx_migration_radicale_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/radicale/uninstall.yml"
+  tags:
+    - setup-all
+    - setup-radicale

@@ -1,0 +1,6 @@
+---
+
+- name: Ensure Matrix nginx-proxy configuration for radicale domain does not exists
+  ansible.builtin.file:
+    path: "{{ matrix_nginx_proxy_confd_path }}/matrix-custom-radicale.conf"
+    state: absent
