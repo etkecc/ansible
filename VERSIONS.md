@@ -36,7 +36,6 @@
 * jitsi_ldap: "3"
 * jitsi_prosody_auth_matrix_user_verification_repo: 2839499cb03894d8cfc3e5b2219441427cb133d8 # v1.8.0
 * jitsi: stable-8319
-* kuma: 1.20.2-alpine
 * languagetool: 6.0-dockerupdate-3
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * ma1sd: 2.5.0
@@ -79,5 +78,6 @@
 * traefik_certs_dumper: v2.8.1
 * traefik: v2.9.8
 * twitter: v0.1.5
+* uptime_kuma: 1.20.2
 * user_verification_service: v2.0.0
 * whatsapp: v0.8.2

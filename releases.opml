@@ -40,7 +40,6 @@
     <outline text="hookshot" title="hookshot" type="rss" htmlUrl="https://github.com/matrix-org/matrix-hookshot" xmlUrl="https://github.com/matrix-org/matrix-hookshot/releases.atom" />
     <outline text="hydrogen" title="hydrogen" type="rss" htmlUrl="https://github.com/vector-im/hydrogen-web" xmlUrl="https://github.com/vector-im/hydrogen-web/releases.atom" />
     <outline text="jitsi" title="jitsi" type="rss" htmlUrl="https://github.com/jitsi/docker-jitsi-meet" xmlUrl="https://github.com/jitsi/docker-jitsi-meet/releases.atom" />
-    <outline text="kuma" title="kuma" type="rss" htmlUrl="https://github.com/louislam/uptime-kuma" xmlUrl="https://github.com/louislam/uptime-kuma/releases.atom" />
     <outline text="languagetool" title="languagetool" type="rss" htmlUrl="https://github.com/Erikvl87/docker-languagetool" xmlUrl="https://github.com/Erikvl87/docker-languagetool/releases.atom" />
     <outline text="ldap-registration-proxy" title="ldap-registration-proxy" type="rss" htmlUrl="https://gitlab.com/activism.international/matrix_ldap_registration_proxy" xmlUrl="https://gitlab.com/activism.international/matrix_ldap_registration_proxy/-/tags?format=atom" />
     <outline text="ma1sd" title="ma1sd" type="rss" htmlUrl="https://github.com/ma1uta/ma1sd" xmlUrl="https://github.com/ma1uta/ma1sd/releases.atom" />
@@ -84,6 +83,7 @@
     <outline text="synapse" title="synapse" type="rss" htmlUrl="https://github.com/matrix-org/synapse" xmlUrl="https://github.com/matrix-org/synapse/releases.atom" />
     <outline text="synapse-admin" title="synapse-admin" type="rss" htmlUrl="https://github.com/Awesome-Technologies/synapse-admin" xmlUrl="https://github.com/Awesome-Technologies/synapse-admin/releases.atom" />
     <outline text="synapse-auto-compressor" title="synapse-auto-compressor" type="rss" htmlUrl="https://github.com/matrix-org/rust-synapse-compress-state" xmlUrl="https://github.com/matrix-org/rust-synapse-compress-state/releases.atom" />
+    <outline text="uptime_kuma" title="uptime_kuma" type="rss" htmlUrl="https://github.com/louislam/uptime-kuma" xmlUrl="https://github.com/louislam/uptime-kuma/releases.atom" />
     <outline text="wireguard" title="wireguard" type="rss" htmlUrl="https://git.zx2c4.com/wireguard-linux" xmlUrl="https://git.zx2c4.com/wireguard-linux/atom/" />
   </body>
 </opml>
