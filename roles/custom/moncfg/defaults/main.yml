@@ -1,5 +1,6 @@
 ---
 moncfg_export_full: false
+moncfg_export_group: customers
 moncfg_labels:
   admin: "{{ matrix_monitoring_mxid | default(matrix_admin | default('')) }}"
   email: "{{ matrix_monitoring_email | default(matrix_ssl_lets_encrypt_support_email | default('')) }}"
@@ -16,7 +17,7 @@ moncfg_job_http_targets: |
   {{
     (['https://' + (matrix_server_fqn_matrix | default('matrix.' + matrix_domain)) + '/_matrix/client/versions'] if matrix_synapse_enabled | default(True) else [])
     +
-    (['https://' + matrix_domain + ':8448/_matrix/federation/v1/version'] if matrix_synapse_federation_enabled | default(True) else [])
+    (['https://' + (matrix_server_fqn_matrix | default('matrix.' + matrix_domain)) + ':8448/_matrix/federation/v1/version'] if matrix_synapse_federation_enabled | default(True) else [])
     +
     (['https://' + matrix_domain + '/.well-known/matrix/server'] if matrix_synapse_federation_enabled | default(True) else [])
     +

@@ -6,10 +6,7 @@
 - name: Load per-host configuration
   ansible.builtin.set_fact:
     moncfg_prometheus: "{{ moncfg_prometheus + lookup('ansible.builtin.file', inventory_dir + '/monitoring/' + item + '.yml') | from_yaml }}"
-  with_items: "{{ groups['etke_overrides'] }}"
-
-- debug:
-    msg: "{{ moncfg_prometheus }}"
+  with_items: "{{ groups[moncfg_export_group] }}"
 
 - name: Dump full configuration
   ansible.builtin.copy:
