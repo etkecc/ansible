@@ -1,0 +1,60 @@
+---
+- name: Ensure state dir exists
+  ansible.builtin.file:
+    path: "{{ moncfg_export_state }}"
+    state: directory
+  become: false
+  run_once: true
+  delegate_to: 127.0.0.1
+  tags:
+    - moncfg
+
+- name: Ensure each host is present in the state dir
+  ansible.builtin.copy:
+    content: "[]"
+    dest: "{{ moncfg_export_state }}/{{ item }}.yml"
+  with_items: "{{ groups[moncfg_export_group] }}"
+  become: false
+  run_once: true
+  delegate_to: 127.0.0.1
+  tags:
+    - moncfg
+
+- name: Ensure monitoring state is stored
+  ansible.builtin.copy:
+    content: "{{ moncfg_config | to_yaml }}"
+    dest: "{{ moncfg_export_state }}/{{ inventory_hostname }}.yml"
+  become: false
+  delegate_to: 127.0.0.1
+  tags:
+    - moncfg
+
+
+- name: Generate monitoring config
+  ansible.builtin.set_fact:
+    moncfg_config: "{{ moncfg_config | from_yaml }}"
+  when: inventory_hostname in groups[moncfg_export_group]
+  register: moncfg_config_result
+  tags:
+    - moncfg
+
+
+- name: Merge all monitoring configs
+  ansible.builtin.set_fact:
+    moncfg_export_data: "{{ moncfg_export_data + lookup('ansible.builtin.file', moncfg_export_state + '/' + item + '.yml') | from_yaml }}"
+  with_items: "{{ groups[moncfg_export_group] | sort }}"
+  become: false
+  run_once: true
+  delegate_to: 127.0.0.1
+  tags:
+    - moncfg
+
+- name: Dump full configuration
+  ansible.builtin.copy:
+    content: "{{ moncfg_export_data | to_nice_yaml(indent=2, width=999999) }}"
+    dest: "{{ moncfg_export_file }}"
+  become: false
+  run_once: true
+  delegate_to: 127.0.0.1
+  tags:
+    - moncfg

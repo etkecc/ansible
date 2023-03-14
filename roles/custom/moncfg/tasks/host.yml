@@ -1,5 +1,0 @@
----
-- name: Ensure monitoring config is stored
-  ansible.builtin.copy:
-    content: "{{ moncfg_config | to_nice_yaml(indent=2, width=999999) }}"
-    dest: "{{ inventory_dir }}/monitoring/{{ inventory_hostname }}.yml"

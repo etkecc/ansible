@@ -1,5 +1,7 @@
 ---
-moncfg_export_full: false
+moncfg_export_state: "/tmp/moncfg"
+moncfg_export_file: "{{ inventory_dir }}/monitoring.yml"
+moncfg_export_data: []
 moncfg_export_group: customers
 moncfg_labels:
   admin: "{{ matrix_monitoring_mxid | default(matrix_admin | default('')) }}"
@@ -17,9 +19,9 @@ moncfg_job_http_targets: |
   {{
     (['https://' + (matrix_server_fqn_matrix | default('matrix.' + matrix_domain)) + '/_matrix/client/versions'] if matrix_synapse_enabled | default(True) else [])
     +
-    (['https://' + (matrix_server_fqn_matrix | default('matrix.' + matrix_domain)) + ':8448/_matrix/federation/v1/version'] if matrix_synapse_federation_enabled | default(True) else [])
+    (['https://' + (matrix_server_fqn_matrix | default('matrix.' + matrix_domain)) + ':8448/_matrix/federation/v1/version'] if (matrix_synapse_enabled | default(True) and matrix_synapse_federation_enabled | default(True)) else [])
     +
-    (['https://' + matrix_domain + '/.well-known/matrix/server'] if matrix_synapse_federation_enabled | default(True) else [])
+    (['https://' + matrix_domain + '/.well-known/matrix/server'] if (matrix_synapse_enabled | default(True) and matrix_synapse_federation_enabled | default(True)) else [])
     +
     (['https://' + matrix_server_fqn_buscarron|default('') + '/_health'] if matrix_bot_buscarron_enabled | default(False) else [])
     +
@@ -37,7 +39,7 @@ moncfg_job_http_targets: |
     +
     (['https://' + radicale_hostname | default('') + radicale_path_prefix | default('/') + '.web/'] if radicale_enabled | default(False) else [])
     +
-    (['https://' + matrix_server_fqn_sygnal | default('')] if matrix_sygnal_enabled | default(False) else [])
+    (['https://' + matrix_server_fqn_sygnal | default('') + '/health'] if matrix_sygnal_enabled | default(False) else [])
     +
     (['https://' + uptime_kuma_hostname | default('') + uptime_kuma_path_prefix | default('')] if uptime_kuma_enabled | default(False) else [])
   }}
