@@ -1,20 +1,22 @@
 ---
 moncfg_export_state: "/tmp/moncfg"
-moncfg_export_file: "{{ inventory_dir }}/monitoring.yml"
-moncfg_export_data: []
+moncfg_export_file: "{{ inventory_dir }}/monitoring" # .node.yml and .html.yml will be added automatically
 moncfg_export_group: customers
+moncfg_export_node: []
+moncfg_export_http: []
+
 moncfg_labels:
   admin: "{{ matrix_monitoring_mxid | default(matrix_admin | default('')) }}"
   email: "{{ matrix_monitoring_email | default(matrix_ssl_lets_encrypt_support_email | default('')) }}"
   domain: "{{ matrix_domain }}"
 
-moncfg_job_node_name: "node-{{ matrix_domain }}"
+moncfg_job_node_name: "node"
 moncfg_job_node_targets:
   - "{{ matrix_server_fqn_matrix | default('matrix.' + matrix_domain) }}"
 moncfg_job_node_auth_user: "{{ matrix_nginx_proxy_proxy_matrix_metrics_basic_auth_username | default ('') }}"
 moncfg_job_node_auth_pass: "{{ matrix_nginx_proxy_proxy_matrix_metrics_basic_auth_password | default ('') }}"
 
-moncfg_job_http_name: "http-{{ matrix_domain }}"
+moncfg_job_http_name: "http"
 moncfg_job_http_targets: |
   {{
     (['https://' + (matrix_server_fqn_matrix | default('matrix.' + matrix_domain)) + '/_matrix/client/versions'] if matrix_synapse_enabled | default(True) else [])
@@ -43,12 +45,3 @@ moncfg_job_http_targets: |
     +
     (['https://' + uptime_kuma_hostname | default('') + uptime_kuma_path_prefix | default('')] if uptime_kuma_enabled | default(False) else [])
   }}
-moncfg_job_http_relabel_configs:
-  - source_labels: [__address__]
-    target_label: __param_target
-  - source_labels: [__param_target]
-    target_label: instance
-  - target_label: __address__
-    replacement: int-prometheus-blackbox-exporter:9115
-
-moncfg_config: "{{ lookup('template', 'templates/jobs.yml.j2') | from_yaml }}"

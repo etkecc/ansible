@@ -9,10 +9,10 @@
   tags:
     - moncfg
 
-- name: Ensure each host is present in the state dir
+- name: Ensure each host is present in the state dir (job node)
   ansible.builtin.copy:
     content: "[]"
-    dest: "{{ moncfg_export_state }}/{{ item }}.yml"
+    dest: "{{ moncfg_export_state }}/{{ item }}.node.yml"
   with_items: "{{ groups[moncfg_export_group] }}"
   become: false
   run_once: true
@@ -20,28 +20,45 @@
   tags:
     - moncfg
 
-- name: Ensure monitoring state is stored
+- name: Ensure each host is present in the state dir (job http)
   ansible.builtin.copy:
-    content: "{{ moncfg_config | to_yaml }}"
-    dest: "{{ moncfg_export_state }}/{{ inventory_hostname }}.yml"
+    content: "[]"
+    dest: "{{ moncfg_export_state }}/{{ item }}.http.yml"
+  with_items: "{{ groups[moncfg_export_group] }}"
+  become: false
+  run_once: true
+  delegate_to: 127.0.0.1
+  tags:
+    - moncfg
+
+- name: Ensure monitoring state is stored (job node)
+  ansible.builtin.copy:
+    content: |
+      - targets: {{ moncfg_job_node_targets }}
+        labels: {{ moncfg_labels }}
+    dest: "{{ moncfg_export_state }}/{{ inventory_hostname }}.node.yml"
+  when: moncfg_job_node_auth_user and moncfg_job_node_auth_pass
   become: false
   delegate_to: 127.0.0.1
   tags:
     - moncfg
 
-
-- name: Generate monitoring config
-  ansible.builtin.set_fact:
-    moncfg_config: "{{ moncfg_config | from_yaml }}"
-  when: inventory_hostname in groups[moncfg_export_group]
-  register: moncfg_config_result
+- name: Ensure monitoring state is stored (job http)
+  ansible.builtin.copy:
+    content: |
+      - targets: {{ moncfg_job_http_targets }}
+        labels: {{ moncfg_labels }}
+    dest: "{{ moncfg_export_state }}/{{ inventory_hostname }}.http.yml"
+  when: moncfg_job_http_targets | length > 0
+  become: false
+  delegate_to: 127.0.0.1
   tags:
     - moncfg
 
-
 - name: Merge all monitoring configs
   ansible.builtin.set_fact:
-    moncfg_export_data: "{{ moncfg_export_data + lookup('ansible.builtin.file', moncfg_export_state + '/' + item + '.yml') | from_yaml }}"
+    moncfg_export_node: "{{ moncfg_export_node + lookup('ansible.builtin.file', moncfg_export_state + '/' + item + '.node.yml') | from_yaml }}"
+    moncfg_export_http: "{{ moncfg_export_http + lookup('ansible.builtin.file', moncfg_export_state + '/' + item + '.http.yml') | from_yaml }}"
   with_items: "{{ groups[moncfg_export_group] | sort }}"
   become: false
   run_once: true
@@ -49,10 +66,20 @@
   tags:
     - moncfg
 
-- name: Dump full configuration
+- name: Dump full configuration (job node)
   ansible.builtin.copy:
-    content: "{{ moncfg_export_data | to_nice_yaml(indent=2, width=999999) }}"
-    dest: "{{ moncfg_export_file }}"
+    content: "{{ moncfg_export_node | to_nice_yaml(indent=2, width=999999) }}"
+    dest: "{{ moncfg_export_file }}.node.yml"
+  become: false
+  run_once: true
+  delegate_to: 127.0.0.1
+  tags:
+    - moncfg
+
+- name: Dump full configuration (job http)
+  ansible.builtin.copy:
+    content: "{{ moncfg_export_http | to_nice_yaml(indent=2, width=999999) }}"
+    dest: "{{ moncfg_export_file }}.http.yml"
   become: false
   run_once: true
   delegate_to: 127.0.0.1
