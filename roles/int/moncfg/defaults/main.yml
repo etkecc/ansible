@@ -25,13 +25,19 @@ moncfg_job_http_targets: |
     +
     (['https://' + matrix_domain + '/.well-known/matrix/server'] if (matrix_synapse_enabled | default(True) and matrix_synapse_federation_enabled | default(True)) else [])
     +
-    (['https://' + matrix_server_fqn_buscarron|default('') + '/_health'] if matrix_bot_buscarron_enabled | default(False) else [])
+    (['https://' + matrix_server_fqn_buscarron | default('') + '/_health'] if matrix_bot_buscarron_enabled | default(False) else [])
     +
-    (['https://' + matrix_server_fqn_dimension|default('')] if matrix_dimension_enabled | default(False) else [])
+    (['https://' + matrix_server_fqn_cinny | default('')] if matrix_client_cinny_enabled | default(True) else [])
+    +
+    (['https://' + matrix_server_fqn_dimension | default('')] if matrix_dimension_enabled | default(False) else [])
+    +
+    (['https://' + matrix_server_fqn_element | default('')] if matrix_client_element_enabled | default(True) else [])
     +
     (['https://' + matrix_server_fqn_etherpad | default('') + etherpad_path_prefix | default('')] if etherpad_enabled | default(False) else [])
     +
     (['https://' + matrix_server_fqn_grafana | default('')] if grafana_enabled | default(False) else [])
+    +
+    (['https://' + matrix_server_fqn_hydrogen | default('')] if matrix_client_hydrogen_enabled | default(True) else [])
     +
     (['https://' + languagetool_hostname | default('') + languagetool_path_prefix | default('') + 'v2/languages'] if languagetool_enabled | default(False) else [])
     +
