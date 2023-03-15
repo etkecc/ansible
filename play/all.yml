@@ -3,13 +3,9 @@
   hosts: "{{ target if target is defined else 'etke_servers' }}"
   become: true
   vars:
-    matrix_playbook_docker_installation_enabled: false # handled by galaxy/docker
+    matrix_playbook_docker_installation_enabled: false
 
   roles:
-    # CUSTOM
-    - galaxy/docker
-    # END CUSTOM
-
     # MATRIX
     - galaxy/com.devture.ansible.role.playbook_help
     - galaxy/com.devture.ansible.role.systemd_docker_base
