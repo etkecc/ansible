@@ -54,7 +54,7 @@
 * nginx_proxy: 1.23.3-alpine
 * ntfy: v2.1.2
 * postmoogle: v0.9.14
-* prometheus_blackbox_exporter: v0.22.0
+* prometheus_blackbox_exporter: v0.23.0
 * prometheus_nginxlog_exporter: v1.10.0
 * prometheus_node_exporter: v1.5.0
 * prometheus_postgres_exporter: v0.11.1
