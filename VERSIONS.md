@@ -11,7 +11,7 @@
 * chatgpt: 3.0.0
 * cinny: v2.2.4
 * container_socket_proxy: 0.1.1
-* corporal: 2.5.1
+* corporal: 2.5.2
 * coturn: 4.6.1-r2
 * dimension: latest
 * discord: v0.1.1
@@ -36,7 +36,7 @@
 * jitsi_ldap: "3"
 * jitsi_prosody_auth_matrix_user_verification_repo: 2839499cb03894d8cfc3e5b2219441427cb133d8 # v1.8.0
 * jitsi: stable-8319
-* languagetool: 6.0-dockerupdate-3
+* languagetool: 6.0-dockerupdate-4
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * ma1sd: 2.5.0
 * mailer: 4.96-r1-0

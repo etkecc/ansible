@@ -8,23 +8,27 @@ submodules:
 
 # pull new upstream changes
 upstream:
-    @cd ./upstream && git pull
+    @echo "updating upstream..."
+    @cd ./upstream && git pull -q
 
 # pull roles
 roles:
-    ansible-galaxy install -r upstream/requirements.yml -p roles/galaxy/ --force
-    ansible-galaxy install -r requirements.yml -p roles/galaxy/ --force
+    @echo "updating roles..."
+    @ansible-galaxy install -r upstream/requirements.yml -p roles/galaxy/
+    @ansible-galaxy install -r requirements.yml -p roles/galaxy/
 
 # pull dependencies
 dependencies: submodules roles
 
 # pull all updates
-update: upstream roles opml hookshot versions
+update: && upstream roles opml hookshot versions
+    @agru
 
 # update VERSIONS.md file using the actual versions from roles' files
 versions:
-    bash bin/versions.sh
-    git --no-pager diff --no-ext-diff VERSIONS.md
+    echo "generating versions diff..."
+    @bash bin/versions.sh
+    @git --no-pager diff --no-ext-diff VERSIONS.md
 
 # run ansible-lint
 lint:
@@ -38,11 +42,13 @@ commit: opml hookshot versions
 
 # dumps an OPML file with extracted git feeds for roles
 opml:
-    python bin/feeds.py . dump
+    @echo "generating opml..."
+    @python bin/feeds.py . dump
 
 # dumps a file with list of hookshot commands with extracted git feeds for roles
 hookshot:
-    python bin/feeds.py . hookshot
+    @echo "generating hookshot..."
+    @python bin/feeds.py . hookshot
 
 # prints roles files for which a GIT feeds couldn't be extracted
 nofeeds:
