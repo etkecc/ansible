@@ -10,9 +10,6 @@ matrix_registry_prefix: registry.etke.cc/
 matrix_container_global_registry_prefix: "{{ matrix_registry_prefix }}"
 
 custom_dnsmasq_docker_image: "{{ matrix_registry_prefix }}etke.cc/dnsmasq:{{ custom_dnsmasq_version }}"
-custom_kuma_docker_image: "{{ matrix_registry_prefix }}louislam/uptime-kuma:{{ custom_kuma_version }}"
-custom_miniflux_docker_image: "{{ matrix_registry_prefix }}miniflux/miniflux:{{ custom_miniflux_version }}"
-custom_radicale_docker_image: "{{ matrix_registry_prefix }}tomsquest/docker-radicale:{{ custom_radicale_version }}"
 matrix_client_element_docker_image: "{{ matrix_registry_prefix }}etke.cc/app:{{ matrix_client_element_version }}"
 
 backup_borg_docker_image_name_prefix: "{{ 'localhost/' if backup_borg_container_image_self_build else matrix_registry_prefix }}"
@@ -53,10 +50,13 @@ matrix_s3_goofys_docker_image_name_prefix: "{{ matrix_registry_prefix }}"
 matrix_synapse_auto_compressor_container_image_name_prefix: "{{ 'localhost/' if matrix_synapse_auto_compressor_container_image_self_build else matrix_registry_prefix }}"
 matrix_synapse_rust_synapse_compress_state_docker_image_name_prefix: "{{ matrix_registry_prefix }}"
 matrix_telegram_lottieconverter_docker_image_name_prefix: "{{ 'localhost/' if matrix_telegram_lottieconverter_container_image_self_build else matrix_registry_prefix }}"
+miniflux_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
 ntfy_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
 prometheus_node_exporter_docker_image_name_prefix: "{{ matrix_registry_prefix }}"
 prometheus_postgres_exporter_docker_image_name_prefix: "{{ matrix_registry_prefix }}"
+radicale_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
 redis_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
+uptime_kuma_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
 
 ########################################################################
 #                                                                      #
@@ -141,19 +141,105 @@ languagetool_container_labels_traefik_entrypoints: "{{ devture_traefik_entrypoin
 
 ########################################################################
 #                                                                      #
+# miniflux                                                             #
+#                                                                      #
+########################################################################
+
+miniflux_enabled: false
+
+miniflux_identifier: custom-miniflux
+
+miniflux_base_path: "{{ matrix_base_data_path }}/custom-miniflux"
+
+miniflux_uid: "{{ matrix_user_uid }}"
+miniflux_gid: "{{ matrix_user_gid }}"
+
+miniflux_container_network: "{{ matrix_nginx_proxy_container_network if matrix_playbook_reverse_proxy_type != 'playbook-managed-traefik' else miniflux_identifier }}"
+
+miniflux_container_additional_networks: |
+  {{
+    ([matrix_playbook_reverse_proxyable_services_additional_network] if matrix_playbook_reverse_proxyable_services_additional_network else [])
+    +
+    ([devture_postgres_container_network] if devture_postgres_enabled and miniflux_database_hostname == devture_postgres_identifier and devture_postgres_container_network != miniflux_container_network else [])
+  }}
+
+miniflux_container_labels_traefik_enabled: "{{ matrix_playbook_reverse_proxy_type in ['playbook-managed-traefik', 'other-traefik-container'] }}"
+miniflux_container_labels_traefik_docker_network: "{{ matrix_playbook_reverse_proxyable_services_additional_network }}"
+miniflux_container_labels_traefik_entrypoints: "{{ devture_traefik_entrypoint_primary }}"
+miniflux_container_labels_traefik_tls_certResolver: "{{ devture_traefik_certResolver_primary }}"
+
+miniflux_database_hostname: "{{ devture_postgres_connection_hostname if devture_postgres_enabled else '' }}"
+miniflux_database_password: "{{ '%s' | format(matrix_homeserver_generic_secret_key) | password_hash('sha512', 'miniflux.db', rounds=655555) | to_uuid }}"
+
+########################################################################
+#                                                                      #
+# radicale                                                             #
+#                                                                      #
+########################################################################
+
+radicale_enabled: false
+
+radicale_identifier: custom-radicale
+
+radicale_base_path: "{{ matrix_base_data_path }}/custom-radicale"
+radicale_config_path: "{{ radicale_base_path }}/conf"
+
+radicale_uid: "{{ matrix_user_uid }}"
+radicale_gid: "{{ matrix_user_gid }}"
+
+radicale_container_network: "{{ matrix_nginx_proxy_container_network if matrix_playbook_reverse_proxy_type != 'playbook-managed-traefik' else radicale_identifier }}"
+
+radicale_container_additional_networks: |
+  {{
+    ([matrix_playbook_reverse_proxyable_services_additional_network] if matrix_playbook_reverse_proxyable_services_additional_network else [])
+  }}
+
+radicale_container_labels_traefik_enabled: "{{ matrix_playbook_reverse_proxy_type in ['playbook-managed-traefik', 'other-traefik-container'] }}"
+radicale_container_labels_traefik_docker_network: "{{ matrix_playbook_reverse_proxyable_services_additional_network }}"
+radicale_container_labels_traefik_entrypoints: "{{ devture_traefik_entrypoint_primary }}"
+radicale_container_labels_traefik_tls_certResolver: "{{ devture_traefik_certResolver_primary }}"
+
+########################################################################
+#                                                                      #
+# uptime-kuma                                                          #
+#                                                                      #
+########################################################################
+
+uptime_kuma_enabled: false
+
+uptime_kuma_identifier: custom-kuma
+
+uptime_kuma_base_path: "{{ matrix_base_data_path }}/custom-kuma"
+
+uptime_kuma_uid: "{{ matrix_user_uid }}"
+uptime_kuma_gid: "{{ matrix_user_gid }}"
+
+uptime_kuma_container_network: "{{ matrix_nginx_proxy_container_network if matrix_playbook_reverse_proxy_type != 'playbook-managed-traefik' else uptime_kuma_identifier }}"
+
+uptime_kuma_container_additional_networks: |
+  {{
+    ([matrix_playbook_reverse_proxyable_services_additional_network] if matrix_playbook_reverse_proxyable_services_additional_network else [])
+  }}
+
+uptime_kuma_container_labels_traefik_enabled: "{{ matrix_playbook_reverse_proxy_type in ['playbook-managed-traefik', 'other-traefik-container'] }}"
+uptime_kuma_container_labels_traefik_docker_network: "{{ matrix_playbook_reverse_proxyable_services_additional_network }}"
+uptime_kuma_container_labels_traefik_entrypoints: "{{ devture_traefik_entrypoint_primary }}"
+uptime_kuma_container_labels_traefik_tls_certResolver: "{{ devture_traefik_certResolver_primary }}"
+
+########################################################################
+#                                                                      #
 # matrix/synapse-auto-compressor                                       #
 #                                                                      #
 ########################################################################
 
 # enabled by default for etke.cc on purpose
 matrix_synapse_auto_compressor_enabled: "{{ matrix_synapse_enabled | bool }}"
-matrix_synapse_auto_compressor_synapse_database: 'postgres://{{ matrix_synapse_database_user | urlencode() }}:{{ matrix_synapse_database_password | urlencode() }}@{{ matrix_synapse_database_host }}:{{ matrix_synapse_auto_compressor_database_port }}/{{ matrix_synapse_database_database }}'
-matrix_synapse_auto_compressor_systemd_required_services_list: |
-  {{
-    ['docker.service']
-    +
-    ([devture_postgres_identifier ~ '.service'] if devture_postgres_enabled else [])
-  }}
+
+# The cleanup role will delete our custom network, because it's unused unless the timer gets triggered.
+# As a workaround, we just reuse some other network.
+# Some servers don't use a playbook-managed Postgres, so we can't use `devture_postgres_container_network` everywhere.
+# The Synapse network is available everywhere where Synapse is enabled though.
+matrix_synapse_auto_compressor_container_network: "{{ matrix_synapse_container_network }}"
 
 ########################################################################
 #                                                                      #
@@ -163,6 +249,15 @@ matrix_synapse_auto_compressor_systemd_required_services_list: |
 
 nginx_migration_languagetool_enabled: "{{ languagetool_enabled and matrix_playbook_reverse_proxy_type == 'playbook-managed-nginx' }}"
 nginx_migration_languagetool_hostname: "{{ languagetool_hostname }}"
+
+nginx_migration_miniflux_enabled: "{{ miniflux_enabled and matrix_playbook_reverse_proxy_type == 'playbook-managed-nginx' }}"
+nginx_migration_miniflux_hostname: "{{ miniflux_hostname }}"
+
+nginx_migration_radicale_enabled: "{{ radicale_enabled and matrix_playbook_reverse_proxy_type == 'playbook-managed-nginx' }}"
+nginx_migration_radicale_hostname: "{{ radicale_hostname }}"
+
+nginx_migration_uptime_kuma_enabled: "{{ uptime_kuma_enabled and matrix_playbook_reverse_proxy_type == 'playbook-managed-nginx' }}"
+nginx_migration_uptime_kuma_hostname: "{{ uptime_kuma_hostname }}"
 
 ########################################################################
 #                                                                      #
@@ -183,13 +278,13 @@ devture_systemd_service_manager_services_list_additional: |
     +
     ([{'name': 'custom-dnsmasq.service', 'priority': 5000, 'groups': ['etke', 'dnsmasq']}] if custom_dnsmasq_enabled else [])
     +
-    ([{'name': 'custom-kuma.service', 'priority': 5000, 'groups': ['etke', 'kuma']}] if custom_kuma_enabled else [])
+    ([{'name': (uptime_kuma_identifier + '.service'), 'priority': 5000, 'groups': ['etke', 'uptime-kuma']}] if uptime_kuma_enabled else [])
     +
     ([{'name': (languagetool_identifier + '.service'), 'priority': 5000, 'groups': ['etke', 'languagetool']}] if languagetool_enabled else [])
     +
-    ([{'name': 'custom-miniflux.service', 'priority': 5000, 'groups': ['etke', 'miniflux']}] if custom_miniflux_enabled else [])
+    ([{'name': (miniflux_identifier + '.service'), 'priority': 5000, 'groups': ['etke', 'miniflux']}] if miniflux_enabled else [])
     +
-    ([{'name': 'custom-radicale.service', 'priority': 5000, 'groups': ['etke', 'radicale']}] if custom_radicale_enabled else [])
+    ([{'name': (radicale_identifier + '.service'), 'priority': 5000, 'groups': ['etke', 'radicale']}] if radicale_enabled else [])
     +
     ([{'name': 'custom-softserve.service', 'priority': 5000, 'groups': ['etke', 'softserve']}] if custom_softserve_enabled else [])
     +
@@ -205,5 +300,27 @@ devture_systemd_service_manager_services_list_additional: |
 ########################################################################
 #                                                                      #
 # /com.devture.ansible.role.systemd_service_manager                    #
+#                                                                      #
+########################################################################
+
+
+########################################################################
+#                                                                      #
+# com.devture.ansible.role.postgres                                    #
+#                                                                      #
+########################################################################
+
+devture_postgres_managed_databases_additional: |
+  {{
+    ([{
+      'name': miniflux_database_name,
+      'username': miniflux_database_username,
+      'password': miniflux_database_password,
+    }] if miniflux_enabled else [])
+  }}
+
+########################################################################
+#                                                                      #
+# /com.devture.ansible.role.postgres                                   #
 #                                                                      #
 ########################################################################

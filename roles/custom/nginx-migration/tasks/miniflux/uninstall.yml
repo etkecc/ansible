@@ -1,0 +1,6 @@
+---
+
+- name: Ensure Matrix nginx-proxy configuration for miniflux domain does not exists
+  ansible.builtin.file:
+    path: "{{ matrix_nginx_proxy_confd_path }}/matrix-custom-miniflux.conf"
+    state: absent

@@ -52,6 +52,7 @@ How? [bin/commit-msg.sh](./bin/commit-msg.sh)
 
 * **nginx-proxy-website** - host a static website on your base domain. Pull it from a git repo, run an arbitrary command (like `hugo`) and upload the results to your server
 * **restart** - one-by-one restarts (opposed to the `--tags start` that will stop all the services and start them after that)
+* <s>**synapse-auto-compressor** - periodic housekeeping of state groups</s> uploaded to upstream
 * <s>**room-purger** - purge matrix rooms through synapse admin api</s> removed
 * <s>**miounne** - deprecated [an old etke.cc back office](https://gitlab.com/etke.cc/miounne)</s> removed
 * <s>**cinny** - [cinny.in](https://cinny.in) matrix web client installation</s> uploaded to upstream

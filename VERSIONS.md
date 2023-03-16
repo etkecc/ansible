@@ -8,7 +8,7 @@
 * beeper_linkedin: v0.5.4
 * buscarron: v1.3.1
 * cactus_comments: 0.9.0
-* chatgpt: 2.2.1
+* chatgpt: 3.0.0
 * cinny: v2.2.4
 * container_socket_proxy: 0.1.1
 * corporal: 2.5.1
@@ -19,7 +19,7 @@
 * docker_compose: v2.11.1
 * draupnir: v1.80.1
 * dynamic_dns: v3.10.0-ls111
-* element: v1.11.24
+* element: v1.11.25
 * email2matrix: 1.1.0
 * etherpad: 1.8.18
 * facebook: v0.4.1
@@ -36,7 +36,6 @@
 * jitsi_ldap: "3"
 * jitsi_prosody_auth_matrix_user_verification_repo: 2839499cb03894d8cfc3e5b2219441427cb133d8 # v1.8.0
 * jitsi: stable-8319
-* kuma: 1.20.2-alpine
 * languagetool: 6.0-dockerupdate-3
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * ma1sd: 2.5.0
@@ -55,7 +54,7 @@
 * nginx_proxy: 1.23.3-alpine
 * ntfy: v2.1.2
 * postmoogle: v0.9.14
-* prometheus_blackbox_exporter: v0.22.0
+* prometheus_blackbox_exporter: v0.23.0
 * prometheus_nginxlog_exporter: v1.10.0
 * prometheus_node_exporter: v1.5.0
 * prometheus_postgres_exporter: v0.11.1
@@ -74,10 +73,11 @@
 * synapse_admin: 0.8.7
 * synapse_auto_compressor: v0.1.3
 * synapse_reverse_proxy_companion: 1.23.3-alpine
-* synapse: v1.78.0
+* synapse: v1.79.0
 * telegram: v0.13.0
 * traefik_certs_dumper: v2.8.1
 * traefik: v2.9.8
 * twitter: v0.1.5
+* uptime_kuma: 1.20.2
 * user_verification_service: v2.0.0
 * whatsapp: v0.8.2

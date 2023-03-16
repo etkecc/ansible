@@ -1,11 +1,12 @@
 ---
-custom_skopeo_target: registry.etke.cc
-custom_skopeo_ignore_text: etke.cc
-custom_skopeo_ignore_images:
+skopeo_target: registry.etke.cc
+skopeo_ignore_text: etke.cc
+skopeo_ignore_images:
   - "{{ etherpad_container_image }}"
   - "{{ matrix_email2matrix_docker_image }}"
   - "{{ matrix_client_element_docker_image }}"
-custom_skopeo_static:
+skopeo_static:
+  - dock.mau.dev/mautrix/signal:latest
   - dock.mau.dev/mautrix/instagram:latest
   - dock.mau.dev/mautrix/googlechat:latest
   - docker.io/matrixdotorg/synapse:v1.50.0

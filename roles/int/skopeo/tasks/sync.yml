@@ -1,0 +1,56 @@
+---
+
+- name: Initialize images vars
+  ansible.builtin.set_fact:
+    skopeo_sources: "{{ skopeo_static }}"
+    skopeo_targets: {}
+    skopeo_final: {}
+
+- name: Populate source images list
+  ansible.builtin.set_fact:
+    skopeo_sources: "{{ skopeo_sources + [lookup('vars', item)] }}"
+  loop: "{{ query('varnames', '^.*_(docker|container)_image(_v[0-9]+|_latest)?$') }}"
+
+- name: Unique source images list
+  ansible.builtin.set_fact:
+    skopeo_sources: "{{ skopeo_sources | unique | sort }}"
+
+- name: Print list of source images
+  debug:
+    msg: "{{ skopeo_sources }}"
+
+- name: Populate target images dict
+  ansible.builtin.set_fact:
+    skopeo_targets: "{{ skopeo_targets | combine({item: skopeo_target + item | regex_search('/.*')}) }}"
+  when: skopeo_ignore_text not in item and item not in skopeo_ignore_images
+  loop: "{{ skopeo_sources }}"
+
+- name: Check image status
+  ansible.builtin.uri:
+    url: "https://{{ skopeo_target }}/v2{{ item | regex_search('\/.*') | replace(':', '/manifests/') }}"
+    method: GET
+    status_code: [200, 404]
+    headers:
+      Accept: application/vnd.docker.distribution.manifest.list.v2+json, application/vnd.oci.image.index.v1+json
+  when: skopeo_ignore_text not in item and item not in skopeo_ignore_images
+  failed_when: false
+  loop: "{{ skopeo_sources }}"
+  register: skopeo_status
+
+- name: Populate final images dict
+  ansible.builtin.set_fact:
+    skopeo_final: "{{ skopeo_final | combine({item.item: skopeo_targets[item.item]}) }}"
+  when: skopeo_ignore_text not in item.item and item.item not in skopeo_ignore_images and (item.status | default(-1) != 200 or item.item.endswith(':latest'))
+  loop_control:
+    label: "{{ item.item }}"
+  loop: "{{ skopeo_status.results }}"
+
+- name: Final list of images to sync
+  ansible.builtin.debug:
+    msg: "{{ skopeo_final }}"
+
+- name: Sync image between registries
+  ansible.builtin.shell: "skopeo copy --all --preserve-digests docker://{{ item.key }} docker://{{ item.value }}"
+  loop: "{{ skopeo_final | dict2items }}"
+  become: false
+  delegate_to: 127.0.0.1

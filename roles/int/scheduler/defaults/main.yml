@@ -46,8 +46,8 @@ int_scheduler_http_port: '8080'
 int_scheduler_http_user:
 int_scheduler_http_password:
 
-# admin room id
-int_scheduler_roomid:
+int_scheduler_roomid_admin: ''
+int_scheduler_roomid_alert: ''
 
 # workers config
 int_scheduler_workers:
@@ -63,6 +63,9 @@ int_scheduler_recurring_mxid:
 int_scheduler_recurring_roomid:
 int_scheduler_recurring_eventid:
 int_scheduler_recurring_command:
+
+# prometheus service discovery config
+int_scheduler_psd_listcommand:
 
 # Sentry DSN
 int_scheduler_monitoring_sentry_dsn: ''

@@ -3,13 +3,9 @@
   hosts: "{{ target if target is defined else 'etke_servers' }}"
   become: true
   vars:
-    matrix_playbook_docker_installation_enabled: false # handled by galaxy/docker
+    matrix_playbook_docker_installation_enabled: false
 
   roles:
-    # CUSTOM
-    - galaxy/docker
-    # END CUSTOM
-
     # MATRIX
     - galaxy/com.devture.ansible.role.playbook_help
     - galaxy/com.devture.ansible.role.systemd_docker_base
@@ -73,6 +69,7 @@
     # - custom/matrix-cactus-comments # unused
     # - custom/matrix-rageshake
     - custom/matrix-synapse
+    - custom/matrix-synapse-auto-compressor
     - custom/matrix-synapse-reverse-proxy-companion
     # - custom/matrix-dendrite # unused
     # - custom/matrix-conduit # unused
@@ -102,17 +99,16 @@
     # END MATRIX
 
     # CUSTOM
-    - matrix/synapse-auto-compressor
     - int/prometheus-blackbox-exporter
     - int/scheduler
     - galaxy/swap
     - galaxy/security
     - custom/dnsmasq
-    - custom/kuma
+    - galaxy/uptime_kuma
     - galaxy/languagetool
     - custom/nginx-migration
-    - custom/miniflux
-    - custom/radicale
+    - galaxy/miniflux
+    - galaxy/radicale
     - custom/soft-serve
     - custom/wireguard
     - matrix/nginx-proxy-website
@@ -125,18 +121,18 @@
     - galaxy/backup_borg
     - custom/matrix-user-creator
     - custom/matrix-common-after
-    # - galaxy/com.devture.ansible.role.container_socket_proxy # unused
-    # - when: devture_traefik_enabled | bool # unused
-    #   role: galaxy/com.devture.ansible.role.traefik # unused
-    # - when: devture_traefik_certs_dumper_enabled | bool # unused
-    #   role: galaxy/com.devture.ansible.role.traefik_certs_dumper # unused
+    - galaxy/com.devture.ansible.role.container_socket_proxy
+    - when: devture_traefik_enabled | bool
+      role: galaxy/com.devture.ansible.role.traefik
+    - when: devture_traefik_certs_dumper_enabled | bool
+      role: galaxy/com.devture.ansible.role.traefik_certs_dumper
     - when: devture_systemd_service_manager_enabled | bool
       role: galaxy/com.devture.ansible.role.systemd_service_manager
     # END MATRIX
 
     # CUSTOM
     - galaxy/cleanup
-    - custom/skopeo
+    - int/skopeo
     # END CUSTOM
 
     # MATRIX
