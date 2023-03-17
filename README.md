@@ -3,8 +3,11 @@
 It's a wrapper around awesome [spantaleev/matrix-docker-ansible-deploy](https://github.com/spantaleev/matrix-docker-ansible-deploy) playbook
 with additional roles and playbooks, like system maintenance (check the list below).
 
-**NOTE**: we have [paid service - etke.cc](https://etke.cc/) - that will do all setup, configuration, and maintenance for you.
-That service is pretty cheap and has 2 purposes - invite new people to matrix and support the project.
+This Ansible playbook tries to make self-hosting and maintaining a Matrix server fairly easy. Still, running any service smoothly requires knowledge, time and effort.
+
+If you like the [FOSS](https://en.wikipedia.org/wiki/Free_and_open-source_software) spirit of this Ansible playbook, but prefer to put the responsibility on someone else, you can also [get a managed Matrix server from etke.cc](https://etke.cc/) - a service built on top of this Ansible playbook, which can help you run a Matrix server with ease.
+
+If you like learning and experimentation, but would rather reduce future maintenance effort, you can even go for a hybrid approach - self-hosting manually using this Ansible playbook at first and then transferring server maintenance to etke.cc at a later time.
 
 # Fork differences
 
@@ -34,47 +37,29 @@ How? [bin/commit-msg.sh](./bin/commit-msg.sh)
 
 > **NOTE**: requires [yq](https://github.com/mikefarah/yq)
 
+## Different focus
+
+The original playbook's focus is on matrix components only, while we at [etke.cc](https://etke.cc) focusing on wider list of goals:
+
+* system security
+* maintenance of the operating system
+* matrix components (that's the upstream's goal)
+* diversity of the components
+
 </details>
 
-## New roles
+# Prerequisites
 
-### System
-
-* **[init](https://gitlab.com/etke.cc/roles/init)** - run arbitrary commands before the play starts
-* **[swap](https://gitlab.com/etke.cc/roles/swap)** - automatically create and mount swap partition, based on host RAM
-* **[security](https://gitlab.com/etke.cc/roles/security)** - sshd hardening, fail2ban and ufw installation, automatic integration with other services/roles.
-* **[cleanup](https://gitlab.com/etke.cc/roles/cleanup)** - system package updates, cleanup, etc. The same for matrix components
-
-### Matrix
-
-> all matrix roles available in [roles/matrix](./roles/matrix).
-> Each role has a README.md file with description and basic how-to.
-
-* **nginx-proxy-website** - host a static website on your base domain. Pull it from a git repo, run an arbitrary command (like `hugo`) and upload the results to your server
-* **restart** - one-by-one restarts (opposed to the `--tags start` that will stop all the services and start them after that)
-* <s>**synapse-auto-compressor** - periodic housekeeping of state groups</s> uploaded to upstream
-* <s>**room-purger** - purge matrix rooms through synapse admin api</s> removed
-* <s>**miounne** - deprecated [an old etke.cc back office](https://gitlab.com/etke.cc/miounne)</s> removed
-* <s>**cinny** - [cinny.in](https://cinny.in) matrix web client installation</s> uploaded to upstream
-* <s>**honoroit** - [a helpdesk bot](https://gitlab.com/etke.cc/honoroit) to proxy user messages in 1:1 rooms into one big room with threads (check the link, it has pretty cool screenshots).</s> uploaded to upstream
-* <s>**buscarron** - [a new etke.cc back office](https://gitlab.com/etke.cc/buscarron)</s> uploaded to upstream
-* <s>nginx-proxy-health - deprecated simple healthcheck, based on systemd units. Works pretty bad, don't use it.</s> removed
-
-### Non-Matrix components
-
-* **dnsmasq** - recursive resolver with adblocker, like pi-hole, but even better! Automatic integration with wireguard
-* **kuma** - uptime-kuma monitoring servers. Pretty simple, yet powerful.
-* **languagetool** - "open-source grammarly" server
-* **miniflux** - an opinionated RSS reader
-* **radicale** - a CalDav/CardDav server, very small and straightforward. It must be in the suckless.org lists!
-* **soft-serve** - a tasty, self-hostable Git server for the command line
-* **wireguard** - simple and fast VPN, has automatic integration with dnsmasq
-* **prometheus-blackbox-exporter** - blackbox exporter
-* <s>**backup-borg** - automatic borg backups of the matrix server</s> uploaded to upstream
-
-### Integration to 3rdParty services
-
-* <s>**[git2bunny](https://gitlab.com/etke.cc/roles/git2bunny)** - like the `matrix/nginx-proxy-website`, but the target is your BunnyCDN storage</s> excluded
+* [yq](https://github.com/mikefarah/yq) - to generate VERSIONS.md
+* [git](https://git-scm.com/) - it's a git repo, you know
+* [sed](https://en.wikipedia.org/wiki/Sed) - to generate VERSIONS.md
+* [grep](https://en.wikipedia.org/wiki/Grep) - to generate VERSIONS.md
+* [agru](https://gitlab.com/etke.cc/int/agru) - to update requirements.yml
+* [just](https://just.systems/man/en/) - to automate routine
+* [docker](https://www.docker.com/) - to build containers
+* [skopeo](https://github.com/containers/skopeo) - to sync containers
+* [python](https://www.python.org/) - to run the playbook, build opml and hookshot lists
+* [ansible](https://www.ansible.com/) - to run the playbook
 
 # Usage
 

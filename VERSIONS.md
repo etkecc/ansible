@@ -4,7 +4,7 @@
 * appservice_slack: 2.0.2
 * appservice_webhooks: v1.0.3-01
 * backup_borg_borg: 1.2.3
-* backup_borg_borgmatic: 1.7.8
+* backup_borg_borgmatic: 1.7.9
 * beeper_linkedin: v0.5.4
 * buscarron: v1.3.1
 * cactus_comments: 0.9.0
@@ -43,7 +43,7 @@
 * matrix_registration_bot: latest
 * matrix_reminder_bot: release-v0.2.1
 * maubot: v0.4.0
-* miniflux: 2.0.42
+* miniflux: 2.0.43
 * mjolnir: v1.6.4
 * mx_puppet_discord: v0.1.1
 * mx_puppet_groupme: 533cccc8
