@@ -67,6 +67,8 @@ uptime_kuma_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
 # enforce nginx reverse proxy to allow proper per-host migration
 matrix_playbook_reverse_proxy_type: playbook-managed-nginx
 
+matrix_synapse_auto_compressor_container_network: "{{ devture_postgres_container_network }}"
+
 # ntfy web app
 ntfy_web_root: app
 
