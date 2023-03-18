@@ -60,6 +60,17 @@ uptime_kuma_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
 
 ########################################################################
 #                                                                      #
+# security                                                             #
+#                                                                      #
+########################################################################
+
+system_security_ssh_enabled: true
+system_security_ufw_enabled: true
+system_security_fail2ban_enabled: true
+system_security_fail2ban_sshd_port: "{{ system_security_ssh_port }}"
+
+########################################################################
+#                                                                      #
 # customization                                                        #
 #                                                                      #
 ########################################################################

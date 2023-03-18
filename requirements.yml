@@ -1,6 +1,10 @@
 - src: git+https://gitlab.com/etke.cc/roles/swap.git
   version: main
-- src: git+https://gitlab.com/etke.cc/roles/security.git
+- src: git+https://gitlab.com/etke.cc/roles/ufw.git
+  version: main
+- src: git+https://gitlab.com/etke.cc/roles/ssh.git
+  version: main
+- src: git+https://gitlab.com/etke.cc/roles/fail2ban.git
   version: main
 - src: git+https://gitlab.com/etke.cc/roles/cleanup.git
   version: main

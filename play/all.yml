@@ -102,7 +102,9 @@
     - int/prometheus-blackbox-exporter
     - int/scheduler
     - galaxy/swap
-    - galaxy/security
+    - galaxy/ssh
+    - galaxy/ufw
+    - galaxy/fail2ban
     - custom/dnsmasq
     - galaxy/uptime_kuma
     - galaxy/languagetool
