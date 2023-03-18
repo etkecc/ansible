@@ -67,6 +67,7 @@ uptime_kuma_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
 # enforce nginx reverse proxy to allow proper per-host migration
 matrix_playbook_reverse_proxy_type: playbook-managed-nginx
 
+# use the same network as postgres
 matrix_synapse_auto_compressor_container_network: "{{ devture_postgres_container_network }}"
 
 # ntfy web app
@@ -75,6 +76,19 @@ ntfy_web_root: app
 # etherpad with plugins and libreoffice
 etherpad_container_image: "{{ matrix_registry_prefix }}etke.cc/etherpad:{{ etherpad_version }}"
 etherpad_soffice: /usr/bin/soffice
+
+# matrix domain automatic redirect to all supported clients
+matrix_nginx_proxy_proxy_matrix_client_redirect_root_uri_to_domain: "{{ matrix_server_fqn_element if matrix_client_element_enabled else (matrix_server_fqn_cinny if matrix_client_cinny_enabled else (matrix_server_fqn_hydrogen if matrix_client_hydrogen_enabled else '')) }}"
+# determine if base domain automatic redirect to all supported clients is possible
+matrix_nginx_proxy_proxy_matrix_client_redirect_enabled: "{{ not matrix_nginx_proxy_website_enabled and (matrix_client_element_enabled or matrix_client_cinny_enabled or matrix_client_hydrogen_enabled) }}"
+# nginx config to automatically redirect to all supported clients
+matrix_nginx_proxy_proxy_matrix_client_redirect_config: |
+  location ~* ^/$ {
+    return 302 $scheme://{{ matrix_nginx_proxy_proxy_matrix_client_redirect_root_uri_to_domain }}$request_uri;
+  }
+# set the config for base domain
+matrix_nginx_proxy_proxy_domain_additional_server_configuration_blocks:
+  - "{{ matrix_nginx_proxy_proxy_matrix_client_redirect_config if matrix_nginx_proxy_proxy_matrix_client_redirect_enabled else '' }}"
 
 # element branding
 matrix_client_element_branding_authFooterLinks:
