@@ -99,7 +99,7 @@
     # END MATRIX
 
     # CUSTOM
-    - int/prometheus-blackbox-exporter
+    - galaxy/prometheus_blackbox_exporter
     - int/scheduler
     - galaxy/swap
     - galaxy/ssh

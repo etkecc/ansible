@@ -12,6 +12,8 @@
   version: v6.0-3
 - src: git+https://gitlab.com/etke.cc/roles/miniflux.git
   version: v2.0.43-0
+- src: git+https://gitlab.com/etke.cc/roles/prometheus_blackbox_exporter.git
+  version: v0.23.0-0
 - src: git+https://gitlab.com/etke.cc/roles/radicale.git
   version: v3.1.8.1-1
 - src: git+https://gitlab.com/etke.cc/roles/uptime_kuma.git
