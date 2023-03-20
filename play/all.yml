@@ -118,7 +118,7 @@
 
     # MATRIX
     - custom/matrix-coturn
-    - custom/matrix-aux
+    - galaxy/aux
     - galaxy/com.devture.ansible.role.postgres_backup
     - galaxy/backup_borg
     - custom/matrix-user-creator
