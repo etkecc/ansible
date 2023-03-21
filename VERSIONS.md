@@ -30,7 +30,7 @@
 * hangouts: latest
 * heisenbridge: 1.14.2
 * honoroit: v0.9.17
-* hookshot: 3.0.0
+* hookshot: 3.0.1
 * hydrogen: v0.3.8
 * instagram: v0.2.3
 * jitsi_ldap: "3"
@@ -58,9 +58,9 @@
 * prometheus_nginxlog_exporter: v1.10.0
 * prometheus_node_exporter: v1.5.0
 * prometheus_postgres_exporter: v0.11.1
-* prometheus: v2.42.0
+* prometheus: v2.43.0
 * radicale: 3.1.8.1
-* redis: 7.0.9
+* redis: 7.0.10
 * registration: v0.7.2
 * scheduler: latest
 * signal_daemon: 0.23.1
