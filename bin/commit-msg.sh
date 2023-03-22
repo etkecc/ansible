@@ -33,7 +33,7 @@ while IFS= read -r LINE; do
 		IFS=" " read -ra lineparts <<< "$LINE"
 		item=$(echo "${lineparts[1],,}" | sed -e 's/://g')
 		version="${lineparts[2],,}"
-		CHANGES["$item"]="${CHANGES[${item}]}${version}"
+		CHANGES["$item"]="${CHANGES[${item}]:-}${version}"
 	fi
 done <<< "$DIFF"
 

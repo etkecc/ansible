@@ -57,9 +57,10 @@
 * prometheus_blackbox_exporter: v0.23.0
 * prometheus_nginxlog_exporter: v1.10.0
 * prometheus_node_exporter: v1.5.0
-* prometheus_postgres_exporter: v0.11.1
+* prometheus_postgres_exporter: v0.12.0
 * prometheus: v2.43.0
 * radicale: 3.1.8.1
+* rageshake: 1.9.0
 * redis: 7.0.10
 * registration: v0.7.2
 * scheduler: latest
@@ -76,7 +77,7 @@
 * synapse: v1.79.0
 * telegram: v0.13.0
 * traefik_certs_dumper: v2.8.1
-* traefik: v2.9.8
+* traefik: v2.9.9
 * twitter: v0.1.5
 * uptime_kuma: 1.21.0
 * user_verification_service: v2.0.0
