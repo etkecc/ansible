@@ -1,13 +1,26 @@
 ---
 
 - block:
+    - when: nginx_migration_honoroit_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/honoroit/install.yml"
+  tags:
+    - setup-all
+    - setup-bot-honoroit
+    - setup-nginx-proxy
+    - install-all
+    - install-bot-honoroit
+    - install-nginx-proxy
+
+- block:
     - when: nginx_migration_languagetool_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/languagetool/install.yml"
   tags:
     - setup-all
     - setup-languagetool
+    - setup-nginx-proxy
     - install-all
     - install-languagetool
+    - install-nginx-proxy
 
 - block:
     - when: not nginx_migration_languagetool_enabled | bool
@@ -22,8 +35,10 @@
   tags:
     - setup-all
     - setup-miniflux
+    - setup-nginx-proxy
     - install-all
     - install-miniflux
+    - install-nginx-proxy
 
 - block:
     - when: not nginx_migration_miniflux_enabled | bool
@@ -38,8 +53,10 @@
   tags:
     - setup-all
     - setup-radicale
+    - setup-nginx-proxy
     - install-all
     - install-radicale
+    - install-nginx-proxy
 
 - block:
     - when: not nginx_migration_radicale_enabled | bool
@@ -54,8 +71,10 @@
   tags:
     - setup-all
     - setup-radicale
+    - setup-nginx-proxy
     - install-all
     - install-radicale
+    - install-nginx-proxy
 
 - block:
     - when: not nginx_migration_uptime_kuma_enabled | bool

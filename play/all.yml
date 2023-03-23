@@ -96,7 +96,6 @@
     - custom/matrix-email2matrix
     - custom/matrix-sygnal
     - galaxy/ntfy
-    - custom/matrix-nginx-proxy
     # END MATRIX
 
     # CUSTOM
@@ -117,6 +116,7 @@
     # END CUSTOM
 
     # MATRIX
+    - custom/matrix-nginx-proxy
     - custom/matrix-coturn
     - galaxy/aux
     - galaxy/com.devture.ansible.role.postgres_backup

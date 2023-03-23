@@ -11,3 +11,5 @@ nginx_migration_radicale_hostname: ''
 
 nginx_migration_uptime_kuma_enabled: false
 nginx_migration_uptime_kuma_hostname: ''
+
+nginx_migration_honoroit_enabled: false
