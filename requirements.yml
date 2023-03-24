@@ -1,3 +1,4 @@
+- include: upstream/requirements.yml
 - src: git+https://gitlab.com/etke.cc/roles/swap.git
   version: main
 - src: git+https://gitlab.com/etke.cc/roles/ufw.git

@@ -67,7 +67,6 @@
     <outline text="ntfy" title="ntfy" type="rss" htmlUrl="https://github.com/binwiederhier/ntfy" xmlUrl="https://github.com/binwiederhier/ntfy/releases.atom" />
     <outline text="postmoogle" title="postmoogle" type="rss" htmlUrl="https://gitlab.com/etke.cc/postmoogle" xmlUrl="https://gitlab.com/etke.cc/postmoogle/-/tags?format=atom" />
     <outline text="prometheus" title="prometheus" type="rss" htmlUrl="https://github.com/prometheus/prometheus" xmlUrl="https://github.com/prometheus/prometheus/releases.atom" />
-    <outline text="prometheus_blackbox_exporter" title="prometheus_blackbox_exporter" type="rss" htmlUrl="https://github.com/prometheus/blackbox_exporter" xmlUrl="https://github.com/prometheus/blackbox_exporter/releases.atom" />
     <outline text="prometheus_node_exporter" title="prometheus_node_exporter" type="rss" htmlUrl="https://github.com/prometheus/node_exporter" xmlUrl="https://github.com/prometheus/node_exporter/releases.atom" />
     <outline text="prometheus_postgres_exporter" title="prometheus_postgres_exporter" type="rss" htmlUrl="https://github.com/prometheus-community/postgres_exporter" xmlUrl="https://github.com/prometheus-community/postgres_exporter/releases.atom" />
     <outline text="radicale" title="radicale" type="rss" htmlUrl="https://github.com/tomsquest/docker-radicale" xmlUrl="https://github.com/tomsquest/docker-radicale/releases.atom" />
