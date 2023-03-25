@@ -54,7 +54,7 @@ The original playbook's focus is on matrix components only, while we at [etke.cc
 * [git](https://git-scm.com/) - it's a git repo, you know
 * [sed](https://en.wikipedia.org/wiki/Sed) - to generate VERSIONS.md
 * [grep](https://en.wikipedia.org/wiki/Grep) - to generate VERSIONS.md
-* [agru](https://gitlab.com/etke.cc/int/agru) - to update requirements.yml
+* [agru](https://gitlab.com/etke.cc/int/agru) - to update roles
 * [just](https://just.systems/man/en/) - to automate routine
 * [docker](https://www.docker.com/) - to build containers
 * [skopeo](https://github.com/containers/skopeo) - to sync containers

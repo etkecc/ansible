@@ -13,19 +13,24 @@ upstream:
 
 # pull roles
 roles:
-    @echo "updating roles..."
-    @-agru
-    @ansible-galaxy install -r requirements.yml -p roles/galaxy/
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ -x "$(command -v agru)" ]; then
+        agru
+    else
+        ansible-galaxy install -r requirements.yml -p roles/galaxy/ --force
+    fi
 
 # pull dependencies
 dependencies: submodules roles
 
 # pull all updates
-update: upstream roles opml hookshot versions
+update: upstream && opml hookshot versions
+    @agru -u
 
 # update VERSIONS.md file using the actual versions from roles' files
 versions:
-    echo "generating versions diff..."
+    @echo "generating versions diff..."
     @bash bin/versions.sh
     @git --no-pager diff --no-ext-diff VERSIONS.md
 
