@@ -110,7 +110,7 @@
     - custom/nginx-migration
     - galaxy/miniflux
     - galaxy/radicale
-    - custom/soft-serve
+    - galaxy/soft_serve
     - custom/wireguard
     - matrix/nginx-proxy-website
     # END CUSTOM

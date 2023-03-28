@@ -17,3 +17,5 @@
   version: v3.1.8.1-2
 - src: git+https://gitlab.com/etke.cc/roles/uptime_kuma.git
   version: v1.21.1-0
+- src: git+https://gitlab.com/etke.cc/roles/soft_serve.git
+  version: v0.4.6-0

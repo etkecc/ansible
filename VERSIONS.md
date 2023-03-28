@@ -29,7 +29,7 @@
 * hangouts: latest
 * heisenbridge: 1.14.2
 * honoroit: v0.9.17
-* hookshot: 3.0.1
+* hookshot: 3.1.0
 * hydrogen: v0.3.8
 * instagram: v0.2.3
 * jitsi_ldap: "3"
@@ -68,7 +68,7 @@
 * slack: latest
 * sliding_sync: v0.99.1
 * sms_bridge: 0.5.7
-* softserve: v0.4.6
+* soft_serve: v0.4.6
 * sygnal: v0.12.0
 * synapse_admin: 0.8.7
 * synapse_auto_compressor: v0.1.3

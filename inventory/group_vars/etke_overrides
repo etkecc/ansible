@@ -256,6 +256,21 @@ uptime_kuma_container_labels_traefik_tls_certResolver: "{{ devture_traefik_certR
 
 ########################################################################
 #                                                                      #
+# soft-serve                                                           #
+#                                                                      #
+########################################################################
+
+soft_serve_enabled: false
+
+soft_serve_identifier: custom-softserve
+
+soft_serve_base_path: "{{ matrix_base_data_path }}/softserve"
+
+soft_serve_uid: "{{ matrix_user_uid }}"
+soft_serve_gid: "{{ matrix_user_gid }}"
+
+########################################################################
+#                                                                      #
 # matrix/synapse-auto-compressor                                       #
 #                                                                      #
 ########################################################################
@@ -322,8 +337,6 @@ devture_systemd_service_manager_up_verification_enabled: false
 
 devture_systemd_service_manager_services_list_additional: |
   {{
-    ([{'name': 'matrix-synapse-auto-compressor.timer', 'priority': 5000, 'groups': ['matrix', 'synapse-auto-compressor']}] if matrix_synapse_auto_compressor_enabled else [])
-    +
     ([{'name': 'custom-dnsmasq.service', 'priority': 5000, 'groups': ['etke', 'dnsmasq']}] if custom_dnsmasq_enabled else [])
     +
     ([{'name': (uptime_kuma_identifier + '.service'), 'priority': 5000, 'groups': ['etke', 'uptime-kuma']}] if uptime_kuma_enabled else [])
@@ -334,7 +347,7 @@ devture_systemd_service_manager_services_list_additional: |
     +
     ([{'name': (radicale_identifier + '.service'), 'priority': 5000, 'groups': ['etke', 'radicale']}] if radicale_enabled else [])
     +
-    ([{'name': 'custom-softserve.service', 'priority': 5000, 'groups': ['etke', 'softserve']}] if custom_softserve_enabled else [])
+    ([{'name': soft_serve_identifier + '.service', 'priority': 5000, 'groups': ['etke', 'softserve', 'soft-serve']}] if soft_serve_enabled else [])
     +
     ([{'name': ('wg-quick@' + custom_wireguard_interface + '.service'), 'priority': 5000, 'groups': ['etke', 'wireguard']}] if custom_wireguard_enabled else [])
     +

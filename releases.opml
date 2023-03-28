@@ -77,7 +77,7 @@
     <outline text="reminder-bot" title="reminder-bot" type="rss" htmlUrl="https://github.com/anoadragon453/matrix-reminder-bot" xmlUrl="https://github.com/anoadragon453/matrix-reminder-bot/releases.atom" />
     <outline text="scheduler" title="scheduler" type="rss" htmlUrl="https://gitlab.com/etke.cc/int/scheduler" xmlUrl="https://gitlab.com/etke.cc/int/scheduler/-/tags?format=atom" />
     <outline text="sms" title="sms" type="rss" htmlUrl="https://github.com/benkuly/matrix-sms-bridge" xmlUrl="https://github.com/benkuly/matrix-sms-bridge/releases.atom" />
-    <outline text="soft-serve" title="soft-serve" type="rss" htmlUrl="https://github.com/charmbracelet/soft-serve.git" xmlUrl="https://github.com/charmbracelet/soft-serve/releases.atom" />
+    <outline text="soft_serve" title="soft_serve" type="rss" htmlUrl="https://github.com/charmbracelet/soft-serve" xmlUrl="https://github.com/charmbracelet/soft-serve/releases.atom" />
     <outline text="sygnal" title="sygnal" type="rss" htmlUrl="https://github.com/matrix-org/sygnal" xmlUrl="https://github.com/matrix-org/sygnal/releases.atom" />
     <outline text="synapse" title="synapse" type="rss" htmlUrl="https://github.com/matrix-org/synapse" xmlUrl="https://github.com/matrix-org/synapse/releases.atom" />
     <outline text="synapse-admin" title="synapse-admin" type="rss" htmlUrl="https://github.com/Awesome-Technologies/synapse-admin" xmlUrl="https://github.com/Awesome-Technologies/synapse-admin/releases.atom" />
