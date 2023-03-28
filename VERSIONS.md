@@ -3,9 +3,8 @@
 * appservice_kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * appservice_slack: 2.0.2
 * appservice_webhooks: v1.0.3-01
-* backup_borg_borg: 1.2.4
-* backup_borg_borgmatic: 1.7.9
-* beeper_linkedin: v0.5.4
+* borg: 1.2.4
+* borgmatic: 1.7.10
 * buscarron: v1.3.1
 * cactus_comments: 0.9.0
 * chatgpt: 3.0.0
@@ -38,6 +37,7 @@
 * jitsi: stable-8319
 * languagetool: 6.0-dockerupdate-4
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
+* linkedin: v0.5.4
 * ma1sd: 2.5.0
 * mailer: 4.96-r1-0
 * matrix_registration_bot: latest

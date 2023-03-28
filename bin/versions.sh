@@ -15,4 +15,4 @@ Script will generate VERSIONS.md file based on component versions present in rol
     exit
 fi
 
-grep -rhE ".*_version: " ./upstream/roles/*/*/defaults/main.yml ./roles/*/*/defaults/main.yml | grep -Ev '{{|master|main|""' | sed -e "s/matrix_//;s/custom_//;s/int_//;s/_version//;/^synapse_default/d;/^synapse_ext/d;/^mailer_container/d;s/bot_//;s/client_//;s/mautrix_//;s/devture_//" | sort | yq eval -M -P | sed "s/^/\*\ /" > $PWD/VERSIONS.md
+grep -rhE ".*_version: " ./upstream/roles/*/*/defaults/main.yml ./roles/*/*/defaults/main.yml | grep -Ev '{{|master|main|""' | sed -e "s/matrix_//;s/custom_//;s/int_//;s/_version//;/^synapse_default/d;/^synapse_ext/d;/^mailer_container/d;s/bot_//;s/client_//;s/mautrix_//;s/devture_//;s/beeper_//;s/backup_borg_//" | sort | yq eval -M -P | sed "s/^/\*\ /" > $PWD/VERSIONS.md
