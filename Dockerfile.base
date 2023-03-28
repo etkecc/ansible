@@ -1,9 +1,16 @@
+FROM registry.gitlab.com/etke.cc/base/build AS builder
+ARG AGRU=v0.1.2
+
+RUN git clone --depth 1 -b $AGRU https://gitlab.com/etke.cc/int/agru.git && \
+    cd agru && just build && mv agru /bin/agru && cd .. && rm -rf agru
+
 FROM alpine:3.17.2
 ARG ANSIBLE_CORE=2.14.4
 ARG ANSIBLE=7.3.0
 
 ENV PATH="/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin"
 
+COPY --from=builder /bin/agru /bin/agru
 
 RUN apk --no-cache add python3 ca-certificates git just openssh skopeo && \
 		apk --no-cache add --virtual builddeps alpine-sdk py3-cffi py3-pip && \
