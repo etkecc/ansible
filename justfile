@@ -14,12 +14,13 @@ upstream:
 # pull roles
 roles:
     #!/usr/bin/env sh
-    set -euo pipefail
-    if [ -x "$(command -v agru)" ]; then
-        agru
-    else
-        ansible-galaxy install -r requirements.yml -p roles/galaxy/ --force
-    fi
+    ansible-galaxy install -r requirements.yml -p roles/galaxy/ --force
+    # set -euo pipefail
+    # if [ -x "$(command -v agru)" ]; then
+    #     agru
+    # else
+    #     ansible-galaxy install -r requirements.yml -p roles/galaxy/ --force
+    # fi
 
 # pull dependencies
 dependencies: submodules roles
