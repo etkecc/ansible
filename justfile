@@ -16,7 +16,7 @@ roles:
     #!/usr/bin/env sh
     set -euo pipefail
     if [ -x "$(command -v agru)" ]; then
-        echo "agru ${AGRU_CLEANUP:-}"
+        agru ${AGRU_CLEANUP:-}
     else
         ansible-galaxy install -r requirements.yml -p roles/galaxy/ --force
     fi
