@@ -6,7 +6,7 @@ RUN git clone --depth 1 -b $AGRU https://gitlab.com/etke.cc/int/agru.git && \
 
 FROM alpine:3.17.2
 ARG ANSIBLE_CORE=2.14.4
-ARG ANSIBLE=7.3.0
+ARG ANSIBLE=7.4.0
 
 ENV PATH="/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin"
 
