@@ -12,6 +12,17 @@
     - install-nginx-proxy
 
 - block:
+    - when: nginx_migration_buscarron_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/buscarron/install.yml"
+  tags:
+    - setup-all
+    - setup-bot-buscarron
+    - setup-nginx-proxy
+    - install-all
+    - install-bot-buscarron
+    - install-nginx-proxy
+
+- block:
     - when: nginx_migration_languagetool_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/languagetool/install.yml"
   tags:

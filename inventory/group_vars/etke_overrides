@@ -322,6 +322,8 @@ nginx_migration_uptime_kuma_hostname: "{{ uptime_kuma_hostname }}"
 
 nginx_migration_honoroit_enabled: "{{ matrix_bot_honoroit_enabled and matrix_playbook_reverse_proxy_type == 'playbook-managed-nginx' }}"
 
+nginx_migration_buscarron_enabled: "{{ matrix_bot_buscarron_enabled and matrix_playbook_reverse_proxy_type == 'playbook-managed-nginx' }}"
+
 ########################################################################
 #                                                                      #
 # com.devture.ansible.role.systemd_service_manager                     #
