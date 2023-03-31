@@ -18,7 +18,7 @@
 * docker_compose: v2.11.1
 * draupnir: v1.80.1
 * dynamic_dns: v3.10.0-ls111
-* element: v1.11.26
+* element: v1.11.27
 * email2matrix: 1.1.0
 * etherpad: 1.8.18
 * facebook: v0.4.1
@@ -52,7 +52,7 @@
 * mx_puppet_steam: latest
 * mx_puppet_twitter: latest
 * nginx_proxy: 1.23.3-alpine
-* ntfy: v2.3.0
+* ntfy: v2.3.1
 * postmoogle: v0.9.14
 * prometheus_nginxlog_exporter: v1.10.0
 * prometheus_node_exporter: v1.5.0
