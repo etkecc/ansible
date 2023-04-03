@@ -18,4 +18,4 @@
 - src: git+https://gitlab.com/etke.cc/roles/ufw.git
   version: main
 - src: git+https://gitlab.com/etke.cc/roles/uptime_kuma.git
-  version: v1.21.1-0
+  version: v1.21.2-0
