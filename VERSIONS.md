@@ -33,7 +33,7 @@
 * hydrogen: v0.3.8
 * instagram: v0.2.3
 * jitsi_ldap: "3"
-* jitsi_prosody_auth_matrix_user_verification_repo: 2839499cb03894d8cfc3e5b2219441427cb133d8 # v1.8.0
+* jitsi_prosody_auth_user_verification_repo: 2839499cb03894d8cfc3e5b2219441427cb133d8 # v1.8.0
 * jitsi: stable-8319
 * languagetool: 6.0-dockerupdate-4
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
@@ -54,6 +54,7 @@
 * nginx_proxy: 1.23.3-alpine
 * ntfy: v2.3.1
 * postmoogle: v0.9.14
+* prometheus_blackbox_exporter: v0.23.0
 * prometheus_nginxlog_exporter: v1.10.0
 * prometheus_node_exporter: v1.5.0
 * prometheus_postgres_exporter: v0.12.0
