@@ -11,14 +11,14 @@
 * cinny: v2.2.6
 * container_socket_proxy: 0.1.1
 * corporal: 2.5.2
-* coturn: 4.6.1-r2
+* coturn: 4.6.1-r3
 * dimension: latest
 * discord: v0.2.0
 * dnsmasq: latest
 * docker_compose: v2.11.1
 * draupnir: v1.80.1
 * dynamic_dns: v3.10.0-ls111
-* element: v1.11.27
+* element: v1.11.28
 * email2matrix: 1.1.0
 * etherpad: 1.8.18
 * facebook: v0.4.1
@@ -54,7 +54,6 @@
 * nginx_proxy: 1.23.3-alpine
 * ntfy: v2.3.1
 * postmoogle: v0.9.14
-* prometheus_blackbox_exporter: v0.23.0
 * prometheus_nginxlog_exporter: v1.10.0
 * prometheus_node_exporter: v1.5.0
 * prometheus_postgres_exporter: v0.12.0
