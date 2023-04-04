@@ -1,117 +1,4 @@
 ---
-
-########################################################################
-#                                                                      #
-# registry overrides                                                   #
-#                                                                      #
-########################################################################
-
-matrix_registry_prefix: registry.etke.cc/
-matrix_container_global_registry_prefix: "{{ matrix_registry_prefix }}"
-
-custom_dnsmasq_docker_image: "{{ matrix_registry_prefix }}etke.cc/dnsmasq:{{ custom_dnsmasq_version }}"
-matrix_client_element_docker_image: "{{ matrix_registry_prefix }}etke.cc/app:{{ matrix_client_element_version }}"
-
-backup_borg_docker_image_name_prefix: "{{ 'localhost/' if backup_borg_container_image_self_build else matrix_registry_prefix }}"
-devture_postgres_backup_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
-devture_traefik_certs_dumper_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
-devture_traefik_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
-docker_postgres_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
-grafana_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
-jitsi_jicofo_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
-jitsi_jvb_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
-jitsi_web_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
-jitsi_prosody_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
-int_scheduler_docker_image_name_prefix: "{{ matrix_registry_prefix }}"
-languagetool_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
-matrix_appservice_discord_docker_image_name_prefix: "{{ 'localhost/' if matrix_appservice_discord_container_image_self_build else matrix_registry_prefix }}"
-matrix_beeper_linkedin_docker_image_name_prefix: "{{ 'localhost/' if matrix_beeper_linkedin_container_image_self_build else matrix_registry_prefix }}"
-matrix_bot_buscarron_docker_image_name_prefix: "{{ 'localhost/' if matrix_bot_buscarron_container_image_self_build else matrix_registry_prefix }}"
-matrix_bot_chatgpt_docker_image_name_prefix: "{{ 'localhost/' if matrix_bot_chatgpt_container_image_self_build else matrix_registry_prefix }}"
-matrix_bot_honoroit_docker_image_name_prefix: "{{ 'localhost/' if matrix_bot_honoroit_container_image_self_build else matrix_registry_prefix }}"
-matrix_bot_maubot_docker_image_name_prefix: "{{ 'localhost/' if matrix_bot_maubot_container_image_self_build else matrix_registry_prefix }}"
-matrix_bot_postmoogle_docker_image_name_prefix: "{{ 'localhost/' if matrix_bot_postmoogle_container_image_self_build else matrix_registry_prefix }}"
-matrix_client_hydrogen_docker_image_name_prefix: "{{ 'localhost/' if matrix_client_hydrogen_container_image_self_build else matrix_registry_prefix }}"
-matrix_conduit_docker_image_name_prefix: "{{ matrix_registry_prefix }}"
-matrix_dendrite_docker_image_name_prefix: "{{ matrix_registry_prefix }}"
-matrix_mautrix_discord_docker_image_name_prefix: "{{ 'localhost/' if matrix_mautrix_discord_container_image_self_build else matrix_registry_prefix }}"
-matrix_mautrix_facebook_docker_image_name_prefix: "{{ 'localhost/' if matrix_mautrix_facebook_container_image_self_build else matrix_registry_prefix }}"
-matrix_mautrix_googlechat_docker_image_name_prefix: "{{ 'localhost/' if matrix_mautrix_googlechat_container_image_self_build else matrix_registry_prefix }}"
-matrix_mautrix_hangouts_docker_image_name_prefix: "{{ 'localhost/' if matrix_mautrix_hangouts_container_image_self_build else matrix_registry_prefix }}"
-matrix_mautrix_instagram_docker_image_name_prefix: "{{ 'localhost/' if matrix_mautrix_instagram_container_image_self_build else matrix_registry_prefix }}"
-matrix_mautrix_signal_daemon_docker_image_name_prefix: "{{ matrix_registry_prefix }}"
-matrix_mautrix_signal_docker_image_name_prefix: "{{ 'localhost/' if matrix_mautrix_signal_container_image_self_build else matrix_registry_prefix }}"
-matrix_mautrix_slack_docker_image_name_prefix: "{{ 'localhost/' if matrix_mautrix_slack_container_image_self_build else matrix_registry_prefix }}"
-matrix_mautrix_telegram_docker_image_name_prefix: "{{ 'localhost/' if matrix_mautrix_telegram_container_image_self_build else matrix_registry_prefix }}"
-matrix_mautrix_twitter_docker_image_name_prefix: "{{ 'localhost/' if matrix_mautrix_twitter_container_image_self_build else matrix_registry_prefix }}"
-matrix_mautrix_whatsapp_docker_image_name_prefix: "{{ 'localhost/' if matrix_mautrix_whatsapp_container_image_self_build else matrix_registry_prefix }}"
-matrix_mx_puppet_discord_docker_image_name_prefix: "{{ 'localhost/' if matrix_mx_puppet_discord_container_image_self_build else matrix_registry_prefix }}"
-matrix_mx_puppet_groupme_docker_image_name_prefix: "{{ 'localhost/' if matrix_mx_puppet_groupme_container_image_self_build else matrix_registry_prefix }}"
-matrix_mx_puppet_slack_docker_image_name_prefix: "{{ 'localhost/' if matrix_mx_puppet_slack_container_image_self_build else matrix_registry_prefix }}"
-matrix_prometheus_nginxlog_exporter_docker_image_name_prefix: "{{ matrix_registry_prefix }}martin-helmich/"
-matrix_rageshake_container_image_name_prefix: "{{ 'localhost/' if matrix_rageshake_container_image_self_build else matrix_registry_prefix }}"
-matrix_s3_goofys_docker_image_name_prefix: "{{ matrix_registry_prefix }}"
-matrix_synapse_auto_compressor_container_image_name_prefix: "{{ 'localhost/' if matrix_synapse_auto_compressor_container_image_self_build else matrix_registry_prefix }}"
-matrix_synapse_docker_image_registry_prefix: "{{ matrix_registry_prefix }}"
-matrix_synapse_rust_synapse_compress_state_docker_image_name_prefix: "{{ matrix_registry_prefix }}"
-matrix_telegram_lottieconverter_docker_image_name_prefix: "{{ 'localhost/' if matrix_telegram_lottieconverter_container_image_self_build else matrix_registry_prefix }}"
-miniflux_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
-ntfy_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
-prometheus_blackbox_exporter_docker_image_name_prefix: "{{ matrix_registry_prefix }}"
-prometheus_node_exporter_docker_image_name_prefix: "{{ matrix_registry_prefix }}"
-prometheus_postgres_exporter_docker_image_name_prefix: "{{ matrix_registry_prefix }}"
-radicale_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
-redis_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
-uptime_kuma_container_image_registry_prefix: "{{ matrix_registry_prefix }}"
-
-########################################################################
-#                                                                      #
-# security                                                             #
-#                                                                      #
-########################################################################
-
-system_security_ssh_enabled: true
-system_security_ufw_enabled: true
-system_security_fail2ban_enabled: true
-system_security_fail2ban_sshd_port: "{{ system_security_ssh_port }}"
-
-########################################################################
-#                                                                      #
-# customization                                                        #
-#                                                                      #
-########################################################################
-
-# enforce nginx reverse proxy to allow proper per-host migration
-matrix_playbook_reverse_proxy_type: playbook-managed-nginx
-
-# use the same network as postgres
-matrix_synapse_auto_compressor_container_network: "{{ devture_postgres_container_network }}"
-
-# ntfy web app
-ntfy_web_root: app
-
-# etherpad with plugins and libreoffice
-etherpad_container_image: "{{ matrix_registry_prefix }}etke.cc/etherpad:{{ etherpad_version }}"
-etherpad_soffice: /usr/bin/soffice
-
-# matrix domain automatic redirect to all supported clients
-matrix_nginx_proxy_proxy_matrix_client_redirect_root_uri_to_domain: "{{ matrix_server_fqn_element if matrix_client_element_enabled else (matrix_server_fqn_cinny if matrix_client_cinny_enabled else (matrix_server_fqn_hydrogen if matrix_client_hydrogen_enabled else '')) }}"
-# determine if base domain automatic redirect to all supported clients is possible
-matrix_nginx_proxy_proxy_matrix_client_redirect_enabled: "{{ not matrix_nginx_proxy_website_enabled and (matrix_client_element_enabled or matrix_client_cinny_enabled or matrix_client_hydrogen_enabled) }}"
-# nginx config to automatically redirect to all supported clients
-matrix_nginx_proxy_proxy_matrix_client_redirect_config: |
-  location ~* ^/$ {
-    return 302 $scheme://{{ matrix_nginx_proxy_proxy_matrix_client_redirect_root_uri_to_domain }}$request_uri;
-  }
-# set the config for base domain
-matrix_nginx_proxy_proxy_domain_additional_server_configuration_blocks:
-  - "{{ matrix_nginx_proxy_proxy_matrix_client_redirect_config if matrix_nginx_proxy_proxy_matrix_client_redirect_enabled else '' }}"
-
-# element branding
-matrix_client_element_branding_authFooterLinks:
-  - text: Managed by etke.cc
-    url: https://etke.cc
-
 ########################################################################
 #                                                                      #
 # migration from disabled roles                                        #
@@ -121,29 +8,6 @@ matrix_client_element_branding_authFooterLinks:
 # just copied from disabled roles
 matrix_dendrite_max_file_size_bytes: 1073741824
 matrix_conduit_max_request_size: 20_000_000
-
-########################################################################
-#                                                                      #
-# monitoring                                                           #
-#                                                                      #
-########################################################################
-
-matrix_nginx_proxy_proxy_matrix_metrics_enabled: yes
-matrix_prometheus_services_proxy_connect_prometheus_node_exporter_metrics_proxying_enabled: yes
-matrix_nginx_proxy_proxy_matrix_metrics_basic_auth_enabled: yes
-matrix_nginx_proxy_proxy_matrix_metrics_basic_auth_username: "{{ '%s' | format(matrix_homeserver_generic_secret_key) | password_hash('sha512', 'metrics.username', rounds=655555) | to_uuid }}"
-matrix_nginx_proxy_proxy_matrix_metrics_basic_auth_password: "{{ '%s' | format(matrix_homeserver_generic_secret_key) | password_hash('sha512', 'metrics.password', rounds=655555) | to_uuid }}"
-prometheus_node_exporter_enabled: yes
-prometheus_node_exporter_process_extra_arguments:
-  - "--collector.disable-defaults"
-  - "--collector.cpu"
-  - "--collector.filesystem"
-  - "--collector.meminfo"
-  - "--collector.systemd"
-  - "--collector.uname"
-prometheus_node_exporter_container_extra_arguments:
-  - "--security-opt apparmor=unconfined"
-  - "--mount type=bind,src=/var/run/dbus/system_bus_socket,dst=/var/run/dbus/system_bus_socket,ro,bind-propagation=rslave"
 
 ########################################################################
 #                                                                      #
@@ -289,24 +153,6 @@ matrix_synapse_auto_compressor_enabled: "{{ matrix_synapse_enabled | bool }}"
 # The Synapse network is available everywhere where Synapse is enabled though.
 matrix_synapse_auto_compressor_container_network: "{{ matrix_synapse_container_network }}"
 
-######################################################################
-#
-# etke/prometheus_node_exporter
-#
-######################################################################
-
-prometheus_blackbox_exporter_enabled: false
-prometheus_blackbox_exporter_identifier: matrix-prometheus-blackbox-exporter
-prometheus_blackbox_exporter_base_path: "{{ matrix_base_data_path }}/prometheus-blackbox-exporter"
-prometheus_blackbox_exporter_uid: "{{ matrix_user_uid }}"
-prometheus_blackbox_exporter_gid: "{{ matrix_user_gid }}"
-prometheus_blackbox_exporter_container_network: "{{ matrix_docker_network }}"
-prometheus_blackbox_exporter_container_additional_networks: "{{ [matrix_playbook_reverse_proxyable_services_additional_network] if matrix_playbook_reverse_proxyable_services_additional_network else [] }}"
-prometheus_blackbox_exporter_container_labels_traefik_enabled: false
-prometheus_blackbox_exporter_container_labels_traefik_docker_network: "{{ matrix_playbook_reverse_proxyable_services_additional_network }}"
-prometheus_blackbox_exporter_container_labels_traefik_entrypoints: "{{ devture_traefik_entrypoint_primary }}"
-prometheus_blackbox_exporter_container_labels_traefik_tls_certResolver: "{{ devture_traefik_certResolver_primary }}"
-
 ########################################################################
 #                                                                      #
 # nginx-migration                                                      #
@@ -357,8 +203,6 @@ devture_systemd_service_manager_services_list_additional: |
     ([{'name': soft_serve_identifier + '.service', 'priority': 5000, 'groups': ['etke', 'softserve', 'soft-serve']}] if soft_serve_enabled else [])
     +
     ([{'name': ('wg-quick@' + custom_wireguard_interface + '.service'), 'priority': 5000, 'groups': ['etke', 'wireguard']}] if custom_wireguard_enabled else [])
-    +
-    ([{'name': (prometheus_blackbox_exporter_identifier + '.service'), 'priority': 3900, 'groups': ['etke', 'monitoring', 'prometheus', 'prometheus-node-exporters']}] if prometheus_blackbox_exporter_enabled else [])
     +
     ([{'name': 'int-scheduler.service', 'priority': 5000, 'groups': ['etke', 'scheduler']}] if int_scheduler_enabled else [])
     +

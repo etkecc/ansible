@@ -1,10 +1,10 @@
 * appservice_discord: v3.1.0
-* appservice_irc: 0.37.0
+* appservice_irc: 0.37.1
 * appservice_kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * appservice_slack: 2.0.2
 * appservice_webhooks: v1.0.3-01
 * borg: 1.2.4
-* borgmatic: 1.7.10
+* borgmatic: 1.7.11
 * buscarron: v1.3.1
 * cactus_comments: 0.9.0
 * chatgpt: 3.0.0
@@ -35,7 +35,7 @@
 * jitsi_ldap: "3"
 * jitsi_prosody_auth_user_verification_repo: 2839499cb03894d8cfc3e5b2219441427cb133d8 # v1.8.0
 * jitsi: stable-8319
-* languagetool: 6.0-dockerupdate-4
+* languagetool: 6.1
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * linkedin: v0.5.4
 * ma1sd: 2.5.0
