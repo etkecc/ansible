@@ -112,11 +112,17 @@
     - galaxy/radicale
     - galaxy/soft_serve
     - custom/wireguard
-    - matrix/nginx-proxy-website
     # END CUSTOM
 
     # MATRIX
     - custom/matrix-nginx-proxy
+    # END MATRIX
+
+    # CUSTOM
+    - matrix/nginx-proxy-website
+    # END CUSTOM
+
+    # MATRIX
     - custom/matrix-coturn
     - galaxy/aux
     - galaxy/com.devture.ansible.role.postgres_backup

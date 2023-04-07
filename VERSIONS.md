@@ -42,7 +42,7 @@
 * mailer: 4.96-r1-0
 * matrix_registration_bot: latest
 * matrix_reminder_bot: release-v0.2.1
-* maubot: v0.4.0
+* maubot: v0.4.1
 * miniflux: 2.0.43
 * mjolnir: v1.6.4
 * mx_puppet_discord: v0.1.1
@@ -76,7 +76,7 @@
 * synapse: v1.80.0
 * telegram: v0.13.0
 * traefik_certs_dumper: v2.8.1
-* traefik: v2.9.9
+* traefik: v2.9.10
 * twitter: v0.1.5
 * uptime_kuma: 1.21.2
 * user_verification_service: v2.0.0
