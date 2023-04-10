@@ -9,4 +9,3 @@ skopeo_static:
   - dock.mau.dev/mautrix/signal:latest
   - dock.mau.dev/mautrix/instagram:latest
   - dock.mau.dev/mautrix/googlechat:latest
-  - docker.io/matrixdotorg/synapse:v1.50.0

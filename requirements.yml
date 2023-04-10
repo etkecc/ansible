@@ -1,3 +1,5 @@
+---
+
 - include: upstream/requirements.yml
 - src: git+https://gitlab.com/etke.cc/roles/cleanup.git
   version: main
