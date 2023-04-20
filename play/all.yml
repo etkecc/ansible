@@ -99,7 +99,6 @@
     # END MATRIX
 
     # CUSTOM
-    - int/scheduler
     - galaxy/swap
     - galaxy/ssh
     - galaxy/ufw
@@ -140,7 +139,7 @@
 
     # CUSTOM
     - galaxy/cleanup
-    - int/skopeo
+    - custom/skopeo
     # END CUSTOM
 
     # MATRIX

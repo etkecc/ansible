@@ -62,7 +62,6 @@
 * rageshake: 1.9.0
 * redis: 7.0.10
 * registration: v0.7.2
-* scheduler: latest
 * signal_daemon: 0.23.1
 * signal: v0.4.2
 * slack: latest

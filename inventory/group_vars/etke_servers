@@ -203,10 +203,6 @@ devture_systemd_service_manager_services_list_additional: |
     ([{'name': soft_serve_identifier + '.service', 'priority': 5000, 'groups': ['etke', 'softserve', 'soft-serve']}] if soft_serve_enabled else [])
     +
     ([{'name': ('wg-quick@' + custom_wireguard_interface + '.service'), 'priority': 5000, 'groups': ['etke', 'wireguard']}] if custom_wireguard_enabled else [])
-    +
-    ([{'name': 'int-scheduler.service', 'priority': 5000, 'groups': ['etke', 'scheduler']}] if int_scheduler_enabled else [])
-    +
-    ([{'name': 'int-scheduler-update.timer', 'priority': 5000, 'groups': ['etke', 'scheduler']}] if int_scheduler_enabled else [])
   }}
 
 ########################################################################
