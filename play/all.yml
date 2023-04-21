@@ -108,6 +108,7 @@
     - galaxy/languagetool
     - custom/nginx-migration
     - galaxy/miniflux
+    - galaxy/gotosocial
     - galaxy/radicale
     - galaxy/soft_serve
     - custom/wireguard
