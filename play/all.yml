@@ -141,6 +141,7 @@
     # CUSTOM
     - galaxy/cleanup
     - custom/skopeo
+    - custom/mrs-discovery
     # END CUSTOM
 
     # MATRIX

@@ -1,0 +1,7 @@
+---
+# Automatic MRS discovery using public federation information
+# Project URL: https://gitlab.com/etke.cc/mrs/api
+mrs_discovery_url: https://example.com/discover
+mrs_discovery_command: "{{ matrix_base_data_path }}/postgres/bin/cli-non-interactive -d synapse -c 'select destination from destinations;'"
+mrs_discovery_login: discovery
+mrs_discovery_password: changeme

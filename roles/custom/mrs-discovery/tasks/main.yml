@@ -1,0 +1,6 @@
+---
+- ansible.builtin.import_tasks: export.yml
+  tags:
+    - setup-all
+    - install-all
+    - mrs-discovery
