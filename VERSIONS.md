@@ -18,7 +18,7 @@
 * docker_compose: v2.11.1
 * draupnir: v1.80.1
 * dynamic_dns: v3.10.0-ls111
-* element: v1.11.29
+* element: v1.11.30
 * email2matrix: 1.1.0
 * etherpad: 1.8.18
 * facebook: v0.4.1
@@ -73,7 +73,7 @@
 * synapse_admin: 0.8.7
 * synapse_auto_compressor: v0.1.3
 * synapse_reverse_proxy_companion: 1.23.3-alpine
-* synapse: v1.81.0
+* synapse: v1.82.0
 * telegram: v0.13.0
 * traefik_certs_dumper: v2.8.1
 * traefik: v2.9.10
