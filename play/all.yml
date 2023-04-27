@@ -51,7 +51,7 @@
     - custom/matrix-bridge-mx-puppet-groupme
     - custom/matrix-bridge-mx-puppet-steam
     - custom/matrix-bridge-mx-puppet-slack
-    - custom/matrix-bridge-mx-puppet-twitter
+    # - custom/matrix-bridge-mx-puppet-twitter # unused
     # - custom/matrix-bridge-mx-puppet-instagram # unused
     # - custom/matrix-bridge-sms # unused
     - custom/matrix-bridge-heisenbridge
