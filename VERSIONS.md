@@ -1,5 +1,5 @@
 * appservice_discord: v3.1.0
-* appservice_irc: 0.37.1
+* appservice_irc: 0.38.0
 * appservice_kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * appservice_slack: 2.0.2
 * appservice_webhooks: v1.0.3-01
@@ -63,7 +63,7 @@
 * rageshake: 1.9.0
 * redis: 7.0.10
 * registration: v0.7.2
-* signal_daemon: 0.23.1
+* signal_daemon: 0.23.2
 * signal: v0.4.2
 * slack: latest
 * sliding_sync: v0.99.1
