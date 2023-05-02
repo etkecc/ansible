@@ -12,7 +12,7 @@ ENV PATH="/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 COPY --from=builder /bin/agru /bin/agru
 
-RUN apk --no-cache add python3 py3-cryptography py3-jinja2 py3-packaging py3-paramiko py3-resolvelib py3-yaml git just openssh skopeo && \
+RUN apk --no-cache add python3 py3-cryptography py3-jinja2 py3-packaging py3-paramiko py3-resolvelib py3-yaml git just openssh skopeo hugo && \
 		apk --no-cache add --virtual builddeps alpine-sdk py3-pip && \
 		ln -s /bin/uname /usr/local/bin/uname && \
 		ln -s /bin/rm /usr/local/bin/rm && \

@@ -3,7 +3,6 @@ ENV AGRU_CLEANUP="-c=false"
 ENV ANSIBLE_LOG_PATH=" "
 WORKDIR /playbook
 COPY . /playbook
-RUN apk --no-cache add hugo
 # Note the current commit hash into a file, if we ever need it.
 # Then initialize /upstream from submodules, and get rid of the `.git` directory.
 # We don't need to carry that extra weight into the final image.
