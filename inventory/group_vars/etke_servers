@@ -87,8 +87,14 @@ radicale_enabled: false
 
 radicale_identifier: custom-radicale
 
+radicale_container_image: "{{ radicale_container_image_registry_prefix }}etke.cc/radicale:{{ radicale_container_image_tag }}"
+radicale_container_image_registry_prefix: registry.etke.cc/
+
 radicale_base_path: "{{ matrix_base_data_path }}/custom-radicale"
 radicale_config_path: "{{ radicale_base_path }}/conf"
+
+radicale_auth_type: radicale_auth_matrix
+radicale_auth_matrix_server: "{{ matrix_homeserver_container_url }}"
 
 radicale_uid: "{{ matrix_user_uid }}"
 radicale_gid: "{{ matrix_user_gid }}"
