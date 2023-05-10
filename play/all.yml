@@ -136,15 +136,12 @@
       role: galaxy/com.devture.ansible.role.traefik_certs_dumper
     - when: devture_systemd_service_manager_enabled | bool
       role: galaxy/com.devture.ansible.role.systemd_service_manager
-    # END MATRIX
-
-    # CUSTOM
-    - galaxy/cleanup
-    - custom/skopeo
-    - custom/mrs-discovery
-    # END CUSTOM
-
-    # MATRIX
     # - galaxy/com.devture.ansible.role.playbook_state_preserver # unused
     - galaxy/com.devture.ansible.role.playbook_runtime_messages
     # END MATRIX
+
+    # CUSTOM
+    - custom/skopeo
+    - custom/mrs-discovery
+    - galaxy/cleanup
+    # END CUSTOM
