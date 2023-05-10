@@ -7,7 +7,7 @@
 * borgmatic: 1.7.12
 * buscarron: v1.3.1
 * cactus_comments: 0.9.0
-* chatgpt: 3.0.0
+* chatgpt: 3.1.0
 * cinny: v2.2.6
 * container_socket_proxy: 0.1.1
 * corporal: 2.5.2
@@ -73,7 +73,7 @@
 * synapse_admin: 0.8.7
 * synapse_auto_compressor: v0.1.3
 * synapse_reverse_proxy_companion: 1.23.3-alpine
-* synapse: v1.82.0
+* synapse: v1.83.0
 * telegram: v0.13.0
 * traefik_certs_dumper: v2.8.1
 * traefik: v2.9.10
