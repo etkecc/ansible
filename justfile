@@ -58,6 +58,19 @@ hookshot:
 nofeeds:
     python bin/feeds.py . check
 
+# Runs the playbook with --tags=install-all,ensure-matrix-users-created,start and optional arguments
+install-all *extra_args: (run-tags "install-all,ensure-matrix-users-created,start" extra_args)
+
+# Runs installation tasks for a single service
+install-service service *extra_args:
+    just --justfile {{ justfile() }} run \
+    --tags=install-{{ service }},start-group \
+    --extra-vars=group={{ service }} \
+    --extra-vars=devture_systemd_service_manager_service_restart_mode=one-by-one {{ extra_args }}
+
+# Runs the playbook with --tags=setup-all,ensure-matrix-users-created,start and optional arguments
+setup-all *extra_args: (run-tags "setup-all,ensure-matrix-users-created,start" extra_args)
+
 # Runs the playbook with the given list of arguments
 run +extra_args:
     time ansible-playbook play/all.yml {{ extra_args }}
