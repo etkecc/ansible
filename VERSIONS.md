@@ -58,7 +58,7 @@
 * prometheus_nginxlog_exporter: v1.10.0
 * prometheus_node_exporter: v1.5.0
 * prometheus_postgres_exporter: v0.12.0
-* prometheus: v2.43.0
+* prometheus: v2.44.0
 * radicale: 3.1.8.2
 * rageshake: 1.9.0
 * redis: 7.0.10
