@@ -64,7 +64,7 @@
 * redis: 7.0.10
 * registration: v0.7.2
 * signal_daemon: 0.23.2
-* signal: v0.4.2
+* signal: v0.4.3
 * slack: latest
 * sliding_sync: v0.99.1
 * sms_bridge: 0.5.7
