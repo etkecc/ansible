@@ -4,7 +4,7 @@
 * appservice_slack: 2.0.2
 * appservice_webhooks: v1.0.3-01
 * borg: 1.2.4
-* borgmatic: 1.7.12
+* borgmatic: 1.7.13
 * buscarron: v1.3.1
 * cactus_comments: 0.9.0
 * chatgpt: 3.1.0
@@ -13,7 +13,7 @@
 * corporal: 2.5.2
 * coturn: 4.6.1-r3
 * dimension: latest
-* discord: v0.3.0
+* discord: v0.4.0
 * dnsmasq: latest
 * docker_compose: v2.11.1
 * draupnir: v1.80.1
@@ -80,4 +80,4 @@
 * twitter: v0.1.5
 * uptime_kuma: 1.21.3
 * user_verification_service: v2.0.0
-* whatsapp: v0.8.4
+* whatsapp: v0.8.5
