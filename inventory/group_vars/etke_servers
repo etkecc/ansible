@@ -223,12 +223,12 @@ nginx_migration_radicale_hostname: "{{ radicale_hostname }}"
 nginx_migration_uptime_kuma_enabled: "{{ uptime_kuma_enabled and matrix_playbook_reverse_proxy_type == 'playbook-managed-nginx' }}"
 nginx_migration_uptime_kuma_hostname: "{{ uptime_kuma_hostname }}"
 
-nginx_migration_honoroit_enabled: "{{ matrix_bot_honoroit_enabled }}"
+nginx_migration_honoroit_enabled: "{{ matrix_bot_honoroit_enabled and matrix_playbook_reverse_proxy_type == 'playbook-managed-nginx' }}"
 matrix_bot_honoroit_basicauth_enabled: true
 matrix_bot_honoroit_basicauth_user: "{{ matrix_nginx_proxy_proxy_matrix_metrics_basic_auth_username }}"
 matrix_bot_honoroit_basicauth_password: "{{ matrix_nginx_proxy_proxy_matrix_metrics_basic_auth_password }}"
 
-nginx_migration_buscarron_enabled: "{{ matrix_bot_buscarron_enabled }}"
+nginx_migration_buscarron_enabled: "{{ matrix_bot_buscarron_enabled and matrix_playbook_reverse_proxy_type == 'playbook-managed-nginx' }}"
 matrix_bot_buscarron_basicauth_enabled: true
 matrix_bot_buscarron_basicauth_user: "{{ matrix_nginx_proxy_proxy_matrix_metrics_basic_auth_username }}"
 matrix_bot_buscarron_basicauth_password: "{{ matrix_nginx_proxy_proxy_matrix_metrics_basic_auth_password }}"
