@@ -65,7 +65,7 @@
     # - custom/matrix-bot-go-neb # unused
     # - custom/matrix-bot-mjolnir # unused
     # - custom/matrix-bot-draupnir # unused
-    # - custom/matrix-bot-chatgpt # unused
+    - custom/matrix-bot-chatgpt
     # - custom/matrix-cactus-comments # unused
     # - custom/matrix-rageshake
     - custom/matrix-synapse
