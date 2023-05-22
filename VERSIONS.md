@@ -77,7 +77,7 @@
 * telegram: v0.13.0
 * traefik_certs_dumper: v2.8.1
 * traefik: v2.9.10
-* twitter: v0.1.5
+* twitter: v0.1.6
 * uptime_kuma: 1.21.3
 * user_verification_service: v2.0.0
 * whatsapp: v0.8.5
