@@ -25,12 +25,12 @@
 * go_neb: latest
 * googlechat: v0.4.0
 * go_skype_bridge: latest
-* gotosocial: 0.8.1
+* gotosocial: 0.9.0
 * grafana: 9.5.2
 * hangouts: latest
 * heisenbridge: 1.14.2
 * honoroit: v0.9.17
-* hookshot: 4.0.0
+* hookshot: 4.1.0
 * hydrogen: v0.3.8
 * instagram: v0.2.3
 * jitsi_ldap: "3"
