@@ -56,7 +56,7 @@
 * ntfy: v2.5.0
 * postmoogle: v0.9.14
 * prometheus_nginxlog_exporter: v1.10.0
-* prometheus_node_exporter: v1.5.0
+* prometheus_node_exporter: v1.6.0
 * prometheus_postgres_exporter: v0.12.0
 * prometheus: v2.44.0
 * radicale: 3.1.8.2
