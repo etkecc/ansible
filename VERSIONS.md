@@ -76,7 +76,7 @@
 * synapse: v1.84.1
 * telegram: v0.14.0
 * traefik_certs_dumper: v2.8.1
-* traefik: v2.9.10
+* traefik: v2.10.1
 * twitter: v0.1.6
 * uptime_kuma: 1.21.3
 * user_verification_service: v2.0.0
