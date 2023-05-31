@@ -136,7 +136,7 @@
       role: galaxy/com.devture.ansible.role.traefik_certs_dumper
     - when: devture_systemd_service_manager_enabled | bool
       role: galaxy/com.devture.ansible.role.systemd_service_manager
-    # - galaxy/com.devture.ansible.role.playbook_state_preserver # unused
+    - galaxy/com.devture.ansible.role.playbook_state_preserver
     - galaxy/com.devture.ansible.role.playbook_runtime_messages
     # END MATRIX
 
