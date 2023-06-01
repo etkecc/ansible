@@ -7,7 +7,7 @@
 * borgmatic: 1.7.13
 * buscarron: v1.3.1
 * cactus_comments: 0.9.0
-* chatgpt: 3.1.0
+* chatgpt: 3.1.2
 * cinny: v2.2.6
 * container_socket_proxy: 0.1.1
 * corporal: 2.5.2
@@ -16,12 +16,12 @@
 * discord: v0.4.0
 * dnsmasq: latest
 * docker_compose: v2.11.1
-* draupnir: v1.82.0
+* draupnir: v1.83.0
 * dynamic_dns: v3.10.0-ls111
 * element: v1.11.31
 * email2matrix: 1.1.0
 * etherpad: 1.8.18
-* facebook: v0.4.1
+* facebook: v0.5.0
 * go_neb: latest
 * googlechat: v0.4.0
 * go_skype_bridge: latest
@@ -30,9 +30,9 @@
 * hangouts: latest
 * heisenbridge: 1.14.2
 * honoroit: v0.9.17
-* hookshot: 4.0.0
+* hookshot: 4.1.0
 * hydrogen: v0.3.8
-* instagram: v0.2.3
+* instagram: v0.3.0
 * jitsi_ldap: "3"
 * jitsi_prosody_auth_user_verification_repo: 2839499cb03894d8cfc3e5b2219441427cb133d8 # v1.8.0
 * jitsi: stable-8615
