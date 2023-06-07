@@ -4,7 +4,7 @@
 * appservice_slack: 2.0.2
 * appservice_webhooks: v1.0.3-01
 * borg: 1.2.4
-* borgmatic: 1.7.13
+* borgmatic: 1.7.14
 * buscarron: v1.3.1
 * cactus_comments: 0.9.0
 * chatgpt: 3.1.2
@@ -18,7 +18,7 @@
 * docker_compose: v2.11.1
 * draupnir: v1.83.0
 * dynamic_dns: v3.10.0-ls123
-* element: v1.11.31
+* element: v1.11.32
 * email2matrix: 1.1.0
 * etherpad: 1.8.18
 * facebook: v0.5.0
@@ -26,11 +26,11 @@
 * googlechat: v0.4.0
 * go_skype_bridge: latest
 * gotosocial: 0.9.0
-* grafana: 9.5.2
+* grafana: 9.5.3
 * hangouts: latest
 * heisenbridge: 1.14.2
 * honoroit: v0.9.17
-* hookshot: 4.1.0
+* hookshot: 4.2.0
 * hydrogen: v0.3.8
 * instagram: v0.3.0
 * jitsi_ldap: "3"
