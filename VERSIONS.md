@@ -11,9 +11,9 @@
 * cinny: v2.2.6
 * container_socket_proxy: 0.1.1
 * corporal: 2.5.2
-* coturn: 4.6.1-r3
+* coturn: 4.6.2-r3
 * dimension: latest
-* discord: v0.4.0
+* discord: v0.5.0
 * dnsmasq: latest
 * docker_compose: v2.11.1
 * draupnir: v1.83.0
@@ -23,7 +23,7 @@
 * etherpad: 1.8.18
 * facebook: v0.5.0
 * go_neb: latest
-* googlechat: v0.4.0
+* googlechat: v0.5.0
 * go_skype_bridge: latest
 * gotosocial: 0.9.0
 * grafana: 9.5.3
@@ -52,7 +52,7 @@
 * mx_puppet_slack: v0.1.2
 * mx_puppet_steam: latest
 * mx_puppet_twitter: latest
-* nginx_proxy: 1.23.3-alpine
+* nginx_proxy: 1.25.1-alpine
 * ntfy: v2.5.0
 * postmoogle: v0.9.14
 * prometheus_nginxlog_exporter: v1.10.0
@@ -80,4 +80,4 @@
 * twitter: v0.1.6
 * uptime_kuma: 1.21.3
 * user_verification_service: v2.0.0
-* whatsapp: v0.8.5
+* whatsapp: v0.8.6
