@@ -12,7 +12,7 @@ stages:
 base:
   stage: base
   rules:
-    - if: $CI_COMMIT_REF_SLUG == "fresh" && $CI_PIPELINE_SOURCE != "merge_request_event"
+    - if: $CI_COMMIT_REF_SLUG == "fresh" && $CI_PIPELINE_SOURCE == "push"
       changes:
         - Dockerfile.base
   services:

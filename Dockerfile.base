@@ -3,6 +3,7 @@ ARG ALPINE=3.17.4
 ARG ANSIBLE=7.6.0
 ARG ANSIBLE_CORE=2.14.7
 
+
 FROM registry.gitlab.com/etke.cc/base/build AS builder
 
 RUN git clone --depth 1 -b $AGRU https://gitlab.com/etke.cc/int/agru.git && \
