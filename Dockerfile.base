@@ -4,9 +4,9 @@ ARG AGRU=v0.1.4
 RUN git clone --depth 1 -b $AGRU https://gitlab.com/etke.cc/int/agru.git && \
     cd agru && just build && mv agru /bin/agru && cd .. && rm -rf agru
 
-FROM alpine:3.17.3
-ARG ANSIBLE_CORE=2.14.5
-ARG ANSIBLE=7.4.0
+FROM alpine:3.17.4
+ARG ANSIBLE_CORE=2.14.7
+ARG ANSIBLE=7.6.0
 
 ENV PATH="/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin"
 
