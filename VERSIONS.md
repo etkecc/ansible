@@ -17,7 +17,7 @@
 * dnsmasq: latest
 * docker_compose: v2.11.1
 * draupnir: v1.83.0
-* dynamic_dns: v3.10.0-ls123
+* dynamic_dns: v3.10.0-ls124
 * element: v1.11.33
 * email2matrix: 1.1.0
 * etherpad: 1.8.18
@@ -30,7 +30,7 @@
 * hangouts: latest
 * heisenbridge: 1.14.2
 * honoroit: v0.9.17
-* hookshot: 4.2.0
+* hookshot: 4.3.0
 * hydrogen: v0.3.8
 * instagram: v0.3.0
 * jitsi_ldap: "3"
