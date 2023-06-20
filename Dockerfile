@@ -1,4 +1,8 @@
-FROM registry.gitlab.com/etke.cc/ansible/base AS playbook
+ARG ALPINE=3.17.4
+ARG ANSIBLE=7.6.0
+ARG ANSIBLE_CORE=2.14.7
+
+FROM registry.gitlab.com/etke.cc/ansible/base:${ALPINE}-${ANSIBLE_CORE}-${ANSIBLE} AS playbook
 ENV AGRU_CLEANUP="-c=false"
 ENV ANSIBLE_LOG_PATH=" "
 WORKDIR /playbook
@@ -12,7 +16,7 @@ RUN git rev-parse HEAD > /playbook/source-commit && \
     rm -rf /playbook/upstream/.git
 
 
-FROM registry.gitlab.com/etke.cc/ansible/base
+FROM registry.gitlab.com/etke.cc/ansible/base:${ALPINE}-${ANSIBLE_CORE}-${ANSIBLE}
 WORKDIR /playbook
 ENTRYPOINT ["/bin/sh"]
 COPY --from=playbook /playbook /playbook

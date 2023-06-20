@@ -1,18 +1,36 @@
+variables:
+  AGRU: 0.1.4
+  ALPINE: 3.17.4
+  ANSIBLE: 7.6.0
+  ANSIBLE_CORE: 2.14.7
+
 stages:
+  - base
   - release
   - postrelease
 
 base:
-  stage: release
-  when: manual
+  stage: base
+  rules:
+    - if: $CI_COMMIT_REF_SLUG == "fresh"
+      changes:
+        - Dockerfile.base
   services:
     - docker:dind
-  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/jdrouet/docker-with-buildx:stable
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/jdrouet/docker-with-buildx:latest
   before_script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
     - docker buildx create --use
-    - docker buildx build --platform linux/arm64/v8,linux/amd64 --push -t ${CI_REGISTRY_IMAGE}/base -t registry.etke.cc/etke.cc/ansible/base -f Dockerfile.base .
+    - docker buildx build --platform linux/arm64/v8,linux/amd64 --push \
+      -t ${CI_REGISTRY_IMAGE}/base:${ALPINE}-${ANSIBLE_CORE}-${ANSIBLE} \
+      -t registry.etke.cc/etke.cc/ansible/base:${ALPINE}-${ANSIBLE_CORE}-${ANSIBLE} \
+      --build-arg AGRU="$AGRU" \
+      --build-arg ALPINE="$ALPINE" \
+      --build-arg ANSIBLE="$ANSIBLE" \
+      --build-arg ANSIBLE_CORE="$ANSIBLE_CORE" \
+      -f Dockerfile.base \
+      .
   tags:
     - docker
 
@@ -22,12 +40,18 @@ fresh:
   except: ['schedules']
   services:
     - docker:dind
-  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/jdrouet/docker-with-buildx:stable
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/jdrouet/docker-with-buildx:latest
   before_script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
     - docker buildx create --use
-    - docker buildx build --platform linux/arm64/v8,linux/amd64 --push -t $CI_REGISTRY_IMAGE:fresh -t registry.etke.cc/etke.cc/ansible:fresh .
+    - docker buildx build --platform linux/arm64/v8,linux/amd64 --push \
+      -t $CI_REGISTRY_IMAGE:fresh \
+      -t registry.etke.cc/etke.cc/ansible:fresh \
+      --build-arg ALPINE="$ALPINE" \
+      --build-arg ANSIBLE="$ANSIBLE" \
+      --build-arg ANSIBLE_CORE="$ANSIBLE_CORE" \
+      .
   tags:
     - docker
 
@@ -48,11 +72,17 @@ stable:
   only: ['master']
   services:
     - docker:dind
-  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/jdrouet/docker-with-buildx:stable
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/jdrouet/docker-with-buildx:latest
   before_script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
     - docker buildx create --use
-    - docker buildx build --platform linux/arm64/v8,linux/amd64 --push -t $CI_REGISTRY_IMAGE -t registry.etke.cc/etke.cc/ansible .
+    - docker buildx build --platform linux/arm64/v8,linux/amd64 --push \
+      -t $CI_REGISTRY_IMAGE \
+      -t registry.etke.cc/etke.cc/ansible \
+      --build-arg ALPINE="$ALPINE" \
+      --build-arg ANSIBLE="$ANSIBLE" \
+      --build-arg ANSIBLE_CORE="$ANSIBLE_CORE" \
+      .
   tags:
     - docker
