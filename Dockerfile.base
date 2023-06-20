@@ -1,15 +1,12 @@
-ARG AGRU=v0.1.4
-ARG ALPINE=3.17.4
-ARG ANSIBLE=7.6.0
-ARG ANSIBLE_CORE=2.14.7
-
-
 FROM registry.gitlab.com/etke.cc/base/build AS builder
-
+ARG AGRU=v0.1.4
 RUN git clone --depth 1 -b $AGRU https://gitlab.com/etke.cc/int/agru.git && \
     cd agru && just build && mv agru /bin/agru && cd .. && rm -rf agru
 
+ARG ALPINE=3.17.4
 FROM alpine:${ALPINE}
+ARG ANSIBLE=7.6.0
+ARG ANSIBLE_CORE=2.14.7
 
 ENV PATH="/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin"
 
