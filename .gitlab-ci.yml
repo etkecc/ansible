@@ -12,7 +12,7 @@ stages:
 base:
   stage: base
   rules:
-    - if: $CI_COMMIT_REF_SLUG == "fresh"
+    - if: $CI_COMMIT_REF_SLUG == "fresh" && $CI_PIPELINE_SOURCE == "push"
       changes:
         - Dockerfile.base
   services:
@@ -22,14 +22,14 @@ base:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
     - docker buildx create --use
-    - docker buildx build --platform linux/arm64/v8,linux/amd64 --push \
-      -t ${CI_REGISTRY_IMAGE}/base:${ALPINE}-${ANSIBLE_CORE}-${ANSIBLE} \
-      -t registry.etke.cc/etke.cc/ansible/base:${ALPINE}-${ANSIBLE_CORE}-${ANSIBLE} \
-      --build-arg AGRU="$AGRU" \
-      --build-arg ALPINE="$ALPINE" \
-      --build-arg ANSIBLE="$ANSIBLE" \
-      --build-arg ANSIBLE_CORE="$ANSIBLE_CORE" \
-      -f Dockerfile.base \
+    - docker buildx build --platform linux/arm64/v8,linux/amd64 --push
+      -t ${CI_REGISTRY_IMAGE}/base:${ALPINE}-${ANSIBLE_CORE}-${ANSIBLE}
+      -t registry.etke.cc/etke.cc/ansible/base:${ALPINE}-${ANSIBLE_CORE}-${ANSIBLE}
+      --build-arg AGRU="$AGRU"
+      --build-arg ALPINE="$ALPINE"
+      --build-arg ANSIBLE="$ANSIBLE"
+      --build-arg ANSIBLE_CORE="$ANSIBLE_CORE"
+      -f Dockerfile.base
       .
   tags:
     - docker
@@ -45,12 +45,12 @@ fresh:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
     - docker buildx create --use
-    - docker buildx build --platform linux/arm64/v8,linux/amd64 --push \
-      -t $CI_REGISTRY_IMAGE:fresh \
-      -t registry.etke.cc/etke.cc/ansible:fresh \
-      --build-arg ALPINE="$ALPINE" \
-      --build-arg ANSIBLE="$ANSIBLE" \
-      --build-arg ANSIBLE_CORE="$ANSIBLE_CORE" \
+    - docker buildx build --platform linux/arm64/v8,linux/amd64 --push
+      -t $CI_REGISTRY_IMAGE:fresh
+      -t registry.etke.cc/etke.cc/ansible:fresh
+      --build-arg ALPINE="$ALPINE"
+      --build-arg ANSIBLE="$ANSIBLE"
+      --build-arg ANSIBLE_CORE="$ANSIBLE_CORE"
       .
   tags:
     - docker
@@ -77,12 +77,12 @@ stable:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
     - docker buildx create --use
-    - docker buildx build --platform linux/arm64/v8,linux/amd64 --push \
-      -t $CI_REGISTRY_IMAGE \
-      -t registry.etke.cc/etke.cc/ansible \
-      --build-arg ALPINE="$ALPINE" \
-      --build-arg ANSIBLE="$ANSIBLE" \
-      --build-arg ANSIBLE_CORE="$ANSIBLE_CORE" \
+    - docker buildx build --platform linux/arm64/v8,linux/amd64 --push
+      -t $CI_REGISTRY_IMAGE
+      -t registry.etke.cc/etke.cc/ansible
+      --build-arg ALPINE="$ALPINE"
+      --build-arg ANSIBLE="$ANSIBLE"
+      --build-arg ANSIBLE_CORE="$ANSIBLE_CORE"
       .
   tags:
     - docker
