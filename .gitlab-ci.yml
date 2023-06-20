@@ -55,18 +55,6 @@ fresh:
   tags:
     - docker
 
-sync images:
-  stage: postrelease
-  only: ['fresh', 'schedules']
-  image:
-    name: $CI_REGISTRY_IMAGE:fresh
-    entrypoint: [""]
-  before_script:
-    - cp -r /playbook/.config/inventory /
-  script:
-    - cd /playbook; ansible-playbook play/all.yml -l localhost -t skopeo -e target=localhost
-  allow_failure: true
-
 stable:
   stage: release
   only: ['master']
@@ -86,3 +74,15 @@ stable:
       .
   tags:
     - docker
+
+sync images:
+  stage: postrelease
+  only: ['fresh', 'schedules']
+  image:
+    name: $CI_REGISTRY_IMAGE:fresh
+    entrypoint: [""]
+  before_script:
+    - cp -r /playbook/.config/inventory /
+  script:
+    - cd /playbook; ansible-playbook play/all.yml -l localhost -t skopeo -e target=localhost
+  allow_failure: true
