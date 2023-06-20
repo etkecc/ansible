@@ -1,8 +1,8 @@
 ARG ALPINE=3.17.4
 ARG ANSIBLE=7.6.0
 ARG ANSIBLE_CORE=2.14.7
-
 FROM registry.gitlab.com/etke.cc/ansible/base:$ALPINE-$ANSIBLE_CORE-$ANSIBLE
+
 ENV AGRU_CLEANUP="-c=false"
 ENV ANSIBLE_LOG_PATH=" "
 WORKDIR /playbook
