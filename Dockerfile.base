@@ -24,14 +24,14 @@ RUN apk --no-cache add python3 py3-cryptography py3-jinja2 py3-packaging py3-par
 		apk del builddeps && \
 		rm -rf /var/cache/apk/* && \
 		rm -rf /root/.cache/pip && \
-		rm -rf /usr/lib/python3.10/site-packages/ansible_collections/fortinet && \
-		rm -rf /usr/lib/python3.10/site-packages/ansible_collections/cisco && \
-		rm -rf /usr/lib/python3.10/site-packages/ansible_collections/dellemc && \
-		rm -rf /usr/lib/python3.10/site-packages/ansible_collections/netapp && \
-		rm -rf /usr/lib/python3.10/site-packages/ansible_collections/f5networks && \
-		rm -rf /usr/lib/python3.10/site-packages/ansible_collections/google && \
-		rm -rf /usr/lib/python3.10/site-packages/ansible_collections/azure && \
-		rm -rf /usr/lib/python3.10/site-packages/ansible_collections/arista && \
-		rm -rf /usr/lib/python3.10/site-packages/ansible_collections/junipernetworks && \
-		rm -rf /usr/lib/python3.10/site-packages/ansible_collections/ovirt && \
+		rm -rf /usr/lib/python3.11/site-packages/ansible_collections/fortinet && \
+		rm -rf /usr/lib/python3.11/site-packages/ansible_collections/cisco && \
+		rm -rf /usr/lib/python3.11/site-packages/ansible_collections/dellemc && \
+		rm -rf /usr/lib/python3.11/site-packages/ansible_collections/netapp && \
+		rm -rf /usr/lib/python3.11/site-packages/ansible_collections/f5networks && \
+		rm -rf /usr/lib/python3.11/site-packages/ansible_collections/google && \
+		rm -rf /usr/lib/python3.11/site-packages/ansible_collections/azure && \
+		rm -rf /usr/lib/python3.11/site-packages/ansible_collections/arista && \
+		rm -rf /usr/lib/python3.11/site-packages/ansible_collections/junipernetworks && \
+		rm -rf /usr/lib/python3.11/site-packages/ansible_collections/ovirt && \
 		find / -name '*.pyc' -exec rm {} \;
