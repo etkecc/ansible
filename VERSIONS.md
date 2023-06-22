@@ -26,7 +26,7 @@
 * googlechat: v0.5.0
 * go_skype_bridge: latest
 * gotosocial: 0.9.0
-* grafana: 9.5.3
+* grafana: 10.0.1
 * hangouts: latest
 * heisenbridge: 1.14.2
 * honoroit: v0.9.17
@@ -44,7 +44,7 @@
 * matrix_registration_bot: latest
 * matrix_reminder_bot: release-v0.2.1
 * maubot: v0.4.1
-* miniflux: 2.0.44
+* miniflux: 2.0.45
 * mjolnir: v1.6.4
 * mx_puppet_discord: v0.1.1
 * mx_puppet_groupme: 533cccc8
@@ -57,7 +57,7 @@
 * postmoogle: v0.9.14
 * prometheus_nginxlog_exporter: v1.10.0
 * prometheus_node_exporter: v1.6.0
-* prometheus_postgres_exporter: v0.12.0
+* prometheus_postgres_exporter: v0.13.0
 * prometheus: v2.44.0
 * radicale: 3.1.8.2
 * rageshake: 1.9.0
