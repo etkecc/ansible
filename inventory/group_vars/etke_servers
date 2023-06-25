@@ -190,9 +190,6 @@ gotosocial_container_labels_traefik_tls_certResolver: "{{ devture_traefik_certRe
 #                                                                      #
 ########################################################################
 
-# enabled by default for etke.cc on purpose
-matrix_synapse_auto_compressor_enabled: "{{ matrix_synapse_enabled | bool }}"
-
 # The cleanup role will delete our custom network, because it's unused unless the timer gets triggered.
 # As a workaround, we just reuse some other network.
 # Some servers don't use a playbook-managed Postgres, so we can't use `devture_postgres_container_network` everywhere.

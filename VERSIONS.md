@@ -58,7 +58,7 @@
 * prometheus_nginxlog_exporter: v1.10.0
 * prometheus_node_exporter: v1.6.0
 * prometheus_postgres_exporter: v0.13.0
-* prometheus: v2.44.0
+* prometheus: v2.45.0
 * radicale: 3.1.8.2
 * rageshake: 1.9.0
 * redis: 7.0.10
@@ -72,7 +72,7 @@
 * sygnal: v0.12.0
 * synapse_admin: 0.8.7
 * synapse_auto_compressor: v0.1.3
-* synapse_reverse_proxy_companion: 1.23.3-alpine
+* synapse_reverse_proxy_companion: 1.25.1-alpine
 * synapse: v1.86.0
 * telegram: v0.14.0
 * traefik_certs_dumper: v2.8.1
