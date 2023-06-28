@@ -17,7 +17,7 @@
 * dnsmasq: latest
 * docker_compose: v2.11.1
 * draupnir: v1.83.0
-* dynamic_dns: v3.10.0-ls124
+* dynamic_dns: v3.10.0-ls125
 * element: v1.11.34
 * email2matrix: 1.1.0
 * etherpad: 1.9.0
@@ -57,7 +57,7 @@
 * postmoogle: v0.9.14
 * prometheus_nginxlog_exporter: v1.10.0
 * prometheus_node_exporter: v1.6.0
-* prometheus_postgres_exporter: v0.13.0
+* prometheus_postgres_exporter: v0.13.1
 * prometheus: v2.45.0
 * radicale: 3.1.8.2
 * rageshake: 1.9.0
