@@ -11,14 +11,14 @@
 * cinny: v2.2.6
 * container_socket_proxy: 0.1.1
 * corporal: 2.5.2
-* coturn: 4.6.2-r3
+* coturn: 4.6.2-r4
 * dimension: latest
 * discord: v0.5.0
 * dnsmasq: latest
 * docker_compose: v2.11.1
 * draupnir: v1.83.0
-* dynamic_dns: v3.10.0-ls125
-* element: v1.11.34
+* dynamic_dns: v3.10.0-ls126
+* element: v1.11.35
 * email2matrix: 1.1.0
 * etherpad: 1.9.0
 * facebook: v0.5.0
@@ -78,6 +78,6 @@
 * traefik_certs_dumper: v2.8.1
 * traefik: v2.10.3
 * twitter: v0.1.6
-* uptime_kuma: 1.22.0
+* uptime_kuma: 1.22.1
 * user_verification_service: v2.0.0
 * whatsapp: v0.8.6
