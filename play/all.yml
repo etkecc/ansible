@@ -62,7 +62,7 @@
     - custom/matrix-bot-buscarron
     - custom/matrix-bot-honoroit
     - custom/matrix-bot-postmoogle
-    # - custom/matrix-bot-go-neb # unused
+    - custom/matrix-bot-go-neb
     # - custom/matrix-bot-mjolnir # unused
     # - custom/matrix-bot-draupnir # unused
     - custom/matrix-bot-chatgpt
