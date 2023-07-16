@@ -59,14 +59,14 @@
 * prometheus_node_exporter: v1.6.0
 * prometheus_postgres_exporter: v0.13.1
 * prometheus: v2.45.0
-* radicale: 3.1.8.2
+* radicale: 3.1.8.3
 * rageshake: 1.9.0
 * redis: 7.0.10
 * registration: v0.7.2
 * signal_daemon: 0.23.2
 * signal: v0.4.3
 * slack: latest
-* sliding_sync: v0.99.3
+* sliding_sync: v0.99.4
 * sms_bridge: 0.5.7
 * soft_serve: v0.4.7
 * sygnal: v0.12.0
