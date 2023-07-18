@@ -15,6 +15,7 @@ base:
     - if: $CI_COMMIT_REF_SLUG == "fresh" && $CI_PIPELINE_SOURCE == "push"
       changes:
         - Dockerfile.base
+        - .gitlab-ci.yml
   services:
     - docker:dind
   image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/jdrouet/docker-with-buildx:latest
