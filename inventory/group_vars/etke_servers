@@ -17,6 +17,7 @@ mash_playbook_reverse_proxyable_services_additional_network: "{{ matrix_playbook
 # just copied from disabled roles
 matrix_dendrite_max_file_size_bytes: 1073741824
 matrix_conduit_max_request_size: 20_000_000
+matrix_media_repo_metrics_enabled: false
 
 ########################################################################
 #                                                                      #
