@@ -41,6 +41,7 @@
 !hookshot feed https://mau.dev/maubot/maubot/-/tags?format=atom maubot
 !hookshot feed https://github.com/mautrix/discord/releases.atom mautrix-discord
 !hookshot feed https://github.com/mautrix/facebook/releases.atom mautrix-facebook
+!hookshot feed https://github.com/mautrix/gmessages/releases.atom mautrix-gmessages
 !hookshot feed https://github.com/mautrix/googlechat/releases.atom mautrix-googlechat
 !hookshot feed https://github.com/mautrix/hangouts/releases.atom mautrix-hangouts
 !hookshot feed https://github.com/mautrix/instagram/releases.atom mautrix-instagram

@@ -47,6 +47,7 @@
     <outline text="maubot" title="maubot" type="rss" htmlUrl="https://mau.dev/maubot/maubot" xmlUrl="https://mau.dev/maubot/maubot/-/tags?format=atom" />
     <outline text="mautrix-discord" title="mautrix-discord" type="rss" htmlUrl="https://github.com/mautrix/discord" xmlUrl="https://github.com/mautrix/discord/releases.atom" />
     <outline text="mautrix-facebook" title="mautrix-facebook" type="rss" htmlUrl="https://github.com/mautrix/facebook" xmlUrl="https://github.com/mautrix/facebook/releases.atom" />
+    <outline text="mautrix-gmessages" title="mautrix-gmessages" type="rss" htmlUrl="https://github.com/mautrix/gmessages" xmlUrl="https://github.com/mautrix/gmessages/releases.atom" />
     <outline text="mautrix-googlechat" title="mautrix-googlechat" type="rss" htmlUrl="https://github.com/mautrix/googlechat" xmlUrl="https://github.com/mautrix/googlechat/releases.atom" />
     <outline text="mautrix-hangouts" title="mautrix-hangouts" type="rss" htmlUrl="https://github.com/mautrix/hangouts" xmlUrl="https://github.com/mautrix/hangouts/releases.atom" />
     <outline text="mautrix-instagram" title="mautrix-instagram" type="rss" htmlUrl="https://github.com/mautrix/instagram" xmlUrl="https://github.com/mautrix/instagram/releases.atom" />

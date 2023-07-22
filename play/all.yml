@@ -44,6 +44,7 @@
     - custom/matrix-bridge-mautrix-instagram
     - custom/matrix-bridge-mautrix-signal
     - custom/matrix-bridge-mautrix-telegram
+    - custom/matrix-bridge-mautrix-gmessages
     - custom/matrix-bridge-mautrix-whatsapp
     - custom/matrix-bridge-mautrix-discord
     - custom/matrix-bridge-mautrix-slack
@@ -67,7 +68,7 @@
     # - custom/matrix-bot-draupnir # unused
     - custom/matrix-bot-chatgpt
     # - custom/matrix-cactus-comments # unused
-    # - custom/matrix-rageshake
+    # - custom/matrix-rageshake # unused
     - custom/matrix-synapse
     - custom/matrix-synapse-auto-compressor
     - custom/matrix-synapse-reverse-proxy-companion
@@ -124,6 +125,7 @@
 
     # MATRIX
     - custom/matrix-coturn
+    # - custom/matrix-media-repo # unused
     - galaxy/auxiliary
     - galaxy/com.devture.ansible.role.postgres_backup
     - galaxy/backup_borg

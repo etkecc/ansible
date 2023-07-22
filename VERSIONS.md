@@ -22,6 +22,7 @@
 * email2matrix: 1.1.0
 * etherpad: 1.9.0
 * facebook: v0.5.0
+* gmessages: latest
 * go_neb: latest
 * googlechat: v0.5.0
 * go_skype_bridge: latest
@@ -44,7 +45,7 @@
 * matrix_registration_bot: latest
 * matrix_reminder_bot: release-v0.2.1
 * maubot: v0.4.1
-* miniflux: 2.0.45
+* miniflux: 2.0.46
 * mjolnir: v1.6.4
 * mx_puppet_discord: v0.1.1
 * mx_puppet_groupme: 533cccc8
