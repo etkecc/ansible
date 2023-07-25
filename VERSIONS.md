@@ -42,7 +42,7 @@
 * linkedin: v0.5.4
 * ma1sd: 2.5.0
 * mailer: 4.96-r1-0
-* matrix_registration_bot: latest
+* matrix_registration_bot: 1.3.0
 * matrix_reminder_bot: release-v0.2.1
 * maubot: v0.4.1
 * miniflux: 2.0.46
@@ -58,7 +58,7 @@
 * postmoogle: v0.9.14
 * prometheus_nginxlog_exporter: v1.10.0
 * prometheus_node_exporter: v1.6.0
-* prometheus_postgres_exporter: v0.13.1
+* prometheus_postgres_exporter: v0.13.2
 * prometheus: v2.45.0
 * radicale: 3.1.8.3
 * rageshake: 1.9.0
@@ -77,7 +77,7 @@
 * synapse: v1.88.0
 * telegram: v0.14.1
 * traefik_certs_dumper: v2.8.1
-* traefik: v2.10.3
+* traefik: v2.10.4
 * twitter: v0.1.6
 * uptime_kuma: 1.22.1
 * user_verification_service: v2.0.0
