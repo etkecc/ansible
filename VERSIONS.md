@@ -1,7 +1,7 @@
 * appservice_discord: v3.1.0
-* appservice_irc: 0.38.0
+* appservice_irc: 1.0.1
 * appservice_kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
-* appservice_slack: 2.0.2
+* appservice_slack: 2.1.2
 * appservice_webhooks: v1.0.3-01
 * borg: 1.2.4
 * borgmatic: 1.7.15
@@ -29,9 +29,9 @@
 * gotosocial: 0.10.0
 * grafana: 10.0.3
 * hangouts: latest
-* heisenbridge: 1.14.3
+* heisenbridge: 1.14.4
 * honoroit: v0.9.17
-* hookshot: 4.4.0
+* hookshot: 4.4.1
 * hydrogen: v0.4.0
 * instagram: v0.3.0
 * jitsi_ldap: "3"
