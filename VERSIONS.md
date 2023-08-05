@@ -67,7 +67,7 @@
 * signal_daemon: 0.23.2
 * signal: v0.4.3
 * slack: latest
-* sliding_sync: v0.99.4
+* sliding_sync: v0.99.5
 * sms_bridge: 0.5.7
 * soft_serve: v0.4.7
 * sygnal: v0.12.0
