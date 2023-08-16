@@ -53,7 +53,7 @@
 * mx_puppet_slack: v0.1.2
 * mx_puppet_steam: latest
 * mx_puppet_twitter: latest
-* nginx_proxy: 1.25.1-alpine
+* nginx_proxy: 1.25.2-alpine
 * ntfy: v2.6.2
 * postmoogle: v0.9.14
 * prometheus_nginxlog_exporter: v1.10.0
@@ -62,7 +62,7 @@
 * prometheus: v2.45.0
 * radicale: 3.1.8.3
 * rageshake: 1.9.0
-* redis: 7.0.10
+* redis: 7.0.12
 * registration: v0.7.2
 * signal_daemon: 0.23.2
 * signal: v0.4.3
@@ -73,7 +73,7 @@
 * sygnal: v0.12.0
 * synapse_admin: 0.8.7
 * synapse_auto_compressor: v0.1.3
-* synapse_reverse_proxy_companion: 1.25.1-alpine
+* synapse_reverse_proxy_companion: 1.25.2-alpine
 * synapse: v1.90.0
 * telegram: v0.14.1
 * traefik_certs_dumper: v2.8.1
