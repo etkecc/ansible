@@ -21,6 +21,37 @@ roles:
         ansible-galaxy install -r requirements.yml -p roles/galaxy/ --force
     fi
 
+# merge fresh into master
+update-stable:
+    @echo "[1/9] force switch to the fresh branch"
+    @git checkout fresh
+
+    @echo "[2/9] fetch and apply any missing changes in the local fresh branch"
+    @git pull
+
+    @echo "[3/9] switch to the master branch"
+    @git checkout master
+
+    @echo "[4/9] fetch and apply any missing changes in the local master branch"
+    @git pull
+
+    @echo "[5/9] merge the fresh branch into the master branch"
+    @git merge fresh
+
+    @echo "[6/9] push updated master branch to the remote repo"
+    @git push
+
+    @echo "[7/9] switch do the fresh branch"
+    @git checkout fresh
+
+    @echo "[8/9] add the latest merge commit you did during the step 5 to the fresh branch, otherwise the history will be screwed in the next MRs"
+    @git merge master
+
+    @echo "[9/9] push changes of the fresh branch to the remote repo"
+    @git push
+
+    @echo "done"
+
 # pull dependencies
 dependencies: submodules roles
 
