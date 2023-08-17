@@ -13,7 +13,7 @@
 * corporal: 2.5.2
 * coturn: 4.6.2-r4
 * dimension: latest
-* discord: v0.6.0
+* discord: v0.6.1
 * dnsmasq: latest
 * docker_compose: v2.11.1
 * draupnir: v1.83.0
@@ -22,7 +22,7 @@
 * email2matrix: 1.1.0
 * etherpad: 1.9.0
 * facebook: v0.5.0
-* gmessages: latest
+* gmessages: v0.1.0
 * go_neb: latest
 * googlechat: v0.5.0
 * go_skype_bridge: latest
@@ -79,6 +79,6 @@
 * traefik_certs_dumper: v2.8.1
 * traefik: v2.10.4
 * twitter: v0.1.6
-* uptime_kuma: 1.22.1
+* uptime_kuma: 1.23.0
 * user_verification_service: v2.0.0
-* whatsapp: v0.9.0
+* whatsapp: v0.10.0
