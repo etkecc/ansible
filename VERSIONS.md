@@ -20,7 +20,7 @@
 * dynamic_dns: v3.10.0-ls131
 * element: v1.11.39
 * email2matrix: 1.1.0
-* etherpad: 1.9.0
+* etherpad: 1.9.2
 * facebook: v0.5.0
 * gmessages: v0.1.0
 * go_neb: latest
@@ -54,7 +54,7 @@
 * mx_puppet_steam: latest
 * mx_puppet_twitter: latest
 * nginx_proxy: 1.25.2-alpine
-* ntfy: v2.6.2
+* ntfy: v2.7.0
 * postmoogle: v0.9.14
 * prometheus_nginxlog_exporter: v1.10.0
 * prometheus_node_exporter: v1.6.1
