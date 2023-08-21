@@ -45,7 +45,7 @@
 * matrix_registration_bot: 1.3.0
 * matrix_reminder_bot: release-v0.2.1
 * maubot: v0.4.1
-* miniflux: 2.0.46
+* miniflux: 2.0.47
 * mjolnir: v1.6.4
 * mx_puppet_discord: v0.1.1
 * mx_puppet_groupme: 533cccc8
@@ -62,7 +62,7 @@
 * prometheus: v2.45.0
 * radicale: 3.1.8.3
 * rageshake: 1.9.0
-* redis: 7.0.12
+* redis: 7.2.0
 * registration: v0.7.2
 * signal_daemon: 0.23.2
 * signal: v0.4.3
