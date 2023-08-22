@@ -4,7 +4,7 @@
 * appservice_slack: 2.1.2
 * appservice_webhooks: v1.0.3-01
 * borg: 1.2.4
-* borgmatic: 1.7.15
+* borgmatic: 1.8.2
 * buscarron: v1.3.1
 * cactus_comments: 0.9.0
 * chatgpt: 3.1.2
