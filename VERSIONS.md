@@ -16,7 +16,7 @@
 * discord: v0.6.1
 * dnsmasq: latest
 * docker_compose: v2.11.1
-* draupnir: v1.83.0
+* draupnir: v1.84.0
 * dynamic_dns: v3.10.0-ls131
 * element: v1.11.39
 * email2matrix: 1.1.0
