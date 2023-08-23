@@ -82,3 +82,5 @@
 * uptime_kuma: 1.23.0
 * user_verification_service: v2.0.0
 * whatsapp: v0.10.0
+* wsproxy: latest
+* wsproxy_syncproxy: latest
