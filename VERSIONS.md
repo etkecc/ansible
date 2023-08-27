@@ -27,7 +27,7 @@
 * googlechat: v0.5.0
 * go_skype_bridge: latest
 * gotosocial: 0.11.0
-* grafana: 10.0.3
+* grafana: 10.1.0
 * hangouts: latest
 * heisenbridge: 1.14.5
 * honoroit: v0.9.18
@@ -67,7 +67,7 @@
 * signal_daemon: 0.23.2
 * signal: v0.4.3
 * slack: latest
-* sliding_sync: v0.99.5
+* sliding_sync: v0.99.7
 * sms_bridge: 0.5.7
 * soft_serve: v0.4.7
 * sygnal: v0.12.0
