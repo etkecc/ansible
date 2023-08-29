@@ -76,6 +76,7 @@
     <outline text="registration" title="registration" type="rss" htmlUrl="https://github.com/ZerataX/matrix-registration" xmlUrl="https://github.com/ZerataX/matrix-registration/releases.atom" />
     <outline text="registration-bot" title="registration-bot" type="rss" htmlUrl="https://github.com/moan0s/matrix-registration-bot" xmlUrl="https://github.com/moan0s/matrix-registration-bot/releases.atom" />
     <outline text="reminder-bot" title="reminder-bot" type="rss" htmlUrl="https://github.com/anoadragon453/matrix-reminder-bot" xmlUrl="https://github.com/anoadragon453/matrix-reminder-bot/releases.atom" />
+    <outline text="sliding-sync" title="sliding-sync" type="rss" htmlUrl="https://github.com/matrix-org/sliding-sync" xmlUrl="https://github.com/matrix-org/sliding-sync/releases.atom" />
     <outline text="sms" title="sms" type="rss" htmlUrl="https://github.com/benkuly/matrix-sms-bridge" xmlUrl="https://github.com/benkuly/matrix-sms-bridge/releases.atom" />
     <outline text="soft_serve" title="soft_serve" type="rss" htmlUrl="https://github.com/charmbracelet/soft-serve" xmlUrl="https://github.com/charmbracelet/soft-serve/releases.atom" />
     <outline text="sygnal" title="sygnal" type="rss" htmlUrl="https://github.com/matrix-org/sygnal" xmlUrl="https://github.com/matrix-org/sygnal/releases.atom" />
