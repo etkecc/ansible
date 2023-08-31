@@ -86,6 +86,7 @@
     - custom/matrix-client-element
     - custom/matrix-client-hydrogen
     - custom/matrix-client-cinny
+    - custom/matrix-client-schildichat
     - galaxy/jitsi
     - custom/matrix-user-verification-service
     # - custom/matrix-ldap-registration-proxy # unused

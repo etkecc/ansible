@@ -64,6 +64,7 @@
 * rageshake: 1.9.0
 * redis: 7.2.0
 * registration: v0.7.2
+* schildichat: v1.11.30-sc.2
 * signal_daemon: 0.23.2
 * signal: v0.4.3
 * slack: latest

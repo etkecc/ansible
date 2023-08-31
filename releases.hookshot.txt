@@ -70,6 +70,7 @@
 !hookshot feed https://github.com/ZerataX/matrix-registration/releases.atom registration
 !hookshot feed https://github.com/moan0s/matrix-registration-bot/releases.atom registration-bot
 !hookshot feed https://github.com/anoadragon453/matrix-reminder-bot/releases.atom reminder-bot
+!hookshot feed https://github.com/SchildiChat/schildichat-desktop/releases.atom schildichat
 !hookshot feed https://github.com/matrix-org/sliding-sync/releases.atom sliding-sync
 !hookshot feed https://github.com/benkuly/matrix-sms-bridge/releases.atom sms
 !hookshot feed https://github.com/charmbracelet/soft-serve/releases.atom soft_serve
