@@ -32,11 +32,11 @@
 * heisenbridge: 1.14.5
 * honoroit: v0.9.19
 * hookshot: 4.4.1
-* hydrogen: v0.4.0
+* hydrogen: v0.4.1
 * instagram: v0.3.0
 * jitsi_ldap: "3"
 * jitsi_prosody_auth_user_verification_repo: 2839499cb03894d8cfc3e5b2219441427cb133d8 # v1.8.0
-* jitsi: stable-8615
+* jitsi: stable-8922
 * languagetool: 6.1
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * linkedin: v0.5.4
@@ -75,7 +75,7 @@
 * synapse_admin: 0.8.7
 * synapse_auto_compressor: v0.1.3
 * synapse_reverse_proxy_companion: 1.25.2-alpine
-* synapse: v1.91.0
+* synapse: v1.91.1
 * telegram: v0.14.1
 * traefik_certs_dumper: v2.8.1
 * traefik: v2.10.4
