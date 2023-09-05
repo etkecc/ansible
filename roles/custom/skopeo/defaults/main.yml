@@ -9,3 +9,4 @@ skopeo_static:
   - dock.mau.dev/mautrix/signal:latest
   - dock.mau.dev/mautrix/instagram:latest
   - dock.mau.dev/mautrix/googlechat:latest
+  - ghcr.io/beeper/linkedin:latest
