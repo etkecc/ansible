@@ -68,14 +68,14 @@
 * signal_daemon: 0.23.2
 * signal: v0.4.3
 * slack: latest
-* sliding_sync: v0.99.8
+* sliding_sync: v0.99.9
 * sms_bridge: 0.5.7
 * soft_serve: v0.4.7
 * sygnal: v0.12.0
 * synapse_admin: 0.8.7
 * synapse_auto_compressor: v0.1.3
 * synapse_reverse_proxy_companion: 1.25.2-alpine
-* synapse: v1.91.1
+* synapse: v1.91.2
 * telegram: v0.14.1
 * traefik_certs_dumper: v2.8.1
 * traefik: v2.10.4
