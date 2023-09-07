@@ -112,7 +112,7 @@
     - galaxy/miniflux
     - galaxy/gotosocial
     - galaxy/radicale
-    - galaxy/soft_serve
+    - galaxy/vaultwarden
     - custom/wireguard
     # END CUSTOM
 

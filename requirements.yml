@@ -14,8 +14,6 @@
   version: v2.0.47-0
 - src: git+https://gitlab.com/etke.cc/roles/radicale.git
   version: v3.1.8.3-0
-- src: git+https://gitlab.com/etke.cc/roles/soft_serve.git
-  version: v0.4.7-0
 - src: git+https://gitlab.com/etke.cc/roles/ssh.git
   version: main
 - src: git+https://gitlab.com/etke.cc/roles/swap.git
@@ -24,3 +22,6 @@
   version: main
 - src: git+https://gitlab.com/etke.cc/roles/uptime_kuma.git
   version: v1.23.1-0
+- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-vaultwarden.git
+  version: v1.29.2-0
+  name: vaultwarden

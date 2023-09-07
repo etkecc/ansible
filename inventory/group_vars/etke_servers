@@ -187,6 +187,43 @@ gotosocial_container_labels_traefik_tls_certResolver: "{{ devture_traefik_certRe
 
 ########################################################################
 #                                                                      #
+# vaultwarden                                                          #
+#                                                                      #
+########################################################################
+
+vaultwarden_enabled: false
+vaultwarden_identifier: "{{ mash_playbook_service_identifier_prefix }}vaultwarden"
+vaultwarden_uid: "{{ mash_playbook_uid }}"
+vaultwarden_gid: "{{ mash_playbook_gid }}"
+
+vaultwarden_base_path: "{{ mash_playbook_base_path }}/{{ mash_playbook_service_base_directory_name_prefix }}vaultwarden"
+
+vaultwarden_systemd_required_systemd_services_list: |
+  {{
+    (['docker.service'])
+    +
+    ([devture_postgres_identifier ~ '.service'] if devture_postgres_enabled and vaultwarden_database_hostname == devture_postgres_identifier else [])
+  }}
+
+vaultwarden_container_additional_networks: |
+  {{
+    ([mash_playbook_reverse_proxyable_services_additional_network] if mash_playbook_reverse_proxyable_services_additional_network else [])
+    +
+    ([devture_postgres_container_network] if devture_postgres_enabled and vaultwarden_database_hostname == devture_postgres_identifier and vaultwarden_container_network != devture_postgres_container_network else [])
+  }}
+
+vaultwarden_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
+vaultwarden_container_labels_traefik_docker_network: "{{ mash_playbook_reverse_proxyable_services_additional_network }}"
+vaultwarden_container_labels_traefik_entrypoints: "{{ devture_traefik_entrypoint_primary }}"
+vaultwarden_container_labels_traefik_tls_certResolver: "{{ devture_traefik_certResolver_primary }}"
+
+vaultwarden_database_hostname: "{{ devture_postgres_identifier if devture_postgres_enabled else '' }}"
+vaultwarden_database_port: "{{ '5432' if devture_postgres_enabled else '' }}"
+vaultwarden_database_username: "vaultwarden"
+vaultwarden_database_password: "{{ '%s' | format(mash_playbook_generic_secret_key) | password_hash('sha512', 'db.vaultwarden', rounds=655555) | to_uuid }}"
+
+########################################################################
+#                                                                      #
 # matrix/synapse-auto-compressor                                       #
 #                                                                      #
 ########################################################################
@@ -246,6 +283,8 @@ devture_systemd_service_manager_services_list_additional: |
     +
     ([{'name': (uptime_kuma_identifier + '.service'), 'priority': 5000, 'groups': ['etke', 'uptime-kuma']}] if uptime_kuma_enabled else [])
     +
+    ([{'name': (vaultwarden_identifier + '.service'), 'priority': 2000, 'groups': ['etke', 'vaultwarden', 'vaultwarden-server']}] if vaultwarden_enabled else [])
+    +
     ([{'name': (languagetool_identifier + '.service'), 'priority': 5000, 'groups': ['etke', 'languagetool']}] if languagetool_enabled else [])
     +
     ([{'name': (miniflux_identifier + '.service'), 'priority': 5000, 'groups': ['etke', 'miniflux']}] if miniflux_enabled else [])
@@ -283,6 +322,12 @@ devture_postgres_managed_databases_additional: |
       'username': gotosocial_database_username,
       'password': gotosocial_database_password,
     }] if gotosocial_enabled else [])
+    +
+    ([{
+      'name': vaultwarden_database_name,
+      'username': vaultwarden_database_username,
+      'password': vaultwarden_database_password,
+    }] if vaultwarden_enabled else [])
   }}
 
 ########################################################################

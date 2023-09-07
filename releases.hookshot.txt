@@ -79,4 +79,5 @@
 !hookshot feed https://github.com/Awesome-Technologies/synapse-admin/releases.atom synapse-admin
 !hookshot feed https://github.com/matrix-org/rust-synapse-compress-state/releases.atom synapse-auto-compressor
 !hookshot feed https://github.com/louislam/uptime-kuma/releases.atom uptime_kuma
+!hookshot feed https://github.com/dani-garcia/vaultwarden/releases.atom vaultwarden
 !hookshot feed https://git.zx2c4.com/wireguard-linux/atom/ wireguard

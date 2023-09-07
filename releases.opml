@@ -85,6 +85,7 @@
     <outline text="synapse-admin" title="synapse-admin" type="rss" htmlUrl="https://github.com/Awesome-Technologies/synapse-admin" xmlUrl="https://github.com/Awesome-Technologies/synapse-admin/releases.atom" />
     <outline text="synapse-auto-compressor" title="synapse-auto-compressor" type="rss" htmlUrl="https://github.com/matrix-org/rust-synapse-compress-state" xmlUrl="https://github.com/matrix-org/rust-synapse-compress-state/releases.atom" />
     <outline text="uptime_kuma" title="uptime_kuma" type="rss" htmlUrl="https://github.com/louislam/uptime-kuma" xmlUrl="https://github.com/louislam/uptime-kuma/releases.atom" />
+    <outline text="vaultwarden" title="vaultwarden" type="rss" htmlUrl="https://github.com/dani-garcia/vaultwarden" xmlUrl="https://github.com/dani-garcia/vaultwarden/releases.atom" />
     <outline text="wireguard" title="wireguard" type="rss" htmlUrl="https://git.zx2c4.com/wireguard-linux" xmlUrl="https://git.zx2c4.com/wireguard-linux/atom/" />
   </body>
 </opml>

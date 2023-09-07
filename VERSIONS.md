@@ -82,6 +82,7 @@
 * twitter: v0.1.6
 * uptime_kuma: 1.23.1
 * user_verification_service: v2.0.0
+* vaultwarden: 1.29.2
 * whatsapp: v0.10.0
 * wsproxy: latest
 * wsproxy_syncproxy: latest
