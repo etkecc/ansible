@@ -16,7 +16,7 @@
 * discord: v0.6.1
 * dnsmasq: latest
 * docker_compose: v2.11.1
-* draupnir: v1.84.0
+* draupnir: v1.85.0
 * dynamic_dns: v3.10.0-ls131
 * element: v1.11.40
 * email2matrix: 1.1.0
@@ -68,7 +68,7 @@
 * signal_daemon: 0.23.2
 * signal: v0.4.3
 * slack: latest
-* sliding_sync: v0.99.9
+* sliding_sync: v0.99.10
 * sms_bridge: 0.5.7
 * soft_serve: v0.4.7
 * sygnal: v0.12.0
