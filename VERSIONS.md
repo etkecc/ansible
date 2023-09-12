@@ -16,9 +16,9 @@
 * discord: v0.6.1
 * dnsmasq: latest
 * docker_compose: v2.11.1
-* draupnir: v1.85.0
+* draupnir: v1.85.1
 * dynamic_dns: v3.10.0-ls131
-* element: v1.11.40
+* element: v1.11.41
 * email2matrix: 1.1.0
 * etherpad: 1.9.2
 * facebook: v0.5.0
@@ -75,7 +75,7 @@
 * synapse_admin: 0.8.7
 * synapse_auto_compressor: v0.1.3
 * synapse_reverse_proxy_companion: 1.25.2-alpine
-* synapse: v1.91.2
+* synapse: v1.92.1
 * telegram: v0.14.1
 * traefik_certs_dumper: v2.8.1
 * traefik: v2.10.4
