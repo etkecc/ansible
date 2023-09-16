@@ -1,4 +1,4 @@
-* appservice_discord: v3.1.0
+* appservice_discord: v4.0.0
 * appservice_irc: 1.0.1
 * appservice_kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * appservice_slack: 2.1.2
@@ -45,7 +45,7 @@
 * matrix_registration_bot: 1.3.0
 * matrix_reminder_bot: release-v0.2.1
 * maubot: v0.4.1
-* miniflux: 2.0.47
+* miniflux: 2.0.48
 * mjolnir: v1.6.4
 * mx_puppet_discord: v0.1.1
 * mx_puppet_groupme: 533cccc8
