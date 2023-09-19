@@ -27,7 +27,7 @@
 * googlechat: v0.5.0
 * go_skype_bridge: latest
 * gotosocial: 0.11.0
-* grafana: 10.1.1
+* grafana: 10.1.2
 * hangouts: latest
 * heisenbridge: 1.14.5
 * honoroit: v0.9.19
