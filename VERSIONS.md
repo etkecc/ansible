@@ -21,7 +21,7 @@
 * element: v1.11.43
 * email2matrix: 1.1.0
 * etherpad: 1.9.2
-* facebook: v0.5.0
+* facebook: v0.5.1
 * gmessages: v0.2.0
 * go_neb: latest
 * googlechat: v0.5.0
@@ -33,13 +33,13 @@
 * honoroit: v0.9.19
 * hookshot: 4.4.1
 * hydrogen: v0.4.1
-* instagram: v0.3.0
+* instagram: v0.3.1
 * jitsi_ldap: "3"
 * jitsi_prosody_auth_user_verification_repo: 2839499cb03894d8cfc3e5b2219441427cb133d8 # v1.8.0
 * jitsi: stable-8960
 * languagetool: 6.1
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
-* linkedin: v0.5.4
+* linkedin: latest
 * ma1sd: 2.5.0
 * mailer: 4.96-r1-0
 * matrix_registration_bot: 1.3.0
@@ -76,13 +76,13 @@
 * synapse_auto_compressor: v0.1.3
 * synapse_reverse_proxy_companion: 1.25.2-alpine
 * synapse: v1.92.3
-* telegram: v0.14.1
+* telegram: v0.14.2
 * traefik_certs_dumper: v2.8.1
 * traefik: v2.10.4
-* twitter: v0.1.6
+* twitter: v0.1.7
 * uptime_kuma: 1.23.2
 * user_verification_service: v2.0.0
 * vaultwarden: 1.29.2
-* whatsapp: v0.10.1
+* whatsapp: v0.10.2
 * wsproxy: latest
 * wsproxy_syncproxy: latest
