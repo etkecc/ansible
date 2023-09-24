@@ -36,7 +36,7 @@
 * instagram: v0.3.1
 * jitsi_ldap: "3"
 * jitsi_prosody_auth_user_verification_repo: 2839499cb03894d8cfc3e5b2219441427cb133d8 # v1.8.0
-* jitsi: stable-8960
+* jitsi: stable-8960-1
 * languagetool: 6.1
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * linkedin: latest
@@ -55,7 +55,7 @@
 * mx_puppet_twitter: latest
 * nginx_proxy: 1.25.2-alpine
 * ntfy: v2.7.0
-* postmoogle: v0.9.14
+* postmoogle: v0.9.15
 * prometheus_nginxlog_exporter: v1.10.0
 * prometheus_node_exporter: v1.6.1
 * prometheus_postgres_exporter: v0.14.0
