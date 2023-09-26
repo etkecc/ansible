@@ -20,7 +20,7 @@
 * dynamic_dns: v3.10.0-ls131
 * element: v1.11.43
 * email2matrix: 1.1.0
-* etherpad: 1.9.2
+* etherpad: 1.9.3
 * facebook: v0.5.1
 * gmessages: v0.2.0
 * go_neb: latest
