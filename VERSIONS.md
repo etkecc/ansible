@@ -18,7 +18,7 @@
 * docker_compose: v2.11.1
 * draupnir: v1.85.1
 * dynamic_dns: v3.10.0-ls131
-* element: v1.11.43
+* element: v1.11.44
 * email2matrix: 1.1.0
 * etherpad: 1.9.3
 * facebook: v0.5.1
@@ -31,7 +31,7 @@
 * hangouts: latest
 * heisenbridge: 1.14.5
 * honoroit: v0.9.19
-* hookshot: 4.4.1
+* hookshot: 4.5.1
 * hydrogen: v0.4.1
 * instagram: v0.3.1
 * jitsi_ldap: "3"
@@ -75,7 +75,7 @@
 * synapse_admin: 0.8.7
 * synapse_auto_compressor: v0.1.3
 * synapse_reverse_proxy_companion: 1.25.2-alpine
-* synapse: v1.92.3
+* synapse: v1.93.0
 * telegram: v0.14.2
 * traefik_certs_dumper: v2.8.1
 * traefik: v2.10.4
