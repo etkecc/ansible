@@ -27,7 +27,7 @@
 * googlechat: v0.5.0
 * go_skype_bridge: latest
 * gotosocial: 0.11.0
-* grafana: 10.1.2
+* grafana: 10.1.4
 * hangouts: latest
 * heisenbridge: 1.14.5
 * honoroit: v0.9.19
@@ -44,7 +44,7 @@
 * mailer: 4.96-r1-0
 * matrix_registration_bot: 1.3.0
 * matrix_reminder_bot: release-v0.2.1
-* maubot: v0.4.1
+* maubot: v0.4.2
 * miniflux: 2.0.48
 * mjolnir: v1.6.4
 * mx_puppet_discord: v0.1.1
