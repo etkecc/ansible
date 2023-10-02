@@ -90,7 +90,7 @@ nofeeds:
     python bin/feeds.py . check
 
 # Runs the playbook with --tags=install-all,ensure-matrix-users-created,start and optional arguments
-install-all *extra_args: (run-tags "install-all,ensure-matrix-users-created,start" extra_args)
+install-all *extra_args: (run-tags "install-all,ensure-users-created,ensure-matrix-users-created,start" extra_args)
 
 # Runs installation tasks for a single service
 install-service service *extra_args:
@@ -100,7 +100,7 @@ install-service service *extra_args:
     --extra-vars=devture_systemd_service_manager_service_restart_mode=one-by-one {{ extra_args }}
 
 # Runs the playbook with --tags=setup-all,ensure-matrix-users-created,start and optional arguments
-setup-all *extra_args: (run-tags "setup-all,ensure-matrix-users-created,start" extra_args)
+setup-all *extra_args: (run-tags "setup-all,ensure-users-created,ensure-matrix-users-created,start" extra_args)
 
 # Runs the playbook with the given list of arguments
 run +extra_args:
