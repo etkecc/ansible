@@ -3,7 +3,7 @@
 * appservice_kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * appservice_slack: 2.1.2
 * appservice_webhooks: v1.0.3-01
-* borg: 1.2.4
+* borg: 1.2.6
 * borgmatic: 1.8.2
 * buscarron: v1.3.1
 * cactus_comments: 0.9.0
