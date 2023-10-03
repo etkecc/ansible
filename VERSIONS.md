@@ -17,14 +17,14 @@
 * dnsmasq: latest
 * docker_compose: v2.11.1
 * draupnir: v1.85.1
-* dynamic_dns: v3.10.0-ls131
+* dynamic_dns: v3.10.0-ls135
 * element: v1.11.45
 * email2matrix: 1.1.0
 * etherpad: 1.9.3
 * facebook: v0.5.1
 * gmessages: v0.2.0
 * go_neb: latest
-* googlechat: v0.5.0
+* googlechat: v0.5.1
 * go_skype_bridge: latest
 * gotosocial: 0.11.0
 * grafana: 10.1.4
