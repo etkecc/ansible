@@ -22,7 +22,8 @@
 - name: Populate target images dict
   ansible.builtin.set_fact:
     skopeo_targets: "{{ skopeo_targets | combine({item: skopeo_target + item | regex_search('/.*')}) }}"
-  when: skopeo_ignore_text not in item and item not in skopeo_ignore_images
+  when: item not in skopeo_ignore_images
+  # when: skopeo_ignore_text not in item and item not in skopeo_ignore_images
   loop: "{{ skopeo_sources }}"
 
 - name: Check image status
@@ -32,7 +33,8 @@
     status_code: [200, 404]
     headers:
       Accept: application/vnd.docker.distribution.manifest.list.v2+json, application/vnd.oci.image.index.v1+json
-  when: skopeo_ignore_text not in item and item not in skopeo_ignore_images
+  when: item not in skopeo_ignore_images
+  # when: skopeo_ignore_text not in item and item not in skopeo_ignore_images
   failed_when: false
   loop: "{{ skopeo_sources }}"
   register: skopeo_status
@@ -40,7 +42,8 @@
 - name: Populate final images dict
   ansible.builtin.set_fact:
     skopeo_final: "{{ skopeo_final | combine({item.item: skopeo_targets[item.item]}) }}"
-  when: skopeo_ignore_text not in item.item and item.item not in skopeo_ignore_images and (item.status | default(-1) != 200 or item.item.endswith(':latest'))
+  when: item.item not in skopeo_ignore_images and (item.status | default(-1) != 200 or item.item.endswith(':latest'))
+  # when: skopeo_ignore_text not in item.item and item.item not in skopeo_ignore_images and (item.status | default(-1) != 200 or item.item.endswith(':latest'))
   loop_control:
     label: "{{ item.item }}"
   loop: "{{ skopeo_status.results }}"
