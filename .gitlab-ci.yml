@@ -59,6 +59,7 @@ fresh:
 stable:
   stage: release
   only: ['master']
+  except: ['schedules']
   services:
     - docker:dind
   image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/jdrouet/docker-with-buildx:latest
@@ -79,6 +80,7 @@ stable:
 sync images (fresh):
   stage: postrelease
   only: ['fresh', 'schedules']
+  except: ['master']
   image:
     name: $CI_REGISTRY_IMAGE:fresh
     entrypoint: [""]
@@ -91,6 +93,7 @@ sync images (fresh):
 sync images (stable):
   stage: postrelease
   only: ['master', 'schedules']
+  except: ['fresh']
   image:
     name: $CI_REGISTRY_IMAGE
     entrypoint: [""]

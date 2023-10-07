@@ -11,7 +11,7 @@
 * cinny: v2.2.6
 * container_socket_proxy: 0.1.1
 * corporal: 2.5.2
-* coturn: 4.6.2-r4
+* coturn: 4.6.2-r5
 * dimension: latest
 * discord: v0.6.2
 * dnsmasq: latest
