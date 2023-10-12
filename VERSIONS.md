@@ -68,7 +68,7 @@
 * signal_daemon: 0.23.2
 * signal: v0.4.3
 * slack: latest
-* sliding_sync: v0.99.10
+* sliding_sync: v0.99.11
 * sms_bridge: 0.5.7
 * soft_serve: v0.4.7
 * sygnal: v0.12.0
@@ -78,7 +78,7 @@
 * synapse: v1.94.0
 * telegram: v0.14.2
 * traefik_certs_dumper: v2.8.1
-* traefik: v2.10.4
+* traefik: v2.10.5
 * twitter: v0.1.7
 * uptime_kuma: 1.23.3
 * user_verification_service: v2.0.0
