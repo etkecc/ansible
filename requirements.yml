@@ -11,7 +11,7 @@
 - src: git+https://gitlab.com/etke.cc/roles/languagetool.git
   version: v6.1-0
 - src: git+https://gitlab.com/etke.cc/roles/miniflux.git
-  version: v2.0.48-0
+  version: v2.0.49-0
 - src: git+https://gitlab.com/etke.cc/roles/radicale.git
   version: v3.1.8.3-0
 - src: git+https://gitlab.com/etke.cc/roles/ssh.git
