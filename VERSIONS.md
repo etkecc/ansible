@@ -4,7 +4,7 @@
 * appservice_slack: 2.1.2
 * appservice_webhooks: v1.0.3-01
 * borg: 1.2.6
-* borgmatic: 1.8.2
+* borgmatic: 1.8.3
 * buscarron: v1.3.1
 * cactus_comments: 0.9.0
 * chatgpt: 3.1.2
@@ -13,7 +13,7 @@
 * corporal: 2.5.2
 * coturn: 4.6.2-r5
 * dimension: latest
-* discord: v0.6.2
+* discord: v0.6.3
 * dnsmasq: latest
 * docker_compose: v2.11.1
 * draupnir: v1.85.1
@@ -22,7 +22,7 @@
 * email2matrix: 1.1.0
 * etherpad: 1.9.3
 * facebook: v0.5.1
-* gmessages: v0.2.0
+* gmessages: v0.2.1
 * go_neb: latest
 * googlechat: v0.5.1
 * go_skype_bridge: latest
@@ -59,7 +59,7 @@
 * prometheus_nginxlog_exporter: v1.10.0
 * prometheus_node_exporter: v1.6.1
 * prometheus_postgres_exporter: v0.14.0
-* prometheus: v2.47.1
+* prometheus: v2.47.2
 * radicale: 3.1.8.3
 * rageshake: 1.9.0
 * redis: 7.2.0
@@ -82,6 +82,6 @@
 * uptime_kuma: 1.23.3
 * user_verification_service: v2.0.0
 * vaultwarden: 1.29.2
-* whatsapp: v0.10.2
+* whatsapp: v0.10.3
 * wsproxy: latest
 * wsproxy_syncproxy: latest
