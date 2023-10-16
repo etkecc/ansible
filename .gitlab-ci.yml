@@ -1,8 +1,8 @@
 variables:
   AGRU: v0.1.5
-  ALPINE: 3.18.2
-  ANSIBLE: 8.4.0
-  ANSIBLE_CORE: 2.15.4
+  ALPINE: 3.18.4
+  ANSIBLE: 8.5.0
+  ANSIBLE_CORE: 2.15.5
 
 stages:
   - base
@@ -85,6 +85,7 @@ sync images (fresh):
     name: $CI_REGISTRY_IMAGE:fresh
     entrypoint: [""]
   before_script:
+    - apk --no-cache add skopeo
     - cp -r /playbook/.config/inventory /
   script:
     - cd /playbook; ansible-playbook play/all.yml -l localhost -t skopeo -e target=localhost
@@ -98,6 +99,7 @@ sync images (stable):
     name: $CI_REGISTRY_IMAGE
     entrypoint: [""]
   before_script:
+    - apk --no-cache add skopeo
     - cp -r /playbook/.config/inventory /
   script:
     - cd /playbook; ansible-playbook play/all.yml -l localhost -t skopeo -e target=localhost
