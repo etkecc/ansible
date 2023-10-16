@@ -70,7 +70,6 @@
 * slack: latest
 * sliding_sync: v0.99.11
 * sms_bridge: 0.5.7
-* soft_serve: v0.4.7
 * sygnal: v0.12.0
 * synapse_admin: 0.8.7
 * synapse_auto_compressor: v0.1.3

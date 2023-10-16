@@ -4,6 +4,7 @@
     <title>Release feeds for roles</title>
   </head>
   <body>
+    <outline text="alpinelinux" title="alpinelinux" type="rss" htmlUrl="https://github.com/alpinelinux/aports" xmlUrl="https://github.com/alpinelinux/aports/releases.atom" />
     <outline text="ansible" title="ansible" type="rss" htmlUrl="https://pypi.org/project/ansible/#history" xmlUrl="https://pypi.org/rss/project/ansible/releases.xml" />
     <outline text="ansible-core" title="ansible-core" type="rss" htmlUrl="https://pypi.org/project/ansible-core/#history" xmlUrl="https://pypi.org/rss/project/ansible-core/releases.xml" />
     <outline text="appservice-discord" title="appservice-discord" type="rss" htmlUrl="https://github.com/Half-Shot/matrix-appservice-discord" xmlUrl="https://github.com/Half-Shot/matrix-appservice-discord/releases.atom" />
@@ -12,6 +13,8 @@
     <outline text="appservice-webhooks" title="appservice-webhooks" type="rss" htmlUrl="https://github.com/redoonetworks/matrix-appservice-webhooks" xmlUrl="https://github.com/redoonetworks/matrix-appservice-webhooks/releases.atom" />
     <outline text="backup_borg" title="backup_borg" type="rss" htmlUrl="https://gitlab.com/etke.cc/borgmatic" xmlUrl="https://gitlab.com/etke.cc/borgmatic/-/tags?format=atom" />
     <outline text="beeper-linkedin" title="beeper-linkedin" type="rss" htmlUrl="https://github.com/beeper/linkedin" xmlUrl="https://github.com/beeper/linkedin/releases.atom" />
+    <outline text="borg" title="borg" type="rss" htmlUrl="https://github.com/borgbackup/borg" xmlUrl="https://github.com/borgbackup/borg/releases.atom" />
+    <outline text="borgmatic" title="borgmatic" type="rss" htmlUrl="https://github.com/borgmatic-collective/borgmatic" xmlUrl="https://github.com/borgmatic-collective/borgmatic/releases.atom" />
     <outline text="buscarron" title="buscarron" type="rss" htmlUrl="https://gitlab.com/etke.cc/buscarron" xmlUrl="https://gitlab.com/etke.cc/buscarron/-/tags?format=atom" />
     <outline text="cactus-comments" title="cactus-comments" type="rss" htmlUrl="https://gitlab.com/cactus-comments/cactus-appservice" xmlUrl="https://gitlab.com/cactus-comments/cactus-appservice/-/tags?format=atom" />
     <outline text="cactus-comments-2" title="cactus-comments-2" type="rss" htmlUrl="https://gitlab.com/cactus-comments/cactus-client" xmlUrl="https://gitlab.com/cactus-comments/cactus-client/-/tags?format=atom" />
@@ -48,6 +51,7 @@
     <outline text="mautrix-discord" title="mautrix-discord" type="rss" htmlUrl="https://github.com/mautrix/discord" xmlUrl="https://github.com/mautrix/discord/releases.atom" />
     <outline text="mautrix-facebook" title="mautrix-facebook" type="rss" htmlUrl="https://github.com/mautrix/facebook" xmlUrl="https://github.com/mautrix/facebook/releases.atom" />
     <outline text="mautrix-gmessages" title="mautrix-gmessages" type="rss" htmlUrl="https://github.com/mautrix/gmessages" xmlUrl="https://github.com/mautrix/gmessages/releases.atom" />
+    <outline text="mautrix-go" title="mautrix-go" type="rss" htmlUrl="https://github.com/mautrix/go" xmlUrl="https://github.com/mautrix/go/releases.atom" />
     <outline text="mautrix-googlechat" title="mautrix-googlechat" type="rss" htmlUrl="https://github.com/mautrix/googlechat" xmlUrl="https://github.com/mautrix/googlechat/releases.atom" />
     <outline text="mautrix-hangouts" title="mautrix-hangouts" type="rss" htmlUrl="https://github.com/mautrix/hangouts" xmlUrl="https://github.com/mautrix/hangouts/releases.atom" />
     <outline text="mautrix-instagram" title="mautrix-instagram" type="rss" htmlUrl="https://github.com/mautrix/instagram" xmlUrl="https://github.com/mautrix/instagram/releases.atom" />
@@ -79,7 +83,6 @@
     <outline text="schildichat" title="schildichat" type="rss" htmlUrl="https://github.com/SchildiChat/schildichat-desktop" xmlUrl="https://github.com/SchildiChat/schildichat-desktop/releases.atom" />
     <outline text="sliding-sync" title="sliding-sync" type="rss" htmlUrl="https://github.com/matrix-org/sliding-sync" xmlUrl="https://github.com/matrix-org/sliding-sync/releases.atom" />
     <outline text="sms" title="sms" type="rss" htmlUrl="https://github.com/benkuly/matrix-sms-bridge" xmlUrl="https://github.com/benkuly/matrix-sms-bridge/releases.atom" />
-    <outline text="soft_serve" title="soft_serve" type="rss" htmlUrl="https://github.com/charmbracelet/soft-serve" xmlUrl="https://github.com/charmbracelet/soft-serve/releases.atom" />
     <outline text="sygnal" title="sygnal" type="rss" htmlUrl="https://github.com/matrix-org/sygnal" xmlUrl="https://github.com/matrix-org/sygnal/releases.atom" />
     <outline text="synapse" title="synapse" type="rss" htmlUrl="https://github.com/matrix-org/synapse" xmlUrl="https://github.com/matrix-org/synapse/releases.atom" />
     <outline text="synapse-admin" title="synapse-admin" type="rss" htmlUrl="https://github.com/Awesome-Technologies/synapse-admin" xmlUrl="https://github.com/Awesome-Technologies/synapse-admin/releases.atom" />
