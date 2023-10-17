@@ -61,7 +61,7 @@
 * prometheus_postgres_exporter: v0.14.0
 * prometheus: v2.47.2
 * radicale: 3.1.8.3
-* rageshake: 1.9.0
+* rageshake: 1.11.0
 * redis: 7.2.0
 * registration: v0.7.2
 * schildichat: v1.11.30-sc.2
@@ -69,7 +69,7 @@
 * signal: v0.4.3
 * slack: latest
 * sliding_sync: v0.99.11
-* sms_bridge: 0.5.7
+* sms_bridge: 0.5.8
 * sygnal: v0.12.0
 * synapse_admin: 0.8.7
 * synapse_auto_compressor: v0.1.3
@@ -80,7 +80,7 @@
 * traefik: v2.10.5
 * twitter: v0.1.7
 * uptime_kuma: 1.23.3
-* user_verification_service: v2.0.0
+* user_verification_service: v3.0.0
 * vaultwarden: 1.29.2
 * whatsapp: v0.10.3
 * wsproxy: latest
