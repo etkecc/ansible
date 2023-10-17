@@ -61,9 +61,10 @@ update: upstream && opml hookshot versions
 
 # update VERSIONS.md file using the actual versions from roles' files
 versions:
-    @echo "generating versions diff..."
-    @bash bin/versions.sh
-    @git --no-pager diff --no-ext-diff VERSIONS.md
+    #!/usr/bin/env sh
+    echo "generating versions diff..."
+    bash bin/versions.sh
+    git --no-pager diff --no-ext-diff VERSIONS.md
 
 # run ansible-lint
 lint:
@@ -71,9 +72,10 @@ lint:
 
 # make commit
 commit: opml hookshot versions
-    @git add --all
-    @git commit -S -q -m "`bash bin/commit-msg.sh`"
-    @echo "Changes have been committed"
+    #!/usr/bin/env sh
+    git add --all
+    git commit -S -q -m "$(bash bin/commit-msg.sh)"
+    echo "Changes have been committed"
 
 # dumps an OPML file with extracted git feeds for roles
 opml:
