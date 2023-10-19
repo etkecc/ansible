@@ -10,7 +10,7 @@
 * chatgpt: 3.1.2
 * cinny: v2.2.6
 * container_socket_proxy: 0.1.1
-* corporal: 2.5.2
+* corporal: 2.6.0
 * coturn: 4.6.2-r5
 * dimension: latest
 * discord: v0.6.3
