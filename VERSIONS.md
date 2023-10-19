@@ -41,7 +41,7 @@
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * linkedin: latest
 * ma1sd: 2.5.0
-* mailer: 4.96-r1-0
+* mailer: 4.96.2-r0-0
 * matrix_registration_bot: 1.3.0
 * matrix_reminder_bot: release-v0.2.1
 * maubot: v0.4.2
