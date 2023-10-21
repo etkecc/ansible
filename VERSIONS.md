@@ -8,7 +8,7 @@
 * buscarron: v1.3.1
 * cactus_comments: 0.9.0
 * chatgpt: 3.1.2
-* cinny: v2.2.6
+* cinny: v3.0.0
 * container_socket_proxy: 0.1.1
 * corporal: 2.6.0
 * coturn: 4.6.2-r5
