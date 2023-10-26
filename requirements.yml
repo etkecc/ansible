@@ -8,6 +8,10 @@
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-gotosocial.git
   version: v0.12.1-0
   name: gotosocial
+  # TODO: remove after merge https://github.com/spantaleev/matrix-docker-ansible-deploy/pull/2969
+- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-jitsi.git
+  version: v8960-2
+  name: jitsi
 - src: git+https://gitlab.com/etke.cc/roles/languagetool.git
   version: v6.1-0
 - src: git+https://gitlab.com/etke.cc/roles/miniflux.git
