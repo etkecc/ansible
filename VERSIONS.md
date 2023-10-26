@@ -17,8 +17,8 @@
 * dnsmasq: latest
 * docker_compose: v2.11.1
 * draupnir: v1.85.1
-* dynamic_dns: v3.11.0-ls137
-* element: v1.11.46
+* dynamic_dns: 3.11.1
+* element: v1.11.47
 * email2matrix: 1.1.0
 * etherpad: 1.9.3
 * facebook: v0.5.1
@@ -26,8 +26,8 @@
 * go_neb: latest
 * googlechat: v0.5.1
 * go_skype_bridge: latest
-* gotosocial: 0.12.0
-* grafana: 10.1.5
+* gotosocial: 0.12.1
+* grafana: 10.2.0
 * hangouts: latest
 * heisenbridge: 1.14.5
 * honoroit: v0.9.19
@@ -53,7 +53,7 @@
 * mx_puppet_slack: v0.1.2
 * mx_puppet_steam: latest
 * mx_puppet_twitter: latest
-* nginx_proxy: 1.25.2-alpine
+* nginx_proxy: 1.25.3-alpine
 * ntfy: v2.7.0
 * postmoogle: v0.9.16
 * prometheus_nginxlog_exporter: v1.10.0
@@ -73,8 +73,8 @@
 * sygnal: v0.12.0
 * synapse_admin: 0.8.7
 * synapse_auto_compressor: v0.1.3
-* synapse_reverse_proxy_companion: 1.25.2-alpine
-* synapse: v1.94.0
+* synapse_reverse_proxy_companion: 1.25.3-alpine
+* synapse: v1.95.0
 * telegram: v0.14.2
 * traefik_certs_dumper: v2.8.1
 * traefik: v2.10.5
