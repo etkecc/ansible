@@ -4,11 +4,11 @@
 * appservice_slack: 2.1.2
 * appservice_webhooks: v1.0.3-01
 * borg: 1.2.6
-* borgmatic: 1.8.3
+* borgmatic: 1.8.4
 * buscarron: v1.3.1
 * cactus_comments: 0.9.0
-* chatgpt: 3.1.2
-* cinny: v3.0.0
+* chatgpt: 3.1.4
+* cinny: v3.1.0
 * container_socket_proxy: 0.1.1
 * corporal: 2.6.0
 * coturn: 4.6.2-r5

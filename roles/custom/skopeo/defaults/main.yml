@@ -6,7 +6,12 @@ skopeo_ignore_images:
   - "{{ matrix_email2matrix_docker_image }}"
   - "{{ matrix_client_element_docker_image }}"
 skopeo_static:
-  - dock.mau.dev/mautrix/signal:latest
-  - dock.mau.dev/mautrix/instagram:latest
+  - "registry.gitlab.com/etke.cc/app:{{ matrix_client_element_version }}"
+  - "registry.gitlab.com/etke.cc/etherpad:{{ etherpad_version }}"
   - dock.mau.dev/mautrix/googlechat:latest
+  - dock.mau.dev/mautrix/instagram:latest
+  - dock.mau.dev/mautrix/signal:latest
   - ghcr.io/beeper/linkedin:latest
+  - registry.gitlab.com/etke.cc/buscarron:latest
+  - registry.gitlab.com/etke.cc/honoroit:latest
+  - registry.gitlab.com/etke.cc/postmoogle:latest
