@@ -45,6 +45,7 @@
     <outline text="jitsi" title="jitsi" type="rss" htmlUrl="https://github.com/jitsi/docker-jitsi-meet" xmlUrl="https://github.com/jitsi/docker-jitsi-meet/releases.atom" />
     <outline text="languagetool" title="languagetool" type="rss" htmlUrl="https://github.com/Erikvl87/docker-languagetool" xmlUrl="https://github.com/Erikvl87/docker-languagetool/releases.atom" />
     <outline text="ldap-registration-proxy" title="ldap-registration-proxy" type="rss" htmlUrl="https://gitlab.com/activism.international/matrix_ldap_registration_proxy" xmlUrl="https://gitlab.com/activism.international/matrix_ldap_registration_proxy/-/tags?format=atom" />
+    <outline text="linkding" title="linkding" type="rss" htmlUrl="https://github.com/sissbruecker/linkding" xmlUrl="https://github.com/sissbruecker/linkding/releases.atom" />
     <outline text="ma1sd" title="ma1sd" type="rss" htmlUrl="https://github.com/ma1uta/ma1sd" xmlUrl="https://github.com/ma1uta/ma1sd/releases.atom" />
     <outline text="mailer" title="mailer" type="rss" htmlUrl="https://github.com/devture/exim-relay" xmlUrl="https://github.com/devture/exim-relay/releases.atom" />
     <outline text="maubot" title="maubot" type="rss" htmlUrl="https://mau.dev/maubot/maubot" xmlUrl="https://mau.dev/maubot/maubot/-/tags?format=atom" />

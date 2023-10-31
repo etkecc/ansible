@@ -39,6 +39,7 @@
 !hookshot feed https://github.com/jitsi/docker-jitsi-meet/releases.atom jitsi
 !hookshot feed https://github.com/Erikvl87/docker-languagetool/releases.atom languagetool
 !hookshot feed https://gitlab.com/activism.international/matrix_ldap_registration_proxy/-/tags?format=atom ldap-registration-proxy
+!hookshot feed https://github.com/sissbruecker/linkding/releases.atom linkding
 !hookshot feed https://github.com/ma1uta/ma1sd/releases.atom ma1sd
 !hookshot feed https://github.com/devture/exim-relay/releases.atom mailer
 !hookshot feed https://mau.dev/maubot/maubot/-/tags?format=atom maubot

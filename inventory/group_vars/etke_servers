@@ -48,6 +48,43 @@ languagetool_container_labels_traefik_entrypoints: "{{ devture_traefik_entrypoin
 
 ########################################################################
 #                                                                      #
+# linkding                                                             #
+#                                                                      #
+########################################################################
+
+linkding_enabled: false
+
+linkding_identifier: "{{ mash_playbook_service_identifier_prefix }}linkding"
+
+linkding_base_path: "{{ mash_playbook_base_path }}/{{ mash_playbook_service_base_directory_name_prefix }}linkding"
+
+linkding_uid: "{{ mash_playbook_uid }}"
+linkding_gid: "{{ mash_playbook_gid }}"
+
+linkding_systemd_required_services_list: |
+  {{
+    (['docker.service'])
+    +
+    ([devture_postgres_identifier ~ '.service'] if devture_postgres_enabled and linkding_database_hostname == devture_postgres_identifier else [])
+  }}
+
+linkding_container_additional_networks: |
+  {{
+    ([mash_playbook_reverse_proxyable_services_additional_network] if mash_playbook_reverse_proxyable_services_additional_network else [])
+    +
+    ([devture_postgres_container_network] if devture_postgres_enabled and linkding_database_hostname == devture_postgres_identifier and linkding_container_network != devture_postgres_container_network else [])
+  }}
+
+linkding_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
+linkding_container_labels_traefik_docker_network: "{{ mash_playbook_reverse_proxyable_services_additional_network }}"
+linkding_container_labels_traefik_entrypoints: "{{ devture_traefik_entrypoint_primary }}"
+linkding_container_labels_traefik_tls_certResolver: "{{ devture_traefik_certResolver_primary }}"
+
+linkding_database_hostname: "{{ devture_postgres_connection_hostname if devture_postgres_enabled else '' }}"
+linkding_database_password: "{{ '%s' | format(mash_playbook_generic_secret_key) | password_hash('sha512', 'linkding.db', rounds=655555) | to_uuid }}"
+
+########################################################################
+#                                                                      #
 # miniflux                                                             #
 #                                                                      #
 ########################################################################
@@ -289,6 +326,8 @@ devture_systemd_service_manager_services_list_additional: |
     +
     ([{'name': (miniflux_identifier + '.service'), 'priority': 5000, 'groups': ['etke', 'miniflux']}] if miniflux_enabled else [])
     +
+    ([{'name': (linkding_identifier + '.service'), 'priority': 2000, 'groups': ['etke', 'linkding']}] if linkding_enabled else [])
+    +
     ([{'name': (radicale_identifier + '.service'), 'priority': 5000, 'groups': ['etke', 'radicale']}] if radicale_enabled else [])
     +
     ([{'name': soft_serve_identifier + '.service', 'priority': 5000, 'groups': ['etke', 'softserve', 'soft-serve']}] if soft_serve_enabled else [])
@@ -316,6 +355,12 @@ devture_postgres_managed_databases_additional: |
       'username': miniflux_database_username,
       'password': miniflux_database_password,
     }] if miniflux_enabled else [])
+    +
+    ([{
+      'name': linkding_database_name,
+      'username': linkding_database_username,
+      'password': linkding_database_password,
+    }] if linkding_enabled and linkding_database_engine == 'postgres' else [])
     +
     ([{
       'name': gotosocial_database_name,

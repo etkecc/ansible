@@ -10,6 +10,9 @@
   name: gotosocial
 - src: git+https://gitlab.com/etke.cc/roles/languagetool.git
   version: v6.1-0
+- src: git+https://github.com/kinduff/ansible-docker-linkding.git
+  version: v1.9.0
+  name: linkding
 - src: git+https://gitlab.com/etke.cc/roles/miniflux.git
   version: v2.0.49-0
 - src: git+https://gitlab.com/etke.cc/roles/radicale.git
