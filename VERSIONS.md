@@ -29,7 +29,7 @@
 * gotosocial: 0.12.1
 * grafana: 10.2.0
 * hangouts: latest
-* heisenbridge: 1.14.5
+* heisenbridge: 1.14.6
 * honoroit: v0.9.19
 * hookshot: 4.5.1
 * hydrogen: v0.4.1
