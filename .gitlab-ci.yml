@@ -2,7 +2,7 @@ variables:
   AGRU: v0.1.5
   ALPINE: 3.18.4
   ANSIBLE: 8.5.0
-  ANSIBLE_CORE: 2.15.5
+  ANSIBLE_CORE: 2.15.6
 
 stages:
   - base
