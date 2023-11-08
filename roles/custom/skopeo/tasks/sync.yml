@@ -3,6 +3,7 @@
 - name: Initialize images vars
   ansible.builtin.set_fact:
     skopeo_sources: "{{ skopeo_static }}"
+    skopeo_commands: []
     skopeo_targets: {}
     skopeo_final: {}
 
@@ -43,7 +44,6 @@
   ansible.builtin.set_fact:
     skopeo_final: "{{ skopeo_final | combine({item.item: skopeo_targets[item.item]}) }}"
   when: item.item not in skopeo_ignore_images and (item.status | default(-1) != 200 or item.item.endswith(':latest'))
-  # when: skopeo_ignore_text not in item.item and item.item not in skopeo_ignore_images and (item.status | default(-1) != 200 or item.item.endswith(':latest'))
   loop_control:
     label: "{{ item.item }}"
   loop: "{{ skopeo_status.results }}"
@@ -52,8 +52,24 @@
   ansible.builtin.debug:
     msg: "{{ skopeo_final }}"
 
-- name: Sync image between registries
-  ansible.builtin.shell: "skopeo copy --all --preserve-digests docker://{{ item.key }} docker://{{ item.value }}"
+# NEW: generate list of commands
+- name: Populate commands list
+  ansible.builtin.set_fact:
+    skopeo_commands: "{{ skopeo_commands + ['skopeo copy --all --preserve-digests docker://' + item.key + ' docker://' + item.value] }}"
   loop: "{{ skopeo_final | dict2items }}"
   become: false
   delegate_to: 127.0.0.1
+
+- name: Write commands list
+  ansible.builtin.copy:
+    content: "({% for command in skopeo_commands %}echo \"{{ command }}\"; {% endfor %}echo \"echo list generated\") | parallel"
+    dest: .skopeo-parallel
+  become: false
+  delegate_to: 127.0.0.1
+
+# OLD: run skopeo by ansible
+# - name: Sync image between registries
+#   ansible.builtin.shell: "skopeo copy --all --preserve-digests docker://{{ item.key }} docker://{{ item.value }}"
+#   loop: "{{ skopeo_final | dict2items }}"
+#   become: false
+#   delegate_to: 127.0.0.1

@@ -84,10 +84,11 @@ sync images (fresh):
     name: $CI_REGISTRY_IMAGE:fresh
     entrypoint: [""]
   before_script:
-    - apk --no-cache add skopeo
+    - apk --no-cache add skopeo parallel
     - cp -r /playbook/.config/inventory /
   script:
     - cd /playbook; ansible-playbook play/all.yml -l localhost -t skopeo -e target=localhost
+    - sh play/.skopeo-parallel
   allow_failure: true
 
 sync images (stable):
@@ -98,8 +99,9 @@ sync images (stable):
     name: $CI_REGISTRY_IMAGE
     entrypoint: [""]
   before_script:
-    - apk --no-cache add skopeo
+    - apk --no-cache add skopeo parallel
     - cp -r /playbook/.config/inventory /
   script:
     - cd /playbook; ansible-playbook play/all.yml -l localhost -t skopeo -e target=localhost
+    - sh play/.skopeo-parallel
   allow_failure: true

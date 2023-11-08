@@ -1,3 +1,6 @@
+# ignore temporary state
+/play/.skopeo-parallel
+
 # ignore roles pulled by ansible-galaxy
 /roles/galaxy/*
 !/roles/galaxy/.gitkeep
