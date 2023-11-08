@@ -25,7 +25,6 @@ base:
     - docker buildx create --use
     - docker buildx build --platform linux/arm64/v8,linux/amd64 --push
       -t ${CI_REGISTRY_IMAGE}/base:${ALPINE}-${ANSIBLE_CORE}-${ANSIBLE}
-      -t registry.etke.cc/etke.cc/ansible/base:${ALPINE}-${ANSIBLE_CORE}-${ANSIBLE}
       --build-arg AGRU="$AGRU"
       --build-arg ALPINE="$ALPINE"
       --build-arg ANSIBLE="$ANSIBLE"
