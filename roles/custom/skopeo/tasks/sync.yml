@@ -20,43 +20,12 @@
   debug:
     msg: "{{ skopeo_sources }}"
 
-- name: Populate target images dict
-  ansible.builtin.set_fact:
-    skopeo_targets: "{{ skopeo_targets | combine({item: skopeo_target + item | regex_search('/.*')}) }}"
-  when: item not in skopeo_ignore_images
-  # when: skopeo_ignore_text not in item and item not in skopeo_ignore_images
-  loop: "{{ skopeo_sources }}"
-
-- name: Check image status
-  ansible.builtin.uri:
-    url: "https://{{ skopeo_target }}/v2{{ item | regex_search('\/.*') | replace(':', '/manifests/') }}"
-    method: GET
-    status_code: [200, 404]
-    headers:
-      Accept: application/vnd.docker.distribution.manifest.list.v2+json, application/vnd.oci.image.index.v1+json
-  when: item not in skopeo_ignore_images
-  # when: skopeo_ignore_text not in item and item not in skopeo_ignore_images
-  failed_when: false
-  loop: "{{ skopeo_sources }}"
-  register: skopeo_status
-
-- name: Populate final images dict
-  ansible.builtin.set_fact:
-    skopeo_final: "{{ skopeo_final | combine({item.item: skopeo_targets[item.item]}) }}"
-  when: item.item not in skopeo_ignore_images and (item.status | default(-1) != 200 or item.item.endswith(':latest'))
-  loop_control:
-    label: "{{ item.item }}"
-  loop: "{{ skopeo_status.results }}"
-
-- name: Final list of images to sync
-  ansible.builtin.debug:
-    msg: "{{ skopeo_final }}"
-
-# NEW: generate list of commands
+# NEW2: use skopeo sync
 - name: Populate commands list
   ansible.builtin.set_fact:
-    skopeo_commands: "{{ skopeo_commands + ['skopeo copy --all --preserve-digests docker://' + item.key + ' docker://' + item.value] }}"
-  loop: "{{ skopeo_final | dict2items }}"
+    skopeo_commands: "{{ skopeo_commands + ['skopeo sync --all --preserve-digests --src docker --dest docker ' + item + ' ' + skopeo_target + (item|regex_search('/.*')|regex_search('.*/'))] }}"
+  when: item not in skopeo_ignore_images
+  loop: "{{ skopeo_sources }}"
   become: false
   delegate_to: 127.0.0.1
 
@@ -66,6 +35,53 @@
     dest: .skopeo-parallel
   become: false
   delegate_to: 127.0.0.1
+# OLD & NEW1
+# - name: Populate target images dict
+#   ansible.builtin.set_fact:
+#     skopeo_targets: "{{ skopeo_targets | combine({item: skopeo_target + item | regex_search('/.*')}) }}"
+#   when: item not in skopeo_ignore_images
+#   # when: skopeo_ignore_text not in item and item not in skopeo_ignore_images
+#   loop: "{{ skopeo_sources }}"
+#
+# - name: Check image status
+#   ansible.builtin.uri:
+#     url: "https://{{ skopeo_target }}/v2{{ item | regex_search('\/.*') | replace(':', '/manifests/') }}"
+#     method: GET
+#     status_code: [200, 404]
+#     headers:
+#       Accept: application/vnd.docker.distribution.manifest.list.v2+json, application/vnd.oci.image.index.v1+json
+#   when: item not in skopeo_ignore_images
+#   # when: skopeo_ignore_text not in item and item not in skopeo_ignore_images
+#   failed_when: false
+#   loop: "{{ skopeo_sources }}"
+#   register: skopeo_status
+#
+# - name: Populate final images dict
+#   ansible.builtin.set_fact:
+#     skopeo_final: "{{ skopeo_final | combine({item.item: skopeo_targets[item.item]}) }}"
+#   when: item.item not in skopeo_ignore_images and (item.status | default(-1) != 200 or item.item.endswith(':latest'))
+#   loop_control:
+#     label: "{{ item.item }}"
+#   loop: "{{ skopeo_status.results }}"
+#
+# - name: Final list of images to sync
+#   ansible.builtin.debug:
+#     msg: "{{ skopeo_final }}"
+
+# NEW1: generate list of commands with skopeo copy
+# - name: Populate commands list
+#   ansible.builtin.set_fact:
+#     skopeo_commands: "{{ skopeo_commands + ['skopeo copy --all --preserve-digests docker://' + item.key + ' docker://' + item.value] }}"
+#   loop: "{{ skopeo_final | dict2items }}"
+#   become: false
+#   delegate_to: 127.0.0.1
+#
+# - name: Write commands list
+#   ansible.builtin.copy:
+#     content: "({% for command in skopeo_commands %}echo \"{{ command }}\"; {% endfor %}echo \"echo list generated\") | parallel"
+#     dest: .skopeo-parallel
+#   become: false
+#   delegate_to: 127.0.0.1
 
 # OLD: run skopeo by ansible
 # - name: Sync image between registries
