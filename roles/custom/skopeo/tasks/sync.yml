@@ -21,11 +21,25 @@
     msg: "{{ skopeo_sources }}"
 
 # NEW2: use skopeo sync
-- name: Populate commands list
+- name: Populate commands list (all)
   ansible.builtin.set_fact:
     skopeo_commands: "{{ skopeo_commands + ['skopeo sync --all --preserve-digests --src docker --dest docker ' + item + ' ' + skopeo_target + (item|regex_search('/.*')|regex_search('.*/'))] }}"
-  when: item not in skopeo_ignore_images
+  when:
+    - item not in skopeo_ignore_images
+    - ('only-latest' not in ansible_run_tags)
   loop: "{{ skopeo_sources }}"
+  become: false
+  delegate_to: 127.0.0.1
+
+- name: Populate commands list (all)
+  ansible.builtin.set_fact:
+    skopeo_commands: "{{ skopeo_commands + ['skopeo sync --all --preserve-digests --src docker --dest docker ' + item + ' ' + skopeo_target + (item|regex_search('/.*')|regex_search('.*/'))] }}"
+  when:
+    - item not in skopeo_ignore_images
+    - item.endswith(':latest')
+  loop: "{{ skopeo_sources }}"
+  tags:
+    - only-latest
   become: false
   delegate_to: 127.0.0.1
 

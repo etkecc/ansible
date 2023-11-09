@@ -76,32 +76,32 @@ stable:
   tags:
     - docker
 
-sync images (fresh):
+sync images (all):
   stage: postrelease
-  only: ['fresh', 'schedules']
-  except: ['master']
+  only: ['fresh']
   image:
     name: $CI_REGISTRY_IMAGE:fresh
     entrypoint: [""]
   before_script:
     - apk --no-cache add skopeo parallel
+    - skopeo login --username $DOCKER_HUB_LOGIN --password $DOCKER_HUB_PASSWORD docker.io
     - cp -r /playbook/.config/inventory /
   script:
     - cd /playbook; ansible-playbook play/all.yml -l localhost -t skopeo -e target=localhost
     - sh play/.skopeo-parallel
   allow_failure: true
 
-sync images (stable):
+sync images (only latest):
   stage: postrelease
-  only: ['master', 'schedules']
-  except: ['fresh']
+  only: ['schedules']
   image:
-    name: $CI_REGISTRY_IMAGE
+    name: $CI_REGISTRY_IMAGE:fresh
     entrypoint: [""]
   before_script:
     - apk --no-cache add skopeo parallel
+    - skopeo login --username $DOCKER_HUB_LOGIN --password $DOCKER_HUB_PASSWORD docker.io
     - cp -r /playbook/.config/inventory /
   script:
-    - cd /playbook; ansible-playbook play/all.yml -l localhost -t skopeo -e target=localhost
+    - cd /playbook; ansible-playbook play/all.yml -l localhost -t skopeo,only-latest -e target=localhost
     - sh play/.skopeo-parallel
   allow_failure: true
