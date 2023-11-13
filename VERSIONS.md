@@ -18,7 +18,7 @@
 * docker_compose: v2.11.1
 * draupnir: v1.85.1
 * dynamic_dns: 3.11.1
-* element: v1.11.48
+* element: v1.11.49
 * email2matrix: 1.1.0
 * etherpad: 1.9.3
 * facebook: v0.5.1
