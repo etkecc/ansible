@@ -58,7 +58,7 @@
 * ntfy: v2.7.0
 * postmoogle: v0.9.16
 * prometheus_nginxlog_exporter: v1.10.0
-* prometheus_node_exporter: v1.6.1
+* prometheus_node_exporter: v1.7.0
 * prometheus_postgres_exporter: v0.14.0
 * prometheus: v2.47.2
 * radicale: 3.1.8.3
@@ -80,7 +80,7 @@
 * traefik_certs_dumper: v2.8.1
 * traefik: v2.10.5
 * twitter: v0.1.7
-* uptime_kuma: 1.23.3
+* uptime_kuma: 1.23.4
 * user_verification_service: v3.0.0
 * vaultwarden: 1.30.0
 * whatsapp: v0.10.3
