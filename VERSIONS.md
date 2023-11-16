@@ -27,7 +27,7 @@
 * googlechat: v0.5.1
 * go_skype_bridge: latest
 * gotosocial: 0.12.1
-* grafana: 10.2.0
+* grafana: 10.2.1
 * hangouts: latest
 * heisenbridge: 1.14.6
 * honoroit: v0.9.19
@@ -36,7 +36,7 @@
 * instagram: v0.3.1
 * jitsi_ldap: "3"
 * jitsi_prosody_auth_user_verification_repo: 2839499cb03894d8cfc3e5b2219441427cb133d8 # v1.8.0
-* jitsi: stable-8960-1
+* jitsi: stable-9078
 * languagetool: 6.1
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * linkding: latest
@@ -47,7 +47,7 @@
 * matrix_reminder_bot: release-v0.2.1
 * maubot: v0.4.2
 * miniflux: 2.0.50
-* mjolnir: v1.6.4
+* mjolnir: v1.6.5
 * mx_puppet_discord: v0.1.1
 * mx_puppet_groupme: 533cccc8
 * mx_puppet_instagram: latest
@@ -60,7 +60,7 @@
 * prometheus_nginxlog_exporter: v1.10.0
 * prometheus_node_exporter: v1.7.0
 * prometheus_postgres_exporter: v0.14.0
-* prometheus: v2.47.2
+* prometheus: v2.48.0
 * radicale: 3.1.8.3
 * rageshake: 1.11.0
 * redis: 7.2.0
