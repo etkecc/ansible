@@ -13,7 +13,7 @@
 * corporal: 2.6.0
 * coturn: 4.6.2-r5
 * dimension: latest
-* discord: v0.6.3
+* discord: v0.6.4
 * dnsmasq: latest
 * docker_compose: v2.11.1
 * draupnir: v1.85.1
@@ -22,7 +22,7 @@
 * email2matrix: 1.1.0
 * etherpad: 1.9.3
 * facebook: v0.5.1
-* gmessages: v0.2.1
+* gmessages: v0.2.2
 * go_neb: latest
 * googlechat: v0.5.1
 * go_skype_bridge: latest
@@ -75,7 +75,7 @@
 * synapse_admin: 0.8.7
 * synapse_auto_compressor: v0.1.3
 * synapse_reverse_proxy_companion: 1.25.3-alpine
-* synapse: v1.95.1
+* synapse: v1.96.1
 * telegram: v0.14.2
 * traefik_certs_dumper: v2.8.1
 * traefik: v2.10.5
@@ -83,6 +83,6 @@
 * uptime_kuma: 1.23.4
 * user_verification_service: v3.0.0
 * vaultwarden: 1.30.0
-* whatsapp: v0.10.3
+* whatsapp: v0.10.4
 * wsproxy: latest
 * wsproxy_syncproxy: latest
