@@ -1,6 +1,9 @@
 ---
 
 - include: upstream/requirements.yml
+- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-jitsi.git
+  version: v9078-1
+  name: jitsi
 - src: git+https://gitlab.com/etke.cc/roles/cleanup.git
   version: main
 - src: git+https://gitlab.com/etke.cc/roles/fail2ban.git
