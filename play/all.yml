@@ -7,18 +7,18 @@
 
   roles:
     # MATRIX
-    - galaxy/com.devture.ansible.role.playbook_help
-    - galaxy/com.devture.ansible.role.systemd_docker_base
+    - galaxy/playbook_help
+    - galaxy/systemd_docker_base
     - custom/matrix_playbook_migration
     - when: devture_docker_sdk_for_python_installation_enabled | bool
-      role: galaxy/com.devture.ansible.role.docker_sdk_for_python
+      role: galaxy/docker_sdk_for_python
       tags:
         - setup-docker
         - setup-all
         - install-docker
         - install-all
     - when: devture_timesync_installation_enabled | bool
-      role: galaxy/com.devture.ansible.role.timesync
+      role: galaxy/timesync
       tags:
         - setup-timesync
         - setup-all
@@ -27,7 +27,7 @@
     - custom/matrix-base
     # - custom/matrix-dynamic-dns # unused
     - custom/matrix-mailer
-    - galaxy/com.devture.ansible.role.postgres
+    - galaxy/postgres
     - galaxy/redis
     # - custom/matrix-corporal # unused
     - custom/matrix-bridge-appservice-discord
@@ -129,19 +129,19 @@
     - custom/matrix-coturn
     # - custom/matrix-media-repo # unused
     - galaxy/auxiliary
-    - galaxy/com.devture.ansible.role.postgres_backup
+    - galaxy/postgres_backup
     - galaxy/backup_borg
     - custom/matrix-user-creator
     - custom/matrix-common-after
-    - galaxy/com.devture.ansible.role.container_socket_proxy
+    - galaxy/container_socket_proxy
     - when: devture_traefik_enabled | bool
-      role: galaxy/com.devture.ansible.role.traefik
+      role: galaxy/traefik
     - when: devture_traefik_certs_dumper_enabled | bool
-      role: galaxy/com.devture.ansible.role.traefik_certs_dumper
+      role: galaxy/traefik_certs_dumper
     - when: devture_systemd_service_manager_enabled | bool
-      role: galaxy/com.devture.ansible.role.systemd_service_manager
-    - galaxy/com.devture.ansible.role.playbook_state_preserver
-    - galaxy/com.devture.ansible.role.playbook_runtime_messages
+      role: galaxy/systemd_service_manager
+    - galaxy/playbook_state_preserver
+    - galaxy/playbook_runtime_messages
     # END MATRIX
 
     # CUSTOM

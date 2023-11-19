@@ -80,7 +80,7 @@
 * traefik_certs_dumper: v2.8.1
 * traefik: v2.10.5
 * twitter: v0.1.7
-* uptime_kuma: 1.23.5
+* uptime_kuma: 1.23.6
 * user_verification_service: v3.0.0
 * vaultwarden: 1.30.0
 * whatsapp: v0.10.4
