@@ -4,7 +4,7 @@
 * appservice_slack: 2.1.2
 * appservice_webhooks: v1.0.3-01
 * borg: 1.2.6
-* borgmatic: 1.8.4
+* borgmatic: 1.8.5
 * buscarron: v1.3.1
 * cactus_comments: 0.9.0
 * chatgpt: 3.1.4
@@ -55,7 +55,7 @@
 * mx_puppet_steam: latest
 * mx_puppet_twitter: latest
 * nginx_proxy: 1.25.3-alpine
-* ntfy: v2.7.0
+* ntfy: v2.8.0
 * postmoogle: v0.9.16
 * prometheus_nginxlog_exporter: v1.10.0
 * prometheus_node_exporter: v1.7.0
@@ -82,7 +82,7 @@
 * twitter: v0.1.7
 * uptime_kuma: 1.23.6
 * user_verification_service: v3.0.0
-* vaultwarden: 1.30.0
+* vaultwarden: 1.30.1
 * whatsapp: v0.10.4
 * wsproxy: latest
 * wsproxy_syncproxy: latest
