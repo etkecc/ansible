@@ -18,7 +18,7 @@
 * docker_compose: v2.11.1
 * draupnir: v1.85.1
 * dynamic_dns: 3.11.1
-* element: v1.11.49
+* element: v1.11.50
 * email2matrix: 1.1.0
 * etherpad: 1.9.3
 * facebook: v0.5.1
@@ -27,16 +27,16 @@
 * googlechat: v0.5.1
 * go_skype_bridge: latest
 * gotosocial: 0.12.1
-* grafana: 10.2.1
+* grafana: 10.2.2
 * hangouts: latest
 * heisenbridge: 1.14.6
 * honoroit: v0.9.19
-* hookshot: 4.5.1
+* hookshot: 4.6.0
 * hydrogen: v0.4.1
 * instagram: v0.3.1
 * jitsi_ldap: "3"
 * jitsi_prosody_auth_user_verification_repo: 2839499cb03894d8cfc3e5b2219441427cb133d8 # v1.8.0
-* jitsi: stable-9078
+* jitsi: stable-9111
 * languagetool: 6.1
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * linkding: latest
@@ -71,7 +71,7 @@
 * slack: latest
 * sliding_sync: v0.99.12
 * sms_bridge: 0.5.8
-* sygnal: v0.12.0
+* sygnal: v0.13.0
 * synapse_admin: 0.8.7
 * synapse_auto_compressor: v0.1.3
 * synapse_reverse_proxy_companion: 1.25.3-alpine

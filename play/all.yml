@@ -4,6 +4,7 @@
   become: true
   vars:
     matrix_playbook_docker_installation_enabled: false
+    matrix_playbook_migration_debian_signedby_migration_enabled: false
 
   roles:
     # MATRIX
