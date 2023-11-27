@@ -76,11 +76,11 @@
 * synapse_auto_compressor: v0.1.3
 * synapse_reverse_proxy_companion: 1.25.3-alpine
 * synapse: v1.96.1
-* telegram: v0.14.2
+* telegram: v0.15.0
 * traefik_certs_dumper: v2.8.1
 * traefik: v2.10.5
 * twitter: v0.1.7
-* uptime_kuma: 1.23.6
+* uptime_kuma: 1.23.7
 * user_verification_service: v3.0.0
 * vaultwarden: 1.30.1
 * whatsapp: v0.10.4
