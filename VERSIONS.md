@@ -75,7 +75,7 @@
 * synapse_admin: 0.8.7
 * synapse_auto_compressor: v0.1.3
 * synapse_reverse_proxy_companion: 1.25.3-alpine
-* synapse: v1.96.1
+* synapse: v1.97.0
 * telegram: v0.15.0
 * traefik_certs_dumper: v2.8.1
 * traefik: v2.10.5
