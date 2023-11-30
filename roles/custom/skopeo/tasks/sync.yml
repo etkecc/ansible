@@ -45,7 +45,7 @@
 
 - name: Write commands list
   ansible.builtin.copy:
-    content: "({% for command in skopeo_commands %}echo \"{{ command }}\"; {% endfor %}echo \"echo list generated\") | parallel"
+    content: "({% for command in skopeo_commands %}echo \"{{ command }}\"; {% endfor %}echo \"echo list generated\") | parallel --progress"
     dest: .skopeo-parallel
   become: false
   delegate_to: 127.0.0.1
