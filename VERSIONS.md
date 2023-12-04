@@ -3,7 +3,7 @@
 * appservice_kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * appservice_slack: 2.1.2
 * appservice_webhooks: v1.0.3-01
-* borg: 1.2.6
+* borg: 1.2.7
 * borgmatic: 1.8.5
 * buscarron: v1.3.1
 * cactus_comments: 0.9.0
@@ -80,7 +80,7 @@
 * traefik_certs_dumper: v2.8.1
 * traefik: v2.10.6
 * twitter: v0.1.7
-* uptime_kuma: 1.23.7
+* uptime_kuma: 1.23.8
 * user_verification_service: v3.0.0
 * vaultwarden: 1.30.1
 * whatsapp: v0.10.4
