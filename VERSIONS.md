@@ -63,7 +63,7 @@
 * prometheus: v2.48.0
 * radicale: 3.1.8.3
 * rageshake: 1.11.0
-* redis: 7.2.0
+* redis: 7.2.3
 * registration: v0.7.2
 * schildichat: v1.11.30-sc.2
 * signal_daemon: 0.23.2
