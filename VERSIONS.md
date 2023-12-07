@@ -37,7 +37,7 @@
 * jitsi_ldap: "3"
 * jitsi_prosody_auth_user_verification_repo: 2839499cb03894d8cfc3e5b2219441427cb133d8 # v1.8.0
 * jitsi: stable-9111
-* languagetool: 6.1
+* languagetool: 6.2
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * linkding: latest
 * linkedin: latest
@@ -78,7 +78,7 @@
 * synapse: v1.97.0
 * telegram: v0.15.0
 * traefik_certs_dumper: v2.8.3
-* traefik: v2.10.6
+* traefik: v2.10.7
 * twitter: v0.1.7
 * uptime_kuma: 1.23.8
 * user_verification_service: v3.0.0

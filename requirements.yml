@@ -9,7 +9,7 @@
   version: v0.12.2-0
   name: gotosocial
 - src: git+https://gitlab.com/etke.cc/roles/languagetool.git
-  version: v6.1-0
+  version: v6.2-0
 - src: git+https://github.com/kinduff/ansible-docker-linkding.git
   version: v1.9.0
   name: linkding
