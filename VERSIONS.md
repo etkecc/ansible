@@ -37,7 +37,7 @@
 * jitsi_ldap: "3"
 * jitsi_prosody_auth_user_verification_repo: 2839499cb03894d8cfc3e5b2219441427cb133d8 # v1.8.0
 * jitsi: stable-9111
-* languagetool: 6.2
+* languagetool: 6.3
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * linkding: latest
 * linkedin: latest

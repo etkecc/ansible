@@ -8,6 +8,10 @@ skopeo_ignore_images:
   - "{{ matrix_user_verification_service_docker_image }}"
 skopeo_static:
   - "registry.gitlab.com/etke.cc/app:{{ matrix_client_element_version }}"
+  - "registry.gitlab.com/etke.cc/borgmatic:13-{{ backup_borg_borg_version }}-{{ backup_borg_borgmatic_version }}"
+  - "registry.gitlab.com/etke.cc/borgmatic:14-{{ backup_borg_borg_version }}-{{ backup_borg_borgmatic_version }}"
+  - "registry.gitlab.com/etke.cc/borgmatic:15-{{ backup_borg_borg_version }}-{{ backup_borg_borgmatic_version }}"
+  - "registry.gitlab.com/etke.cc/borgmatic:16-{{ backup_borg_borg_version }}-{{ backup_borg_borgmatic_version }}"
   - "registry.gitlab.com/etke.cc/etherpad:{{ etherpad_version }}"
   - dock.mau.dev/mautrix/googlechat:latest
   - dock.mau.dev/mautrix/instagram:latest
@@ -16,7 +20,3 @@ skopeo_static:
   - registry.gitlab.com/etke.cc/buscarron:latest
   - registry.gitlab.com/etke.cc/honoroit:latest
   - registry.gitlab.com/etke.cc/postmoogle:latest
-  - "registry.gitlab.com/etke.cc/borgmatic:12-{{ backup_borg_borg_version }}-{{ backup_borg_borgmatic_version }}"
-  - "registry.gitlab.com/etke.cc/borgmatic:13-{{ backup_borg_borg_version }}-{{ backup_borg_borgmatic_version }}"
-  - "registry.gitlab.com/etke.cc/borgmatic:14-{{ backup_borg_borg_version }}-{{ backup_borg_borgmatic_version }}"
-  - "registry.gitlab.com/etke.cc/borgmatic:15-{{ backup_borg_borg_version }}-{{ backup_borg_borgmatic_version }}"
