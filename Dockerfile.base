@@ -17,9 +17,9 @@ RUN apk --no-cache add python3 py3-cryptography py3-jinja2 py3-packaging py3-par
 		ln -s /bin/uname /usr/local/bin/uname && \
 		ln -s /bin/rm /usr/local/bin/rm && \
 		ln -s /bin/sh /usr/local/bin/sh && \
-		pip install --upgrade pip && \
-		pip install passlib && \
-		pip install ansible-core==${ANSIBLE_CORE} ansible==${ANSIBLE} && \
+		pip install --upgrade --break-system-packages pip && \
+		pip install --break-system-packages passlib && \
+		pip install --break-system-packages ansible-core==${ANSIBLE_CORE} ansible==${ANSIBLE} && \
 		pip cache purge && \
 		apk del builddeps && \
 		rm -rf /var/cache/apk/* && \
