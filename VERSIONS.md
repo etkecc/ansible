@@ -60,7 +60,7 @@
 * prometheus_nginxlog_exporter: v1.10.0
 * prometheus_node_exporter: v1.7.0
 * prometheus_postgres_exporter: v0.14.0
-* prometheus: v2.48.0
+* prometheus: v2.48.1
 * radicale: 3.1.8.3
 * rageshake: 1.11.0
 * redis: 7.2.3
@@ -80,7 +80,7 @@
 * traefik_certs_dumper: v2.8.3
 * traefik: v2.10.7
 * twitter: v0.1.7
-* uptime_kuma: 1.23.8
+* uptime_kuma: 1.23.9
 * user_verification_service: v3.0.0
 * vaultwarden: 1.30.1
 * whatsapp: v0.10.4
