@@ -20,7 +20,7 @@
 * dynamic_dns: 3.11.2
 * element: v1.11.51
 * email2matrix: 1.1.0
-* etherpad: 1.9.3
+* etherpad: 1.9.5
 * facebook: v0.5.1
 * gmessages: v0.2.2
 * go_neb: latest
@@ -75,12 +75,12 @@
 * synapse_admin: 0.8.7
 * synapse_auto_compressor: v0.1.3
 * synapse_reverse_proxy_companion: 1.25.3-alpine
-* synapse: v1.97.0
+* synapse: v1.98.0
 * telegram: v0.15.0
 * traefik_certs_dumper: v2.8.3
 * traefik: v2.10.7
 * twitter: v0.1.7
-* uptime_kuma: 1.23.9
+* uptime_kuma: 1.23.10
 * user_verification_service: v3.0.0
 * vaultwarden: 1.30.1
 * whatsapp: v0.10.4
