@@ -20,7 +20,7 @@ base:
     - docker:dind
   image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/jdrouet/docker-with-buildx:latest
   before_script:
-    - curl -H "Content-Type: application/json" -H "Authorization: Bearer $MATRIX_TOKEN" $MATRIX_URL_FRESH -d '{"msgtype":"m.text", "body":"'"$CI_COMMIT_MESSAGE"'"}'
+    - "curl -H \"Content-Type: application/json\" -H \"Authorization: Bearer $MATRIX_TOKEN\" $MATRIX_URL_FRESH -d '{\"msgtype\":\"m.text\", \"body\":\"$CI_COMMIT_MESSAGE\"}'"
     - exit 1
     - docker login -u $DOCKER_HUB_LOGIN -p $DOCKER_HUB_PASSWORD docker.io
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
