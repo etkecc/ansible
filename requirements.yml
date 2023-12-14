@@ -1,10 +1,6 @@
 ---
 
 - include: upstream/requirements.yml
-# Temporary pin related to: https://github.com/spantaleev/matrix-docker-ansible-deploy/commit/8b9faa7e6575af176e6f1e00a3b309c52039f46f
-- src: git+https://gitlab.com/etke.cc/roles/etherpad.git
-  version: v1.9.5-1
-  name: etherpad
 - src: git+https://gitlab.com/etke.cc/roles/cleanup.git
   version: main
 - src: git+https://gitlab.com/etke.cc/roles/fail2ban.git
