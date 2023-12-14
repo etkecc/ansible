@@ -18,13 +18,8 @@ base:
         - .gitlab-ci.yml
   services:
     - docker:dind
-  variables:
-    MATRIX_BODY: "{\"msgtype\":\"m.text\", \"body\":\"$CI_COMMIT_MESSAGE\"}"
   image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/jdrouet/docker-with-buildx:latest
   before_script:
-    - apk add curl
-    - ./bin/ci-notify.sh
-    - exit 1
     - docker login -u $DOCKER_HUB_LOGIN -p $DOCKER_HUB_PASSWORD docker.io
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
@@ -91,25 +86,11 @@ sync images (all):
     name: $CI_REGISTRY_IMAGE:fresh
     entrypoint: [""]
   before_script:
-    - apk --no-cache add skopeo parallel
+    - apk --no-cache add skopeo parallel curl
     - skopeo login --username $DOCKER_HUB_LOGIN --password $DOCKER_HUB_PASSWORD docker.io
     - cp -r /playbook/.config/inventory /
   script:
     - cd /playbook; ansible-playbook play/all.yml -l localhost -t skopeo -e target=localhost
-    - sh play/.skopeo-parallel
-  allow_failure: true
-
-sync images (only latest):
-  stage: postrelease
-  only: ['schedules']
-  image:
-    name: $CI_REGISTRY_IMAGE:fresh
-    entrypoint: [""]
-  before_script:
-    - apk --no-cache add skopeo parallel
-    - skopeo login --username $DOCKER_HUB_LOGIN --password $DOCKER_HUB_PASSWORD docker.io
-    - cp -r /playbook/.config/inventory /
-  script:
-    - cd /playbook; ansible-playbook play/all.yml -l localhost -t skopeo,only-latest -e target=localhost
-    - sh play/.skopeo-parallel
+    - sh play/.skopeo-parallel || echo "that's ok"
+    - ./bin/ci-notify.sh
   allow_failure: true
