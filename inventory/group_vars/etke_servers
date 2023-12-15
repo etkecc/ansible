@@ -246,6 +246,48 @@ vaultwarden_database_password: "{{ '%s' | format(mash_playbook_generic_secret_ke
 
 ########################################################################
 #                                                                      #
+# firezone                                                             #
+#                                                                      #
+########################################################################
+
+firezone_enabled: false
+
+firezone_identifier: "{{ mash_playbook_service_identifier_prefix }}firezone"
+
+firezone_base_path: "{{ mash_playbook_base_path }}/{{ mash_playbook_service_base_directory_name_prefix }}firezone"
+
+firezone_uid: "{{ mash_playbook_uid }}"
+firezone_gid: "{{ mash_playbook_gid }}"
+firezone_generic_secret: "{{ mash_playbook_generic_secret_key }}"
+
+# role-specific:postgres
+firezone_database_host: "{{ devture_postgres_identifier if devture_postgres_enabled else '' }}"
+firezone_database_port: "{{ '5432' if devture_postgres_enabled else '' }}"
+firezone_database_password: "{{ '%s' | format(mash_playbook_generic_secret_key) | password_hash('sha512', 'fz.db.user', rounds=655555) | to_uuid }}"
+firezone_database_user: "{{ firezone_identifier }}"
+# /role-specific:postgres
+
+firezone_systemd_required_services_list: |
+  {{
+    (['docker.service'])
+    +
+    ([devture_postgres_identifier ~ '.service'] if devture_postgres_enabled | default(false) and firezone_database_host == devture_postgres_identifier else [])
+  }}
+
+firezone_container_additional_networks: |
+  {{
+    ([mash_playbook_reverse_proxyable_services_additional_network] if mash_playbook_reverse_proxyable_services_additional_network else [])
+    +
+    ([devture_postgres_container_network] if devture_postgres_enabled | default(false) and firezone_database_host == devture_postgres_identifier and firezone_container_network != devture_postgres_container_network else [])
+  }}
+
+firezone_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
+firezone_container_labels_traefik_docker_network: "{{ mash_playbook_reverse_proxyable_services_additional_network }}"
+firezone_container_labels_traefik_entrypoints: "{{ devture_traefik_entrypoint_primary }}"
+firezone_container_labels_traefik_tls_certResolver: "{{ devture_traefik_certResolver_primary }}"
+
+########################################################################
+#                                                                      #
 # matrix/synapse-auto-compressor                                       #
 #                                                                      #
 ########################################################################
@@ -315,6 +357,8 @@ devture_systemd_service_manager_services_list_additional: |
     +
     ([{'name': (radicale_identifier + '.service'), 'priority': 5000, 'groups': ['etke', 'radicale']}] if radicale_enabled else [])
     +
+    ([{'name': (firezone_identifier + '.service'), 'priority': 5000, 'groups': ['etke', 'firezone']}] if firezone_enabled else [])
+    +
     ([{'name': ('wg-quick@' + custom_wireguard_interface + '.service'), 'priority': 5000, 'groups': ['etke', 'wireguard']}] if custom_wireguard_enabled else [])
   }}
 
@@ -356,6 +400,12 @@ devture_postgres_managed_databases_additional: |
       'username': vaultwarden_database_username,
       'password': vaultwarden_database_password,
     }] if vaultwarden_enabled else [])
+    +
+    ([{
+      'name': firezone_database_name,
+      'username': firezone_database_username,
+      'password': firezone_database_password,
+    }] if firezone_enabled else [])
   }}
 
 ########################################################################

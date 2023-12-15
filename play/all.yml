@@ -115,6 +115,7 @@
     - galaxy/gotosocial
     - galaxy/radicale
     - galaxy/vaultwarden
+    - galaxy/firezone
     - custom/wireguard
     # END CUSTOM
 

@@ -22,6 +22,7 @@
 * email2matrix: 1.1.0
 * etherpad: 1.9.5
 * facebook: v0.5.1
+* firezone: 0.7.35
 * gmessages: v0.2.2
 * go_neb: latest
 * googlechat: v0.5.1
