@@ -28,7 +28,7 @@
     <outline text="dnsmasq" title="dnsmasq" type="rss" htmlUrl="https://gitlab.com/etke.cc/dnsmasq" xmlUrl="https://gitlab.com/etke.cc/dnsmasq/-/tags?format=atom" />
     <outline text="draupnir" title="draupnir" type="rss" htmlUrl="https://github.com/the-draupnir-project/Draupnir" xmlUrl="https://github.com/the-draupnir-project/Draupnir/releases.atom" />
     <outline text="dynamic-dns" title="dynamic-dns" type="rss" htmlUrl="https://github.com/linuxserver/docker-ddclient" xmlUrl="https://github.com/linuxserver/docker-ddclient/releases.atom" />
-    <outline text="element" title="element" type="rss" htmlUrl="https://github.com/vector-im/element-web" xmlUrl="https://github.com/vector-im/element-web/releases.atom" />
+    <outline text="element" title="element" type="rss" htmlUrl="https://github.com/element-hq/element-web" xmlUrl="https://github.com/element-hq/element-web/releases.atom" />
     <outline text="email2matrix" title="email2matrix" type="rss" htmlUrl="https://github.com/devture/email2matrix" xmlUrl="https://github.com/devture/email2matrix/releases.atom" />
     <outline text="etherpad" title="etherpad" type="rss" htmlUrl="https://github.com/ether/etherpad-lite" xmlUrl="https://github.com/ether/etherpad-lite/releases.atom" />
     <outline text="go-neb" title="go-neb" type="rss" htmlUrl="https://github.com/matrix-org/go-neb" xmlUrl="https://github.com/matrix-org/go-neb/releases.atom" />
@@ -37,7 +37,7 @@
     <outline text="heisenbridge" title="heisenbridge" type="rss" htmlUrl="https://github.com/hifi/heisenbridge" xmlUrl="https://github.com/hifi/heisenbridge/releases.atom" />
     <outline text="honoroit" title="honoroit" type="rss" htmlUrl="https://gitlab.com/etke.cc/honoroit" xmlUrl="https://gitlab.com/etke.cc/honoroit/-/tags?format=atom" />
     <outline text="hookshot" title="hookshot" type="rss" htmlUrl="https://github.com/matrix-org/matrix-hookshot" xmlUrl="https://github.com/matrix-org/matrix-hookshot/releases.atom" />
-    <outline text="hydrogen" title="hydrogen" type="rss" htmlUrl="https://github.com/vector-im/hydrogen-web" xmlUrl="https://github.com/vector-im/hydrogen-web/releases.atom" />
+    <outline text="hydrogen" title="hydrogen" type="rss" htmlUrl="https://github.com/element-hq/hydrogen-web" xmlUrl="https://github.com/element-hq/hydrogen-web/releases.atom" />
     <outline text="jitsi" title="jitsi" type="rss" htmlUrl="https://github.com/jitsi/docker-jitsi-meet" xmlUrl="https://github.com/jitsi/docker-jitsi-meet/releases.atom" />
     <outline text="languagetool" title="languagetool" type="rss" htmlUrl="https://github.com/Erikvl87/docker-languagetool" xmlUrl="https://github.com/Erikvl87/docker-languagetool/releases.atom" />
     <outline text="ldap-registration-proxy" title="ldap-registration-proxy" type="rss" htmlUrl="https://gitlab.com/activism.international/matrix_ldap_registration_proxy" xmlUrl="https://gitlab.com/activism.international/matrix_ldap_registration_proxy/-/tags?format=atom" />

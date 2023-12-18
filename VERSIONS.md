@@ -10,7 +10,7 @@
 * chatgpt: 3.1.4
 * cinny: v3.2.0
 * container_socket_proxy: 0.1.1
-* corporal: 2.6.0
+* corporal: 2.7.0
 * coturn: 4.6.2-r5
 * dimension: latest
 * discord: v0.6.4
@@ -23,7 +23,7 @@
 * etherpad: 1.9.5
 * facebook: v0.5.1
 * firezone: 0.7.35
-* gmessages: v0.2.2
+* gmessages: v0.2.3
 * go_neb: latest
 * googlechat: v0.5.1
 * go_skype_bridge: latest
@@ -43,7 +43,7 @@
 * linkding: latest
 * linkedin: latest
 * ma1sd: 2.5.0
-* mailer: 4.96.2-r0-0
+* mailer: 4.97-r0-0
 * matrix_registration_bot: 1.3.0
 * matrix_reminder_bot: release-v0.2.1
 * maubot: v0.4.2
@@ -84,6 +84,6 @@
 * uptime_kuma: 1.23.10
 * user_verification_service: v3.0.0
 * vaultwarden: 1.30.1
-* whatsapp: v0.10.4
+* whatsapp: v0.10.5
 * wsproxy: latest
 * wsproxy_syncproxy: latest
