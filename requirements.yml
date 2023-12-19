@@ -6,10 +6,10 @@
 - src: git+https://gitlab.com/etke.cc/roles/fail2ban.git
   version: main
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-firezone.git
-  version: v0.7.35-2
+  version: v0.7.35-3
   name: firezone
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-gotosocial.git
-  version: v0.12.2-0
+  version: v0.13.0-0
   name: gotosocial
 - src: git+https://gitlab.com/etke.cc/roles/languagetool.git
   version: v6.3-0
