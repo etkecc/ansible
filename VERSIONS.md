@@ -32,7 +32,7 @@
 * hangouts: latest
 * heisenbridge: 1.14.6
 * honoroit: v0.9.19
-* hookshot: 4.7.0
+* hookshot: 5.0.0
 * hydrogen: v0.4.1
 * instagram: v0.3.1
 * jitsi_ldap: "3"
@@ -77,7 +77,7 @@
 * synapse_auto_compressor: v0.1.3
 * synapse_reverse_proxy_companion: 1.25.3-alpine
 * synapse: v1.98.0
-* telegram: v0.15.0
+* telegram: v0.15.1
 * traefik_certs_dumper: v2.8.3
 * traefik: v2.10.7
 * twitter: v0.1.7
