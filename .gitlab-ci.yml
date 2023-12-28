@@ -32,6 +32,7 @@ base:
       --build-arg ANSIBLE_CORE="$ANSIBLE_CORE"
       -f Dockerfile.base
       .
+
   tags:
     - docker
 
