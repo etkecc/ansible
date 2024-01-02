@@ -20,7 +20,7 @@
 * dynamic_dns: 3.11.2
 * element: v1.11.52
 * email2matrix: 1.1.0
-* etherpad: 1.9.5
+* etherpad: 1.9.6
 * facebook: v0.5.1
 * firezone: 0.7.35
 * gmessages: v0.2.3
@@ -32,7 +32,7 @@
 * hangouts: latest
 * heisenbridge: 1.14.6
 * honoroit: v0.9.19
-* hookshot: 5.0.0
+* hookshot: 5.1.1
 * hydrogen: v0.4.1
 * instagram: v0.3.1
 * jitsi_ldap: "3"
@@ -67,8 +67,7 @@
 * redis: 7.2.3
 * registration: v0.7.2
 * schildichat: v1.11.30-sc.2
-* signal_daemon: 0.23.2
-* signal: v0.4.3
+* signal: 18e006300885e7432f0791211dec77345ae974a2
 * slack: latest
 * sliding_sync: v0.99.13
 * sms_bridge: 0.5.8
@@ -81,7 +80,7 @@
 * traefik_certs_dumper: v2.8.3
 * traefik: v2.10.7
 * twitter: v0.1.7
-* uptime_kuma: 1.23.10
+* uptime_kuma: 1.23.11
 * user_verification_service: v3.0.0
 * vaultwarden: 1.30.1
 * whatsapp: v0.10.5
