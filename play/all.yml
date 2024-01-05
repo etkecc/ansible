@@ -26,13 +26,13 @@
         - install-timesync
         - install-all
     - custom/matrix-base
+    - galaxy/exim_relay
     - galaxy/container_socket_proxy
     - when: devture_traefik_enabled | bool
       role: galaxy/traefik
     - when: devture_traefik_certs_dumper_enabled | bool
       role: galaxy/traefik_certs_dumper
     # - custom/matrix-dynamic-dns # unused
-    - custom/matrix-mailer
     - galaxy/postgres
     - galaxy/redis
     # - custom/matrix-corporal # unused

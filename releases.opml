@@ -31,6 +31,7 @@
     <outline text="element" title="element" type="rss" htmlUrl="https://github.com/element-hq/element-web" xmlUrl="https://github.com/element-hq/element-web/releases.atom" />
     <outline text="email2matrix" title="email2matrix" type="rss" htmlUrl="https://github.com/devture/email2matrix" xmlUrl="https://github.com/devture/email2matrix/releases.atom" />
     <outline text="etherpad" title="etherpad" type="rss" htmlUrl="https://github.com/ether/etherpad-lite" xmlUrl="https://github.com/ether/etherpad-lite/releases.atom" />
+    <outline text="exim_relay" title="exim_relay" type="rss" htmlUrl="https://github.com/devture/exim-relay" xmlUrl="https://github.com/devture/exim-relay/releases.atom" />
     <outline text="go-neb" title="go-neb" type="rss" htmlUrl="https://github.com/matrix-org/go-neb" xmlUrl="https://github.com/matrix-org/go-neb/releases.atom" />
     <outline text="go-skype-bridge" title="go-skype-bridge" type="rss" htmlUrl="https://github.com/kelaresg/go-skype-bridge" xmlUrl="https://github.com/kelaresg/go-skype-bridge/releases.atom" />
     <outline text="grafana" title="grafana" type="rss" htmlUrl="https://github.com/grafana/grafana" xmlUrl="https://github.com/grafana/grafana/releases.atom" />
@@ -43,7 +44,6 @@
     <outline text="ldap-registration-proxy" title="ldap-registration-proxy" type="rss" htmlUrl="https://gitlab.com/activism.international/matrix_ldap_registration_proxy" xmlUrl="https://gitlab.com/activism.international/matrix_ldap_registration_proxy/-/tags?format=atom" />
     <outline text="linkding" title="linkding" type="rss" htmlUrl="https://github.com/sissbruecker/linkding" xmlUrl="https://github.com/sissbruecker/linkding/releases.atom" />
     <outline text="ma1sd" title="ma1sd" type="rss" htmlUrl="https://github.com/ma1uta/ma1sd" xmlUrl="https://github.com/ma1uta/ma1sd/releases.atom" />
-    <outline text="mailer" title="mailer" type="rss" htmlUrl="https://github.com/devture/exim-relay" xmlUrl="https://github.com/devture/exim-relay/releases.atom" />
     <outline text="maubot" title="maubot" type="rss" htmlUrl="https://mau.dev/maubot/maubot" xmlUrl="https://mau.dev/maubot/maubot/-/tags?format=atom" />
     <outline text="mautrix-discord" title="mautrix-discord" type="rss" htmlUrl="https://github.com/mautrix/discord" xmlUrl="https://github.com/mautrix/discord/releases.atom" />
     <outline text="mautrix-facebook" title="mautrix-facebook" type="rss" htmlUrl="https://github.com/mautrix/facebook" xmlUrl="https://github.com/mautrix/facebook/releases.atom" />

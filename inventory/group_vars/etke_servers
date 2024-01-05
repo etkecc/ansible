@@ -189,6 +189,10 @@ gotosocial_database_host: "{{ devture_postgres_identifier if devture_postgres_en
 gotosocial_database_port: "{{ '5432' if devture_postgres_enabled else '' }}"
 gotosocial_database_password: "{{ '%s' | format(mash_playbook_generic_secret_key) | password_hash('sha512', 'db.gotosocial', rounds=655555) | to_uuid }}"
 gotosocial_database_username: "{{ gotosocial_identifier }}"
+gotosocial_smtp_host: "{{ exim_relay_identifier }}"
+gotosocial_smtp_from: "{{ exim_relay_sender_address }}"
+gotosocial_smtp_port: 8025
+
 
 gotosocial_systemd_required_services_list: |
   {{
@@ -245,6 +249,11 @@ vaultwarden_database_hostname: "{{ devture_postgres_identifier if devture_postgr
 vaultwarden_database_port: "{{ '5432' if devture_postgres_enabled else '' }}"
 vaultwarden_database_username: "vaultwarden"
 vaultwarden_database_password: "{{ '%s' | format(mash_playbook_generic_secret_key) | password_hash('sha512', 'db.vaultwarden', rounds=655555) | to_uuid }}"
+
+vaultwarden_config_smtp_from: "{{ exim_relay_sender_address }}"
+vaultwarden_config_smtp_host: "{{ exim_relay_identifier }}"
+vaultwarden_config_smtp_port: 8025
+vaultwarden_config_smtp_security: off
 
 ########################################################################
 #                                                                      #

@@ -4,7 +4,7 @@
 * appservice_slack: 2.1.2
 * appservice_webhooks: v1.0.3-01
 * borg: 1.2.7
-* borgmatic: 1.8.5
+* borgmatic: 1.8.6
 * buscarron: v1.3.1
 * cactus_comments: 0.9.0
 * chatgpt: 3.1.4
@@ -21,6 +21,7 @@
 * element: v1.11.53
 * email2matrix: 1.1.0
 * etherpad: 1.9.6
+* exim_relay: 4.97-r0-0
 * facebook: v0.5.1
 * firezone: 0.7.35
 * gmessages: v0.2.3
@@ -43,7 +44,6 @@
 * linkding: latest
 * linkedin: latest
 * ma1sd: 2.5.0
-* mailer: 4.97-r0-0
 * matrix_registration_bot: 1.3.0
 * matrix_reminder_bot: release-v0.2.1
 * maubot: v0.4.2
