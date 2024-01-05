@@ -26,6 +26,11 @@
         - install-timesync
         - install-all
     - custom/matrix-base
+    - galaxy/container_socket_proxy
+    - when: devture_traefik_enabled | bool
+      role: galaxy/traefik
+    - when: devture_traefik_certs_dumper_enabled | bool
+      role: galaxy/traefik_certs_dumper
     # - custom/matrix-dynamic-dns # unused
     - custom/matrix-mailer
     - galaxy/postgres
@@ -133,15 +138,10 @@
     - galaxy/auxiliary
     - galaxy/postgres_backup
     - galaxy/backup_borg
-    - custom/matrix-user-creator
-    - custom/matrix-common-after
-    - galaxy/container_socket_proxy
-    - when: devture_traefik_enabled | bool
-      role: galaxy/traefik
-    - when: devture_traefik_certs_dumper_enabled | bool
-      role: galaxy/traefik_certs_dumper
     - when: devture_systemd_service_manager_enabled | bool
       role: galaxy/systemd_service_manager
+    - custom/matrix-user-creator
+    - custom/matrix-common-after
     - galaxy/playbook_state_preserver
     - galaxy/playbook_runtime_messages
     # END MATRIX

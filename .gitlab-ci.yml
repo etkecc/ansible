@@ -18,7 +18,7 @@ base:
         - .gitlab-ci.yml
   services:
     - docker:dind
-  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/jdrouet/docker-with-buildx:latest
+  image: registry.gitlab.com/etke.cc/base/build
   before_script:
     - docker login -u $DOCKER_HUB_LOGIN -p $DOCKER_HUB_PASSWORD docker.io
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
@@ -42,7 +42,7 @@ fresh:
   except: ['schedules']
   services:
     - docker:dind
-  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/jdrouet/docker-with-buildx:latest
+  image: registry.gitlab.com/etke.cc/base/build
   before_script:
     - docker login -u $DOCKER_HUB_LOGIN -p $DOCKER_HUB_PASSWORD docker.io
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
@@ -64,7 +64,7 @@ stable:
   except: ['schedules']
   services:
     - docker:dind
-  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/jdrouet/docker-with-buildx:latest
+  image: registry.gitlab.com/etke.cc/base/build
   before_script:
     - docker login -u $DOCKER_HUB_LOGIN -p $DOCKER_HUB_PASSWORD docker.io
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
