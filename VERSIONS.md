@@ -18,7 +18,7 @@
 * docker_compose: v2.11.1
 * draupnir: v1.85.1
 * dynamic_dns: 3.11.2
-* element: v1.11.52
+* element: v1.11.53
 * email2matrix: 1.1.0
 * etherpad: 1.9.6
 * facebook: v0.5.1
@@ -67,13 +67,12 @@
 * redis: 7.2.3
 * registration: v0.7.2
 * schildichat: v1.11.30-sc.2
-* signal: 18e006300885e7432f0791211dec77345ae974a2
+* signal: a91fc7028c54482ec6c581784d553199dfff93ff
 * slack: latest
 * sliding_sync: v0.99.13
 * sms_bridge: 0.5.8
 * sygnal: v0.13.0
 * synapse_admin: 0.8.7
-* synapse_auto_compressor: v0.1.3
 * synapse_reverse_proxy_companion: 1.25.3-alpine
 * synapse: v1.98.0
 * telegram: v0.15.1
