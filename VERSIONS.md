@@ -67,7 +67,7 @@
 * redis: 7.2.3
 * registration: v0.7.2
 * schildichat: v1.11.30-sc.2
-* signal: a91fc7028c54482ec6c581784d553199dfff93ff
+* signal: 959eb7eaf9eb648f97b8e85d7650ea87f2639cd1
 * slack: latest
 * sliding_sync: v0.99.14
 * sms_bridge: 0.5.8
