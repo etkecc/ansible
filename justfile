@@ -55,8 +55,15 @@ update-stable:
 # pull dependencies
 dependencies: submodules roles
 
+# pull self
+update-self:
+    @echo "updating self..."
+    @git stash
+    @git pull -q
+    @git stash apply
+
 # pull all updates
-update: upstream && opml hookshot versions
+update: update-self upstream && opml hookshot versions
     @agru -u
 
 # update VERSIONS.md file using the actual versions from roles' files
