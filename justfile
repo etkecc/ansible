@@ -2,17 +2,58 @@
 default:
     @just --list --justfile {{ justfile() }}
 
-# initialize upstream with pinned commit
-submodules:
-    git submodule update --init --recursive
+### Playbook recipes
 
-# pull new upstream changes
-upstream:
-    @echo "updating upstream..."
-    @cd ./upstream && git pull -q
+# Runs the playbook with --tags=install-all,ensure-users-created,start and optional arguments
+install-all *extra_args: (run-tags "install-all,ensure-users-created,start" extra_args)
+
+# Runs installation tasks for a single service
+install-service service *extra_args:
+    just --justfile {{ justfile() }} run \
+    --tags=install-{{ service }},start-group \
+    --extra-vars=group={{ service }} \
+    --extra-vars=devture_systemd_service_manager_service_restart_mode=one-by-one {{ extra_args }}
+
+# Runs the playbook with --tags=setup-all,ensure-users-created,start and optional arguments
+setup-all *extra_args: (run-tags "setup-all,ensure-users-created,start" extra_args)
+
+# Runs the playbook with the given list of arguments
+run +extra_args:
+    time ansible-playbook play/all.yml {{ extra_args }}
+
+# Runs the playbook with the given list of comma-separated tags and optional arguments
+run-tags tags *extra_args:
+    just --justfile {{ justfile() }} run --tags={{ tags }} {{ extra_args }}
+
+### Infrastructure
+
+# run ansible-lint
+lint:
+    ansible-lint --project-dir . --exclude upstream
+
+# prints roles files for which a GIT feeds couldn't be extracted
+nofeeds:
+    python bin/feeds.py . check
+
+# pull all updates
+update: update-self update-upstream && update-opml update-hookshot update-versions
+    @agru -u
+
+# pull dependencies
+update-dependencies: update-submodules update-roles
+
+# dumps a file with list of hookshot commands with extracted git feeds for roles
+update-hookshot:
+    @echo "generating hookshot..."
+    @python bin/feeds.py . hookshot
+
+# dumps an OPML file with extracted git feeds for roles
+update-opml:
+    @echo "generating opml..."
+    @python bin/feeds.py . dump
 
 # pull roles
-roles:
+update-roles:
     #!/usr/bin/env sh
     set -euo pipefail
     if [ -x "$(command -v agru)" ]; then
@@ -20,6 +61,13 @@ roles:
     else
         ansible-galaxy install -r requirements.yml -p roles/galaxy/ --force
     fi
+
+# pull self
+update-self:
+    @echo "updating self..."
+    @git stash -q
+    @git pull -q
+    @git stash pop -q
 
 # merge fresh into master
 update-stable:
@@ -52,69 +100,18 @@ update-stable:
 
     @echo "done"
 
-# pull dependencies
-dependencies: submodules roles
+# initialize upstream with pinned commit
+update-submodules:
+    git submodule update --init --recursive
 
-# pull self
-update-self:
-    @echo "updating self..."
-    @git stash -q
-    @git pull -q
-    @git stash pop -q
-
-# pull all updates
-update: update-self upstream && opml hookshot versions
-    @agru -u
+# pull new upstream changes
+update-upstream:
+    @echo "updating upstream..."
+    @cd ./upstream && git pull -q
 
 # update VERSIONS.md file using the actual versions from roles' files
-versions:
+update-versions:
     #!/usr/bin/env sh
     echo "generating versions diff..."
     bash bin/versions.sh
     git --no-pager diff --no-ext-diff VERSIONS.md
-
-# run ansible-lint
-lint:
-    ansible-lint --project-dir . --exclude upstream
-
-# make commit
-commit: opml hookshot versions
-    #!/usr/bin/env sh
-    git add --all
-    git commit -S -q -m "$(bash bin/commit-msg.sh)"
-    echo "Changes have been committed"
-
-# dumps an OPML file with extracted git feeds for roles
-opml:
-    @echo "generating opml..."
-    @python bin/feeds.py . dump
-
-# dumps a file with list of hookshot commands with extracted git feeds for roles
-hookshot:
-    @echo "generating hookshot..."
-    @python bin/feeds.py . hookshot
-
-# prints roles files for which a GIT feeds couldn't be extracted
-nofeeds:
-    python bin/feeds.py . check
-
-# Runs the playbook with --tags=install-all,ensure-users-created,start and optional arguments
-install-all *extra_args: (run-tags "install-all,ensure-users-created,start" extra_args)
-
-# Runs installation tasks for a single service
-install-service service *extra_args:
-    just --justfile {{ justfile() }} run \
-    --tags=install-{{ service }},start-group \
-    --extra-vars=group={{ service }} \
-    --extra-vars=devture_systemd_service_manager_service_restart_mode=one-by-one {{ extra_args }}
-
-# Runs the playbook with --tags=setup-all,ensure-users-created,start and optional arguments
-setup-all *extra_args: (run-tags "setup-all,ensure-users-created,start" extra_args)
-
-# Runs the playbook with the given list of arguments
-run +extra_args:
-    time ansible-playbook play/all.yml {{ extra_args }}
-
-# Runs the playbook with the given list of comma-separated tags and optional arguments
-run-tags tags *extra_args:
-    just --justfile {{ justfile() }} run --tags={{ tags }} {{ extra_args }}
