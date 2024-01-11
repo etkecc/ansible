@@ -14,6 +14,7 @@
 !hookshot feed https://gitlab.com/cactus-comments/cactus-client/-/tags?format=atom cactus-comments-2
 !hookshot feed https://github.com/matrixgpt/matrix-chatgpt-bot/releases.atom chatgpt
 !hookshot feed https://github.com/ajbura/cinny/releases.atom cinny
+!hookshot feed https://gitlab.com/famedly/conduit/-/tags?format=atom conduit
 !hookshot feed https://github.com/Tecnativa/docker-socket-proxy/releases.atom container_socket_proxy
 !hookshot feed https://github.com/devture/matrix-corporal/releases.atom corporal
 !hookshot feed https://github.com/coturn/coturn/releases.atom coturn

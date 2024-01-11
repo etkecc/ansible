@@ -58,9 +58,9 @@ dependencies: submodules roles
 # pull self
 update-self:
     @echo "updating self..."
-    @git stash
+    @git stash -q
     @git pull -q
-    @git stash apply
+    @git stash pop -q
 
 # pull all updates
 update: update-self upstream && opml hookshot versions

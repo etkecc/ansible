@@ -20,6 +20,7 @@
     <outline text="cactus-comments-2" title="cactus-comments-2" type="rss" htmlUrl="https://gitlab.com/cactus-comments/cactus-client" xmlUrl="https://gitlab.com/cactus-comments/cactus-client/-/tags?format=atom" />
     <outline text="chatgpt" title="chatgpt" type="rss" htmlUrl="https://github.com/matrixgpt/matrix-chatgpt-bot" xmlUrl="https://github.com/matrixgpt/matrix-chatgpt-bot/releases.atom" />
     <outline text="cinny" title="cinny" type="rss" htmlUrl="https://github.com/ajbura/cinny" xmlUrl="https://github.com/ajbura/cinny/releases.atom" />
+    <outline text="conduit" title="conduit" type="rss" htmlUrl="https://gitlab.com/famedly/conduit" xmlUrl="https://gitlab.com/famedly/conduit/-/tags?format=atom" />
     <outline text="container_socket_proxy" title="container_socket_proxy" type="rss" htmlUrl="https://github.com/Tecnativa/docker-socket-proxy" xmlUrl="https://github.com/Tecnativa/docker-socket-proxy/releases.atom" />
     <outline text="corporal" title="corporal" type="rss" htmlUrl="https://github.com/devture/matrix-corporal" xmlUrl="https://github.com/devture/matrix-corporal/releases.atom" />
     <outline text="coturn" title="coturn" type="rss" htmlUrl="https://github.com/coturn/coturn" xmlUrl="https://github.com/coturn/coturn/releases.atom" />
