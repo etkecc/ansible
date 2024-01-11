@@ -12,6 +12,6 @@ COPY . /playbook
 # Then initialize /upstream from submodules, and get rid of the `.git` directory.
 # We don't need to carry that extra weight into the final image.
 RUN git rev-parse HEAD > /playbook/source-commit && \
-    just dependencies && \
+    just update-dependencies && \
     rm -rf /playbook/.git && \
     rm -rf /playbook/upstream/.git
