@@ -67,7 +67,7 @@ update-self:
     @echo "updating self..."
     @git stash -q
     @git pull -q
-    @git stash pop -q
+    @-git stash pop -q
 
 # merge fresh into master
 update-stable:

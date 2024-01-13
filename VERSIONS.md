@@ -45,7 +45,7 @@
 * linkedin: latest
 * ma1sd: 2.5.0
 * matrix_registration_bot: 1.3.0
-* matrix_reminder_bot: release-v0.2.1
+* matrix_reminder_bot: v0.3.0
 * maubot: v0.4.2
 * miniflux: 2.0.51
 * mjolnir: v1.6.5
@@ -67,7 +67,7 @@
 * redis: 7.2.3
 * registration: v0.7.2
 * schildichat: v1.11.30-sc.2
-* signal: 959eb7eaf9eb648f97b8e85d7650ea87f2639cd1
+* signal: de8c8d97c23dc1982686a698162b45f1f112155b
 * slack: latest
 * sliding_sync: v0.99.14
 * sms_bridge: 0.5.8
