@@ -74,6 +74,7 @@
     # - custom/matrix-bot-draupnir # unused
     - custom/matrix-bot-chatgpt
     # - custom/matrix-cactus-comments # unused
+    # - custom/matrix-cactus-comments-client # unused
     # - custom/matrix-rageshake # unused
     - custom/matrix-synapse
     - custom/matrix-synapse-auto-compressor
@@ -87,7 +88,6 @@
     - galaxy/prometheus
     - galaxy/grafana
     - custom/matrix-prometheus-services-connect
-    - custom/matrix-prometheus-services-proxy-connect
     - custom/matrix-registration
     - custom/matrix-client-element
     - custom/matrix-client-hydrogen
@@ -99,7 +99,6 @@
     - custom/matrix-ma1sd
     - custom/matrix-dimension
     - galaxy/etherpad
-    - custom/etherpad-proxy-connect
     - custom/matrix-sliding-sync
     - custom/matrix-email2matrix
     - custom/matrix-sygnal
@@ -125,7 +124,7 @@
     # END CUSTOM
 
     # MATRIX
-    - custom/matrix-nginx-proxy
+    - custom/matrix-static-files
     # END MATRIX
 
     # CUSTOM

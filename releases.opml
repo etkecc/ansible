@@ -17,7 +17,7 @@
     <outline text="borgmatic" title="borgmatic" type="rss" htmlUrl="https://github.com/borgmatic-collective/borgmatic" xmlUrl="https://github.com/borgmatic-collective/borgmatic/releases.atom" />
     <outline text="buscarron" title="buscarron" type="rss" htmlUrl="https://gitlab.com/etke.cc/buscarron" xmlUrl="https://gitlab.com/etke.cc/buscarron/-/tags?format=atom" />
     <outline text="cactus-comments" title="cactus-comments" type="rss" htmlUrl="https://gitlab.com/cactus-comments/cactus-appservice" xmlUrl="https://gitlab.com/cactus-comments/cactus-appservice/-/tags?format=atom" />
-    <outline text="cactus-comments-2" title="cactus-comments-2" type="rss" htmlUrl="https://gitlab.com/cactus-comments/cactus-client" xmlUrl="https://gitlab.com/cactus-comments/cactus-client/-/tags?format=atom" />
+    <outline text="cactus-comments-client" title="cactus-comments-client" type="rss" htmlUrl="https://gitlab.com/cactus-comments/cactus-client" xmlUrl="https://gitlab.com/cactus-comments/cactus-client/-/tags?format=atom" />
     <outline text="chatgpt" title="chatgpt" type="rss" htmlUrl="https://github.com/matrixgpt/matrix-chatgpt-bot" xmlUrl="https://github.com/matrixgpt/matrix-chatgpt-bot/releases.atom" />
     <outline text="cinny" title="cinny" type="rss" htmlUrl="https://github.com/ajbura/cinny" xmlUrl="https://github.com/ajbura/cinny/releases.atom" />
     <outline text="conduit" title="conduit" type="rss" htmlUrl="https://gitlab.com/famedly/conduit" xmlUrl="https://gitlab.com/famedly/conduit/-/tags?format=atom" />
@@ -66,7 +66,6 @@
     <outline text="mx-puppet-slack" title="mx-puppet-slack" type="rss" htmlUrl="https://gitlab.com/mx-puppet/slack/mx-puppet-slack" xmlUrl="https://gitlab.com/mx-puppet/slack/mx-puppet-slack/-/tags?format=atom" />
     <outline text="mx-puppet-steam" title="mx-puppet-steam" type="rss" htmlUrl="https://github.com/icewind1991/mx-puppet-steam" xmlUrl="https://github.com/icewind1991/mx-puppet-steam/releases.atom" />
     <outline text="mx-puppet-twitter" title="mx-puppet-twitter" type="rss" htmlUrl="https://github.com/Sorunome/mx-puppet-twitter" xmlUrl="https://github.com/Sorunome/mx-puppet-twitter/releases.atom" />
-    <outline text="nginx-proxy" title="nginx-proxy" type="rss" htmlUrl="https://github.com/nginx/nginx" xmlUrl="https://github.com/nginx/nginx/releases.atom" />
     <outline text="ntfy" title="ntfy" type="rss" htmlUrl="https://github.com/binwiederhier/ntfy" xmlUrl="https://github.com/binwiederhier/ntfy/releases.atom" />
     <outline text="postgres" title="postgres" type="rss" htmlUrl="https://github.com/postgres/postgres" xmlUrl="https://github.com/postgres/postgres/releases.atom" />
     <outline text="postgres_backup" title="postgres_backup" type="rss" htmlUrl="https://github.com/prodrigestivill/docker-postgres-backup-local" xmlUrl="https://github.com/prodrigestivill/docker-postgres-backup-local/releases.atom" />
@@ -84,7 +83,7 @@
     <outline text="sliding-sync" title="sliding-sync" type="rss" htmlUrl="https://github.com/matrix-org/sliding-sync" xmlUrl="https://github.com/matrix-org/sliding-sync/releases.atom" />
     <outline text="sms" title="sms" type="rss" htmlUrl="https://github.com/benkuly/matrix-sms-bridge" xmlUrl="https://github.com/benkuly/matrix-sms-bridge/releases.atom" />
     <outline text="sygnal" title="sygnal" type="rss" htmlUrl="https://github.com/matrix-org/sygnal" xmlUrl="https://github.com/matrix-org/sygnal/releases.atom" />
-    <outline text="synapse" title="synapse" type="rss" htmlUrl="https://github.com/matrix-org/synapse" xmlUrl="https://github.com/matrix-org/synapse/releases.atom" />
+    <outline text="synapse" title="synapse" type="rss" htmlUrl="https://github.com/element-hq/synapse" xmlUrl="https://github.com/element-hq/synapse/releases.atom" />
     <outline text="synapse-admin" title="synapse-admin" type="rss" htmlUrl="https://github.com/Awesome-Technologies/synapse-admin" xmlUrl="https://github.com/Awesome-Technologies/synapse-admin/releases.atom" />
     <outline text="synapse-auto-compressor" title="synapse-auto-compressor" type="rss" htmlUrl="https://github.com/matrix-org/rust-synapse-compress-state" xmlUrl="https://github.com/matrix-org/rust-synapse-compress-state/releases.atom" />
     <outline text="traefik" title="traefik" type="rss" htmlUrl="https://github.com/traefik/traefik" xmlUrl="https://github.com/traefik/traefik/releases.atom" />
