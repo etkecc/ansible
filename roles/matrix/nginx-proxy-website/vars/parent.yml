@@ -1,8 +1,0 @@
----
-# Following variables defined in parent roles, like matrix-nginx-proxy or matrix-base,
-# but if that role (matrix/nginx-proxy-website) used without parent roles, we should define those vars.
-
-# in case the role was not triggered after matrix-nginx-proxy, we set default value
-matrix_nginx_proxy_data_path: "/matrix/nginx-proxy/data"
-matrix_user_username: "matrix"
-matrix_user_groupname: "matrix"

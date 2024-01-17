@@ -126,10 +126,6 @@
     - custom/matrix-static-files
     # END MATRIX
 
-    # CUSTOM
-    - matrix/nginx-proxy-website
-    # END CUSTOM
-
     # MATRIX
     - custom/matrix-coturn
     # - custom/matrix-media-repo # unused
