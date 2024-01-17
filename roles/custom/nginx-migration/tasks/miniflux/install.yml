@@ -1,7 +1,0 @@
----
-
-- name: Ensure Matrix nginx-proxy configuration for miniflux domain exists
-  ansible.builtin.template:
-    src: "{{ role_path }}/templates/matrix-custom-miniflux.conf.j2"
-    dest: "{{ matrix_nginx_proxy_confd_path }}/matrix-custom-miniflux.conf"
-    mode: 0644

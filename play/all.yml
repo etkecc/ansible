@@ -113,7 +113,6 @@
     - custom/dnsmasq
     - galaxy/uptime_kuma
     - galaxy/languagetool
-    - custom/nginx-migration
     - galaxy/linkding
     - galaxy/miniflux
     - galaxy/gotosocial
