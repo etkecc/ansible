@@ -35,12 +35,26 @@ lint:
 nofeeds:
     python bin/feeds.py . check
 
+# pull dependencies
+pull-dependencies: pull-submodules pull-roles
+
+# initialize upstream with pinned commit
+pull-submodules:
+    git submodule update --init --recursive
+
+# pull roles
+pull-roles:
+    #!/usr/bin/env sh
+    set -euo pipefail
+    if [ -x "$(command -v agru)" ]; then
+        agru ${AGRU_CLEANUP:-}
+    else
+        ansible-galaxy install -r requirements.yml -p roles/galaxy/ --force
+    fi
+
 # pull all updates
 update: update-self update-upstream && update-opml update-hookshot update-versions
     @agru -u
-
-# pull dependencies
-update-dependencies: update-submodules update-roles
 
 # dumps a file with list of hookshot commands with extracted git feeds for roles
 update-hookshot:
@@ -51,16 +65,6 @@ update-hookshot:
 update-opml:
     @echo "generating opml..."
     @python bin/feeds.py . dump
-
-# pull roles
-update-roles:
-    #!/usr/bin/env sh
-    set -euo pipefail
-    if [ -x "$(command -v agru)" ]; then
-        agru ${AGRU_CLEANUP:-}
-    else
-        ansible-galaxy install -r requirements.yml -p roles/galaxy/ --force
-    fi
 
 # pull self
 update-self:
@@ -99,10 +103,6 @@ update-stable:
     @git push
 
     @echo "done"
-
-# initialize upstream with pinned commit
-update-submodules:
-    git submodule update --init --recursive
 
 # pull new upstream changes
 update-upstream:
