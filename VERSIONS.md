@@ -69,7 +69,7 @@
 * schildichat: v1.11.30-sc.2
 * signal: de8c8d97c23dc1982686a698162b45f1f112155b
 * slack: latest
-* sliding_sync: v0.99.14
+* sliding_sync: v0.99.15
 * sms_bridge: 0.5.8
 * static_files: 2.24.2
 * sygnal: v0.13.0
