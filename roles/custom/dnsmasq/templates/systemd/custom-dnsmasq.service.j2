@@ -17,7 +17,7 @@ ExecStart=/usr/bin/env docker run --rm --name custom-dnsmasq \
           --log-driver=none \
           --user=dnsmasq:dnsmasq \
           --cap-drop=ALL \
-          --network={{ matrix_docker_network }} \
+          --network={{ matrix_addons_container_network }} \
           --publish {{ custom_dnsmasq_port }}:5353/udp \
           --publish {{ custom_dnsmasq_port }}:5353/tcp \
           {{ custom_dnsmasq_docker_image }}
