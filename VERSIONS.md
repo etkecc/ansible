@@ -7,7 +7,7 @@
 * borgmatic: 1.8.6
 * buscarron: v1.3.1
 * cactus_comments: 0.9.0
-* cactus_comments_client: 2.24.2
+* cactus_comments_client: 2.25.0
 * chatgpt: 3.1.4
 * cinny: v3.2.0
 * container_socket_proxy: 0.1.1
@@ -71,7 +71,7 @@
 * slack: latest
 * sliding_sync: v0.99.15
 * sms_bridge: 0.5.8
-* static_files: 2.24.2
+* static_files: 2.25.0
 * sygnal: v0.13.0
 * synapse_admin: 0.8.7
 * synapse_reverse_proxy_companion: 1.25.3-alpine
