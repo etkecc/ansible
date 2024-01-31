@@ -75,14 +75,14 @@
 * sygnal: v0.13.0
 * synapse_admin: 0.8.7
 * synapse_reverse_proxy_companion: 1.25.3-alpine
-* synapse: v1.99.0
+* synapse: v1.100.0
 * telegram: v0.15.1
 * traefik_certs_dumper: v2.8.3
 * traefik: v2.10.7
 * twitter: v0.1.7
 * uptime_kuma: 1.23.11
 * user_verification_service: v3.0.0
-* vaultwarden: 1.30.1
+* vaultwarden: 1.30.2
 * whatsapp: v0.10.5
 * wsproxy: latest
 * wsproxy_syncproxy: latest
