@@ -19,7 +19,7 @@
 * docker_compose: v2.11.1
 * draupnir: v1.86.0
 * dynamic_dns: 3.11.2
-* element: v1.11.55
+* element: v1.11.57
 * email2matrix: 1.1.0
 * etherpad: 1.9.6
 * exim_relay: 4.97-r0-0
@@ -39,7 +39,7 @@
 * instagram: v0.3.1
 * jitsi_ldap: "3"
 * jitsi_prosody_auth_user_verification_repo: 2839499cb03894d8cfc3e5b2219441427cb133d8 # v1.8.0
-* jitsi: stable-9111
+* jitsi: stable-9220
 * languagetool: 6.3
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * linkding: latest
