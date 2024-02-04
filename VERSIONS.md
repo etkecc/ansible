@@ -17,7 +17,7 @@
 * discord: v0.6.5
 * dnsmasq: latest
 * docker_compose: v2.11.1
-* draupnir: v1.86.0
+* draupnir: v1.86.1
 * dynamic_dns: 3.11.2
 * element: v1.11.57
 * email2matrix: 1.1.0
@@ -82,7 +82,7 @@
 * twitter: v0.1.7
 * uptime_kuma: 1.23.11
 * user_verification_service: v3.0.0
-* vaultwarden: 1.30.2
+* vaultwarden: 1.30.3
 * whatsapp: v0.10.5
 * wsproxy: latest
 * wsproxy_syncproxy: latest
