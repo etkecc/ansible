@@ -67,13 +67,13 @@
 * redis: 7.2.3
 * registration: v0.7.2
 * schildichat: v1.11.30-sc.2
-* signal: de8c8d97c23dc1982686a698162b45f1f112155b
+* signal: 103666990f30a692c63dd84a499b0dd390cef8a4
 * slack: latest
 * sliding_sync: v0.99.15
 * sms_bridge: 0.5.8
 * static_files: 2.25.0
 * sygnal: v0.13.0
-* synapse_admin: 0.8.7
+* synapse_admin: 0.9.0
 * synapse_reverse_proxy_companion: 1.25.3-alpine
 * synapse: v1.100.0
 * telegram: v0.15.1
