@@ -5,7 +5,7 @@
 * appservice_webhooks: v1.0.3-01
 * borg: 1.2.7
 * borgmatic: 1.8.6
-* buscarron: v1.3.1
+* buscarron: v1.4.0
 * cactus_comments: 0.9.0
 * cactus_comments_client: 2.25.0
 * chatgpt: 3.1.4
@@ -33,7 +33,7 @@
 * grafana: 10.3.1
 * hangouts: latest
 * heisenbridge: 1.14.6
-* honoroit: v0.9.19
+* honoroit: v0.9.20
 * hookshot: 5.1.2
 * hydrogen: v0.4.1
 * instagram: v0.3.1
