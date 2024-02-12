@@ -7,7 +7,7 @@
 * borgmatic: 1.8.6
 * buscarron: v1.4.0
 * cactus_comments: 0.9.0
-* cactus_comments_client: 2.25.0
+* cactus_comments_client: 2.26.0
 * chatgpt: 3.1.4
 * cinny: v3.2.0
 * container_socket_proxy: 0.1.1
@@ -17,7 +17,7 @@
 * discord: v0.6.5
 * dnsmasq: latest
 * docker_compose: v2.11.1
-* draupnir: v1.86.1
+* draupnir: v1.86.2
 * dynamic_dns: 3.11.2
 * element: v1.11.57
 * email2matrix: 1.1.0
@@ -57,7 +57,7 @@
 * mx_puppet_steam: latest
 * mx_puppet_twitter: latest
 * ntfy: v2.8.0
-* postmoogle: v0.9.16
+* postmoogle: v0.9.17
 * prometheus_nginxlog_exporter: v1.10.0
 * prometheus_node_exporter: v1.7.0
 * prometheus_postgres_exporter: v0.14.0
@@ -71,7 +71,7 @@
 * slack: latest
 * sliding_sync: v0.99.15
 * sms_bridge: 0.5.8
-* static_files: 2.25.0
+* static_files: 2.26.0
 * sygnal: v0.13.0
 * synapse_admin: 0.9.1
 * synapse_reverse_proxy_companion: 1.25.3-alpine
