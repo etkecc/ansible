@@ -7,7 +7,7 @@
 * borgmatic: 1.8.6
 * buscarron: v1.4.0
 * cactus_comments: 0.9.0
-* cactus_comments_client: 2.26.0
+* cactus_comments_client: 2.27.0
 * chatgpt: 3.1.4
 * cinny: v3.2.0
 * container_socket_proxy: 0.1.1
@@ -19,7 +19,7 @@
 * docker_compose: v2.11.1
 * draupnir: v1.86.2
 * dynamic_dns: 3.11.2
-* element: v1.11.57
+* element: v1.11.58
 * email2matrix: 1.1.0
 * etherpad: 1.9.6
 * exim_relay: 4.97-r0-0
@@ -71,14 +71,14 @@
 * slack: latest
 * sliding_sync: v0.99.15
 * sms_bridge: 0.5.8
-* static_files: 2.26.0
+* static_files: 2.27.0
 * sygnal: v0.13.0
 * synapse_admin: 0.9.1
 * synapse_reverse_proxy_companion: 1.25.3-alpine
-* synapse: v1.100.0
+* synapse: v1.101.0
 * telegram: v0.15.1
 * traefik_certs_dumper: v2.8.3
-* traefik: v2.10.7
+* traefik: v2.11.0
 * twitter: v0.1.7
 * uptime_kuma: 1.23.11
 * user_verification_service: v3.0.0
