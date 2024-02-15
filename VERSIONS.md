@@ -39,7 +39,7 @@
 * instagram: v0.3.1
 * jitsi_ldap: "3"
 * jitsi_prosody_auth_user_verification_repo: 2839499cb03894d8cfc3e5b2219441427cb133d8 # v1.8.0
-* jitsi: stable-9220
+* jitsi: stable-9258
 * languagetool: 6.3
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * linkding: latest
@@ -73,8 +73,8 @@
 * sms_bridge: 0.5.8
 * static_files: 2.27.0
 * sygnal: v0.13.0
-* synapse_admin: 0.9.1
-* synapse_reverse_proxy_companion: 1.25.3-alpine
+* synapse_admin: 0.8.7
+* synapse_reverse_proxy_companion: 1.25.4-alpine
 * synapse: v1.101.0
 * telegram: v0.15.1
 * traefik_certs_dumper: v2.8.3
