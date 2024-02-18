@@ -48,7 +48,7 @@
 * matrix_registration_bot: 1.3.0
 * matrix_reminder_bot: v0.3.0
 * maubot: v0.4.2
-* miniflux: 2.0.51
+* miniflux: 2.1.0
 * mjolnir: v1.6.5
 * mx_puppet_discord: v0.1.1
 * mx_puppet_groupme: 533cccc8
@@ -67,7 +67,7 @@
 * redis: 7.2.3
 * registration: v0.7.2
 * schildichat: v1.11.30-sc.2
-* signal: 103666990f30a692c63dd84a499b0dd390cef8a4
+* signal: v0.5.0
 * slack: latest
 * sliding_sync: v0.99.15
 * sms_bridge: 0.5.8
