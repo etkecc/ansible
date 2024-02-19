@@ -48,6 +48,8 @@
 * matrix_registration_bot: 1.3.0
 * matrix_reminder_bot: v0.3.0
 * maubot: v0.4.2
+* meta_instagram: v0.1.0
+* meta_messenger: v0.1.0
 * miniflux: 2.1.0
 * mjolnir: v1.6.5
 * mx_puppet_discord: v0.1.1

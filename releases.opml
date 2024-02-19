@@ -53,6 +53,8 @@
     <outline text="mautrix-googlechat" title="mautrix-googlechat" type="rss" htmlUrl="https://github.com/mautrix/googlechat" xmlUrl="https://github.com/mautrix/googlechat/releases.atom" />
     <outline text="mautrix-hangouts" title="mautrix-hangouts" type="rss" htmlUrl="https://github.com/mautrix/hangouts" xmlUrl="https://github.com/mautrix/hangouts/releases.atom" />
     <outline text="mautrix-instagram" title="mautrix-instagram" type="rss" htmlUrl="https://github.com/mautrix/instagram" xmlUrl="https://github.com/mautrix/instagram/releases.atom" />
+    <outline text="mautrix-meta-instagram" title="mautrix-meta-instagram" type="rss" htmlUrl="https://github.com/mautrix/meta" xmlUrl="https://github.com/mautrix/meta/releases.atom" />
+    <outline text="mautrix-meta-messenger" title="mautrix-meta-messenger" type="rss" htmlUrl="https://github.com/mautrix/meta" xmlUrl="https://github.com/mautrix/meta/releases.atom" />
     <outline text="mautrix-signal" title="mautrix-signal" type="rss" htmlUrl="https://github.com/mautrix/signal" xmlUrl="https://github.com/mautrix/signal/releases.atom" />
     <outline text="mautrix-slack" title="mautrix-slack" type="rss" htmlUrl="https://github.com/mautrix/slack" xmlUrl="https://github.com/mautrix/slack/releases.atom" />
     <outline text="mautrix-telegram" title="mautrix-telegram" type="rss" htmlUrl="https://github.com/mautrix/telegram" xmlUrl="https://github.com/mautrix/telegram/releases.atom" />
