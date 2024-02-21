@@ -8,7 +8,7 @@
 * buscarron: v1.4.0
 * cactus_comments: 0.9.0
 * cactus_comments_client: 2.27.0
-* chatgpt: 3.1.4
+* chatgpt: 3.1.5
 * cinny: v3.2.0
 * container_socket_proxy: 0.1.1
 * corporal: 2.7.0
