@@ -8,7 +8,7 @@
 * buscarron: v1.4.0
 * cactus_comments: 0.9.0
 * cactus_comments_client: 2.27.0
-* chatgpt: 3.1.5
+* chatgpt: 3.1.4
 * cinny: v3.2.0
 * container_socket_proxy: 0.1.1
 * corporal: 2.7.0
@@ -34,7 +34,7 @@
 * hangouts: latest
 * heisenbridge: 1.14.6
 * honoroit: v0.9.20
-* hookshot: 5.1.2
+* hookshot: 5.2.1
 * hydrogen: v0.4.1
 * instagram: v0.3.1
 * jitsi_ldap: "3"
