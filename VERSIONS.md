@@ -68,7 +68,7 @@
 * rageshake: 1.11.0
 * redis: 7.2.3
 * registration: v0.7.2
-* schildichat: v1.11.30-sc.2
+* schildichat: v1.11.36-sc.2
 * signal: v0.5.0
 * slack: latest
 * sliding_sync: v0.99.15
