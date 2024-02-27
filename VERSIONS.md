@@ -19,7 +19,7 @@
 * docker_compose: v2.11.1
 * draupnir: v1.86.2
 * dynamic_dns: 3.11.2
-* element: v1.11.58
+* element: v1.11.59
 * email2matrix: 1.1.0
 * etherpad: 1.9.6
 * exim_relay: 4.97-r0-0
@@ -63,12 +63,12 @@
 * prometheus_nginxlog_exporter: v1.10.0
 * prometheus_node_exporter: v1.7.0
 * prometheus_postgres_exporter: v0.14.0
-* prometheus: v2.50.0
+* prometheus: v2.50.1
 * radicale: 3.1.8.3
 * rageshake: 1.11.0
 * redis: 7.2.3
 * registration: v0.7.2
-* schildichat: v1.11.36-sc.2
+* schildichat: v1.11.36-sc.3
 * signal: v0.5.0
 * slack: latest
 * sliding_sync: v0.99.15
