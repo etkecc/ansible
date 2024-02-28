@@ -29,7 +29,7 @@
 - name: Check image status
   ansible.builtin.uri:
     url: "https://{{ skopeo_target }}/v2{{ item | regex_search('\/.*') | replace(':', '/manifests/') }}"
-    method: GET
+    method: HEAD
     status_code: [200, 404]
     headers:
       Accept: application/vnd.docker.distribution.manifest.list.v2+json, application/vnd.oci.image.index.v1+json

@@ -1,5 +1,5 @@
 ---
-skopeo_target: registry.etke.cc
+skopeo_target: registry-v2.etke.cc
 # skopeo_ignore_text: etke.cc
 skopeo_ignore_images:
   - "{{ etherpad_container_image }}"
