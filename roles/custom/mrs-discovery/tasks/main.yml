@@ -1,5 +1,6 @@
 ---
 - ansible.builtin.import_tasks: export.yml
+  when: mrs_discovery_enabled|bool
   tags:
     - setup-all
     - install-all
