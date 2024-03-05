@@ -2,6 +2,7 @@
 !hookshot feed https://pypi.org/rss/project/ansible/releases.xml ansible
 !hookshot feed https://pypi.org/rss/project/ansible-core/releases.xml ansible-core
 !hookshot feed https://github.com/Half-Shot/matrix-appservice-discord/releases.atom appservice-discord
+!hookshot feed https://github.com/the-draupnir-project/Draupnir/releases.atom appservice-draupnir-for-all
 !hookshot feed https://github.com/matrix-org/matrix-appservice-irc/releases.atom appservice-irc
 !hookshot feed https://github.com/matrix-org/matrix-appservice-slack/releases.atom appservice-slack
 !hookshot feed https://github.com/redoonetworks/matrix-appservice-webhooks/releases.atom appservice-webhooks

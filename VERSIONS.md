@@ -1,4 +1,5 @@
 * appservice_discord: v4.0.0
+* appservice_draupnir_for_all: develop
 * appservice_irc: 1.0.1
 * appservice_kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * appservice_slack: 2.1.2
@@ -77,7 +78,7 @@
 * sygnal: v0.13.0
 * synapse_admin: 0.8.7
 * synapse_reverse_proxy_companion: 1.25.4-alpine
-* synapse: v1.101.0
+* synapse: v1.102.0
 * telegram: v0.15.1
 * traefik_certs_dumper: v2.8.3
 * traefik: v2.11.0
