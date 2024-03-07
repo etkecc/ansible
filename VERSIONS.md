@@ -30,8 +30,8 @@
 * go_neb: latest
 * googlechat: v0.5.1
 * go_skype_bridge: latest
-* gotosocial: 0.13.3
-* grafana: 10.3.1
+* gotosocial: 0.14.0
+* grafana: 10.4.0
 * hangouts: latest
 * heisenbridge: 1.14.6
 * honoroit: v0.9.20
