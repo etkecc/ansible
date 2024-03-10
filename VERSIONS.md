@@ -51,7 +51,7 @@
 * maubot: v0.4.2
 * meta_instagram: v0.1.0
 * meta_messenger: v0.1.0
-* miniflux: 2.1.0
+* miniflux: 2.1.1
 * mjolnir: v1.6.5
 * mx_puppet_discord: v0.1.1
 * mx_puppet_groupme: 533cccc8
