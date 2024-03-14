@@ -73,7 +73,7 @@
 * signal: v0.5.0
 * slack: latest
 * sliding_sync: v0.99.15
-* sms_bridge: 0.5.8
+* sms_bridge: 0.5.9
 * static_files: 2.28.0
 * sygnal: v0.13.0
 * synapse_admin: 0.8.7
