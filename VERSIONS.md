@@ -26,7 +26,7 @@
 * exim_relay: 4.97-r0-0
 * facebook: v0.5.1
 * firezone: 0.7.35
-* gmessages: v0.2.4
+* gmessages: v0.3.0
 * go_neb: latest
 * googlechat: v0.5.1
 * go_skype_bridge: latest
@@ -49,8 +49,8 @@
 * matrix_registration_bot: 1.3.0
 * matrix_reminder_bot: v0.3.0
 * maubot: v0.4.2
-* meta_instagram: v0.1.0
-* meta_messenger: v0.1.0
+* meta_instagram: v0.2.0
+* meta_messenger: v0.2.0
 * miniflux: 2.1.1
 * mjolnir: v1.6.5
 * mx_puppet_discord: v0.1.1
@@ -70,7 +70,7 @@
 * redis: 7.2.3
 * registration: v0.7.2
 * schildichat: v1.11.36-sc.3
-* signal: v0.5.0
+* signal: v0.5.1
 * slack: latest
 * sliding_sync: v0.99.15
 * sms_bridge: 0.5.9
@@ -86,6 +86,6 @@
 * uptime_kuma: 1.23.11
 * user_verification_service: v3.0.0
 * vaultwarden: 1.30.5
-* whatsapp: v0.10.5
+* whatsapp: v0.10.6
 * wsproxy: latest
 * wsproxy_syncproxy: latest
