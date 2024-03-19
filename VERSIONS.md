@@ -22,7 +22,7 @@
 * dynamic_dns: 3.11.2
 * element: v1.11.61
 * email2matrix: 1.1.0
-* etherpad: 1.9.6
+* etherpad: 2.0.1
 * exim_relay: 4.97-r0-0
 * facebook: v0.5.1
 * firezone: 0.7.35
@@ -40,7 +40,7 @@
 * instagram: v0.3.1
 * jitsi_ldap: "3"
 * jitsi_prosody_auth_user_verification_repo: 2839499cb03894d8cfc3e5b2219441427cb133d8 # v1.8.0
-* jitsi: stable-9258
+* jitsi: stable-9364
 * languagetool: 6.3
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * linkding: latest
@@ -64,7 +64,7 @@
 * prometheus_nginxlog_exporter: v1.10.0
 * prometheus_node_exporter: v1.7.0
 * prometheus_postgres_exporter: v0.14.0
-* prometheus: v2.50.1
+* prometheus: v2.51.0
 * radicale: 3.1.9.0
 * rageshake: 1.12.0
 * redis: 7.2.3
@@ -78,7 +78,7 @@
 * sygnal: v0.13.0
 * synapse_admin: 0.8.7
 * synapse_reverse_proxy_companion: 1.25.4-alpine
-* synapse: v1.102.0
+* synapse: v1.103.0
 * telegram: v0.15.1
 * traefik_certs_dumper: v2.8.3
 * traefik: v2.11.0
