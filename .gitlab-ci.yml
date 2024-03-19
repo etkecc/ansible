@@ -92,6 +92,8 @@ sync images (all):
     - cp -r /playbook/.config/inventory /
   script:
     - cd /playbook; ansible-playbook play/all.yml -l localhost -t skopeo -e target=localhost
-    - sh play/.skopeo-parallel || echo "that's ok"
+    - sh play/.skopeo-parallel || echo "first run"
+    - sh play/.skopeo-parallel || echo "second run"
+    - sh play/.skopeo-parallel || echo "third run"
     - ./bin/ci-notify.sh
   allow_failure: true
