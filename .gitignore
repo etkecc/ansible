@@ -1,5 +1,6 @@
 # ignore temporary state
 /play/.skopeo-parallel
+/play/local.yml
 
 # ignore roles pulled by ansible-galaxy
 /roles/galaxy/*
