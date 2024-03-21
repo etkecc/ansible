@@ -75,7 +75,7 @@
 * sliding_sync: v0.99.15
 * sms_bridge: 0.5.9
 * static_files: 2.28.0
-* sygnal: v0.13.0
+* sygnal: v0.14.0
 * synapse_admin: 0.8.7
 * synapse_reverse_proxy_companion: 1.25.4-alpine
 * synapse: v1.103.0
