@@ -39,6 +39,8 @@ languagetool_gid: "{{ matrix_user_gid }}"
 
 languagetool_hostname: "{{ matrix_server_fqn_languagetool }}"
 
+languagetool_container_network: "{{ matrix_addons_container_network }}"
+
 languagetool_container_additional_networks_auto: "{{ [matrix_playbook_reverse_proxyable_services_additional_network] if matrix_playbook_reverse_proxyable_services_additional_network and languagetool_container_labels_traefik_enabled else [] }}"
 
 languagetool_container_labels_traefik_enabled: "{{ matrix_playbook_traefik_labels_enabled }}"
@@ -66,6 +68,8 @@ linkding_systemd_required_services_list: |
     +
     ([devture_postgres_identifier ~ '.service'] if devture_postgres_enabled and linkding_database_hostname == devture_postgres_identifier else [])
   }}
+
+linkding_container_network: "{{ matrix_addons_container_network }}"
 
 linkding_container_additional_networks: |
   {{
@@ -98,6 +102,8 @@ miniflux_base_path: "{{ matrix_base_data_path }}/custom-miniflux"
 miniflux_uid: "{{ matrix_user_uid }}"
 miniflux_gid: "{{ matrix_user_gid }}"
 
+miniflux_container_network: "{{ matrix_addons_container_network }}"
+
 miniflux_container_additional_networks: |
   {{
     ([matrix_playbook_reverse_proxyable_services_additional_network] if (matrix_playbook_reverse_proxyable_services_additional_network and miniflux_container_labels_traefik_enabled) else [])
@@ -129,6 +135,8 @@ radicale_config_path: "{{ radicale_base_path }}/conf"
 radicale_uid: "{{ matrix_user_uid }}"
 radicale_gid: "{{ matrix_user_gid }}"
 
+radicale_container_network: "{{ matrix_addons_container_network }}"
+
 radicale_container_additional_networks: |
   {{
     ([matrix_playbook_reverse_proxyable_services_additional_network] if (matrix_playbook_reverse_proxyable_services_additional_network and radicale_container_labels_traefik_enabled) else [])
@@ -153,6 +161,8 @@ uptime_kuma_base_path: "{{ matrix_base_data_path }}/custom-kuma"
 
 uptime_kuma_uid: "{{ matrix_user_uid }}"
 uptime_kuma_gid: "{{ matrix_user_gid }}"
+
+uptime_kuma_container_network: "{{ matrix_addons_container_network }}"
 
 uptime_kuma_container_additional_networks: |
   {{
@@ -186,6 +196,8 @@ gotosocial_systemd_wanted_services_list_auto: |
   {{
     ([(exim_relay_identifier | default('mash-exim-relay')) ~ '.service'] if (exim_relay_enabled | default(false) and gotosocial_smtp_host == exim_relay_identifier | default('mash-exim-relay')) else [])
   }}
+
+gotosocial_container_network: "{{ matrix_addons_container_network }}"
 
 gotosocial_container_additional_networks_auto: |
   {{
@@ -229,6 +241,8 @@ vaultwarden_systemd_required_systemd_services_list_auto: |
   {{
     ([devture_postgres_identifier ~ '.service'] if devture_postgres_enabled and vaultwarden_database_hostname == devture_postgres_identifier else [])
   }}
+
+vaultwarden_container_network: "{{ matrix_addons_container_network }}"
 
 vaultwarden_container_additional_networks_auto: |
   {{
@@ -288,6 +302,8 @@ firezone_systemd_required_services_list_auto: |
     +
     ([devture_postgres_identifier ~ '.service'] if devture_postgres_enabled | default(false) and firezone_database_host == devture_postgres_identifier else [])
   }}
+
+firezone_container_network: "{{ matrix_addons_container_network }}"
 
 firezone_container_additional_networks_auto: |
   {{
