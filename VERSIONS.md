@@ -1,5 +1,5 @@
 * appservice_discord: v4.0.0
-* appservice_draupnir_for_all: develop
+* appservice_draupnir_for_all: 1.87.0
 * appservice_irc: 1.0.1
 * appservice_kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * appservice_slack: 2.1.2
@@ -18,7 +18,7 @@
 * discord: v0.6.5
 * dnsmasq: latest
 * docker_compose: v2.11.1
-* draupnir: v1.86.2
+* draupnir: v1.87.0
 * dynamic_dns: 3.11.2
 * element: v1.11.61
 * email2matrix: 1.1.0
@@ -40,7 +40,7 @@
 * instagram: v0.3.1
 * jitsi_ldap: "3"
 * jitsi_prosody_auth_user_verification_repo: 2839499cb03894d8cfc3e5b2219441427cb133d8 # v1.8.0
-* jitsi: stable-9364
+* jitsi: stable-9364-1
 * languagetool: 6.3
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * linkding: latest
@@ -59,7 +59,8 @@
 * mx_puppet_slack: v0.1.2
 * mx_puppet_steam: latest
 * mx_puppet_twitter: latest
-* ntfy: v2.9.0
+* ntfy: v2.10.0
+* pantalaimon: 0.10.5
 * postmoogle: v0.9.17
 * prometheus_nginxlog_exporter: v1.10.0
 * prometheus_node_exporter: v1.7.0

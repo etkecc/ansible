@@ -64,6 +64,7 @@
 !hookshot feed https://github.com/icewind1991/mx-puppet-steam/releases.atom mx-puppet-steam
 !hookshot feed https://github.com/Sorunome/mx-puppet-twitter/releases.atom mx-puppet-twitter
 !hookshot feed https://github.com/binwiederhier/ntfy/releases.atom ntfy
+!hookshot feed https://github.com/matrix-org/pantalaimon/releases.atom pantalaimon
 !hookshot feed https://github.com/postgres/postgres/releases.atom postgres
 !hookshot feed https://github.com/prodrigestivill/docker-postgres-backup-local/releases.atom postgres_backup
 !hookshot feed https://gitlab.com/etke.cc/postmoogle/-/tags?format=atom postmoogle
