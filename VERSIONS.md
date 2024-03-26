@@ -67,7 +67,7 @@
 * prometheus_node_exporter: v1.7.0
 * prometheus_postgres_exporter: v0.14.0
 * prometheus: v2.51.0
-* radicale: 3.1.9.0
+* radicale: 3.1.9.1
 * rageshake: 1.12.0
 * redis: 7.2.4
 * registration: v0.7.2
