@@ -35,6 +35,7 @@
     # - custom/matrix-dynamic-dns # unused
     - galaxy/postgres
     - galaxy/redis
+    - galaxy/keydb
     # - custom/matrix-corporal # unused
     - custom/matrix-bridge-appservice-discord
     # - custom/matrix-bridge-appservice-slack # unused

@@ -41,6 +41,7 @@
 * jitsi_ldap: "3"
 * jitsi_prosody_auth_user_verification_repo: 2839499cb03894d8cfc3e5b2219441427cb133d8 # v1.8.0
 * jitsi: stable-9364-1
+* keydb: 6.3.4
 * languagetool: 6.3
 * ldap_registration_proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * linkding: latest
@@ -68,7 +69,7 @@
 * prometheus: v2.51.0
 * radicale: 3.1.9.0
 * rageshake: 1.12.0
-* redis: 7.2.3
+* redis: 7.2.4
 * registration: v0.7.2
 * schildichat: v1.11.36-sc.3
 * signal: v0.5.1

@@ -53,13 +53,8 @@ pull-roles:
     fi
 
 # pull all updates
-update: update-self update-upstream && update-opml update-hookshot update-versions
+update: update-self update-upstream && update-opml update-versions
     @agru -u
-
-# dumps a file with list of hookshot commands with extracted git feeds for roles
-update-hookshot:
-    @echo "generating hookshot..."
-    @python bin/feeds.py . hookshot
 
 # dumps an OPML file with extracted git feeds for roles
 update-opml:
