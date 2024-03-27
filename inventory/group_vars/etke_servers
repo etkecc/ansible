@@ -27,25 +27,21 @@ matrix_media_repo_metrics_enabled: false
 ########################################################################
 
 languagetool_enabled: false
+languagetool_identifier: "{{ mash_playbook_service_identifier_prefix }}languagetool"
+languagetool_base_path: "{{ mash_playbook_base_path }}/{{ mash_playbook_service_base_directory_name_prefix }}languagetool"
 
-languagetool_identifier: custom-languagetool
-
-# Base path and data path are the same. This is an old bug. We're keeping compatibility for it.
-languagetool_base_path: "{{ matrix_base_data_path }}/custom-languagetool"
-languagetool_data_path: "{{ matrix_base_data_path }}/custom-languagetool"
-
-languagetool_uid: "{{ matrix_user_uid }}"
-languagetool_gid: "{{ matrix_user_gid }}"
-
-languagetool_hostname: "{{ matrix_server_fqn_languagetool }}"
+languagetool_uid: "{{ mash_playbook_uid }}"
+languagetool_gid: "{{ mash_playbook_gid }}"
 
 languagetool_container_network: "{{ matrix_addons_container_network }}"
-
-languagetool_container_additional_networks_auto: "{{ [matrix_playbook_reverse_proxyable_services_additional_network] if matrix_playbook_reverse_proxyable_services_additional_network and languagetool_container_labels_traefik_enabled else [] }}"
-
-languagetool_container_labels_traefik_enabled: "{{ matrix_playbook_traefik_labels_enabled }}"
-languagetool_container_labels_traefik_docker_network: "{{ matrix_playbook_reverse_proxyable_services_additional_network }}"
+languagetool_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
+languagetool_container_labels_traefik_docker_network: "{{ mash_playbook_reverse_proxyable_services_additional_network }}"
 languagetool_container_labels_traefik_entrypoints: "{{ devture_traefik_entrypoint_primary }}"
+languagetool_container_labels_traefik_tls_certResolver: "{{ devture_traefik_certResolver_primary }}"
+languagetool_container_additional_networks_auto: |
+  {{
+    ([mash_playbook_reverse_proxyable_services_additional_network] if mash_playbook_reverse_proxyable_services_additional_network else [])
+  }}
 
 ########################################################################
 #                                                                      #
