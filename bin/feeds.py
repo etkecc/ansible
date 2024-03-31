@@ -85,7 +85,35 @@ def format_feeds_from_git_repos(git_repos):
             'type': 'rss',
             'htmlUrl': 'https://pypi.org/project/ansible-core/#history',
             'xmlUrl': 'https://pypi.org/rss/project/ansible-core/releases.xml'
-        }
+        },
+        'alpinelinux': {
+            'text': 'alpinelinux',
+            'title': 'alpinelinux',
+            'type': 'rss',
+            'htmlUrl': 'https://github.com/alpinelinux/aports/releases',
+            'xmlUrl': 'https://github.com/alpinelinux/aports/releases.atom'
+        },
+        'borg': {
+            'text': 'borg',
+            'title': 'borg',
+            'type': 'rss',
+            'htmlUrl': 'https://github.com/borgbackup/borg/releases',
+            'xmlUrl': 'https://github.com/borgbackup/borg/releases.atom'
+        },
+        'borgmatic': {
+            'text': 'borgmatic',
+            'title': 'borgmatic',
+            'type': 'rss',
+            'htmlUrl': 'https://github.com/borgmatic-collective/borgmatic/releases',
+            'xmlUrl': 'https://github.com/borgmatic-collective/borgmatic/releases.atom'
+        },
+        'mautrix-go': {
+            'text': 'mautrix-go',
+            'title': 'mautrix-go',
+            'type': 'rss',
+            'htmlUrl': 'https://github.com/mautrix/go/releases',
+            'xmlUrl': 'https://github.com/mautrix/go/releases.atom'
+        },
     }
     for role, git_repos in git_repos.items():
         for idx, git_repo in enumerate(git_repos):
@@ -93,8 +121,14 @@ def format_feeds_from_git_repos(git_repos):
                 atomFilePath = git_repo.replace('.git', '') + '/releases.atom'
             elif ('gitlab' in git_repo or 'mau.dev' in git_repo):
                 atomFilePath = git_repo.replace('.git', '') + '/-/tags?format=atom'
-            elif 'git.zx2c4.com' in git_repo:
+            elif 'git.zx2c4.com' in git_repo: # cgit
                 atomFilePath = git_repo + '/atom/'
+            elif 'framagit.org' in git_repo: # gitlab
+                atomFilePath = git_repo.replace('.git', '') + '/-/tags?format=atom'
+            elif 'git.osgeo.org' in git_repo: # gitea
+                atomFilePath = git_repo.replace('.git', '') + '.atom'
+            elif 'dev.funkwhale.audio' in git_repo: # gitlab
+                atomFilePath = git_repo.replace('.git', '') + '/-/tags?format=atom'
             else:
                 print('Unrecognized git repository: %s' % git_repo)
                 continue
