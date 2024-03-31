@@ -15,6 +15,8 @@ mash_playbook_traefik_labels_enabled: "{{ matrix_playbook_traefik_labels_enabled
 mash_playbook_reverse_proxyable_services_additional_network: "{{ matrix_playbook_reverse_proxyable_services_additional_network }}"
 devture_systemd_docker_base_container_network_creation_method: ansible-module
 
+keydb_enabled: "{{ matrix_synapse_workers_enabled or funkwhale_enabled or (matrix_hookshot_enabled and matrix_hookshot_experimental_encryption_enabled) }}"
+
 # just copied from disabled roles
 matrix_dendrite_max_file_size_bytes: 1073741824
 matrix_conduit_max_request_size: 20_000_000
@@ -190,7 +192,7 @@ gotosocial_systemd_required_services_list_auto: |
 
 gotosocial_systemd_wanted_services_list_auto: |
   {{
-    ([(exim_relay_identifier | default('mash-exim-relay')) ~ '.service'] if (exim_relay_enabled | default(false) and gotosocial_smtp_host == exim_relay_identifier | default('mash-exim-relay')) else [])
+    ([(exim_relay_identifier | default('matrix-exim-relay')) ~ '.service'] if (exim_relay_enabled | default(false) and gotosocial_smtp_host == exim_relay_identifier | default('matrix-exim-relay')) else [])
   }}
 
 gotosocial_container_network: "{{ matrix_addons_container_network }}"
@@ -201,7 +203,7 @@ gotosocial_container_additional_networks_auto: |
     +
     ([devture_postgres_container_network] if devture_postgres_enabled and gotosocial_database_host == devture_postgres_identifier and gotosocial_container_network != devture_postgres_container_network else [])
      +
-    ([exim_relay_container_network | default('mash-exim-relay')] if (exim_relay_enabled | default(false) and gotosocial_smtp_host == exim_relay_identifier | default('mash-exim-relay') and exim_relay_container_network != gotosocial_container_network) else [])
+    ([exim_relay_container_network | default('matrix-exim-relay')] if (exim_relay_enabled | default(false) and gotosocial_smtp_host == exim_relay_identifier | default('matrix-exim-relay') and exim_relay_container_network != gotosocial_container_network) else [])
   }}
 
 gotosocial_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
@@ -246,12 +248,12 @@ vaultwarden_container_additional_networks_auto: |
     +
     ([devture_postgres_container_network] if devture_postgres_enabled and vaultwarden_database_hostname == devture_postgres_identifier and vaultwarden_container_network != devture_postgres_container_network else [])
     +
-    ([exim_relay_container_network | default('mash-exim-relay')] if (exim_relay_enabled | default(false) and vaultwarden_config_smtp_host == exim_relay_identifier | default('mash-exim-relay') and exim_relay_container_network != vaultwarden_container_network) else [])
+    ([exim_relay_container_network | default('matrix-exim-relay')] if (exim_relay_enabled | default(false) and vaultwarden_config_smtp_host == exim_relay_identifier | default('matrix-exim-relay') and exim_relay_container_network != vaultwarden_container_network) else [])
   }}
 
 vaultwarden_systemd_wanted_systemd_services_list_auto: |
   {{
-    ([(exim_relay_identifier | default('mash-exim-relay')) ~ '.service'] if (exim_relay_enabled | default(false) and vaultwarden_config_smtp_host == exim_relay_identifier | default('mash-exim-relay')) else [])
+    ([(exim_relay_identifier | default('matrix-exim-relay')) ~ '.service'] if (exim_relay_enabled | default(false) and vaultwarden_config_smtp_host == exim_relay_identifier | default('matrix-exim-relay')) else [])
   }}
 
 vaultwarden_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
@@ -314,6 +316,80 @@ firezone_container_labels_traefik_entrypoints: "{{ devture_traefik_entrypoint_pr
 firezone_container_labels_traefik_tls_certResolver: "{{ devture_traefik_certResolver_primary }}"
 
 
+
+########################################################################
+#                                                                      #
+# funkwhale                                                            #
+#                                                                      #
+########################################################################
+
+funkwhale_enabled: false
+funkwhale_identifier: "{{ mash_playbook_service_identifier_prefix }}funkwhale"
+funkwhale_base_path: "{{ mash_playbook_base_path }}/{{ mash_playbook_service_base_directory_name_prefix }}funkwhale"
+
+funkwhale_uid: "{{ mash_playbook_uid }}"
+funkwhale_gid: "{{ mash_playbook_gid }}"
+funkwhale_container_network: "{{ matrix_addons_container_network }}"
+
+funkwhale_database_hostname: "{{ devture_postgres_identifier if devture_postgres_enabled else '' }}"
+funkwhale_database_port: "{{ '5432' if devture_postgres_enabled else '' }}"
+funkwhale_database_password: "{{ '%s' | format(mash_playbook_generic_secret_key) | password_hash('sha512', 'db.funkwhale', rounds=655555) | to_uuid }}"
+funkwhale_database_username: "{{ funkwhale_identifier }}"
+
+funkwhale_email_protocol: "{{ 'smtp://' if exim_relay_enabled else 'consolemail://' }}"
+funkwhale_email_host: "{{ exim_relay_identifier | default('matrix-exim-relay') }}"
+funkwhale_email_port: "{{ 8025 if exim_relay_enabled else '587' }}"
+funkwhale_email_username: ''
+funkwhale_email_password: ''
+funkwhale_email_from: "{{ exim_relay_sender_address if exim_relay_enabled else '' }}"
+funkwhale_account_email_verification_enforce: "{{ exim_relay_enabled | default(false) }}"
+funkwhale_django_secret_key: "{{ '%s' | format(mash_playbook_generic_secret_key) | password_hash('sha512', 'funkwhale', rounds=655555) | to_uuid }}"
+
+funkwhale_config_redis_hostname: "{{ keydb_identifier if keydb_enabled else '' }}"
+
+funkwhale_api_systemd_required_services_list_auto: |
+  {{
+    ([devture_postgres_identifier ~ '.service'] if devture_postgres_enabled and funkwhale_database_hostname == devture_postgres_identifier else [])
+    +
+    ([keydb_identifier ~ '.service'] if keydb_enabled else [])
+  }}
+
+funkwhale_frontend_systemd_required_services_list_auto: |
+  {{
+    ([devture_postgres_identifier ~ '.service'] if devture_postgres_enabled and funkwhale_database_hostname == devture_postgres_identifier else [])
+  }}
+
+funkwhale_api_container_additional_networks_auto: |
+  {{
+    ([mash_playbook_reverse_proxyable_services_additional_network] if mash_playbook_reverse_proxyable_services_additional_network else [])
+    +
+    ([devture_postgres_container_network] if devture_postgres_enabled and funkwhale_database_hostname == devture_postgres_identifier and funkwhale_api_container_network != devture_postgres_container_network else [])
+    +
+    ([exim_relay_container_network | default('matrix-exim-relay')] if (exim_relay_enabled | default(false) and funkwhale_email_host == exim_relay_identifier | default('matrix-exim-relay') and exim_relay_container_network != funkwhale_container_network) else [])
+    +
+    ([keydb_container_network] if keydb_enabled and funkwhale_config_redis_hostname == keydb_identifier else [])
+  }}
+
+funkwhale_frontend_container_additional_networks_auto: |
+  {{
+    ([mash_playbook_reverse_proxyable_services_additional_network] if mash_playbook_reverse_proxyable_services_additional_network else [])
+    +
+    ([devture_postgres_container_network] if devture_postgres_enabled and funkwhale_database_hostname == devture_postgres_identifier and funkwhale_frontend_container_network != devture_postgres_container_network else [])
+    +
+    ([exim_relay_container_network | default('matrix-exim-relay')] if (exim_relay_enabled | default(false) and funkwhale_email_host == exim_relay_identifier | default('matrix-exim-relay') and exim_relay_container_network != funkwhale_container_network) else [])
+  }}
+
+funkwhale_api_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
+funkwhale_api_container_labels_traefik_docker_network: "{{ mash_playbook_reverse_proxyable_services_additional_network }}"
+funkwhale_api_container_labels_traefik_entrypoints: "{{ devture_traefik_entrypoint_primary }}"
+funkwhale_api_container_labels_traefik_tls_certResolver: "{{ devture_traefik_certResolver_primary }}"
+
+funkwhale_frontend_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
+funkwhale_frontend_container_labels_traefik_docker_network: "{{ mash_playbook_reverse_proxyable_services_additional_network }}"
+funkwhale_frontend_container_labels_traefik_entrypoints: "{{ devture_traefik_entrypoint_primary }}"
+funkwhale_frontend_container_labels_traefik_tls_certResolver: "{{ devture_traefik_certResolver_primary }}"
+
+
 ########################################################################
 #                                                                      #
 # matrix/synapse-auto-compressor                                       #
@@ -359,6 +435,14 @@ devture_systemd_service_manager_services_list_additional: |
     ([{'name': (radicale_identifier + '.service'), 'priority': 5000, 'groups': ['etke', 'radicale']}] if radicale_enabled else [])
     +
     ([{'name': (firezone_identifier + '.service'), 'priority': 5000, 'groups': ['etke', 'firezone']}] if firezone_enabled else [])
+    +
+    ([{'name': (funkwhale_api_identifier + '.service'), 'priority': 2000, 'groups': ['etke', 'funkwhale']}] if funkwhale_enabled else [])
+    +
+    ([{'name': (funkwhale_frontend_identifier + '.service'), 'priority': 2000, 'groups': ['etke', 'funkwhale']}] if funkwhale_enabled else [])
+    +
+    ([{'name': (funkwhale_celery_beat_identifier + '.service'), 'priority': 2000, 'groups': ['etke', 'funkwhale']}] if funkwhale_enabled else [])
+    +
+    ([{'name': (funkwhale_celery_worker_identifier + '.service'), 'priority': 2000, 'groups': ['etke', 'funkwhale']}] if funkwhale_enabled else [])
     +
     ([{'name': ('wg-quick@' + custom_wireguard_interface + '.service'), 'priority': 5000, 'groups': ['etke', 'wireguard']}] if custom_wireguard_enabled else [])
   }}
@@ -407,6 +491,12 @@ devture_postgres_managed_databases_additional: |
       'username': firezone_database_username,
       'password': firezone_database_password,
     }] if firezone_enabled else [])
+    +
+    ([{
+      'name': funkwhale_database_name,
+      'username': funkwhale_database_username,
+      'password': funkwhale_database_password,
+      }] if funkwhale_enabled else [])
   }}
 
 ########################################################################

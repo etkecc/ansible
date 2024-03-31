@@ -34,6 +34,7 @@
     <outline text="email2matrix" title="email2matrix" type="rss" htmlUrl="https://github.com/devture/email2matrix" xmlUrl="https://github.com/devture/email2matrix/releases.atom" />
     <outline text="etherpad" title="etherpad" type="rss" htmlUrl="https://github.com/ether/etherpad-lite" xmlUrl="https://github.com/ether/etherpad-lite/releases.atom" />
     <outline text="exim_relay" title="exim_relay" type="rss" htmlUrl="https://github.com/devture/exim-relay" xmlUrl="https://github.com/devture/exim-relay/releases.atom" />
+    <outline text="funkwhale" title="funkwhale" type="rss" htmlUrl="https://dev.funkwhale.audio/funkwhale/funkwhale" xmlUrl="https://dev.funkwhale.audio/funkwhale/funkwhale/-/tags?format=atom" />
     <outline text="go-neb" title="go-neb" type="rss" htmlUrl="https://github.com/matrix-org/go-neb" xmlUrl="https://github.com/matrix-org/go-neb/releases.atom" />
     <outline text="go-skype-bridge" title="go-skype-bridge" type="rss" htmlUrl="https://github.com/kelaresg/go-skype-bridge" xmlUrl="https://github.com/kelaresg/go-skype-bridge/releases.atom" />
     <outline text="grafana" title="grafana" type="rss" htmlUrl="https://github.com/grafana/grafana" xmlUrl="https://github.com/grafana/grafana/releases.atom" />

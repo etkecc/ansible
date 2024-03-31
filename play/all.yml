@@ -122,6 +122,7 @@
     - galaxy/radicale
     - galaxy/vaultwarden
     - galaxy/firezone
+    - galaxy/funkwhale
     - custom/wireguard
     # END CUSTOM
 

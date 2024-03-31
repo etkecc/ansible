@@ -26,6 +26,7 @@
 * exim_relay: 4.97-r0-0
 * facebook: v0.5.1
 * firezone: 0.7.35
+* funkwhale: 1.4.0
 * gmessages: v0.3.0
 * go_neb: latest
 * googlechat: v0.5.1
