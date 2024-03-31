@@ -4,8 +4,8 @@
 * appservice_kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * appservice_slack: 2.1.2
 * appservice_webhooks: v1.0.3-01
-* borg: 1.2.7
-* borgmatic: 1.8.6
+* borg: 1.2.8
+* borgmatic: 1.8.9
 * buscarron: v1.4.0
 * cactus_comments: 0.9.0
 * cactus_comments_client: 2.28.0
@@ -52,7 +52,7 @@
 * maubot: v0.4.2
 * meta_instagram: v0.2.0
 * meta_messenger: v0.2.0
-* miniflux: 2.1.1
+* miniflux: 2.1.2
 * mjolnir: v1.6.5
 * mx_puppet_discord: v0.1.1
 * mx_puppet_groupme: 533cccc8
