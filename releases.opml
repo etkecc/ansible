@@ -73,6 +73,7 @@
     <outline text="mx-puppet-twitter" title="mx-puppet-twitter" type="rss" htmlUrl="https://github.com/Sorunome/mx-puppet-twitter" xmlUrl="https://github.com/Sorunome/mx-puppet-twitter/releases.atom" />
     <outline text="ntfy" title="ntfy" type="rss" htmlUrl="https://github.com/binwiederhier/ntfy" xmlUrl="https://github.com/binwiederhier/ntfy/releases.atom" />
     <outline text="pantalaimon" title="pantalaimon" type="rss" htmlUrl="https://github.com/matrix-org/pantalaimon" xmlUrl="https://github.com/matrix-org/pantalaimon/releases.atom" />
+    <outline text="peertube" title="peertube" type="rss" htmlUrl="https://github.com/Chocobozzz/PeerTube" xmlUrl="https://github.com/Chocobozzz/PeerTube/releases.atom" />
     <outline text="postgres" title="postgres" type="rss" htmlUrl="https://github.com/postgres/postgres" xmlUrl="https://github.com/postgres/postgres/releases.atom" />
     <outline text="postgres_backup" title="postgres_backup" type="rss" htmlUrl="https://github.com/prodrigestivill/docker-postgres-backup-local" xmlUrl="https://github.com/prodrigestivill/docker-postgres-backup-local/releases.atom" />
     <outline text="postmoogle" title="postmoogle" type="rss" htmlUrl="https://gitlab.com/etke.cc/postmoogle" xmlUrl="https://gitlab.com/etke.cc/postmoogle/-/tags?format=atom" />

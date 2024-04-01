@@ -15,7 +15,7 @@ mash_playbook_traefik_labels_enabled: "{{ matrix_playbook_traefik_labels_enabled
 mash_playbook_reverse_proxyable_services_additional_network: "{{ matrix_playbook_reverse_proxyable_services_additional_network }}"
 devture_systemd_docker_base_container_network_creation_method: ansible-module
 
-keydb_enabled: "{{ matrix_synapse_workers_enabled or funkwhale_enabled or (matrix_hookshot_enabled and matrix_hookshot_experimental_encryption_enabled) }}"
+keydb_enabled: "{{ matrix_synapse_workers_enabled or funkwhale_enabled or peertube_enabled or (matrix_hookshot_enabled and matrix_hookshot_experimental_encryption_enabled) }}"
 
 # just copied from disabled roles
 matrix_dendrite_max_file_size_bytes: 1073741824
@@ -269,7 +269,7 @@ vaultwarden_database_password: "{{ '%s' | format(mash_playbook_generic_secret_ke
 # role-specific:exim_relay
 vaultwarden_config_smtp_from: "{{ exim_relay_sender_address if exim_relay_enabled else '' }}"
 vaultwarden_config_smtp_host: "{{ exim_relay_identifier if exim_relay_enabled else '' }}"
-vaultwarden_config_smtp_port: "{{ 8025 if exim_relay_enabled else '587' }}"
+vaultwarden_config_smtp_port: 8025
 vaultwarden_config_smtp_security: "{{ 'off' if exim_relay_enabled else 'starttls' }}"
 # /role-specific:exim_relay
 
@@ -338,7 +338,7 @@ funkwhale_database_username: "{{ funkwhale_identifier }}"
 
 funkwhale_email_protocol: "{{ 'smtp://' if exim_relay_enabled else 'consolemail://' }}"
 funkwhale_email_host: "{{ exim_relay_identifier | default('matrix-exim-relay') }}"
-funkwhale_email_port: "{{ 8025 if exim_relay_enabled else '587' }}"
+funkwhale_email_port: 8025
 funkwhale_email_username: ''
 funkwhale_email_password: ''
 funkwhale_email_from: "{{ exim_relay_sender_address if exim_relay_enabled else '' }}"
@@ -388,6 +388,56 @@ funkwhale_frontend_container_labels_traefik_enabled: "{{ mash_playbook_traefik_l
 funkwhale_frontend_container_labels_traefik_docker_network: "{{ mash_playbook_reverse_proxyable_services_additional_network }}"
 funkwhale_frontend_container_labels_traefik_entrypoints: "{{ devture_traefik_entrypoint_primary }}"
 funkwhale_frontend_container_labels_traefik_tls_certResolver: "{{ devture_traefik_certResolver_primary }}"
+
+########################################################################
+#                                                                      #
+# peertube                                                             #
+#                                                                      #
+########################################################################
+
+peertube_enabled: false
+peertube_identifier: "{{ mash_playbook_service_identifier_prefix }}peertube"
+peertube_base_path: "{{ mash_playbook_base_path }}/{{ mash_playbook_service_base_directory_name_prefix }}peertube"
+
+peertube_uid: "{{ mash_playbook_uid }}"
+peertube_gid: "{{ mash_playbook_gid }}"
+peertube_container_network: "{{ matrix_addons_container_network }}"
+peertube_trusted_proxies_values_custom: ["172.16.0.0/12"]
+peertube_container_rtmp_host_bind_port: 1935
+
+peertube_config_smtp_hostname: "{{ exim_relay_identifier | default('matrix-exim-relay') }}"
+peertube_config_smtp_port: 8025
+peertube_config_smtp_from: "{{ exim_relay_sender_address if exim_relay_enabled else '' }}"
+
+peertube_container_additional_networks_auto: |
+  {{
+    (
+      ([mash_playbook_reverse_proxyable_services_additional_network] if mash_playbook_reverse_proxyable_services_additional_network else [])
+      +
+      ([devture_postgres_container_network] if devture_postgres_enabled and peertube_config_database_hostname == devture_postgres_identifier and peertube_container_network != devture_postgres_container_network else [])
+      +
+      ([exim_relay_container_network | default('matrix-exim-relay')] if (exim_relay_enabled | default(false) and peertube_config_smtp_hostname == exim_relay_identifier | default('matrix-exim-relay') and exim_relay_container_network != peertube_container_network) else [])
+      +
+      ([keydb_container_network] if keydb_enabled and peertube_config_redis_hostname == keydb_identifier else [])
+    ) | unique
+  }}
+
+peertube_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
+peertube_container_labels_traefik_docker_network: "{{ mash_playbook_reverse_proxyable_services_additional_network }}"
+peertube_container_labels_traefik_entrypoints: "{{ devture_traefik_entrypoint_primary }}"
+peertube_container_labels_traefik_tls_certResolver: "{{ devture_traefik_certResolver_primary }}"
+
+peertube_config_database_hostname: "{{ devture_postgres_identifier if devture_postgres_enabled else '' }}"
+peertube_config_database_port: "{{ '5432' if devture_postgres_enabled else '' }}"
+peertube_config_database_username: peertube
+peertube_config_database_password: "{{ '%s' | format(mash_playbook_generic_secret_key) | password_hash('sha512', 'db.peertube', rounds=655555) | to_uuid }}"
+
+peertube_config_redis_hostname: "{{ keydb_identifier }}"
+
+peertube_systemd_required_services_list_auto: |
+  {{
+    ([devture_postgres_identifier ~ '.service'] if devture_postgres_enabled and peertube_config_database_hostname == devture_postgres_identifier else [])
+  }}
 
 
 ########################################################################
@@ -444,6 +494,8 @@ devture_systemd_service_manager_services_list_additional: |
     +
     ([{'name': (funkwhale_celery_worker_identifier + '.service'), 'priority': 2000, 'groups': ['etke', 'funkwhale']}] if funkwhale_enabled else [])
     +
+    ([{'name': (peertube_identifier + '.service'), 'priority': 2000, 'groups': ['etke', 'peertube']}] if peertube_enabled else [])
+    +
     ([{'name': ('wg-quick@' + custom_wireguard_interface + '.service'), 'priority': 5000, 'groups': ['etke', 'wireguard']}] if custom_wireguard_enabled else [])
   }}
 
@@ -497,6 +549,12 @@ devture_postgres_managed_databases_additional: |
       'username': funkwhale_database_username,
       'password': funkwhale_database_password,
       }] if funkwhale_enabled else [])
+    +
+    ([{
+      'name': peertube_config_database_name,
+      'username': peertube_config_database_username,
+      'password': peertube_config_database_password,
+    }] if peertube_enabled else [])
   }}
 
 ########################################################################

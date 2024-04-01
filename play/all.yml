@@ -123,6 +123,7 @@
     - galaxy/vaultwarden
     - galaxy/firezone
     - galaxy/funkwhale
+    - galaxy/peertube
     - custom/wireguard
     # END CUSTOM
 

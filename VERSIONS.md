@@ -63,6 +63,7 @@
 * mx_puppet_twitter: latest
 * ntfy: v2.10.0
 * pantalaimon: 0.10.5
+* peertube: v6.0.3
 * postmoogle: v0.9.17
 * prometheus_nginxlog_exporter: v1.10.0
 * prometheus_node_exporter: v1.7.0
