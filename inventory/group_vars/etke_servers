@@ -408,9 +408,11 @@ peertube_gid: "{{ mash_playbook_gid }}"
 peertube_container_network: "{{ matrix_addons_container_network }}"
 peertube_container_rtmp_host_bind_port: 1935
 
-peertube_config_smtp_hostname: "{{ exim_relay_identifier | default('matrix-exim-relay') }}"
-peertube_config_smtp_port: 8025
+# role-specific:exim_relay
+peertube_config_smtp_hostname: "{{ exim_relay_identifier if exim_relay_enabled else '' }}"
+peertube_config_smtp_port: "{{ 8025 if exim_relay_enabled else '' }}"
 peertube_config_smtp_from: "{{ exim_relay_sender_address if exim_relay_enabled else '' }}"
+# /role-specific:exim_relay
 
 peertube_container_additional_networks_auto: |
   {{
@@ -419,9 +421,9 @@ peertube_container_additional_networks_auto: |
       +
       ([devture_postgres_container_network] if devture_postgres_enabled and peertube_config_database_hostname == devture_postgres_identifier and peertube_container_network != devture_postgres_container_network else [])
       +
-      ([exim_relay_container_network | default('matrix-exim-relay')] if (exim_relay_enabled | default(false) and peertube_config_smtp_hostname == exim_relay_identifier | default('matrix-exim-relay') and exim_relay_container_network != peertube_container_network) else [])
-      +
       ([keydb_container_network] if keydb_enabled and peertube_config_redis_hostname == keydb_identifier else [])
+      +
+      ([exim_relay_container_network | default('matrix-exim-relay')] if (exim_relay_enabled | default(false) and peertube_config_smtp_hostname == exim_relay_identifier | default('matrix-exim-relay') and exim_relay_container_network != peertube_container_network) else [])
     ) | unique
   }}
 
@@ -435,13 +437,21 @@ peertube_config_database_port: "{{ '5432' if devture_postgres_enabled else '' }}
 peertube_config_database_username: peertube
 peertube_config_database_password: "{{ '%s' | format(mash_playbook_generic_secret_key) | password_hash('sha512', 'db.peertube', rounds=655555) | to_uuid }}"
 
-peertube_config_redis_hostname: "{{ keydb_identifier }}"
+# role-specific:keydb
+peertube_config_redis_hostname: "{{ keydb_identifier if keydb_enabled else '' }}"
+# /role-specific:keydb
 
 peertube_systemd_required_services_list_auto: |
   {{
     ([devture_postgres_identifier ~ '.service'] if devture_postgres_enabled and peertube_config_database_hostname == devture_postgres_identifier else [])
+    +
+    ([keydb_identifier ~ '.service'] if keydb_enabled | default(false) and peertube_config_redis_hostname == keydb_identifier | default('matrix-keydb') else [])
   }}
 
+peertube_systemd_wanted_services_list_auto: |
+  {{
+    ([(exim_relay_identifier | default('matrix-exim-relay')) ~ '.service'] if (exim_relay_enabled | default(false) and peertube_config_smtp_hostname == exim_relay_identifier | default('matrix-exim-relay')) else [])
+  }}
 
 ########################################################################
 #                                                                      #
