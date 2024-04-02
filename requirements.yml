@@ -22,7 +22,7 @@
 - src: git+https://gitlab.com/etke.cc/roles/miniflux.git
   version: v2.1.2-0
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-peertube.git
-  version: v6.0.3-3
+  version: v6.0.3-4
   name: peertube
 - src: git+https://gitlab.com/etke.cc/roles/radicale.git
   version: v3.1.9.1-0

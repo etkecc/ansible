@@ -406,7 +406,6 @@ peertube_base_path: "{{ mash_playbook_base_path }}/{{ mash_playbook_service_base
 peertube_uid: "{{ mash_playbook_uid }}"
 peertube_gid: "{{ mash_playbook_gid }}"
 peertube_container_network: "{{ matrix_addons_container_network }}"
-peertube_trusted_proxies_values_custom: ["172.16.0.0/12"]
 peertube_container_rtmp_host_bind_port: 1935
 
 peertube_config_smtp_hostname: "{{ exim_relay_identifier | default('matrix-exim-relay') }}"
