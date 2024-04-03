@@ -82,7 +82,7 @@
 * sygnal: v0.14.0
 * synapse_admin: 0.8.7
 * synapse_reverse_proxy_companion: 1.25.4-alpine
-* synapse: v1.103.0
+* synapse: v1.104.0
 * telegram: v0.15.1
 * traefik_certs_dumper: v2.8.3
 * traefik: v2.11.0
