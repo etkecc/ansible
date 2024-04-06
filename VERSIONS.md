@@ -11,7 +11,7 @@
 * cactus_comments_client: 2.28.0
 * chatgpt: 3.1.4
 * cinny: v3.2.0
-* container_socket_proxy: 0.1.1
+* container_socket_proxy: 0.1.2
 * corporal: 2.7.0
 * coturn: 4.6.2-r5
 * dimension: latest
@@ -63,7 +63,7 @@
 * mx_puppet_twitter: latest
 * ntfy: v2.10.0
 * pantalaimon: 0.10.5
-* peertube: v6.0.3
+* peertube: v6.0.4
 * postmoogle: v0.9.17
 * prometheus_nginxlog_exporter: v1.10.0
 * prometheus_node_exporter: v1.7.0
