@@ -23,7 +23,7 @@
 * element: v1.11.63
 * email2matrix: 1.1.0
 * etherpad: 2.0.1
-* exim_relay: 4.97-r0-0
+* exim_relay: 4.97.1-r0-0
 * facebook: v0.5.1
 * firezone: 0.7.35
 * funkwhale: 1.4.0
