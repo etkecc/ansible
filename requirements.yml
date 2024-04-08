@@ -3,9 +3,6 @@
 - include: upstream/requirements.yml
 - src: git+https://gitlab.com/etke.cc/roles/cleanup.git
   version: main
-- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-exim-relay.git
-  version: v4.97.1-r0-0-1
-  name: exim_relay
 - src: git+https://gitlab.com/etke.cc/roles/fail2ban.git
   version: main
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-firezone.git
