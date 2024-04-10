@@ -20,7 +20,7 @@
 * docker_compose: v2.11.1
 * draupnir: v1.87.0
 * dynamic_dns: 3.11.2
-* element: v1.11.63
+* element: v1.11.64
 * email2matrix: 1.1.0
 * etherpad: 2.0.1
 * exim_relay: 4.97.1-r0-0
@@ -79,7 +79,7 @@
 * sliding_sync: v0.99.15
 * sms_bridge: 0.5.9
 * static_files: 2.28.0
-* sygnal: v0.14.0
+* sygnal: v0.14.1
 * synapse_admin: 0.8.7
 * synapse_reverse_proxy_companion: 1.25.4-alpine
 * synapse: v1.104.0
