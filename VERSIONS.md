@@ -11,7 +11,7 @@
 * cactus_comments_client: 2.28.0
 * chatgpt: 3.1.4
 * cinny: v3.2.0
-* container_socket_proxy: 0.1.1
+* container_socket_proxy: 0.1.2
 * corporal: 2.7.0
 * coturn: 4.6.2-r5
 * dimension: latest
@@ -20,10 +20,10 @@
 * docker_compose: v2.11.1
 * draupnir: v1.87.0
 * dynamic_dns: 3.11.2
-* element: v1.11.63
+* element: v1.11.64
 * email2matrix: 1.1.0
 * etherpad: 2.0.1
-* exim_relay: 4.97-r0-0
+* exim_relay: 4.97.1-r0-0
 * facebook: v0.5.1
 * firezone: 0.7.35
 * funkwhale: 1.4.0
@@ -31,7 +31,7 @@
 * go_neb: latest
 * googlechat: v0.5.1
 * go_skype_bridge: latest
-* gotosocial: 0.14.0
+* gotosocial: 0.15.0
 * grafana: 10.4.1
 * hangouts: latest
 * heisenbridge: 1.14.6
@@ -63,7 +63,7 @@
 * mx_puppet_twitter: latest
 * ntfy: v2.10.0
 * pantalaimon: 0.10.5
-* peertube: v6.0.3
+* peertube: v6.0.4
 * postmoogle: v0.9.17
 * prometheus_nginxlog_exporter: v1.10.0
 * prometheus_node_exporter: v1.7.0
@@ -79,7 +79,7 @@
 * sliding_sync: v0.99.15
 * sms_bridge: 0.5.9
 * static_files: 2.28.0
-* sygnal: v0.14.0
+* sygnal: v0.14.1
 * synapse_admin: 0.8.7
 * synapse_reverse_proxy_companion: 1.25.4-alpine
 * synapse: v1.104.0
