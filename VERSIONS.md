@@ -31,7 +31,7 @@
 * go_neb: latest
 * googlechat: v0.5.1
 * go_skype_bridge: latest
-* gotosocial: 0.14.0
+* gotosocial: 0.15.0
 * grafana: 10.4.1
 * hangouts: latest
 * heisenbridge: 1.14.6
