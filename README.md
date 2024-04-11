@@ -33,9 +33,7 @@ Testing branch, with latest updates from the upstream and unstable changes, incl
 
 Used components' version automatically added to the [VERSIONS.md](./VERSIONS.md) file on each commit.
 
-How? [bin/commit-msg.sh](./bin/commit-msg.sh)
-
-> **NOTE**: requires [yq](https://github.com/mikefarah/yq)
+How? [bin/versions.py](./bin/versions.py)
 
 ## Different focus
 
@@ -50,15 +48,12 @@ The original playbook's focus is on matrix components only, while we at [etke.cc
 
 # Prerequisites
 
-* [yq](https://github.com/mikefarah/yq) - to generate VERSIONS.md
 * [git](https://git-scm.com/) - it's a git repo, you know
-* [sed](https://en.wikipedia.org/wiki/Sed) - to generate VERSIONS.md
-* [grep](https://en.wikipedia.org/wiki/Grep) - to generate VERSIONS.md
 * [agru](https://gitlab.com/etke.cc/int/agru) - to update roles
 * [just](https://just.systems/man/en/) - to automate routine
 * [docker](https://www.docker.com/) - to build containers
 * [skopeo](https://github.com/containers/skopeo) - to sync containers
-* [python](https://www.python.org/) - to run the playbook, build opml and hookshot lists
+* [python](https://www.python.org/) - to run the playbook, build opml, etc.
 * [ansible](https://www.ansible.com/) - to run the playbook
 
 # Usage
