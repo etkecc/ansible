@@ -108,3 +108,4 @@ update-upstream:
 update-versions:
     @echo "generating versions diff..."
     @python bin/versions.py
+    @python bin/commitmsg.py

@@ -32,7 +32,7 @@
 * Go Skype Bridge: latest
 * Googlechat: v0.5.1
 * Gotosocial: 0.15.0
-* Grafana: 10.4.1
+* Grafana: 10.4.2
 * Hangouts: latest
 * Heisenbridge: 1.14.6
 * Honoroit: v0.9.20
@@ -65,7 +65,7 @@
 * Pantalaimon: 0.10.5
 * Peertube: v6.0.4
 * Postmoogle: v0.9.17
-* Prometheus: v2.51.0
+* Prometheus: v2.51.2
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.7.0
 * Prometheus Postgres Exporter: v0.14.0
@@ -85,10 +85,11 @@
 * Synapse: v1.104.0
 * Synapse Admin: 0.8.7
 * Synapse Auto Accept Invite: 1.1.3
+* Synapse Auto Compressor: v0.1.4
 * Synapse Reverse Proxy Companion: 1.25.4-alpine
 * Synapse S3 Storage Provider: 1.3.0
 * Telegram: v0.15.1
-* Traefik: v2.11.0
+* Traefik: v2.11.2
 * Traefik Certs Dumper: v2.8.3
 * Twitter: v0.1.7
 * Uptime Kuma: 1.23.11
