@@ -106,7 +106,6 @@ update-upstream:
 
 # update VERSIONS.md file using the actual versions from roles' files
 update-versions:
-    #!/usr/bin/env sh
-    echo "generating versions diff..."
-    bash bin/versions.sh
-    git --no-pager diff --no-ext-diff VERSIONS.md
+    @echo "generating versions diff..."
+    @python bin/versions.py
+    @python bin/commitmsg.py
