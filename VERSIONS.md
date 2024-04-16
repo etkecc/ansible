@@ -27,7 +27,7 @@
 * Facebook: v0.5.1
 * Firezone: 0.7.35
 * Funkwhale: 1.4.0
-* Gmessages: v0.3.0
+* Gmessages: v0.4.0
 * Go Neb: latest
 * Go Skype Bridge: latest
 * Googlechat: v0.5.1
@@ -51,8 +51,8 @@
 * Matrix Registration Bot: 1.3.0
 * Matrix Reminder Bot: v0.3.0
 * Maubot: v0.4.2
-* Meta Instagram: v0.2.0
-* Meta Messenger: v0.2.0
+* Meta Instagram: v0.3.0
+* Meta Messenger: v0.3.0
 * Miniflux: 2.1.2
 * Mjolnir: v1.6.5
 * Mx Puppet Discord: v0.1.1
@@ -74,7 +74,7 @@
 * Redis: 7.2.4
 * Registration: v0.7.2
 * Schildichat: v1.11.36-sc.3
-* Signal: v0.5.1
+* Signal: v0.6.0
 * Slack: latest
 * Sliding Sync: v0.99.15
 * Sms Bridge: 0.5.9
@@ -82,7 +82,7 @@
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.28.0
 * Sygnal: v0.14.1
-* Synapse: v1.104.0
+* Synapse: v1.105.0
 * Synapse Admin: 0.8.7
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4
@@ -95,6 +95,6 @@
 * Uptime Kuma: 1.23.11
 * User Verification Service: v3.0.0
 * Vaultwarden: 1.30.5
-* Whatsapp: v0.10.6
+* Whatsapp: v0.10.7
 * Wsproxy: latest
 * Wsproxy Syncproxy: latest
