@@ -6,7 +6,7 @@
 * Appservice Webhooks: v1.0.3-01
 * Borg: 1.2.8
 * Borgmatic: 1.8.9
-* Buscarron: v1.4.0
+* Buscarron: v1.4.1
 * Cactus Comments: 0.9.0
 * Cactus Comments Client: 2.28.0
 * Chatgpt: 3.1.4
@@ -36,7 +36,7 @@
 * Hangouts: latest
 * Heisenbridge: 1.14.6
 * Honoroit: v0.9.20
-* Hookshot: 5.2.1
+* Hookshot: 5.3.0
 * Hydrogen: v0.4.1
 * Instagram: v0.3.1
 * Jitsi: stable-9364-1
@@ -83,7 +83,7 @@
 * Static Files: 2.28.0
 * Sygnal: v0.14.1
 * Synapse: v1.105.0
-* Synapse Admin: 0.8.7
+* Synapse Admin: 0.9.2
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4
 * Synapse Reverse Proxy Companion: 1.25.4-alpine
