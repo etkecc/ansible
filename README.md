@@ -41,8 +41,7 @@ The original playbook's focus is on matrix components only, while we at [etke.cc
 
 * system security
 * maintenance of the operating system
-* matrix components (that's the upstream's goal)
-* diversity of the components
+* diversity of the components, including both [matrix](https://github.com/spantaleev/matrix-docker-ansible-deploy) and [non-matrix](https://github.com/mother-of-all-self-hosting/mash-playbook) components
 
 </details>
 
@@ -69,21 +68,21 @@ The original playbook's focus is on matrix components only, while we at [etke.cc
 git clone https://gitlab.com/etke.cc/ansible.git
 cd ansible
 
-# pull the spantaleev/matrix-docker-ansible-deploy repo and other dependency roles
-just dependencies
+# pull the spantaleev/matrix-docker-ansible-deploy repo and other dependency roles, the recipe name is an alias to match with the upstream
+just roles
 
 # create directory for your server config
 mkdir inventory/host_vars/DOMAIN
 
 # copy the example configs
-cp upstream/examples/hosts inventory/hosts
-cp upstream/examples/vars.yml inventory/host_vars/DOMAIN/
+cp .config/examples/hosts inventory/hosts
+cp .config/examples/vars.yml inventory/host_vars/DOMAIN/
 
 # edit inventory file and put your server connection details (vim is optional, aye).
-# note: replace matrix.<your-domain> with your DOMAIN (tbh, you dont need matrix. prefix here, so you may remove it, too)
+# note: replace DOMAIN with your actual base/apex domain name
 vim inventory/hosts
 
-# edit your server configuration file (vim is optional here)
+# edit your server configuration file
 vim inventory/host_vars/DOMAIN/vars.yml
 ```
 
@@ -96,42 +95,9 @@ after that you can use playbook `play/matrix.yml`, here is the list of commands 
 # Moving to the grand finale
 
 # Run server setup
-ansible-playbook play/all.yml -t setup-all
-
-# create users, configure dimension, etc. - do all the stuff
-
-# Start the server
-ansible-playbook play/matrix.yml -t start
-
-# Check if it works
-ansible-playbook play/matrix.yml -t self-check
+just setup-all
 ```
 
-</details>
-
-<details>
-<summary>Upgrades & maintenance</summary>
-
-New versions of matrix-related software are releaseed very often, so to stay up to date, follow these steps:
-
-* Check parent project's [CHANGELOG](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/CHANGELOG.md) for news
-* Upgrade playbooks and roles with `git pull`
-* **Don't forget to carefully read the changelog**, because it may contain breaking changes!
-* Run the upgrade: `ansible-playbook play/all.yml -t setup-all,start`
-* Check if it works as expected: `ansible-playbook play/matrix.yml -t self-check`
-
-### Full maintenance cycle:
-
-1. Run all playbooks (including cleanup tasks)
-2. Run rust-synapse-compress-state
-3. Run postgres full vacuum.
-
-```bash
-ansible-playbook play/all.yml -l DOMAIN -t setup-all
-ansible-playbook play/all.yml -l DOMAIN -t rust-synapse-compress-state -e matrix_synapse_rust_synapse_compress_state_find_rooms_command_wait_time=86400 -e matrix_synapse_rust_synapse_compress_state_compress_room_time=86400 -e matrix_synapse_rust_synapse_compress_state_psql_import_time=86400
-ansible-playbook play/all.yml -l DOMAIN -t run-postgres-vacuum
-ansible-playbook play/all.yml -l DOMAIN -t restart-all
-```
 </details>
 
 ## Supported distros

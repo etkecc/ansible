@@ -1,2 +1,8 @@
-[matrix_servers]
+[etke_hosts]
 localhost ansible_connection=local become=no
+
+[etke_servers]
+[etke_servers:children]
+matrix_servers
+[matrix_servers:children]
+etke_hosts
