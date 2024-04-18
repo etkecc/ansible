@@ -1,9 +1,0 @@
-# unnecessary in docker
-/bin
-/upstream
-/.gitignore
-/.gitlab-ci.yml
-/Dockerfile
-/Dockerfile.base
-/releases.opml
-/VERSIONS.md
