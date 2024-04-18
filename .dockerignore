@@ -1,6 +1,5 @@
 # unnecessary in docker
 /bin
-/.config
 /upstream
 /.gitignore
 /.gitlab-ci.yml
