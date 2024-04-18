@@ -92,7 +92,7 @@
 * Traefik: v2.11.2
 * Traefik Certs Dumper: v2.8.3
 * Twitter: v0.1.7
-* Uptime Kuma: 1.23.11
+* Uptime Kuma: 1.23.12
 * User Verification Service: v3.0.0
 * Vaultwarden: 1.30.5
 * Whatsapp: v0.10.7
