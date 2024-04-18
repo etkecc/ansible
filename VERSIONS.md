@@ -25,7 +25,7 @@
 * Etherpad: 2.0.1
 * Exim Relay: 4.97.1-r0-0
 * Facebook: v0.5.1
-* Firezone: 0.7.35
+* Firezone: 0.7.36
 * Funkwhale: 1.4.0
 * Gmessages: v0.4.0
 * Go Neb: latest
@@ -86,7 +86,7 @@
 * Synapse Admin: 0.9.2
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4
-* Synapse Reverse Proxy Companion: 1.25.4-alpine
+* Synapse Reverse Proxy Companion: 1.25.5-alpine
 * Synapse S3 Storage Provider: 1.3.0
 * Telegram: v0.15.1
 * Traefik: v2.11.2
