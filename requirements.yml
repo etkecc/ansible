@@ -6,7 +6,7 @@
 - src: git+https://gitlab.com/etke.cc/roles/fail2ban.git
   version: main
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-firezone.git
-  version: v0.7.36-0
+  version: v0.7.36-1
   name: firezone
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-funkwhale.git
   version: v1.4.0-3

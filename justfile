@@ -108,6 +108,7 @@ update-upstream:
 update-versions:
     @echo "generating versions diff..."
     @python bin/versions.py
+    @python bin/versions.diff.py
     @python bin/commitmsg.py
 
 # alias to match with the upstream recipes and docs
