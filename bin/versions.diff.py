@@ -53,6 +53,30 @@ def parse_version_line(line):
     component, version = line.split(": ", 1)
     return component.strip("* "), version.strip()
 
+def get_version_url(repo_url, version):
+    custom = get_version_url_custom(repo_url, version)
+    if custom:
+        return custom
+
+    if 'github' in repo_url:
+        return f"{repo_url}/releases/tag/{version}"
+    elif any(substring in repo_url for substring in ['gitlab', 'mau.dev', 'dev.funkwhale.audio']):
+        return f"{repo_url}/-/tags/{version}"
+    else:
+        print(f'Unrecognized git repository: {repo_url}')
+        return None
+
+def get_version_url_custom(repo_url, version):
+    github_repos = ['github.com/matrix-org/rageshake', 'github.com/Snapchat/KeyDB', 
+                    'github.com/grafana/grafana', 'github.com/Tecnativa/docker-socket-proxy',
+                    'github.com/the-draupnir-project/Draupnir']
+    if 'github.com/nginx/nginx' in repo_url:
+        version = version.split('-')[0]
+        return f"{repo_url}/releases/tag/release-{version}"
+    if not version.startswith('v') and any(repo in repo_url for repo in github_repos):
+        return f"{repo_url}/releases/tag/v{version}"
+    return None
+
 def get_version_diff(repo_path, old_branch, new_branch, file_path):
     repo = git.Repo(repo_path)
 
@@ -96,10 +120,14 @@ if __name__ == "__main__":
     with open(os.path.join(os.getcwd(), 'VERSIONS.diff.md'), 'w') as f:
         f.write("**Stable Updates Published**\n\n")
         for component, old_version, new_version in added_or_changed_lines:
+            if old_version == new_version or new_version is None:
+                continue
             if component in git_repos:
                 component_link = f"[{component}]({git_repos[component]})"
+                version_url = f"[{new_version}]({get_version_url(git_repos[component], new_version)})"
             else:
                 component_link = component
-            f.write(f"* {component_link}: {old_version} -> {new_version}\n")
+                version_url = new_version
+            f.write(f"* {component_link}: {old_version} -> {version_url}\n")
 
     print("VERSIONS.diff.md generated successfully")
