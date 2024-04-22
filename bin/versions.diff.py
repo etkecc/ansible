@@ -77,6 +77,10 @@ def get_version_url_custom(repo_url, version):
         return f"{repo_url}/releases/tag/v{version}"
     return None
 
+def parse_version_line(line):
+    component, version = line.split(": ", 1)
+    return component.strip("* "), version.strip()
+
 def get_version_diff(repo_path, old_branch, new_branch, file_path):
     repo = git.Repo(repo_path)
 
@@ -87,21 +91,30 @@ def get_version_diff(repo_path, old_branch, new_branch, file_path):
     new_version = new_commit.tree / file_path
 
     old_content = old_version.data_stream.read().decode().splitlines()
-    new_content = new_version.data_stream.read().decode().splitlines()
+    if new_commit == repo.head.commit:
+        new_content = open(file_path, 'r').read().splitlines()
+    else:
+        new_content = new_version.data_stream.read().decode().splitlines()
 
-    differ = difflib.Differ()
-    diff = list(differ.compare(old_content, new_content))
+    old_versions = {}
+    new_versions = {}
+    for line in old_content:
+        if line.startswith('* '):
+            component, version = parse_version_line(line)
+            old_versions[component] = version
+    for line in new_content:
+        if line.startswith('* '):
+            component, version = parse_version_line(line)
+            new_versions[component] = version
 
-    added_or_changed_lines = []
-    for line in diff:
-        if line.startswith('- * '):
-            component, old_version = parse_version_line(line[2:])
-            added_or_changed_lines.append((component, old_version, None))
-        elif line.startswith('+ * '):
-            component, new_version = parse_version_line(line[2:])
-            added_or_changed_lines[-1] = (component, added_or_changed_lines[-1][1], new_version)
+    changes = []
+    for component in new_versions.keys():
+        if component not in old_versions:
+            changes.append((component, None, new_versions[component]))
+        elif old_versions[component] != new_versions[component]:
+            changes.append((component, old_versions[component], new_versions[component]))
 
-    return added_or_changed_lines
+    return changes
 
 if __name__ == "__main__":
     repo_path = "."
@@ -124,10 +137,15 @@ if __name__ == "__main__":
                 continue
             if component in git_repos:
                 component_link = f"[{component}]({git_repos[component]})"
-                version_url = f"[{new_version}]({get_version_url(git_repos[component], new_version)})"
+                old_version_url = f"[{old_version}]({get_version_url(git_repos[component], old_version)})"
+                new_version_url = f"[{new_version}]({get_version_url(git_repos[component], new_version)})"
             else:
                 component_link = component
-                version_url = new_version
-            f.write(f"* {component_link}: {old_version} -> {version_url}\n")
+                old_version_url = old_version
+                new_version_url = new_version
+            if old_version is None:
+                f.write(f"* {component_link}: {new_version_url} _new_\n")
+            else:
+                f.write(f"* {component_link}: {old_version_url} -> {new_version_url}\n")
 
     print("VERSIONS.diff.md generated successfully")
