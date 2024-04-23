@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-import difflib
 import git
 import os
 from urllib.parse import urlparse
 
-project_source_url_str = '# Project source code URL:'
+PROJECT_SOURCE_URL_STR = '# Project source code URL:'
+
 
 def get_roles_files_from_dir(root_dir):
     file_paths = []
@@ -14,6 +14,7 @@ def get_roles_files_from_dir(root_dir):
             if dir_name.endswith('defaults') and file_name == 'main.yml':
                 file_paths.append(os.path.join(dir_name, file_name))
     return file_paths
+
 
 def get_git_repos_from_files(file_paths):
     git_repos = {}
@@ -27,10 +28,10 @@ def get_git_repos_from_files(file_paths):
         found_project_repo = False
         for line in file_lines:
             project_repo_val = ''
-            if project_source_url_str in line:
+            if PROJECT_SOURCE_URL_STR in line:
                 # extract the value from a line like this:
                 # Project source code URL: https://github.com/mautrix/signal
-                project_repo_val = line.split(project_source_url_str)[1].strip()
+                project_repo_val = line.split(PROJECT_SOURCE_URL_STR)[1].strip()
                 if not validate_url(project_repo_val):
                     print('Invalid url for line ', line)
                     break
@@ -42,6 +43,7 @@ def get_git_repos_from_files(file_paths):
                 found_project_repo = True
     return git_repos
 
+
 def validate_url(text):
     try:
         result = urlparse(text)
@@ -49,9 +51,6 @@ def validate_url(text):
     except:
         return False
 
-def parse_version_line(line):
-    component, version = line.split(": ", 1)
-    return component.strip("* "), version.strip()
 
 def get_version_url(repo_url, version):
     custom = get_version_url_custom(repo_url, version)
@@ -66,8 +65,9 @@ def get_version_url(repo_url, version):
         print(f'Unrecognized git repository: {repo_url}')
         return None
 
+
 def get_version_url_custom(repo_url, version):
-    github_repos = ['github.com/matrix-org/rageshake', 'github.com/Snapchat/KeyDB', 
+    github_repos = ['github.com/matrix-org/rageshake', 'github.com/Snapchat/KeyDB',
                     'github.com/grafana/grafana', 'github.com/Tecnativa/docker-socket-proxy',
                     'github.com/the-draupnir-project/Draupnir']
     if 'github.com/nginx/nginx' in repo_url:
@@ -77,9 +77,11 @@ def get_version_url_custom(repo_url, version):
         return f"{repo_url}/releases/tag/v{version}"
     return None
 
+
 def parse_version_line(line):
     component, version = line.split(": ", 1)
     return component.strip("* "), version.strip()
+
 
 def get_version_diff(repo_path, old_branch, new_branch, file_path):
     repo = git.Repo(repo_path)
@@ -116,6 +118,7 @@ def get_version_diff(repo_path, old_branch, new_branch, file_path):
 
     return changes
 
+
 if __name__ == "__main__":
     repo_path = "."
     old_branch = "master"
@@ -126,8 +129,8 @@ if __name__ == "__main__":
     git_repos = get_git_repos_from_files(role_files)
     added_or_changed_lines = get_version_diff(repo_path, old_branch, new_branch, file_path)
 
-    if len(added_or_changed_lines) == 0:
-        print("no changes detected in VERSIONS.md, skipping generation of VERSIONS.diff.md")
+    if not added_or_changed_lines:
+        print("No changes detected in VERSIONS.md. Skipping generation of VERSIONS.diff.md")
         exit(0)
 
     with open(os.path.join(os.getcwd(), 'VERSIONS.diff.md'), 'w') as f:

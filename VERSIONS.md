@@ -20,7 +20,7 @@
 * Docker Compose: v2.11.1
 * Draupnir: v1.87.0
 * Dynamic Dns: 3.11.2
-* Element: v1.11.64
+* Element: v1.11.65
 * Email2Matrix: 1.1.0
 * Etherpad: 2.0.1
 * Exim Relay: 4.97.1-r0-0
@@ -82,8 +82,8 @@
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.28.0
 * Sygnal: v0.14.1
-* Synapse: v1.105.0
-* Synapse Admin: 0.9.4
+* Synapse: v1.105.1
+* Synapse Admin: 0.10.0
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4
 * Synapse Reverse Proxy Companion: 1.25.5-alpine
