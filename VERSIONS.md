@@ -67,7 +67,7 @@
 * Postmoogle: v0.9.17
 * Prometheus: v2.51.2
 * Prometheus Nginxlog Exporter: v1.10.0
-* Prometheus Node Exporter: v1.7.0
+* Prometheus Node Exporter: v1.8.0
 * Prometheus Postgres Exporter: v0.14.0
 * Radicale: 3.1.9.1
 * Rageshake: 1.12.0
@@ -83,7 +83,7 @@
 * Static Files: 2.28.0
 * Sygnal: v0.14.1
 * Synapse: v1.105.1
-* Synapse Admin: 0.10.0
+* Synapse Admin: 0.10.1
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4
 * Synapse Reverse Proxy Companion: 1.25.5-alpine
