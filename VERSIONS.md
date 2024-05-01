@@ -35,15 +35,15 @@
 * Grafana: 10.4.2
 * Hangouts: latest
 * Heisenbridge: 1.14.6
-* Honoroit: v0.9.20
+* Honoroit: v0.9.21
 * Hookshot: 5.3.0
 * Hydrogen: v0.4.1
 * Instagram: v0.3.1
-* Jitsi: stable-9457-1
+* Jitsi: stable-9457-2
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
 * Keydb: 6.3.4
-* Languagetool: 6.3
+* Languagetool: 6.4
 * Ldap Registration Proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * Linkding: latest
 * Linkedin: latest
@@ -64,7 +64,7 @@
 * Ntfy: v2.10.0
 * Pantalaimon: 0.10.5
 * Peertube: v6.0.4
-* Postmoogle: v0.9.17
+* Postmoogle: v0.9.18
 * Prometheus: v2.51.2
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.8.0
@@ -82,7 +82,7 @@
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.30.0
 * Sygnal: v0.14.1
-* Synapse: v1.105.1
+* Synapse: v1.106.0
 * Synapse Admin: 0.10.1
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4

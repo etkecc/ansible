@@ -9,13 +9,13 @@
   version: v0.7.36-1
   name: firezone
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-funkwhale.git
-  version: v1.4.0-4
+  version: v1.4.0-5
   name: funkwhale
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-gotosocial.git
   version: v0.15.0-0
   name: gotosocial
 - src: git+https://gitlab.com/etke.cc/roles/languagetool.git
-  version: v6.3-1
+  version: v6.4-0
 - src: git+https://github.com/kinduff/ansible-docker-linkding.git
   version: v1.9.0
   name: linkding
