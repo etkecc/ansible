@@ -70,13 +70,13 @@
 * Prometheus Node Exporter: v1.8.0
 * Prometheus Postgres Exporter: v0.14.0
 * Radicale: 3.1.9.1
-* Rageshake: 1.12.0
+* Rageshake: 1.13.0
 * Redis: 7.2.4
 * Registration: v0.7.2
 * Schildichat: v1.11.36-sc.3
 * Signal: v0.6.0
 * Slack: latest
-* Sliding Sync: v0.99.16
+* Sliding Sync: v0.99.17
 * Sms Bridge: 0.5.9
 * Spam Checker Mjolnir Antispam Git: v1.6.4
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
