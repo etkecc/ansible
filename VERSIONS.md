@@ -65,7 +65,7 @@
 * Pantalaimon: 0.10.5
 * Peertube: v6.1.0
 * Postmoogle: v0.9.18
-* Prometheus: v2.51.2
+* Prometheus: v2.52.0
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.8.0
 * Prometheus Postgres Exporter: v0.14.0
