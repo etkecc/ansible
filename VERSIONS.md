@@ -32,7 +32,7 @@
 * Go Skype Bridge: latest
 * Googlechat: v0.5.1
 * Gotosocial: 0.15.0
-* Grafana: 10.4.2
+* Grafana: 11.0.0
 * Hangouts: latest
 * Heisenbridge: 1.14.6
 * Honoroit: v0.9.21
@@ -82,7 +82,7 @@
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.30.0
 * Sygnal: v0.14.1
-* Synapse: v1.106.0
+* Synapse: v1.107.0
 * Synapse Admin: 0.10.1
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4
