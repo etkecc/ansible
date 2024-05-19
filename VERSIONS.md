@@ -27,7 +27,7 @@
 * Facebook: v0.5.1
 * Firezone: 0.7.36
 * Funkwhale: 1.4.0
-* Gmessages: v0.4.0
+* Gmessages: v0.4.1
 * Go Neb: latest
 * Go Skype Bridge: latest
 * Googlechat: v0.5.1
@@ -51,8 +51,8 @@
 * Matrix Registration Bot: 1.3.0
 * Matrix Reminder Bot: v0.3.0
 * Maubot: v0.4.2
-* Meta Instagram: v0.3.0
-* Meta Messenger: v0.3.0
+* Meta Instagram: v0.3.1
+* Meta Messenger: v0.3.1
 * Miniflux: 2.1.3
 * Mjolnir: v1.6.5
 * Mx Puppet Discord: v0.1.1
@@ -74,7 +74,7 @@
 * Redis: 7.2.4
 * Registration: v0.7.2
 * Schildichat: v1.11.36-sc.3
-* Signal: v0.6.0
+* Signal: v0.6.1
 * Slack: latest
 * Sliding Sync: v0.99.17
 * Sms Bridge: 0.5.9
