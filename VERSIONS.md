@@ -67,7 +67,7 @@
 * Postmoogle: v0.9.18
 * Prometheus: v2.52.0
 * Prometheus Nginxlog Exporter: v1.10.0
-* Prometheus Node Exporter: v1.8.0
+* Prometheus Node Exporter: v1.8.1
 * Prometheus Postgres Exporter: v0.14.0
 * Radicale: 3.1.9.1
 * Rageshake: 1.13.0
@@ -81,7 +81,7 @@
 * Spam Checker Mjolnir Antispam Git: v1.6.4
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.31.1
-* Sygnal: v0.14.1
+* Sygnal: v0.14.2
 * Synapse: v1.107.0
 * Synapse Admin: 0.10.1
 * Synapse Auto Accept Invite: 1.1.3
