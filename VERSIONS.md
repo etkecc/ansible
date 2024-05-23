@@ -76,7 +76,7 @@
 * Schildichat: v1.11.36-sc.3
 * Signal: v0.6.1
 * Slack: latest
-* Sliding Sync: v0.99.17
+* Sliding Sync: v0.99.18
 * Sms Bridge: 0.5.9
 * Spam Checker Mjolnir Antispam Git: v1.6.4
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05

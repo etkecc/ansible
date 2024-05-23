@@ -8,5 +8,6 @@
 * [Prometheus Node Exporter](https://github.com/prometheus/node_exporter): [v1.8.0](https://github.com/prometheus/node_exporter/releases/tag/v1.8.0) -> [v1.8.1](https://github.com/prometheus/node_exporter/releases/tag/v1.8.1)
 * [Radicale](https://github.com/tomsquest/docker-radicale): [3.1.9.1](https://github.com/tomsquest/docker-radicale/releases/tag/3.1.9.1) -> [3.2.0.0](https://github.com/tomsquest/docker-radicale/releases/tag/3.2.0.0)
 * [Signal](https://github.com/mautrix/signal): [v0.6.0](https://github.com/mautrix/signal/releases/tag/v0.6.0) -> [v0.6.1](https://github.com/mautrix/signal/releases/tag/v0.6.1)
+* [Sliding Sync](https://github.com/matrix-org/sliding-sync): [v0.99.17](https://github.com/matrix-org/sliding-sync/releases/tag/v0.99.17) -> [v0.99.18](https://github.com/matrix-org/sliding-sync/releases/tag/v0.99.18)
 * Static Files: 2.30.0 -> 2.31.1
 * [Sygnal](https://github.com/matrix-org/sygnal): [v0.14.1](https://github.com/matrix-org/sygnal/releases/tag/v0.14.1) -> [v0.14.2](https://github.com/matrix-org/sygnal/releases/tag/v0.14.2)
