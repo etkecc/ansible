@@ -25,7 +25,7 @@
   version: v6.1.0-1
   name: peertube
 - src: git+https://gitlab.com/etke.cc/roles/radicale.git
-  version: v3.1.9.1-0
+  version: v3.2.0.0-0
 - src: git+https://gitlab.com/etke.cc/roles/ssh.git
   version: main
 - src: git+https://gitlab.com/etke.cc/roles/swap.git
