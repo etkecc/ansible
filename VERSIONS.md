@@ -13,7 +13,7 @@
 * Cinny: v3.2.0
 * Container Socket Proxy: 0.1.2
 * Corporal: 2.7.0
-* Coturn: 4.6.2-r5
+* Coturn: 4.6.2-r9
 * Dimension: latest
 * Discord: v0.6.5
 * Dnsmasq: latest
