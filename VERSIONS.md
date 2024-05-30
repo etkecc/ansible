@@ -82,7 +82,7 @@
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.31.1
 * Sygnal: v0.14.2
-* Synapse: v1.107.0
+* Synapse: v1.108.0
 * Synapse Admin: 0.10.1
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4
