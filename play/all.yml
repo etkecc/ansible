@@ -44,6 +44,7 @@
     # - custom/matrix-bridge-appservice-kakaotalk # unused disabled due to issues
     - custom/matrix-bridge-beeper-linkedin
     - custom/matrix-bridge-go-skype-bridge
+    - custom/matrix-bridge-wechat
     - custom/matrix-bridge-mautrix-facebook
     - custom/matrix-bridge-mautrix-twitter
     - custom/matrix-bridge-mautrix-hangouts

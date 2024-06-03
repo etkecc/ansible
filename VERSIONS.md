@@ -22,7 +22,7 @@
 * Dynamic Dns: 3.11.2
 * Element: v1.11.67
 * Email2Matrix: 1.1.0
-* Etherpad: 2.0.3
+* Etherpad: 2.1.0
 * Exim Relay: 4.97.1-r0-0
 * Facebook: v0.5.1
 * Firezone: 0.7.36
@@ -95,6 +95,8 @@
 * Uptime Kuma: 1.23.13
 * User Verification Service: v3.0.0
 * Vaultwarden: 1.30.5
+* Wechat: 0.2.4
+* Wechat Agent: 0.0.1
 * Whatsapp: v0.10.7
 * Wsproxy: latest
 * Wsproxy Syncproxy: latest
