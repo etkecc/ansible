@@ -1,4 +1,4 @@
 **Stable Updates Published**
 
-* [Coturn](https://github.com/coturn/coturn): [4.6.2-r5](https://github.com/coturn/coturn/releases/tag/4.6.2-r5) -> [4.6.2-r9](https://github.com/coturn/coturn/releases/tag/4.6.2-r9)
-* [Synapse](https://github.com/element-hq/synapse): [v1.107.0](https://github.com/element-hq/synapse/releases/tag/v1.107.0) -> [v1.108.0](https://github.com/element-hq/synapse/releases/tag/v1.108.0)
+* [Sygnal](https://github.com/matrix-org/sygnal): [v0.14.2](https://github.com/matrix-org/sygnal/releases/tag/v0.14.2) -> [v0.14.3](https://github.com/matrix-org/sygnal/releases/tag/v0.14.3)
+* [Synapse Reverse Proxy Companion](https://github.com/nginx/nginx): [1.25.5-alpine](https://github.com/nginx/nginx/releases/tag/release-1.25.5) -> [1.27.0-alpine](https://github.com/nginx/nginx/releases/tag/release-1.27.0)

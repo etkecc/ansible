@@ -40,7 +40,7 @@
 
 - name: Populate commands list (all)
   ansible.builtin.set_fact:
-    skopeo_commands: "{{ skopeo_commands + ['skopeo sync --all --preserve-digests --src docker --dest docker ' + item.item + ' ' + skopeo_target + (item.item|regex_search('/.*')|regex_search('.*/'))] }}"
+    skopeo_commands: "{{ skopeo_commands + ['skopeo --command-timeout 10m sync --all --src docker --dest docker ' + item.item + ' ' + skopeo_target + (item.item|regex_search('/.*')|regex_search('.*/'))] }}"
   when: item.item not in skopeo_ignore_images and (item.status | default(-1) != 200 or item.item.endswith(':latest'))
   loop_control:
     label: "{{ item.item }}"
