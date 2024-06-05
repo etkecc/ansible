@@ -5,7 +5,7 @@
 * Appservice Slack: 2.1.2
 * Appservice Webhooks: v1.0.3-01
 * Borg: 1.2.8
-* Borgmatic: 1.8.9
+* Borgmatic: 1.8.11
 * Buscarron: v1.4.1
 * Cactus Comments: 0.9.0
 * Cactus Comments Client: 2.31.1
@@ -20,7 +20,7 @@
 * Docker Compose: v2.11.1
 * Draupnir: v1.87.0
 * Dynamic Dns: 3.11.2
-* Element: v1.11.67
+* Element: v1.11.68
 * Email2Matrix: 1.1.0
 * Etherpad: 2.1.0
 * Exim Relay: 4.97.1-r0-0
