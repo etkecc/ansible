@@ -140,7 +140,10 @@ if __name__ == "__main__":
                 continue
             if component in git_repos:
                 component_link = f"[{component}]({git_repos[component]})"
-                old_version_url = f"[{old_version}]({get_version_url(git_repos[component], old_version)})"
+                if old_version:
+                    old_version_url = f"[{old_version}]({get_version_url(git_repos[component], old_version)})"
+                else:
+                    old_version_url = old_version
                 new_version_url = f"[{new_version}]({get_version_url(git_repos[component], new_version)})"
             else:
                 component_link = component

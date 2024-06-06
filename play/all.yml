@@ -34,16 +34,17 @@
       role: galaxy/traefik_certs_dumper
     # - custom/matrix-dynamic-dns # unused
     - galaxy/postgres
-    - galaxy/redis
+    # - galaxy/redis # unused
     - galaxy/keydb
     # - custom/matrix-corporal # unused
     - custom/matrix-bridge-appservice-discord
     # - custom/matrix-bridge-appservice-slack # unused
-    - custom/matrix-bridge-appservice-webhooks
+    # - custom/matrix-bridge-appservice-webhooks # unsued
     # - custom/matrix-bridge-appservice-irc # unused
     # - custom/matrix-bridge-appservice-kakaotalk # unused disabled due to issues
     - custom/matrix-bridge-beeper-linkedin
     - custom/matrix-bridge-go-skype-bridge
+    - custom/matrix-bridge-wechat
     - custom/matrix-bridge-mautrix-facebook
     - custom/matrix-bridge-mautrix-twitter
     - custom/matrix-bridge-mautrix-hangouts
@@ -87,7 +88,7 @@
     - custom/matrix-synapse-admin
     - galaxy/prometheus_node_exporter
     - galaxy/prometheus_postgres_exporter
-    - custom/matrix-prometheus-nginxlog-exporter
+    # - custom/matrix-prometheus-nginxlog-exporter # unused
     - galaxy/prometheus
     - galaxy/grafana
     - custom/matrix-prometheus-services-connect
@@ -97,13 +98,13 @@
     - custom/matrix-client-cinny
     - custom/matrix-client-schildichat
     - galaxy/jitsi
-    - custom/matrix-user-verification-service
+    # - custom/matrix-user-verification-service # unused
     # - custom/matrix-ldap-registration-proxy # unused
     - custom/matrix-ma1sd
     - custom/matrix-dimension
     - galaxy/etherpad
     - custom/matrix-sliding-sync
-    - custom/matrix-email2matrix
+    # - custom/matrix-email2matrix # unused
     - custom/matrix-sygnal
     - galaxy/ntfy
     # END MATRIX

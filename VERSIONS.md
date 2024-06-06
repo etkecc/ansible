@@ -5,7 +5,7 @@
 * Appservice Slack: 2.1.2
 * Appservice Webhooks: v1.0.3-01
 * Borg: 1.2.8
-* Borgmatic: 1.8.9
+* Borgmatic: 1.8.11
 * Buscarron: v1.4.1
 * Cactus Comments: 0.9.0
 * Cactus Comments Client: 2.31.1
@@ -20,9 +20,9 @@
 * Docker Compose: v2.11.1
 * Draupnir: v1.87.0
 * Dynamic Dns: 3.11.2
-* Element: v1.11.67
+* Element: v1.11.68
 * Email2Matrix: 1.1.0
-* Etherpad: 2.0.3
+* Etherpad: 2.1.0
 * Exim Relay: 4.97.1-r0-0
 * Facebook: v0.5.1
 * Firezone: 0.7.36
@@ -81,12 +81,12 @@
 * Spam Checker Mjolnir Antispam Git: v1.6.4
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.31.1
-* Sygnal: v0.14.2
+* Sygnal: v0.14.3
 * Synapse: v1.108.0
 * Synapse Admin: 0.10.1
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4
-* Synapse Reverse Proxy Companion: 1.25.5-alpine
+* Synapse Reverse Proxy Companion: 1.27.0-alpine
 * Synapse S3 Storage Provider: 1.3.0
 * Telegram: v0.15.1
 * Traefik: v2.11.2
@@ -95,6 +95,8 @@
 * Uptime Kuma: 1.23.13
 * User Verification Service: v3.0.0
 * Vaultwarden: 1.30.5
+* Wechat: 0.2.4
+* Wechat Agent: 0.0.1
 * Whatsapp: v0.10.7
 * Wsproxy: latest
 * Wsproxy Syncproxy: latest
