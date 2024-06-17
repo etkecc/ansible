@@ -27,7 +27,7 @@
 * Facebook: v0.5.1
 * Firezone: 0.7.36
 * Funkwhale: 1.4.0
-* Gmessages: v0.4.1
+* Gmessages: v0.4.2
 * Go Neb: latest
 * Go Skype Bridge: latest
 * Googlechat: v0.5.1
@@ -74,7 +74,7 @@
 * Redis: 7.2.4
 * Registration: v0.7.2
 * Schildichat: v1.11.36-sc.3
-* Signal: v0.6.1
+* Signal: v0.6.2
 * Slack: latest
 * Sliding Sync: v0.99.18
 * Sms Bridge: 0.5.9
@@ -97,6 +97,6 @@
 * Vaultwarden: 1.30.5
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
-* Whatsapp: v0.10.7
+* Whatsapp: v0.10.8
 * Wsproxy: latest
 * Wsproxy Syncproxy: latest
