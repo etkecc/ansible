@@ -22,7 +22,7 @@ RUN apk --no-cache add python3 py3-cryptography py3-jinja2 py3-packaging py3-par
 		apk del builddeps && \
 		rm -rf /var/cache/apk/* && \
 		rm -rf /root/.cache/pip && \
-		find /usr/lib/python3.11/site-packages/ansible_collections -mindepth 1 -maxdepth 1 -type d ! -name 'community' ! -name 'ansible' -exec rm -rf {} + && \
-		find /usr/lib/python3.11/site-packages/ansible_collections/ansible -mindepth 1 -maxdepth 1 -type d ! -name 'utils' ! -name 'posix' -exec rm -rf {} + && \
-		find /usr/lib/python3.11/site-packages/ansible_collections/community -mindepth 1 -maxdepth 1 -type d ! -name 'general' ! -name 'docker' -exec rm -rf {} + && \
+		find /usr/lib/python3.12/site-packages/ansible_collections -mindepth 1 -maxdepth 1 -type d ! -name 'community' ! -name 'ansible' -exec rm -rf {} + && \
+		find /usr/lib/python3.12/site-packages/ansible_collections/ansible -mindepth 1 -maxdepth 1 -type d ! -name 'utils' ! -name 'posix' -exec rm -rf {} + && \
+		find /usr/lib/python3.12/site-packages/ansible_collections/community -mindepth 1 -maxdepth 1 -type d ! -name 'general' ! -name 'docker' -exec rm -rf {} + && \
 		find / -name '*.pyc' -exec rm {} \;
