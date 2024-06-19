@@ -80,7 +80,7 @@ stable:
   tags:
     - docker
 
-sync images (all):
+registry sync:
   stage: postrelease
   only: ['fresh']
   image:
@@ -94,4 +94,3 @@ sync images (all):
     - cd /playbook; ansible-playbook play/all.yml -l localhost -t skopeo -e target=localhost
     - sh play/.skopeo-parallel
     - ./bin/ci-notify.sh
-  allow_failure: true
