@@ -13,7 +13,7 @@
 * Cinny: v3.2.0
 * Container Socket Proxy: 0.1.2
 * Corporal: 2.7.0
-* Coturn: 4.6.2-r9
+* Coturn: 4.6.2-r10
 * Dimension: latest
 * Discord: v0.6.5
 * Dnsmasq: latest
@@ -31,12 +31,12 @@
 * Go Neb: latest
 * Go Skype Bridge: latest
 * Googlechat: v0.5.1
-* Gotosocial: 0.15.0
+* Gotosocial: 0.16.0
 * Grafana: 11.0.0
 * Hangouts: latest
 * Heisenbridge: 1.14.6
 * Honoroit: v0.9.21
-* Hookshot: 5.3.0
+* Hookshot: 5.4.1
 * Hydrogen: v0.4.1
 * Instagram: v0.3.1
 * Jitsi: stable-9457-2
