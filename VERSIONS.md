@@ -32,7 +32,7 @@
 * Go Skype Bridge: latest
 * Googlechat: v0.5.1
 * Gotosocial: 0.16.0
-* Grafana: 11.0.0
+* Grafana: 11.1.0
 * Hangouts: latest
 * Heisenbridge: 1.14.6
 * Honoroit: v0.9.21
