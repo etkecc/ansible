@@ -1,5 +1,5 @@
 **Stable Updates Published**
 
-* [Jitsi](https://github.com/jitsi/docker-jitsi-meet): [stable-9457-2](https://github.com/jitsi/docker-jitsi-meet/releases/tag/stable-9457-2) -> [stable-9584](https://github.com/jitsi/docker-jitsi-meet/releases/tag/stable-9584)
-* [Sliding Sync](https://github.com/matrix-org/sliding-sync): [v0.99.18](https://github.com/matrix-org/sliding-sync/releases/tag/v0.99.18) -> [v0.99.19](https://github.com/matrix-org/sliding-sync/releases/tag/v0.99.19)
-* [Synapse](https://github.com/element-hq/synapse): [v1.109.0](https://github.com/element-hq/synapse/releases/tag/v1.109.0) -> [v1.110.0](https://github.com/element-hq/synapse/releases/tag/v1.110.0)
+* [Corporal](https://github.com/devture/matrix-corporal): [2.7.0](https://github.com/devture/matrix-corporal/releases/tag/2.7.0) -> [2.8.0](https://github.com/devture/matrix-corporal/releases/tag/2.8.0)
+* [Exim Relay](https://github.com/devture/exim-relay): [4.97.1-r0-0](https://github.com/devture/exim-relay/releases/tag/4.97.1-r0-0) -> [4.97.1-r0-1](https://github.com/devture/exim-relay/releases/tag/4.97.1-r0-1)
+* [Jitsi](https://github.com/jitsi/docker-jitsi-meet): [stable-9584](https://github.com/jitsi/docker-jitsi-meet/releases/tag/stable-9584) -> [stable-9584-1](https://github.com/jitsi/docker-jitsi-meet/releases/tag/stable-9584-1)

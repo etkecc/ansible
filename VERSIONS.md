@@ -12,7 +12,7 @@
 * Chatgpt: 3.1.4
 * Cinny: v3.2.0
 * Container Socket Proxy: 0.1.2
-* Corporal: 2.7.0
+* Corporal: 2.8.0
 * Coturn: 4.6.2-r10
 * Dimension: latest
 * Discord: v0.6.5
@@ -23,7 +23,7 @@
 * Element: v1.11.69
 * Email2Matrix: 1.1.0
 * Etherpad: 2.1.0
-* Exim Relay: 4.97.1-r0-0
+* Exim Relay: 4.97.1-r0-1
 * Facebook: v0.5.1
 * Firezone: 0.7.36
 * Funkwhale: 1.4.0
@@ -39,7 +39,7 @@
 * Hookshot: 5.4.1
 * Hydrogen: v0.4.1
 * Instagram: v0.3.1
-* Jitsi: stable-9584
+* Jitsi: stable-9584-1
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
 * Keydb: 6.3.4
