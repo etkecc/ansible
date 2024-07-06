@@ -89,7 +89,7 @@
 * Synapse Reverse Proxy Companion: 1.27.0-alpine
 * Synapse S3 Storage Provider: 1.3.0
 * Telegram: v0.15.1
-* Traefik: v2.11.4
+* Traefik: v3.0.4
 * Traefik Certs Dumper: v2.8.3
 * Twitter: v0.1.7
 * Uptime Kuma: 1.23.13
