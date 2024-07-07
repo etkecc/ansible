@@ -1,3 +1,4 @@
+* Alertmanager Receiver: 2024.7.3
 * Appservice Discord: v4.0.0
 * Appservice Draupnir For All: 1.87.0
 * Appservice Irc: 1.0.1
@@ -35,7 +36,7 @@
 * Grafana: 11.1.0
 * Hangouts: latest
 * Heisenbridge: 1.14.6
-* Honoroit: v0.9.21
+* Honoroit: v0.9.22
 * Hookshot: 5.4.1
 * Hydrogen: v0.4.1
 * Instagram: v0.3.1

@@ -4,6 +4,7 @@
     <title>Release feeds for roles</title>
   </head>
   <body>
+    <outline text="alertmanager-receiver" title="alertmanager-receiver" type="rss" htmlUrl="https://github.com/metio/matrix-alertmanager-receiver" xmlUrl="https://github.com/metio/matrix-alertmanager-receiver/releases.atom" />
     <outline text="alpinelinux" title="alpinelinux" type="rss" htmlUrl="https://github.com/alpinelinux/aports/releases" xmlUrl="https://github.com/alpinelinux/aports/releases.atom" />
     <outline text="ansible" title="ansible" type="rss" htmlUrl="https://pypi.org/project/ansible/#history" xmlUrl="https://pypi.org/rss/project/ansible/releases.xml" />
     <outline text="ansible-core" title="ansible-core" type="rss" htmlUrl="https://pypi.org/project/ansible-core/#history" xmlUrl="https://pypi.org/rss/project/ansible-core/releases.xml" />
