@@ -2,6 +2,8 @@
 
 * [Alertmanager Receiver](https://github.com/metio/matrix-alertmanager-receiver): [2024.7.3](https://github.com/metio/matrix-alertmanager-receiver/releases/tag/2024.7.3) _new_
 * [Corporal](https://github.com/devture/matrix-corporal): [2.7.0](https://github.com/devture/matrix-corporal/releases/tag/2.7.0) -> [2.8.0](https://github.com/devture/matrix-corporal/releases/tag/2.8.0)
+* [Element](https://github.com/element-hq/element-web): [v1.11.69](https://github.com/element-hq/element-web/releases/tag/v1.11.69) -> [v1.11.70](https://github.com/element-hq/element-web/releases/tag/v1.11.70)
+* [Etherpad](https://github.com/ether/etherpad-lite): [2.1.0](https://github.com/ether/etherpad-lite/releases/tag/2.1.0) -> [2.1.1](https://github.com/ether/etherpad-lite/releases/tag/2.1.1)
 * [Exim Relay](https://github.com/devture/exim-relay): [4.97.1-r0-0](https://github.com/devture/exim-relay/releases/tag/4.97.1-r0-0) -> [4.97.1-r0-1](https://github.com/devture/exim-relay/releases/tag/4.97.1-r0-1)
 * [Honoroit](https://gitlab.com/etke.cc/honoroit): [v0.9.21](https://gitlab.com/etke.cc/honoroit/-/tags/v0.9.21) -> [v0.9.22](https://gitlab.com/etke.cc/honoroit/-/tags/v0.9.22)
 * [Jitsi](https://github.com/jitsi/docker-jitsi-meet): [stable-9584](https://github.com/jitsi/docker-jitsi-meet/releases/tag/stable-9584) -> [stable-9584-1](https://github.com/jitsi/docker-jitsi-meet/releases/tag/stable-9584-1)
