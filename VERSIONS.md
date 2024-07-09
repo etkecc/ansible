@@ -12,7 +12,7 @@
 * Cactus Comments Client: 2.32.0
 * Chatgpt: 3.1.4
 * Cinny: v3.2.0
-* Container Socket Proxy: 0.1.2
+* Container Socket Proxy: 0.2.0
 * Corporal: 2.8.0
 * Coturn: 4.6.2-r10
 * Dimension: latest
@@ -84,7 +84,7 @@
 * Static Files: 2.32.0
 * Sygnal: v0.15.0
 * Synapse: v1.110.0
-* Synapse Admin: 0.10.1
+* Synapse Admin: 0.10.2
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4
 * Synapse Reverse Proxy Companion: 1.27.0-alpine
@@ -95,7 +95,7 @@
 * Twitter: v0.1.7
 * Uptime Kuma: 1.23.13
 * User Verification Service: v3.0.0
-* Vaultwarden: 1.30.5
+* Vaultwarden: 1.31.0
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
 * Whatsapp: v0.10.8
