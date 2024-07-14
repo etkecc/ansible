@@ -53,8 +53,8 @@ pull-roles:
     fi
 
 # pull all updates
-update: update-self update-upstream && update-opml update-versions
-    @agru -u
+update *flags: update-self update-upstream && update-opml update-versions
+    @agru {{ flags }}
 
 # dumps an OPML file with extracted git feeds for roles
 update-opml:
