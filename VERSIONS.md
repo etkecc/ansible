@@ -24,7 +24,7 @@
 * Element: v1.11.70
 * Email2Matrix: 1.1.0
 * Etherpad: 2.1.1
-* Exim Relay: 4.97.1-r0-1
+* Exim Relay: 4.98-r0-0
 * Facebook: v0.5.1
 * Firezone: 0.7.36
 * Funkwhale: 1.4.0
