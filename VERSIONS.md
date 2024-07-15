@@ -6,7 +6,7 @@
 * Appservice Slack: 2.1.2
 * Appservice Webhooks: v1.0.3-01
 * Borg: 1.2.8
-* Borgmatic: 1.8.11
+* Borgmatic: 1.8.13
 * Buscarron: v1.4.1
 * Cactus Comments: 0.9.0
 * Cactus Comments Client: 2.32.0
@@ -68,7 +68,7 @@
 * Postmoogle: v0.9.18
 * Prometheus: v2.53.1
 * Prometheus Nginxlog Exporter: v1.10.0
-* Prometheus Node Exporter: v1.8.1
+* Prometheus Node Exporter: v1.8.2
 * Prometheus Postgres Exporter: v0.14.0
 * Radicale: 3.2.2.0
 * Rageshake: 1.13.0
