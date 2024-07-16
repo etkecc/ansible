@@ -16,22 +16,22 @@
 * Corporal: 2.8.0
 * Coturn: 4.6.2-r10
 * Dimension: latest
-* Discord: v0.6.5
+* Discord: v0.7.0
 * Dnsmasq: latest
 * Docker Compose: v2.11.1
 * Draupnir: v1.87.0
 * Dynamic Dns: 3.11.2
-* Element: v1.11.70
+* Element: v1.11.71
 * Email2Matrix: 1.1.0
 * Etherpad: 2.1.1
 * Exim Relay: 4.98-r0-0
 * Facebook: v0.5.1
 * Firezone: 0.7.36
 * Funkwhale: 1.4.0
-* Gmessages: v0.4.2
+* Gmessages: v0.4.3
 * Go Neb: latest
 * Go Skype Bridge: latest
-* Googlechat: v0.5.1
+* Googlechat: v0.5.2
 * Gotosocial: 0.16.0
 * Grafana: 11.1.0
 * Hangouts: latest
@@ -52,8 +52,8 @@
 * Matrix Registration Bot: 1.3.0
 * Matrix Reminder Bot: v0.3.0
 * Maubot: v0.4.2
-* Meta Instagram: v0.3.1
-* Meta Messenger: v0.3.1
+* Meta Instagram: v0.3.2
+* Meta Messenger: v0.3.2
 * Miniflux: 2.1.4
 * Mjolnir: v1.6.5
 * Mx Puppet Discord: v0.1.1
@@ -75,7 +75,7 @@
 * Redis: 7.2.4
 * Registration: v0.7.2
 * Schildichat: v1.11.36-sc.3
-* Signal: v0.6.2
+* Signal: v0.6.3
 * Slack: latest
 * Sliding Sync: v0.99.19
 * Sms Bridge: 0.5.9
@@ -83,21 +83,21 @@
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.32.0
 * Sygnal: v0.15.0
-* Synapse: v1.110.0
+* Synapse: v1.111.0
 * Synapse Admin: 0.10.2
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4
 * Synapse Reverse Proxy Companion: 1.27.0-alpine
 * Synapse S3 Storage Provider: 1.3.0
-* Telegram: v0.15.1
-* Traefik: v3.0.4
+* Telegram: v0.15.2
+* Traefik: v3.1.0
 * Traefik Certs Dumper: v2.8.3
-* Twitter: v0.1.7
+* Twitter: v0.1.8
 * Uptime Kuma: 1.23.13
 * User Verification Service: v3.0.0
 * Vaultwarden: 1.31.0
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
-* Whatsapp: v0.10.8
+* Whatsapp: v0.10.9
 * Wsproxy: latest
 * Wsproxy Syncproxy: latest
