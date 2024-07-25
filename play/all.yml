@@ -86,6 +86,7 @@
     # - custom/matrix-dendrite # unused
     # - custom/matrix-conduit # unused
     - custom/matrix-synapse-admin
+    - custom/matrix-synapse-usage-exporter
     - galaxy/prometheus_node_exporter
     - galaxy/prometheus_postgres_exporter
     # - custom/matrix-prometheus-nginxlog-exporter # unused
