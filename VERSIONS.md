@@ -11,7 +11,7 @@
 * Cactus Comments: 0.9.0
 * Cactus Comments Client: 2.32.1
 * Chatgpt: 3.1.4
-* Cinny: v3.2.0
+* Cinny: v4.0.3
 * Container Socket Proxy: 0.2.0
 * Corporal: 2.8.0
 * Coturn: 4.6.2-r10
@@ -33,7 +33,7 @@
 * Go Skype Bridge: latest
 * Googlechat: v0.5.2
 * Gotosocial: 0.16.0
-* Grafana: 11.1.0
+* Grafana: 11.1.1
 * Hangouts: latest
 * Heisenbridge: 1.14.6
 * Honoroit: v0.9.23
