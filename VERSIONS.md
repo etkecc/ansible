@@ -14,7 +14,7 @@
 * Cinny: v4.0.3
 * Container Socket Proxy: 0.2.0
 * Corporal: 2.8.0
-* Coturn: 4.6.2-r10
+* Coturn: 4.6.2-r11
 * Dimension: latest
 * Discord: v0.7.0
 * Dnsmasq: latest
@@ -33,7 +33,7 @@
 * Go Skype Bridge: latest
 * Googlechat: v0.5.2
 * Gotosocial: 0.16.0
-* Grafana: 11.1.1
+* Grafana: 11.1.3
 * Hangouts: latest
 * Heisenbridge: 1.14.6
 * Honoroit: v0.9.23
