@@ -36,7 +36,7 @@
 * Grafana: 11.1.3
 * Hangouts: latest
 * Heisenbridge: 1.14.6
-* Honoroit: v0.9.23
+* Honoroit: v0.9.24
 * Hookshot: 5.4.1
 * Hydrogen: v0.4.1
 * Instagram: v0.3.1
@@ -65,7 +65,7 @@
 * Ntfy: v2.10.0
 * Pantalaimon: 0.10.5
 * Peertube: v6.2.0
-* Postmoogle: v0.9.19
+* Postmoogle: v0.9.20
 * Prometheus: v2.53.1
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.8.2
