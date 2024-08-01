@@ -21,7 +21,7 @@
 * Docker Compose: v2.11.1
 * Draupnir: v1.87.0
 * Dynamic Dns: 3.11.2
-* Element: v1.11.71
+* Element: v1.11.72
 * Email2Matrix: 1.1.0
 * Etherpad: 2.1.1
 * Exim Relay: 4.98-r0-0
@@ -72,7 +72,7 @@
 * Prometheus Postgres Exporter: v0.14.0
 * Radicale: 3.2.2.0
 * Rageshake: 1.13.0
-* Redis: 7.2.4
+* Redis: 7.2.5
 * Registration: v0.7.2
 * Schildichat: v1.11.36-sc.3
 * Signal: v0.6.3
@@ -83,14 +83,14 @@
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.32.1
 * Sygnal: v0.15.0
-* Synapse: v1.111.0
+* Synapse: v1.112.0
 * Synapse Admin: 0.10.3
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4
 * Synapse Reverse Proxy Companion: 1.27.0-alpine
 * Synapse S3 Storage Provider: 1.3.0
 * Telegram: v0.15.2
-* Traefik: v3.1.0
+* Traefik: v3.1.1
 * Traefik Certs Dumper: v2.8.3
 * Twitter: v0.1.8
 * Uptime Kuma: 1.23.13
