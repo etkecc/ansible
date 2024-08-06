@@ -69,7 +69,7 @@
     - custom/matrix-bridge-hookshot
     - custom/matrix-bot-matrix-reminder-bot
     # - custom/matrix-bot-matrix-registration-bot # unused
-    # - custom/matrix-bot-maubot # unused
+    - custom/matrix-bot-maubot
     - custom/matrix-bot-buscarron
     - custom/matrix-bot-honoroit
     - custom/matrix-bot-postmoogle
