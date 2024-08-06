@@ -11,7 +11,7 @@
 * Cactus Comments: 0.9.0
 * Cactus Comments Client: 2.32.1
 * Chatgpt: 3.1.4
-* Cinny: v4.0.3
+* Cinny: v4.1.0
 * Container Socket Proxy: 0.2.0
 * Corporal: 2.8.0
 * Coturn: 4.6.2-r11
@@ -40,7 +40,7 @@
 * Hookshot: 5.4.1
 * Hydrogen: v0.4.1
 * Instagram: v0.3.1
-* Jitsi: stable-9584-1
+* Jitsi: stable-9646
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
 * Keydb: 6.3.4
