@@ -21,7 +21,7 @@
 * Docker Compose: v2.11.1
 * Draupnir: v1.87.0
 * Dynamic Dns: 3.11.2
-* Element: v1.11.72
+* Element: v1.11.73
 * Email2Matrix: 1.1.0
 * Etherpad: 2.1.1
 * Exim Relay: 4.98-r0-0
