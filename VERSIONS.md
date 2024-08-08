@@ -13,7 +13,7 @@
 * Chatgpt: 3.1.4
 * Cinny: v4.1.0
 * Container Socket Proxy: 0.2.0
-* Corporal: 2.8.0
+* Corporal: 3.0.0
 * Coturn: 4.6.2-r11
 * Dimension: latest
 * Discord: v0.7.0
@@ -24,7 +24,7 @@
 * Element: v1.11.73
 * Email2Matrix: 1.1.0
 * Etherpad: 2.1.1
-* Exim Relay: 4.98-r0-0
+* Exim Relay: 4.98-r0-1
 * Facebook: v0.5.1
 * Firezone: 0.7.36
 * Funkwhale: 1.4.0
@@ -90,7 +90,7 @@
 * Synapse Reverse Proxy Companion: 1.27.0-alpine
 * Synapse S3 Storage Provider: 1.3.0
 * Telegram: v0.15.2
-* Traefik: v3.1.1
+* Traefik: v3.1.2
 * Traefik Certs Dumper: v2.8.3
 * Twitter: v0.1.8
 * Uptime Kuma: 1.23.13
