@@ -23,7 +23,7 @@
 * Dynamic Dns: 3.11.2
 * Element: v1.11.73
 * Email2Matrix: 1.1.0
-* Etherpad: 2.1.1
+* Etherpad: 2.2.2
 * Exim Relay: 4.98-r0-1
 * Facebook: v0.5.1
 * Firezone: 0.7.36
@@ -35,7 +35,7 @@
 * Gotosocial: 0.16.0
 * Grafana: 11.1.3
 * Hangouts: latest
-* Heisenbridge: 1.14.6
+* Heisenbridge: 1.15.0
 * Honoroit: v0.9.24
 * Hookshot: 5.4.1
 * Hydrogen: v0.4.1
@@ -66,7 +66,7 @@
 * Pantalaimon: 0.10.5
 * Peertube: v6.2.1
 * Postmoogle: v0.9.20
-* Prometheus: v2.53.1
+* Prometheus: v2.54.0
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.8.2
 * Prometheus Postgres Exporter: v0.14.0
