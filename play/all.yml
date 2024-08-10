@@ -32,24 +32,15 @@
       role: galaxy/traefik
     - when: devture_traefik_certs_dumper_enabled | bool
       role: galaxy/traefik_certs_dumper
-    # - custom/matrix-dynamic-dns # unused
     - galaxy/postgres
-    # - galaxy/redis # unused
     - galaxy/keydb
-    # - custom/matrix-corporal # unused
     - custom/matrix-bridge-appservice-discord
-    # - custom/matrix-bridge-appservice-slack # unused
-    - custom/matrix-bridge-appservice-webhooks
-    # - custom/matrix-bridge-appservice-irc # unused
-    # - custom/matrix-bridge-appservice-kakaotalk # unused disabled due to issues
     - custom/matrix-bridge-beeper-linkedin
     - custom/matrix-bridge-go-skype-bridge
     - custom/matrix-bridge-wechat
-    - custom/matrix-bridge-mautrix-facebook
     - custom/matrix-bridge-mautrix-twitter
     - custom/matrix-bridge-mautrix-hangouts
     - custom/matrix-bridge-mautrix-googlechat
-    - custom/matrix-bridge-mautrix-instagram
     - custom/matrix-bridge-mautrix-meta-messenger
     - custom/matrix-bridge-mautrix-meta-instagram
     - custom/matrix-bridge-mautrix-signal
@@ -58,38 +49,22 @@
     - custom/matrix-bridge-mautrix-whatsapp
     - custom/matrix-bridge-mautrix-discord
     - custom/matrix-bridge-mautrix-slack
-    - custom/matrix-bridge-mx-puppet-discord
-    - custom/matrix-bridge-mx-puppet-groupme
-    - custom/matrix-bridge-mx-puppet-steam
-    - custom/matrix-bridge-mx-puppet-slack
-    # - custom/matrix-bridge-mx-puppet-twitter # unused
-    # - custom/matrix-bridge-mx-puppet-instagram # unused
-    # - custom/matrix-bridge-sms # unused
     - custom/matrix-bridge-heisenbridge
     - custom/matrix-bridge-hookshot
     - custom/matrix-bot-matrix-reminder-bot
-    # - custom/matrix-bot-matrix-registration-bot # unused
     - custom/matrix-bot-maubot
     - custom/matrix-bot-buscarron
     - custom/matrix-bot-honoroit
     - custom/matrix-bot-postmoogle
     - custom/matrix-bot-go-neb
-    # - custom/matrix-bot-mjolnir # unused
-    # - custom/matrix-bot-draupnir # unused
     - custom/matrix-bot-chatgpt
-    # - custom/matrix-cactus-comments # unused
-    # - custom/matrix-cactus-comments-client # unused
-    # - custom/matrix-rageshake # unused
     - custom/matrix-synapse
     - custom/matrix-synapse-auto-compressor
     - custom/matrix-synapse-reverse-proxy-companion
-    # - custom/matrix-dendrite # unused
-    # - custom/matrix-conduit # unused
     - custom/matrix-synapse-admin
     - custom/matrix-synapse-usage-exporter
     - galaxy/prometheus_node_exporter
     - galaxy/prometheus_postgres_exporter
-    # - custom/matrix-prometheus-nginxlog-exporter # unused
     - galaxy/prometheus
     - galaxy/grafana
     - custom/matrix-prometheus-services-connect
@@ -99,13 +74,9 @@
     - custom/matrix-client-cinny
     - custom/matrix-client-schildichat
     - galaxy/jitsi
-    # - custom/matrix-user-verification-service # unused
-    # - custom/matrix-ldap-registration-proxy # unused
     - custom/matrix-ma1sd
-    - custom/matrix-dimension
     - galaxy/etherpad
     - custom/matrix-sliding-sync
-    # - custom/matrix-email2matrix # unused
     - custom/matrix-sygnal
     - galaxy/ntfy
     # END MATRIX
@@ -115,7 +86,6 @@
     - galaxy/ssh
     - galaxy/ufw
     - galaxy/fail2ban
-    - custom/dnsmasq
     - galaxy/uptime_kuma
     - galaxy/languagetool
     - galaxy/linkding
@@ -126,7 +96,6 @@
     - galaxy/firezone
     - galaxy/funkwhale
     - galaxy/peertube
-    - custom/wireguard
     # END CUSTOM
 
     # MATRIX

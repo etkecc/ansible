@@ -481,8 +481,6 @@ devture_systemd_service_manager_up_verification_enabled: false
 
 devture_systemd_service_manager_services_list_additional: |
   {{
-    ([{'name': 'custom-dnsmasq.service', 'priority': 5000, 'groups': ['etke', 'dnsmasq']}] if custom_dnsmasq_enabled else [])
-    +
     ([{'name': (gotosocial_identifier + '.service'), 'priority': 5000, 'groups': ['etke', 'gotosocial']}] if gotosocial_enabled else [])
     +
     ([{'name': (uptime_kuma_identifier + '.service'), 'priority': 5000, 'groups': ['etke', 'uptime-kuma']}] if uptime_kuma_enabled else [])
@@ -508,8 +506,6 @@ devture_systemd_service_manager_services_list_additional: |
     ([{'name': (funkwhale_celery_worker_identifier + '.service'), 'priority': 2000, 'groups': ['etke', 'funkwhale']}] if funkwhale_enabled else [])
     +
     ([{'name': (peertube_identifier + '.service'), 'priority': 2000, 'groups': ['etke', 'peertube']}] if peertube_enabled else [])
-    +
-    ([{'name': ('wg-quick@' + custom_wireguard_interface + '.service'), 'priority': 5000, 'groups': ['etke', 'wireguard']}] if custom_wireguard_enabled else [])
   }}
 
 ########################################################################
