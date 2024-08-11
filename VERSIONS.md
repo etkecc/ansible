@@ -17,7 +17,6 @@
 * Coturn: 4.6.2-r11
 * Dimension: latest
 * Discord: v0.7.0
-* Dnsmasq: latest
 * Docker Compose: v2.11.1
 * Draupnir: v1.87.0
 * Dynamic Dns: 3.11.2
@@ -95,7 +94,7 @@
 * Twitter: v0.1.8
 * Uptime Kuma: 1.23.13
 * User Verification Service: v3.0.0
-* Vaultwarden: 1.31.0
+* Vaultwarden: 1.32.0
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
 * Whatsapp: v0.10.9
