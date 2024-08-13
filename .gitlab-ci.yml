@@ -1,8 +1,8 @@
 variables:
   AGRU: "v0.1.10"
   ALPINE: "3.20"
-  ANSIBLE: "10.2.0"
-  ANSIBLE_CORE: "2.17.2"
+  ANSIBLE: "10.3.0"
+  ANSIBLE_CORE: "2.17.3"
 
 stages:
   - base
