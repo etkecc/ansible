@@ -9,7 +9,7 @@
 * Borgmatic: 1.8.13
 * Buscarron: v1.4.2
 * Cactus Comments: 0.9.0
-* Cactus Comments Client: 2.32.1
+* Cactus Comments Client: 2.32.2
 * Chatgpt: 3.1.4
 * Cinny: v4.1.0
 * Container Socket Proxy: 0.2.0
@@ -32,7 +32,7 @@
 * Go Skype Bridge: latest
 * Googlechat: v0.5.2
 * Gotosocial: 0.16.0
-* Grafana: 11.1.3
+* Grafana: 11.1.4
 * Hangouts: latest
 * Heisenbridge: 1.15.0
 * Honoroit: v0.9.24
@@ -80,7 +80,7 @@
 * Sms Bridge: 0.5.9
 * Spam Checker Mjolnir Antispam Git: v1.6.4
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
-* Static Files: 2.32.1
+* Static Files: 2.32.2
 * Sygnal: v0.15.0
 * Synapse: v1.113.0
 * Synapse Admin: 0.10.3
