@@ -74,7 +74,7 @@
 * Redis: 7.2.5
 * Registration: v0.7.2
 * Schildichat: v1.11.36-sc.3
-* Signal: v0.6.3
+* Signal: v0.7.0
 * Slack: latest
 * Sliding Sync: v0.99.19
 * Sms Bridge: 0.5.9
@@ -86,7 +86,7 @@
 * Synapse Admin: 0.10.3
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4
-* Synapse Reverse Proxy Companion: 1.27.0-alpine
+* Synapse Reverse Proxy Companion: 1.27.1-alpine
 * Synapse S3 Storage Provider: 1.3.0
 * Telegram: v0.15.2
 * Traefik: v3.1.2
