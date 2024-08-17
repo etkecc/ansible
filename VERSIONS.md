@@ -75,7 +75,7 @@
 * Registration: v0.7.2
 * Schildichat: v1.11.36-sc.3
 * Signal: v0.7.0
-* Slack: latest
+* Slack: v0.1.0
 * Sliding Sync: v0.99.19
 * Sms Bridge: 0.5.9
 * Spam Checker Mjolnir Antispam Git: v1.6.4
