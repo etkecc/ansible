@@ -1,9 +1,9 @@
 ---
 
 - include: upstream/requirements.yml
-- src: git+https://gitlab.com/etke.cc/roles/cleanup.git
+- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-cleanup.git
   version: main
-- src: git+https://gitlab.com/etke.cc/roles/fail2ban.git
+- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-fail2ban.git
   version: main
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-firezone.git
   version: v0.7.36-1
@@ -14,25 +14,25 @@
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-gotosocial.git
   version: v0.16.0-1
   name: gotosocial
-- src: git+https://gitlab.com/etke.cc/roles/languagetool.git
+- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-languagetool.git
   version: v6.4-0
 - src: git+https://github.com/kinduff/ansible-docker-linkding.git
   version: v1.9.0
   name: linkding
-- src: git+https://gitlab.com/etke.cc/roles/miniflux.git
+- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-miniflux.git
   version: v2.1.4-0
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-peertube.git
   version: v6.2.1-0
   name: peertube
-- src: git+https://gitlab.com/etke.cc/roles/radicale.git
+- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-radicale.git
   version: v3.2.2.0-0
-- src: git+https://gitlab.com/etke.cc/roles/ssh.git
+- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-ssh.git
   version: main
-- src: git+https://gitlab.com/etke.cc/roles/swap.git
+- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-swap.git
   version: main
-- src: git+https://gitlab.com/etke.cc/roles/ufw.git
+- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-ufw.git
   version: main
-- src: git+https://gitlab.com/etke.cc/roles/uptime_kuma.git
+- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-uptime_kuma.git
   version: v1.23.13-0
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-vaultwarden.git
   version: v1.32.0-0
