@@ -2,11 +2,11 @@
 
 - include: upstream/requirements.yml
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-cleanup.git
+  version: main
   name: cleanup
-  version: main
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-fail2ban.git
-  name: fail2ban
   version: main
+  name: fail2ban
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-firezone.git
   version: v0.7.36-1
   name: firezone
