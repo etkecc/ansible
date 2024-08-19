@@ -53,7 +53,7 @@
 * Maubot: v0.4.2
 * Meta Instagram: v0.3.2
 * Meta Messenger: v0.3.2
-* Miniflux: 2.1.4
+* Miniflux: 2.2.0
 * Mjolnir: v1.6.5
 * Mx Puppet Discord: v0.1.1
 * Mx Puppet Groupme: 533cccc8
