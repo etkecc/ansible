@@ -2,7 +2,7 @@ ARG ALPINE
 FROM registry.gitlab.com/etke.cc/base/build AS builder
 ARG AGRU
 ENV GOPROXY=""
-RUN git clone --depth 1 -b $AGRU https://gitlab.com/etke.cc/tools/agru.git && \
+RUN git clone --depth 1 -b $AGRU https://github.com/etkecc/agru.git && \
     cd agru && just build && mv agru /usr/bin/agru
 
 FROM alpine:${ALPINE}
