@@ -64,7 +64,7 @@
 * Ntfy: v2.10.0
 * Pantalaimon: 0.10.5
 * Peertube: v6.2.1
-* Postmoogle: v0.9.20
+* Postmoogle: v0.9.21
 * Prometheus: v2.54.0
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.8.2
@@ -73,7 +73,7 @@
 * Rageshake: 1.13.0
 * Redis: 7.2.5
 * Registration: v0.7.2
-* Schildichat: v1.11.36-sc.3
+* Schildichat: 1.11.36-sc.3
 * Signal: v0.7.0
 * Slack: v0.1.0
 * Sliding Sync: v0.99.19
