@@ -1,4 +1,4 @@
-* Alertmanager Receiver: 2024.7.3
+* Alertmanager Receiver: 2024.8.21
 * Appservice Discord: v4.0.0
 * Appservice Draupnir For All: 1.87.0
 * Appservice Irc: 1.0.1
@@ -7,7 +7,7 @@
 * Appservice Webhooks: v1.0.3-01
 * Borg: 1.2.8
 * Borgmatic: 1.8.13
-* Buscarron: v1.4.2
+* Buscarron: v1.4.3
 * Cactus Comments: 0.9.0
 * Cactus Comments Client: 2.32.2
 * Chatgpt: 3.1.4
@@ -35,7 +35,7 @@
 * Grafana: 11.1.4
 * Hangouts: latest
 * Heisenbridge: 1.15.0
-* Honoroit: v0.9.24
+* Honoroit: v0.9.25
 * Hookshot: 5.4.1
 * Hydrogen: v0.5.0
 * Instagram: v0.3.1

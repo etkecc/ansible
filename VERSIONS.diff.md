@@ -1,6 +1,9 @@
 **Stable Updates Published**
 
+* [Alertmanager Receiver](https://github.com/metio/matrix-alertmanager-receiver): [2024.7.3](https://github.com/metio/matrix-alertmanager-receiver/releases/tag/2024.7.3) -> [2024.8.21](https://github.com/metio/matrix-alertmanager-receiver/releases/tag/2024.8.21)
+* [Buscarron](https://gitlab.com/etke.cc/buscarron): [v1.4.2](https://gitlab.com/etke.cc/buscarron/-/tags/v1.4.2) -> [v1.4.3](https://gitlab.com/etke.cc/buscarron/-/tags/v1.4.3)
 * [Element](https://github.com/element-hq/element-web): [v1.11.74](https://github.com/element-hq/element-web/releases/tag/v1.11.74) -> [v1.11.75](https://github.com/element-hq/element-web/releases/tag/v1.11.75)
+* [Honoroit](https://gitlab.com/etke.cc/honoroit): [v0.9.24](https://gitlab.com/etke.cc/honoroit/-/tags/v0.9.24) -> [v0.9.25](https://gitlab.com/etke.cc/honoroit/-/tags/v0.9.25)
 * [Hydrogen](https://github.com/element-hq/hydrogen-web): [v0.4.1](https://github.com/element-hq/hydrogen-web/releases/tag/v0.4.1) -> [v0.5.0](https://github.com/element-hq/hydrogen-web/releases/tag/v0.5.0)
 * [Miniflux](https://github.com/miniflux/v2): [2.1.4](https://github.com/miniflux/v2/releases/tag/2.1.4) -> [2.2.0](https://github.com/miniflux/v2/releases/tag/2.2.0)
 * [Postmoogle](https://github.com/etkecc/postmoogle): [v0.9.20](https://github.com/etkecc/postmoogle/releases/tag/v0.9.20) -> [v0.9.21](https://github.com/etkecc/postmoogle/releases/tag/v0.9.21)

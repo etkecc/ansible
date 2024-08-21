@@ -12,6 +12,6 @@ skopeo_static:
   - "registry.gitlab.com/etke.cc/borgmatic:15-{{ backup_borg_borg_version }}-{{ backup_borg_borgmatic_version }}"
   - "registry.gitlab.com/etke.cc/borgmatic:16-{{ backup_borg_borg_version }}-{{ backup_borg_borgmatic_version }}"
   - "registry.gitlab.com/etke.cc/etherpad:{{ etherpad_version }}"
+  - ghcr.io/etkecc/buscarron:latest
+  - ghcr.io/etkecc/honoroit:latest
   - ghcr.io/etkecc/postmoogle:latest
-  - registry.gitlab.com/etke.cc/buscarron:latest
-  - registry.gitlab.com/etke.cc/honoroit:latest
