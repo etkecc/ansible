@@ -6,11 +6,12 @@ skopeo_ignore_images:
   - "{{ matrix_client_element_docker_image }}"
   - "{{ matrix_synapse_usage_exporter_container_image }}" # it uses localhost
 skopeo_static:
-  - "registry.gitlab.com/etke.cc/app:{{ matrix_client_element_version }}"
+  - "ghcr.io/etkecc/app:{{ matrix_client_element_version }}"
+  - "ghcr.io/etkecc/etherpad:{{ etherpad_version }}"
   - "registry.gitlab.com/etke.cc/borgmatic:14-{{ backup_borg_borg_version }}-{{ backup_borg_borgmatic_version }}"
   - "registry.gitlab.com/etke.cc/borgmatic:15-{{ backup_borg_borg_version }}-{{ backup_borg_borgmatic_version }}"
   - "registry.gitlab.com/etke.cc/borgmatic:16-{{ backup_borg_borg_version }}-{{ backup_borg_borgmatic_version }}"
   - "registry.gitlab.com/etke.cc/etherpad:{{ etherpad_version }}"
+  - ghcr.io/etkecc/postmoogle:latest
   - registry.gitlab.com/etke.cc/buscarron:latest
   - registry.gitlab.com/etke.cc/honoroit:latest
-  - registry.gitlab.com/etke.cc/postmoogle:latest
