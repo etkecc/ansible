@@ -1,7 +1,7 @@
 ARG ALPINE
 ARG ANSIBLE
 ARG ANSIBLE_CORE
-FROM registry.gitlab.com/etke.cc/ansible/base:${ALPINE}-${ANSIBLE_CORE}-${ANSIBLE}
+FROM ghcr.io/etkecc/ansible/base:${ALPINE}-${ANSIBLE_CORE}-${ANSIBLE}
 
 ENV AGRU_CLEANUP="-c=false"
 ENV ANSIBLE_LOG_PATH=" "
