@@ -124,7 +124,7 @@ def get_version_diff(repo_path, old_branch, new_branch, file_path):
 
 if __name__ == "__main__":
     repo_path = "."
-    old_branch = "master"
+    old_branch = "main"
     new_branch = "fresh"
     file_path = "VERSIONS.md"
 
