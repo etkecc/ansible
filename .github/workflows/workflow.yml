@@ -98,10 +98,10 @@ jobs:
         env:
           MATRIX_TOKEN: ${{ secrets.MATRIX_TOKEN }}
           MATRIX_URL_FRESH: ${{ secrets.MATRIX_URL_FRESH }}
-          CI_COMMIT_MESSAGE: ${{ github.event.push.head_commit.message }}
+          CI_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
         run: |
           apk --no-cache add skopeo parallel curl
-          skopeo login --username ${{ secrets.DOCKER_HUB_LOGIN }} --password ${{ secrets.DOCKER_HUB_PASSWORD }} docker.io
+          skopeo login --username etkecc --password ${{ secrets.DOCKER_HUB_PASSWORD }} docker.io
           cp -r /playbook/.config/inventory /
           cd /playbook; ansible-playbook play/all.yml -l localhost -t skopeo -e target=localhost
           sh play/.skopeo-parallel
