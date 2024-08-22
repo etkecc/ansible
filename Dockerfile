@@ -11,6 +11,7 @@ COPY . /playbook
 # Note the current commit hash into a file, if we ever need it.
 # Then initialize /upstream from submodules, and get rid of the `.git` directory.
 # We don't need to carry that extra weight into the final image.
-RUN just pull-dependencies && \
+RUN git rev-parse HEAD > /playbook/source-commit && \
+    just pull-dependencies && \
     rm -rf /playbook/.git && \
     rm -rf /playbook/upstream/.git
