@@ -2,7 +2,7 @@ name: CI
 on:
   push:
     branches: [ "main", "fresh" ]
-vars:
+env:
   agru: "v0.1.12"
   alpine: "3.20"
   ansible: "10.3.0"
