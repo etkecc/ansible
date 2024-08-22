@@ -22,7 +22,7 @@ Testing branch, with latest updates from the upstream and unstable changes, incl
 
 ### master
 
-* git branch: `master`
+* git branch: `main`
 * docker tag: `latest`
 
 "Stable" branch, deployed and tested at least on 1 homeserver.
@@ -46,7 +46,7 @@ The original playbook's focus is on matrix components only, while we at [etke.cc
 # Prerequisites
 
 * [git](https://git-scm.com/) - it's a git repo, you know
-* [agru](https://gitlab.com/etke.cc/int/agru) - to update roles
+* [agru](https://github.com/etkecc/agru) - to update roles
 * [just](https://just.systems/man/en/) - to automate routine
 * [docker](https://www.docker.com/) - to build containers
 * [skopeo](https://github.com/containers/skopeo) - to sync containers
@@ -63,7 +63,7 @@ The original playbook's focus is on matrix components only, while we at [etke.cc
 
 ```bash
 # clone that repo
-git clone https://gitlab.com/etke.cc/ansible.git
+git clone https://github.com/etkecc/ansible.git
 cd ansible
 
 # pull the spantaleev/matrix-docker-ansible-deploy repo and other dependency roles, the recipe name is an alias to match with the upstream
