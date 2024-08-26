@@ -50,7 +50,7 @@
 * Ma1Sd: 2.5.0
 * Matrix Registration Bot: 1.3.0
 * Matrix Reminder Bot: v0.3.0
-* Maubot: v0.4.2
+* Maubot: v0.5.0
 * Meta Instagram: v0.3.2
 * Meta Messenger: v0.3.2
 * Miniflux: 2.2.0
