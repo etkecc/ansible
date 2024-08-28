@@ -20,7 +20,7 @@
 * Docker Compose: v2.11.1
 * Draupnir: v1.87.0
 * Dynamic Dns: 3.11.2
-* Element: v1.11.75
+* Element: v1.11.76
 * Email2Matrix: 1.1.0
 * Etherpad: 2.2.2
 * Exim Relay: 4.98-r0-1
@@ -65,7 +65,7 @@
 * Pantalaimon: 0.10.5
 * Peertube: v6.2.1
 * Postmoogle: v0.9.21
-* Prometheus: v2.54.0
+* Prometheus: v2.54.1
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.8.2
 * Prometheus Postgres Exporter: v0.14.0
