@@ -1,4 +1,4 @@
-* Alertmanager Receiver: 2024.8.21
+* Alertmanager Receiver: 2024.8.28
 * Appservice Discord: v4.0.0
 * Appservice Draupnir For All: 1.87.0
 * Appservice Irc: 1.0.1
