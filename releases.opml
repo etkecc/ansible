@@ -17,7 +17,7 @@
     <outline text="beeper-linkedin" title="beeper-linkedin" type="rss" htmlUrl="https://github.com/beeper/linkedin" xmlUrl="https://github.com/beeper/linkedin/releases.atom" />
     <outline text="borg" title="borg" type="rss" htmlUrl="https://github.com/borgbackup/borg/releases" xmlUrl="https://github.com/borgbackup/borg/releases.atom" />
     <outline text="borgmatic" title="borgmatic" type="rss" htmlUrl="https://github.com/borgmatic-collective/borgmatic/releases" xmlUrl="https://github.com/borgmatic-collective/borgmatic/releases.atom" />
-    <outline text="buscarron" title="buscarron" type="rss" htmlUrl="https://gitlab.com/etke.cc/buscarron" xmlUrl="https://gitlab.com/etke.cc/buscarron/-/tags?format=atom" />
+    <outline text="buscarron" title="buscarron" type="rss" htmlUrl="https://github.com/etkecc/buscarron" xmlUrl="https://github.com/etkecc/buscarron/releases.atom" />
     <outline text="cactus-comments" title="cactus-comments" type="rss" htmlUrl="https://gitlab.com/cactus-comments/cactus-appservice" xmlUrl="https://gitlab.com/cactus-comments/cactus-appservice/-/tags?format=atom" />
     <outline text="cactus-comments-client" title="cactus-comments-client" type="rss" htmlUrl="https://gitlab.com/cactus-comments/cactus-client" xmlUrl="https://gitlab.com/cactus-comments/cactus-client/-/tags?format=atom" />
     <outline text="chatgpt" title="chatgpt" type="rss" htmlUrl="https://github.com/matrixgpt/matrix-chatgpt-bot" xmlUrl="https://github.com/matrixgpt/matrix-chatgpt-bot/releases.atom" />
@@ -41,7 +41,7 @@
     <outline text="gotosocial" title="gotosocial" type="rss" htmlUrl="https://github.com/superseriousbusiness/gotosocial" xmlUrl="https://github.com/superseriousbusiness/gotosocial/releases.atom" />
     <outline text="grafana" title="grafana" type="rss" htmlUrl="https://github.com/grafana/grafana" xmlUrl="https://github.com/grafana/grafana/releases.atom" />
     <outline text="heisenbridge" title="heisenbridge" type="rss" htmlUrl="https://github.com/hifi/heisenbridge" xmlUrl="https://github.com/hifi/heisenbridge/releases.atom" />
-    <outline text="honoroit" title="honoroit" type="rss" htmlUrl="https://gitlab.com/etke.cc/honoroit" xmlUrl="https://gitlab.com/etke.cc/honoroit/-/tags?format=atom" />
+    <outline text="honoroit" title="honoroit" type="rss" htmlUrl="https://github.com/etkecc/honoroit" xmlUrl="https://github.com/etkecc/honoroit/releases.atom" />
     <outline text="hookshot" title="hookshot" type="rss" htmlUrl="https://github.com/matrix-org/matrix-hookshot" xmlUrl="https://github.com/matrix-org/matrix-hookshot/releases.atom" />
     <outline text="hydrogen" title="hydrogen" type="rss" htmlUrl="https://github.com/element-hq/hydrogen-web" xmlUrl="https://github.com/element-hq/hydrogen-web/releases.atom" />
     <outline text="jitsi" title="jitsi" type="rss" htmlUrl="https://github.com/jitsi/docker-jitsi-meet" xmlUrl="https://github.com/jitsi/docker-jitsi-meet/releases.atom" />
