@@ -22,8 +22,9 @@ jobs:
       - name: Check if Docker image exists
         id: check
         run: |
-          IMAGE_TAG=ghcr.io/${{ github.repository }}/base:${{ env.alpine }}-${{ env.ansible_core }}-${{ env.ansible }}
-          if docker manifest inspect $IMAGE_TAG > /dev/null 2>&1; then
+          IMAGE_TAG="ghcr.io/${{ github.repository }}/base:${{ env.alpine }}-${{ env.ansible_core }}-${{ env.ansible }}"
+          echo "Checking for image: $IMAGE_TAG"
+          if docker manifest inspect "$IMAGE_TAG" > /dev/null 2>&1; then
             echo "exists=true" >> $GITHUB_OUTPUT
           else
             echo "exists=false" >> $GITHUB_OUTPUT
