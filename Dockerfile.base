@@ -1,18 +1,11 @@
 ARG ALPINE
-FROM ghcr.io/etkecc/base/build AS builder
-ARG AGRU
-ENV GOPROXY=""
-RUN git clone --depth 1 -b $AGRU https://github.com/etkecc/agru.git && \
-    cd agru && just build && mv agru /usr/bin/agru
-
 FROM alpine:${ALPINE}
 ARG ANSIBLE
 ARG ANSIBLE_CORE
 ENV PATH="/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin"
 
-COPY --from=builder /usr/bin/agru /usr/bin/agru
 RUN apk --no-cache add python3 py3-cryptography py3-jinja2 py3-packaging py3-paramiko py3-resolvelib py3-passlib py3-yaml \
-		git just openssh hugo && \
+		git openssh hugo && \
 		apk --no-cache add --virtual builddeps alpine-sdk py3-pip && \
 		ln -s /bin/uname /usr/local/bin/uname && \
 		ln -s /bin/rm /usr/local/bin/rm && \
