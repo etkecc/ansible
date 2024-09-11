@@ -1,0 +1,101 @@
+---
+# prometheus_postgres_exporter is an Prometheus exporter for postgres metrics
+# Project source code URL: https://github.com/prometheus-community/postgres_exporter
+
+prometheus_postgres_exporter_enabled: true
+
+prometheus_postgres_exporter_identifier: prometheus-postgres-exporter
+
+prometheus_postgres_exporter_uid: ''
+prometheus_postgres_exporter_gid: ''
+prometheus_postgres_exporter_hostname: ''
+prometheus_postgres_exporter_path_prefix: "/metrics/postgres-exporter"
+
+prometheus_postgres_exporter_version: v0.14.0
+prometheus_postgres_exporter_port: 9187
+
+prometheus_postgres_exporter_docker_image: "{{ prometheus_postgres_exporter_docker_image_name_prefix }}prometheuscommunity/postgres-exporter:{{ prometheus_postgres_exporter_version }}"
+prometheus_postgres_exporter_docker_image_name_prefix: "quay.io/"
+prometheus_postgres_exporter_docker_image_force_pull: "{{ prometheus_postgres_exporter_docker_image.endswith(':latest') }}"
+
+# A path on host where all related files will be saved
+prometheus_postgres_exporter_base_path: "/{{ prometheus_postgres_exporter_identifier }}"
+
+# details for connecting to the database
+prometheus_postgres_exporter_database_username: 'prometheus_postgres_exporter'
+prometheus_postgres_exporter_database_password: 'some-password'
+prometheus_postgres_exporter_database_hostname: ''
+prometheus_postgres_exporter_database_port: 5432
+prometheus_postgres_exporter_database_name: 'prometheus_postgres_exporter'
+prometeus_postgres_exporter_database_ssl: false
+
+# Controls the PG_EXPORTER_AUTO_DISCOVER_DATABASES environment variable
+prometheus_postgres_exporter_env_variable_pg_exporter_auto_discover_databases: true
+
+# Controls the PG_EXPORTER_WEB_LISTEN_ADDRESS environment variable
+prometheus_postgres_exporter_env_variable_pg_exporter_web_listen_address: ":{{ prometheus_postgres_exporter_port }}"
+
+# Controls the DATA_SOURCE_NAME environment variable
+prometheus_postgres_exporter_env_variable_data_source_name: "postgresql://{{ prometheus_postgres_exporter_database_username }}:{{ prometheus_postgres_exporter_database_password }}@{{ prometheus_postgres_exporter_database_hostname }}:{{ prometheus_postgres_exporter_database_port }}/{{ prometheus_postgres_exporter_database_name }}{{ '?sslmode=disable' if not prometeus_postgres_exporter_database_ssl else '' }}"
+
+# Additional environment variables to pass to the container
+#
+# Example:
+# prometheus_postgres_exporter_environment_variables_extension: |
+#   KEY=VALUE
+prometheus_postgres_exporter_environment_variables_extension: ''
+
+# List of systemd services that prometheus-postgres-exporter.service depends on
+prometheus_postgres_exporter_systemd_required_services_list: "{{ prometheus_postgres_exporter_systemd_required_services_list_default + prometheus_postgres_exporter_systemd_required_services_list_auto + prometheus_postgres_exporter_systemd_required_services_list_custom }}"
+prometheus_postgres_exporter_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+prometheus_postgres_exporter_systemd_required_services_list_auto: []
+prometheus_postgres_exporter_systemd_required_services_list_custom: []
+
+# List of systemd services that prometheus-postgres-exporter.service wants
+prometheus_postgres_exporter_systemd_wanted_services_list: []
+
+# A list of extra arguments to pass to the container
+prometheus_postgres_exporter_container_extra_arguments: []
+
+# The base container network. It will be auto-created by this role if it doesn't exist already.
+prometheus_postgres_exporter_container_network: "{{ prometheus_postgres_exporter_identifier }}"
+
+# A list of additional container networks that the container would be connected to.
+# The role does not create these networks, so make sure they already exist.
+#
+# Use this to expose this container to another reverse proxy, which runs in a different container network,
+# without exposing all other container services to that other reverse-proxy.
+prometheus_postgres_exporter_container_additional_networks: []
+
+# prometheus_postgres_exporter_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
+# See `../templates/labels.j2` for details.
+#
+# To inject your own other container labels, see `prometheus_postgres_exporter_container_labels_additional_labels`.
+prometheus_postgres_exporter_container_labels_traefik_enabled: true
+prometheus_postgres_exporter_container_labels_traefik_docker_network: "{{ prometheus_postgres_exporter_container_network }}"
+prometheus_postgres_exporter_container_labels_traefik_rule: "Host(`{{ prometheus_postgres_exporter_hostname }}`) && PathPrefix(`{{ prometheus_postgres_exporter_path_prefix | quote }}`)"
+prometheus_postgres_exporter_container_labels_traefik_entrypoints: web-secure
+prometheus_postgres_exporter_container_labels_traefik_tls: "{{ prometheus_postgres_exporter_container_labels_traefik_entrypoints != 'web' }}"
+prometheus_postgres_exporter_container_labels_traefik_tls_certResolver: default  # noqa var-naming
+prometheus_postgres_exporter_container_labels_metrics_middleware_basic_auth_enabled: false
+# See: https://doc.traefik.io/traefik/middlewares/http/basicauth/#users
+prometheus_postgres_exporter_container_labels_metrics_middleware_basic_auth_users: ''
+
+# prometheus_postgres_exporter_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
+# See `../templates/labels.j2` for details.
+#
+# Example:
+# prometheus_postgres_exporter_container_labels_additional_labels: |
+#   my.label=1
+#   another.label="here"
+prometheus_postgres_exporter_container_labels_additional_labels: ''
+
+# Controls whether the container exposes its HTTP port (tcp/9187 in the container).
+#
+# Takes an "<ip>:<port>" value (e.g. "127.0.0.1:9187"), just a port number or an empty string to not expose.
+prometheus_postgres_exporter_container_http_host_bind_port: ''
+
+# prometheus_postgres_exporter_dashboard_urls contains a list of URLs with Grafana dashboard definitions.
+# This role doesn't make use of this variable, but you can hook this into other roles.
+prometheus_postgres_exporter_dashboard_urls:
+  - "https://grafana.com/api/dashboards/9628/revisions/7/download"

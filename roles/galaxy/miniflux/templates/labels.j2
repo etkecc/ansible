@@ -1,0 +1,45 @@
+{% if miniflux_container_labels_traefik_enabled %}
+traefik.enable=true
+
+{% if miniflux_container_labels_traefik_docker_network %}
+traefik.docker.network={{ miniflux_container_labels_traefik_docker_network }}
+{% endif %}
+
+{% set middlewares = [] %}
+
+{% if miniflux_container_labels_traefik_path_prefix != '/' %}
+traefik.http.middlewares.{{ miniflux_identifier }}-slashless-redirect.redirectregex.regex=({{ miniflux_container_labels_traefik_path_prefix | quote }})$
+traefik.http.middlewares.{{ miniflux_identifier }}-slashless-redirect.redirectregex.replacement=${1}/
+{% set middlewares = middlewares + [miniflux_identifier + '-slashless-redirect'] %}
+{% endif %}
+
+{#
+	Intentionally not adding a stripPrefix middleware.
+	Miniflux seems to serve itself under the same prefix it sees in the BASE_URL environment variable.
+#}
+
+{% if miniflux_container_labels_traefik_additional_response_headers.keys() | length > 0 %}
+{% for name, value in miniflux_container_labels_traefik_additional_response_headers.items() %}
+traefik.http.middlewares.{{ miniflux_identifier }}-add-headers.headers.customresponseheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [miniflux_identifier + '-add-headers'] %}
+{% endif %}
+
+traefik.http.routers.{{ miniflux_identifier }}.rule={{ miniflux_container_labels_traefik_rule }}
+{% if miniflux_container_labels_traefik_priority | int > 0 %}
+traefik.http.routers.{{ miniflux_identifier }}.priority={{ miniflux_container_labels_traefik_priority }}
+{% endif %}
+traefik.http.routers.{{ miniflux_identifier }}.service={{ miniflux_identifier }}
+{% if middlewares | length > 0 %}
+traefik.http.routers.{{ miniflux_identifier }}.middlewares={{ middlewares | join(',') }}
+{% endif %}
+traefik.http.routers.{{ miniflux_identifier }}.entrypoints={{ miniflux_container_labels_traefik_entrypoints }}
+traefik.http.routers.{{ miniflux_identifier }}.tls={{ miniflux_container_labels_traefik_tls | to_json }}
+{% if miniflux_container_labels_traefik_tls %}
+traefik.http.routers.{{ miniflux_identifier }}.tls.certResolver={{ miniflux_container_labels_traefik_tls_certResolver }}
+{% endif %}
+
+traefik.http.services.{{ miniflux_identifier }}.loadbalancer.server.port=8080
+{% endif %}
+
+{{ miniflux_container_labels_additional_labels }}

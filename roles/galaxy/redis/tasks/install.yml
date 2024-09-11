@@ -1,0 +1,86 @@
+---
+- name: Inject warning about Redis dual-licensing starting from v7.4.0
+  ansible.builtin.set_fact:
+    devture_playbook_runtime_messages_list: |
+      {{
+        devture_playbook_runtime_messages_list | default([])
+        +
+        [
+          "WARNING: Starting from Redis v7.4.0, Redis is dual-licensed under the Redis Source Available License v2 and the Server Side Public License v1, details: https://redis.com/blog/redis-adopts-dual-source-available-licensing/ This means Redis is no longer Open Source. If you care about that, you may stick to the last known Open Source version, which is v7.2.5 OR (even better) consider switching to a fully Open Source alternative KeyDB. We've already prepared a KeyDB role that works as drop-in replacement for Redis, check it out: https://github.com/mother-of-all-self-hosting/ansible-role-keydb"
+        ]
+      }}
+
+- name: Check if transparent_hugepage is disabled in the boot command
+  ansible.builtin.lineinfile:
+    backup: true
+    path: /etc/default/grub
+    regexp: '^GRUB_CMDLINE_LINUX=".*transparent_hugepage=never'
+    state: absent
+  check_mode: true
+  register: grub_cmdline_check
+  changed_when: false
+  become: true
+  when: redis_transparent_hugepage_disabled
+
+- name: Ensure transparent_hugepage is set to never if missing
+  ansible.builtin.lineinfile:
+    backrefs: true
+    path: /etc/default/grub
+    regexp: "^(GRUB_CMDLINE_LINUX=\".*)\"$"
+    line: '\1 transparent_hugepage=never"'
+  become: true
+  notify:
+    - Update Grub
+  when: redis_transparent_hugepage_disabled and grub_cmdline_check.found == 0
+
+- name: Ensure VM Overcommit Memory is set to 1
+  ansible.posix.sysctl:
+    name: vm.overcommit_memory
+    value: '1'
+    state: present
+    reload: true
+  become: true
+  when: redis_vm_overcommit_memory_enabled
+
+- name: Ensure Redis paths exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0750
+    owner: "{{ redis_uid }}"
+    group: "{{ redis_gid }}"
+  with_items:
+    - "{{ redis_base_path }}"
+    - "{{ redis_data_path }}"
+
+- name: Ensure Redis environment variables file created
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/{{ item }}.j2"
+    dest: "{{ redis_base_path }}/{{ item }}"
+    mode: 0640
+    owner: "{{ redis_uid }}"
+    group: "{{ redis_gid }}"
+  with_items:
+    - "redis.conf"
+
+- name: Ensure Redis container image is pulled
+  community.docker.docker_image:
+    name: "{{ redis_container_image }}"
+    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+    force_source: "{{ redis_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else redis_container_image_force_pull }}"
+  register: result
+  retries: "{{ devture_playbook_help_container_retries_count }}"
+  delay: "{{ devture_playbook_help_container_retries_delay }}"
+  until: result is not failed
+
+- name: Ensure Redis container network is created
+  community.general.docker_network:
+    name: "{{ redis_container_network }}"
+    driver: bridge
+
+- name: Ensure Redis systemd installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/redis.service.j2"
+    dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ redis_identifier }}.service"
+    mode: 0644

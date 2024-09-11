@@ -1,0 +1,44 @@
+---
+
+- name: Ensure miniflux paths exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0750
+    owner: "{{ miniflux_uid }}"
+    group: "{{ miniflux_gid }}"
+  with_items:
+    - "{{ miniflux_base_path }}"
+
+- name: Ensure miniflux support files installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/{{ item }}.j2"
+    dest: "{{ miniflux_base_path }}/{{ item }}"
+    mode: 0640
+    owner: "{{ miniflux_uid }}"
+    group: "{{ miniflux_gid }}"
+  with_items:
+    - env
+    - labels
+
+- name: Ensure miniflux container image is pulled
+  community.docker.docker_image:
+    name: "{{ miniflux_container_image }}"
+    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+    force_source: "{{ miniflux_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else miniflux_container_image_force_pull }}"
+  register: result
+  retries: "{{ devture_playbook_help_container_retries_count }}"
+  delay: "{{ devture_playbook_help_container_retries_delay }}"
+  until: result is not failed
+
+- name: Ensure miniflux container network is created
+  community.general.docker_network:
+    name: "{{ miniflux_container_network }}"
+    driver: bridge
+
+- name: Ensure miniflux systemd service is present
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/systemd/miniflux.service.j2"
+    dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ miniflux_identifier }}.service"
+    mode: 0644

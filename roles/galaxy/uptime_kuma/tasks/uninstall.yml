@@ -1,0 +1,20 @@
+---
+- name: Check existence of uptime-kuma systemd service
+  ansible.builtin.stat:
+    path: "{{ devture_systemd_docker_base_systemd_path }}/{{ uptime_kuma_identifier }}.service"
+  register: uptime_kuma_service_stat
+
+- name: Stop and uninstall uptime-kuma systemd service
+  when: uptime_kuma_service_stat.stat.exists | bool
+  block:
+    - name: Ensure uptime-kuma systemd service is stopped
+      ansible.builtin.service:
+        name: "{{ uptime_kuma_identifier }}"
+        state: stopped
+        enabled: false
+        daemon_reload: true
+
+    - name: Ensure uptime-kuma systemd service does not exist
+      ansible.builtin.file:
+        path: "{{ devture_systemd_docker_base_systemd_path }}/{{ uptime_kuma_identifier }}.service"
+        state: absent

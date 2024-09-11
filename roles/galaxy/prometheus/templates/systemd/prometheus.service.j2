@@ -1,0 +1,52 @@
+#jinja2: lstrip_blocks: "True"
+[Unit]
+Description=Prometheus ({{ prometheus_identifier }})
+{% for service in prometheus_systemd_required_services_list %}
+Requires={{ service }}
+After={{ service }}
+{% endfor %}
+{% for service in prometheus_systemd_wanted_services_list %}
+Wants={{ service }}
+{% endfor %}
+DefaultDependencies=no
+
+[Service]
+Type=simple
+Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop --time={{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ prometheus_identifier }} 2>/dev/null || true'
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ prometheus_identifier }} 2>/dev/null || true'
+
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
+			--rm \
+			--name={{ prometheus_identifier }} \
+			--log-driver=none \
+			--user={{ prometheus_uid }}:{{ prometheus_gid }} \
+			--cap-drop=ALL \
+			--read-only \
+			--network={{ prometheus_container_network }} \
+			{% if prometheus_container_http_host_bind_port %}
+			-p {{ prometheus_container_http_host_bind_port }}:9090 \
+			{% endif %}
+			--label-file={{ prometheus_base_path }}/labels \
+			--mount type=bind,src={{ prometheus_config_path }},dst=/etc/prometheus \
+			--mount type=bind,src={{ prometheus_data_path }},dst=/prometheus \
+			{% for arg in prometheus_container_extra_arguments %}
+			{{ arg }} \
+			{% endfor %}
+			{{ prometheus_container_image }} {{ prometheus_process_arguments|join(' ') }}
+
+{% for network in prometheus_container_additional_networks %}
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ prometheus_identifier }}
+{% endfor %}
+
+ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ prometheus_identifier }}
+
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop --time={{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ prometheus_identifier }} 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ prometheus_identifier }} 2>/dev/null || true'
+
+Restart=always
+RestartSec=30
+SyslogIdentifier={{ prometheus_identifier }}
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,42 @@
+---
+
+- block:
+    - ansible.builtin.include_tasks: "{{ role_path }}/tasks/logs.yml"
+  tags:
+    - setup-all
+    - setup-cleanup
+    - install-cleanup
+
+- block:
+    - ansible.builtin.include_tasks: "{{ role_path }}/tasks/docker.yml"
+  tags:
+    - setup-all
+    - setup-cleanup
+    - install-cleanup
+
+- name: Ensure paths are removed
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  with_items: "{{ system_cleanup_paths }}"
+  ignore_errors: true # ansible (!) behavior is inconsistent, depending on the target server's distro, so that's a workaround
+  tags:
+    - setup-all
+    - setup-cleanup
+    - install-cleanup
+
+- block:
+    - when: system_cleanup_apt | bool and ansible_facts['os_family'] == "Debian"
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/packages.yml"
+  tags:
+    - setup-all
+    - setup-cleanup
+    - install-cleanup
+
+- block:
+    - when: system_cleanup_kernels | bool and ansible_facts['os_family'] == "Debian"
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/kernels.yml"
+  tags:
+    - setup-all
+    - setup-cleanup
+    - install-cleanup

@@ -1,0 +1,111 @@
+{
+  "title": {{ etherpad_title|to_json }},
+  "favicon": "favicon.ico",
+  "skinName": "colibris",
+  "skinVariants": "super-light-toolbar super-light-editor light-background",
+  "ip": "::",
+  "port": 9001,
+  "showSettingsInAdminPage": true,
+  "dbType": {{ etherpad_database_engine|to_json }},
+  "dbSettings": {
+    "database": {{ etherpad_database_name|to_json }},
+    "host":     {{ etherpad_database_hostname|to_json }},
+    "password": {{ etherpad_database_password|to_json }},
+    "port":     {{ etherpad_database_port|to_json }},
+    "user":     {{ etherpad_database_username|to_json }}
+  },
+  "defaultPadText" : {{ etherpad_default_pad_text|to_json }},
+  "suppressErrorsInPadText": false,
+  "requireSession": false,
+  "editOnly": false,
+  "minify": true,
+  "maxAge": 21600,
+  "abiword": {{ etherpad_abiword|to_json }},
+  "soffice": {{ etherpad_soffice|to_json }},
+  "allowUnknownFileEnds": true,
+  "requireAuthentication": false,
+  "requireAuthorization": false,
+  "trustProxy": true,
+  "cookie": {
+    "sameSite": "Lax",
+    "keyRotationInterval": 86400000,
+    "sessionLifetime": 86400000
+  },
+  "disableIPlogging": true,
+  "automaticReconnectionTimeout": 0,
+  "scrollWhenFocusLineIsOutOfViewport": {
+    "percentage": {
+      "editionAboveViewport": 0,
+      "editionBelowViewport": 0
+    },
+    "duration": 0,
+    "scrollWhenCaretIsInTheLastLineOfViewport": false,
+    "percentageToScrollWhenUserPressesArrowUp": 0
+  },
+  "socketTransportProtocols" : ["xhr-polling", "jsonp-polling", "htmlfile"],
+  "socketIo": {
+    "maxHttpBufferSize": 10000
+  },
+  "loadTest": false,
+  "dumpOnUncleanExit": false,
+  "indentationOnNewLine": false,
+  "importExportRateLimiting": {
+    "windowMs": 90000,
+    "max": 10
+  },
+  "importMaxFileSize": 52428800,
+  "commitRateLimiting": {
+    "duration": 1,
+    "points": 10
+  },
+  "exposeVersion": false,
+  "padOptions": {
+    "noColors": false,
+    "showControls": true,
+    "showChat": false,
+    "showLineNumbers": true,
+    "useMonospaceFont": false,
+    "userName": false,
+    "userColor": false,
+    "rtl": false,
+    "alwaysShowChat": false,
+    "chatAndUsers": false,
+    "lang": "en-gb"
+  },
+{% if etherpad_admin_username != "" and etherpad_admin_password != "" %}
+  "users": {
+    {{ etherpad_admin_username|to_json }}: {
+      "password": {{ etherpad_admin_password|to_json }},
+      "is_admin": true
+    }
+  },
+{% endif %}
+  "padShortcutEnabled" : {
+    "altF9": true,
+    "altC": true,
+    "cmdShift2": true,
+    "delete": true,
+    "return": true,
+    "esc": true,
+    "cmdS": true,
+    "tab": true,
+    "cmdZ": true,
+    "cmdY": true,
+    "cmdI": true,
+    "cmdB": true,
+    "cmdU": true,
+    "cmd5": true,
+    "cmdShiftL": true,
+    "cmdShiftN": true,
+    "cmdShift1": true,
+    "cmdShiftC": true,
+    "cmdH": true,
+    "ctrlHome": true,
+    "pageUp": true,
+    "pageDown": true
+  },
+  "socketTransportProtocols" : ["websocket", "polling"],
+  "loglevel": "WARN",
+  "customLocaleStrings": {},
+  "enableAdminUITests": false
+}

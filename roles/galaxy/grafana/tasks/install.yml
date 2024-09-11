@@ -1,0 +1,81 @@
+---
+
+- name: Ensure grafana paths exists
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0750"
+    owner: "{{ grafana_uid }}"
+    group: "{{ grafana_gid }}"
+  with_items:
+    - "{{ grafana_base_path }}"
+    - "{{ grafana_config_path }}"
+    - "{{ grafana_config_path }}/provisioning"
+    - "{{ grafana_config_path }}/provisioning/datasources"
+    - "{{ grafana_config_path }}/provisioning/dashboards"
+    - "{{ grafana_config_path }}/dashboards"
+    - "{{ grafana_data_path }}"
+
+- name: Ensure Grafana support files present
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/{{ item.src }}"
+    dest: "{{ item.dst }}"
+    mode: "0440"
+    owner: "{{ grafana_uid }}"
+    group: "{{ grafana_gid }}"
+  with_items:
+    - src: grafana.ini.j2
+      dst: "{{ grafana_config_path }}/grafana.ini"
+    - src: provisioning/datasources.yaml.j2
+      dst: "{{ grafana_config_path }}/provisioning/datasources/default.yaml"
+    - src: provisioning/dashboards.yaml.j2
+      dst: "{{ grafana_config_path }}/provisioning/dashboards/default.yaml"
+    - src: labels.j2
+      dst: "{{ grafana_base_path }}/labels"
+    - src: env.j2
+      dst: "{{ grafana_base_path }}/env"
+
+- name: Ensure dashboard(s) downloaded
+  ansible.builtin.get_url:
+    url: "{{ item }}"
+    dest: "{{ grafana_config_path }}/dashboards/"
+    force: true
+    mode: "0440"
+    owner: "{{ grafana_uid }}"
+    group: "{{ grafana_gid }}"
+  with_items: "{{ grafana_dashboard_download_urls }}"
+  register: result
+  retries: "{{ devture_playbook_help_geturl_retries_count }}"
+  delay: "{{ devture_playbook_help_geturl_retries_delay }}"
+  until: result is not failed
+
+- name: Ensure dashboard templates installed
+  ansible.builtin.template:
+    src: "{{ item.path }}"
+    dest: "{{ grafana_config_path }}/provisioning/dashboards/{{ item.name }}"
+    mode: "0440"
+    owner: "{{ grafana_uid }}"
+    group: "{{ grafana_gid }}"
+  with_items: "{{ grafana_provisioning_dashboard_template_files }}"
+
+- name: Ensure Grafana image is pulled
+  community.docker.docker_image:
+    name: "{{ grafana_container_image }}"
+    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+    force_source: "{{ grafana_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else grafana_container_image_force_pull }}"
+  register: result
+  retries: "{{ devture_playbook_help_container_retries_count }}"
+  delay: "{{ devture_playbook_help_container_retries_delay }}"
+  until: result is not failed
+
+- name: Ensure Grafana container network is created
+  community.general.docker_network:
+    name: "{{ grafana_container_network }}"
+    driver: bridge
+
+- name: Ensure Grafana systemd service installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/systemd/grafana.service.j2"
+    dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ grafana_identifier }}.service"
+    mode: "0644"

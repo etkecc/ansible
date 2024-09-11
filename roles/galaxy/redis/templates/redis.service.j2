@@ -1,0 +1,52 @@
+#jinja2: lstrip_blocks: "True"
+[Unit]
+Description=Redis ({{ redis_identifier }})
+{% for service in redis_systemd_required_services_list %}
+Requires={{ service }}
+After={{ service }}
+{% endfor %}
+{% for service in redis_systemd_wanted_services_list %}
+Wants={{ service }}
+{% endfor %}
+
+[Service]
+Type=simple
+Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop --time={{ redis_container_stop_grace_time_seconds }} {{ redis_identifier }} 2>/dev/null || true'
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ redis_identifier }} 2>/dev/null || true'
+
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
+			--rm \
+			--name={{ redis_identifier }} \
+			--log-driver=none \
+			--user={{ redis_uid }}:{{ redis_gid }} \
+			--cap-drop=ALL \
+			--read-only \
+			--tmpfs=/tmp:rw,noexec,nosuid,size=100m \
+			--network={{ redis_container_network }} \
+			{% if redis_container_redis_bind_port %}
+			-p {{ redis_container_redis_bind_port }}:6379 \
+			{% endif %}
+			--mount type=bind,src={{ redis_base_path }}/redis.conf,dst=/usr/local/etc/redis/redis.conf,ro \
+			--mount type=bind,src={{ redis_data_path }},dst=/data \
+			{% for arg in redis_container_extra_arguments %}
+			{{ arg }} \
+			{% endfor %}
+			{{ redis_container_image }} \
+			redis-server /usr/local/etc/redis/redis.conf
+
+{% for network in redis_container_additional_networks %}
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ redis_identifier }}
+{% endfor %}
+
+ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ redis_identifier }}
+
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop --time={{ redis_container_stop_grace_time_seconds }} {{ redis_identifier }} 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ redis_identifier }} 2>/dev/null || true'
+
+Restart=always
+RestartSec=30
+SyslogIdentifier={{ redis_identifier }}
+
+[Install]
+WantedBy=multi-user.target

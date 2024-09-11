@@ -1,0 +1,53 @@
+#jinja2: lstrip_blocks: "True"
+[Unit]
+Description=Grafana ({{ grafana_identifier }})
+{% for service in grafana_systemd_required_services_list %}
+Requires={{ service }}
+After={{ service }}
+{% endfor %}
+{% for service in grafana_systemd_wanted_services_list %}
+Wants={{ service }}
+{% endfor %}
+DefaultDependencies=no
+
+[Service]
+Type=simple
+Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop --time={{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ grafana_identifier }} 2>/dev/null || true'
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ grafana_identifier }} 2>/dev/null || true'
+
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
+			--rm \
+			--name={{ grafana_identifier }} \
+			--log-driver=none \
+			--user={{ grafana_uid }}:{{ grafana_gid }} \
+			--cap-drop=ALL \
+			--read-only \
+			--network={{ grafana_container_network }} \
+			{% if grafana_container_http_host_bind_port %}
+			-p {{ grafana_container_http_host_bind_port }}:3000 \
+			{% endif %}
+			--env-file={{ grafana_base_path }}/env \
+			--label-file={{ grafana_base_path }}/labels \
+			--mount type=bind,src={{ grafana_config_path }},dst=/etc/grafana \
+			--mount type=bind,src={{ grafana_data_path }},dst=/var/lib/grafana \
+			{% for arg in grafana_container_extra_arguments %}
+			{{ arg }} \
+			{% endfor %}
+			{{ grafana_container_image }}
+
+{% for network in grafana_container_additional_networks %}
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ grafana_identifier }}
+{% endfor %}
+
+ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ grafana_identifier }}
+
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop --time={{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ grafana_identifier }} 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ grafana_identifier }} 2>/dev/null || true'
+
+Restart=always
+RestartSec=30
+SyslogIdentifier={{ grafana_identifier }}
+
+[Install]
+WantedBy=multi-user.target

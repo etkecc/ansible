@@ -1,0 +1,45 @@
+{% if languagetool_container_labels_traefik_enabled %}
+traefik.enable=true
+
+{% if languagetool_container_labels_traefik_docker_network %}
+traefik.docker.network={{ languagetool_container_labels_traefik_docker_network }}
+{% endif %}
+
+{% set middlewares = [] %}
+
+{% if languagetool_container_labels_traefik_path_prefix != '/' %}
+traefik.http.middlewares.{{ languagetool_identifier }}-slashless-redirect.redirectregex.regex=({{ languagetool_container_labels_traefik_path_prefix | quote }})$
+traefik.http.middlewares.{{ languagetool_identifier }}-slashless-redirect.redirectregex.replacement=${1}/
+{% set middlewares = middlewares + [languagetool_identifier + '-slashless-redirect'] %}
+{% endif %}
+
+{% if languagetool_container_labels_traefik_path_prefix != '/' %}
+traefik.http.middlewares.{{ languagetool_identifier }}-strip-prefix.stripprefix.prefixes={{ languagetool_container_labels_traefik_path_prefix }}
+{% set middlewares = middlewares + [languagetool_identifier + '-strip-prefix'] %}
+{% endif %}
+
+{% if languagetool_container_labels_traefik_additional_response_headers.keys() | length > 0 %}
+{% for name, value in languagetool_container_labels_traefik_additional_response_headers.items() %}
+traefik.http.middlewares.{{ languagetool_identifier }}-add-headers.headers.customresponseheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [languagetool_identifier + '-add-headers'] %}
+{% endif %}
+
+traefik.http.routers.{{ languagetool_identifier }}.rule={{ languagetool_container_labels_traefik_rule }}
+{% if languagetool_container_labels_traefik_priority | int > 0 %}
+traefik.http.routers.{{ languagetool_identifier }}.priority={{ languagetool_container_labels_traefik_priority }}
+{% endif %}
+traefik.http.routers.{{ languagetool_identifier }}.service={{ languagetool_identifier }}
+{% if middlewares | length > 0 %}
+traefik.http.routers.{{ languagetool_identifier }}.middlewares={{ middlewares | join(',') }}
+{% endif %}
+traefik.http.routers.{{ languagetool_identifier }}.entrypoints={{ languagetool_container_labels_traefik_entrypoints }}
+traefik.http.routers.{{ languagetool_identifier }}.tls={{ languagetool_container_labels_traefik_tls | to_json }}
+{% if languagetool_container_labels_traefik_tls %}
+traefik.http.routers.{{ languagetool_identifier }}.tls.certResolver={{ languagetool_container_labels_traefik_tls_certResolver }}
+{% endif %}
+
+traefik.http.services.{{ languagetool_identifier }}.loadbalancer.server.port=8010
+{% endif %}
+
+{{ languagetool_container_labels_additional_labels }}

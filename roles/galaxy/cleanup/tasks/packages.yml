@@ -1,0 +1,14 @@
+---
+# Debian only
+
+- name: Ensure packages are upgraded
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+    upgrade: "{{ system_cleanup_apt_upgrade_type }}"
+
+- name: Ensure package manager is clean
+  ansible.builtin.apt:
+    clean: true
+    autoclean: true
+    autoremove: true

@@ -1,0 +1,43 @@
+---
+
+- name: Ensure languagetool paths exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0750
+    owner: "{{ languagetool_uid }}"
+    group: "{{ languagetool_gid }}"
+  with_items:
+    - "{{ languagetool_base_path }}"
+    - "{{ languagetool_data_path }}"
+
+- name: Install n-grams
+  ansible.builtin.include_tasks: ngrams.yml
+  with_items: "{{ languagetool_ngrams_langs_enabled }}"
+  when: languagetool_ngrams_enabled | bool
+
+- name: Ensure languagetool labels installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/labels.j2"
+    dest: "{{ languagetool_base_path }}/labels"
+    mode: 0640
+    owner: "{{ languagetool_uid }}"
+    group: "{{ languagetool_gid }}"
+
+- name: Ensure languagetool container image is pulled
+  community.docker.docker_image:
+    name: "{{ languagetool_container_image }}"
+    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+    force_source: "{{ languagetool_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else languagetool_container_image_force_pull }}"
+
+- name: Ensure languagetool container network is created
+  community.general.docker_network:
+    name: "{{ languagetool_container_network }}"
+    driver: bridge
+
+- name: Ensure languagetool systemd service is present
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/systemd/languagetool.service.j2"
+    dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ languagetool_identifier }}.service"
+    mode: 0644

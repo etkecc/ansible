@@ -1,0 +1,26 @@
+---
+
+- name: Check existence of swap file
+  ansible.builtin.stat:
+    path: "{{ system_swap_path }}"
+  register: system_swap_file
+
+- when: system_swap_file.stat.exists | bool
+  block:
+    - name: Ensure swap is disabled
+      ansible.builtin.command: "swapoff {{ system_swap_path }}"
+
+    - name: Ensure swap is absent in /etc/fstab
+      ansible.posix.mount:
+        name: none
+        src: "{{ system_swap_path }}"
+        fstype: swap
+        opts: sw,nofail
+        dump: '0'
+        passno: '0'
+        state: present
+
+    - name: Ensure swap file removed
+      ansible.builtin.file:
+        path: "{{ system_swap_path }}"
+        state: absent

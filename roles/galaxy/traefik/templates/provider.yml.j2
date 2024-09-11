@@ -1,0 +1,35 @@
+#jinja2: lstrip_blocks: "True"
+
+http:
+  middlewares:
+    {% if devture_traefik_dashboard_basicauth_enabled %}
+    traefik-dashboard-auth:
+      basicauth:
+        users: {{ devture_traefik_dashboard_basicauth_file_contents | to_json }}
+    {% endif %}
+
+  routers:
+    {% for domain in devture_traefik_additional_domains_to_obtain_certificates_for %}
+      {{ domain|replace(".", "-") }}-dummy:
+        rule: Host(`{{ domain }}`)
+        service: noop@internal
+        entryPoints: {{ devture_traefik_additional_domains_to_obtain_certificates_for_entryPoints | to_json }}
+        tls:
+          certResolver: {{ devture_traefik_additional_domains_to_obtain_certificates_for_certResolver | to_json }}
+    {% endfor %}
+
+    {% if devture_traefik_dashboard_enabled %}
+      traefik-dashboard:
+        rule: {{ devture_traefik_dashboard_rule | to_json }}
+        service: api@internal
+        entryPoints: {{ devture_traefik_dashboard_entrypoints | to_json }}
+        {% if devture_traefik_dashboard_tls %}
+        tls:
+          certResolver: {{ devture_traefik_dashboard_tls_certResolver | to_json }}
+        {% else %}
+        tls: false
+        {% endif %}
+        {% if devture_traefik_dashboard_basicauth_enabled %}
+        middlewares: traefik-dashboard-auth
+        {% endif %}
+    {% endif %}

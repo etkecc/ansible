@@ -1,0 +1,20 @@
+---
+
+- block:
+    - when: vaultwarden_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+
+    - when: vaultwarden_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+  tags:
+    - setup-all
+    - setup-vaultwarden
+    - install-all
+    - install-vaultwarden
+
+- block:
+    - when: not vaultwarden_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
+  tags:
+    - setup-all
+    - setup-vaultwarden

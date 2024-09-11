@@ -1,0 +1,9 @@
+[Unit]
+Description=Run journalctl vacuuum procedure
+
+[Timer]
+Unit=systemd-journald-autovacuum.service
+OnCalendar={{ system_cleanup_logs_calendar }}
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,21 @@
+galaxy_info:
+  author: kinduff
+  company: kinduff
+  role_name: linkding
+  namespace: kinduff
+  description: Ansible Docker Linkding
+  platforms:
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+    - name: ArchLinux
+      versions:
+        - all
+    - name: EL
+      versions:
+        - "7"
+  license: GPL-3.0-or-later
+  min_ansible_version: "2.1"

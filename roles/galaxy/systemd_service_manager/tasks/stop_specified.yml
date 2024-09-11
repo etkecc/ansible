@@ -1,0 +1,11 @@
+---
+
+- name: Ensure systemd is reloaded
+  ansible.builtin.service:
+    daemon_reload: true
+
+- name: Ensure systemd services are stopped
+  ansible.builtin.service:
+    name: "{{ item.name }}"
+    state: stopped
+  with_items: "{{ devture_systemd_service_manager_services_list_to_work_with | sort (attribute='priority,name', reverse=true) }}"

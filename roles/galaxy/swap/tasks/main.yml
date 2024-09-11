@@ -1,0 +1,19 @@
+---
+
+- tags:
+    - setup-all
+    - setup-system-swap
+    - install-all
+    - install-system-swap
+  block:
+    - name: Run swap installation tasks
+      when: system_swap_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+
+- tags:
+    - setup-all
+    - setup-system-swap
+  block:
+    - name: Run swap uninstallation tasks
+      when: not system_swap_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

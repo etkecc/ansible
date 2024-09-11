@@ -1,0 +1,91 @@
+---
+
+- name: Ensure Etherpad paths exists
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: 0770
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+  when: item.when | bool
+  with_items:
+    - path: "{{ etherpad_base_path }}"
+      owner: "{{ etherpad_user_uid }}"
+      group: "{{ etherpad_user_gid }}"
+      when: true
+    - path: "{{ etherpad_config_path }}"
+      owner: "{{ etherpad_user_uid }}"
+      group: "{{ etherpad_user_gid }}"
+      when: true
+    - path: "{{ etherpad_data_path }}"
+      owner: "{{ etherpad_user_uid }}"
+      group: "{{ etherpad_user_gid }}"
+      when: true
+    - path: "{{ etherpad_container_src_path }}"
+      owner: root
+      group: root
+      when: "{{ etherpad_container_image_self_build }}"
+
+- name: Ensure Etherpad config installed
+  ansible.builtin.copy:
+    content: "{{ etherpad_configuration | to_nice_json }}"
+    dest: "{{ etherpad_config_path }}/settings.json"
+    mode: 0640
+    owner: "{{ etherpad_user_uid }}"
+    group: "{{ etherpad_user_gid }}"
+
+- name: Ensure Etherpad labels installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/labels.j2"
+    dest: "{{ etherpad_base_path }}/labels"
+    mode: 0640
+    owner: "{{ etherpad_user_uid }}"
+    group: "{{ etherpad_user_gid }}"
+
+- name: Ensure Etherpad container image is pulled
+  community.docker.docker_image:
+    name: "{{ etherpad_container_image }}"
+    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+    force_source: "{{ etherpad_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else etherpad_container_image_force_pull }}"
+  when: "not etherpad_container_image_self_build | bool"
+  register: result
+  retries: "{{ devture_playbook_help_container_retries_count }}"
+  delay: "{{ devture_playbook_help_container_retries_delay }}"
+  until: result is not failed
+
+- when: etherpad_container_image_self_build | bool
+  block:
+    - name: Ensure Etherpad repository is present on self-build
+      ansible.builtin.git:
+        repo: "{{ etherpad_container_image_self_build_repo }}"
+        version: "{{ etherpad_container_image_self_build_repo_version }}"
+        dest: "{{ etherpad_container_src_path }}"
+        force: "yes"
+      register: etherpad_git_pull_results
+
+    # Invoking the `docker build` command here, instead of calling the `docker_image` Ansible module,
+    # because the latter does not support BuildKit.
+    # See: https://github.com/ansible-collections/community.general/issues/514
+    - name: Ensure Etherpad container image is built
+      ansible.builtin.shell:
+        chdir: "{{ etherpad_container_src_path }}"
+        cmd: |
+          {{ devture_systemd_docker_base_host_command_docker }} build \
+          -t "{{ etherpad_container_image }}" \
+          -f Dockerfile \
+          .
+      environment:
+        DOCKER_BUILDKIT: 1
+      changed_when: true
+
+- name: Ensure Etherpad container network is created
+  community.general.docker_network:
+    name: "{{ etherpad_container_network }}"
+    driver: bridge
+
+- name: Ensure Etherpad systemd service installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/systemd/etherpad.service.j2"
+    dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ etherpad_identifier }}.service"
+    mode: 0644

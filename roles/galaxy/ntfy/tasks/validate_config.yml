@@ -1,0 +1,34 @@
+---
+
+- name: Fail if required ntfy settings not defined
+  ansible.builtin.fail:
+    msg: >
+      You need to define a required configuration setting (`{{ item }}`).
+  when: "vars[item] == ''"
+  with_items:
+    - ntfy_identifier
+    - ntfy_uid
+    - ntfy_gid
+    - ntfy_hostname
+    - ntfy_path_prefix
+    - ntfy_container_network
+
+- when: ntfy_container_labels_traefik_enabled | bool
+  block:
+    - name: Fail if required ntfy Traefik settings not defined
+      ansible.builtin.fail:
+        msg: >-
+          You need to define a required configuration setting (`{{ item }}`).
+      when: "vars[item] == ''"
+      with_items:
+        - ntfy_container_labels_traefik_hostname
+        - ntfy_container_labels_traefik_path_prefix
+
+    # We ensure it doesn't end with a slash, because we handle both (slash and no-slash).
+    # Knowing that `ntfy_container_labels_traefik_path_prefix` does not end with a slash
+    # ensures we know how to set these routes up without having to do "does it end with a slash" checks elsewhere.
+    - name: Fail if ntfy_container_labels_traefik_path_prefix ends with a slash
+      ansible.builtin.fail:
+        msg: >-
+          ntfy_container_labels_traefik_path_prefix (`{{ ntfy_container_labels_traefik_path_prefix }}`) must either be `/` or not end with a slash (e.g. `/ntfy`).
+      when: "ntfy_container_labels_traefik_path_prefix != '/' and ntfy_container_labels_traefik_path_prefix[-1] == '/'"

@@ -1,0 +1,38 @@
+---
+
+- name: Ensure AUX directories are created
+  ansible.builtin.file:
+    dest: "{{ item.dest }}"
+    state: directory
+    owner: "{{ item.owner | default(aux_directory_default_owner) }}"
+    group: "{{ item.group | default(aux_directory_default_group) }}"
+    mode: "{{ item.mode | default(aux_directory_default_mode) }}"
+  with_items: "{{ aux_directory_definitions }}"
+
+- name: Ensure AUX files are created
+  ansible.builtin.copy:
+    src: "{{ item.src if 'src' in item else omit }}"
+    content: "{{ item.content if 'content' in item else omit }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ item.owner | default(aux_file_default_owner) }}"
+    group: "{{ item.group | default(aux_file_default_group) }}"
+    mode: "{{ item.mode | default(aux_file_default_mode) }}"
+  with_items: "{{ aux_file_definitions }}"
+  loop_control:
+    label: "{{ item.dest }}"
+
+- name: Ensure AUX packages are installed
+  ansible.builtin.package:
+    name: "{{ aux_package_definitions }}"
+    state: "{{ aux_package_state }}"
+  become: true
+  when: aux_package_definitions|length > 0
+
+- name: Ensure AUX commands are run
+  ansible.builtin.command: "{{ item.command }}"
+  become: "{{ item.become|default(aux_command_default_become)|bool }}"
+  become_user: "{{ item.become_user|default(aux_command_default_become_user) }}"
+  ignore_errors: "{{ item.ignore_errors|default(aux_command_default_ignore_errors)|bool }}"
+  with_items: "{{ aux_command_definitions }}"
+  loop_control:
+    label: "{{ item.command }}"

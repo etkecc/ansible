@@ -1,0 +1,5 @@
+---
+
+# `prometheus_postgres_exporter_container_http_host_bind_port_number_raw` contains the raw port number extracted from `prometheus_postgres_exporter_container_http_host_bind_port`,
+# which can contain values like this: ('1234', '127.0.0.1:1234', '0.0.0.0:1234')
+prometheus_postgres_exporter_container_http_host_bind_port_number_raw: "{{ '' if prometheus_postgres_exporter_container_http_host_bind_port == '' else (prometheus_postgres_exporter_container_http_host_bind_port.split(':')[1] if ':' in prometheus_postgres_exporter_container_http_host_bind_port else prometheus_postgres_exporter_container_http_host_bind_port) }}"

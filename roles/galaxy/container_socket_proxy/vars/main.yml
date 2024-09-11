@@ -1,0 +1,4 @@
+---
+
+# devture_container_socket_proxy_endpoint exposes the endpoint URI on which other containers can reach this proxy
+devture_container_socket_proxy_endpoint: "tcp://{{ devture_container_socket_proxy_identifier }}:2375"

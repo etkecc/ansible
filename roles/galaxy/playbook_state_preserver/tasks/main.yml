@@ -1,0 +1,16 @@
+---
+
+- name: Fail if required playbook-state-preserver settings not defined
+  fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`) for using this role.
+  when: "vars[item] == ''"
+  with_items:
+    - devture_playbook_state_preserver_uid
+    - devture_playbook_state_preserver_gid
+
+- when: devture_playbook_state_preserver_vars_preservation_enabled | bool
+  ansible.builtin.import_tasks: "{{ role_path }}/tasks/preserve_vars.yml"
+
+- when: devture_playbook_state_preserver_commit_hash_preservation_enabled | bool
+  ansible.builtin.import_tasks: "{{ role_path }}/tasks/preserve_commit_hash.yml"

@@ -1,0 +1,54 @@
+---
+
+devture_systemd_docker_base_systemd_path: "/etc/systemd/system"
+
+# Specifies the path to use for the `HOME` environment variable for systemd unit files.
+# Docker 20.10 complains with `WARNING: Error loading config file: .dockercfg: $HOME is not defined`
+# if `$HOME` is not defined, so we define something to make it happy.
+devture_systemd_docker_base_systemd_unit_home_path: /root
+
+devture_systemd_docker_base_host_command_docker: "/usr/bin/env docker"
+devture_systemd_docker_base_host_command_sh: "/usr/bin/env sh"
+devture_systemd_docker_base_host_command_systemctl: "/usr/bin/env systemctl"
+
+# Controls whether to enable IPv6 for all Docker container networks used by the various services.
+# This variable doesn't do anything by itself - it merely affects services (roles) that are configured to respect it.
+#
+# For IPv6 to work, the Docker daemon needs to be configured for IPv6: https://docs.docker.com/config/daemon/ipv6/
+# You may be able to apply the required Docker Daemon settings via Ansible by using the `docker_daemon_options` variable.
+# See: https://github.com/geerlingguy/ansible-role-docker/blob/dc1c9a16066506c09f426713544581dc9b38e747/defaults/main.yml#L58
+#
+# Playbooks that integrate this role may be adjusting the Docker role as well in a similar way as shown below:
+# docker_daemon_options:
+#   experimental: true
+#   ip6tables: true
+#
+# Changing `devture_systemd_docker_base_ipv6_enabled` subsequently may not adjust existing container networks.
+# When changing `devture_systemd_docker_base_ipv6_enabled`, consider:
+# - stopping all services (`just stop-all`)
+# - deleting all container networks on the server: `docker network rm $(docker network ls -q)`
+# - re-running the playbook fully: `just install-all`
+devture_systemd_docker_base_ipv6_enabled: false
+
+# The name of the Docker service that other services will depend on.
+# You can use an empty string to remove this dependency.
+devture_systemd_docker_base_docker_service_name: docker.service
+
+# Specifies how various roles will interact with the container system when it comes to pulling images, creating networks, etc.
+# Valid options: ansible-module, command
+devture_systemd_docker_base_container_system_interaction_method: ansible-module
+
+# Specifies how various roles will pull the image.
+# Valid options: ansible-module, command
+devture_systemd_docker_base_container_image_pull_method: "{{ devture_systemd_docker_base_container_system_interaction_method }}"
+
+# Specifies how various roles will create container networks.
+# Valid options: ansible-module, command
+devture_systemd_docker_base_container_network_creation_method: "{{ devture_systemd_docker_base_container_system_interaction_method }}"
+
+# Specifies how long to give to the container stopping process (docker stop --time=X CONTAINER) to run gracefully, before killing the container.
+# We use a relatively short interval here, because:
+# - certain services ignore SIGTERM and we don't wish to be stuck waiting for long
+# - certain services (HTTP servers) may wish to wait for long-polling connections to end and they may not be ending as quickly as we wish
+# A few seconds of grace time should be enough for everyone.
+devture_systemd_docker_base_container_stop_grace_time_seconds: 3

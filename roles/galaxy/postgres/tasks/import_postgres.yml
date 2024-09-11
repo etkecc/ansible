@@ -1,0 +1,115 @@
+---
+
+# Pre-checks
+
+- name: Fail if playbook called incorrectly
+  ansible.builtin.fail:
+    msg: "The `server_path_postgres_dump` variable needs to be provided to this playbook, via --extra-vars"
+  when: "server_path_postgres_dump is not defined or server_path_postgres_dump.startswith('<')"
+
+- name: Check if the provided Postgres dump file exists
+  ansible.builtin.stat:
+    path: "{{ server_path_postgres_dump }}"
+  register: result_server_path_postgres_dump_stat
+
+- name: Fail if provided Postgres dump file doesn't exists
+  ansible.builtin.fail:
+    msg: "File cannot be found on the server at {{ server_path_postgres_dump }}"
+  when: "not result_server_path_postgres_dump_stat.stat.exists"
+
+
+# Defaults
+
+- name: Set postgres_start_wait_time, if not provided
+  ansible.builtin.set_fact:
+    postgres_start_wait_time: 15
+  when: "postgres_start_wait_time | default('') == ''"
+
+- name: Set postgres_import_wait_time, if not provided
+  ansible.builtin.set_fact:
+    postgres_import_wait_time: "{{ 7 * 86400 }}"
+  when: "postgres_import_wait_time | default('') == ''"
+
+# By default, we connect and import into the main (`default`) database.
+# Single-database dumps may wish to import into a specific database instead by passing an `postgres_default_import_database` extra-vars variable.
+- name: Set postgres_default_import_database, if not provided
+  ansible.builtin.set_fact:
+    postgres_default_import_database: "{{ devture_postgres_db_name }}"
+  when: "postgres_default_import_database | default('') == ''"
+
+# Actual import work
+
+- name: Ensure Postgres is started
+  ansible.builtin.service:
+    name: "{{ devture_postgres_identifier }}"
+    state: started
+    daemon_reload: true
+  register: devture_postgres_ensure_started_result
+
+- when: "devture_postgres_ensure_started_result.changed | bool"
+  name: Wait a bit, so that Postgres can start
+  ansible.builtin.wait_for:
+    timeout: "{{ postgres_start_wait_time }}"
+  delegate_to: 127.0.0.1
+  become: false
+
+- ansible.builtin.import_tasks: tasks/detect_existing_postgres_version.yml
+
+- name: Abort, if no existing Postgres version detected
+  ansible.builtin.fail:
+    msg: "Could not find existing Postgres installation"
+  when: "not devture_postgres_detected_existing | bool"
+
+# Starting the database container had automatically created the default
+# role (`devture_postgres_connection_username`) and database (`devture_postgres_db_name`).
+# The dump most likely contains those same entries and would try to re-create them, leading to errors.
+# We need to skip over those lines.
+- name: Generate Postgres database import command
+  ansible.builtin.set_fact:
+    devture_postgres_import_command: >-
+      {{ devture_systemd_docker_base_host_command_docker }} run --rm --name {{ devture_postgres_identifier }}-import
+      --log-driver=none
+      --user={{ devture_postgres_uid }}:{{ devture_postgres_gid }}
+      --cap-drop=ALL
+      --network={{ devture_postgres_container_network }}
+      --env-file={{ devture_postgres_base_path }}/env-postgres-psql
+      --mount type=bind,src={{ server_path_postgres_dump }},dst=/{{ server_path_postgres_dump | basename }},ro
+      --entrypoint=/bin/sh
+      {{ devture_postgres_container_image_latest }}
+      -c "set -o pipefail && cat /{{ server_path_postgres_dump | basename }} |
+      {{ 'gunzip |' if server_path_postgres_dump.endswith('.gz') else '' }}
+      grep -vE '{{ devture_postgres_import_roles_ignore_regex }}' |
+      grep -vE '{{ devture_postgres_import_databases_ignore_regex }}' |
+      psql -b -v ON_ERROR_STOP=1 -h {{ devture_postgres_identifier }} --dbname={{ postgres_default_import_database }}"
+  tags:
+    - skip_ansible_lint
+
+# This is a hack.
+# See: https://ansibledaily.com/print-to-standard-output-without-escaping/
+#
+# We want to run `debug: msg=".."`, but that dumps it as JSON and escapes double quotes within it,
+# which ruins the command (`devture_postgres_import_command`)
+- name: Note about Postgres importing alternative
+  ansible.builtin.set_fact:
+    dummy: true
+  with_items:
+    - >-
+        Importing Postgres database using the following command: `{{ devture_postgres_import_command }}`.
+        If this crashes, you can stop Postgres (`systemctl stop {{ devture_postgres_identifier }}`),
+        delete its existing data (`rm -rf {{ devture_postgres_data_path }}/*`), start it again (`systemctl start {{ devture_postgres_identifier }}`)
+        and manually run the above import command directly on the server.
+
+- name: Perform Postgres database import
+  ansible.builtin.command:
+    cmd: "{{ devture_postgres_import_command }}"
+  async: "{{ postgres_import_wait_time }}"
+  poll: 10
+  register: devture_postgres_import_postgres_command_result
+  failed_when: not devture_postgres_import_postgres_command_result.finished or devture_postgres_import_postgres_command_result.rc != 0
+  changed_when: devture_postgres_import_postgres_command_result.finished and devture_postgres_import_postgres_command_result.rc == 0
+
+- when: "devture_postgres_ensure_started_result.changed | bool"
+  name: Ensure Postgres is stopped (if it previously was)
+  ansible.builtin.service:
+    name: "{{ devture_postgres_identifier }}"
+    state: stopped

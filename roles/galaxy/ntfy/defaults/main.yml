@@ -1,0 +1,179 @@
+---
+# Project source code URL: https://github.com/binwiederhier/ntfy
+
+ntfy_enabled: true
+
+ntfy_identifier: ntfy
+
+ntfy_base_path: "{{ ntfy_identifier }}"
+ntfy_config_dir_path: "{{ ntfy_base_path }}/config"
+ntfy_data_path: "{{ ntfy_base_path }}/data"
+
+ntfy_version: v2.10.0
+
+ntfy_uid: ''
+ntfy_gid: ''
+
+# The hostname at which ntfy is served.
+ntfy_hostname: ''
+
+# The path at which ntfy is exposed.
+# This value must either be `/` or not end with a slash (e.g. `/ntfy`).
+ntfy_path_prefix: /
+
+# Public facing base URL of the ntfy service.
+# It should not end with a slash.
+ntfy_base_url: "https://{{ ntfy_hostname }}{{ '' if ntfy_path_prefix == '/' else ntfy_path_prefix }}"
+
+ntfy_container_image: "{{ ntfy_container_image_registry_prefix }}binwiederhier/ntfy:{{ ntfy_version }}"
+ntfy_container_image_registry_prefix: docker.io/
+ntfy_container_image_force_pull: "{{ ntfy_container_image.endswith(':latest') }}"
+
+# Controls whether the container exposes its HTTP port (tcp/80 in the container).
+#
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
+ntfy_container_http_host_bind_port: ''
+
+# The base container network. It will be auto-created by this role if it doesn't exist already.
+ntfy_container_network: "{{ ntfy_identifier }}"
+
+# A list of additional container networks that the container would be connected to.
+# The role does not create these networks, so make sure they already exist.
+# Use this to expose this container to another reverse proxy, which runs in a different container network.
+ntfy_container_additional_networks: []
+
+# ntfy_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
+# See `../templates/labels.j2` for details.
+#
+# To inject your own other container labels, see `ntfy_container_labels_additional_labels`.
+ntfy_container_labels_traefik_enabled: true
+ntfy_container_labels_traefik_docker_network: "{{ ntfy_container_network }}"
+ntfy_container_labels_traefik_hostname: "{{ ntfy_hostname }}"
+# The path prefix must either be `/` or not end with a slash (e.g. `/cinny`).
+ntfy_container_labels_traefik_path_prefix: "{{ ntfy_path_prefix }}"
+ntfy_container_labels_traefik_rule: "Host(`{{ ntfy_container_labels_traefik_hostname }}`){% if ntfy_container_labels_traefik_path_prefix != '/' %} && PathPrefix(`{{ ntfy_container_labels_traefik_path_prefix }}`){% endif %}"
+ntfy_container_labels_traefik_priority: 0
+ntfy_container_labels_traefik_entrypoints: web-secure
+ntfy_container_labels_traefik_tls: "{{ ntfy_container_labels_traefik_entrypoints != 'web' }}"
+ntfy_container_labels_traefik_tls_certResolver: default  # noqa var-naming
+
+# Controls which additional headers to attach to all HTTP responses.
+# To add your own headers, use `ntfy_container_labels_traefik_additional_response_headers_custom`
+ntfy_container_labels_traefik_additional_response_headers: "{{ ntfy_container_labels_traefik_additional_response_headers_auto | combine(ntfy_container_labels_traefik_additional_response_headers_custom) }}"
+ntfy_container_labels_traefik_additional_response_headers_auto: {}
+ntfy_container_labels_traefik_additional_response_headers_custom: {}
+
+# ntfy_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
+# See `../templates/labels.j2` for details.
+#
+# Example:
+# ntfy_container_labels_additional_labels: |
+#   my.label=1
+#   another.label="here"
+ntfy_container_labels_additional_labels: ''
+
+# Specifies how often the container health-check will run.
+#
+# For Traefik based setups, it's important that the interval is short,
+# because the interval value also specifies the "initial wait time".
+# This is a Docker (moby) bug: https://github.com/moby/moby/issues/33410
+# Without a successful healthcheck, Traefik will not register the service for reverse-proxying.
+# Thus, the health interval determines the initial start-up time -- the smaller, the better.
+#
+# For non-Traefik setups, we use the default healthcheck interval (60s) to decrease overhead.
+ntfy_container_health_interval: "{{ '5s' if ntfy_container_labels_traefik_enabled else '60s' }}"
+
+# A list of extra arguments to pass to the container (`docker run` command)
+ntfy_container_extra_arguments: []
+
+# List of systemd services that the ntfy systemd service depends on
+ntfy_systemd_required_services_list: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+
+# List of systemd services that the ntfy systemd service wants
+ntfy_systemd_wanted_services_list: []
+
+# Rate limits
+ntfy_global_topic_limit: 15000  # default
+ntfy_visitor_subscription_limit: 30  # default
+ntfy_visitor_request_limit_burst: 60  # default
+ntfy_visitor_request_limit_replenish: "5s"  # default
+
+# Controls the `web-root` configuraiton setting, which specifies what should be served by ntfy at the root path.
+# See: https://github.com/binwiederhier/ntfy/blob/main/server/server.yml
+#
+# We don't serve anything there by default, because:
+# - `app` (the ntfy default) serves some webapp, which doesn't seem useful,
+#    and also doesn't work when `ntfy_path_prefix` is not `/` (see: https://github.com/binwiederhier/ntfy/issues/256)
+# - `home` serves some homepage (like https://ntfy.sh), which doesn't seem useful
+ntfy_web_root: disable
+
+# Controls the NTFY_VISITOR_REQUEST_LIMIT_EXEMPT_HOSTS environment variable's value.
+# Exempt hosts can be defined as hostnames, IP addresses or network ranges.
+#
+# Define your own in `ntfy_visitor_request_limit_exempt_hosts_hostnames_custom`.
+#
+# This variable may also include values which do sub-shell invocations, like `$(curl https://icanhazip.com)`
+#
+# `ntfy_visitor_request_limit_exempt_hosts_container_networks_inspect_commands_list` is a similar list of sub-shell commands,
+# generated from the `ntfy_visitor_request_limit_exempt_hosts_container_networks` list.
+ntfy_visitor_request_limit_exempt_hosts: |-
+  {{
+    (
+      ['localhost']
+      +
+      ntfy_visitor_request_limit_exempt_hosts_hostnames
+      +
+      ntfy_visitor_request_limit_exempt_hosts_container_networks_inspect_commands_list
+    ) | join(',')
+  }}
+
+# Controls which hostnames to register in NTFY_VISITOR_REQUEST_LIMIT_EXEMPT_HOSTS
+# See `ntfy_visitor_request_limit_exempt_hosts`.
+# Your own custom changes should be added to `ntfy_visitor_request_limit_exempt_hosts_hostnames_custom`.
+ntfy_visitor_request_limit_exempt_hosts_hostnames: "{{ ntfy_visitor_request_limit_exempt_hosts_hostnames_auto + ntfy_visitor_request_limit_exempt_hosts_hostnames_custom }}"
+ntfy_visitor_request_limit_exempt_hosts_hostnames_auto: []
+ntfy_visitor_request_limit_exempt_hosts_hostnames_custom: []
+
+# Controls which container network's addresses to register in NTFY_VISITOR_REQUEST_LIMIT_EXEMPT_HOSTS
+# See `ntfy_visitor_request_limit_exempt_hosts`
+ntfy_visitor_request_limit_exempt_hosts_container_networks: |
+  {{
+    (
+      [ntfy_container_network]
+      +
+      ntfy_container_additional_networks
+      +
+      ntfy_visitor_request_limit_exempt_hosts_container_networks_auto
+      +
+      ntfy_visitor_request_limit_exempt_hosts_container_networks_custom
+    ) | unique
+  }}
+
+ntfy_visitor_request_limit_exempt_hosts_container_networks_auto: []
+ntfy_visitor_request_limit_exempt_hosts_container_networks_custom: []
+
+
+# Controls whether the self-check feature should validate SSL certificates.
+ntfy_self_check_validate_certificates: true
+
+# Default ntfy configuration template which covers the generic use case.
+# You can customize it by controlling the various variables inside it.
+#
+# For a more advanced customization, you can extend the default (see `ntfy_configuration_extension_yaml`)
+# or completely replace this variable with your own template.
+ntfy_configuration_yaml: "{{ lookup('template', 'templates/ntfy/server.yml.j2') }}"
+
+ntfy_configuration_extension_yaml: |
+  # Your custom YAML configuration for ntfy goes here.
+  # This configuration extends the default starting configuration (`ntfy_configuration_yaml`).
+  #
+  # You can override individual variables from the default configuration, or introduce new ones.
+  #
+  # If you need something more special, you can take full control by
+  # completely redefining `ntfy_configuration_yaml`.
+
+ntfy_configuration_extension: "{{ ntfy_configuration_extension_yaml | from_yaml if ntfy_configuration_extension_yaml | from_yaml is mapping else {} }}"
+
+# Holds the final ntfy configuration (a combination of the default and its extension).
+# You most likely don't need to touch this variable. Instead, see `ntfy_configuration_yaml`.
+ntfy_configuration: "{{ ntfy_configuration_yaml | from_yaml | combine(ntfy_configuration_extension, recursive=True) }}"

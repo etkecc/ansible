@@ -1,0 +1,56 @@
+---
+
+- name: (Deprecation) Catch and report renamed Traefik settings
+  ansible.builtin.fail:
+    msg: >-
+      Your configuration contains a variable, which now has a different name.
+      Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
+  when: "item.old in vars"
+  with_items:
+    - {'old': 'devture_traefik_ssl_email_address', 'new': 'devture_traefik_config_certificatesResolvers_acme_email'}
+    - {'old': 'devture_traefik_config_letsencrypt_resolver_caServer', 'new': 'devture_traefik_config_certificatesResolvers_acme_caServer'}
+    - {'old': 'devture_traefik_config_letsencrypt_use_staging', 'new': 'devture_traefik_config_certificatesResolvers_acme_use_staging'}
+    - {'old': 'devture_traefik_config_letsencrypt_httpChallenge_entrypoint', 'new': 'devture_traefik_config_certificatesResolvers_acme_httpChallenge_entrypoint'}
+
+- name: Fail if required Traefik settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`) for using this role.
+  when: "vars[item] == ''"
+  with_items:
+    - devture_traefik_uid
+    - devture_traefik_gid
+    - devture_traefik_entrypoint_primary
+
+- name: Fail if required Traefik ACME settings not defined
+  fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`) when enabling ACME SSL certificate resolvers.
+  when: "devture_traefik_config_certificatesResolvers_acme_enabled | bool and vars[item] == ''"
+  with_items:
+    - devture_traefik_config_certificatesResolvers_acme_email
+    - devture_traefik_config_certificatesResolvers_acme_httpChallenge_entrypoint
+
+- name: Fail if Traefik docker endpoint syntax invalid
+  fail:
+    msg: >-
+      devture_traefik_config_providers_docker_endpoint must look like `unix:///var/run/docker.sock` or `tcp://host:2345`
+  when: "not (devture_traefik_config_providers_docker_endpoint.startswith('unix://') or devture_traefik_config_providers_docker_endpoint.startswith('tcp://'))"
+
+- name: Fail if required Traefik Dashboard settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`) for enabling the Traefik Dashboard.
+  when: "devture_traefik_dashboard_enabled | bool and vars[item] == ''"
+  with_items:
+    - devture_traefik_dashboard_hostname
+    - devture_traefik_dashboard_entrypoints
+
+- name: Fail if required Traefik Dashboard Basic Auth settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`) for using Basic Auth.
+  when: "devture_traefik_dashboard_basicauth_enabled | bool and vars[item] == ''"
+  with_items:
+    - devture_traefik_dashboard_basicauth_user
+    - devture_traefik_dashboard_basicauth_password

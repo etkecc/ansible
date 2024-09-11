@@ -1,0 +1,48 @@
+#jinja2: lstrip_blocks: "True"
+[Unit]
+Description={{ exim_relay_identifier }}
+After=docker.service
+Requires=docker.service
+DefaultDependencies=no
+
+[Service]
+Type=simple
+Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop --time={{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ exim_relay_identifier }} 2>/dev/null || true'
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ exim_relay_identifier }} 2>/dev/null || true'
+
+# --hostname gives us a friendlier hostname than the default.
+# The real hostname that gets used for delivery is passed to Exim via a `HOSTNAME` environment variable though.
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
+			--rm \
+			--name={{ exim_relay_identifier }} \
+			--log-driver=none \
+			--user={{ exim_relay_container_user_uid }}:{{ exim_relay_container_user_gid }} \
+			--cap-drop=ALL \
+			--read-only \
+			--mount type=bind,src={{ exim_relay_spool_path }},dst=/var/spool/exim \
+			{% if exim_relay_dkim_privkey_contents != "" and not exim_relay_relay_use|bool %}
+			--mount type=bind,src={{ exim_relay_dkim_privkey_path }},dst=/etc/exim/dkim.pem,readonly \
+			{% endif %}
+			--network={{ exim_relay_container_network }} \
+			--env-file={{ exim_relay_base_path }}/env \
+			--hostname={{ exim_relay_identifier }} \
+			{% for arg in exim_relay_container_extra_arguments %}
+			{{ arg }} \
+			{% endfor %}
+			{{ exim_relay_container_image }}
+
+{% for network in exim_relay_container_additional_networks %}
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ exim_relay_identifier }}
+{% endfor %}
+
+ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ exim_relay_identifier }}
+
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop --time={{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ exim_relay_identifier }} 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ exim_relay_identifier }} 2>/dev/null || true'
+Restart=always
+RestartSec=30
+SyslogIdentifier={{ exim_relay_identifier }}
+
+[Install]
+WantedBy=multi-user.target

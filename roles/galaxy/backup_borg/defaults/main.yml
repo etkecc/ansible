@@ -1,0 +1,133 @@
+---
+# Project source code URL: https://gitlab.com/etke.cc/borgmatic
+
+backup_borg_enabled: true
+
+backup_borg_identifier: 'backup-borg'
+backup_borg_username: 'backup-borg'
+
+backup_borg_uid: ""
+backup_borg_gid: ""
+
+backup_borg_base_path: "/{{ backup_borg_identifier }}"
+backup_borg_bin_path: "{{ backup_borg_base_path }}/bin"
+backup_borg_config_path: "{{ backup_borg_base_path }}/config"
+backup_borg_restore_path: "{{ backup_borg_base_path }}/restored"
+
+backup_borg_container_network: "{{ backup_borg_identifier }}"
+
+backup_borg_container_image_self_build: false
+backup_borg_docker_repo: "https://gitlab.com/etke.cc/borgmatic"
+backup_borg_docker_repo_version: main
+backup_borg_docker_src_files_path: "{{ backup_borg_base_path }}/docker-src"
+
+# Image and Postgres version are determined automatically, based on the detected Postgres server version (if enabled), otherwise latest is used
+# Also see the `backup_borg_postgresql_version_detection_*` variables.
+backup_borg_version: "{{ (backup_borg_postgres_version ~ '-' ~ backup_borg_borg_version ~ '-' ~ backup_borg_borgmatic_version) if backup_borg_postgres_version else 'latest' }}"
+backup_borg_postgres_version: ""
+backup_borg_borg_version: 1.2.8
+backup_borg_borgmatic_version: 1.8.13
+backup_borg_docker_image: "{{ backup_borg_docker_image_name_prefix }}etke.cc/borgmatic:{{ backup_borg_version }}"
+backup_borg_docker_image_name_prefix: "{{ 'localhost/' if backup_borg_container_image_self_build else 'registry.gitlab.com/' }}"
+backup_borg_docker_image_force_pull: "{{ backup_borg_docker_image.endswith(':latest') }}"
+
+# container tmp directory size
+backup_borg_container_tmp_size: 4096m
+
+# A list of extra arguments to pass to the container
+backup_borg_container_extra_arguments: []
+
+# List of systemd services that matrix-backup-borg.service depends on
+backup_borg_systemd_required_services_list: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+
+# List of systemd services that matrix-backup-borg.service wants
+backup_borg_systemd_wanted_services_list: []
+
+# systemd calendar configuration for the backup job
+# the actual job may run with a delay (see backup_borg_schedule_randomized_delay_sec)
+backup_borg_schedule: "*-*-* 04:00:00"
+# the delay with which the systemd timer may run in relation to the `backup_borg_schedule` schedule
+backup_borg_schedule_randomized_delay_sec: 2h
+
+# what directories should be added to backup
+backup_borg_location_source_directories: []
+
+# postgres db backup
+backup_borg_postgresql_enabled: true
+backup_borg_supported_postgres_versions: ['14', '15', '16']
+backup_borg_postgresql_databases: []
+backup_borg_postgresql_databases_hostname: ''
+backup_borg_postgresql_databases_username: "{{ backup_borg_identifier }}"
+backup_borg_postgresql_databases_password: ""
+backup_borg_postgresql_databases_port: 5432
+backup_borg_postgresql_version_detection_enabled: "{{ backup_borg_postgresql_version_detection_devture_postgres_role_name != '' }}"
+# backup_borg_postgresql_version_detection_devture_postgres_role_name lets you control the role name, leading to the com.devture.ansible.role.postgres.
+# This role is invoked to determine the Postgres version, unless you have set `backup_borg_version` manually.
+backup_borg_postgresql_version_detection_devture_postgres_role_name: ''
+
+backup_borg_mysql_enabled: true
+backup_borg_mysql_databases: []
+backup_borg_mysql_databases_hostname: ''
+backup_borg_mysql_databases_username: "{{ backup_borg_identifier }}"
+backup_borg_mysql_databases_password: ""
+backup_borg_mysql_databases_port: 3306
+
+# Setting a healthchecks ping URL will make borgmatic ping your Healthchecks project when a backup begins, ends, or errors
+# See: https://torsion.org/borgmatic/docs/how-to/monitor-your-backups/#healthchecks-hook
+backup_borg_healthchecks_ping_url: ''
+
+# target repositories
+backup_borg_location_repositories: []
+
+# exclude following paths:
+backup_borg_location_exclude_patterns: []
+
+# borg encryption mode, only "repokey-*" and "none" are supported
+backup_borg_encryption: repokey-blake2
+
+# private ssh key used to connect to the borg repo
+backup_borg_ssh_key_private: ""
+
+# allow unencrypted repo access
+backup_borg_unknown_unencrypted_repo_access_is_ok: "{{ backup_borg_encryption == 'none' }}"
+
+# borg ssh command with ssh key
+backup_borg_storage_ssh_command: ssh -o "StrictHostKeyChecking accept-new" -i /etc/borgmatic.d/sshkey
+
+# compression algorithm
+backup_borg_storage_compression: lz4
+
+# archive name format
+backup_borg_storage_archive_name_format: backup-borg-{now:%Y-%m-%d-%H%M%S}
+
+# repository passphrase
+backup_borg_storage_encryption_passphrase: ""
+
+# retention configuration
+backup_borg_retention_keep_hourly: 0
+backup_borg_retention_keep_daily: 7
+backup_borg_retention_keep_weekly: 4
+backup_borg_retention_keep_monthly: 12
+backup_borg_retention_keep_yearly: 2
+
+# Default borgmatic configuration template which covers the generic use case.
+# You can customize it by controlling the various variables inside it.
+#
+# For a more advanced customization, you can extend the default (see `backup_borg_configuration_extension_yaml`)
+# or completely replace this variable with your own template.
+backup_borg_configuration_yaml: "{{ lookup('template', 'templates/config.yaml.j2') }}"
+
+backup_borg_configuration_extension_yaml: |
+  # Your custom YAML configuration for borgmatic goes here.
+  # This configuration extends the default starting configuration (`borg_configuration_yaml`).
+  #
+  # You can override individual variables from the default configuration, or introduce new ones.
+  #
+  # If you need something more special, you can take full control by
+  # completely redefining `backup_borg_configuration_yaml`.
+
+backup_borg_configuration_extension: "{{ backup_borg_configuration_extension_yaml | from_yaml if backup_borg_configuration_extension_yaml | from_yaml is mapping else {} }}"
+
+# Holds the final borgmatic configuration (a combination of the default and its extension).
+# You most likely don't need to touch this variable. Instead, see `backup_borg_configuration_yaml`.
+backup_borg_configuration: "{{ backup_borg_configuration_yaml | from_yaml | combine(backup_borg_configuration_extension, recursive=True) }}"

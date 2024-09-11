@@ -1,0 +1,19 @@
+---
+- name: Ensure systemd-journald-autovacuum units are installed
+  ansible.builtin.template:
+    src: "systemd/{{ item }}.j2"
+    dest: "/etc/systemd/system/{{ item }}"
+    mode: 0644
+  with_items:
+    - systemd-journald-autovacuum.timer
+    - systemd-journald-autovacuum.service
+
+- name: Esure systemd-journald-autovacuum units are enabled and started
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    enabled: true
+    daemon_reload: true
+    state: started
+  with_items:
+    - systemd-journald-autovacuum.service
+    - systemd-journald-autovacuum.timer

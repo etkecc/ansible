@@ -1,0 +1,185 @@
+---
+
+# Project source code URL: https://github.com/tomsquest/docker-radicale
+
+radicale_enabled: true
+
+radicale_identifier: radicale
+
+radicale_uid: ''
+radicale_gid: ''
+
+radicale_version: 3.2.3.0
+
+# The hostname at which radicale is served.
+radicale_hostname: ''
+
+# The path at which radicale is served.
+# This value must either be `/` or not end with a slash (e.g. `/radicale`).
+radicale_path_prefix: /
+
+radicale_base_path: "/{{ radicale_identifier }}"
+radicale_data_path: "{{ radicale_base_path }}/data"
+radicale_config_path: "{{ radicale_base_path }}/config"
+radicale_data_collections_path: "{{ radicale_data_path }}/{{ radicale_data_collections_subdir }}"
+radicale_data_collections_subdir: collections
+
+# default is htpasswd
+radicale_auth_type: htpasswd
+# if you use https://gitlab.com/etke.cc/radicale-auth-matrix
+radicale_auth_matrix_server: ''
+
+# A list of `htpasswd -nb user password` entries
+# Also see `radicale_credentials` for a more convenient way to create credentials.
+# Ansible will run `htpasswd` on the entries in `radicale_credentials` and append them to this list.
+radicale_htpasswds: []
+
+# A list of credential entries
+#
+# Example:
+# radicale_credentials:
+#   - username: someone
+#     password: secret-password
+#   - username: another
+#     password: more-secret-password
+radicale_credentials: []
+
+# Temporary file path on the host that runs Ansible.
+# Used for converting the `radicale_credentials` entries to `radicale_htpasswds` entries.
+radicale_credentials_basicauth_file_tmp: "/tmp/ansible_htpasswd"
+
+radicale_container_image: "{{ radicale_container_image_registry_prefix }}tomsquest/docker-radicale:{{ radicale_container_image_tag }}"
+radicale_container_image_registry_prefix: docker.io/
+radicale_container_image_tag: "{{ radicale_version }}"
+radicale_container_image_force_pull: "{{ radicale_container_image.endswith(':latest') }}"
+
+# The base container network. It will be auto-created by this role if it doesn't exist already.
+radicale_container_network: "{{ radicale_identifier }}"
+
+# A list of additional container networks that the container would be connected to.
+# The role does not create these networks, so make sure they already exist.
+# Use this to expose this container to another reverse proxy, which runs in a different container network.
+radicale_container_additional_networks: []
+
+# radicale_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
+# See `../templates/labels.j2` for details.
+#
+# To inject your own other container labels, see `radicale_container_labels_additional_labels`.
+radicale_container_labels_traefik_enabled: true
+radicale_container_labels_traefik_docker_network: "{{ radicale_container_network }}"
+radicale_container_labels_traefik_hostname: "{{ radicale_hostname }}"
+# The path prefix must either be `/` or not end with a slash (e.g. `/radicale`).
+radicale_container_labels_traefik_path_prefix: "{{ radicale_path_prefix }}"
+radicale_container_labels_traefik_rule: "Host(`{{ radicale_container_labels_traefik_hostname }}`){% if radicale_container_labels_traefik_path_prefix != '/' %} && PathPrefix(`{{ radicale_container_labels_traefik_path_prefix }}`){% endif %}"
+radicale_container_labels_traefik_priority: 0
+radicale_container_labels_traefik_entrypoints: web-secure
+radicale_container_labels_traefik_tls: "{{ radicale_container_labels_traefik_entrypoints != 'web' }}"
+radicale_container_labels_traefik_tls_certResolver: default  # noqa var-naming
+
+# Controls which additional headers to attach to all HTTP requests.
+# To add your own custom request headers, use `radicale_container_labels_traefik_additional_response_headers_custom`
+radicale_container_labels_traefik_additional_request_headers: "{{ radicale_container_labels_traefik_additional_request_headers_auto | combine(radicale_container_labels_traefik_additional_request_headers_custom) }}"
+radicale_container_labels_traefik_additional_request_headers_auto: |
+  {{
+    {}
+    | combine ({'X-Script-Name': radicale_path_prefix} if radicale_path_prefix != '/' else {})
+  }}
+radicale_container_labels_traefik_additional_request_headers_custom: {}
+
+# Controls which additional headers to attach to all HTTP responses.
+# To add your own custom response headers, use `radicale_container_labels_traefik_additional_response_headers_custom`
+radicale_container_labels_traefik_additional_response_headers: "{{ radicale_container_labels_traefik_additional_response_headers_auto | combine(radicale_container_labels_traefik_additional_response_headers_custom) }}"
+radicale_container_labels_traefik_additional_response_headers_auto: |
+  {{
+    {}
+    | combine ({'X-XSS-Protection': radicale_http_header_xss_protection} if radicale_http_header_xss_protection else {})
+    | combine ({'X-Frame-Options': radicale_http_header_frame_options} if radicale_http_header_frame_options else {})
+    | combine ({'X-Content-Type-Options': radicale_http_header_content_type_options} if radicale_http_header_content_type_options else {})
+    | combine ({'Content-Security-Policy': radicale_http_header_content_security_policy} if radicale_http_header_content_security_policy else {})
+    | combine ({'Permission-Policy': radicale_http_header_content_permission_policy} if radicale_http_header_content_permission_policy else {})
+    | combine ({'Strict-Transport-Security': radicale_http_header_strict_transport_security} if radicale_http_header_strict_transport_security and radicale_container_labels_traefik_tls else {})
+  }}
+radicale_container_labels_traefik_additional_response_headers_custom: {}
+
+# radicale_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
+# See `../templates/labels.j2` for details.
+#
+# Example:
+# radicale_container_labels_additional_labels: |
+#   my.label=1
+#   another.label="here"
+radicale_container_labels_additional_labels: ''
+
+# Specifies how often the container health-check will run.
+#
+# For Traefik based setups, it's important that the interval is short,
+# because the interval value also specifies the "initial wait time".
+# This is a Docker (moby) bug: https://github.com/moby/moby/issues/33410
+# Without a successful healthcheck, Traefik will not register the service for reverse-proxying.
+# Thus, the health interval determines the initial start-up time -- the smaller, the better.
+#
+# For non-Traefik setups, we use the default healthcheck interval (30s) to decrease overhead.
+radicale_container_health_interval: "{{ '5s' if radicale_container_labels_traefik_enabled else '30s' }}"
+
+# A list of extra arguments to pass to the container
+radicale_container_extra_arguments: []
+
+# Controls the TAKE_FILE_OWNERSHIP environment variable
+radicale_environment_variable_take_file_ownership: false
+
+# Additional environment variables.
+radicale_environment_variables_additional_variables: ''
+
+# Specifies the value of the `X-XSS-Protection` header
+# Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
+#
+# Learn more about it is here:
+# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
+# - https://portswigger.net/web-security/cross-site-scripting/reflected
+radicale_http_header_xss_protection: "1; mode=block"
+
+# Specifies the value of the `X-Frame-Options` header which controls whether framing can happen.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
+radicale_http_header_frame_options: SAMEORIGIN
+
+# Specifies the value of the `X-Content-Type-Options` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
+radicale_http_header_content_type_options: nosniff
+
+# Specifies the value of the `Content-Security-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
+radicale_http_header_content_security_policy: frame-ancestors 'self'
+
+# Specifies the value of the `Permission-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permission-Policy
+radicale_http_header_content_permission_policy: "{{ 'interest-cohort=()' if radicale_floc_optout_enabled else '' }}"
+
+# Specifies the value of the `Strict-Transport-Security` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+radicale_http_header_strict_transport_security: "max-age=31536000; includeSubDomains{{ '; preload' if radicale_hsts_preload_enabled else '' }}"
+
+# Controls whether to send a "Permissions-Policy interest-cohort=();" header along with all responses
+#
+# Learn more about what it is here:
+# - https://www.eff.org/deeplinks/2021/03/googles-floc-terrible-idea
+# - https://paramdeo.com/blog/opting-your-website-out-of-googles-floc-network
+# - https://amifloced.org/
+#
+# Of course, a better solution is to just stop using browsers (like Chrome), which participate in such tracking practices.
+# See: `radicale_content_permission_policy`
+radicale_floc_optout_enabled: true
+
+# Controls if HSTS preloading is enabled
+#
+# In its strongest and recommended form, the [HSTS policy](https://www.chromium.org/hsts) includes all subdomains, and
+# indicates a willingness to be "preloaded" into browsers:
+# `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload`
+# For more information visit:
+# - https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
+# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+# - https://hstspreload.org/#opt-in
+# See: `radicale_http_header_strict_transport_security`
+radicale_hsts_preload_enabled: false
+
+# List of systemd services that radicale.service depends on
+radicale_systemd_required_services_list: ['docker.service']

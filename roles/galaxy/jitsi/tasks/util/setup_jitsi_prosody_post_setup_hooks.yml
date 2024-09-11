@@ -1,0 +1,32 @@
+---
+#####
+#
+# This tasks file starts and stops (if state before was stopped) a prosody container during setup to run commands,
+# that require a running prosody container.
+# The task is called in ../setup_jitsi_prosody_install.yml.
+#
+# Important: The task is called conditionally, as to only start if really needed.
+# So if you add or change anything - remember to also change the 'when' in:  ../setup_jitsi_prosody_install.yml
+#
+#####
+
+#
+# Start Necessary Services
+#
+
+- name: Ensure jitsi-prosody container is restarted
+  ansible.builtin.service:
+    name: "{{ jitsi_identifier }}-prosody"
+    state: restarted
+    daemon_reload: true
+  register: restart_result
+
+- name: Wait a while, so that the prosody instance can manage to start
+  ansible.builtin.pause:
+    seconds: 7
+  when: "restart_result.changed"
+
+- name: Ensure internal authentication is properly configured
+  ansible.builtin.include_tasks:
+    file: "{{ role_path }}/tasks/util/prosody_post_setup_hooks/setup_jitsi_auth_internal.yml"
+  when: jitsi_enable_auth | bool and jitsi_auth_type == "internal"

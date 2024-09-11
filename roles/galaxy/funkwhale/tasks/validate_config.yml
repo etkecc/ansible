@@ -1,0 +1,14 @@
+---
+
+- name: Fail if required funkwhale settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`) for using this role.
+  when: "vars[item] == ''"
+  with_items:
+    - funkwhale_hostname
+    - funkwhale_database_hostname
+    - funkwhale_database_username
+    - funkwhale_database_password
+    - funkwhale_django_secret_key
+    - funkwhale_config_redis_hostname

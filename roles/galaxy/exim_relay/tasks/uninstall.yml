@@ -1,0 +1,25 @@
+---
+
+- name: Check existence of exim-relay service
+  ansible.builtin.stat:
+    path: "{{ devture_systemd_docker_base_systemd_path }}/{{ exim_relay_identifier }}.service"
+  register: exim_relay_service_stat
+
+- when: exim_relay_service_stat.stat.exists | bool
+  block:
+    - name: Ensure exim-relay is stopped
+      ansible.builtin.service:
+        name: "{{ exim_relay_identifier }}"
+        state: stopped
+        enabled: false
+        daemon_reload: true
+
+    - name: Ensure exim-relay.service doesn't exist
+      ansible.builtin.file:
+        path: "{{ devture_systemd_docker_base_systemd_path }}/{{ exim_relay_identifier }}.service"
+        state: absent
+
+    - name: Ensure exim-relay path doesn't exist
+      ansible.builtin.file:
+        path: "{{ exim_relay_base_path }}"
+        state: absent

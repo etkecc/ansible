@@ -1,0 +1,57 @@
+---
+
+- when: devture_postgres_backup_postgres_data_path != ''
+  block:
+    - name: Detect Postgres version from provided data path
+      ansible.builtin.include_role:
+        name: "{{ devture_postgres_backup_postgres_role_include_name }}"
+        tasks_from: detect_existing_postgres_version
+
+    # If we have found an existing version (installed from before), we use its corresponding Docker image.
+    # If not, we let `devture_postgres_backup_container_image_to_use` remain default (using the latest Postgres version).
+    - name: Use detected Postgres version, if detected
+      ansible.builtin.set_fact:
+        devture_postgres_backup_container_image_to_use: "{{ devture_postgres_backup_detected_version_corresponding_docker_image }}"
+      when: devture_postgres_backup_detected_version_corresponding_docker_image | default('') != ''
+
+- name: Ensure postgres backup Docker image is pulled
+  community.docker.docker_image:
+    name: "{{ devture_postgres_backup_container_image_to_use }}"
+    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+    force_source: "{{ devture_postgres_backup_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else devture_postgres_backup_container_image_force_pull }}"
+  register: result
+  retries: "{{ devture_playbook_help_container_retries_count }}"
+  delay: "{{ devture_playbook_help_container_retries_delay }}"
+  until: result is not failed
+
+- name: Ensure Postgres backup paths exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0700
+    owner: "{{ devture_postgres_backup_uid }}"
+    group: "{{ devture_postgres_backup_gid }}"
+  with_items:
+    - "{{ devture_postgres_backup_base_path }}"
+    - "{{ devture_postgres_backup_config_path }}"
+    - "{{ devture_postgres_backup_data_path }}"
+
+- name: Ensure Postgres backup environment variables file created
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/env.j2"
+    dest: "{{ devture_postgres_backup_config_path }}/env"
+    owner: "{{ devture_postgres_backup_uid }}"
+    group: "{{ devture_postgres_backup_gid }}"
+    mode: 0640
+
+- name: Ensure postgres-backup container network is created
+  community.general.docker_network:
+    name: "{{ devture_postgres_backup_container_network }}"
+    driver: bridge
+
+- name: Ensure postgres-backup systemd service installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/systemd/postgres-backup.service.j2"
+    dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ devture_postgres_backup_identifier }}.service"
+    mode: 0644

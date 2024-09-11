@@ -1,0 +1,25 @@
+---
+
+- name: Check existence of Vaultwarden systemd service
+  ansible.builtin.stat:
+    path: "{{ devture_systemd_docker_base_systemd_path }}/{{ vaultwarden_identifier }}.service"
+  register: vaultwarden_service_stat
+
+- when: vaultwarden_service_stat.stat.exists | bool
+  block:
+    - name: Ensure Vaultwarden systemd service is stopped
+      ansible.builtin.service:
+        name: "{{ vaultwarden_identifier }}"
+        state: stopped
+        enabled: false
+        daemon_reload: true
+
+    - name: Ensure Vaultwarden systemd service does not exists
+      ansible.builtin.file:
+        path: "{{ devture_systemd_docker_base_systemd_path }}/{{ vaultwarden_identifier }}.service"
+        state: absent
+
+    - name: Ensure Vaultwarden path doesn't exist
+      ansible.builtin.file:
+        path: "{{ vaultwarden_base_path }}"
+        state: absent

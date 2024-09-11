@@ -1,0 +1,35 @@
+---
+- name: Fail if required linkding settings not defined
+  ansible.builtin.fail:
+    msg: >
+      You need to define a required configuration setting (`{{ item }}`).
+  when: "vars[item] == ''"
+  with_items:
+    - linkding_identifier
+    - linkding_uid
+    - linkding_gid
+    - linkding_hostname
+    - linkding_path_prefix
+    - linkding_container_network
+    - linkding_database_hostname
+    - linkding_database_password
+
+- when: linkding_container_labels_traefik_enabled | bool
+  block:
+    - name: Fail if required linkding Traefik settings not defined
+      ansible.builtin.fail:
+        msg: >-
+          You need to define a required configuration setting (`{{ item }}`).
+      when: "vars[item] == ''"
+      with_items:
+        - linkding_container_labels_traefik_hostname
+        - linkding_container_labels_traefik_path_prefix
+
+    # We ensure it doesn't end with a slash, because we handle both (slash and no-slash).
+    # Knowing that `linkding_container_labels_traefik_path_prefix` does not end with a slash
+    # ensures we know how to set these routes up without having to do "does it end with a slash" checks elsewhere.
+    - name: Fail if linkding_container_labels_traefik_path_prefix ends with a slash
+      ansible.builtin.fail:
+        msg: >-
+          linkding_container_labels_traefik_path_prefix (`{{ linkding_container_labels_traefik_path_prefix }}`) must either be `/` or not end with a slash (e.g. `/linkding`).
+      when: "linkding_container_labels_traefik_path_prefix != '/' and linkding_container_labels_traefik_path_prefix[-1] == '/'"

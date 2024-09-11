@@ -1,0 +1,50 @@
+#jinja2: lstrip_blocks: "True"
+[Unit]
+Description=Postgres server ({{ devture_postgres_identifier }})
+{% for service in devture_postgres_systemd_required_services_list %}
+Requires={{ service }}
+After={{ service }}
+{% endfor %}
+DefaultDependencies=no
+
+[Service]
+Type=simple
+Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop --time={{ devture_postgres_container_stop_grace_time_seconds }} {{ devture_postgres_identifier }} 2>/dev/null || true'
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ devture_postgres_identifier }} 2>/dev/null || true'
+
+# We need /dev/shm to be larger than the default to allow VACUUM to work.
+# See:
+# - https://github.com/spantaleev/matrix-docker-ansible-deploy/issues/1362
+# - https://github.com/spantaleev/matrix-docker-ansible-deploy/issues/1268
+ExecStart={{ devture_systemd_docker_base_host_command_docker }} run \
+			--rm \
+			--name {{ devture_postgres_identifier }} \
+			--log-driver=none \
+			--user={{ devture_postgres_uid }}:{{ devture_postgres_gid }} \
+			--cap-drop=ALL \
+			--read-only \
+			--tmpfs=/tmp:rw,noexec,nosuid,size=100m \
+			--tmpfs=/run/postgresql:rw,noexec,nosuid,size=100m \
+			--shm-size={{ devture_postgres_container_shm_size }} \
+			--network={{ devture_postgres_container_network }} \
+			{% if devture_postgres_container_postgres_bind_port %}
+			-p {{ devture_postgres_container_postgres_bind_port }}:5432 \
+			{% endif %}
+			--env-file={{ devture_postgres_base_path }}/env-postgres-server \
+			--mount type=bind,src={{ devture_postgres_data_path }},dst=/var/lib/postgresql/data \
+			--mount type=bind,src=/etc/passwd,dst=/etc/passwd,ro \
+			{% for arg in devture_postgres_container_extra_arguments %}
+			{{ arg }} \
+			{% endfor %}
+			{{ devture_postgres_container_image_to_use }} \
+			postgres {{ devture_postgres_process_extra_arguments|join(' ') }}
+
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop --time={{ devture_postgres_container_stop_grace_time_seconds }} {{ devture_postgres_identifier }} 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ devture_postgres_identifier }} 2>/dev/null || true'
+Restart=always
+RestartSec=30
+SyslogIdentifier={{ devture_postgres_identifier }}
+
+[Install]
+WantedBy=multi-user.target

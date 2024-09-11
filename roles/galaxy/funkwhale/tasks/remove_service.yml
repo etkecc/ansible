@@ -1,0 +1,19 @@
+---
+
+- name: Check existence of funkwhale systemd service
+  ansible.builtin.stat:
+    path: "{{ item.path }}"
+  register: funkwhale_service_stat
+
+- when: funkwhale_service_stat.stat.exists | bool
+  block:
+    - name: Ensure funkwhale service is stopped
+      ansible.builtin.service:
+        name: "{{ item.service }}"
+        state: stopped
+        daemon_reload: true
+    - name: Ensure funkwhale service doesn't exist
+      ansible.builtin.file:
+        dest: "{{ item.path }}"
+        state: absent
+ 

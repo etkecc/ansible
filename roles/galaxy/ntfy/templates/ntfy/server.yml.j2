@@ -1,0 +1,13 @@
+base_url: {{ ntfy_base_url }}
+behind_proxy: true
+cache_file: /data/cache.db
+listen-http: :8080
+
+# Rate Limits
+global-topic-limit: {{ ntfy_global_topic_limit | to_json }}
+visitor-subscription-limit: {{ ntfy_visitor_subscription_limit | to_json }}
+
+visitor-request-limit-burst: {{ ntfy_visitor_request_limit_burst | to_json }}
+visitor-request-limit-replenish: {{ ntfy_visitor_request_limit_replenish | to_json }}
+
+web-root: {{ ntfy_web_root | to_json }}

@@ -1,0 +1,58 @@
+---
+
+# Project source code URL: https://github.com/devture/exim-relay
+
+exim_relay_enabled: true
+
+exim_relay_identifier: exim-relay
+
+exim_relay_base_path: "/{{ exim_relay_identifier }}"
+exim_relay_spool_path: "{{ exim_relay_base_path }}/spool"
+
+# Also see `exim_relay_container_user_uid` and `exim_relay_container_user_gid` below
+exim_relay_uid: ''
+exim_relay_gid: ''
+
+# renovate: datasource=docker depName=devture/exim-relay versioning=semver
+exim_relay_version: 4.98-r0-1
+
+exim_relay_container_image_self_build: false
+exim_relay_container_image_self_build_repository_url: "https://github.com/devture/exim-relay"
+exim_relay_container_image_self_build_src_files_path: "{{ exim_relay_base_path }}/docker-src"
+exim_relay_container_image_self_build_version: "{{ exim_relay_container_image.split(':')[1] }}"
+
+exim_relay_container_image: "{{ exim_relay_container_image_name_prefix }}devture/exim-relay:{{ exim_relay_version }}"
+exim_relay_container_image_name_prefix: "{{ 'localhost/' if exim_relay_container_image_self_build else 'docker.io/' }}"
+exim_relay_container_image_force_pull: "{{ exim_relay_container_image.endswith(':latest') }}"
+
+# The user/group that the container runs with.
+# These match the `exim` user/group within the container image.
+exim_relay_container_user_uid: 100
+exim_relay_container_user_gid: 101
+
+# The base container network. It will be auto-created by this role if it doesn't exist already.
+exim_relay_container_network: "{{ exim_relay_identifier }}"
+
+# A list of additional container networks that the container would be connected to.
+# The role does not create these networks, so make sure they already exist.
+# Use this to expose this container to another reverse proxy, which runs in a different container network.
+exim_relay_container_additional_networks: []
+
+# A list of extra arguments to pass to the container
+exim_relay_container_extra_arguments: []
+
+exim_relay_hostname: ""
+
+# path to the file containing the DKIM private key
+exim_relay_dkim_privkey_path: "{{ exim_relay_base_path }}/dkim.private"
+# contents of the DKIM private key
+exim_relay_dkim_privkey_contents: ""
+
+exim_relay_sender_address: ""
+
+exim_relay_relay_use: false
+exim_relay_relay_host_name: "mail.example.com"
+exim_relay_relay_host_port: 587
+exim_relay_relay_auth: false
+exim_relay_relay_auth_username: ""
+exim_relay_relay_auth_password: ""

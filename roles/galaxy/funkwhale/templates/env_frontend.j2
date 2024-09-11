@@ -1,0 +1,22 @@
+# Replace this by the definitive, public domain you will use for
+# your instance. It cannot be changed after initial deployment
+# without breaking your instance.
+FUNKWHALE_HOSTNAME={{ funkwhale_hostname }}
+FUNKWHALE_PROTOCOL=https
+
+FUNKWHALE_API_HOST={{ funkwhale_api_identifier }}
+FUNKWHALE_API_PORT={{ funkwhale_api_container_port }}
+
+MEDIA_ROOT={{ funkwhale_frontend_container_media_path }}
+MUSIC_DIRECTORY_PATH={{ funkwhale_frontend_container_music_path }}
+
+FUNKWHALE_WEB_WORKERS={{ funkwhale_frontend_web_workers }}
+
+NGINX_MAX_BODY_SIZE={{ funkwhale_frontend_max_body_size}}
+
+DJANGO_SECRET_KEY={{ funkwhale_django_secret_key }}
+DJANGO_SETTINGS_MODULE=config.settings.production
+
+DATABASE_URL=postgresql://{{ funkwhale_database_username }}:{{ funkwhale_database_password }}@{{ funkwhale_database_hostname }}:{{ funkwhale_database_port }}/{{ funkwhale_database_name }}
+
+{{ funkwhale_frontend_variables_additional_variables }}

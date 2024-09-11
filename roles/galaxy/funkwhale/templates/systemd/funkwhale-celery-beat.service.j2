@@ -1,0 +1,18 @@
+[Unit]
+Description=Funkwhale Celery Beat ({{ funkwhale_celery_beat_identifier }})
+Requires={{ funkwhale_api_identifier }}.service
+After={{ funkwhale_api_identifier }}.service
+DefaultDependencies=no
+
+
+[Service]
+Type=simple
+ExecStart={{ devture_systemd_docker_base_host_command_docker }} exec {{ funkwhale_api_identifier }} \
+    celery \
+    --app=funkwhale_api.taskapp beat \
+    --loglevel={{ funkwhale_loglevel }} \
+    -s /tmp/celerybeat-schedule {{ funkwhale_celery_beat_process_extra_arguments | join(' ') }}
+
+Restart=always
+RestartSec=30
+SyslogIdentifier={{ funkwhale_celery_beat_identifier }}

@@ -1,0 +1,25 @@
+---
+
+- name: Fail if required postgres-backup settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`).
+  when: "not vars[item]"
+  with_items:
+    - devture_postgres_backup_connection_hostname
+    - devture_postgres_backup_connection_username
+    - devture_postgres_backup_connection_password
+    - devture_postgres_backup_uid
+    - devture_postgres_backup_gid
+    - devture_postgres_backup_container_network
+
+- name: (Deprecation) Catch and report renamed settings
+  ansible.builtin.fail:
+    msg: >-
+      Your configuration contains a variable, which now has a different name.
+      Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
+  when: "item.old in vars"
+  with_items:
+    - {'old': 'devture_postgres_backup_container_image_suffix', 'new': 'devture_postgres_backup_container_image_distro'}
+    - {'old': 'devture_postgres_backup_path', 'new': 'devture_postgres_backup_base_path'}
+    - {'old': 'devture_postgres_backup_docker_image_to_use', 'new': 'devture_postgres_backup_container_image_to_use'}

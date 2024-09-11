@@ -1,0 +1,30 @@
+---
+- block:
+  - name: Add authorized keys
+    ansible.posix.authorized_key:
+      user: "{{ ansible_user }}"
+      state: present
+      key: "{{ item }}"
+    with_items: "{{ system_security_ssh_authorizedkeys }}"
+
+  - name: Revoke authorized keys
+    ansible.posix.authorized_key:
+      user: "{{ ansible_user }}"
+      state: absent
+      key: "{{ item }}"
+    with_items: "{{ system_security_ssh_unauthorizedkeys }}"
+
+  - name: Enforce sshd config
+    ansible.builtin.template:
+      src: etc/ssh/sshd_config.j2
+      dest: /etc/ssh/sshd_config
+      mode: 0644
+      owner: root
+      group: root
+    notify: Reload sshd
+  tags:
+    - setup-all
+    - setup-ssh
+    - install-all
+    - install-ssh
+  when: system_security_ssh_enabled | bool

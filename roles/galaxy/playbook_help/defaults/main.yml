@@ -1,0 +1,20 @@
+---
+
+# Each docker pull will retry on failed attempt 10 times with delay of 10 seconds between each attempt.
+devture_playbook_help_container_retries_count: 10
+devture_playbook_help_container_retries_delay: 10
+
+# Each get_url will retry on failed attempt 10 times with delay of 10 seconds between each attempt.
+devture_playbook_help_geturl_retries_count: 10
+devture_playbook_help_geturl_retries_delay: 10
+
+# Controls whether the apt cache will be updated when running this role.
+# Most installations do not need this, but having it here increases reliability.
+# This only affects Debian-based distros.
+# Related to: https://github.com/spantaleev/matrix-docker-ansible-deploy/issues/2448
+devture_playbook_help_apt_cache_prewarming_enabled: true
+
+# Controls how long the apt cache is considered valid for after prewarming it.
+# Subsequent runs within that interval should not prewarm it again.
+# Related to: `devture_playbook_help_apt_cache_prewarming_enabled`.
+devture_playbook_help_apt_cache_prewarming_cache_valid_time: 600

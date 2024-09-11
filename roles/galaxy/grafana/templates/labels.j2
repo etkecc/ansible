@@ -1,0 +1,45 @@
+{% if grafana_container_labels_traefik_enabled %}
+traefik.enable=true
+
+{% if grafana_container_labels_traefik_docker_network %}
+traefik.docker.network={{ grafana_container_labels_traefik_docker_network }}
+{% endif %}
+
+{% set middlewares = [] %}
+
+{% if grafana_container_labels_traefik_path_prefix != '/' %}
+traefik.http.middlewares.{{ grafana_identifier }}-slashless-redirect.redirectregex.regex=({{ grafana_container_labels_traefik_path_prefix | quote }})$
+traefik.http.middlewares.{{ grafana_identifier }}-slashless-redirect.redirectregex.replacement=${1}/
+{% set middlewares = middlewares + [grafana_identifier + '-slashless-redirect'] %}
+{% endif %}
+
+{% if grafana_container_labels_traefik_path_prefix != '/' %}
+traefik.http.middlewares.{{ grafana_identifier }}-strip-prefix.stripprefix.prefixes={{ grafana_container_labels_traefik_path_prefix }}
+{% set middlewares = middlewares + [grafana_identifier + '-strip-prefix'] %}
+{% endif %}
+
+{% if grafana_container_labels_traefik_additional_response_headers.keys() | length > 0 %}
+{% for name, value in grafana_container_labels_traefik_additional_response_headers.items() %}
+traefik.http.middlewares.{{ grafana_identifier }}-add-headers.headers.customresponseheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [grafana_identifier + '-add-headers'] %}
+{% endif %}
+
+traefik.http.routers.{{ grafana_identifier }}.rule={{ grafana_container_labels_traefik_rule }}
+{% if grafana_container_labels_traefik_priority | int > 0 %}
+traefik.http.routers.{{ grafana_identifier }}.priority={{ grafana_container_labels_traefik_priority }}
+{% endif %}
+traefik.http.routers.{{ grafana_identifier }}.service={{ grafana_identifier }}
+{% if middlewares | length > 0 %}
+traefik.http.routers.{{ grafana_identifier }}.middlewares={{ middlewares | join(',') }}
+{% endif %}
+traefik.http.routers.{{ grafana_identifier }}.entrypoints={{ grafana_container_labels_traefik_entrypoints }}
+traefik.http.routers.{{ grafana_identifier }}.tls={{ grafana_container_labels_traefik_tls | to_json }}
+{% if grafana_container_labels_traefik_tls %}
+traefik.http.routers.{{ grafana_identifier }}.tls.certResolver={{ grafana_container_labels_traefik_tls_certResolver }}
+{% endif %}
+
+traefik.http.services.{{ grafana_identifier }}.loadbalancer.server.port=3000
+{% endif %}
+
+{{ grafana_container_labels_additional_labels }}

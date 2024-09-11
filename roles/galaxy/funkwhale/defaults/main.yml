@@ -1,0 +1,503 @@
+---
+
+# Project source code URL: https://dev.funkwhale.audio/funkwhale/funkwhale
+
+funkwhale_enabled: true
+funkwhale_identifier: funkwhale
+
+funkwhale_version: "1.4.0"
+
+funkwhale_hostname: ''
+
+funkwhale_uid: ''
+funkwhale_gid: ''
+
+funkwhale_base_path: "/{{ funkwhale_identifier }}"
+
+
+funkwhale_frontend_base_path: "{{ funkwhale_base_path }}/frontend"
+funkwhale_api_base_path: "{{ funkwhale_base_path }}/api"
+funkwhale_celery_beat_base_path: "{{ funkwhale_base_path }}/celery-beat"
+funkwhale_celery_worker_base_path: "{{ funkwhale_base_path }}/celery-worker"
+
+funkwhale_data_path: "{{ funkwhale_base_path }}/data"
+funkwhale_static_path: "{{ funkwhale_data_path }}/static"
+# The `funkwhale_media_path` defines where the media is stored
+funkwhale_media_path: "{{ funkwhale_data_path }}/media"
+# The `funkwhale_music_path` defines a place where you can put music that can then be imported into funkwhale.
+funkwhale_music_path: "{{ funkwhale_data_path }}/music"
+
+# Enables automatic in-place import and watching file and metadata changes in the funkwhale_music_path directory.
+# Needs the first 8 characters of the library ID after creating a library in the web UI. If your library ID is "769a2bc3-eb1d-4aff-9f84-2c4d80d5c2d1", provide "769a2bc3".
+funkwhale_watch_imports_enabled: false
+funkwhale_watch_imports_library_id: ""  # add first 8 characters of library ID here
+
+funkwhale_frontend_static_path: "{{ funkwhale_frontend_base_path }}/appstatic"
+
+funkwhale_frontend_env_path: "{{ funkwhale_frontend_base_path }}/env"
+funkwhale_api_env_path: "{{ funkwhale_api_base_path }}/env"
+
+funkwhale_aws_access_key_id: ''
+funkwhale_aws_secret_access_key: ''
+funkwhale_aws_storage_bucket_name: ''
+funkwhale_aws_s3_region_name: ''
+funkwhale_aws_s3_endpoint_url: ''
+funkwhale_aws_location: 'funkwhale'
+
+
+funkwhale_database_hostname: ''
+funkwhale_database_port: 5432
+funkwhale_database_name: funkwhale
+funkwhale_database_username: ''
+funkwhale_database_password: ''
+# Use this to set the sslmode parameter of the SSL connection
+# By default, we expect a local container (without SSL), so attempting SSL connections is not necessary.
+funkwhale_database_sslmode: disable
+
+funkwhale_config_redis_hostname: ''
+funkwhale_config_redis_port: 6379
+funkwhale_config_redis_database: 0
+funkwhale_config_redis_url: "redis://{{ funkwhale_config_redis_hostname }}:{{ funkwhale_config_redis_port }}/{{ funkwhale_config_redis_database }}"
+
+# Can be one of `consolemail://`, `dummymail://`, `smtp://`, `smtp+ssl://` and `smtp+tls://`
+# the default outputs e-mail in the console (journalctl -fu mash-funkwhale-api)
+funkwhale_email_protocol: "consolemail://"
+funkwhale_email_host: ''
+funkwhale_email_port: ''
+funkwhale_email_username: ''
+funkwhale_email_password: ''
+funkwhale_email_from: "noreply@{{ funkwhale_hostname }}"
+
+funkwhale_account_email_verification_enforce: false
+
+# This var holds the list of users that should be created automatically by playbooks/roles/group vars,
+# To add your own users for specific host, use `funkwhale_users_additional`
+# funkwhale_users_auto:
+# - username: admin
+#   initial_email: admin@example.com
+#   initial_password: password
+#   initial_type: admin
+# - username: user
+#   initial_email: admin@example.com
+#   initial_password: password
+#   initial_type: user
+funkwhale_users_auto: []
+# This var holds the list of users that should be created automatically by specific host (using host's vars.yml) instead of playbook/role/group vars
+# funkwhale_users_additional:
+# - username: rssbot
+#   initial_email: bots@example.com
+#   initial_password: password
+#   initial_type: user
+funkwhale_users_additional: []
+# Use funkwhale_users_auto and funkwhale_users_additional to define users that should be created automatically.
+funkwhale_users: "{{ funkwhale_users_auto + funkwhale_users_additional }}"
+
+funkwhale_container_network: '{{ funkwhale_identifier }}'
+
+funkwhale_container_image_registry_prefix: docker.io/
+
+funkwhale_django_secret_key: ''
+
+# Must be one of debug, info, warning, error, critical
+funkwhale_loglevel: error
+
+#########
+## API ##
+#########
+
+funkwhale_api_hostname: "{{ funkwhale_hostname }}"
+funkwhale_api_container_labels_traefik_path_prefix: "/api"
+
+funkwhale_api_identifier: "{{ funkwhale_identifier }}-api"
+
+# List of systemd services that funkwhale-api.service depends on
+funkwhale_api_systemd_required_services_list: "{{ funkwhale_api_systemd_required_services_list_default + funkwhale_api_systemd_required_services_list_auto + funkwhale_api_systemd_required_services_list_custom }}"
+funkwhale_api_systemd_required_services_list_default: ['docker.service']
+funkwhale_api_systemd_required_services_list_auto: []
+funkwhale_api_systemd_required_services_list_custom: []
+
+
+funkwhale_api_version: "{{ funkwhale_version }}"
+
+funkwhale_api_container_image: "{{ funkwhale_api_container_image_registry_prefix }}funkwhale/api:{{ funkwhale_api_container_image_tag }}"
+funkwhale_api_container_image_registry_prefix: "{{ funkwhale_container_image_registry_prefix }}"
+funkwhale_api_container_image_tag: "{{ funkwhale_api_version }}"
+funkwhale_api_container_image_force_pull: "{{ funkwhale_api_container_image.endswith(':latest') }}"
+
+funkwhale_api_container_data_path: "/srv/funkwhale/data"
+funkwhale_api_container_media_path: "{{ funkwhale_api_container_data_path }}/media"
+funkwhale_api_container_music_path: "{{ funkwhale_api_container_data_path }}/music"
+funkwhale_api_container_static_path: "{{ funkwhale_api_container_data_path }}/static"
+
+
+funkwhale_api_container_network: '{{ funkwhale_container_network }}'
+
+# Increase this if you want to upload a lot of audio files via the web GUI and get "Can't upload file, ensure it's not to big"
+funkwhale_api_tmpfs_size: 5000m
+
+funkwhale_api_container_port: 5000
+
+# Controls whether the funkwhale container exposes its HTTP port (as defined by `funkwhale_container_http_port`).
+#
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:8731"), or empty string to not expose.
+funkwhale_api_container_http_host_bind_port: ""
+
+# A list of additional container networks that the container would be connected to.
+# The role does not create these networks, so make sure they already exist.
+# Use this to expose this container to another reverse proxy, which runs in a different container network.
+funkwhale_api_container_additional_networks: "{{ funkwhale_api_container_additional_networks_auto + funkwhale_api_container_additional_networks_custom }}"
+funkwhale_api_container_additional_networks_auto: []
+funkwhale_api_container_additional_networks_custom: []
+
+
+# funkwhale_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
+# See `roles/custom/funkwhale_funkwhale/templates/labels.j2` for details.
+#
+# To inject your own other container labels, see `funkwhale_container_labels_additional_labels`.
+funkwhale_api_container_labels_traefik_enabled: false
+funkwhale_api_container_labels_traefik_docker_network: ""
+funkwhale_api_container_labels_traefik_entrypoints: web-secure
+funkwhale_api_container_labels_traefik_priority: 0
+funkwhale_api_container_labels_traefik_tls: "{{ funkwhale_api_container_labels_traefik_entrypoints != 'web' }}"
+funkwhale_api_container_labels_traefik_tls_certResolver: default  # noqa var-naming
+
+funkwhale_api_container_labels_traefik_hostname: "{{ funkwhale_hostname }}"
+funkwhale_api_container_labels_traefik_rule: "Host(`{{ funkwhale_api_container_labels_traefik_hostname }}`) && PathPrefix (`/api/`)"
+
+# Controls which additional headers to attach to all HTTP requests.
+# To add your own custom request headers, use `funkwhale_container_labels_traefik_additional_response_headers_custom`
+funkwhale_api_container_labels_traefik_additional_request_headers: "{{ funkwhale_api_container_labels_traefik_additional_request_headers_auto | combine(funkwhale_api_container_labels_traefik_additional_request_headers_custom) }}"
+funkwhale_api_container_labels_traefik_additional_request_headers_auto: {}
+funkwhale_api_container_labels_traefik_additional_request_headers_custom: {}
+
+
+# Controls which additional headers to attach to all HTTP responses.
+# To add your own custom response headers, use `funkwhale_container_labels_traefik_additional_response_headers_custom`
+funkwhale_api_container_labels_traefik_additional_response_headers: "{{ funkwhale_api_container_labels_traefik_additional_response_headers_auto | combine(funkwhale_api_container_labels_traefik_additional_response_headers_custom) }}"
+funkwhale_api_container_labels_traefik_additional_response_headers_auto: |
+  {{
+    {}
+    | combine ({'X-XSS-Protection': funkwhale_api_http_header_xss_protection} if funkwhale_api_http_header_xss_protection else {})
+    | combine ({'X-Frame-Options': funkwhale_api_http_header_frame_options} if funkwhale_api_http_header_frame_options else {})
+    | combine ({'X-Content-Type-Options': funkwhale_api_http_header_content_type_options} if funkwhale_api_http_header_content_type_options else {})
+    | combine ({'Content-Security-Policy': funkwhale_api_http_header_content_security_policy} if funkwhale_api_http_header_content_security_policy else {})
+    | combine ({'Permission-Policy': funkwhale_api_http_header_content_permission_policy} if funkwhale_api_http_header_content_permission_policy else {})
+    | combine ({'Strict-Transport-Security': funkwhale_api_http_header_strict_transport_security} if funkwhale_api_http_header_strict_transport_security and funkwhale_api_container_labels_traefik_tls else {})
+  }}
+funkwhale_api_container_labels_traefik_additional_response_headers_custom: {}
+
+# Specifies the value of the `X-XSS-Protection` header
+# Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
+#
+# Learn more about it is here:
+# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
+# - https://portswigger.net/web-security/cross-site-scripting/reflected
+funkwhale_api_http_header_xss_protection: "1; mode=block"
+
+# Specifies the value of the `X-Frame-Options` header which controls whether framing can happen.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
+funkwhale_api_http_header_frame_options: SAMEORIGIN
+
+# Specifies the value of the `X-Content-Type-Options` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
+funkwhale_api_http_header_content_type_options: nosniff
+
+# Specifies the value of the `Content-Security-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
+funkwhale_api_http_header_content_security_policy: frame-ancestors 'self'
+
+# Specifies the value of the `Permission-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permission-Policy
+funkwhale_api_http_header_content_permission_policy: "{{ 'interest-cohort=()' if funkwhale_api_floc_optout_enabled else '' }}"
+
+# Specifies the value of the `Strict-Transport-Security` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+funkwhale_api_http_header_strict_transport_security: "max-age=31536000; includeSubDomains{{ '; preload' if funkwhale_api_hsts_preload_enabled else '' }}"
+
+# Controls whether to send a "Permissions-Policy interest-cohort=();" header along with all responses
+#
+# Learn more about what it is here:
+# - https://www.eff.org/deeplinks/2021/03/googles-floc-terrible-idea
+# - https://paramdeo.com/blog/opting-your-website-out-of-googles-floc-network
+# - https://amifloced.org/
+#
+# Of course, a better solution is to just stop using browsers (like Chrome), which participate in such tracking practices.
+# See: `funkwhale_content_permission_policy`
+funkwhale_api_floc_optout_enabled: true
+
+# Controls if HSTS preloading is enabled
+#
+# In its strongest and recommended form, the [HSTS policy](https://www.chromium.org/hsts) includes all subdomains, and
+# indicates a willingness to be "preloaded" into browsers:
+# `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload`
+# For more information visit:
+# - https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
+# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+# - https://hstspreload.org/#opt-in
+# See: `funkwhale_http_header_strict_transport_security`
+funkwhale_api_hsts_preload_enabled: false
+
+
+# funkwhale_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
+# See `roles/custom/collabora_online/templates/labels.j2` for details.
+#
+# Example:
+# funkwhale_container_labels_additional_labels: |
+#   my.label=1
+#   another.label="here"
+funkwhale_api_container_labels_additional_labels: ''
+
+funkwhale_api_variables_additional_variables: ''
+
+# A list of extra arguments to pass to the Funkwhale API container (run) statement
+# To mount a library to the funkwhale/music directory use: ["--mount type=bind,src=LIBRARY_PATH,dst=/srv/funkwhale/data/music,ro"]
+funkwhale_api_container_extra_arguments: "{{ funkwhale_api_container_extra_arguments_auto + funkwhale_api_container_extra_arguments_custom }}"
+funkwhale_api_container_extra_arguments_auto: []
+funkwhale_api_container_extra_arguments_custom: []
+
+# A list of extra arguments to pass to the Funkwhale API process
+# Example: ['--SOME_ARGUMENT']
+funkwhale_api_process_extra_arguments: "{{ funkwhale_api_process_extra_arguments_auto + funkwhale_api_process_extra_arguments_custom }}"
+funkwhale_api_process_extra_arguments_auto: []
+funkwhale_api_process_extra_arguments_custom: []
+
+##############
+## FRONTEND ##
+##############
+
+funkwhale_frontend_hostname: "{{ funkwhale_hostname }}"
+
+funkwhale_frontend_identifier: "{{ funkwhale_identifier }}-frontend"
+
+funkwhale_frontend_version: "{{ funkwhale_version }}"
+
+# The number of web workers to start in parallel. Higher means you can handle
+# more concurrent requests, but also leads to higher CPU/Memory usage
+funkwhale_frontend_web_workers: 2
+
+funkwhale_frontend_nginx_run_path: "{{ funkwhale_frontend_base_path }}/nginx-run"
+funkwhale_frontend_nginx_cache_path: "{{ funkwhale_frontend_base_path }}/nginx-cache"
+funkwhale_frontend_nginx_etc_path: "{{ funkwhale_frontend_base_path }}/nginx-etc"
+
+# List of systemd services that funkwhale-frontend.service depends on
+funkwhale_frontend_systemd_required_services_list: "{{ funkwhale_frontend_systemd_required_services_list_default + funkwhale_frontend_systemd_required_services_list_auto + funkwhale_frontend_systemd_required_services_list_custom }}"
+funkwhale_frontend_systemd_required_services_list_default: ['docker.service', '{{ funkwhale_api_identifier }}.service']
+funkwhale_frontend_systemd_required_services_list_auto: []
+funkwhale_frontend_systemd_required_services_list_custom: []
+
+funkwhale_frontend_container_image: "{{ funkwhale_frontend_container_image_registry_prefix }}funkwhale/front:{{ funkwhale_frontend_container_image_tag }}"
+funkwhale_frontend_container_image_registry_prefix: "{{ funkwhale_container_image_registry_prefix }}"
+funkwhale_frontend_container_image_tag: "{{ funkwhale_frontend_version }}"
+funkwhale_frontend_container_image_force_pull: "{{ funkwhale_frontend_container_image.endswith(':latest') }}"
+
+funkwhale_frontend_container_media_path: "/srv/funkwhale/data/media"
+funkwhale_frontend_container_music_path: "/srv/funkwhale/data/music"
+funkwhale_frontend_container_static_path: "/usr/share/nginx/html/staticfiles"
+
+funkwhale_frontend_container_network: '{{ funkwhale_container_network }}'
+
+funkwhale_frontend_container_http_port: 80
+
+# Controls whether the funkwhale container exposes its HTTP port (as defined by `funkwhale_container_http_port`).
+#
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:8731"), or empty string to not expose.
+funkwhale_frontend_container_http_host_bind_port: ""
+
+# A list of additional container networks that the container would be connected to.
+# The role does not create these networks, so make sure they already exist.
+# Use this to expose this container to another reverse proxy, which runs in a different container network.
+funkwhale_frontend_container_additional_networks: "{{ funkwhale_frontend_container_additional_networks_auto + funkwhale_frontend_container_additional_networks_custom }}"
+funkwhale_frontend_container_additional_networks_auto: []
+funkwhale_frontend_container_additional_networks_custom: []
+
+funkwhale_frontend_max_body_size: 100M
+
+# funkwhale_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
+# See `roles/custom/funkwhale_funkwhale/templates/labels.j2` for details.
+#
+# To inject your own other container labels, see `funkwhale_container_labels_additional_labels`.
+funkwhale_frontend_container_labels_traefik_enabled: false
+funkwhale_frontend_container_labels_traefik_docker_network: ""
+funkwhale_frontend_container_labels_traefik_entrypoints: web-secure
+funkwhale_frontend_container_labels_traefik_priority: 0
+funkwhale_frontend_container_labels_traefik_tls: "{{ funkwhale_api_container_labels_traefik_entrypoints != 'web' }}"
+funkwhale_frontend_container_labels_traefik_tls_certResolver: default  # noqa var-naming
+
+# Controls which additional headers to attach to all HTTP requests.
+# To add your own custom request headers, use `funkwhale_container_labels_traefik_additional_response_headers_custom`
+funkwhale_frontend_container_labels_traefik_additional_request_headers: "{{ funkwhale_frontend_container_labels_traefik_additional_request_headers_auto | combine(funkwhale_frontend_container_labels_traefik_additional_request_headers_custom) }}"
+funkwhale_frontend_container_labels_traefik_additional_request_headers_auto: {}
+funkwhale_frontend_container_labels_traefik_additional_request_headers_custom: {}
+
+
+# Controls which additional headers to attach to all HTTP responses.
+# To add your own custom response headers, use `funkwhale_container_labels_traefik_additional_response_headers_custom`
+funkwhale_frontend_container_labels_traefik_additional_response_headers: "{{ funkwhale_frontend_container_labels_traefik_additional_response_headers_auto | combine(funkwhale_frontend_container_labels_traefik_additional_response_headers_custom) }}"
+funkwhale_frontend_container_labels_traefik_additional_response_headers_auto: |
+  {{
+    {}
+    | combine ({'X-XSS-Protection': funkwhale_frontend_http_header_xss_protection} if funkwhale_frontend_http_header_xss_protection else {})
+    | combine ({'X-Frame-Options': funkwhale_frontend_http_header_frame_options} if funkwhale_frontend_http_header_frame_options else {})
+    | combine ({'X-Content-Type-Options': funkwhale_frontend_http_header_content_type_options} if funkwhale_frontend_http_header_content_type_options else {})
+    | combine ({'Content-Security-Policy': funkwhale_frontend_http_header_content_security_policy} if funkwhale_frontend_http_header_content_security_policy else {})
+    | combine ({'Permission-Policy': funkwhale_frontend_http_header_content_permission_policy} if funkwhale_frontend_http_header_content_permission_policy else {})
+    | combine ({'Strict-Transport-Security': funkwhale_frontend_http_header_strict_transport_security} if funkwhale_frontend_http_header_strict_transport_security and funkwhale_frontend_container_labels_traefik_tls else {})
+  }}
+funkwhale_frontend_container_labels_traefik_additional_response_headers_custom: {}
+
+# Specifies the value of the `X-XSS-Protection` header
+# Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
+#
+# Learn more about it is here:
+# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
+# - https://portswigger.net/web-security/cross-site-scripting/reflected
+funkwhale_frontend_http_header_xss_protection: "1; mode=block"
+
+# Specifies the value of the `X-Frame-Options` header which controls whether framing can happen.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
+funkwhale_frontend_http_header_frame_options: SAMEORIGIN
+
+# Specifies the value of the `X-Content-Type-Options` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
+funkwhale_frontend_http_header_content_type_options: nosniff
+
+# Specifies the value of the `Content-Security-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
+funkwhale_frontend_http_header_content_security_policy: frame-ancestors 'self'
+
+# Specifies the value of the `Permission-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permission-Policy
+funkwhale_frontend_http_header_content_permission_policy: "{{ 'interest-cohort=()' if funkwhale_frontend_floc_optout_enabled else '' }}"
+
+# Specifies the value of the `Strict-Transport-Security` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+funkwhale_frontend_http_header_strict_transport_security: "max-age=31536000; includeSubDomains{{ '; preload' if funkwhale_frontend_hsts_preload_enabled else '' }}"
+
+# Controls whether to send a "Permissions-Policy interest-cohort=();" header along with all responses
+#
+# Learn more about what it is here:
+# - https://www.eff.org/deeplinks/2021/03/googles-floc-terrible-idea
+# - https://paramdeo.com/blog/opting-your-website-out-of-googles-floc-network
+# - https://amifloced.org/
+#
+# Of course, a better solution is to just stop using browsers (like Chrome), which participate in such tracking practices.
+# See: `funkwhale_content_permission_policy`
+funkwhale_frontend_floc_optout_enabled: true
+
+# Controls if HSTS preloading is enabled
+#
+# In its strongest and recommended form, the [HSTS policy](https://www.chromium.org/hsts) includes all subdomains, and
+# indicates a willingness to be "preloaded" into browsers:
+# `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload`
+# For more information visit:
+# - https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
+# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+# - https://hstspreload.org/#opt-in
+# See: `funkwhale_http_header_strict_transport_security`
+funkwhale_frontend_hsts_preload_enabled: false
+
+
+# funkwhale_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
+# See `roles/custom/collabora_online/templates/labels.j2` for details.
+#
+# Example:
+# funkwhale_container_labels_additional_labels: |
+#   my.label=1
+#   another.label="here"
+funkwhale_frontend_container_labels_additional_labels: ''
+
+funkwhale_frontend_variables_additional_variables: ''
+
+# A list of extra arguments to pass to the Funkwhale frontend container (run) statement
+# To mount a library to the funkwhale/music directory use: ["--mount type=bind,src=LIBRARY_PATH,dst=/srv/funkwhale/data/music,ro"]
+funkwhale_frontend_container_extra_arguments: "{{ funkwhale_frontend_container_extra_arguments_auto + funkwhale_frontend_container_extra_arguments_custom }}"
+funkwhale_frontend_container_extra_arguments_auto: []
+funkwhale_frontend_container_extra_arguments_custom: []
+
+# A list of extra arguments to pass to the Funkwhale frontend process
+# Example: ['--SOME_ARGUMENT']
+funkwhale_frontend_process_extra_arguments: "{{ funkwhale_frontend_process_extra_arguments_auto + funkwhale_frontend_process_extra_arguments_custom }}"
+funkwhale_frontend_process_extra_arguments_auto: []
+funkwhale_frontend_process_extra_arguments_custom: []
+
+#################
+## CELERY-BEAT ##
+#################
+
+funkwhale_celery_beat_identifier: "{{ funkwhale_identifier }}-celery-beat"
+
+funkwhale_celery_beat_version: "{{ funkwhale_version }}"
+
+funkwhale_celery_beat_concurrency: 0
+
+funkwhale_celery_beat_container_network: '{{ funkwhale_container_network }}'
+
+funkwhale_celery_beat_systemd_required_services_list: ['docker.service', '{{ funkwhale_api_identifier }}.service']
+
+# A list of additional container networks that the container would be connected to.
+# The role does not create these networks, so make sure they already exist.
+# Use this to expose this container to a reverse proxy, which runs in a different container network.
+funkwhale_celery_beat_container_additional_networks: []
+
+funkwhale_celery_beat_variables_additional_variables: ''
+
+# A list of extra arguments to pass to the Funkwhale celery beat process
+# Example: ['--SOME_ARGUMENT']
+funkwhale_celery_beat_process_extra_arguments: "{{ funkwhale_celery_beat_process_extra_arguments_auto + funkwhale_celery_beat_process_extra_arguments_custom }}"
+funkwhale_celery_beat_process_extra_arguments_auto: []
+funkwhale_celery_beat_process_extra_arguments_custom: []
+
+
+###################
+## CELERY-WORKER ##
+###################
+
+funkwhale_celery_worker_identifier: "{{ funkwhale_identifier }}-celery-worker"
+
+funkwhale_celery_worker_version: "{{ funkwhale_version }}"
+
+funkwhale_celery_worker_systemd_required_services_list: ['docker.service', '{{ funkwhale_api_identifier }}.service']
+
+# Number of worker processes to execute. Defaults to 0, in which case it uses your number of CPUs
+# Celery workers handle background tasks (such file imports or federation
+# messaging). The more processes a worker gets, the more tasks
+# can be processed in parallel. However, more processes also means
+# a bigger memory footprint.
+funkwhale_celery_worker_concurrency: 0
+
+funkwhale_celery_worker_container_network: '{{ funkwhale_container_network }}'
+
+# A list of additional container networks that the container would be connected to.
+# The role does not create these networks, so make sure they already exist.
+# Use this to expose this container to a reverse proxy, which runs in a different container network.
+funkwhale_celery_worker_container_additional_networks: []
+
+funkwhale_celery_worker_variables_additional_variables: ''
+
+# A list of extra arguments to pass to the Funkwhale celery worker process
+# Example: ['--SOME_ARGUMENT']
+funkwhale_celery_worker_process_extra_arguments: "{{ funkwhale_celery_worker_process_extra_arguments_auto + funkwhale_celery_worker_process_extra_arguments_custom }}"
+funkwhale_celery_worker_process_extra_arguments_auto: []
+funkwhale_celery_worker_process_extra_arguments_custom: []
+
+
+###################
+## WATCH-IMPORTS ##
+###################
+
+funkwhale_watch_imports_identifier: "{{ funkwhale_identifier }}-watch-imports"
+
+funkwhale_watch_imports_systemd_required_services_list: ['docker.service', '{{ funkwhale_api_identifier }}.service']
+
+funkwhale_watch_imports_container_network: '{{ funkwhale_container_network }}'
+
+# A list of additional container networks that the container would be connected to.
+# The role does not create these networks, so make sure they already exist.
+# Use this to expose this container to a reverse proxy, which runs in a different container network.
+funkwhale_watch_imports_container_additional_networks: []
+
+# A list of extra arguments to pass to the Funkwhale watch imports process
+# Example: ['--prune', '--replace']
+funkwhale_watch_imports_process_extra_arguments: "{{ funkwhale_watch_imports_process_extra_arguments_auto + funkwhale_watch_imports_process_extra_arguments_custom }}"
+funkwhale_watch_imports_process_extra_arguments_auto: []
+funkwhale_watch_imports_process_extra_arguments_custom: []

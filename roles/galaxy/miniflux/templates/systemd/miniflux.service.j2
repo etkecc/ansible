@@ -1,0 +1,44 @@
+#jinja2: lstrip_blocks: "True"
+[Unit]
+Description=Miniflux ({{ miniflux_identifier }})
+{% for service in miniflux_systemd_required_services_list %}
+Requires={{ service }}
+After={{ service }}
+{% endfor %}
+DefaultDependencies=no
+
+[Service]
+Type=simple
+Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop --time={{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ miniflux_identifier }} 2>/dev/null || true'
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ miniflux_identifier }} 2>/dev/null || true'
+
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
+			--rm \
+			--name={{ miniflux_identifier }} \
+			--log-driver=none \
+			--user={{ miniflux_uid }}:{{ miniflux_gid }} \
+			--cap-drop=ALL \
+			--network={{ miniflux_container_network }} \
+			--env-file={{ miniflux_base_path }}/env \
+			--label-file={{ miniflux_base_path }}/labels \
+			{% for arg in miniflux_container_extra_arguments %}
+			{{ arg }} \
+			{% endfor %}
+			{{ miniflux_container_image }}
+
+{% for network in miniflux_container_additional_networks %}
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ miniflux_identifier }}
+{% endfor %}
+
+ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ miniflux_identifier }}
+
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop --time={{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ miniflux_identifier }} 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ miniflux_identifier }} 2>/dev/null || true'
+
+Restart=always
+RestartSec=30
+SyslogIdentifier={{ miniflux_identifier }}
+
+[Install]
+WantedBy=multi-user.target

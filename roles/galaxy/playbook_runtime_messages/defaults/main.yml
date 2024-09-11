@@ -1,0 +1,5 @@
+---
+
+# A list of messages to display at the end of playbook execution.
+# Other roles can inject messages here at runtime.
+devture_playbook_runtime_messages_list: []

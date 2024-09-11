@@ -1,0 +1,51 @@
+---
+
+- name: Ensure ntfy paths exists
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0750
+    owner: "{{ ntfy_uid }}"
+    group: "{{ ntfy_gid }}"
+  with_items:
+    - "{{ ntfy_base_path }}"
+    - "{{ ntfy_config_dir_path }}"
+    - "{{ ntfy_data_path }}"
+
+- name: Ensure ntfy config installed
+  ansible.builtin.copy:
+    content: "{{ ntfy_configuration | to_nice_yaml(indent=2, width=999999) }}"
+    dest: "{{ ntfy_config_dir_path }}/server.yml"
+    mode: 0644
+    owner: "{{ ntfy_uid }}"
+    group: "{{ ntfy_gid }}"
+
+- name: Ensure ntfy labels installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/labels.j2"
+    dest: "{{ ntfy_base_path }}/labels"
+    mode: 0640
+    owner: "{{ ntfy_uid }}"
+    group: "{{ ntfy_gid }}"
+
+- name: Ensure ntfy container image is pulled
+  community.docker.docker_image:
+    name: "{{ ntfy_container_image }}"
+    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+    force_source: "{{ ntfy_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else ntfy_container_image_force_pull }}"
+  register: result
+  retries: "{{ devture_playbook_help_container_retries_count }}"
+  delay: "{{ devture_playbook_help_container_retries_delay }}"
+  until: result is not failed
+
+- name: Ensure ntfy container network is created
+  community.general.docker_network:
+    name: "{{ ntfy_container_network }}"
+    driver: bridge
+
+- name: Ensure ntfy.service installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/systemd/ntfy.service.j2"
+    dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ ntfy_identifier }}.service"
+    mode: 0644

@@ -1,0 +1,20 @@
+---
+- name: Ensure GoToSocial user registered - {{ user.username | quote }}
+  ansible.builtin.command:
+    cmd: |-
+      {{ devture_systemd_docker_base_host_command_docker }} exec {{ gotosocial_identifier }}
+      /gotosocial/gotosocial admin account create
+      --username {{ user.username | quote }}
+      --email {{ user.initial_email | quote }}
+      --password {{ user.initial_password | quote }}
+  register: gotosocial_create_account_result
+  changed_when: gotosocial_create_account_result.rc == 0 and 'is already in use' not in gotosocial_create_account_result.stderr
+  failed_when: gotosocial_create_account_result.rc > 0 and 'is already in use' not in gotosocial_create_account_result.stderr
+
+- name: Ensure GoToSocial user is promoted - {{ user.username | quote }}
+  ansible.builtin.command:
+    cmd: |-
+      {{ devture_systemd_docker_base_host_command_docker }} exec {{ gotosocial_identifier }}
+      /gotosocial/gotosocial admin account promote
+      --username {{ user.username | quote }}
+  when: user.initial_type == 'admin'

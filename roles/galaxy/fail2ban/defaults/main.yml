@@ -1,0 +1,9 @@
+---
+# Enable fail2ban installation and config
+system_security_fail2ban_enabled: true
+
+# ssh port for sshd jail
+system_security_fail2ban_sshd_port: 22
+
+# custom configuration
+system_security_fail2ban_configuration_extension: ''

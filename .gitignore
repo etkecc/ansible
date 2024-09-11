@@ -2,10 +2,6 @@
 /play/.skopeo-parallel
 /play/local.yml
 
-# ignore roles pulled by ansible-galaxy
-/roles/galaxy/*
-!/roles/galaxy/.gitkeep
-
 # ignore sensitive data by default
 /inventory/host_vars/*
 

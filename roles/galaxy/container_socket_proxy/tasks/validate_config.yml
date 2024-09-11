@@ -1,0 +1,10 @@
+---
+
+- name: Fail if required container-socket-proxy settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`) for using this role.
+  when: "vars[item] == ''"
+  with_items:
+    - devture_container_socket_proxy_uid
+    - devture_container_socket_proxy_gid

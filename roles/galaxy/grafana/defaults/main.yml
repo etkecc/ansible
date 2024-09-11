@@ -1,0 +1,204 @@
+---
+
+# Grafana is open source visualization and analytics software
+# Project source code URL: https://github.com/grafana/grafana
+
+grafana_enabled: true
+
+grafana_identifier: grafana
+
+grafana_version: 11.1.4
+
+grafana_uid: ''
+grafana_gid: ''
+
+# The hostname at which Grafana is served.
+grafana_hostname: ''
+
+# The path at which Grafana is exposed.
+# This value must either be `/` or not end with a slash (e.g. `/grafana`).
+grafana_path_prefix: /
+
+# grafana_dashboard_download_urls holds a list of URLs of dashboards to download
+grafana_dashboard_download_urls: []
+
+grafana_base_path: "{{ grafana_identifier }}"
+grafana_config_path: "{{ grafana_base_path }}/config"
+grafana_data_path: "{{ grafana_base_path }}/data"
+
+# Allow viewing Grafana without logging in
+grafana_anonymous_access: false
+
+# When `false`, sends a `X-Frame-Options: deny` HTTP header, which allows Grafana from being embeded in a frame.
+# Read more here: https://grafana.com/docs/grafana/latest/administration/configuration/#allow_embedding
+grafana_allow_embedding: false
+
+# specify organization name that should be used for unauthenticated users
+# if you change this in the Grafana admin panel, this needs to be updated
+# to match to keep anonymous logins working
+grafana_anonymous_access_org_name: 'Main Org.'
+
+# default admin credentials, you are asked to change these on first login
+grafana_default_admin_user: admin
+grafana_default_admin_password: admin
+
+# Set to true to add the Content-Security-Policy header to your requests.
+# CSP allows to control resources that the user agent can load and helps
+# prevent XSS attacks.
+# [Content Security Policy](https://grafana.com/docs/grafana/latest/administration/configuration/#content_security_policy)
+grafana_content_security_policy: true
+
+# specify content security policy template to customized template
+# added https: and http: url schemes (ignored by browsers supporting 'strict-dynamic') to be backward compatible with older browsers.
+# [Content Security Policy Browser Test] (https://content-security-policy.com/browser-test/)
+# [Content Security Policy Reference](https://content-security-policy.com/script-src/)
+grafana_content_security_policy_customized: false
+grafana_content_security_policy_template: "script-src 'self' 'unsafe-eval' 'unsafe-inline' http: https: 'strict-dynamic' $NONCE;object-src 'none';font-src 'self';style-src 'self' 'unsafe-inline' blob:;img-src * data:;base-uri 'self';connect-src 'self' grafana.com ws://$ROOT_PATH wss://$ROOT_PATH;manifest-src 'self';media-src 'none';form-action 'self';"
+
+# grafana_default_home_dashboard_path influences the `default_home_dashboard_path` grafana.ini setting,
+# which is an in-container path for the default dashboard.
+grafana_default_home_dashboard_path: ''
+
+# grafana_feature_toggles_enable controls the enabled feature toggles.
+# To enable experimental features use comma-separation: `grafana_feature_toggles_enable: feature1,feature2`
+# Leave it empty to not enable any experimental features.
+grafana_feature_toggles_enable: ''
+
+# A list of provisioning dashboard providers.
+# See `../templates/provisioning/dashboards.yaml.j2`
+grafana_provisioning_dashboard_providers:
+  - name: Dashboards
+    folder: ''  # The folder where to place the dashboards
+    type: file
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/dashboards
+
+# Configure smtp settings for sending email notifications
+#
+# Example:
+# grafana_smtp_host: "smtp.example.com"
+# grafana_smtp_port: "587"
+# grafana_smtp_user: "test@example.com"
+# grafana_smtp_password: "changem3"
+# grafana_smtp_from_address: "test@example.com"
+grafana_smtp_enabled: false
+grafana_smtp_host: ""
+grafana_smtp_port: ""
+grafana_smtp_user: ""
+grafana_smtp_password: ""
+grafana_smtp_from_address: ""
+
+# A list of template files on the Ansible controller server to install into the dashboards directory.
+#
+# Example:
+# grafana_provisioning_dashboard_template_files:
+#   - name: /path/to/my-dashboard.json
+#     name: my-dashboard.json
+grafana_provisioning_dashboard_template_files: []
+
+# A list of provisioning datasources.
+# See `../templates/provisioning/datasources.yaml.j2`
+grafana_provisioning_datasources: []
+
+grafana_container_image: "{{ grafana_container_image_registry_prefix }}grafana/grafana-oss:{{ grafana_version }}"
+grafana_container_image_registry_prefix: docker.io/
+grafana_container_image_force_pull: "{{ grafana_container_image.endswith(':latest') }}"
+
+# The base container network. It will be auto-created by this role if it doesn't exist already.
+grafana_container_network: "{{ grafana_identifier }}"
+
+# A list of additional container networks that the container would be connected to.
+# The role does not create these networks, so make sure they already exist.
+grafana_container_additional_networks: "{{ grafana_container_additional_networks_auto + grafana_container_additional_networks_custom }}"
+grafana_container_additional_networks_auto: []
+grafana_container_additional_networks_custom: []
+
+# Controls whether the Grafana container exposes its HTTP port (tcp/3000 in the container).
+#
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:3000"), or empty string to not expose.
+grafana_container_http_host_bind_port: ''
+
+# grafana_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
+# See `../templates/labels.j2` for details.
+#
+# To inject your own other container labels, see `grafana_container_labels_additional_labels`.
+grafana_container_labels_traefik_enabled: true
+grafana_container_labels_traefik_docker_network: "{{ grafana_container_network }}"
+grafana_container_labels_traefik_hostname: "{{ grafana_hostname }}"
+# The path prefix must either be `/` or not end with a slash (e.g. `/cinny`).
+grafana_container_labels_traefik_path_prefix: "{{ grafana_path_prefix }}"
+grafana_container_labels_traefik_rule: "Host(`{{ grafana_container_labels_traefik_hostname }}`){% if grafana_container_labels_traefik_path_prefix != '/' %} && PathPrefix(`{{ grafana_container_labels_traefik_path_prefix }}`){% endif %}"
+grafana_container_labels_traefik_priority: 0
+grafana_container_labels_traefik_entrypoints: web-secure
+grafana_container_labels_traefik_tls: "{{ grafana_container_labels_traefik_entrypoints != 'web' }}"
+grafana_container_labels_traefik_tls_certResolver: default  # noqa var-naming
+
+# Controls which additional headers to attach to all HTTP responses.
+# To add your own headers, use `grafana_container_labels_traefik_additional_response_headers_custom`
+#
+# Note that Grafana sends these security headers by itself, so we don't have to:
+# - X-XSS-Protection
+# - X-Frame-Options
+# - X-Content-Type-Options
+# - Content-Security-Policy (see `grafana_content_security_policy` and `grafana_content_security_policy_customized`)
+grafana_container_labels_traefik_additional_response_headers: "{{ grafana_container_labels_traefik_additional_response_headers_auto | combine(grafana_container_labels_traefik_additional_response_headers_custom) }}"
+grafana_container_labels_traefik_additional_response_headers_auto: |
+  {{
+    {}
+    | combine ({'Permission-Policy': grafana_http_header_content_permission_policy} if grafana_http_header_content_permission_policy else {})
+    | combine ({'Strict-Transport-Security': grafana_http_header_strict_transport_security} if grafana_http_header_strict_transport_security and grafana_container_labels_traefik_tls else {})
+  }}
+grafana_container_labels_traefik_additional_response_headers_custom: {}
+
+# grafana_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
+# See `../templates/labels.j2` for details.
+#
+# Example:
+# grafana_container_labels_additional_labels: |
+#   my.label=1
+#   another.label="here"
+grafana_container_labels_additional_labels: ''
+
+# A list of extra arguments to pass to the container
+grafana_container_extra_arguments: []
+
+# Additional environment variables.
+grafana_environment_variables_additional_variables: ''
+
+# List of systemd services that the Grafana systemd service depends on
+grafana_systemd_required_services_list: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+
+# List of systemd services that Grafana systemd service wants
+grafana_systemd_wanted_services_list: []
+
+# Specifies the value of the `Permission-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permission-Policy
+grafana_http_header_content_permission_policy: "{{ 'interest-cohort=()' if grafana_floc_optout_enabled else '' }}"
+
+# Specifies the value of the `Strict-Transport-Security` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+grafana_http_header_strict_transport_security: "max-age=31536000; includeSubDomains{{ '; preload' if grafana_hsts_preload_enabled else '' }}"
+
+# Controls whether to send a "Permissions-Policy interest-cohort=();" header along with all responses
+#
+# Learn more about what it is here:
+# - https://www.eff.org/deeplinks/2021/03/googles-floc-terrible-idea
+# - https://paramdeo.com/blog/opting-your-website-out-of-googles-floc-network
+# - https://amifloced.org/
+#
+# Of course, a better solution is to just stop using browsers (like Chrome), which participate in such tracking practices.
+# See: `grafana_content_permission_policy`
+grafana_floc_optout_enabled: true
+
+# Controls if HSTS preloading is enabled
+#
+# In its strongest and recommended form, the [HSTS policy](https://www.chromium.org/hsts) includes all subdomains, and
+# indicates a willingness to be "preloaded" into browsers:
+# `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload`
+# For more information visit:
+# - https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
+# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+# - https://hstspreload.org/#opt-in
+# See: `grafana_http_header_strict_transport_security`
+grafana_hsts_preload_enabled: false

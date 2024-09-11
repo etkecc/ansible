@@ -1,0 +1,159 @@
+---
+
+# Project source code URL: https://github.com/miniflux/v2
+
+miniflux_enabled: true
+
+miniflux_identifier: miniflux
+
+miniflux_uid: ''
+miniflux_gid: ''
+
+miniflux_scheme: https
+
+# The hostname at which miniflux is served.
+miniflux_hostname: ''
+
+# The path at which miniflux is served.
+# This value must either be `/` or not end with a slash (e.g. `/miniflux`).
+miniflux_path_prefix: /
+
+miniflux_version: 2.2.0
+
+miniflux_base_path: "/{{ miniflux_identifier }}"
+
+# Optional admin credentials to be created on startup.
+miniflux_admin_login: ''
+miniflux_admin_password: ''
+
+miniflux_container_image: "{{ miniflux_container_image_registry_prefix }}miniflux/miniflux:{{ miniflux_container_image_tag }}"
+miniflux_container_image_registry_prefix: docker.io/
+miniflux_container_image_tag: "{{ miniflux_version }}"
+miniflux_container_image_force_pull: "{{ miniflux_container_image.endswith(':latest') }}"
+
+# The base container network. It will be auto-created by this role if it doesn't exist already.
+miniflux_container_network: "{{ miniflux_identifier }}"
+
+# A list of additional container networks that the container would be connected to.
+# The role does not create these networks, so make sure they already exist.
+# Use this to expose this container to another reverse proxy, which runs in a different container network.
+miniflux_container_additional_networks: []
+
+# miniflux_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
+# See `../templates/labels.j2` for details.
+#
+# To inject your own other container labels, see `miniflux_container_labels_additional_labels`.
+miniflux_container_labels_traefik_enabled: true
+miniflux_container_labels_traefik_docker_network: "{{ miniflux_container_network }}"
+miniflux_container_labels_traefik_hostname: "{{ miniflux_hostname }}"
+# The path prefix must either be `/` or not end with a slash (e.g. `/miniflux`).
+miniflux_container_labels_traefik_path_prefix: "{{ miniflux_path_prefix }}"
+miniflux_container_labels_traefik_rule: "Host(`{{ miniflux_container_labels_traefik_hostname }}`){% if miniflux_container_labels_traefik_path_prefix != '/' %} && PathPrefix(`{{ miniflux_container_labels_traefik_path_prefix }}`){% endif %}"
+miniflux_container_labels_traefik_priority: 0
+miniflux_container_labels_traefik_entrypoints: web-secure
+miniflux_container_labels_traefik_tls: "{{ miniflux_container_labels_traefik_entrypoints != 'web' }}"
+miniflux_container_labels_traefik_tls_certResolver: default  # noqa var-naming
+
+# Controls which additional headers to attach to all HTTP responses.
+# To add your own headers, use `miniflux_container_labels_traefik_additional_response_headers_custom`
+miniflux_container_labels_traefik_additional_response_headers: "{{ miniflux_container_labels_traefik_additional_response_headers_auto | combine(miniflux_container_labels_traefik_additional_response_headers_custom) }}"
+miniflux_container_labels_traefik_additional_response_headers_auto: |
+  {{
+    {}
+    | combine ({'X-XSS-Protection': miniflux_http_header_xss_protection} if miniflux_http_header_xss_protection else {})
+    | combine ({'X-Frame-Options': miniflux_http_header_frame_options} if miniflux_http_header_frame_options else {})
+    | combine ({'X-Content-Type-Options': miniflux_http_header_content_type_options} if miniflux_http_header_content_type_options else {})
+    | combine ({'Content-Security-Policy': miniflux_http_header_content_security_policy} if miniflux_http_header_content_security_policy else {})
+    | combine ({'Permission-Policy': miniflux_http_header_content_permission_policy} if miniflux_http_header_content_permission_policy else {})
+    | combine ({'Strict-Transport-Security': miniflux_http_header_strict_transport_security} if miniflux_http_header_strict_transport_security and miniflux_container_labels_traefik_tls else {})
+  }}
+miniflux_container_labels_traefik_additional_response_headers_custom: {}
+
+# miniflux_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
+# See `../templates/labels.j2` for details.
+#
+# Example:
+# miniflux_container_labels_additional_labels: |
+#   my.label=1
+#   another.label="here"
+miniflux_container_labels_additional_labels: ''
+
+# A list of extra arguments to pass to the container
+miniflux_container_extra_arguments: []
+
+# List of systemd services that miniflux.service depends on
+miniflux_systemd_required_services_list: ['docker.service']
+
+# Specifies the value of the `X-XSS-Protection` header
+# Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
+#
+# Learn more about it is here:
+# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
+# - https://portswigger.net/web-security/cross-site-scripting/reflected
+miniflux_http_header_xss_protection: "1; mode=block"
+
+# Specifies the value of the `X-Frame-Options` header which controls whether framing can happen.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
+miniflux_http_header_frame_options: SAMEORIGIN
+
+# Specifies the value of the `X-Content-Type-Options` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
+miniflux_http_header_content_type_options: nosniff
+
+# Specifies the value of the `Content-Security-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
+miniflux_http_header_content_security_policy: frame-ancestors 'self'
+
+# Specifies the value of the `Permission-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permission-Policy
+miniflux_http_header_content_permission_policy: "{{ 'interest-cohort=()' if miniflux_floc_optout_enabled else '' }}"
+
+# Specifies the value of the `Strict-Transport-Security` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+miniflux_http_header_strict_transport_security: "max-age=31536000; includeSubDomains{{ '; preload' if miniflux_hsts_preload_enabled else '' }}"
+
+# Controls whether to send a "Permissions-Policy interest-cohort=();" header along with all responses
+#
+# Learn more about what it is here:
+# - https://www.eff.org/deeplinks/2021/03/googles-floc-terrible-idea
+# - https://paramdeo.com/blog/opting-your-website-out-of-googles-floc-network
+# - https://amifloced.org/
+#
+# Of course, a better solution is to just stop using browsers (like Chrome), which participate in such tracking practices.
+# See: `miniflux_content_permission_policy`
+miniflux_floc_optout_enabled: true
+
+# Controls if HSTS preloading is enabled
+#
+# In its strongest and recommended form, the [HSTS policy](https://www.chromium.org/hsts) includes all subdomains, and
+# indicates a willingness to be "preloaded" into browsers:
+# `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload`
+# For more information visit:
+# - https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
+# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+# - https://hstspreload.org/#opt-in
+# See: `miniflux_http_header_strict_transport_security`
+miniflux_hsts_preload_enabled: false
+
+miniflux_database_username: miniflux
+miniflux_database_password: ''
+miniflux_database_hostname: ''
+miniflux_database_port: 5432
+miniflux_database_name: miniflux
+
+miniflux_database_connection_string: "postgres://{{ miniflux_database_username }}:{{ miniflux_database_password }}@{{ miniflux_database_hostname }}:{{ miniflux_database_port }}/{{ miniflux_database_name }}?sslmode=disable"
+
+# Controls the DATABASE_URL environment variable
+miniflux_environment_variable_database_url: "{{ miniflux_database_connection_string }}"
+
+# Controls the BASE_URL environment variable
+miniflux_environment_variable_base_url: "{{ miniflux_scheme }}://{{ miniflux_hostname }}{{ miniflux_path_prefix }}"
+
+# Controls the ADMIN_USERNAME environment variable
+miniflux_environment_variable_admin_username: "{{ miniflux_admin_login }}"
+
+# Controls the ADMIN_PASSWORD environment variable
+miniflux_environment_variable_admin_password: "{{ miniflux_admin_password }}"
+
+# Additional environment variables.
+miniflux_environment_variables_additional_variables: ''

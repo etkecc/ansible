@@ -1,0 +1,164 @@
+---
+
+# Project source code URL: https://github.com/Erikvl87/docker-languagetool
+
+languagetool_enabled: false
+
+languagetool_identifier: languagetool
+
+languagetool_uid: ''
+languagetool_gid: ''
+
+# The hostname at which languagetool is served.
+languagetool_hostname: ''
+
+# The path at which languagetool is exposed.
+# This value must either be `/` or not end with a slash (e.g. `/languagetool`).
+languagetool_path_prefix: /
+
+languagetool_version: 6.4
+
+languagetool_base_path: "/{{ languagetool_identifier }}"
+languagetool_data_path: "{{ languagetool_base_path }}/data"
+
+languagetool_container_image: "{{ languagetool_container_image_registry_prefix }}erikvl87/languagetool:{{ languagetool_version }}"
+languagetool_container_image_registry_prefix: docker.io/
+languagetool_container_image_force_pull: "{{ languagetool_container_image.endswith(':latest') }}"
+
+# The base container network. It will be auto-created by this role if it doesn't exist already.
+languagetool_container_network: "{{ languagetool_identifier }}"
+
+# A list of additional container networks that the container would be connected to.
+# The role does not create these networks, so make sure they already exist.
+languagetool_container_additional_networks: "{{ languagetool_container_additional_networks_auto + languagetool_container_additional_networks_custom }}"
+languagetool_container_additional_networks_auto: []
+languagetool_container_additional_networks_custom: []
+
+# languagetool_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
+# See `../templates/labels.j2` for details.
+#
+# To inject your own other container labels, see `languagetool_container_labels_additional_labels`.
+languagetool_container_labels_traefik_enabled: true
+languagetool_container_labels_traefik_docker_network: "{{ languagetool_container_network }}"
+languagetool_container_labels_traefik_hostname: "{{ languagetool_hostname }}"
+# The path prefix must either be `/` or not end with a slash (e.g. `/languagetool`).
+languagetool_container_labels_traefik_path_prefix: "{{ languagetool_path_prefix }}"
+languagetool_container_labels_traefik_rule: "Host(`{{ languagetool_container_labels_traefik_hostname }}`){% if languagetool_container_labels_traefik_path_prefix != '/' %} && PathPrefix(`{{ languagetool_container_labels_traefik_path_prefix }}`){% endif %}"
+languagetool_container_labels_traefik_priority: 0
+languagetool_container_labels_traefik_entrypoints: web-secure
+languagetool_container_labels_traefik_tls: "{{ languagetool_container_labels_traefik_entrypoints != 'web' }}"
+languagetool_container_labels_traefik_tls_certResolver: default  # noqa var-naming
+
+# Controls which additional headers to attach to all HTTP responses.
+# To add your own headers, use `languagetool_container_labels_traefik_additional_response_headers_custom`
+languagetool_container_labels_traefik_additional_response_headers: "{{ languagetool_container_labels_traefik_additional_response_headers_auto | combine(languagetool_container_labels_traefik_additional_response_headers_custom) }}"
+languagetool_container_labels_traefik_additional_response_headers_auto: |
+  {{
+    {}
+    | combine ({'X-XSS-Protection': languagetool_http_header_xss_protection} if languagetool_http_header_xss_protection else {})
+    | combine ({'X-Frame-Options': languagetool_http_header_frame_options} if languagetool_http_header_frame_options else {})
+    | combine ({'X-Content-Type-Options': languagetool_http_header_content_type_options} if languagetool_http_header_content_type_options else {})
+    | combine ({'Content-Security-Policy': languagetool_http_header_content_security_policy} if languagetool_http_header_content_security_policy else {})
+    | combine ({'Permission-Policy': languagetool_http_header_content_permission_policy} if languagetool_http_header_content_permission_policy else {})
+    | combine ({'Strict-Transport-Security': languagetool_http_header_strict_transport_security} if languagetool_http_header_strict_transport_security and languagetool_container_labels_traefik_tls else {})
+  }}
+languagetool_container_labels_traefik_additional_response_headers_custom: {}
+
+# languagetool_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
+# See `../templates/labels.j2` for details.
+#
+# Example:
+# languagetool_container_labels_additional_labels: |
+#   my.label=1
+#   another.label="here"
+languagetool_container_labels_additional_labels: ''
+
+# Specifies how often the container health-check will run.
+#
+# For Traefik based setups, it's important that the interval is short,
+# because the interval value also specifies the "initial wait time".
+# This is a Docker (moby) bug: https://github.com/moby/moby/issues/33410
+# Without a successful healthcheck, Traefik will not register the service for reverse-proxying.
+# Thus, the health interval determines the initial start-up time -- the smaller, the better.
+#
+# For non-Traefik setups, we use the default healthcheck interval (60s) to decrease overhead.
+languagetool_container_health_interval: "{{ '5s' if languagetool_container_labels_traefik_enabled else '60s' }}"
+
+# Specifies the value of the `X-XSS-Protection` header
+# Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
+#
+# Learn more about it is here:
+# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
+# - https://portswigger.net/web-security/cross-site-scripting/reflected
+languagetool_http_header_xss_protection: "1; mode=block"
+
+# Specifies the value of the `X-Frame-Options` header which controls whether framing can happen.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
+languagetool_http_header_frame_options: SAMEORIGIN
+
+# Specifies the value of the `X-Content-Type-Options` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
+languagetool_http_header_content_type_options: nosniff
+
+# Specifies the value of the `Content-Security-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
+languagetool_http_header_content_security_policy: frame-ancestors 'self'
+
+# Specifies the value of the `Permission-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permission-Policy
+languagetool_http_header_content_permission_policy: "{{ 'interest-cohort=()' if languagetool_floc_optout_enabled else '' }}"
+
+# Specifies the value of the `Strict-Transport-Security` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+languagetool_http_header_strict_transport_security: "max-age=31536000; includeSubDomains{{ '; preload' if languagetool_hsts_preload_enabled else '' }}"
+
+# Controls whether to send a "Permissions-Policy interest-cohort=();" header along with all responses
+#
+# Learn more about what it is here:
+# - https://www.eff.org/deeplinks/2021/03/googles-floc-terrible-idea
+# - https://paramdeo.com/blog/opting-your-website-out-of-googles-floc-network
+# - https://amifloced.org/
+#
+# Of course, a better solution is to just stop using browsers (like Chrome), which participate in such tracking practices.
+# See: `languagetool_content_permission_policy`
+languagetool_floc_optout_enabled: true
+
+# Controls if HSTS preloading is enabled
+#
+# In its strongest and recommended form, the [HSTS policy](https://www.chromium.org/hsts) includes all subdomains, and
+# indicates a willingness to be "preloaded" into browsers:
+# `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload`
+# For more information visit:
+# - https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
+# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+# - https://hstspreload.org/#opt-in
+# See: `languagetool_http_header_strict_transport_security`
+languagetool_hsts_preload_enabled: false
+
+# n-grams
+# WARNING: n-grams require A LOT of storage (zip is > 8gb, unpacked - even more!)
+languagetool_ngrams_enabled: false
+languagetool_ngrams_tmp: /tmp/
+languagetool_ngrams_langs_enabled: ['en']
+languagetool_ngrams_langs:
+  de: https://languagetool.org/download/ngram-data/ngrams-de-20150819.zip
+  en: https://languagetool.org/download/ngram-data/ngrams-en-20150817.zip
+  es: https://languagetool.org/download/ngram-data/ngrams-es-20150915.zip
+  fr: https://languagetool.org/download/ngram-data/ngrams-fr-20150913.zip
+  he: https://languagetool.org/download/ngram-data/untested/ngram-he-20150916.zip
+  it: https://languagetool.org/download/ngram-data/untested/ngram-it-20150915.zip
+  nl: https://languagetool.org/download/ngram-data/ngrams-nl-20181229.zip
+  ru: https://languagetool.org/download/ngram-data/untested/ngram-ru-20150914.zip
+  zh: https://languagetool.org/download/ngram-data/untested/ngram-zh-20150916.zip
+
+languagetool_java_heap_min: 256m
+languagetool_java_heap_max: 512m
+
+# A list of extra arguments to pass to the container
+languagetool_container_extra_arguments: []
+
+# List of systemd services that languagetool.service depends on
+languagetool_systemd_required_services_list: "{{ languagetool_systemd_required_services_list_default + languagetool_systemd_required_services_list_auto + languagetool_systemd_required_services_list_custom }}"
+languagetool_systemd_required_services_list_default: ['docker.service']
+languagetool_systemd_required_services_list_auto: []
+languagetool_systemd_required_services_list_custom: []

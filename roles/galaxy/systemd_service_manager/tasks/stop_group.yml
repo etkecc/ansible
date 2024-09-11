@@ -1,0 +1,10 @@
+---
+
+- name: Fail if stop-group command called incorrectly
+  ansible.builtin.fail:
+    msg: "The `group` variable needs to be provided to this playbook tag, via --extra-vars"
+  when: "group is not defined"
+
+- include_tasks: "{{ role_path }}/tasks/stop_specified.yml"
+  vars:
+    devture_systemd_service_manager_services_list_to_work_with: "{{ devture_systemd_service_manager_services_list | selectattr('groups', 'contains', group) }}"

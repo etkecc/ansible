@@ -1,0 +1,64 @@
+---
+- name: Ensure radicale paths exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0750
+    owner: "{{ radicale_uid }}"
+    group: "{{ radicale_gid }}"
+  with_items:
+    - "{{ radicale_base_path }}"
+    - "{{ radicale_config_path }}"
+    - "{{ radicale_data_path }}"
+    - "{{ radicale_data_collections_path }}"
+
+- name: Convert radicale credentials to htpasswd entries
+  ansible.builtin.include_tasks: "{{ role_path }}/tasks/includes/convert_credentials_to_htpasswd.yml"
+  with_items: "{{ radicale_credentials | unique }}"
+  when: radicale_auth_type == 'htpasswd'
+  loop_control:
+    loop_var: credential_entry
+
+- name: Ensure radicale config files are present
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/config/{{ item.path }}.j2"
+    dest: "{{ radicale_config_path }}/{{ item.path }}"
+    owner: "{{ radicale_uid }}"
+    group: "{{ radicale_gid }}"
+    mode: 0644
+  when: item.valid
+  with_items:
+    - { path: config, valid: true }
+    - { path: htpasswd, valid: "{{ radicale_auth_type == 'htpasswd' }}" }
+
+- name: Ensure radicale support files installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/{{ item }}.j2"
+    dest: "{{ radicale_base_path }}/{{ item }}"
+    mode: 0640
+    owner: "{{ radicale_uid }}"
+    group: "{{ radicale_gid }}"
+  with_items:
+    - env
+    - labels
+
+- name: Ensure radicale container image is pulled
+  community.docker.docker_image:
+    name: "{{ radicale_container_image }}"
+    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+    force_source: "{{ radicale_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else radicale_container_image_force_pull }}"
+  register: result
+  retries: "{{ devture_playbook_help_container_retries_count }}"
+  delay: "{{ devture_playbook_help_container_retries_delay }}"
+  until: result is not failed
+
+- name: Ensure radicale container network is created
+  community.general.docker_network:
+    name: "{{ radicale_container_network }}"
+    driver: bridge
+
+- name: Ensure radicale systemd service is present
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/systemd/radicale.service.j2"
+    dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ radicale_identifier }}.service"

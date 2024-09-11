@@ -1,0 +1,45 @@
+{% if ntfy_container_labels_traefik_enabled %}
+traefik.enable=true
+
+{% if ntfy_container_labels_traefik_docker_network %}
+traefik.docker.network={{ ntfy_container_labels_traefik_docker_network }}
+{% endif %}
+
+{% set middlewares = [] %}
+
+{% if ntfy_container_labels_traefik_path_prefix != '/' %}
+traefik.http.middlewares.{{ ntfy_identifier }}-slashless-redirect.redirectregex.regex=({{ ntfy_container_labels_traefik_path_prefix | quote }})$
+traefik.http.middlewares.{{ ntfy_identifier }}-slashless-redirect.redirectregex.replacement=${1}/
+{% set middlewares = middlewares + [ntfy_identifier + '-slashless-redirect'] %}
+{% endif %}
+
+{% if ntfy_container_labels_traefik_path_prefix != '/' %}
+traefik.http.middlewares.{{ ntfy_identifier }}-strip-prefix.stripprefix.prefixes={{ ntfy_container_labels_traefik_path_prefix }}
+{% set middlewares = middlewares + [ntfy_identifier + '-strip-prefix'] %}
+{% endif %}
+
+{% if ntfy_container_labels_traefik_additional_response_headers.keys() | length > 0 %}
+{% for name, value in ntfy_container_labels_traefik_additional_response_headers.items() %}
+traefik.http.middlewares.{{ ntfy_identifier }}-add-headers.headers.customresponseheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [ntfy_identifier + '-add-headers'] %}
+{% endif %}
+
+traefik.http.routers.{{ ntfy_identifier }}.rule={{ ntfy_container_labels_traefik_rule }}
+{% if ntfy_container_labels_traefik_priority | int > 0 %}
+traefik.http.routers.{{ ntfy_identifier }}.priority={{ ntfy_container_labels_traefik_priority }}
+{% endif %}
+traefik.http.routers.{{ ntfy_identifier }}.service={{ ntfy_identifier }}
+{% if middlewares | length > 0 %}
+traefik.http.routers.{{ ntfy_identifier }}.middlewares={{ middlewares | join(',') }}
+{% endif %}
+traefik.http.routers.{{ ntfy_identifier }}.entrypoints={{ ntfy_container_labels_traefik_entrypoints }}
+traefik.http.routers.{{ ntfy_identifier }}.tls={{ ntfy_container_labels_traefik_tls | to_json }}
+{% if ntfy_container_labels_traefik_tls %}
+traefik.http.routers.{{ ntfy_identifier }}.tls.certResolver={{ ntfy_container_labels_traefik_tls_certResolver }}
+{% endif %}
+
+traefik.http.services.{{ ntfy_identifier }}.loadbalancer.server.port=8080
+{% endif %}
+
+{{ ntfy_container_labels_additional_labels }}

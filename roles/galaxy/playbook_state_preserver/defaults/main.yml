@@ -1,0 +1,21 @@
+---
+
+# Controls whether this role will do anything at all
+devture_playbook_state_preserver_enabled: true
+
+devture_playbook_state_preserver_uid: ~
+devture_playbook_state_preserver_gid: ~
+devture_playbook_state_preserver_mode: '0660'
+
+# Controls whether we'll preserve the `vars.yml` file on the server.
+# If you have a differently organized inventory, you may wish to disable this feature,
+# or to repoint `devture_playbook_state_preserver_vars_preservation_src` to the file you'd like to preserve.
+devture_playbook_state_preserver_vars_preservation_enabled: true
+devture_playbook_state_preserver_vars_preservation_src: "{{ inventory_dir }}/host_vars/{{ inventory_hostname }}/vars.yml"
+devture_playbook_state_preserver_vars_preservation_dst: ~
+
+# Controls whether the current playbook's commit hash is saved in `git_hash.yml` on the target
+# Set this to false if GIT is not installed on the local system (the system where the ansible command is run on)
+# to suppress the warning message.
+devture_playbook_state_preserver_commit_hash_preservation_enabled: true
+devture_playbook_state_preserver_commit_hash_preservation_dst: ~

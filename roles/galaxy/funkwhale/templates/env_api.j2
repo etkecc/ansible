@@ -1,0 +1,75 @@
+FUNKWHALE_HOSTNAME={{ funkwhale_hostname }}
+
+# Log level (debug, info, warning, error, critical)
+LOGLEVEL={{ funkwhale_loglevel }}
+
+# Configure e-mail sending using this variale
+# By default, funkwhale will output e-mails sent to stdout
+# here are a few examples for this setting
+# EMAIL_CONFIG=consolemail://         # output e-mails to console (the default)
+# EMAIL_CONFIG=dummymail://          # disable e-mail sending completely
+# On a production instance, you'll usually want to use an external SMTP server:
+# If `user` or `password` contain special characters (eg.
+# `noreply@youremail.host` as `user`), be sure to urlencode them, using
+# for example the command:
+# `python3 -c 'import urllib.parse; print(urllib.parse.quote_plus
+# ("noreply@youremail.host"))'`
+# (returns `noreply%40youremail.host`)
+# EMAIL_CONFIG=smtp://user:password@youremail.host:25
+# EMAIL_CONFIG=smtp+ssl://user:password@youremail.host:465
+# EMAIL_CONFIG=smtp+tls://user:password@youremail.host:587
+ EMAIL_CONFIG={{ funkwhale_email_protocol }}{{ funkwhale_email_username }}:{{ funkwhale_email_password }}@{{ funkwhale_email_host }}:{{ funkwhale_email_port }}
+
+# Make e-mail verification mandatory before using the service
+# Doesn't apply to admins.
+ACCOUNT_EMAIL_VERIFICATION_ENFORCE={{ funkwhale_account_email_verification_enforce }}
+
+# The e-mail address to use to send system e-mails.
+DEFAULT_FROM_EMAIL={{ funkwhale_email_from }}
+
+# Depending on the reverse proxy used in front of your funkwhale instance,
+# the API will use different kind of headers to serve audio files
+# Allowed values: nginx, apache2
+REVERSE_PROXY_TYPE=nginx
+
+# API/Django configuration
+
+# Database configuration
+# Examples:
+#  DATABASE_URL=postgresql://<user>:<password>@<host>:<port>/<database>
+#  DATABASE_URL=postgresql://funkwhale:passw0rd@localhost:5432/funkwhale_database
+# Use the next one if you followed Debian installation guide
+DATABASE_URL=postgresql://{{ funkwhale_database_username }}:{{ funkwhale_database_password }}@{{ funkwhale_database_hostname }}:{{ funkwhale_database_port }}/{{ funkwhale_database_name }}
+
+
+CACHE_URL={{ funkwhale_config_redis_url }}
+CELERY_BROKER_URL={{ funkwhale_config_redis_url }}
+
+AWS_ACCESS_KEY_ID={{ funkwhale_aws_access_key_id }}
+AWS_SECRET_ACCESS_KEY={{ funkwhale_aws_secret_access_key }}
+AWS_STORAGE_BUCKET_NAME={{ funkwhale_aws_storage_bucket_name }}
+AWS_S3_REGION_NAME={{ funkwhale_aws_s3_region_name }}
+AWS_S3_ENDPOINT_URL={{ funkwhale_aws_s3_endpoint_url }}
+AWS_LOCATION={{ funkwhale_aws_location }}
+
+# Media root inside the container
+MEDIA_ROOT={{ funkwhale_api_container_media_path }}
+
+# Static root inside the container
+STATIC_ROOT={{ funkwhale_api_container_static_path }}
+
+# Music directory inside the container
+MUSIC_DIRECTORY_PATH={{ funkwhale_api_container_music_path }}
+
+# which settings module should django use?
+# You don't have to touch this unless you really know what you're doing
+DJANGO_SETTINGS_MODULE=config.settings.production
+
+# Generate one using `openssl rand -base64 45`, for example
+DJANGO_SECRET_KEY={{ funkwhale_django_secret_key }}
+
+
+FUNKWHALE_API_PORT={{ funkwhale_api_container_port }}
+
+{{ funkwhale_celery_worker_variables_additional_variables }}
+{{ funkwhale_celery_beat_variables_additional_variables }}

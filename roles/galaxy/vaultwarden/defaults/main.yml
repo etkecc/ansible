@@ -1,0 +1,287 @@
+---
+
+# Vaultwaden is a lightweight unofficial and compatible implementation of the Bitwarden password manager.
+# Project source code URL: https://github.com/dani-garcia/vaultwarden
+
+vaultwarden_enabled: true
+
+vaultwarden_identifier: vaultwarden
+
+vaultwarden_version: 1.32.0
+
+# The fully-qualified name of your Vaultwarden server (e.g. `vaultwarden.example.com`)
+vaultwarden_hostname: ''
+
+# vaultwarden_path_prefix controls the URL prefix where Vaultwarden will be exposed to.
+#
+# By default (`/` prefix), it's accessible at `https://VAULTWARDEN_DOMAIN/`,
+# but you can use another prefix for additional security.
+# See: https://github.com/dani-garcia/vaultwarden/wiki/Hardening-Guide#hiding-under-a-subdir
+#
+# Example: '/my-secret-warden'
+vaultwarden_path_prefix: '/'
+
+vaultwarden_container_image: "{{ vaultwarden_container_registry_prefix }}dani-garcia/vaultwarden:{{ vaultwarden_container_image_tag }}"
+vaultwarden_container_image_tag: "{{ vaultwarden_version }}-alpine"
+vaultwarden_container_image_force_pull: "{{ vaultwarden_container_image.endswith(':latest') }}"
+vaultwarden_container_registry_prefix: ghcr.io/
+vaultwarden_container_hostname: "{{ vaultwarden_hostname }}"
+
+vaultwarden_container_network: "{{ vaultwarden_identifier }}"
+
+# A list of additional container networks that the container would be connected to.
+# The playbook does not create these networks, so make sure they already exist.
+#
+# Use this to expose this container to another reverse proxy, which runs in a different container network,
+# without exposing all other container services to that other reverse-proxy.
+#
+# For background, see: https://github.com/spantaleev/matrix-docker-ansible-deploy/issues/1498
+vaultwarden_container_additional_networks: "{{ vaultwarden_container_additional_networks_auto + vaultwarden_container_additional_networks_custom }}"
+# vaultwarden_container_additional_networks_auto is reserved for usage by the playbook.
+# Your custom networks should go into vaultwarden_container_additional_networks_custom.
+vaultwarden_container_additional_networks_auto: []
+vaultwarden_container_additional_networks_custom: []
+
+vaultwarden_uid: ''
+vaultwarden_gid: ''
+
+vaultwarden_base_path: "/vaultwarden"
+vaultwarden_data_dir_path: "{{ vaultwarden_base_path }}/data"
+vaultwarden_cache_dir_path: "{{ vaultwarden_base_path }}/cache"
+vaultwarden_ephemeral_dir_path: "{{ vaultwarden_base_path }}/ephemeral"
+
+vaultwarden_systemd_required_systemd_services_list: "{{ vaultwarden_systemd_required_systemd_services_list_default + vaultwarden_systemd_required_systemd_services_list_auto + vaultwarden_systemd_required_systemd_services_list_custom }}"
+vaultwarden_systemd_required_systemd_services_list_default: ['docker.service']
+vaultwarden_systemd_required_systemd_services_list_auto: []
+vaultwarden_systemd_required_systemd_services_list_custom: []
+
+vaultwarden_systemd_wanted_systemd_services_list: "{{ vaultwarden_systemd_wanted_systemd_services_list_default + vaultwarden_systemd_wanted_systemd_services_list_auto + vaultwarden_systemd_wanted_systemd_services_list_custom }}"
+vaultwarden_systemd_wanted_systemd_services_list_default: []
+vaultwarden_systemd_wanted_systemd_services_list_auto: []
+vaultwarden_systemd_wanted_systemd_services_list_custom: []
+
+vaultwarden_database_type: postgres
+vaultwarden_database_hostname: ''
+vaultwarden_database_port: 5432
+vaultwarden_database_name: vaultwarden
+vaultwarden_database_username: ''
+vaultwarden_database_password: ''
+# Use this to set the sslmode parameter of the SSL connection
+# By default, we expect a local container (without SSL), so attempting SSL connections is not necessary.
+# It's even potentially buggy too.
+# See: https://github.com/dani-garcia/vaultwarden/issues/2386
+vaultwarden_database_sslmode: disable
+
+# vaultwarden_config_database_url controls the DATABASE_URL environment variable.
+# See https://github.com/dani-garcia/vaultwarden/wiki/Using-the-PostgreSQL-Backend
+# and the other database-related Wiki articles
+vaultwarden_config_database_url: |-
+  {{
+    ('postgresql://' + vaultwarden_database_username + ':' + vaultwarden_database_password + '@' + vaultwarden_database_hostname + ':' + vaultwarden_database_port | string + '/' + vaultwarden_database_name + '?sslmode=' + vaultwarden_database_sslmode)
+    if vaultwarden_database_type == 'postgres'
+    else ''
+  }}
+
+# vaultwarden_config_domain controls the DOMAIN environment variable,
+# which tells Vaultwarden its full URL (e.g. `https://vaultwarden.DOMAIN/prefix`)
+vaultwarden_config_domain: "https://{{ vaultwarden_hostname }}{{ vaultwarden_path_prefix }}"
+
+# vaultwarden_config_signups_enabled controls the SIGNUPS_ALLOWED environment variable.
+# See: https://github.com/dani-garcia/vaultwarden/wiki/Disable-registration-of-new-users
+# Related to: vaultwarden_config_signups_domains_whitelist
+# Related to: vaultwarden_config_invitations_allowed
+vaultwarden_config_signups_enabled: false
+
+# vaultwarden_config_signups_verify controls the SIGNUPS_VERIFY environment variable.
+# See: https://github.com/dani-garcia/vaultwarden/wiki/Disable-registration-of-new-users#restricting-registrations-to-certain-email-domains
+vaultwarden_config_signups_verify: false
+
+# vaultwarden_config_invitations_allowed controls the INVITATIONS_ALLOWED environment variable,
+# which controls if owners and Organization admins can invite people (even when signups are enabled).
+# See: https://github.com/dani-garcia/vaultwarden/wiki/Disable-invitations
+# Related to: vaultwarden_config_signups_enabled
+vaultwarden_config_invitations_allowed: true
+
+# vaultwarden_config_signups_enabled controls the SIGNUPS_DOMAINS_WHITELIST environment variable.
+# See: https://github.com/dani-garcia/vaultwarden/wiki/Disable-registration-of-new-users#restricting-registrations-to-certain-email-domains
+# Note: this is meant to be a list of domain strings (e.g. `['example.com', 'another.com']`, not a comma-separated string like shown in the upstream docs.
+vaultwarden_config_signups_domains_whitelist: []
+
+# vaultwarden_config_show_password_hint controls the SHOW_PASSWORD_HINT environment variable,
+# which can allow showing password hints directly in the user interface.
+# See: https://github.com/dani-garcia/vaultwarden/wiki/Password-hint-display
+vaultwarden_config_show_password_hint: false
+
+# vaultwarden_config_admin_token controls the ADMIN_TOKEN environment variable,
+# which (if set) exposes an /admin page, where people possesing this token can perform administrative actions.
+# See: https://github.com/dani-garcia/vaultwarden/wiki/Enabling-admin-page
+vaultwarden_config_admin_token: ''
+
+# vaultwarden_config_rocket_port controls the ROCKET_PORT environment variable,
+# which controls Vaultwarden's HTTP port in the container
+vaultwarden_config_rocket_port: 8080
+
+# vaultwarden_config_rocket_limits controls the ROCKET_LIMITS environment variable,
+# which controls the maximum size of uploaded files.
+# See: vaultwarden_max_json_mb
+# See: https://github.com/dani-garcia/vaultwarden/wiki/Changing-the-API-request-size-limit
+vaultwarden_config_rocket_limits: "{json={{ vaultwarden_max_json_mb | int * 1024 * 1024 }}}"
+
+# vaultwarden_config_smtp_from controls the SMTP_FROM environment variable.
+# See: https://github.com/dani-garcia/vaultwarden/wiki/SMTP-Configuration
+vaultwarden_config_smtp_from: "noreply@{{ vaultwarden_hostname }}"
+
+# vaultwarden_config_smtp_host controls the SMTP_HOST environment variable.
+# See: https://github.com/dani-garcia/vaultwarden/wiki/SMTP-Configuration
+vaultwarden_config_smtp_host: ''
+
+# vaultwarden_config_smtp_port controls the SMTP_PORT environment variable.
+# See: https://github.com/dani-garcia/vaultwarden/wiki/SMTP-Configuration
+# See: vaultwarden_config_smtp_security
+vaultwarden_config_smtp_port: 587
+
+# vaultwarden_config_smtp_security controls the SMTP_SECURITY environment variable.
+# Valid values: starttls, force_tls, off
+# See: https://github.com/dani-garcia/vaultwarden/wiki/SMTP-Configuration
+vaultwarden_config_smtp_security: starttls
+
+# vaultwarden_config_smtp_username controls the SMTP_USERNAME environment variable.
+# See: https://github.com/dani-garcia/vaultwarden/wiki/SMTP-Configuration
+vaultwarden_config_smtp_username: ''
+
+# vaultwarden_config_smtp_password controls the SMTP_PASSWORD environment variable.
+# See: https://github.com/dani-garcia/vaultwarden/wiki/SMTP-Configuration
+vaultwarden_config_smtp_password: ''
+
+# vaultwarden_config_smtp_auth_mechanism controls the SMTP_AUTH_MECHANISM environment variable.
+# Valid values: Plain, Login, Xoauth2. Multiple may be provided when comma-separated
+# See: https://github.com/dani-garcia/vaultwarden/wiki/SMTP-Configuration
+vaultwarden_config_smtp_auth_mechanism: Login
+
+# vaultwarden_config_icon_cache_folder controls the ICON_CACHE_FOLDER environment variable.
+vaultwarden_config_icon_cache_folder: /cache/icon_cache
+
+# vaultwarden_config_sends_folder controls the SENDS_FOLDER environment variable.
+vaultwarden_config_sends_folder: /ephemeral/sends
+
+# vaultwarden_config_tmp_folder controls the TMP_FOLDER environment variable.
+vaultwarden_config_tmp_folder: /ephemeral/tmp
+
+# vaultwarden_config_log_level controls the LOG_LEVEL environment variable.
+# Valid values: trace, debug, info, warn, error, off
+vaultwarden_config_log_level: info
+
+# vaultwarden_config_extended_logging controls the EXTENDED_LOGGING environment variable,
+# which (when enabled) shows timestamps and targets in the logs
+vaultwarden_config_extended_logging: false
+
+# NOTE:
+# Additional environment variables for configuration can be discovered from https://github.com/dani-garcia/vaultwarden/blob/main/.env.template
+# and configured using vaultwarden_container_additional_environment_variables
+
+# vaultwarden_max_json_mb the maximum size of uploaded JSON payloads.
+# This ultimately influences the json setting of vaultwarden_config_rocket_limits.
+# See: https://github.com/dani-garcia/vaultwarden/wiki/Changing-the-API-request-size-limit
+vaultwarden_max_json_mb: 10
+
+# Specifies the value of the `X-XSS-Protection` header
+# Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
+#
+# Learn more about it is here:
+# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
+# - https://portswigger.net/web-security/cross-site-scripting/reflected
+vaultwarden_http_header_xss_protection: "1; mode=block"
+
+# Specifies the value of the `X-Frame-Options` header which controls whether framing can happen.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
+vaultwarden_http_header_frame_options: SAMEORIGIN
+
+# Specifies the value of the `X-Content-Type-Options` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
+vaultwarden_http_header_content_type_options: nosniff
+
+# Specifies the value of the `Content-Security-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
+vaultwarden_http_header_content_security_policy: frame-ancestors 'self'
+
+# Specifies the value of the `Permission-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permission-Policy
+vaultwarden_http_header_content_permission_policy: "{{ 'interest-cohort=()' if vaultwarden_floc_optout_enabled else '' }}"
+
+# Specifies the value of the `Strict-Transport-Security` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+vaultwarden_http_header_strict_transport_security: "max-age=31536000; includeSubDomains{{ '; preload' if vaultwarden_hsts_preload_enabled else '' }}"
+
+# Controls whether to send a "Permissions-Policy interest-cohort=();" header along with all responses
+#
+# Learn more about what it is here:
+# - https://www.eff.org/deeplinks/2021/03/googles-floc-terrible-idea
+# - https://paramdeo.com/blog/opting-your-website-out-of-googles-floc-network
+# - https://amifloced.org/
+#
+# Of course, a better solution is to just stop using browsers (like Chrome), which participate in such tracking practices.
+# See: `vaultwarden_content_permission_policy`
+vaultwarden_floc_optout_enabled: true
+
+# Controls if HSTS preloading is enabled
+#
+# In its strongest and recommended form, the [HSTS policy](https://www.chromium.org/hsts) includes all subdomains, and
+# indicates a willingness to be "preloaded" into browsers:
+# `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload`
+# For more information visit:
+# - https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
+# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+# - https://hstspreload.org/#opt-in
+# See: `vaultwarden_http_header_strict_transport_security`
+vaultwarden_hsts_preload_enabled: false
+
+# vaultwarden_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
+# See `../templates/labels.j2` for details.
+#
+# To inject your own other container labels, see `vaultwarden_container_labels_additional_labels`.
+vaultwarden_container_labels_traefik_enabled: true
+vaultwarden_container_labels_traefik_docker_network: "{{ vaultwarden_container_network }}"
+vaultwarden_container_labels_traefik_hostname: "{{ vaultwarden_hostname }}"
+# The path prefix must either be `/` or not end with a slash (e.g. `/vaultwarden`).
+vaultwarden_container_labels_traefik_path_prefix: "{{ vaultwarden_path_prefix }}"
+vaultwarden_container_labels_traefik_rule_ui: "Host(`{{ vaultwarden_container_labels_traefik_hostname }}`){% if vaultwarden_container_labels_traefik_path_prefix != '/' %} && PathPrefix(`{{ vaultwarden_container_labels_traefik_path_prefix | quote }}`){% endif %}"
+vaultwarden_container_labels_traefik_priority: 0
+vaultwarden_container_labels_traefik_entrypoints: web-secure
+vaultwarden_container_labels_traefik_tls_certResolver: default  # noqa var-naming
+
+# Controls which additional headers to attach to all HTTP responses.
+# To add your own headers, use `vaultwarden_container_labels_traefik_additional_response_headers_custom`
+vaultwarden_container_labels_traefik_additional_response_headers: "{{ vaultwarden_container_labels_traefik_additional_response_headers_auto | combine(vaultwarden_container_labels_traefik_additional_response_headers_custom) }}"
+vaultwarden_container_labels_traefik_additional_response_headers_auto: |
+  {{
+    {}
+    | combine ({'X-XSS-Protection': vaultwarden_http_header_xss_protection} if vaultwarden_http_header_xss_protection else {})
+    | combine ({'X-Frame-Options': vaultwarden_http_header_frame_options} if vaultwarden_http_header_frame_options else {})
+    | combine ({'X-Content-Type-Options': vaultwarden_http_header_content_type_options} if vaultwarden_http_header_content_type_options else {})
+    | combine ({'Content-Security-Policy': vaultwarden_http_header_content_security_policy} if vaultwarden_http_header_content_security_policy else {})
+    | combine ({'Permission-Policy': vaultwarden_http_header_content_permission_policy} if vaultwarden_http_header_content_permission_policy else {})
+    | combine ({'Strict-Transport-Security': vaultwarden_http_header_strict_transport_security} if vaultwarden_http_header_strict_transport_security and vaultwarden_container_labels_traefik_tls else {})
+  }}
+vaultwarden_container_labels_traefik_additional_response_headers_custom: {}
+
+# vaultwarden_container_http_bind_port controls whether (and how) the container exposes its HTTP port (`vaultwarden_config_rocket_port`).
+# Leave empty to not expose it.
+# Example values: `127.0.0.1:8080`, `0.0.0.0:8080`, `8080`.
+vaultwarden_container_http_bind_port: ''
+
+# vaultwarden_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
+# See `../templates/labels.j2` for details.
+#
+# Example:
+# vaultwarden_container_labels_additional_labels: |
+#   my.label=1
+#   another.label="here"
+vaultwarden_container_labels_additional_labels: ''
+
+# vaultwarden_container_additional_environment_variables contains a multiline string with additional environment variables to pass to the container.
+#
+# Example:
+# vaultwarden_container_additional_environment_variables: |
+#   VAR=1
+#   ANOTHER=value
+vaultwarden_container_additional_environment_variables: ''

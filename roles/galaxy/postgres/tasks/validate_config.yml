@@ -1,0 +1,34 @@
+---
+
+- name: Fail if required Postgres settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`).
+  when: "vars[item] == ''"
+  with_items:
+    - devture_postgres_identifier
+    - devture_postgres_uid
+    - devture_postgres_gid
+    - devture_postgres_container_network
+    - devture_postgres_connection_hostname
+    - devture_postgres_connection_port
+    - devture_postgres_connection_username
+    - devture_postgres_connection_password
+    - devture_postgres_db_name
+    - devture_postgres_architecture
+
+- name: Fail if Postgres password length exceeded
+  ansible.builtin.fail:
+    msg: "The maximum `devture_postgres_connection_password` length is 99 characters"
+  when: "devture_postgres_connection_password | length > 99"
+
+- name: (Deprecation) Catch and report renamed Postgres settings
+  ansible.builtin.fail:
+    msg: >-
+      Your configuration contains a variable, which now has a different name.
+      Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
+  when: "item.old in vars"
+  with_items:
+    - {'old': 'devture_postgres_vacuum_database', 'new': '<superseded by devture_postgres_vacuum_default_databases_list>'}
+    - {'old': 'devture_postgres_additional_databases', 'new': 'devture_postgres_managed_databases'}
+    - {'old': 'devture_postgres_vacuum_command', 'new': '<superseded by devture_postgres_vacuum_presets and postgres_vacuum_preset, or postgres_vacuum_query>'}

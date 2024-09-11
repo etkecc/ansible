@@ -1,0 +1,44 @@
+---
+# Enable ssh config hardening
+system_security_ssh_enabled: true
+
+# SSHd service name
+system_security_ssh_service: sshd
+
+# ssh port
+system_security_ssh_port: 22
+
+# ssh password auth: true - allow, false - block
+system_security_ssh_passwordauth: false
+
+# ssh root login: true - allow, false - block
+system_security_ssh_rootlogin: true
+
+# (intended for group vars) list of public ssh keys, allowed to connect to the server
+system_security_ssh_authorizedkeys_auto: []
+
+# (intended for host vars) list of public ssh keys, allowed to connect to the server
+system_security_ssh_authorizedkeys_host: []
+
+# list of public ssh keys, allowed to connect to the server
+# note: for host vars, use system_security_ssh_authorizedkeys_host
+# note: for group vars, use system_security_ssh_authorizedkeys_auto
+system_security_ssh_authorizedkeys: "{{ system_security_ssh_authorizedkeys_auto + system_security_ssh_authorizedkeys_host }}"
+
+# (intended for group vars) list of public ssh keys to revoke (remove) from .ssh/authorized_keys
+system_security_ssh_unauthorizedkeys_auto: []
+
+# (intended for host vars) list of public ssh keys to revoke (remove) from .ssh/authorized_keys
+system_security_ssh_unauthorizedkeys_host: []
+
+# list of public ssh keys to revoke (remove) from .ssh/authorized_keys
+# note: for host vars, use system_security_ssh_unauthorizedkeys_host
+# note: for group vars, use system_security_ssh_unauthorizedkeys_auto
+system_security_ssh_unauthorizedkeys: "{{ system_security_ssh_unauthorizedkeys_auto + system_security_ssh_unauthorizedkeys_host }}"
+
+# Additional configuration variables to pass to the sshd config
+#
+# Example:
+# system_security_ssh_extension: |
+#   Key value
+system_security_ssh_extension: ''

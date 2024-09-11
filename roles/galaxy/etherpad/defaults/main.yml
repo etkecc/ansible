@@ -1,0 +1,232 @@
+---
+
+# Project source code URL: https://github.com/ether/etherpad-lite
+
+etherpad_enabled: true
+
+etherpad_identifier: etherpad
+
+etherpad_version: 2.2.2
+
+etherpad_scheme: https
+
+# The hostname at which Etherpad is served.
+etherpad_hostname: ''
+
+# The path at which Etherpad is exposed.
+# This value must either be `/` or not end with a slash (e.g. `/etherpad`).
+etherpad_path_prefix: /
+
+etherpad_base_url: "{{ etherpad_scheme }}://{{ etherpad_hostname }}{{ etherpad_path_prefix }}{{ '' if etherpad_path_prefix == '/' else '/' }}"
+
+etherpad_base_path: "/{{ etherpad_identifier }}"
+etherpad_config_path: "{{ etherpad_base_path }}/config"
+etherpad_data_path: "{{ etherpad_base_path }}/data"
+etherpad_container_src_path: "{{ etherpad_base_path }}/container-src"
+
+# List of systemd services that Etherpad systemd service depends on.
+etherpad_systemd_required_services_list: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+
+# List of systemd services that Etherpad systemd service wants
+etherpad_systemd_wanted_services_list: []
+
+# Container user has to be able to write to the source file directories until this bug is fixed:
+# https://github.com/ether/etherpad-lite/issues/2683
+etherpad_user_uid: '5001'
+etherpad_user_gid: '5001'
+
+etherpad_container_image: "{{ etherpad_container_image_name_prefix }}etherpad/etherpad:{{ etherpad_container_image_tag }}"
+etherpad_container_image_name_prefix: "{{ 'localhost/' if etherpad_container_image_self_build else etherpad_container_image_registry_prefix }}"
+etherpad_container_image_tag: "{{ etherpad_version }}"
+etherpad_container_image_force_pull: "{{ etherpad_container_image.endswith(':latest') }}"
+etherpad_container_image_registry_prefix: docker.io/
+
+etherpad_container_image_self_build: false
+etherpad_container_image_self_build_repo: "https://github.com/ether/etherpad-lite"
+etherpad_container_image_self_build_repo_version: "{{ etherpad_version }}"
+
+# Controls whether the container exposes its HTTP port (tcp/9001 in the container).
+#
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:9001"), or empty string to not expose.
+etherpad_container_http_host_bind_port: ''
+
+# The base container network. It will be auto-created by this role if it doesn't exist already.
+etherpad_container_network: "{{ etherpad_identifier }}"
+
+# A list of additional container networks that the container would be connected to.
+# The role does not create these networks, so make sure they already exist.
+# Use this to expose this container to another reverse proxy, which runs in a different container network.
+etherpad_container_additional_networks: []
+
+# etherpad_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
+# See `../templates/labels.j2` for details.
+#
+# To inject your own other container labels, see `etherpad_container_labels_additional_labels`.
+etherpad_container_labels_traefik_enabled: true
+etherpad_container_labels_traefik_docker_network: "{{ etherpad_container_network }}"
+etherpad_container_labels_traefik_hostname: "{{ etherpad_hostname }}"
+# The path prefix must either be `/` or not end with a slash (e.g. `/etherpad`).
+etherpad_container_labels_traefik_path_prefix: "{{ etherpad_path_prefix }}"
+etherpad_container_labels_traefik_rule: "Host(`{{ etherpad_container_labels_traefik_hostname }}`){% if etherpad_container_labels_traefik_path_prefix != '/' %} && PathPrefix(`{{ etherpad_container_labels_traefik_path_prefix }}`){% endif %}"
+etherpad_container_labels_traefik_priority: 0
+etherpad_container_labels_traefik_entrypoints: web-secure
+etherpad_container_labels_traefik_tls: "{{ etherpad_container_labels_traefik_entrypoints != 'web' }}"
+etherpad_container_labels_traefik_tls_certResolver: default  # noqa var-naming
+
+# Controls which additional headers to attach to all HTTP responses.
+# To add your own headers, use `etherpad_container_labels_traefik_additional_response_headers_custom`
+etherpad_container_labels_traefik_additional_response_headers: "{{ etherpad_container_labels_traefik_additional_response_headers_auto | combine(etherpad_container_labels_traefik_additional_response_headers_custom) }}"
+etherpad_container_labels_traefik_additional_response_headers_auto: |
+  {{
+    {}
+    | combine ({'X-XSS-Protection': etherpad_http_header_xss_protection} if etherpad_http_header_xss_protection else {})
+    | combine ({'X-Frame-Options': etherpad_http_header_frame_options} if etherpad_http_header_frame_options else {})
+    | combine ({'X-Content-Type-Options': etherpad_http_header_content_type_options} if etherpad_http_header_content_type_options else {})
+    | combine ({'Content-Security-Policy': etherpad_http_header_content_security_policy} if etherpad_http_header_content_security_policy else {})
+    | combine ({'Permission-Policy': etherpad_http_header_content_permission_policy} if etherpad_http_header_content_permission_policy else {})
+    | combine ({'Strict-Transport-Security': etherpad_http_header_strict_transport_security} if etherpad_http_header_strict_transport_security and etherpad_container_labels_traefik_tls else {})
+  }}
+etherpad_container_labels_traefik_additional_response_headers_custom: {}
+
+# etherpad_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
+# See `../templates/labels.j2` for details.
+#
+# Example:
+# etherpad_container_labels_additional_labels: |
+#   my.label=1
+#   another.label="here"
+etherpad_container_labels_additional_labels: ''
+
+# Specifies how often the container health-check will run.
+#
+# For Traefik based setups, it's important that the interval is short,
+# because the interval value also specifies the "initial wait time".
+# This is a Docker (moby) bug: https://github.com/moby/moby/issues/33410
+# Without a successful healthcheck, Traefik will not register the service for reverse-proxying.
+# Thus, the health interval determines the initial start-up time -- the smaller, the better.
+#
+# For non-Traefik setups, we use the default healthcheck interval (20s) to decrease overhead.
+etherpad_container_health_interval: "{{ '5s' if etherpad_container_labels_traefik_enabled else '20s' }}"
+
+# A list of extra arguments to pass to the container
+etherpad_container_extra_arguments: []
+
+# Specifies the value of the `X-XSS-Protection` header
+# Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
+#
+# Learn more about it is here:
+# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
+# - https://portswigger.net/web-security/cross-site-scripting/reflected
+etherpad_http_header_xss_protection: "1; mode=block"
+
+# Specifies the value of the `X-Frame-Options` header which controls whether framing can happen.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
+etherpad_http_header_frame_options: "{{ '' if etherpad_framing_enabled else 'SAMEORIGIN'  }}"
+
+# Specifies the value of the `X-Content-Type-Options` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
+etherpad_http_header_content_type_options: nosniff
+
+# Specifies the value of the `Content-Security-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
+etherpad_http_header_content_security_policy: |-
+  {{
+    "" if etherpad_framing_enabled
+    else "frame-ancestors 'self'"
+  }}
+
+# Specifies the value of the `Permission-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permission-Policy
+etherpad_http_header_content_permission_policy: "{{ 'interest-cohort=()' if etherpad_floc_optout_enabled else '' }}"
+
+# Specifies the value of the `Strict-Transport-Security` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+etherpad_http_header_strict_transport_security: "max-age=31536000; includeSubDomains{{ '; preload' if etherpad_hsts_preload_enabled else '' }}"
+
+# Controls whether to send a "Permissions-Policy interest-cohort=();" header along with all responses
+#
+# Learn more about what it is here:
+# - https://www.eff.org/deeplinks/2021/03/googles-floc-terrible-idea
+# - https://paramdeo.com/blog/opting-your-website-out-of-googles-floc-network
+# - https://amifloced.org/
+#
+# Of course, a better solution is to just stop using browsers (like Chrome), which participate in such tracking practices.
+# See: `etherpad_content_permission_policy`
+etherpad_floc_optout_enabled: true
+
+# Controls if HSTS preloading is enabled
+#
+# In its strongest and recommended form, the [HSTS policy](https://www.chromium.org/hsts) includes all subdomains, and
+# indicates a willingness to be "preloaded" into browsers:
+# `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload`
+# For more information visit:
+# - https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
+# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+# - https://hstspreload.org/#opt-in
+# See: `etherpad_http_header_strict_transport_security`
+etherpad_hsts_preload_enabled: false
+
+# Controls whether putting Etherpad in a frame on another website will be allowed.
+etherpad_framing_enabled: true
+
+# Database-related configuration fields.
+#
+# Etherpad requires a dedicated database
+etherpad_database_engine: 'postgres'
+
+etherpad_database_username: etherpad
+etherpad_database_password: 'some-password'
+etherpad_database_hostname: ''
+etherpad_database_port: 5432
+etherpad_database_name: 'etherpad'
+
+# If a admin username and password is set, the /admin web page will be available.
+etherpad_admin_username: ''
+etherpad_admin_password: ''
+
+etherpad_database_connection_string: 'postgres://{{ etherpad_database_username }}:{{ etherpad_database_password }}@{{ etherpad_database_hostname }}:{{ etherpad_database_port }}/{{ etherpad_database_name }}'
+
+# Variables configuring the etherpad
+etherpad_title: 'Etherpad'
+etherpad_abiword: null
+etherpad_soffice: null
+etherpad_default_pad_text: |
+  Welcome to Etherpad!
+
+  This pad text is synchronized as you type, so that everyone viewing this page sees the same text. This allows you to collaborate seamlessly on documents!
+
+  Get involved with Etherpad at https://etherpad.org
+
+# Default Etherpad configuration template which covers the generic use case.
+# You can customize it by controlling the various variables inside it.
+#
+# For a more advanced customization, you can extend the default (see `etherpad_configuration_extension_json`)
+# or completely replace this variable with your own template.
+etherpad_configuration_default: "{{ lookup('template', 'templates/settings.json.j2') }}"
+
+# Your custom JSON configuration for Etherpad goes here.
+# This configuration extends the default starting configuration (`etherpad_configuration_json`).
+#
+# You can override individual variables from the default configuration, or introduce new ones.
+#
+# If you need something more special, you can take full control by
+# completely redefining `etherpad_configuration_json`.
+#
+# Example configuration extension follows:
+#
+# etherpad_configuration_extension_json: |
+#  {
+#   "loadTest": true,
+#   "commitRateLimiting": {
+#     "duration": 1,
+#     "points": 10
+#   }
+#  }
+#
+etherpad_configuration_extension_json: '{}'
+
+etherpad_configuration_extension: "{{ etherpad_configuration_extension_json | from_json if etherpad_configuration_extension_json | from_json is mapping else {} }}"
+
+# Holds the final Etherpad configuration (a combination of the default and its extension).
+# You most likely don't need to touch this variable. Instead, see `etherpad_configuration_json`.
+etherpad_configuration: "{{ etherpad_configuration_default | combine(etherpad_configuration_extension, recursive=True) }}"

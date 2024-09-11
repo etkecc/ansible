@@ -1,0 +1,89 @@
+---
+
+- name: Ensure Funkwhale network is created in Docker
+  community.docker.docker_network:
+    name: "{{ funkwhale_container_network }}"
+    driver: bridge
+
+
+- name: Ensure Funkwhale paths exists
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: 0700
+    owner: "{{ funkwhale_uid }}"
+    group: "{{ funkwhale_gid }}"
+  with_items:
+    - {path: "{{ funkwhale_base_path }}", when: true}
+    - {path: "{{ funkwhale_frontend_base_path }}", when: true}
+    - {path: "{{ funkwhale_api_base_path }}", when: true}
+    - {path: "{{ funkwhale_celery_worker_base_path }}", when: true}
+    - {path: "{{ funkwhale_celery_beat_base_path }}", when: true}
+
+- name: Ensure funkwhale data path exists
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: 0755
+    owner: "{{ funkwhale_uid }}"
+    group: "{{ funkwhale_gid }}"
+  with_items:
+    - {path: "{{ funkwhale_data_path }}", when: true}
+    - {path: "{{ funkwhale_music_path }}", when: true}
+    - {path: "{{ funkwhale_media_path }}", when: true}
+    - {path: "{{ funkwhale_static_path }}", when: true}
+    - {path: "{{ funkwhale_frontend_static_path }}", when: true}
+    - {path: "{{ funkwhale_frontend_nginx_run_path }}", when: true}
+    - {path: "{{ funkwhale_frontend_nginx_cache_path }}", when: true}
+    - {path: "{{ funkwhale_frontend_nginx_etc_path }}", when: true}
+
+
+- name: Ensure funkwhale traefik labels are installed
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ funkwhale_uid }}"
+    group: "{{ funkwhale_gid }}"
+    mode: 0640
+  with_items:
+    - {src: "{{ role_path }}/templates/labels_frontend.j2", dest: "{{ funkwhale_frontend_base_path }}/labels"}
+    - {src: "{{ role_path }}/templates/labels_api.j2", dest: "{{ funkwhale_api_base_path }}/labels"}
+
+- name: Ensure funkwhale configuration is deployed
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ funkwhale_uid }}"
+    group: "{{ funkwhale_gid }}"
+    mode: 0640
+  with_items:
+    - {src: "{{ role_path }}/templates/env_frontend.j2", dest: "{{ funkwhale_frontend_base_path }}/env"}
+    - {src: "{{ role_path }}/templates/env_api.j2", dest: "{{ funkwhale_api_base_path }}/env"}
+
+- name: Ensure funkwhale container image is pulled
+  community.docker.docker_image:
+    name: "{{ item.image }}"
+    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+  with_items:
+    - {image: "{{ funkwhale_frontend_container_image }}"}
+    - {image: "{{ funkwhale_api_container_image }}"}
+
+- name: Ensure funkwhale.service installed
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0644
+  with_items:
+    - {src: "{{ role_path }}/templates/systemd/funkwhale-frontend.service.j2", dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ funkwhale_frontend_identifier }}.service"}
+    - {src: "{{ role_path }}/templates/systemd/funkwhale-api.service.j2", dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ funkwhale_api_identifier }}.service"}
+    - {src: "{{ role_path }}/templates/systemd/funkwhale-celery-beat.service.j2", dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ funkwhale_celery_beat_identifier }}.service"}
+    - {src: "{{ role_path }}/templates/systemd/funkwhale-celery-worker.service.j2", dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ funkwhale_celery_worker_identifier }}.service"}
+    - {src: "{{ role_path }}/templates/systemd/funkwhale-watch-imports.service.j2", dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ funkwhale_watch_imports_identifier }}.service", when: funkwhale_watch_imports_enabled}
+
+- name: Ensure disabled funkwhale watch imports service is stopped and removed
+  when: not funkwhale_watch_imports_enabled
+  ansible.builtin.include_tasks: "{{ role_path }}/tasks/remove_service.yml"
+  with_items:
+    - service: "{{ funkwhale_watch_imports_identifier }}.service"
+      path: "{{ devture_systemd_docker_base_systemd_path }}/{{ funkwhale_watch_imports_identifier }}.service"
+

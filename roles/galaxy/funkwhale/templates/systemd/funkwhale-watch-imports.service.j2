@@ -1,0 +1,18 @@
+[Unit]
+Description=Funkwhale Watch Imports Service ({{ funkwhale_watch_imports_identifier }})
+Requires={{ funkwhale_api_identifier }}.service
+After={{ funkwhale_api_identifier }}.service
+DefaultDependencies=no
+
+
+[Service]
+Type=simple
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} exec {{ funkwhale_api_identifier }} \
+    funkwhale-manage import_files {{ funkwhale_watch_imports_library_id }} {{ funkwhale_api_container_music_path }} --recursive --noinput --in-place {{ funkwhale_watch_imports_process_extra_arguments | join(' ') }}
+
+ExecStart={{ devture_systemd_docker_base_host_command_docker }} exec {{ funkwhale_api_identifier }} \
+    funkwhale-manage import_files {{ funkwhale_watch_imports_library_id }} {{ funkwhale_api_container_music_path }} --recursive --noinput --in-place --watch {{ funkwhale_watch_imports_process_extra_arguments | join(' ') }}
+
+Restart=always
+RestartSec=30
+SyslogIdentifier={{ funkwhale_watch_imports_identifier }}

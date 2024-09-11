@@ -1,0 +1,7 @@
+---
+
+- block:
+    - when: devture_playbook_runtime_messages_list | length > 0
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/dump_runtime_messages.yml"
+  tags:
+    - always

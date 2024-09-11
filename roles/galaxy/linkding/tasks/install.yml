@@ -1,0 +1,44 @@
+---
+- name: Ensure linkding paths exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0750
+    owner: "{{ linkding_uid }}"
+    group: "{{ linkding_gid }}"
+  with_items:
+    - "{{ linkding_base_path }}"
+    - "{{ linkding_data_path }}"
+
+- name: Ensure linkding support files installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/{{ item }}.j2"
+    dest: "{{ linkding_base_path }}/{{ item }}"
+    mode: 0640
+    owner: "{{ linkding_uid }}"
+    group: "{{ linkding_gid }}"
+  with_items:
+    - env
+    - labels
+
+- name: Ensure linkding container image is pulled
+  community.docker.docker_image:
+    name: "{{ linkding_container_image }}"
+    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+    force_source: "{{ linkding_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else linkding_container_image_force_pull }}"
+  register: result
+  retries: "{{ devture_playbook_help_container_retries_count }}"
+  delay: "{{ devture_playbook_help_container_retries_delay }}"
+  until: result is not failed
+
+- name: Ensure linkding container network is created
+  community.general.docker_network:
+    name: "{{ linkding_container_network }}"
+    driver: bridge
+
+- name: Ensure linkding systemd service is present
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/systemd/linkding.service.j2"
+    dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ linkding_identifier }}.service"
+    mode: 0644

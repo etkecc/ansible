@@ -1,0 +1,10 @@
+#jinja2: lstrip_blocks: "True"
+global:
+  scrape_interval: {{ prometheus_config_global_scrape_interval | to_json }}
+  evaluation_interval: {{ prometheus_config_global_evaluation_interval | to_json }}
+  scrape_timeout: {{ prometheus_config_global_scrape_timeout | to_json }}
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files: {{ prometheus_config_rule_files | to_json }}
+
+scrape_configs: {{ prometheus_config_scrape_configs | to_json }}

@@ -1,0 +1,25 @@
+---
+
+- name: Check existence of radicale systemd service
+  ansible.builtin.stat:
+    path: "{{ devture_systemd_docker_base_systemd_path }}/{{ radicale_identifier }}.service"
+  register: radicale_service_stat
+
+- when: radicale_service_stat.stat.exists | bool
+  block:
+    - name: Ensure radicale systemd service is stopped
+      ansible.builtin.service:
+        name: "{{ radicale_identifier }}"
+        state: stopped
+        enabled: false
+        daemon_reload: true
+
+    - name: Ensure radicale systemd service does not exist
+      ansible.builtin.file:
+        path: "{{ devture_systemd_docker_base_systemd_path }}/{{ radicale_identifier }}.service"
+        state: absent
+
+    - name: Ensure radicale path doesn't exist
+      ansible.builtin.file:
+        path: "{{ radicale_base_path }}"
+        state: absent

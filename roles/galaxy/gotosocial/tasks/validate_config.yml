@@ -1,0 +1,17 @@
+---
+
+- name: Fail if required gotosocial settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`) for using this role.
+  when: "vars[item] == ''"
+  with_items:
+    - gotosocial_hostname
+
+- name: Fail when SMTP settings are missing (and SMTP is enabled by setting host)
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`) to correctly set up email via SMTP.
+  when: "gotosocial_smtp_host !='' and vars[item] == ''"
+  with_items:
+    - gotosocial_smtp_from

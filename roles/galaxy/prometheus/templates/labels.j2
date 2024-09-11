@@ -1,0 +1,35 @@
+{% if prometheus_container_labels_traefik_enabled %}
+traefik.enable=true
+
+{% if prometheus_container_labels_traefik_docker_network %}
+traefik.docker.network={{ prometheus_container_labels_traefik_docker_network }}
+{% endif %}
+
+traefik.http.services.{{ prometheus_identifier }}.loadbalancer.server.port=9100
+
+{% set middlewares = [] %}
+
+{% if prometheus_container_labels_metrics_middleware_basic_auth_enabled %}
+{% set middlewares = middlewares + [prometheus_identifier + '-basic-auth'] %}
+traefik.http.middlewares.{{ prometheus_identifier }}-basic-auth.basicauth.users={{ prometheus_container_labels_metrics_middleware_basic_auth_users }}
+{% endif %}
+
+traefik.http.middlewares.{{ prometheus_identifier }}-strip-prefix.stripprefix.prefixes={{ prometheus_path_prefix }}
+{% set middlewares = middlewares + [prometheus_identifier + '-strip-prefix@docker'] %}
+
+traefik.http.routers.{{ prometheus_identifier }}.rule={{ prometheus_container_labels_traefik_rule }}
+{% if middlewares | length > 0 %}
+traefik.http.routers.{{ prometheus_identifier }}.middlewares={{ middlewares | join(',') }}
+{% endif %}
+traefik.http.routers.{{ prometheus_identifier }}.service={{ prometheus_identifier }}
+traefik.http.routers.{{ prometheus_identifier }}.priority={{ prometheus_container_labels_traefik_priority }}
+traefik.http.routers.{{ prometheus_identifier }}.tls={{ prometheus_container_labels_traefik_tls | to_json }}
+{% if prometheus_container_labels_traefik_tls %}
+traefik.http.routers.{{ prometheus_identifier }}.tls.certResolver={{ prometheus_container_labels_traefik_tls_certResolver }}
+{% endif %}
+traefik.http.routers.{{ prometheus_identifier }}.entrypoints={{ prometheus_container_labels_traefik_entrypoints }}
+{% endif %}
+traefik.http.services.{{ prometheus_identifier }}.loadbalancer.server.port=9090
+
+
+{{ prometheus_container_labels_additional_labels }}

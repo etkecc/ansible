@@ -1,0 +1,25 @@
+---
+
+- name: Check existence of ntfy systemd service
+  ansible.builtin.stat:
+    path: "{{ devture_systemd_docker_base_systemd_path }}/{{ ntfy_identifier }}.service"
+  register: ntfy_service_stat
+
+- when: ntfy_service_stat.stat.exists | bool
+  block:
+    - name: Ensure ntfy is stopped
+      ansible.builtin.service:
+        name: "{{ ntfy_identifier }}"
+        state: stopped
+        enabled: false
+        daemon_reload: true
+
+    - name: Ensure ntfy systemd service doesn't exist
+      ansible.builtin.file:
+        path: "{{ devture_systemd_docker_base_systemd_path }}/{{ ntfy_identifier }}.service"
+        state: absent
+
+    - name: Ensure ntfy path doesn't exist
+      ansible.builtin.file:
+        path: "{{ ntfy_base_path }}"
+        state: absent

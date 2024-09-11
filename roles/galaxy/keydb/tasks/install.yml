@@ -1,0 +1,44 @@
+---
+
+- name: Ensure keydb paths exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0750
+    owner: "{{ keydb_uid }}"
+    group: "{{ keydb_gid }}"
+  with_items:
+    - "{{ keydb_base_path }}"
+    - "{{ keydb_data_path }}"
+
+- name: Ensure keydb environment variables file created
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/{{ item }}.j2"
+    dest: "{{ keydb_base_path }}/{{ item }}"
+    mode: 0640
+    owner: "{{ keydb_uid }}"
+    group: "{{ keydb_gid }}"
+  with_items:
+    - "keydb.conf"
+
+- name: Ensure keydb container image is pulled
+  community.docker.docker_image:
+    name: "{{ keydb_container_image }}"
+    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+    force_source: "{{ keydb_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else keydb_container_image_force_pull }}"
+  register: result
+  retries: "{{ devture_playbook_help_container_retries_count }}"
+  delay: "{{ devture_playbook_help_container_retries_delay }}"
+  until: result is not failed
+
+- name: Ensure keydb container network is created
+  community.general.docker_network:
+    name: "{{ keydb_container_network }}"
+    driver: bridge
+
+- name: Ensure keydb systemd installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/keydb.service.j2"
+    dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ keydb_identifier }}.service"
+    mode: 0644

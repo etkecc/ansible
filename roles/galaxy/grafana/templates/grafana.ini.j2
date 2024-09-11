@@ -1,0 +1,43 @@
+[server]
+root_url = "https://{{ grafana_hostname }}{{ grafana_path_prefix }}"
+
+[security]
+# default admin user, created on startup
+admin_user = "{{ grafana_default_admin_user }}"
+
+# default admin password, can be changed before first start of grafana, or in profile settings
+admin_password = """{{ grafana_default_admin_password }}"""
+
+# specify content_security_policy to add the Content-Security-Policy header to your requests
+content_security_policy = "{{ grafana_content_security_policy }}"
+
+# specify content security policy template to customized template
+{% if grafana_content_security_policy_customized %}
+content_security_policy_template = """{{ grafana_content_security_policy_template }}"""
+{% endif %}
+
+allow_embedding = {{ grafana_allow_embedding }}
+
+[auth.anonymous]
+# enable anonymous access
+enabled = {{ grafana_anonymous_access }}
+
+# specify organization name that should be used for unauthenticated users
+org_name = "{{ grafana_anonymous_access_org_name }}"
+
+[dashboards]
+default_home_dashboard_path = {{ grafana_default_home_dashboard_path }}
+
+{% if grafana_feature_toggles_enable %}
+[feature_toggles]
+enable = {{ grafana_feature_toggles_enable }}
+{% endif %}
+
+{% if grafana_smtp_enabled %}
+[smtp]
+enabled = {{ grafana_smtp_enabled }}
+host = {{ grafana_smtp_host }}:{{ grafana_smtp_port }}
+user = {{ grafana_smtp_user }}
+password = """{{ grafana_smtp_password }}"""
+from_address = {{ grafana_smtp_from_address }}
+{% endif %}

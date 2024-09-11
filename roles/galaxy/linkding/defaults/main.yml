@@ -1,0 +1,181 @@
+---
+# Project source code URL: https://github.com/sissbruecker/linkding
+
+# Enable or disable linkding deployment
+linkding_enabled: true
+
+# Identifier string for linkding resources (e.g. container names, network names)
+linkding_identifier: linkding
+
+# User ID and Group ID for running linkding service in the container
+linkding_uid: ""
+linkding_gid: ""
+
+# The scheme used for serving linkding (http or https)
+linkding_scheme: https
+
+# The hostname at which linkding is served
+linkding_hostname: ""
+
+# The path at which linkding is served, must either be `/` or not end with a slash (e.g. `/linkding`)
+linkding_path_prefix: /
+
+# Version of linkding to deploy
+linkding_version: latest
+
+# Base path for linkding resources
+linkding_base_path: "{{ linkding_identifier }}"
+linkding_data_path: "{{ linkding_base_path }}/data"
+
+# The username and password for the Linkding superuser
+linkding_superuser_username:
+linkding_superuser_password:
+
+linkding_container_image_registry_prefix: docker.io
+linkding_container_image_path: sissbruecker/linkding
+linkding_container_image_tag: "{{ linkding_version }}"
+linkding_container_image: "{{ linkding_container_image_registry_prefix }}/{{ linkding_container_image_path }}:{{ linkding_container_image_tag }}"
+linkding_container_image_force_pull: "{{ linkding_container_image.endswith(':latest') }}"
+
+# The base container network. It will be auto-created by this role if it doesn't exist already.
+linkding_container_network: "{{ linkding_identifier }}"
+
+# A list of additional container networks that the container would be connected to.
+# The role does not create these networks, so make sure they already exist.
+# Use this to expose this container to another reverse proxy, which runs in a different container network.
+linkding_container_additional_networks: []
+
+# linkding_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
+# See `../templates/labels.j2` for details.
+#
+# To inject your own other container labels, see `linkding_container_labels_additional_labels`.
+linkding_container_labels_traefik_enabled: true
+linkding_container_labels_traefik_docker_network: "{{ linkding_container_network }}"
+linkding_container_labels_traefik_hostname: "{{ linkding_hostname }}"
+# The path prefix must either be `/` or not end with a slash (e.g. `/linkding`).
+linkding_container_labels_traefik_path_prefix: "{{ linkding_path_prefix }}"
+linkding_container_labels_traefik_rule: "Host(`{{ linkding_container_labels_traefik_hostname }}`){% if linkding_container_labels_traefik_path_prefix != '/' %} && PathPrefix(`{{ linkding_container_labels_traefik_path_prefix }}`){% endif %}"
+linkding_container_labels_traefik_priority: 0
+linkding_container_labels_traefik_entrypoints: web-secure
+linkding_container_labels_traefik_tls: "{{ linkding_container_labels_traefik_entrypoints != 'web' }}"
+linkding_container_labels_traefik_tls_certResolver: default # noqa var-naming
+
+# Controls which additional headers to attach to all HTTP responses.
+# To add your own headers, use `linkding_container_labels_traefik_additional_response_headers_custom`
+linkding_container_labels_traefik_additional_response_headers: "{{ linkding_container_labels_traefik_additional_response_headers_auto | combine(linkding_container_labels_traefik_additional_response_headers_custom) }}"
+linkding_container_labels_traefik_additional_response_headers_auto: |
+  {{
+    {}
+    | combine ({'X-XSS-Protection': linkding_http_header_xss_protection} if linkding_http_header_xss_protection else {})
+    | combine ({'X-Frame-Options': linkding_http_header_frame_options} if linkding_http_header_frame_options else {})
+    | combine ({'X-Content-Type-Options': linkding_http_header_content_type_options} if linkding_http_header_content_type_options else {})
+    | combine ({'Content-Security-Policy': linkding_http_header_content_security_policy} if linkding_http_header_content_security_policy else {})
+    | combine ({'Permission-Policy': linkding_http_header_content_permission_policy} if linkding_http_header_content_permission_policy else {})
+    | combine ({'Strict-Transport-Security': linkding_http_header_strict_transport_security} if linkding_http_header_strict_transport_security and linkding_container_labels_traefik_tls else {})
+  }}
+linkding_container_labels_traefik_additional_response_headers_custom: {}
+# linkding_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
+# See `../templates/labels.j2` for details.
+#
+# Example:
+# linkding_container_labels_additional_labels: |
+#   my.label=1
+#   another.label="here"
+linkding_container_labels_additional_labels: ""
+
+# A list of extra arguments to pass to the container
+linkding_container_extra_arguments: []
+
+# List of systemd services that linkding.service depends on
+linkding_systemd_required_services_list: ["docker.service"]
+
+# Specifies the value of the `X-XSS-Protection` header
+# Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
+#
+# Learn more about it is here:
+# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
+# - https://portswigger.net/web-security/cross-site-scripting/reflected
+linkding_http_header_xss_protection: "1; mode=block"
+
+# Specifies the value of the `X-Frame-Options` header which controls whether framing can happen.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
+linkding_http_header_frame_options: SAMEORIGIN
+
+# Specifies the value of the `X-Content-Type-Options` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
+linkding_http_header_content_type_options: nosniff
+
+# Specifies the value of the `Content-Security-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
+linkding_http_header_content_security_policy: frame-ancestors 'self'
+
+# Specifies the value of the `Permission-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permission-Policy
+linkding_http_header_content_permission_policy: "{{ 'interest-cohort=()' if linkding_floc_optout_enabled else '' }}"
+
+# Specifies the value of the `Strict-Transport-Security` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+linkding_http_header_strict_transport_security: "max-age=31536000; includeSubDomains{{ '; preload' if linkding_hsts_preload_enabled else '' }}"
+
+# Controls whether to send a "Permissions-Policy interest-cohort=();" header along with all responses
+#
+# Learn more about what it is here:
+# - https://www.eff.org/deeplinks/2021/03/googles-floc-terrible-idea
+# - https://paramdeo.com/blog/opting-your-website-out-of-googles-floc-network
+# - https://amifloced.org/
+#
+# Of course, a better solution is to just stop using browsers (like Chrome), which participate in such tracking practices.
+# See: `linkding_content_permission_policy`
+linkding_floc_optout_enabled: true
+
+# Controls if HSTS preloading is enabled
+#
+# In its strongest and recommended form, the [HSTS policy](https://www.chromium.org/hsts) includes all subdomains, and
+# indicates a willingness to be "preloaded" into browsers:
+# `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload`
+# For more information visit:
+# - https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
+# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+# - https://hstspreload.org/#opt-in
+# See: `linkding_http_header_strict_transport_security`
+linkding_hsts_preload_enabled: false
+
+# Database configuration, defaults to sqlite
+linkding_database_engine: sqlite
+linkding_database_hostname: "localhost"
+linkding_database_username: linkding
+linkding_database_password:
+linkding_database_port:
+linkding_database_name: linkding
+
+# Controls the LD_CONTEXT_PATH environment variable
+# If the linkding_path_prefix is `/`, then this will be set to an empty string.
+# Otherwise, it will be set to the value of linkding_path_prefix without the first slash plus a leading slash.
+linkding_environment_variable_context_path: "{{ '' if linkding_path_prefix == '/' else linkding_path_prefix_no_slash[1:] + '/' }}"
+
+# Controls the LD_DB_ENGINE environment variable
+linkding_environment_variable_database_engine: "{{ linkding_database_engine }}"
+
+# Controls the LD_DB_USER environment variable
+linkding_environment_variable_database_username: "{{ linkding_database_username }}"
+
+# Controls the LD_DB_PASSWORD environment variable
+linkding_environment_variable_database_password: "{{ linkding_database_password }}"
+
+# Controls the LD_DB_HOST environment variable
+linkding_environment_variable_database_hostname: "{{ linkding_database_hostname }}"
+
+# Controls the LD_DB_PORT environment variable
+linkding_environment_variable_database_port: "{{ linkding_database_port }}"
+
+# Controls the LD_DB_DATABASE environment variable
+linkding_environment_variable_database_name: "{{ linkding_database_name }}"
+
+# Controls the LD_SUPERUSER_NAME environment variable
+linkding_environment_variable_superuser_username: "{{ linkding_superuser_username }}"
+
+# Controls the LD_SUPERUSER_PASSWORD environment variable
+linkding_environment_variable_superuser_password: "{{ linkding_superuser_password }}"
+
+# Additional environment variables.
+linkding_environment_variables_additional_variables: ""

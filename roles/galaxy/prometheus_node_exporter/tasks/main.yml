@@ -1,0 +1,24 @@
+---
+
+- name: Ensure prometheus-node-exporter is installed
+  tags:
+    - setup-all
+    - setup-prometheus-node-exporter
+    - install-all
+    - install-prometheus-node-exporter
+  block:
+    - name: Include prometheus-node-exporter config validation tasks
+      when: prometheus_node_exporter_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Include prometheus-node-exporter installation tasks
+      when: prometheus_node_exporter_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+
+- name: Ensure prometheus-node-exporter is removed
+  tags:
+    - setup-all
+    - setup-prometheus-node-exporter
+  block:
+    - name: Include prometheus-node-exporter removal tasks
+      when: not prometheus_node_exporter_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

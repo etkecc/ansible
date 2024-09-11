@@ -1,0 +1,10 @@
+---
+
+- name: Ensure aux files and directories configured
+  tags:
+    - setup-all
+    - setup-aux
+    - install-all
+    - install-aux
+  block:
+    - ansible.builtin.include_tasks: "{{ role_path }}/tasks/setup.yml"

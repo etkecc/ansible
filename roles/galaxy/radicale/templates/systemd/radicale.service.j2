@@ -1,0 +1,49 @@
+#jinja2: lstrip_blocks: "True"
+[Unit]
+Description=radicale ({{ radicale_identifier }})
+{% for service in radicale_systemd_required_services_list %}
+Requires={{ service }}
+After={{ service }}
+{% endfor %}
+DefaultDependencies=no
+
+[Service]
+Type=simple
+Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} kill {{ radicale_identifier }} 2>/dev/null || true'
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ radicale_identifier }} 2>/dev/null || true'
+
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
+			--rm \
+			--name={{ radicale_identifier }} \
+			--log-driver=none \
+			--user={{ radicale_uid }}:{{ radicale_gid }} \
+			--cap-drop=ALL \
+			--cap-add=KILL \
+			--read-only \
+			--network={{ radicale_container_network }} \
+			--env-file={{ radicale_base_path }}/env \
+			--label-file={{ radicale_base_path }}/labels \
+			--health-interval={{ radicale_container_health_interval }} \
+			--mount type=bind,src={{ radicale_config_path }},dst=/config,ro \
+			--mount type=bind,src={{ radicale_data_path }},dst=/data \
+			{% for arg in radicale_container_extra_arguments %}
+			{{ arg }} \
+			{% endfor %}
+			{{ radicale_container_image }}
+
+{% for network in radicale_container_additional_networks %}
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ radicale_identifier }}
+{% endfor %}
+
+ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ radicale_identifier }}
+
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} kill {{ radicale_identifier }} 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ radicale_identifier }} 2>/dev/null || true'
+
+Restart=always
+RestartSec=30
+SyslogIdentifier={{ radicale_identifier }}
+
+[Install]
+WantedBy=multi-user.target

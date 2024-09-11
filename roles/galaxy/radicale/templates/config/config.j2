@@ -1,0 +1,23 @@
+#jinja2: lstrip_blocks: "True"
+# {{ ansible_managed }}
+
+[server]
+hosts = 0.0.0.0:5232
+max_connections = 1000
+timeout = 60
+
+[auth]
+type = {{ radicale_auth_type }}
+{% if radicale_auth_type == 'radicale_auth_matrix' %}
+matrix_server = {{ radicale_auth_matrix_server }}
+{% elif radicale_auth_type == 'htpasswd' %}
+htpasswd_filename = /config/htpasswd
+realm = protected
+{% endif %}
+
+[storage]
+filesystem_folder = /data/{{ radicale_data_collections_subdir }}
+
+[logging]
+level = warning
+mask_passwords = True

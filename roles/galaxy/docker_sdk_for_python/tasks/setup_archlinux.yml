@@ -1,0 +1,6 @@
+---
+
+- name: Ensure Docker SDK for Python is installed on Archlinux
+  ansible.builtin.package:
+    name: python-docker
+    state: present

@@ -1,0 +1,22 @@
+---
+
+# We used to store backups directly in the base path.
+# postgres-backup used to create 'daily', 'last', 'monthly' and 'weekly' subdirectories.
+# We want to move these to the data path now.
+- name: Find old postgres-backup data directories
+  ansible.builtin.find:
+    path: "{{ devture_postgres_backup_base_path }}"
+    patterns: "(daily|last|monthly|weekly)"
+    file_type: directory
+    use_regex: true
+  register: devture_postgres_backup_old_directories_result
+
+- name: Move old postgres-backup data directories
+  ansible.builtin.command:
+    cmd: "mv {{ item.path }} {{ devture_postgres_backup_data_path }}/{{ item.path | basename }}"
+  with_items: "{{ devture_postgres_backup_old_directories_result.files }}"
+
+- name: Ensure old env-postgres-backup environment variables file is deleted
+  ansible.builtin.file:
+    path: "{{ devture_postgres_backup_base_path }}/env-postgres-backup"
+    state: absent

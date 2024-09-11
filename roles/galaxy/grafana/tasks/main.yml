@@ -1,0 +1,20 @@
+---
+
+- tags:
+    - setup-all
+    - setup-grafana
+    - install-all
+    - install-grafana
+  block:
+    - when: grafana_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+
+    - when: grafana_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+
+- tags:
+    - setup-all
+    - setup-grafana
+  block:
+    - when: not grafana_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

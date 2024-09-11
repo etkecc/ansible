@@ -1,0 +1,20 @@
+---
+
+- tags:
+    - setup-all
+    - setup-container-socket-proxy
+    - install-all
+    - install-container-socket-proxy
+  block:
+    - when: devture_container_socket_proxy_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+
+    - when: devture_container_socket_proxy_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+
+- tags:
+    - setup-all
+    - setup-container-socket-proxy
+  block:
+    - when: not devture_container_socket_proxy_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

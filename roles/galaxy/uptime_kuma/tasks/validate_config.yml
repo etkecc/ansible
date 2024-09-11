@@ -1,0 +1,43 @@
+---
+
+- name: Fail if required uptime-kuma settings not defined
+  ansible.builtin.fail:
+    msg: >
+      You need to define a required configuration setting (`{{ item }}`).
+  when: "vars[item] == ''"
+  with_items:
+    - uptime_kuma_identifier
+    - uptime_kuma_uid
+    - uptime_kuma_gid
+    - uptime_kuma_hostname
+    - uptime_kuma_path_prefix
+    - uptime_kuma_container_network
+
+- name: Fail if uptime-kuma hosted at a subpath
+  ansible.builtin.fail:
+    msg: >
+      uptime-kuma can only be hosted at the base path (`/`), not at a subpath like `{{ uptime_kuma_path_prefix }}`).
+      See: https://github.com/louislam/uptime-kuma/issues/147
+  when: "uptime_kuma_path_prefix != '/'"
+
+- name: Validate uptime-kuma Traefik settings
+  when: uptime_kuma_container_labels_traefik_enabled | bool
+  block:
+    - name: Fail if required uptime-kuma Traefik settings not defined
+      ansible.builtin.fail:
+        msg: >-
+          You need to define a required configuration setting (`{{ item }}`).
+      when: "vars[item] == ''"
+      with_items:
+        - uptime_kuma_container_labels_traefik_hostname
+        - uptime_kuma_container_labels_traefik_path_prefix
+
+    # We ensure it doesn't end with a slash, because we handle both (slash and no-slash).
+    # Knowing that `uptime_kuma_container_labels_traefik_path_prefix` does not end with a slash
+    # ensures we know how to set these routes up without having to do "does it end with a slash" checks elsewhere.
+    - name: Fail if uptime_kuma_container_labels_traefik_path_prefix ends with a slash
+      ansible.builtin.fail:
+        msg: >-
+          uptime_kuma_container_labels_traefik_path_prefix (`{{ uptime_kuma_container_labels_traefik_path_prefix }}`)
+          must either be `/` or not end with a slash (e.g. `/kuma`).
+      when: "uptime_kuma_container_labels_traefik_path_prefix != '/' and uptime_kuma_container_labels_traefik_path_prefix[-1] == '/'"

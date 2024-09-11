@@ -1,0 +1,7 @@
+---
+
+- name: Ensure yum packages are installed
+  ansible.builtin.yum:
+    name:
+      - "{{ devture_timesync_ntpd_package }}"
+    state: present

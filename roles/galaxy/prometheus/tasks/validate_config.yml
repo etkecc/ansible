@@ -1,0 +1,30 @@
+---
+
+- name: (Deprecation) Catch and report renamed Prometheus settings
+  ansible.builtin.fail:
+    msg: >-
+      Your configuration contains a variable, which now has a different name.
+      Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
+  when: "item.old in vars"
+  with_items:
+    - {'old': 'prometheus_basic_auth_enabled', 'new': 'prometheus_container_labels_metrics_middleware_basic_auth_enabled'}
+    - {'old': 'prometheus_basic_auth_username', 'new': '<superseded by prometheus_container_labels_metrics_middleware_basic_auth_users>'}
+    - {'old': 'prometheus_basic_auth_password', 'new': '<superseded by prometheus_container_labels_metrics_middleware_basic_auth_users>'}
+
+- name: Fail if required Prometheus settings not defined
+  ansible.builtin.fail:
+    msg: >
+      You need to define a required configuration setting (`{{ item }}`).
+  when: "vars[item] == ''"
+  with_items:
+    - prometheus_identifier
+    - prometheus_uid
+    - prometheus_gid
+    - prometheus_container_network
+
+- name: Fail if required settings for Traefik labels are not defined
+  ansible.builtin.fail:
+    msg: >
+      You need to define prometheus_hostname to use traefik labels.
+  when: prometheus_container_labels_traefik_enabled and prometheus_hostname == ''
+

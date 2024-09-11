@@ -1,0 +1,6 @@
+---
+
+- name: Ensure Docker SDK for Python is installed on RedHat 7
+  ansible.builtin.package:
+    name: python-docker-py
+    state: present

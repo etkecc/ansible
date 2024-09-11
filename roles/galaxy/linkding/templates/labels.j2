@@ -1,0 +1,40 @@
+{% if linkding_container_labels_traefik_enabled %}
+traefik.enable=true
+
+{% if linkding_container_labels_traefik_docker_network %}
+traefik.docker.network={{ linkding_container_labels_traefik_docker_network }}
+{% endif %}
+
+{% set middlewares = [] %}
+
+{% if linkding_container_labels_traefik_path_prefix != '/' %}
+traefik.http.middlewares.{{ linkding_identifier }}-slashless-redirect.redirectregex.regex=({{ linkding_container_labels_traefik_path_prefix | quote }})$
+traefik.http.middlewares.{{ linkding_identifier }}-slashless-redirect.redirectregex.replacement=${1}/
+{% set middlewares = middlewares + [linkding_identifier + '-slashless-redirect'] %}
+{% endif %}
+
+{% if linkding_container_labels_traefik_additional_response_headers.keys() | length > 0 %}
+{% for name, value in linkding_container_labels_traefik_additional_response_headers.items() %}
+traefik.http.middlewares.{{ linkding_identifier }}-add-headers.headers.customresponseheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [linkding_identifier + '-add-headers'] %}
+{% endif %}
+
+traefik.http.routers.{{ linkding_identifier }}.rule={{ linkding_container_labels_traefik_rule }}
+{% if linkding_container_labels_traefik_priority | int > 0 %}
+traefik.http.routers.{{ linkding_identifier }}.priority={{ linkding_container_labels_traefik_priority }}
+{% endif %}
+traefik.http.routers.{{ linkding_identifier }}.service={{ linkding_identifier }}
+{% if middlewares | length > 0 %}
+traefik.http.routers.{{ linkding_identifier }}.middlewares={{ middlewares | join(',') }}
+{% endif %}
+traefik.http.routers.{{ linkding_identifier }}.entrypoints={{ linkding_container_labels_traefik_entrypoints }}
+traefik.http.routers.{{ linkding_identifier }}.tls={{ linkding_container_labels_traefik_tls | to_json }}
+{% if linkding_container_labels_traefik_tls %}
+traefik.http.routers.{{ linkding_identifier }}.tls.certResolver={{ linkding_container_labels_traefik_tls_certResolver }}
+{% endif %}
+
+traefik.http.services.{{ linkding_identifier }}.loadbalancer.server.port=9090
+{% endif %}
+
+{{ linkding_container_labels_additional_labels }}

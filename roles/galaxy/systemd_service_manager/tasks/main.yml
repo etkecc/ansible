@@ -1,0 +1,39 @@
+---
+
+- block:
+    - ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+  tags:
+    - start
+    - start-all
+    - start-group
+    - restart
+    - restart-all
+    - restart-group
+    - stop
+    - stop-all
+    - stop-group
+
+- block:
+    - ansible.builtin.include_tasks: "{{ role_path }}/tasks/restart_all.yml"
+  tags:
+    - start
+    - start-all
+    - restart
+    - restart-all
+
+- block:
+    - ansible.builtin.include_tasks: "{{ role_path }}/tasks/restart_group.yml"
+  tags:
+    - start-group
+    - restart-group
+
+- block:
+    - ansible.builtin.include_tasks: "{{ role_path }}/tasks/stop_all.yml"
+  tags:
+    - stop
+    - stop-all
+
+- block:
+    - ansible.builtin.include_tasks: "{{ role_path }}/tasks/stop_group.yml"
+  tags:
+    - stop-group

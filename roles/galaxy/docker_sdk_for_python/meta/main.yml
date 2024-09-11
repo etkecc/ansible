@@ -1,0 +1,23 @@
+galaxy_info:
+  author: Slavi Pantaleev
+  company: Devture Ltd
+  description: Docker SDK for Python Ansible role
+  platforms:
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+    - name: Archlinux
+      versions:
+        - all
+    - name: EL
+      versions:
+        - 7
+        - 8
+    - name: Fedora
+      versions:
+        - all
+  license: GPL-3.0-or-later
+  min_ansible_version: '2.1'

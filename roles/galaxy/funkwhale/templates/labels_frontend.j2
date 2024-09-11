@@ -1,0 +1,39 @@
+{% if funkwhale_frontend_container_labels_traefik_enabled %}
+{% if funkwhale_frontend_container_labels_traefik_docker_network %}
+traefik.docker.network={{ funkwhale_frontend_container_labels_traefik_docker_network }}
+{% endif %}
+
+{% set middlewares = [] %}
+
+{% if funkwhale_frontend_container_labels_traefik_additional_request_headers.keys() | length > 0 %}
+{% for name, value in funkwhale_frontend_container_labels_traefik_additional_request_headers.items() %}
+traefik.http.middlewares.{{ funkwhale_frontend_identifier }}-add-request-headers.headers.customrequestheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [funkwhale_frontend_identifier + '-add-request-headers'] %}
+{% endif %}
+
+{% if funkwhale_frontend_container_labels_traefik_additional_response_headers.keys() | length > 0 %}
+{% for name, value in funkwhale_frontend_container_labels_traefik_additional_response_headers.items() %}
+traefik.http.middlewares.{{ funkwhale_frontend_identifier }}-add-response-headers.headers.customresponseheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [funkwhale_frontend_identifier + '-add-response-headers'] %}
+{% endif %}
+
+traefik.enable=true
+{% endif %}
+traefik.http.routers.{{ funkwhale_frontend_identifier }}.rule=Host("{{ funkwhale_frontend_hostname }}")
+{% if funkwhale_frontend_container_labels_traefik_priority | int > 0 %}
+traefik.http.routers.{{ funkwhale_frontend_identifier }}.priority={{ funkwhale_frontend_container_labels_traefik_priority }}
+{% endif %}
+{% if middlewares | length > 0 %}
+traefik.http.routers.{{ funkwhale_frontend_identifier }}.middlewares={{ middlewares | join(',') }}
+{% endif %}
+traefik.http.routers.{{ funkwhale_frontend_identifier }}.service={{ funkwhale_frontend_identifier }}
+traefik.http.routers.{{ funkwhale_frontend_identifier }}.entrypoints={{ funkwhale_frontend_container_labels_traefik_entrypoints }}
+traefik.http.routers.{{ funkwhale_frontend_identifier }}.tls={{ funkwhale_frontend_container_labels_traefik_tls | to_json }}
+{% if funkwhale_frontend_container_labels_traefik_tls %}
+traefik.http.routers.{{ funkwhale_frontend_identifier }}.tls.certResolver={{ funkwhale_frontend_container_labels_traefik_tls_certResolver }}
+{% endif %}
+traefik.http.services.{{ funkwhale_frontend_identifier }}.loadbalancer.server.port={{ funkwhale_frontend_container_http_port }}
+
+{{ funkwhale_frontend_container_labels_additional_labels }}

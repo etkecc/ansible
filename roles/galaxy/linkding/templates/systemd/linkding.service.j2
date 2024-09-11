@@ -1,0 +1,46 @@
+#jinja2: lstrip_blocks: "True"
+[Unit]
+Description=linkding ({{ linkding_identifier }})
+{% for service in linkding_systemd_required_services_list %}
+Requires={{ service }}
+After={{ service }}
+{% endfor %}
+DefaultDependencies=no
+
+[Service]
+Type=simple
+Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} kill {{ linkding_identifier }} 2>/dev/null || true'
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ linkding_identifier }} 2>/dev/null || true'
+
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
+			--rm \
+			--name={{ linkding_identifier }} \
+			--log-driver=none \
+			--network={{ linkding_container_network }} \
+			--user={{ linkding_uid }}:{{ linkding_gid }} \
+			--cap-drop=ALL \
+			--env-file={{ linkding_base_path }}/env \
+			--label-file={{ linkding_base_path }}/labels \
+			--mount type=bind,src={{ linkding_data_path }},dst=/etc/linkding/data \
+			--tmpfs=/tmp:rw,noexec,nosuid,size=512m \
+			{% for arg in linkding_container_extra_arguments %}
+			{{ arg }} \
+			{% endfor %}
+			{{ linkding_container_image }}
+
+{% for network in linkding_container_additional_networks %}
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ linkding_identifier }}
+{% endfor %}
+
+ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ linkding_identifier }}
+
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} kill {{ linkding_identifier }} 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ linkding_identifier }} 2>/dev/null || true'
+
+Restart=always
+RestartSec=30
+SyslogIdentifier={{ linkding_identifier }}
+
+[Install]
+WantedBy=multi-user.target

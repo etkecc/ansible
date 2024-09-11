@@ -1,0 +1,5 @@
+---
+
+- include_tasks: "{{ role_path }}/tasks/stop_specified.yml"
+  vars:
+    devture_systemd_service_manager_services_list_to_work_with: "{{ devture_systemd_service_manager_services_list }}"

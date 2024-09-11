@@ -1,0 +1,101 @@
+---
+# Project source code URL: https://github.com/prometheus/node_exporter
+
+prometheus_node_exporter_enabled: true
+prometheus_node_exporter_identifier: prometheus-node-exporter
+
+prometheus_node_exporter_uid: ''
+prometheus_node_exporter_gid: ''
+
+# You don't need to configure a hostname and path prefix if you're not exposing this.
+prometheus_node_exporter_hostname: ''
+prometheus_node_exporter_path_prefix: "/metrics/node-exporter"
+
+prometheus_node_exporter_version: v1.8.2
+prometheus_node_exporter_docker_image: "{{ prometheus_node_exporter_docker_image_name_prefix }}prom/node-exporter:{{ prometheus_node_exporter_version }}"
+prometheus_node_exporter_docker_image_name_prefix: "docker.io/"
+prometheus_node_exporter_docker_image_force_pull: "{{ prometheus_node_exporter_docker_image.endswith(':latest') }}"
+
+# A path on host where all related files will be saved
+prometheus_node_exporter_base_path: "/{{ prometheus_node_exporter_identifier }}"
+
+# The base container network
+#
+# Official recommendations are to run this container with `--net=host`,
+# but we don't do that, since it:
+# - exposes the metrics web server way too publicly (we'd potentially like to add HTTP Basic Auth, etc.)
+# - or listens on a loopback interface only (--net=host and 127.0.0.1:9100), which is not reachable from a local Prometheus container
+#
+# Not using `--net=host` means that our network statistic reports are likely broken (inaccurate),
+# because node-exporter can't see all interfaces, etc.
+# For now, we'll live with that, until someone develops a better solution.
+prometheus_node_exporter_container_network: "{{ prometheus_node_exporter_identifier }}"
+
+# A list of additional container networks that the container would be connected to.
+# The role does not create these networks, so make sure they already exist.
+#
+# Use this to expose this container to another reverse proxy, which runs in a different container network,
+# without exposing all other container services to that other reverse-proxy.
+#
+# For background, see: https://github.com/spantaleev/matrix-docker-ansible-deploy/issues/1498
+prometheus_node_exporter_container_additional_networks: []
+
+# A list of extra arguments to pass to the container
+prometheus_node_exporter_container_extra_arguments: []
+
+# A list of extra arguments to pass to the node_exporter process
+#
+# Example:
+# prometheus_node_exporter_process_extra_arguments:
+#   - "--collector.systemd"
+#   - "--collector.logind"
+#
+# Note: the above is just an example. Various collectors may require various tweaks to be able to run.
+# Running the systemd collector requires the following `prometheus_node_exporter_process_extra_arguments`:
+# - the socket to be mounted as well (`--mount type=bind,src=/var/run/dbus/system_bus_socket,dst=/var/run/dbus/system_bus_socket,ro,bind-propagation=rslave`)
+# - (on AppArmor-based distros) disabling AppArmor protection (`--security-opt apparmor=unconfined`)
+prometheus_node_exporter_process_extra_arguments: []
+
+# List of systemd services that prometheus-node-exporter.service depends on
+prometheus_node_exporter_systemd_required_services_list: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+
+# List of systemd services that prometheus-node-exporter.service wants
+prometheus_node_exporter_systemd_wanted_services_list: []
+
+# prometheus_node_exporter_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
+# See `../templates/labels.j2` for details.
+#
+# To inject your own other container labels, see `prometheus_node_exporter_container_labels_additional_labels`.
+prometheus_node_exporter_container_labels_traefik_enabled: false
+prometheus_node_exporter_container_labels_traefik_docker_network: "{{ prometheus_node_exporter_container_network }}"
+prometheus_node_exporter_container_labels_traefik_hostname: "{{ prometheus_node_exporter_hostname }}"
+# The path prefix must either be `/` or not end with a slash (e.g. `/metrics`).
+prometheus_node_exporter_container_labels_traefik_path_prefix: "{{ prometheus_node_exporter_path_prefix }}"
+prometheus_node_exporter_container_labels_traefik_rule: "Host(`{{ prometheus_node_exporter_container_labels_traefik_hostname }}`) && PathPrefix(`{{ prometheus_node_exporter_container_labels_traefik_path_prefix | quote }}`)"
+prometheus_node_exporter_container_labels_traefik_entrypoints: web-secure
+prometheus_node_exporter_container_labels_traefik_tls: "{{ prometheus_node_exporter_container_labels_traefik_entrypoints != 'web' }}"
+prometheus_node_exporter_container_labels_traefik_tls_certResolver: default  # noqa var-naming
+prometheus_node_exporter_container_labels_metrics_middleware_basic_auth_enabled: false
+# See: https://doc.traefik.io/traefik/middlewares/http/basicauth/#users
+prometheus_node_exporter_container_labels_metrics_middleware_basic_auth_users: ''
+
+# prometheus_node_exporter_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
+# See `../templates/labels.j2` for details.
+#
+# Example:
+# prometheus_node_exporter_container_labels_additional_labels: |
+#   my.label=1
+#   another.label="here"
+prometheus_node_exporter_container_labels_additional_labels: ''
+
+# A port number in the container
+prometheus_node_exporter_container_http_port: 9100
+
+# Controls whether the prometheus-node-exporter container exposes its HTTP port (tcp/9100 in the container).
+# Takes an "<ip>:<port>" value (e.g. "127.0.0.1:9100"), just a port number or empty string to not expose.
+prometheus_node_exporter_container_http_host_bind_port: ''
+
+# prometheus_node_exporter_dashboard_urls contains a list of URLs with Grafana dashboard definitions for the node exporter.
+# This role doesn't make use of this variable, but you can hook this into other roles.
+prometheus_node_exporter_dashboard_urls:
+  - https://raw.githubusercontent.com/rfrail3/grafana-dashboards/master/prometheus/node-exporter-full.json

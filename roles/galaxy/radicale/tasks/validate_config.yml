@@ -1,0 +1,34 @@
+---
+
+- name: Fail if required radicale settings not defined
+  ansible.builtin.fail:
+    msg: >
+      You need to define a required configuration setting (`{{ item }}`).
+  when: "vars[item] == ''"
+  with_items:
+    - radicale_identifier
+    - radicale_uid
+    - radicale_gid
+    - radicale_hostname
+    - radicale_path_prefix
+    - radicale_container_network
+
+- when: radicale_container_labels_traefik_enabled | bool
+  block:
+    - name: Fail if required radicale Traefik settings not defined
+      ansible.builtin.fail:
+        msg: >-
+          You need to define a required configuration setting (`{{ item }}`).
+      when: "vars[item] == ''"
+      with_items:
+        - radicale_container_labels_traefik_hostname
+        - radicale_container_labels_traefik_path_prefix
+
+    # We ensure it doesn't end with a slash, because we handle both (slash and no-slash).
+    # Knowing that `radicale_container_labels_traefik_path_prefix` does not end with a slash
+    # ensures we know how to set these routes up without having to do "does it end with a slash" checks elsewhere.
+    - name: Fail if radicale_container_labels_traefik_path_prefix ends with a slash
+      ansible.builtin.fail:
+        msg: >-
+          radicale_container_labels_traefik_path_prefix (`{{ radicale_container_labels_traefik_path_prefix }}`) must either be `/` or not end with a slash (e.g. `/radicale`).
+      when: "radicale_container_labels_traefik_path_prefix != '/' and radicale_container_labels_traefik_path_prefix[-1] == '/'"

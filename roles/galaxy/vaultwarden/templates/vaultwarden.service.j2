@@ -1,0 +1,58 @@
+[Unit]
+Description=Vaultwarden ({{ vaultwarden_identifier }})
+{% for service in vaultwarden_systemd_required_systemd_services_list %}
+Requires={{ service }}
+After={{ service }}
+{% endfor %}
+{% for service in vaultwarden_systemd_wanted_systemd_services_list %}
+Wants={{ service }}
+{% endfor %}
+DefaultDependencies=no
+
+[Service]
+Type=simple
+Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop --time={{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ vaultwarden_identifier }} 2>/dev/null'
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ vaultwarden_identifier }} 2>/dev/null'
+
+{#
+	The `--health-interval` health check parameter was changed because by default:
+	- health checks start immediately.. and they always fail, because the HTTP server takes a bit of time to start
+	- the recheck interval is too long (60s) and the service is considered `starting`
+	- when a service is not `healthy`, Traefik does not reverse-proxy to it -- leading to 1 minute downtime every single time this restarts
+#}
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
+			--rm \
+			--name={{ vaultwarden_identifier }} \
+			--log-driver=none \
+			--network={{ vaultwarden_container_network }} \
+			--user={{ vaultwarden_uid }}:{{ vaultwarden_gid }} \
+			--cap-drop=ALL \
+			--read-only \
+			--hostname={{ vaultwarden_container_hostname }} \
+			{% if vaultwarden_container_http_bind_port %}
+			-p {{ vaultwarden_container_http_bind_port }}:{{ vaultwarden_config_rocket_port }} \
+			{% endif %}
+			--health-interval=10s \
+			--env-file={{ vaultwarden_base_path }}/env \
+			--label-file={{ vaultwarden_base_path }}/labels \
+			--mount type=bind,src={{ vaultwarden_data_dir_path }},dst=/data \
+			--mount type=bind,src={{ vaultwarden_cache_dir_path }},dst=/cache \
+			--mount type=bind,src={{ vaultwarden_ephemeral_dir_path }},dst=/ephemeral \
+			--tmpfs=/tmp:rw,noexec,nosuid,size=128m \
+			{{ vaultwarden_container_image }}
+
+{% for network in vaultwarden_container_additional_networks %}
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ vaultwarden_identifier }}
+{% endfor %}
+
+ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ vaultwarden_identifier }}
+
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop --time={{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ vaultwarden_identifier }} 2>/dev/null'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ vaultwarden_identifier }} 2>/dev/null'
+Restart=always
+RestartSec=30
+SyslogIdentifier={{ vaultwarden_identifier }}
+
+[Install]
+WantedBy=multi-user.target

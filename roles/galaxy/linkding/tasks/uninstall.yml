@@ -1,0 +1,24 @@
+---
+- name: Check existence of linkding systemd service
+  ansible.builtin.stat:
+    path: "{{ devture_systemd_docker_base_systemd_path }}/{{ linkding_identifier }}.service"
+  register: linkding_service_stat
+
+- when: linkding_service_stat.stat.exists | bool
+  block:
+    - name: Ensure linkding systemd service is stopped
+      ansible.builtin.service:
+        name: "{{ linkding_identifier }}"
+        state: stopped
+        enabled: false
+        daemon_reload: true
+
+    - name: Ensure linkding systemd service does not exists
+      ansible.builtin.file:
+        path: "{{ devture_systemd_docker_base_systemd_path }}/{{ linkding_identifier }}.service"
+        state: absent
+
+    - name: Ensure linkding path doesn't exist
+      ansible.builtin.file:
+        path: "{{ linkding_base_path }}"
+        state: absent

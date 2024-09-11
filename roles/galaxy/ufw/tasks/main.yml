@@ -1,0 +1,121 @@
+---
+
+- block:
+  - name: Install ufw
+    ansible.builtin.package:
+      name: ufw
+      state: present
+
+  - name: Ensure ufw stared and running
+    ansible.builtin.service:
+      state: started
+      enabled: true
+      name: ufw
+
+  - name: Apply rules
+    community.general.ufw:
+      rule: "{{ item.rule }}"
+      port: "{{ item.port }}"
+      proto: "{{ item.proto }}"
+      comment: "{{ item.name }}"
+    with_items: "{{ system_security_ufw_rules }}"
+
+  - name: Allow email receiving
+    community.general.ufw:
+      rule: allow
+      port: "{{ matrix_email2matrix_smtp_host_bind_port }}"
+      proto: tcp
+      comment: email2matrix
+    when: matrix_email2matrix_enabled | bool
+
+  - name: Allow email receiving (plain)
+    community.general.ufw:
+      rule: allow
+      port: "{{ matrix_bot_postmoogle_smtp_host_bind_port }}"
+      proto: tcp
+      comment: postmoogle
+    when: matrix_bot_postmoogle_enabled | bool
+
+  - name: Allow email receiving (TLS)
+    community.general.ufw:
+      rule: allow
+      port: "{{ matrix_bot_postmoogle_submission_host_bind_port }}"
+      proto: tcp
+      comment: postmoogle
+    when: matrix_bot_postmoogle_enabled | bool
+
+  - name: Allow heisenbridge identd
+    community.general.ufw:
+      rule: allow
+      port: "{{ matrix_heisenbridge_identd_port }}"
+      proto: tcp
+      comment: heisenbridge/identd
+    when: matrix_heisenbridge_enabled | bool
+
+  - name: Allow firezone
+    community.general.ufw:
+      rule: allow
+      port: "{{ firezone_wireguard_container_port }}"
+      proto: udp
+      comment: firezone
+    when: firezone_enabled | bool
+
+  - name: Allow peertube RTMP (TCP)
+    community.general.ufw:
+      rule: allow
+      port: "{{ peertube_container_rtmp_host_bind_port }}"
+      proto: tcp
+      comment: peertube RTMP
+    when: peertube_enabled | bool
+
+  - name: Allow peertube RTMP (UDP)
+    community.general.ufw:
+      rule: allow
+      port: "{{ peertube_container_rtmp_host_bind_port }}"
+      proto: udp
+      comment: peertube RTMP
+    when: peertube_enabled | bool
+
+  - name: Allow wireguard
+    community.general.ufw:
+      rule: allow
+      port: "{{ custom_wireguard_port }}"
+      proto: udp
+      comment: wireguard server
+    when: custom_wireguard_enabled | bool
+
+  - name: Allow wireguard network
+    community.general.ufw:
+      rule: allow
+      interface: "{{ custom_wireguard_interface }}"
+      direction: in
+      proto: any
+    when: custom_wireguard_enabled | bool
+
+  - name: Allow dnsmasq (UDP)
+    community.general.ufw:
+      rule: allow
+      port: "{{ custom_dnsmasq_port }}"
+      proto: udp
+      comment: dnsmasq
+    when: custom_dnsmasq_enabled | bool
+
+  - name: Allow dnsmasq (TCP)
+    community.general.ufw:
+      rule: allow
+      port: "{{ custom_dnsmasq_port }}"
+      proto: tcp
+      comment: dnsmasq
+    when: custom_dnsmasq_enabled | bool
+
+  - name: Start ufw
+    community.general.ufw:
+      logging: 'on'
+      policy: deny
+      state: enabled
+  when: system_security_ufw_enabled | bool
+  tags:
+    - setup-all
+    - setup-ufw
+    - install-all
+    - install-ufw

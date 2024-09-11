@@ -1,0 +1,23 @@
+---
+
+- name: Check existence of gotosocial systemd service
+  ansible.builtin.stat:
+    path: "{{ devture_systemd_docker_base_systemd_path }}/{{ gotosocial_identifier }}.service"
+  register: gotosocial_service_stat
+
+- when: gotosocial_service_stat.stat.exists | bool
+  block:
+    - name: Ensure gotosocial service is stopped
+      ansible.builtin.service:
+        name: "{{ gotosocial_identifier }}"
+        state: stopped
+        daemon_reload: true
+    - name: Ensure gotosocial service doesn't exist
+      ansible.builtin.file:
+        dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ gotosocial_identifier }}.service"
+        state: absent
+
+    - name: Ensure gotosocial base path is files deleted (make sure to delete node data)
+      ansible.builtin.file:
+        path: "{{ gotosocial_base_path }}"
+        state: absent

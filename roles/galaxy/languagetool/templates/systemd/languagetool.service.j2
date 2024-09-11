@@ -1,0 +1,50 @@
+#jinja2: lstrip_blocks: "True"
+[Unit]
+Description=LanguageTool ({{ languagetool_identifier }})
+{% for service in languagetool_systemd_required_services_list %}
+Requires={{ service }}
+After={{ service }}
+{% endfor %}
+DefaultDependencies=no
+
+[Service]
+Type=simple
+Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} kill {{ languagetool_identifier }} 2>/dev/null || true'
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ languagetool_identifier }} 2>/dev/null || true'
+
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
+			--rm \
+			--name={{ languagetool_identifier }} \
+			--log-driver=none \
+			--user={{ languagetool_uid }}:{{ languagetool_gid }} \
+			--cap-drop=ALL \
+			--network={{ languagetool_container_network }} \
+			--health-interval={{ languagetool_container_health_interval }} \
+			{% if languagetool_ngrams_enabled %}
+			--mount type=bind,src={{ languagetool_data_path }},dst=/data,ro \
+			-e langtool_languageModel=/data \
+			{% endif %}
+			--label-file={{ languagetool_base_path }}/labels \
+			-e Java_Xms={{ languagetool_java_heap_min }} \
+			-e Java_Xmx={{ languagetool_java_heap_max }} \
+			{% for arg in languagetool_container_extra_arguments %}
+			{{ arg }} \
+			{% endfor %}
+			{{ languagetool_container_image }}
+
+{% for network in languagetool_container_additional_networks %}
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ languagetool_identifier }}
+{% endfor %}
+
+ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ languagetool_identifier }}
+
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} kill {{ languagetool_identifier }} 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ languagetool_identifier }} 2>/dev/null || true'
+
+Restart=always
+RestartSec=30
+SyslogIdentifier={{ languagetool_identifier }}
+
+[Install]
+WantedBy=multi-user.target

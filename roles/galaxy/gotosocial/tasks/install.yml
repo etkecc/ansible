@@ -1,0 +1,56 @@
+---
+
+- name: Ensure gotosocial network is created in Docker
+  community.docker.docker_network:
+    name: "{{ gotosocial_container_network }}"
+    driver: bridge
+
+
+- name: Ensure gotosocial path exists
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: 0700
+    owner: "{{ gotosocial_uid }}"
+    group: "{{ gotosocial_gid }}"
+  with_items:
+    - {path: "{{ gotosocial_base_path }}", when: true}
+    - {path: "{{ gotosocial_config_path }}", when: true}
+
+- name: Ensure gotosocial data path exists
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: 0755
+    owner: "{{ gotosocial_uid }}"
+    group: "{{ gotosocial_gid }}"
+  with_items:
+    - {path: "{{ gotosocial_data_path }}", when: true}
+
+
+- name: Ensure gotosocial traefik labels are installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/labels.j2"
+    dest: "{{ gotosocial_config_path }}/labels"
+    owner: "{{ gotosocial_uid }}"
+    group: "{{ gotosocial_gid }}"
+    mode: 0640
+
+- name: Ensure gotosocial configuration is deployed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/env.j2"
+    dest: "{{ gotosocial_config_path }}/env"
+    owner: "{{ gotosocial_uid }}"
+    group: "{{ gotosocial_gid }}"
+    mode: 0640
+
+- name: Ensure gotosocial container image is pulled
+  community.docker.docker_image:
+    name: "{{ gotosocial_container_image }}"
+    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+
+- name: Ensure gotosocial.service installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/systemd/gotosocial.service.j2"
+    dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ gotosocial_identifier }}.service"
+    mode: 0644

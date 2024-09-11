@@ -1,0 +1,36 @@
+---
+
+- name: Generate Postgres database vacuum command
+  ansible.builtin.set_fact:
+    devture_postgres_vacuum_run_command: >-
+      {{ devture_systemd_docker_base_host_command_docker }} run
+      --rm
+      --name={{ devture_postgres_identifier }}-vacuum
+      --user={{ devture_postgres_uid }}:{{ devture_postgres_gid }}
+      --cap-drop=ALL
+      --network={{ devture_postgres_container_network_for_vacuuming }}
+      --env-file={{ devture_postgres_base_path }}/env-postgres-psql
+      {{ devture_postgres_detected_version_corresponding_docker_image }}
+      psql -v ON_ERROR_STOP=1 -h {{ devture_postgres_identifier }} {{ devture_postgres_database_to_vacuum }} -c '{{ postgres_vacuum_query }}'
+
+- name: Note about Postgres vacuum alternative
+  ansible.builtin.debug:
+    msg: >-
+      Running vacuum against the `{{ devture_postgres_database_to_vacuum }}` database with the following Postgres command:
+      `{{ devture_postgres_vacuum_run_command }}`.
+      If this crashes, you can stop all processes which may use the database (`systemctl stop example.service another.service`),
+      start Postgres only (`systemctl start {{ devture_postgres_identifier }}`)
+      and manually run the above command directly on the server.
+
+- name: Run Postgres vacuum command
+  ansible.builtin.command:
+    cmd: "{{ devture_postgres_vacuum_run_command }}"
+  async: "{{ postgres_vacuum_wait_time }}"
+  poll: 10
+  register: devture_postgres_vacuum_result
+  failed_when: not devture_postgres_vacuum_result.finished or devture_postgres_vacuum_result.rc != 0
+  changed_when: devture_postgres_vacuum_result.finished and devture_postgres_vacuum_result.rc == 0
+
+# Intentionally show the results
+- ansible.builtin.debug:
+    var: "devture_postgres_vacuum_result"

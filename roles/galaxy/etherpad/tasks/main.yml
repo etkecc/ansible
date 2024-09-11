@@ -1,0 +1,23 @@
+---
+
+- block:
+    - when: etherpad_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+
+    - when: etherpad_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+
+    - when: etherpad_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/migrate.yml"
+  tags:
+    - setup-all
+    - setup-etherpad
+    - install-all
+    - install-etherpad
+
+- block:
+    - when: not etherpad_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
+  tags:
+    - setup-all
+    - setup-etherpad

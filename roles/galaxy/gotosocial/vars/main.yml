@@ -1,0 +1,2 @@
+---
+gotosocial_users: "{{ gotosocial_users_auto + gotosocial_users_additional }}"

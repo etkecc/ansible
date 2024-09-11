@@ -1,0 +1,26 @@
+---
+
+- name: Perform uptime-kuma installation tasks
+  tags:
+    - setup-all
+    - setup-uptime-kuma
+    - install-all
+    - install-uptime-kuma
+  block:
+    - name: Validate uptime-kuma configuration
+      when: uptime_kuma_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+
+    - name: Install uptime-kuma
+      when: uptime_kuma_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+
+
+- name: Perform uptime-kuma uninstallation tasks
+  tags:
+    - setup-all
+    - setup-uptime-kuma
+  block:
+    - name: Uninstall uptime-kuma
+      when: not uptime_kuma_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

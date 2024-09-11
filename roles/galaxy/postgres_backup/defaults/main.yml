@@ -1,0 +1,85 @@
+---
+
+# Project source code URL: https://github.com/prodrigestivill/docker-postgres-backup-local
+
+devture_postgres_backup_enabled: true
+
+# devture_postgres_backup_identifier controls the identifer of this Postgres backup instance, which influences:
+# - the default storage path
+# - the names of systemd services
+devture_postgres_backup_identifier: 'devture-postgres-backup'
+
+devture_postgres_backup_base_path: "/{{ devture_postgres_backup_identifier }}"
+devture_postgres_backup_config_path: "{{ devture_postgres_backup_base_path }}/config"
+devture_postgres_backup_data_path: "{{ devture_postgres_backup_base_path }}/data"
+
+devture_postgres_backup_uid: ~
+devture_postgres_backup_gid: ~
+
+devture_postgres_backup_connection_hostname: ''
+devture_postgres_backup_connection_port: 5432
+devture_postgres_backup_connection_username: ''
+devture_postgres_backup_connection_password: ''
+
+devture_postgres_backup_extra_opts: "-Z9 --schema=public --blobs"
+devture_postgres_backup_schedule: "@daily"
+devture_postgres_backup_keep_days: 7
+devture_postgres_backup_keep_weeks: 4
+devture_postgres_backup_keep_mins: 1440
+devture_postgres_backup_keep_months: 12
+devture_postgres_backup_healthcheck_port: "8080"
+devture_postgres_backup_timezone: 'UTC'
+
+# devture_postgres_backup_databases contains a list of database names to back up
+devture_postgres_backup_databases: []
+
+# Specifies where the Postgres data is.
+#
+# We only use this to:
+# - autodetect the Postgres version during playbook runtime (by parsing the `PG_VERSION` file contained there)
+# - set `devture_postgres_backup_container_image_to_use` accordingly
+#
+# You can leave this empty to prevent auto-detection.
+# If so, the default value of `devture_postgres_backup_container_image_to_use` is used.
+devture_postgres_backup_postgres_data_path: ''
+
+# Specifies where the Postgres role is to be included from, for auto-detection purposes.
+# This should be a path relative to your role directories.
+# It gets passed to Ansible's `ansible.builtin.include_role` as a `name` parameter.
+devture_postgres_backup_postgres_role_include_name: galaxy/com.devture.ansible.role.postgres
+
+devture_postgres_backup_architecture: amd64
+
+devture_postgres_backup_systemd_required_services_list: "{{ devture_postgres_backup_systemd_required_services_list_default + devture_postgres_backup_systemd_required_services_list_auto + devture_postgres_backup_systemd_required_services_list_custom }}"
+devture_postgres_backup_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+devture_postgres_backup_systemd_required_services_list_auto: []
+devture_postgres_backup_systemd_required_services_list_custom: []
+
+devture_postgres_backup_container_network: "{{ devture_postgres_backup_identifier }}"
+
+devture_postgres_backup_container_additional_networks: "{{ devture_postgres_backup_container_additional_networks_auto + devture_postgres_backup_container_additional_networks_custom }}"
+devture_postgres_backup_container_additional_networks_auto: []
+devture_postgres_backup_container_additional_networks_custom: []
+
+devture_postgres_backup_container_image_registry_prefix: "docker.io/"
+
+# devture_postgres_backup_container_image_distro controls whether we use Alpine-based images (`-alpine`) or the normal Debian-based images.
+# Alpine-based Postgres images are smaller and we usually prefer them, but they don't work on ARM32 (tested on a Raspberry Pi 3 running Raspbian 10.7).
+# On ARM32, `-alpine` images fail with the following error:
+# > LOG:  startup process (PID 37) was terminated by signal 11: Segmentation fault
+devture_postgres_backup_container_image_distro: "{{ 'alpine' if devture_postgres_backup_architecture in ['amd64', 'arm64'] else 'debian' }}"
+
+devture_postgres_backup_container_image_v9: "{{ devture_postgres_backup_container_image_registry_prefix }}prodrigestivill/postgres-backup-local:9.6-{{ devture_postgres_backup_container_image_distro }}-2aa03d1"
+devture_postgres_backup_container_image_v10: "{{ devture_postgres_backup_container_image_registry_prefix }}prodrigestivill/postgres-backup-local:10-{{ devture_postgres_backup_container_image_distro }}-2cf00a5"
+devture_postgres_backup_container_image_v11: "{{ devture_postgres_backup_container_image_registry_prefix }}prodrigestivill/postgres-backup-local:11-{{ devture_postgres_backup_container_image_distro }}-2cf00a5"
+devture_postgres_backup_container_image_v12: "{{ devture_postgres_backup_container_image_registry_prefix }}prodrigestivill/postgres-backup-local:12-{{ devture_postgres_backup_container_image_distro }}-2cf00a5"
+devture_postgres_backup_container_image_v13: "{{ devture_postgres_backup_container_image_registry_prefix }}prodrigestivill/postgres-backup-local:13-{{ devture_postgres_backup_container_image_distro }}-2cf00a5"
+devture_postgres_backup_container_image_v14: "{{ devture_postgres_backup_container_image_registry_prefix }}prodrigestivill/postgres-backup-local:14-{{ devture_postgres_backup_container_image_distro }}-2cf00a5"
+devture_postgres_backup_container_image_v15: "{{ devture_postgres_backup_container_image_registry_prefix }}prodrigestivill/postgres-backup-local:15-{{ devture_postgres_backup_container_image_distro }}-2cf00a5"
+devture_postgres_backup_container_image_v16: "{{ devture_postgres_backup_container_image_registry_prefix }}prodrigestivill/postgres-backup-local:16-{{ devture_postgres_backup_container_image_distro }}-1a66318"
+devture_postgres_backup_container_image_latest: "{{ devture_postgres_backup_container_image_v16 }}"
+
+# This variable is assigned at runtime if `devture_postgres_backup_postgres_data_path` is not empty. Overriding its value in that case has no effect.
+devture_postgres_backup_container_image_to_use: '{{ devture_postgres_backup_container_image_latest }}'
+
+devture_postgres_backup_container_image_force_pull: "{{ devture_postgres_backup_container_image_to_use.endswith(':latest') }}"

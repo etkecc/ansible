@@ -1,0 +1,26 @@
+---
+
+- name: Check existence of Prometheus systemd service
+  ansible.builtin.stat:
+    path: "{{ devture_systemd_docker_base_systemd_path }}/{{ prometheus_identifier }}.service"
+  register: prometheus_service_stat
+
+- when: prometheus_service_stat.stat.exists | bool
+  block:
+    - name: Ensure Prometheus systemd service is stopped
+      ansible.builtin.service:
+        name: "{{ prometheus_identifier }}"
+        state: stopped
+        enabled: false
+        daemon_reload: true
+
+    - name: Ensure Prometheus systemd service does not exists
+      ansible.builtin.file:
+        path: "{{ devture_systemd_docker_base_systemd_path }}/{{ prometheus_identifier }}.service"
+        state: absent
+
+    - name: Ensure Prometheus files deleted
+      ansible.builtin.file:
+        path: "{{ prometheus_base_path }}"
+        state: absent
+

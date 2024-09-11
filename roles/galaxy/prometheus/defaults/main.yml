@@ -1,0 +1,202 @@
+---
+
+# Prometheus is an open-source systems monitoring and alerting toolkit
+# Project source code URL: https://github.com/prometheus/prometheus
+
+prometheus_enabled: true
+
+prometheus_identifier: prometheus
+
+prometheus_version: v2.54.1
+
+prometheus_uid: ''
+prometheus_gid: ''
+
+# The hostname at which prometheus is served.
+prometheus_hostname: ''
+
+# The path at which prometheus is served.
+# This value must either be `/` or not end with a slash (e.g. `/prometheus`).
+prometheus_path_prefix: /
+
+prometheus_base_path: "/{{ prometheus_identifier }}"
+prometheus_config_path: "{{ prometheus_base_path }}/config"
+prometheus_data_path: "{{ prometheus_base_path }}/data"
+
+# List of systemd services that the Prometheus systemd service depends on
+prometheus_systemd_required_services_list: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+
+# List of systemd services that the Prometheus systemd service wants
+prometheus_systemd_wanted_services_list: []
+
+prometheus_container_image: "{{ prometheus_container_image_registry_prefix }}prom/prometheus:{{ prometheus_container_image_tag }}"
+prometheus_container_image_tag: "{{ prometheus_version }}"
+prometheus_container_image_force_pull: "{{ prometheus_container_image.endswith(':latest') }}"
+prometheus_container_image_registry_prefix: docker.io/
+
+# The base container network. It will be auto-created by this role if it doesn't exist already.
+prometheus_container_network: "{{ prometheus_identifier }}"
+
+# A list of additional container networks that the container would be connected to.
+# The role does not create these networks, so make sure they already exist.
+prometheus_container_additional_networks: "{{ prometheus_container_additional_networks_auto + prometheus_container_additional_networks_custom }}"
+prometheus_container_additional_networks_auto: []
+prometheus_container_additional_networks_custom: []
+
+# Controls whether the container exposes its HTTP port (tcp/9090 in the container).
+#
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:9090"), or empty string to not expose.
+prometheus_container_http_host_bind_port: ''
+
+
+# prometheus_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
+# See `../templates/labels.j2` for details.
+#
+# To inject your own other container labels, see `prometheus_container_labels_additional_labels`.
+prometheus_container_labels_traefik_enabled: false
+prometheus_container_labels_traefik_docker_network: "{{ prometheus_container_network }}"
+prometheus_container_labels_traefik_hostname: "{{ prometheus_hostname }}"
+# The path prefix must either be `/` or not end with a slash (e.g. `/prometheus`).
+prometheus_container_labels_traefik_path_prefix: "{{ prometheus_path_prefix }}"
+prometheus_container_labels_traefik_rule: "Host(`{{ prometheus_container_labels_traefik_hostname }}`){% if prometheus_container_labels_traefik_path_prefix != '/' %} && PathPrefix(`{{ prometheus_container_labels_traefik_path_prefix }}`){% endif %}"
+prometheus_container_labels_traefik_priority: 0
+prometheus_container_labels_traefik_entrypoints: web-secure
+prometheus_container_labels_traefik_tls: "{{ prometheus_container_labels_traefik_entrypoints != 'web' }}"
+prometheus_container_labels_traefik_tls_certResolver: default  # noqa var-naming
+
+# Controls which additional headers to attach to all HTTP requests.
+# To add your own custom request headers, use `prometheus_container_labels_traefik_additional_response_headers_custom`
+prometheus_container_labels_traefik_additional_request_headers: "{{ prometheus_container_labels_traefik_additional_request_headers_auto | combine(prometheus_container_labels_traefik_additional_request_headers_custom) }}"
+prometheus_container_labels_traefik_additional_request_headers_auto: {}
+prometheus_container_labels_traefik_additional_request_headers_custom: {}
+
+# Controls which additional headers to attach to all HTTP responses.
+# To add your own custom response headers, use `prometheus_container_labels_traefik_additional_response_headers_custom`
+prometheus_container_labels_traefik_additional_response_headers: "{{ prometheus_container_labels_traefik_additional_response_headers_auto | combine(prometheus_container_labels_traefik_additional_response_headers_custom) }}"
+prometheus_container_labels_traefik_additional_response_headers_auto: |
+  {{
+    {}
+    | combine ({'X-XSS-Protection': prometheus_http_header_xss_protection} if prometheus_http_header_xss_protection else {})
+    | combine ({'X-Frame-Options': prometheus_http_header_frame_options} if prometheus_http_header_frame_options else {})
+    | combine ({'X-Content-Type-Options': prometheus_http_header_content_type_options} if prometheus_http_header_content_type_options else {})
+    | combine ({'Content-Security-Policy': prometheus_http_header_content_security_policy} if prometheus_http_header_content_security_policy else {})
+    | combine ({'Permission-Policy': prometheus_http_header_content_permission_policy} if prometheus_http_header_content_permission_policy else {})
+    | combine ({'Strict-Transport-Security': prometheus_http_header_strict_transport_security} if prometheus_http_header_strict_transport_security and prometheus_container_labels_traefik_tls else {})
+  }}
+prometheus_container_labels_traefik_additional_response_headers_custom: {}
+
+# prometheus_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
+# See `../templates/labels.j2` for details.
+#
+# Example:
+# prometheus_container_labels_additional_labels: |
+#   my.label=1
+#   another.label="here"
+prometheus_container_labels_additional_labels: ''
+
+
+# A list of extra arguments to pass to the container
+prometheus_container_extra_arguments: []
+
+# A list of default arguments to pass to the prometheus process
+prometheus_process_default_arguments:
+  - "--config.file=/etc/prometheus/prometheus.yml"
+  - "--storage.tsdb.path=/prometheus"
+  - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+  - "--web.console.templates=/usr/share/prometheus/consoles"
+
+# A list of extra arguments to pass to the prometheus process
+prometheus_process_extra_arguments: []
+
+# holds the final list of process arguments
+prometheus_process_arguments: "{{ prometheus_process_default_arguments + prometheus_process_extra_arguments }}"
+
+prometheus_container_labels_metrics_middleware_basic_auth_enabled: false
+# See: https://doc.traefik.io/traefik/middlewares/http/basicauth/#users
+prometheus_container_labels_metrics_middleware_basic_auth_users: ''
+
+# Controls whether Prometheus will scrape its own process running in the container.
+# See: prometheus_config_scrape_configs_default
+prometheus_self_process_scraper_enabled: true
+prometheus_self_process_scraper_job_name: prometheus
+prometheus_self_process_scraper_scrape_interval: 5s
+prometheus_self_process_scraper_scrape_timeout: 5s
+prometheus_self_process_scraper_static_configs: "{{ [{'targets': [prometheus_self_process_scraper_static_configs_target]}] }}"
+prometheus_self_process_scraper_static_configs_target: 'localhost:9090'
+# The final scrape configs for the self process scraper
+prometheus_self_process_scraper_scrape_configs: |
+  {{
+    [{
+      'job_name': prometheus_self_process_scraper_job_name,
+      'scrape_interval': prometheus_self_process_scraper_scrape_interval,
+      'scrape_timeout': prometheus_self_process_scraper_scrape_timeout,
+      'static_configs': prometheus_self_process_scraper_static_configs,
+    }]
+  }}
+
+# Controls whether Prometheus will scrape its own node.
+# This requires to be pointed to a node-exporter instance and for the instance to be reachable over the container network(s).
+# See: prometheus_config_scrape_configs_default
+prometheus_self_node_scraper_enabled: false
+prometheus_self_node_scraper_job_name: node
+prometheus_self_node_scraper_scrape_interval: 60s
+prometheus_self_node_scraper_scrape_timeout: 60s
+prometheus_self_node_scraper_static_configs: "{{ [{'targets': [prometheus_self_node_scraper_static_configs_target]}] }}"
+prometheus_self_node_scraper_static_configs_target: ''
+# The final scrape configs for the self node scraper
+prometheus_self_node_scraper_scrape_configs: |
+  {{
+    [{
+      'job_name': prometheus_self_node_scraper_job_name,
+      'scrape_interval': prometheus_self_node_scraper_scrape_interval,
+      'scrape_timeout': prometheus_self_node_scraper_scrape_timeout,
+      'static_configs': prometheus_self_node_scraper_static_configs,
+    }]
+  }}
+
+# Default Prometheus configuration template which covers the generic use case.
+# You can customize it by controlling the various variables inside it.
+#
+# For a more advanced customization, you can extend the default (see `prometheus_configuration_extension_yaml`)
+# or completely replace this variable with your own template.
+prometheus_configuration_yaml: "{{ lookup('template', 'templates/prometheus.yml.j2') }}"
+
+prometheus_configuration_extension_yaml: |
+  # Your custom YAML configuration goes here.
+  # This configuration extends the default starting configuration (`prometheus_configuration_yaml`).
+  #
+  # You can override individual variables from the default configuration, or introduce new ones.
+  #
+  # If you need something more special, you can take full control by
+  # completely redefining `prometheus_configuration_yaml`.
+
+prometheus_configuration_extension: "{{ prometheus_configuration_extension_yaml | from_yaml if prometheus_configuration_extension_yaml | from_yaml is mapping else {} }}"
+
+# Holds the final configuration (a combination of the default and its extension).
+# You most likely don't need to touch this variable. Instead, see `prometheus_configuration_yaml`.
+prometheus_configuration: "{{ prometheus_configuration_yaml | from_yaml | combine(prometheus_configuration_extension, recursive=True) }}"
+
+# Controls the `global.scrape_interval` configuration parameter
+prometheus_config_global_scrape_interval: 60s
+
+# Controls the `global.evaluation_interval` configuration parameter
+prometheus_config_global_evaluation_interval: 60s
+
+# Controls the `global.scrape_timeout` configuration parameter
+prometheus_config_global_scrape_timeout: 10s
+
+# Controls the rule_files configuration parameter
+prometheus_config_rule_files: "{{ prometheus_config_rule_files_auto + prometheus_config_rule_files_additional }}"
+prometheus_config_rule_files_auto: []
+prometheus_config_rule_files_additional: []
+
+# Controls the scrape_configs configuration parameter
+prometheus_config_scrape_configs: "{{ prometheus_config_scrape_configs_default + prometheus_config_scrape_configs_auto + prometheus_config_scrape_configs_additional }}"
+prometheus_config_scrape_configs_default: |
+  {{
+    (prometheus_self_process_scraper_scrape_configs if prometheus_self_process_scraper_enabled else [])
+    +
+    (prometheus_self_node_scraper_scrape_configs if prometheus_self_node_scraper_enabled else [])
+  }}
+prometheus_config_scrape_configs_auto: []
+prometheus_config_scrape_configs_additional: []

@@ -66,9 +66,6 @@ The original playbook's focus is on matrix components only, while we at [etke.cc
 git clone https://github.com/etkecc/ansible.git
 cd ansible
 
-# pull the spantaleev/matrix-docker-ansible-deploy repo and other dependency roles, the recipe name is an alias to match with the upstream
-just roles
-
 # create directory for your server config
 mkdir inventory/host_vars/DOMAIN
 

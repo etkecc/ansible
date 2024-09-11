@@ -1,0 +1,7 @@
+---
+
+- name: Ensure APT packages are installed
+  ansible.builtin.apt:
+    name:
+      - "{{ devture_timesync_ntpd_package }}"
+    state: present

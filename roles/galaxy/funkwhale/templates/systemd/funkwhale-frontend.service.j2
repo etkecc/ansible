@@ -1,0 +1,50 @@
+[Unit]
+Description=Funkwhale Frontend ({{ funkwhale_frontend_identifier }})
+{% for service in funkwhale_frontend_systemd_required_services_list %}
+Requires={{ service }}
+After={{ service }}
+{% endfor %}
+DefaultDependencies=no
+
+[Service]
+Type=simple
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop --time={{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ funkwhale_frontend_identifier }} 2>/dev/null || true'
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ funkwhale_frontend_identifier }} 2>/dev/null || true'
+
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
+                --rm \
+                --name={{ funkwhale_frontend_identifier }} \
+                --log-driver=none \
+                --cap-drop=ALL \
+                --cap-add=DAC_OVERRIDE \
+                --cap-add=CHOWN \
+                --cap-add=SETGID \
+                --cap-add=SETUID \
+                {% if funkwhale_frontend_container_http_host_bind_port %}
+                -p {{ funkwhale_frontend_container_http_host_bind_port }}:{{ funkwhale_frontend_container_http_port }} \
+                {% endif %}
+                --label-file={{ funkwhale_frontend_base_path }}/labels \
+                --network={{ funkwhale_frontend_container_network }} \
+                --mount type=bind,src={{ funkwhale_music_path }},dst={{ funkwhale_frontend_container_music_path }},readonly \
+                --mount type=bind,src={{ funkwhale_media_path }},dst={{ funkwhale_frontend_container_media_path }},readonly \
+                --mount type=bind,src={{ funkwhale_static_path }},dst={{ funkwhale_frontend_container_static_path }},readonly \
+                --env-file={{ funkwhale_frontend_env_path }} \
+                {% if funkwhale_frontend_container_extra_arguments | length > 0 %}
+                {{ funkwhale_frontend_container_extra_arguments | join(' ') }} \
+                {% endif %}
+                {{ funkwhale_frontend_container_image }} {{ funkwhale_frontend_process_extra_arguments | join(' ') }}
+
+{% for network in funkwhale_frontend_container_additional_networks %}
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ funkwhale_frontend_identifier }}
+{% endfor %}
+
+ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ funkwhale_frontend_identifier }}
+
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop --time={{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ funkwhale_frontend_identifier }} 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ funkwhale_frontend_identifier }} 2>/dev/null || true'
+Restart=always
+RestartSec=30
+SyslogIdentifier={{ funkwhale_frontend_identifier }}
+
+[Install]
+WantedBy=multi-user.target

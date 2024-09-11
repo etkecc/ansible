@@ -1,0 +1,47 @@
+[Unit]
+Description=GotoSocial ActivityPub Server ({{ gotosocial_identifier }})
+{% for service in gotosocial_systemd_required_services_list %}
+Requires={{ service }}
+After={{ service }}
+{% endfor %}
+{% for service in gotosocial_systemd_wanted_services_list %}
+Wants={{ service }}
+{% endfor %}
+DefaultDependencies=no
+
+[Service]
+Type=simple
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop --time={{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ gotosocial_identifier }} 2>/dev/null || true'
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ gotosocial_identifier }} 2>/dev/null || true'
+
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
+                --rm \
+                --name={{ gotosocial_identifier }} \
+                --log-driver=none \
+                --user={{ gotosocial_uid }}:{{ gotosocial_gid }} \
+                --cap-drop=ALL \
+                {% if gotosocial_container_http_host_bind_port %}
+                -p {{ gotosocial_container_http_host_bind_port }}:{{ gotosocial_container_http_port }} \
+                {% endif %}
+                --label-file={{ gotosocial_config_path }}/labels \
+                --network={{ gotosocial_container_network }} \
+                --mount type=bind,src={{ gotosocial_data_path }},dst=/gotosocial/storage \
+                --read-only \
+                --tmpfs=/tmp:rw,noexec,nosuid,size=100m \
+                --env-file={{ gotosocial_env_path }} \
+                {{ gotosocial_container_image }}
+
+{% for network in gotosocial_container_additional_networks %}
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ gotosocial_identifier }}
+{% endfor %}
+
+ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ gotosocial_identifier }}
+
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop --time={{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ gotosocial_identifier }} 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ gotosocial_identifier }} 2>/dev/null || true'
+Restart=always
+RestartSec=30
+SyslogIdentifier={{ gotosocial_identifier }}
+
+[Install]
+WantedBy=multi-user.target

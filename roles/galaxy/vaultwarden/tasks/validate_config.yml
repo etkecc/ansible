@@ -1,0 +1,52 @@
+---
+
+- name: (Deprecation) Catch and report renamed settings
+  ansible.builtin.fail:
+    msg: >-
+      Your configuration contains a variable, which now has a different name.
+      Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
+  when: "item.old in vars"
+  with_items:
+    - {'old': 'vaultwarden_container_labels_traefik_rule_websocket', 'new': '<Removed. See https://github.com/dani-garcia/vaultwarden/pull/3404>'}
+    - {'old': 'vaultwarden_config_websocket_enabled', 'new': '<Removed. See https://github.com/dani-garcia/vaultwarden/pull/3404>'}
+    - {'old': 'vaultwarden_config_websocket_port', 'new': '<Removed. See https://github.com/dani-garcia/vaultwarden/pull/3404>'}
+    - {'old': 'vaultwarden_container_websocket_bind_port', 'new': '<Removed. See https://github.com/dani-garcia/vaultwarden/pull/3404>'}
+
+- name: Fail if required Vaultwarden settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`) for using this role.
+  when: "vars[item] == ''"
+  with_items:
+    - vaultwarden_hostname
+    - vaultwarden_uid
+    - vaultwarden_gid
+
+- name: Fail if required Vaultwarden + Postgres integration settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`) when `vaultwarden_database_type` is `postgres`
+  when: "vaultwarden_database_type == 'postgres' and vars[item] == ''"
+  with_items:
+    - vaultwarden_database_username
+    - vaultwarden_database_password
+
+- when: vaultwarden_container_labels_traefik_enabled | bool
+  block:
+    - name: Fail if required Vaultwarden Traefik settings not defined
+      ansible.builtin.fail:
+        msg: >-
+          You need to define a required configuration setting (`{{ item }}`).
+      when: "vars[item] == ''"
+      with_items:
+        - vaultwarden_container_labels_traefik_hostname
+        - vaultwarden_container_labels_traefik_path_prefix
+
+    # We ensure it doesn't end with a slash, because we handle both (slash and no-slash).
+    # Knowing that `vaultwarden_container_labels_traefik_path_prefix` does not end with a slash
+    # ensures we know how to set these routes up without having to do "does it end with a slash" checks elsewhere.
+    - name: Fail if vaultwarden_container_labels_traefik_path_prefix ends with a slash
+      ansible.builtin.fail:
+        msg: >-
+          vaultwarden_container_labels_traefik_path_prefix (`{{ vaultwarden_container_labels_traefik_path_prefix }}`) must either be `/` or not end with a slash (e.g. `/vaultwarden`).
+      when: "vaultwarden_container_labels_traefik_path_prefix != '/' and vaultwarden_container_labels_traefik_path_prefix[-1] == '/'"

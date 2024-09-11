@@ -1,0 +1,15 @@
+---
+
+- ansible.builtin.include_tasks: "{{ role_path }}/tasks/setup_redhat.yml"
+  when: ansible_os_family == 'RedHat'
+
+- ansible.builtin.include_tasks: "{{ role_path }}/tasks/setup_debian.yml"
+  when: ansible_os_family == 'Debian'
+
+# For Archlinux (with systemd), there's nothing to install.
+
+- name: "Ensure timesyncing daemon is started and autoruns"
+  ansible.builtin.service:
+    name: "{{ devture_timesync_ntpd_service }}"
+    state: started
+    enabled: true

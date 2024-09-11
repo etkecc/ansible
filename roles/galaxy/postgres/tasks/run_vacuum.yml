@@ -1,0 +1,106 @@
+---
+
+# Pre-checks
+
+
+# Defaults
+
+- name: Set postgres_start_wait_time, if not provided
+  ansible.builtin.set_fact:
+    postgres_start_wait_time: 15
+  when: "postgres_start_wait_time | default('') == ''"
+
+- name: Set postgres_vacuum_wait_time, if not provided
+  ansible.builtin.set_fact:
+    postgres_vacuum_wait_time: "{{ 7 * 86400 }}"
+  when: "postgres_vacuum_wait_time | default('') == ''"
+
+- name: Set postgres_vacuum_databases_list, if not provided
+  ansible.builtin.set_fact:
+    postgres_vacuum_databases_list: "{{ devture_postgres_vacuum_default_databases_list }}"
+  when: "postgres_vacuum_databases_list | default([]) | length == 0"
+
+- name: Set postgres_vacuum_preset, if not provided
+  ansible.builtin.set_fact:
+    postgres_vacuum_preset: vacuum-complete
+  when: "postgres_vacuum_preset | default('') == ''"
+
+- name: Exit if postgres_vacuum_preset is unrecognized
+  ansible.builtin.fail:
+    msg: "Urecognized preset: {{ postgres_vacuum_preset }}"
+  when: "postgres_vacuum_preset not in devture_postgres_vacuum_presets.keys()"
+
+- name: Set postgres_vacuum_stops_services, if not provided
+  ansible.builtin.set_fact:
+    postgres_vacuum_stops_services: "{{ devture_postgres_vacuum_presets[postgres_vacuum_preset].stopsServices }}"
+  when: "postgres_vacuum_stops_services | default('') == ''"
+
+- name: Set postgres_vacuum_query, if not provided
+  ansible.builtin.set_fact:
+    postgres_vacuum_query: "{{ devture_postgres_vacuum_presets[postgres_vacuum_preset].query }}"
+  when: "postgres_vacuum_query | default('') == ''"
+
+# Actual vacuuming work
+
+- name: Ensure Postgres is started
+  ansible.builtin.service:
+    name: "{{ devture_postgres_identifier }}"
+    state: started
+    daemon_reload: true
+  register: devture_postgres_ensure_started_result
+
+- name: Wait a bit, so that Postgres can start
+  when: devture_postgres_ensure_started_result.changed | bool
+  ansible.builtin.wait_for:
+    timeout: "{{ postgres_start_wait_time }}"
+  delegate_to: 127.0.0.1
+  become: false
+
+- name: Detect existing Postgres version
+  ansible.builtin.import_tasks: tasks/detect_existing_postgres_version.yml
+
+- name: Abort, if no existing Postgres version detected
+  ansible.builtin.fail:
+    msg: "Could not find existing Postgres installation"
+  when: "not devture_postgres_detected_existing | bool"
+
+- name: Ensure services are stopped before Postgres vacuuming, if necessary
+  when: postgres_vacuum_stops_services | bool
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: stopped
+    daemon_reload: true
+  with_items: "{{ devture_postgres_systemd_services_to_stop_for_maintenance_list }}"
+
+# If Postgres is up from before, but it had originally been installed on a different container network,
+# trying to vacuum databases by connecting to `devture_postgres_container_network` would fail.
+# For this reason, we determine and use the currently used network.
+# Restarting the service later would put it in the corrent network.
+- name: Check Postgres container network
+  ansible.builtin.command: "{{ devture_systemd_docker_base_host_command_docker }} container inspect {{ devture_postgres_identifier }} --format '{% raw %}{{.HostConfig.NetworkMode}}{% endraw %}'"
+  register: devture_postgres_container_network_check_result
+  changed_when: false
+
+- name: Set Postgres container network to use for vacuuming databases
+  ansible.builtin.set_fact:
+    devture_postgres_container_network_for_vacuuming: "{{ devture_postgres_container_network_check_result.stdout }}"
+
+- name: Run Postgres vacuum against specified databases
+  ansible.builtin.include_tasks: "{{ role_path }}/tasks/util/vacuum_database.yml"
+  with_items: "{{ postgres_vacuum_databases_list }}"
+  loop_control:
+    loop_var: devture_postgres_database_to_vacuum
+
+- name: Ensure Postgres is stopped (if it previously was)
+  when: devture_postgres_ensure_started_result.changed | bool
+  ansible.builtin.service:
+    name: "{{ devture_postgres_identifier }}"
+    state: stopped
+
+- name: Ensure services are started back up after Postgres vacuuming, if necessary
+  when: postgres_vacuum_stops_services | bool
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: started
+    daemon_reload: true
+  with_items: "{{ devture_postgres_systemd_services_to_stop_for_maintenance_list }}"

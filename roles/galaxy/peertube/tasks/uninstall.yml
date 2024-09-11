@@ -1,0 +1,25 @@
+---
+
+- name: Check existence of PeerTube systemd service
+  ansible.builtin.stat:
+    path: "{{ devture_systemd_docker_base_systemd_path }}/{{ peertube_identifier }}.service"
+  register: peertube_service_stat
+
+- when: peertube_service_stat.stat.exists | bool
+  block:
+    - name: Ensure PeerTube systemd service is stopped
+      ansible.builtin.service:
+        name: "{{ peertube_identifier }}"
+        state: stopped
+        enabled: false
+        daemon_reload: true
+
+    - name: Ensure PeerTube systemd service does not exists
+      ansible.builtin.file:
+        path: "{{ devture_systemd_docker_base_systemd_path }}/{{ peertube_identifier }}.service"
+        state: absent
+
+    - name: Ensure PeerTube path doesn't exist
+      ansible.builtin.file:
+        path: "{{ peertube_base_path }}"
+        state: absent

@@ -1,0 +1,13 @@
+---
+
+- name: Fail if required exim-relay settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item.name }}`).
+  when: "item.when | bool and vars[item.name] == ''"
+  with_items:
+    - {'name': 'exim_relay_uid', when: true}
+    - {'name': 'exim_relay_gid', when: true}
+    - {'name': 'exim_relay_hostname', when: true}
+    - {'name': 'exim_relay_sender_address', when: true}
+    - {'name': 'exim_relay_container_network', when: true}

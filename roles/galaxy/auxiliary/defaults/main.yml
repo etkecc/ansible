@@ -1,0 +1,145 @@
+---
+
+# aux is a role that manages auxiliary files and directories on your server.
+#
+# Certain components may sometimes require additional files and directories created on the filesystem.
+# This role allows such files to be managed by the playbook.
+#
+# Note that files and directories created via this role are not automatically made available for containers to use.
+# If you use this role to put files in a directory that's already mounted into a container,
+# you can access the files without additional work.
+# Otherwise, you'd need to mount the file/directory to the container that needs it.
+# Roles usually provide an `*_additional_volumes` or `*_container_extra_arguments` variable
+# that you can use to mount an additional volume.
+
+# The default directory permission mode when creating directories using `aux_directory_definitions`
+aux_directory_default_mode: '0750'
+
+# The default directory owner when creating directories using `aux_directory_definitions`
+aux_directory_default_owner: root
+
+# The default directory group when creating directories using `aux_directory_definitions`
+aux_directory_default_group: root
+
+# Holds a list of directories to create on the server.
+#
+# By default, directories are:
+# - created with permissions as specified in `aux_directory_default_mode`
+# - owned by the `aux_directory_default_owner` user and `aux_directory_default_group`
+#
+# Example:
+#
+# aux_directory_definitions:
+#   - dest: /some-directory
+#
+#   - dest: /some-directory/another
+#     mode: '0700'
+#     owner: 'some-user'
+#     group: 'some-group'
+aux_directory_definitions: []
+
+# The default file permission mode when creating files using `aux_file_definitions`
+aux_file_default_mode: '0640'
+
+# The default file owner when creating files using `aux_file_definitions`
+aux_file_default_owner: root
+
+# The default file group when creating files using `aux_file_definitions`
+aux_file_default_group: root
+
+# Holds a list of files to create on the server.
+#
+# By default, files are:
+# - created with permissions as specified in `aux_file_default_mode`
+# - owned by the `aux_default_owner` user and `aux_default_group` group
+#
+# You can define the file content inline (in your `vars.yml` file) or as an external file (see the example below).
+# Defining the content inline in `vars.yml` has the benefit of not splitting your configuration into multiple files,
+# but rather keeping everything inside `vars.yml`,
+# which also gets backed up on the server in `/../vars.yml` if the `com.devture.ansible.role.playbook_state_preserver` role is used.
+#
+# Note: parent paths for files must exist.
+# If you've defined a file with a destination of `/some/path/file.txt`,
+# then you likely need to add `/some/path` to `aux_directory_definitions` as well.
+# You don't need to do this for directories that the playbook already creates for you.
+#
+# Use a `content` key for text content and `src` with a location to a file for binary content.
+# The `content` key does not support binary content (see https://github.com/ansible/ansible/issues/11594).
+#
+# Example:
+#
+# aux_file_definitions:
+#   - dest: "{{ some_config_dir_path }}/something.html"
+#     content: |
+#       <!doctype html>
+#       <html><body>Something</body></html>
+#
+#   - dest: /aux/some-other-file.txt
+#     content: "Something"
+#     mode: '0600'
+#     owner: 'some-user'
+#     group: 'some-group'
+#
+#   - dest: /aux/yet-another-file.txt
+#     content: "{{ lookup('template', '/path/to/file.txt.j2') }}"
+#     mode: '0600'
+#     owner: 'some-user'
+#     group: 'some-group'
+#
+#   - dest: /aux/binary-file.dat
+#     src: "/path/to/binary.dat"
+#     mode: '0600'
+#     owner: 'some-user'
+#     group: 'some-group'
+aux_file_definitions: []
+
+# The state when installing packages using `aux_package_definitions`
+aux_package_state: present
+
+# Holds a list of packages to install on the server, using the
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/package_module.html
+# All definitions will be sent to the single package.name
+#
+# Example:
+# aux_package_definitions:
+#   - httpd
+#   - nginx=1.23.0
+# aux_package_state: latest
+#
+# Will call:
+# ansible.builtin.package:
+#   name:
+#     - httpd
+#     - nginx=1.23.0
+#   state: latest
+# become: true
+aux_package_definitions: []
+
+# The default become when running commands using `aux_command_definitions`
+aux_command_default_become: false
+
+# The default become_user when running commands using `aux_command_definitions`
+aux_command_default_become_user: root
+
+# The default ignore_errors when running commands using `aux_command_definitions`
+aux_command_default_ignore_errors: false
+
+# Holds a list of commands to call on the server, using the
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/command_module.html
+#
+# By default, commands are are:
+# - run with become specified in `aux_command_default_become`
+# - using user specified in `aux_command_default_become_user`
+#
+# You can define the command with all its args inline (in your `vars.yml` file) or as an external file (see the example below).
+#
+# Example:
+#
+# aux_command_definitions:
+#   - command: "/usr/bin/make_database.sh db_user db_name creates=/path/to/database" # Run command if /path/to/database does not exist
+#     become: true
+#     become_user: system-user
+#
+#   - command: "/usr/bin/just-run" # Run command no matter what, ignore errors
+#     ignore_errors: true
+aux_command_definitions: []
