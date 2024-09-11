@@ -23,9 +23,9 @@ jobs:
         id: check
         run: |
           IMAGE_TAG="ghcr.io/${{ github.repository }}/base:${{ env.alpine }}-${{ env.ansible_core }}-${{ env.ansible }}"
-          if docker manifest inspect "$IMAGE_TAG" > /dev/null 2>&1; then echo "exists=true" >> $GITHUB_OUTPUT; else echo "exists=false" >> $GITHUB_OUTPUT; fi
+          if docker manifest inspect "$IMAGE_TAG" > /dev/null 2>&1; then echo "exists=yes" >> "$GITHUB_OUTPUT"; else echo "exists=no" >> "$GITHUB_OUTPUT"; fi
       - name: Login to ghcr.io
-        if: ${{ steps.check.outputs.exists == 'false' }}
+        if: ${{ steps.check.outputs.exists == 'no' }}
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -39,7 +39,7 @@ jobs:
           tags: |
             type=raw,value=${{ env.alpine }}-${{ env.ansible_core }}-${{ env.ansible }},enable=${{ github.ref_name == 'fresh' }}
       - name: Build and push
-        if: ${{ steps.check.outputs.exists == 'false' }}
+        if: ${{ steps.check.outputs.exists == 'no' }}
         uses: docker/build-push-action@v6
         with:
           platforms: linux/amd64,linux/arm64
