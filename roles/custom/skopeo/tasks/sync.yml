@@ -16,15 +16,15 @@
   ansible.builtin.set_fact:
     skopeo_sources: "{{ skopeo_sources | unique | sort }}"
 
-- name: Print list of source images
-  debug:
-    msg: "{{ skopeo_sources }}"
-
 - name: Populate target images dict
   ansible.builtin.set_fact:
     skopeo_targets: "{{ skopeo_targets | combine({item: skopeo_target + item | regex_search('/.*')}) }}"
-  when: item not in skopeo_ignore_images
+  when: item not in skopeo_ignore_images and skopeo_ignore_text not in item and skopeo_target not in item
   loop: "{{ skopeo_sources }}"
+
+- name: Print list of target images
+  debug:
+    msg: "{{ skopeo_targets }}"
 
 - name: Check image status
   ansible.builtin.uri:
