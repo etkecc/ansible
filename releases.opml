@@ -14,6 +14,7 @@
     <outline text="appservice-slack" title="appservice-slack" type="rss" htmlUrl="https://github.com/matrix-org/matrix-appservice-slack" xmlUrl="https://github.com/matrix-org/matrix-appservice-slack/releases.atom" />
     <outline text="appservice-webhooks" title="appservice-webhooks" type="rss" htmlUrl="https://github.com/redoonetworks/matrix-appservice-webhooks" xmlUrl="https://github.com/redoonetworks/matrix-appservice-webhooks/releases.atom" />
     <outline text="backup_borg" title="backup_borg" type="rss" htmlUrl="https://gitlab.com/etke.cc/borgmatic" xmlUrl="https://gitlab.com/etke.cc/borgmatic/-/tags?format=atom" />
+    <outline text="baibot" title="baibot" type="rss" htmlUrl="https://github.com/etkecc/baibot" xmlUrl="https://github.com/etkecc/baibot/releases.atom" />
     <outline text="beeper-linkedin" title="beeper-linkedin" type="rss" htmlUrl="https://github.com/beeper/linkedin" xmlUrl="https://github.com/beeper/linkedin/releases.atom" />
     <outline text="borg" title="borg" type="rss" htmlUrl="https://github.com/borgbackup/borg/releases" xmlUrl="https://github.com/borgbackup/borg/releases.atom" />
     <outline text="borgmatic" title="borgmatic" type="rss" htmlUrl="https://github.com/borgmatic-collective/borgmatic/releases" xmlUrl="https://github.com/borgmatic-collective/borgmatic/releases.atom" />

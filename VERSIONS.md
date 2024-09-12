@@ -5,6 +5,7 @@
 * Appservice Kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * Appservice Slack: 2.1.2
 * Appservice Webhooks: v1.0.3-01
+* Baibot: latest
 * Borg: 1.2.8
 * Borgmatic: 1.8.13
 * Buscarron: v1.4.3
