@@ -2,8 +2,8 @@
 # Enable ssh config hardening
 system_security_ssh_enabled: true
 
-# SSHd service name
-system_security_ssh_service: sshd
+# Possible SSHd service names
+system_security_ssh_services: ["sshd", "ssh"]
 
 # ssh port
 system_security_ssh_port: 22

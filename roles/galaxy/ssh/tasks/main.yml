@@ -21,7 +21,41 @@
       mode: 0644
       owner: root
       group: root
-    notify: Reload sshd
+  tags:
+    - setup-all
+    - setup-ssh
+    - install-all
+    - install-ssh
+  when: system_security_ssh_enabled | bool
+
+- name: Reload ssh daemon
+  block:
+  - ansible.builtin.set_fact:
+      eligible_service: ""
+
+  - name: Find eligible SSH daemon service
+    ansible.builtin.service:
+      name: "{{ item }}"
+      state: started
+    loop: "{{ system_security_ssh_services }}"
+    register: status
+    failed_when: no
+
+  - name: Set eligible service if available
+    set_fact:
+      eligible_service: "{{ item.name }}"
+    loop: "{{ status.results }}"
+    when: item.state is defined and not eligible_service
+
+  - name: Fail if no eligible SSH service is found
+    fail:
+      msg: "No eligible SSH service was found."
+    when: eligible_service == ""
+
+  - name: Reload SSH daemon
+    ansible.builtin.service:
+      name: "{{ eligible_service }}"
+      state: reloaded
   tags:
     - setup-all
     - setup-ssh
