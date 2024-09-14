@@ -5,6 +5,7 @@ import os
 from urllib.parse import urlparse
 
 PROJECT_SOURCE_URL_STR = '# Project source code URL:'
+FORK_SOURCE_URL_STR = '# Fork source code URL:'
 
 
 def get_roles_files_from_dir(root_dir):
@@ -32,6 +33,13 @@ def get_git_repos_from_files(file_paths):
                 # extract the value from a line like this:
                 # Project source code URL: https://github.com/mautrix/signal
                 project_repo_val = line.split(PROJECT_SOURCE_URL_STR)[1].strip()
+                if not validate_url(project_repo_val):
+                    print('Invalid url for line ', line)
+                    break
+            if FORK_SOURCE_URL_STR in line:
+                # extract the value from a line like this:
+                # Fork source code URL: https://github.com/mautrix/signal
+                project_repo_val = line.split(FORK_SOURCE_URL_STR)[1].strip()
                 if not validate_url(project_repo_val):
                     print('Invalid url for line ', line)
                     break
