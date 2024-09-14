@@ -55,7 +55,7 @@
 * Meta Instagram: v0.3.2
 * Meta Messenger: v0.3.2
 * Miniflux: 2.2.0
-* Mjolnir: v1.6.5
+* Mjolnir: v1.7.0
 * Mx Puppet Discord: v0.1.1
 * Mx Puppet Groupme: 533cccc8
 * Mx Puppet Instagram: latest
@@ -84,7 +84,7 @@
 * Static Files: 2.32.2
 * Sygnal: v0.15.0
 * Synapse: v1.114.0
-* Synapse Admin: v0.10.3-etke12
+* Synapse Admin: v0.10.3-etke13
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4
 * Synapse Reverse Proxy Companion: 1.27.1-alpine
