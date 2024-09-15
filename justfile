@@ -25,6 +25,10 @@ run +extra_args:
 run-tags tags *extra_args:
     just --justfile {{ justfile() }} run --tags={{ tags }} {{ extra_args }}
 
+# Runs the ssh role only with the given list of arguments
+run-ssh *extra_args:
+    time ansible-playbook play/ssh.yml --tags=install-ssh -e system_security_ssh_enabled=true {{ extra_args }}
+
 ### Infrastructure
 
 # run ansible-lint
