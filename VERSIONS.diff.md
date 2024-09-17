@@ -7,5 +7,7 @@
 * [Mjolnir](https://github.com/matrix-org/mjolnir): [v1.6.5](https://github.com/matrix-org/mjolnir/releases/tag/v1.6.5) -> [v1.7.0](https://github.com/matrix-org/mjolnir/releases/tag/v1.7.0)
 * [Signal](https://github.com/mautrix/signal): [v0.7.0](https://github.com/mautrix/signal/releases/tag/v0.7.0) -> [v0.7.1](https://github.com/mautrix/signal/releases/tag/v0.7.1)
 * [Slack](https://github.com/mautrix/slack): [v0.1.0](https://github.com/mautrix/slack/releases/tag/v0.1.0) -> [v0.1.1](https://github.com/mautrix/slack/releases/tag/v0.1.1)
+* [Synapse](https://github.com/element-hq/synapse): [v1.114.0](https://github.com/element-hq/synapse/releases/tag/v1.114.0) -> [v1.115.0](https://github.com/element-hq/synapse/releases/tag/v1.115.0)
 * [Synapse Admin](https://github.com/etkecc/synapse-admin): [v0.10.3-etke12](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.3-etke12) -> [v0.10.3-etke13](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.3-etke13)
+* Synapse S3 Storage Provider: 1.3.0 -> 1.5.0
 * [Traefik](https://github.com/traefik/traefik): [v3.1.2](https://github.com/traefik/traefik/releases/tag/v3.1.2) -> [v3.1.3](https://github.com/traefik/traefik/releases/tag/v3.1.3)
