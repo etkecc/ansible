@@ -1,5 +1,10 @@
 **Stable Updates Published**
 
 * [Cinny](https://github.com/ajbura/cinny): [v4.2.0](https://github.com/ajbura/cinny/releases/tag/v4.2.0) -> [v4.2.1](https://github.com/ajbura/cinny/releases/tag/v4.2.1)
+* [Gmessages](https://github.com/mautrix/gmessages): [v0.4.3](https://github.com/mautrix/gmessages/releases/tag/v0.4.3) -> [v0.5.0](https://github.com/mautrix/gmessages/releases/tag/v0.5.0)
+* [Meta Instagram](https://github.com/mautrix/meta): [v0.3.2](https://github.com/mautrix/meta/releases/tag/v0.3.2) -> [v0.4.0](https://github.com/mautrix/meta/releases/tag/v0.4.0)
+* [Meta Messenger](https://github.com/mautrix/meta): [v0.3.2](https://github.com/mautrix/meta/releases/tag/v0.3.2) -> [v0.4.0](https://github.com/mautrix/meta/releases/tag/v0.4.0)
 * [Mjolnir](https://github.com/matrix-org/mjolnir): [v1.6.5](https://github.com/matrix-org/mjolnir/releases/tag/v1.6.5) -> [v1.7.0](https://github.com/matrix-org/mjolnir/releases/tag/v1.7.0)
+* [Signal](https://github.com/mautrix/signal): [v0.7.0](https://github.com/mautrix/signal/releases/tag/v0.7.0) -> [v0.7.1](https://github.com/mautrix/signal/releases/tag/v0.7.1)
+* [Slack](https://github.com/mautrix/slack): [v0.1.0](https://github.com/mautrix/slack/releases/tag/v0.1.0) -> [v0.1.1](https://github.com/mautrix/slack/releases/tag/v0.1.1)
 * [Synapse Admin](https://github.com/etkecc/synapse-admin): [v0.10.3-etke12](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.3-etke12) -> [v0.10.3-etke13](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.3-etke13)
