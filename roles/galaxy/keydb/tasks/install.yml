@@ -36,6 +36,7 @@
   community.general.docker_network:
     name: "{{ keydb_container_network }}"
     driver: bridge
+    driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
 
 - name: Ensure keydb systemd installed
   ansible.builtin.template:

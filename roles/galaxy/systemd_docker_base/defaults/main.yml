@@ -30,6 +30,13 @@ devture_systemd_docker_base_host_command_systemctl: "/usr/bin/env systemctl"
 # - re-running the playbook fully: `just install-all`
 devture_systemd_docker_base_ipv6_enabled: false
 
+# Controls the driver options used when creating/updating container networks.
+#
+# Changing these settings subsequently correctly adjusts existing container networks.
+devture_systemd_docker_base_container_networks_driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options_auto | combine(devture_systemd_docker_base_container_networks_driver_options_custom, recursive=True) }}"
+devture_systemd_docker_base_container_networks_driver_options_auto: {}
+devture_systemd_docker_base_container_networks_driver_options_custom: {}
+
 # The name of the Docker service that other services will depend on.
 # You can use an empty string to remove this dependency.
 devture_systemd_docker_base_docker_service_name: docker.service

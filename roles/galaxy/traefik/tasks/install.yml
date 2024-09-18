@@ -126,11 +126,13 @@
   when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module' and devture_traefik_container_network != 'host'
   community.docker.docker_network:
     name: "{{ devture_traefik_container_network }}"
+    driver: bridge
+    driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
 
 - name: Ensure Traefik container network exists via command
   when: devture_systemd_docker_base_container_network_creation_method == 'command' and devture_traefik_container_network != 'host'
   ansible.builtin.command:
-    cmd: "{{ devture_systemd_docker_base_host_command_docker }} network create {{ devture_traefik_container_network }}"
+    cmd: "{{ devture_systemd_docker_base_host_command_docker }} network create {% for k, v in devture_systemd_docker_base_container_networks_driver_options %} --opt {{ k }}={{ v }}{% endfor %} {{ devture_traefik_container_network }}"
   register: network_creation_result
   failed_when: network_creation_result.rc != 0 and 'already exists' not in network_creation_result.stderr
 

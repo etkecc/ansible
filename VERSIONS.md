@@ -1,4 +1,4 @@
-* Alertmanager Receiver: 2024.8.28
+* Alertmanager Receiver: 2024.9.18
 * Appservice Discord: v4.0.0
 * Appservice Draupnir For All: 1.87.0
 * Appservice Irc: 1.0.1
@@ -70,7 +70,7 @@
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.8.2
 * Prometheus Postgres Exporter: v0.14.0
-* Radicale: 3.2.3.0
+* Radicale: 3.2.3.1
 * Rageshake: 1.13.0
 * Redis: 7.2.5
 * Registration: v0.7.2

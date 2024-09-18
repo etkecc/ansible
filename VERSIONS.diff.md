@@ -1,11 +1,13 @@
 **Stable Updates Published**
 
+* [Alertmanager Receiver](https://github.com/metio/matrix-alertmanager-receiver): [2024.8.28](https://github.com/metio/matrix-alertmanager-receiver/releases/tag/2024.8.28) -> [2024.9.18](https://github.com/metio/matrix-alertmanager-receiver/releases/tag/2024.9.18)
 * [Cactus Comments Client](https://gitlab.com/cactus-comments/cactus-client): [2.32.2](https://gitlab.com/cactus-comments/cactus-client/-/tags/2.32.2) -> [2.33.0](https://gitlab.com/cactus-comments/cactus-client/-/tags/2.33.0)
 * [Cinny](https://github.com/ajbura/cinny): [v4.2.0](https://github.com/ajbura/cinny/releases/tag/v4.2.0) -> [v4.2.1](https://github.com/ajbura/cinny/releases/tag/v4.2.1)
 * [Gmessages](https://github.com/mautrix/gmessages): [v0.4.3](https://github.com/mautrix/gmessages/releases/tag/v0.4.3) -> [v0.5.0](https://github.com/mautrix/gmessages/releases/tag/v0.5.0)
 * [Meta Instagram](https://github.com/mautrix/meta): [v0.3.2](https://github.com/mautrix/meta/releases/tag/v0.3.2) -> [v0.4.0](https://github.com/mautrix/meta/releases/tag/v0.4.0)
 * [Meta Messenger](https://github.com/mautrix/meta): [v0.3.2](https://github.com/mautrix/meta/releases/tag/v0.3.2) -> [v0.4.0](https://github.com/mautrix/meta/releases/tag/v0.4.0)
 * [Mjolnir](https://github.com/matrix-org/mjolnir): [v1.6.5](https://github.com/matrix-org/mjolnir/releases/tag/v1.6.5) -> [v1.7.0](https://github.com/matrix-org/mjolnir/releases/tag/v1.7.0)
+* [Radicale](https://github.com/tomsquest/docker-radicale): [3.2.3.0](https://github.com/tomsquest/docker-radicale/releases/tag/3.2.3.0) -> [3.2.3.1](https://github.com/tomsquest/docker-radicale/releases/tag/3.2.3.1)
 * [Signal](https://github.com/mautrix/signal): [v0.7.0](https://github.com/mautrix/signal/releases/tag/v0.7.0) -> [v0.7.1](https://github.com/mautrix/signal/releases/tag/v0.7.1)
 * [Slack](https://github.com/mautrix/slack): [v0.1.0](https://github.com/mautrix/slack/releases/tag/v0.1.0) -> [v0.1.1](https://github.com/mautrix/slack/releases/tag/v0.1.1)
 * Static Files: 2.32.2 -> 2.33.0
