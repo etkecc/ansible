@@ -10,7 +10,7 @@
 * Borgmatic: 1.8.13
 * Buscarron: v1.4.3
 * Cactus Comments: 0.9.0
-* Cactus Comments Client: 2.32.2
+* Cactus Comments Client: 2.33.0
 * Chatgpt: 3.1.4
 * Cinny: v4.2.1
 * Container Socket Proxy: 0.2.0
@@ -81,10 +81,10 @@
 * Sms Bridge: 0.5.9
 * Spam Checker Mjolnir Antispam Git: v1.6.4
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
-* Static Files: 2.32.2
+* Static Files: 2.33.0
 * Sygnal: v0.15.0
 * Synapse: v1.115.0
-* Synapse Admin: v0.10.3-etke13
+* Synapse Admin: v0.10.3-etke14
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4
 * Synapse Reverse Proxy Companion: 1.27.1-alpine
