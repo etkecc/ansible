@@ -1,0 +1,37 @@
+---
+
+- name: Initialize PeerTube version determination variables (default to empty)
+  ansible.builtin.set_fact:
+    peertube_detected_existing_installation: false
+    peertube_detected_existing_version: false
+    peertube_detected_version: ""
+
+- name: Determine if PeerTube installation exists
+  ansible.builtin.stat:
+    path: "{{ peertube_base_path }}"
+  register: result_base_path_stat
+
+- when: result_base_path_stat.stat.exists | bool
+  block:
+    - ansible.builtin.set_fact:
+        peertube_detected_existing_installation: true
+
+    - name: Determine existing PeerTube version (check INSTALLED_VERSION file)
+      ansible.builtin.stat:
+        path: "{{ peertube_version_marker_file_path }}"
+      register: result_installed_version_stat
+
+    - ansible.builtin.set_fact:
+        peertube_detected_existing_version: true
+      when: "result_installed_version_stat.stat.exists"
+
+    - name: Determine existing PeerTube version (read INSTALLED_VERSION file)
+      ansible.builtin.slurp:
+        src: "{{ peertube_version_marker_file_path }}"
+      register: result_installed_version
+      when: peertube_detected_existing_version | bool
+
+    - name: Determine existing PeerTube version (make sense of INSTALLED_VERSION file)
+      ansible.builtin.set_fact:
+        peertube_detected_version: "{{ result_installed_version['content'] | b64decode | replace('\n', '') }}"
+      when: peertube_detected_existing_version | bool

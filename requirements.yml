@@ -26,7 +26,7 @@
   version: v2.2.0-0
   name: miniflux
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-peertube.git
-  version: v6.2.1-0
+  version: v6.3.0-0
   name: peertube
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-radicale.git
   version: v3.2.3.1-0

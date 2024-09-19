@@ -1,5 +1,7 @@
 ---
 
+- ansible.builtin.import_tasks: "{{ role_path }}/tasks/utils/detect_installed_version.yml"
+
 - name: Ensure PeerTube paths exist
   ansible.builtin.file:
     path: "{{ item }}"
@@ -40,3 +42,25 @@
     src: "{{ role_path }}/templates/peertube.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ peertube_identifier }}.service"
     mode: 0644
+
+- name: Check if current PeerTube version is less than v6.3.0
+  ansible.builtin.set_fact:
+    # For earlier versions, we were not storing the version in the marker file, so we don't really know the version.
+    # We'll assume that the version is less than v6.3.0 in that case, since that's the first version that supports it.
+    # Being 100% accurate here is not that important, since the migrations we'll run are idempotent anyway.
+    # See: https://github.com/Chocobozzz/PeerTube/releases/tag/v6.3.0
+    peertube_installed_version_less_than_6_3_0: "{{ peertube_detected_existing_installation and (peertube_detected_version == '' or peertube_detected_version is version('v6.3.0', '<')) }}"
+
+- name: Migrate to v6.3.0 if needed
+  when: peertube_installed_version_less_than_6_3_0 | bool and peertube_version is version('v6.3.0', '>=')
+  ansible.builtin.include_tasks:
+    file: "{{ role_path }}/tasks/utils/migrate_to_v6_3_0.yml"
+
+# This is intentionally done last, to ensure we only mark the version after it has been "more successfully" installed.
+- name: Ensure PeerTube INSTALLED_VERSION file created
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/INSTALLED_VERSION.j2"
+    dest: "{{ peertube_base_path }}/INSTALLED_VERSION"
+    owner: "{{ peertube_uid }}"
+    group: "{{ peertube_gid }}"
+    mode: 0640

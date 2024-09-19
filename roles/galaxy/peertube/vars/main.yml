@@ -1,0 +1,3 @@
+---
+
+peertube_version_marker_file_path: "{{ peertube_base_path }}/INSTALLED_VERSION"

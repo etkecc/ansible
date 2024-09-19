@@ -6,7 +6,7 @@ peertube_enabled: true
 
 peertube_identifier: peertube-peertube
 
-peertube_version: v6.2.1
+peertube_version: v6.3.0
 peertube_distro_variant: bookworm
 
 peertube_uid: ''
@@ -25,7 +25,7 @@ peertube_config_dir_path: "{{ peertube_base_path }}/config"
 peertube_data_dir_path: "{{ peertube_base_path }}/data"
 
 peertube_systemd_required_services_list: "{{ peertube_systemd_required_services_list_default + peertube_systemd_required_services_list_auto + peertube_systemd_required_services_list_custom }}"
-peertube_systemd_required_services_list_default: ['docker.service']
+peertube_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
 peertube_systemd_required_services_list_auto: []
 peertube_systemd_required_services_list_custom: []
 
@@ -270,3 +270,6 @@ peertube_trusted_proxies_values_auto_trust_container_networks_enabled: "{{ peert
 peertube_trusted_proxies_values_auto_trust_container_networks_list: ['172.16.0.0/12', '192.168.0.0/16']
 
 peertube_trusted_proxies_values_custom: []
+
+peertube_start_wait_time: 15
+peertube_migration_wait_time: 1800

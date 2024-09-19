@@ -7,6 +7,7 @@
 * [Meta Instagram](https://github.com/mautrix/meta): [v0.3.2](https://github.com/mautrix/meta/releases/tag/v0.3.2) -> [v0.4.0](https://github.com/mautrix/meta/releases/tag/v0.4.0)
 * [Meta Messenger](https://github.com/mautrix/meta): [v0.3.2](https://github.com/mautrix/meta/releases/tag/v0.3.2) -> [v0.4.0](https://github.com/mautrix/meta/releases/tag/v0.4.0)
 * [Mjolnir](https://github.com/matrix-org/mjolnir): [v1.6.5](https://github.com/matrix-org/mjolnir/releases/tag/v1.6.5) -> [v1.7.0](https://github.com/matrix-org/mjolnir/releases/tag/v1.7.0)
+* [Peertube](https://github.com/Chocobozzz/PeerTube): [v6.2.1](https://github.com/Chocobozzz/PeerTube/releases/tag/v6.2.1) -> [v6.3.0](https://github.com/Chocobozzz/PeerTube/releases/tag/v6.3.0)
 * [Radicale](https://github.com/tomsquest/docker-radicale): [3.2.3.0](https://github.com/tomsquest/docker-radicale/releases/tag/3.2.3.0) -> [3.2.3.1](https://github.com/tomsquest/docker-radicale/releases/tag/3.2.3.1)
 * [Signal](https://github.com/mautrix/signal): [v0.7.0](https://github.com/mautrix/signal/releases/tag/v0.7.0) -> [v0.7.1](https://github.com/mautrix/signal/releases/tag/v0.7.1)
 * [Slack](https://github.com/mautrix/slack): [v0.1.0](https://github.com/mautrix/slack/releases/tag/v0.1.0) -> [v0.1.1](https://github.com/mautrix/slack/releases/tag/v0.1.1)
