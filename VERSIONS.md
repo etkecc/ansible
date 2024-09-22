@@ -5,7 +5,7 @@
 * Appservice Kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * Appservice Slack: 2.1.2
 * Appservice Webhooks: v1.0.3-01
-* Baibot: latest
+* Baibot: v1.1.1
 * Borg: 1.2.8
 * Borgmatic: 1.8.13
 * Buscarron: v1.4.3
@@ -23,7 +23,7 @@
 * Dynamic Dns: 3.11.2
 * Element: v1.11.77
 * Email2Matrix: 1.1.0
-* Etherpad: 2.2.2
+* Etherpad: 2.2.5
 * Exim Relay: 4.98-r0-1
 * Facebook: v0.5.1
 * Firezone: 0.7.36
