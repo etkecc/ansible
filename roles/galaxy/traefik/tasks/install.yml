@@ -5,63 +5,63 @@
     path: "{{ item.path }}"
     state: directory
     mode: "0750"
-    owner: "{{ devture_traefik_uid }}"
-    group: "{{ devture_traefik_gid }}"
+    owner: "{{ traefik_uid }}"
+    group: "{{ traefik_gid }}"
   when: item.when | bool
   with_items:
-    - path: "{{ devture_traefik_base_path }}"
+    - path: "{{ traefik_base_path }}"
       when: true
-    - path: "{{ devture_traefik_config_dir_path }}"
+    - path: "{{ traefik_config_dir_path }}"
       when: true
-    - path: "{{ devture_traefik_ssl_dir_path }}"
-      when: "{{ devture_traefik_ssl_dir_enabled }}"
-    - path: "{{ devture_traefik_plugins_dir_path }}"
-      when: "{{ devture_traefik_plugin_support_enabled }}"
+    - path: "{{ traefik_ssl_dir_path }}"
+      when: "{{ traefik_ssl_dir_enabled }}"
+    - path: "{{ traefik_plugins_dir_path }}"
+      when: "{{ traefik_plugin_support_enabled }}"
 
-- when: devture_traefik_dashboard_basicauth_enabled | bool
+- when: traefik_dashboard_basicauth_enabled | bool
   block:
     # We do this locally, so that we won't need passlib to be installed on the server.
     - name: Generate basic auth file locally
       community.general.htpasswd:
-        path: "{{ devture_traefik_dashboard_basicauth_file_tmp }}"
-        name: "{{ devture_traefik_dashboard_basicauth_user }}"
-        password: "{{ devture_traefik_dashboard_basicauth_password }}"
+        path: "{{ traefik_dashboard_basicauth_file_tmp }}"
+        name: "{{ traefik_dashboard_basicauth_user }}"
+        password: "{{ traefik_dashboard_basicauth_password }}"
         mode: 0640
       become: false
       delegate_to: 127.0.0.1
 
     - name: Load basic auth file contents
       ansible.builtin.slurp:
-        src: "{{ devture_traefik_dashboard_basicauth_file_tmp }}"
+        src: "{{ traefik_dashboard_basicauth_file_tmp }}"
       become: false
       delegate_to: 127.0.0.1
-      register: devture_traefik_dashboard_basicauth_file_contents_raw
+      register: traefik_dashboard_basicauth_file_contents_raw
 
     - name: Load basic auth file contents
       ansible.builtin.set_fact:
-        devture_traefik_dashboard_basicauth_file_contents: "{{ devture_traefik_dashboard_basicauth_file_contents_raw['content'] | b64decode }}"
+        traefik_dashboard_basicauth_file_contents: "{{ traefik_dashboard_basicauth_file_contents_raw['content'] | b64decode }}"
 
     - name: Ensure local temporary basic auth file is removed
       ansible.builtin.file:
-        path: "{{ devture_traefik_dashboard_basicauth_file_tmp }}"
+        path: "{{ traefik_dashboard_basicauth_file_tmp }}"
         state: absent
       become: false
       delegate_to: 127.0.0.1
 
 - name: Ensure Traefik environment variables installed
   ansible.builtin.copy:
-    content: "{{ devture_traefik_environment_variables }}"
-    dest: "{{ devture_traefik_config_dir_path }}/env"
-    owner: "{{ devture_traefik_uid }}"
-    group: "{{ devture_traefik_gid }}"
+    content: "{{ traefik_environment_variables }}"
+    dest: "{{ traefik_config_dir_path }}/env"
+    owner: "{{ traefik_uid }}"
+    group: "{{ traefik_gid }}"
     mode: 0640
 
 - name: Ensure Traefik support files installed
   ansible.builtin.template:
     src: "{{ role_path }}/templates/{{ item }}.j2"
-    dest: "{{ devture_traefik_config_dir_path }}/{{ item }}"
-    owner: "{{ devture_traefik_uid }}"
-    group: "{{ devture_traefik_gid }}"
+    dest: "{{ traefik_config_dir_path }}/{{ item }}"
+    owner: "{{ traefik_uid }}"
+    group: "{{ traefik_gid }}"
     mode: 0640
   with_items:
     - env
@@ -69,18 +69,18 @@
 
 - name: Ensure traefik.yml installed
   ansible.builtin.copy:
-    content: "{{ devture_traefik_configuration | to_nice_yaml(indent=2, width=999999) }}"
-    dest: "{{ devture_traefik_config_dir_path }}/traefik.yml"
-    owner: "{{ devture_traefik_uid }}"
-    group: "{{ devture_traefik_gid }}"
+    content: "{{ traefik_configuration | to_nice_yaml(indent=2, width=999999) }}"
+    dest: "{{ traefik_config_dir_path }}/traefik.yml"
+    owner: "{{ traefik_uid }}"
+    group: "{{ traefik_gid }}"
     mode: 0640
 
 - name: Ensure provider.yml installed
   ansible.builtin.copy:
-    content: "{{ devture_traefik_provider_configuration | to_nice_yaml(indent=2, width=999999) }}"
-    dest: "{{ devture_traefik_config_dir_path }}/provider.yml"
-    owner: "{{ devture_traefik_uid }}"
-    group: "{{ devture_traefik_gid }}"
+    content: "{{ traefik_provider_configuration | to_nice_yaml(indent=2, width=999999) }}"
+    dest: "{{ traefik_config_dir_path }}/provider.yml"
+    owner: "{{ traefik_uid }}"
+    group: "{{ traefik_gid }}"
     mode: 0640
 
 # If the Docker API is accessed through a UNIX socket (like we do by default), the container is run as root,
@@ -88,25 +88,25 @@
 #
 # When switching to accessing the Docker API via TCP, we run the container with a regular user.
 # An already existing acme.json (owned by root:root) won't be accessible and needs to be fixed up.
-- when: not devture_traefik_config_providers_docker_endpoint_is_unix_socket
+- when: not traefik_config_providers_docker_endpoint_is_unix_socket
   name: Ensure acme.json file ownership is correct
   block:
     - name: Check existence of acme.json file
       ansible.builtin.stat:
-        path: "{{ devture_traefik_ssl_dir_path }}/acme.json"
-      register: devture_traefik_ssl_acme_json_stat
+        path: "{{ traefik_ssl_dir_path }}/acme.json"
+      register: traefik_ssl_acme_json_stat
 
-    - when: devture_traefik_ssl_acme_json_stat.stat.exists | bool
+    - when: traefik_ssl_acme_json_stat.stat.exists | bool
       name: Ensure acme.json file ownership set correctly
       ansible.builtin.file:
-        path: "{{ devture_traefik_ssl_dir_path }}/acme.json"
-        owner: "{{ devture_traefik_uid }}"
-        group: "{{ devture_traefik_gid }}"
+        path: "{{ traefik_ssl_dir_path }}/acme.json"
+        owner: "{{ traefik_uid }}"
+        group: "{{ traefik_gid }}"
 
 - name: Ensure Traefik container image is pulled via community.docker.docker_image
   when: devture_systemd_docker_base_container_image_pull_method == 'ansible-module'
   community.docker.docker_image:
-    name: "{{ devture_traefik_container_image }}"
+    name: "{{ traefik_container_image }}"
     source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"  # noqa args
   register: result
   retries: "{{ devture_playbook_help_container_retries_count }}"
@@ -116,28 +116,28 @@
 - name: Ensure Traefik container image is pulled via command
   when: devture_systemd_docker_base_container_image_pull_method == 'command'
   ansible.builtin.command:
-    cmd: "{{ devture_systemd_docker_base_host_command_docker }} pull {{ devture_traefik_container_image }}"
+    cmd: "{{ devture_systemd_docker_base_host_command_docker }} pull {{ traefik_container_image }}"
   register: result
   retries: "{{ devture_playbook_help_container_retries_count }}"
   delay: "{{ devture_playbook_help_container_retries_delay }}"
   until: result is not failed
 
 - name: Ensure Traefik container network exists via community.docker.docker_network
-  when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module' and devture_traefik_container_network != 'host'
+  when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module' and traefik_container_network != 'host'
   community.docker.docker_network:
-    name: "{{ devture_traefik_container_network }}"
+    name: "{{ traefik_container_network }}"
     driver: bridge
     driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
 
 - name: Ensure Traefik container network exists via command
-  when: devture_systemd_docker_base_container_network_creation_method == 'command' and devture_traefik_container_network != 'host'
+  when: devture_systemd_docker_base_container_network_creation_method == 'command' and traefik_container_network != 'host'
   ansible.builtin.command:
-    cmd: "{{ devture_systemd_docker_base_host_command_docker }} network create {% for k, v in devture_systemd_docker_base_container_networks_driver_options %} --opt {{ k }}={{ v }}{% endfor %} {{ devture_traefik_container_network }}"
+    cmd: "{{ devture_systemd_docker_base_host_command_docker }} network create {% for k, v in devture_systemd_docker_base_container_networks_driver_options %} --opt {{ k }}={{ v }}{% endfor %} {{ traefik_container_network }}"
   register: network_creation_result
   failed_when: network_creation_result.rc != 0 and 'already exists' not in network_creation_result.stderr
 
 - name: Ensure Traefik systemd service installed
   ansible.builtin.template:
-    src: "{{ role_path }}/templates/devture-traefik.service.j2"
-    dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ devture_traefik_identifier }}.service"
+    src: "{{ role_path }}/templates/traefik.service.j2"
+    dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ traefik_identifier }}.service"
     mode: 0644

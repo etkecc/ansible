@@ -6,21 +6,21 @@
       You need to define a required configuration setting (`{{ item }}`).
   when: "vars[item] == ''"
   with_items:
-    - devture_postgres_identifier
-    - devture_postgres_uid
-    - devture_postgres_gid
-    - devture_postgres_container_network
-    - devture_postgres_connection_hostname
-    - devture_postgres_connection_port
-    - devture_postgres_connection_username
-    - devture_postgres_connection_password
-    - devture_postgres_db_name
-    - devture_postgres_architecture
+    - postgres_identifier
+    - postgres_uid
+    - postgres_gid
+    - postgres_container_network
+    - postgres_connection_hostname
+    - postgres_connection_port
+    - postgres_connection_username
+    - postgres_connection_password
+    - postgres_db_name
+    - postgres_architecture
 
 - name: Fail if Postgres password length exceeded
   ansible.builtin.fail:
-    msg: "The maximum `devture_postgres_connection_password` length is 99 characters"
-  when: "devture_postgres_connection_password | length > 99"
+    msg: "The maximum `postgres_connection_password` length is 99 characters"
+  when: "postgres_connection_password | length > 99"
 
 - name: (Deprecation) Catch and report renamed Postgres settings
   ansible.builtin.fail:
@@ -29,6 +29,6 @@
       Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
   when: "item.old in vars"
   with_items:
-    - {'old': 'devture_postgres_vacuum_database', 'new': '<superseded by devture_postgres_vacuum_default_databases_list>'}
-    - {'old': 'devture_postgres_additional_databases', 'new': 'devture_postgres_managed_databases'}
-    - {'old': 'devture_postgres_vacuum_command', 'new': '<superseded by devture_postgres_vacuum_presets and postgres_vacuum_preset, or postgres_vacuum_query>'}
+    - {'old': 'postgres_vacuum_database', 'new': '<superseded by postgres_vacuum_default_databases_list>'}
+    - {'old': 'postgres_additional_databases', 'new': 'postgres_managed_databases'}
+    - {'old': 'postgres_vacuum_command', 'new': '<superseded by postgres_vacuum_presets and postgres_vacuum_preset, or postgres_vacuum_query>'}

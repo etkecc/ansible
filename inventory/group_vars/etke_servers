@@ -42,8 +42,8 @@ languagetool_gid: "{{ mash_playbook_gid }}"
 languagetool_container_network: "{{ matrix_addons_container_network }}"
 languagetool_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
 languagetool_container_labels_traefik_docker_network: "{{ mash_playbook_reverse_proxyable_services_additional_network }}"
-languagetool_container_labels_traefik_entrypoints: "{{ devture_traefik_entrypoint_primary }}"
-languagetool_container_labels_traefik_tls_certResolver: "{{ devture_traefik_certResolver_primary }}"
+languagetool_container_labels_traefik_entrypoints: "{{ traefik_entrypoint_primary }}"
+languagetool_container_labels_traefik_tls_certResolver: "{{ traefik_certResolver_primary }}"
 languagetool_container_additional_networks_auto: |
   {{
     ([mash_playbook_reverse_proxyable_services_additional_network] if mash_playbook_reverse_proxyable_services_additional_network else [])
@@ -68,7 +68,7 @@ linkding_systemd_required_services_list: |
   {{
     (['docker.service'])
     +
-    ([devture_postgres_identifier ~ '.service'] if devture_postgres_enabled and linkding_database_hostname == devture_postgres_identifier else [])
+    ([postgres_identifier ~ '.service'] if postgres_enabled and linkding_database_hostname == postgres_identifier else [])
   }}
 
 linkding_container_network: "{{ matrix_addons_container_network }}"
@@ -77,17 +77,17 @@ linkding_container_additional_networks: |
   {{
     ([mash_playbook_reverse_proxyable_services_additional_network] if mash_playbook_reverse_proxyable_services_additional_network else [])
     +
-    ([devture_postgres_container_network] if devture_postgres_enabled and linkding_database_hostname == devture_postgres_identifier and linkding_container_network != devture_postgres_container_network else [])
+    ([postgres_container_network] if postgres_enabled and linkding_database_hostname == postgres_identifier and linkding_container_network != postgres_container_network else [])
   }}
 
 linkding_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
 linkding_container_labels_traefik_docker_network: "{{ mash_playbook_reverse_proxyable_services_additional_network }}"
-linkding_container_labels_traefik_entrypoints: "{{ devture_traefik_entrypoint_primary }}"
-linkding_container_labels_traefik_tls_certResolver: "{{ devture_traefik_certResolver_primary }}"
+linkding_container_labels_traefik_entrypoints: "{{ traefik_entrypoint_primary }}"
+linkding_container_labels_traefik_tls_certResolver: "{{ traefik_certResolver_primary }}"
 
-linkding_database_hostname: "{{ devture_postgres_connection_hostname if devture_postgres_enabled else '' }}"
+linkding_database_hostname: "{{ postgres_connection_hostname if postgres_enabled else '' }}"
 linkding_database_password: "{{ '%s' | format(mash_playbook_generic_secret_key) | password_hash('sha512', 'linkding.db', rounds=655555) | to_uuid }}"
-linkding_database_engine: "{{ 'postgres' if devture_postgres_enabled and linkding_database_hostname == devture_postgres_connection_hostname else 'sqlite' }}"
+linkding_database_engine: "{{ 'postgres' if postgres_enabled and linkding_database_hostname == postgres_connection_hostname else 'sqlite' }}"
 
 ########################################################################
 #                                                                      #
@@ -110,15 +110,15 @@ miniflux_container_additional_networks: |
   {{
     ([matrix_playbook_reverse_proxyable_services_additional_network] if (matrix_playbook_reverse_proxyable_services_additional_network and miniflux_container_labels_traefik_enabled) else [])
     +
-    ([devture_postgres_container_network] if (devture_postgres_enabled and miniflux_database_hostname == devture_postgres_connection_hostname and devture_postgres_container_network != miniflux_container_network) else [])
+    ([postgres_container_network] if (postgres_enabled and miniflux_database_hostname == postgres_connection_hostname and postgres_container_network != miniflux_container_network) else [])
   }}
 
 miniflux_container_labels_traefik_enabled: "{{ matrix_playbook_reverse_proxy_type in ['playbook-managed-traefik', 'other-traefik-container'] }}"
 miniflux_container_labels_traefik_docker_network: "{{ matrix_playbook_reverse_proxyable_services_additional_network }}"
-miniflux_container_labels_traefik_entrypoints: "{{ devture_traefik_entrypoint_primary }}"
-miniflux_container_labels_traefik_tls_certResolver: "{{ devture_traefik_certResolver_primary }}"
+miniflux_container_labels_traefik_entrypoints: "{{ traefik_entrypoint_primary }}"
+miniflux_container_labels_traefik_tls_certResolver: "{{ traefik_certResolver_primary }}"
 
-miniflux_database_hostname: "{{ devture_postgres_connection_hostname if devture_postgres_enabled else '' }}"
+miniflux_database_hostname: "{{ postgres_connection_hostname if postgres_enabled else '' }}"
 miniflux_database_password: "{{ '%s' | format(matrix_homeserver_generic_secret_key) | password_hash('sha512', 'miniflux.db', rounds=655555) | to_uuid }}"
 
 ########################################################################
@@ -146,8 +146,8 @@ radicale_container_additional_networks: |
 
 radicale_container_labels_traefik_enabled: "{{ matrix_playbook_reverse_proxy_type in ['playbook-managed-traefik', 'other-traefik-container'] }}"
 radicale_container_labels_traefik_docker_network: "{{ matrix_playbook_reverse_proxyable_services_additional_network }}"
-radicale_container_labels_traefik_entrypoints: "{{ devture_traefik_entrypoint_primary }}"
-radicale_container_labels_traefik_tls_certResolver: "{{ devture_traefik_certResolver_primary }}"
+radicale_container_labels_traefik_entrypoints: "{{ traefik_entrypoint_primary }}"
+radicale_container_labels_traefik_tls_certResolver: "{{ traefik_certResolver_primary }}"
 
 ########################################################################
 #                                                                      #
@@ -173,8 +173,8 @@ uptime_kuma_container_additional_networks: |
 
 uptime_kuma_container_labels_traefik_enabled: "{{ matrix_playbook_reverse_proxy_type in ['playbook-managed-traefik', 'other-traefik-container'] }}"
 uptime_kuma_container_labels_traefik_docker_network: "{{ matrix_playbook_reverse_proxyable_services_additional_network }}"
-uptime_kuma_container_labels_traefik_entrypoints: "{{ devture_traefik_entrypoint_primary }}"
-uptime_kuma_container_labels_traefik_tls_certResolver: "{{ devture_traefik_certResolver_primary }}"
+uptime_kuma_container_labels_traefik_entrypoints: "{{ traefik_entrypoint_primary }}"
+uptime_kuma_container_labels_traefik_tls_certResolver: "{{ traefik_certResolver_primary }}"
 
 ########################################################################
 #                                                                      #
@@ -191,7 +191,7 @@ gotosocial_gid: "{{ mash_playbook_gid }}"
 
 gotosocial_systemd_required_services_list_auto: |
   {{
-    ([devture_postgres_identifier ~ '.service'] if devture_postgres_enabled and gotosocial_database_host == devture_postgres_identifier else [])
+    ([postgres_identifier ~ '.service'] if postgres_enabled and gotosocial_database_host == postgres_identifier else [])
   }}
 
 gotosocial_systemd_wanted_services_list_auto: |
@@ -205,18 +205,18 @@ gotosocial_container_additional_networks_auto: |
   {{
     ([mash_playbook_reverse_proxyable_services_additional_network] if mash_playbook_reverse_proxyable_services_additional_network else [])
     +
-    ([devture_postgres_container_network] if devture_postgres_enabled and gotosocial_database_host == devture_postgres_identifier and gotosocial_container_network != devture_postgres_container_network else [])
+    ([postgres_container_network] if postgres_enabled and gotosocial_database_host == postgres_identifier and gotosocial_container_network != postgres_container_network else [])
      +
     ([exim_relay_container_network | default('matrix-exim-relay')] if (exim_relay_enabled | default(false) and gotosocial_smtp_host == exim_relay_identifier | default('matrix-exim-relay') and exim_relay_container_network != gotosocial_container_network) else [])
   }}
 
 gotosocial_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
 gotosocial_container_labels_traefik_docker_network: "{{ mash_playbook_reverse_proxyable_services_additional_network }}"
-gotosocial_container_labels_traefik_entrypoints: "{{ devture_traefik_entrypoint_primary }}"
-gotosocial_container_labels_traefik_tls_certResolver: "{{ devture_traefik_certResolver_primary }}"
+gotosocial_container_labels_traefik_entrypoints: "{{ traefik_entrypoint_primary }}"
+gotosocial_container_labels_traefik_tls_certResolver: "{{ traefik_certResolver_primary }}"
 
-gotosocial_database_host: "{{ devture_postgres_identifier if devture_postgres_enabled else '' }}"
-gotosocial_database_port: "{{ '5432' if devture_postgres_enabled else '' }}"
+gotosocial_database_host: "{{ postgres_identifier if postgres_enabled else '' }}"
+gotosocial_database_port: "{{ '5432' if postgres_enabled else '' }}"
 gotosocial_database_password: "{{ '%s' | format(mash_playbook_generic_secret_key) | password_hash('sha512', 'db.gotosocial', rounds=655555) | to_uuid }}"
 gotosocial_database_username: "{{ gotosocial_identifier }}"
 
@@ -241,7 +241,7 @@ vaultwarden_base_path: "{{ mash_playbook_base_path }}/{{ mash_playbook_service_b
 
 vaultwarden_systemd_required_systemd_services_list_auto: |
   {{
-    ([devture_postgres_identifier ~ '.service'] if devture_postgres_enabled and vaultwarden_database_hostname == devture_postgres_identifier else [])
+    ([postgres_identifier ~ '.service'] if postgres_enabled and vaultwarden_database_hostname == postgres_identifier else [])
   }}
 
 vaultwarden_container_network: "{{ matrix_addons_container_network }}"
@@ -250,7 +250,7 @@ vaultwarden_container_additional_networks_auto: |
   {{
     ([mash_playbook_reverse_proxyable_services_additional_network] if mash_playbook_reverse_proxyable_services_additional_network else [])
     +
-    ([devture_postgres_container_network] if devture_postgres_enabled and vaultwarden_database_hostname == devture_postgres_identifier and vaultwarden_container_network != devture_postgres_container_network else [])
+    ([postgres_container_network] if postgres_enabled and vaultwarden_database_hostname == postgres_identifier and vaultwarden_container_network != postgres_container_network else [])
     +
     ([exim_relay_container_network | default('matrix-exim-relay')] if (exim_relay_enabled | default(false) and vaultwarden_config_smtp_host == exim_relay_identifier | default('matrix-exim-relay') and exim_relay_container_network != vaultwarden_container_network) else [])
   }}
@@ -262,11 +262,11 @@ vaultwarden_systemd_wanted_systemd_services_list_auto: |
 
 vaultwarden_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
 vaultwarden_container_labels_traefik_docker_network: "{{ mash_playbook_reverse_proxyable_services_additional_network }}"
-vaultwarden_container_labels_traefik_entrypoints: "{{ devture_traefik_entrypoint_primary }}"
-vaultwarden_container_labels_traefik_tls_certResolver: "{{ devture_traefik_certResolver_primary }}"
+vaultwarden_container_labels_traefik_entrypoints: "{{ traefik_entrypoint_primary }}"
+vaultwarden_container_labels_traefik_tls_certResolver: "{{ traefik_certResolver_primary }}"
 
-vaultwarden_database_hostname: "{{ devture_postgres_identifier if devture_postgres_enabled else '' }}"
-vaultwarden_database_port: "{{ '5432' if devture_postgres_enabled else '' }}"
+vaultwarden_database_hostname: "{{ postgres_identifier if postgres_enabled else '' }}"
+vaultwarden_database_port: "{{ '5432' if postgres_enabled else '' }}"
 vaultwarden_database_username: "vaultwarden"
 vaultwarden_database_password: "{{ '%s' | format(mash_playbook_generic_secret_key) | password_hash('sha512', 'db.vaultwarden', rounds=655555) | to_uuid }}"
 
@@ -293,8 +293,8 @@ firezone_uid: "{{ mash_playbook_uid }}"
 firezone_gid: "{{ mash_playbook_gid }}"
 firezone_generic_secret: "{{ mash_playbook_generic_secret_key }}"
 
-firezone_database_host: "{{ devture_postgres_identifier if devture_postgres_enabled else '' }}"
-firezone_database_port: "{{ '5432' if devture_postgres_enabled else '' }}"
+firezone_database_host: "{{ postgres_identifier if postgres_enabled else '' }}"
+firezone_database_port: "{{ '5432' if postgres_enabled else '' }}"
 firezone_database_password: "{{ '%s' | format(mash_playbook_generic_secret_key) | password_hash('sha512', 'fz.db.user', rounds=655555) | to_uuid }}"
 firezone_database_username: "{{ firezone_identifier }}"
 
@@ -302,7 +302,7 @@ firezone_systemd_required_services_list_auto: |
   {{
     (['docker.service'])
     +
-    ([devture_postgres_identifier ~ '.service'] if devture_postgres_enabled | default(false) and firezone_database_host == devture_postgres_identifier else [])
+    ([postgres_identifier ~ '.service'] if postgres_enabled | default(false) and firezone_database_host == postgres_identifier else [])
   }}
 
 firezone_container_network: "{{ matrix_addons_container_network }}"
@@ -311,13 +311,13 @@ firezone_container_additional_networks_auto: |
   {{
     ([mash_playbook_reverse_proxyable_services_additional_network] if mash_playbook_reverse_proxyable_services_additional_network else [])
     +
-    ([devture_postgres_container_network] if devture_postgres_enabled | default(false) and firezone_database_host == devture_postgres_identifier and firezone_container_network != devture_postgres_container_network else [])
+    ([postgres_container_network] if postgres_enabled | default(false) and firezone_database_host == postgres_identifier and firezone_container_network != postgres_container_network else [])
   }}
 
 firezone_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
 firezone_container_labels_traefik_docker_network: "{{ mash_playbook_reverse_proxyable_services_additional_network }}"
-firezone_container_labels_traefik_entrypoints: "{{ devture_traefik_entrypoint_primary }}"
-firezone_container_labels_traefik_tls_certResolver: "{{ devture_traefik_certResolver_primary }}"
+firezone_container_labels_traefik_entrypoints: "{{ traefik_entrypoint_primary }}"
+firezone_container_labels_traefik_tls_certResolver: "{{ traefik_certResolver_primary }}"
 
 
 
@@ -335,8 +335,8 @@ funkwhale_uid: "{{ mash_playbook_uid }}"
 funkwhale_gid: "{{ mash_playbook_gid }}"
 funkwhale_container_network: "{{ matrix_addons_container_network }}"
 
-funkwhale_database_hostname: "{{ devture_postgres_identifier if devture_postgres_enabled else '' }}"
-funkwhale_database_port: "{{ '5432' if devture_postgres_enabled else '' }}"
+funkwhale_database_hostname: "{{ postgres_identifier if postgres_enabled else '' }}"
+funkwhale_database_port: "{{ '5432' if postgres_enabled else '' }}"
 funkwhale_database_password: "{{ '%s' | format(mash_playbook_generic_secret_key) | password_hash('sha512', 'db.funkwhale', rounds=655555) | to_uuid }}"
 funkwhale_database_username: "{{ funkwhale_identifier }}"
 
@@ -353,21 +353,21 @@ funkwhale_config_redis_hostname: "{{ keydb_identifier if keydb_enabled else '' }
 
 funkwhale_api_systemd_required_services_list_auto: |
   {{
-    ([devture_postgres_identifier ~ '.service'] if devture_postgres_enabled and funkwhale_database_hostname == devture_postgres_identifier else [])
+    ([postgres_identifier ~ '.service'] if postgres_enabled and funkwhale_database_hostname == postgres_identifier else [])
     +
     ([keydb_identifier ~ '.service'] if keydb_enabled else [])
   }}
 
 funkwhale_frontend_systemd_required_services_list_auto: |
   {{
-    ([devture_postgres_identifier ~ '.service'] if devture_postgres_enabled and funkwhale_database_hostname == devture_postgres_identifier else [])
+    ([postgres_identifier ~ '.service'] if postgres_enabled and funkwhale_database_hostname == postgres_identifier else [])
   }}
 
 funkwhale_api_container_additional_networks_auto: |
   {{
     ([mash_playbook_reverse_proxyable_services_additional_network] if mash_playbook_reverse_proxyable_services_additional_network else [])
     +
-    ([devture_postgres_container_network] if devture_postgres_enabled and funkwhale_database_hostname == devture_postgres_identifier and funkwhale_api_container_network != devture_postgres_container_network else [])
+    ([postgres_container_network] if postgres_enabled and funkwhale_database_hostname == postgres_identifier and funkwhale_api_container_network != postgres_container_network else [])
     +
     ([exim_relay_container_network | default('matrix-exim-relay')] if (exim_relay_enabled | default(false) and funkwhale_email_host == exim_relay_identifier | default('matrix-exim-relay') and exim_relay_container_network != funkwhale_container_network) else [])
     +
@@ -378,20 +378,20 @@ funkwhale_frontend_container_additional_networks_auto: |
   {{
     ([mash_playbook_reverse_proxyable_services_additional_network] if mash_playbook_reverse_proxyable_services_additional_network else [])
     +
-    ([devture_postgres_container_network] if devture_postgres_enabled and funkwhale_database_hostname == devture_postgres_identifier and funkwhale_frontend_container_network != devture_postgres_container_network else [])
+    ([postgres_container_network] if postgres_enabled and funkwhale_database_hostname == postgres_identifier and funkwhale_frontend_container_network != postgres_container_network else [])
     +
     ([exim_relay_container_network | default('matrix-exim-relay')] if (exim_relay_enabled | default(false) and funkwhale_email_host == exim_relay_identifier | default('matrix-exim-relay') and exim_relay_container_network != funkwhale_container_network) else [])
   }}
 
 funkwhale_api_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
 funkwhale_api_container_labels_traefik_docker_network: "{{ mash_playbook_reverse_proxyable_services_additional_network }}"
-funkwhale_api_container_labels_traefik_entrypoints: "{{ devture_traefik_entrypoint_primary }}"
-funkwhale_api_container_labels_traefik_tls_certResolver: "{{ devture_traefik_certResolver_primary }}"
+funkwhale_api_container_labels_traefik_entrypoints: "{{ traefik_entrypoint_primary }}"
+funkwhale_api_container_labels_traefik_tls_certResolver: "{{ traefik_certResolver_primary }}"
 
 funkwhale_frontend_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
 funkwhale_frontend_container_labels_traefik_docker_network: "{{ mash_playbook_reverse_proxyable_services_additional_network }}"
-funkwhale_frontend_container_labels_traefik_entrypoints: "{{ devture_traefik_entrypoint_primary }}"
-funkwhale_frontend_container_labels_traefik_tls_certResolver: "{{ devture_traefik_certResolver_primary }}"
+funkwhale_frontend_container_labels_traefik_entrypoints: "{{ traefik_entrypoint_primary }}"
+funkwhale_frontend_container_labels_traefik_tls_certResolver: "{{ traefik_certResolver_primary }}"
 
 ########################################################################
 #                                                                      #
@@ -419,7 +419,7 @@ peertube_container_additional_networks_auto: |
     (
       ([mash_playbook_reverse_proxyable_services_additional_network] if mash_playbook_reverse_proxyable_services_additional_network else [])
       +
-      ([devture_postgres_container_network] if devture_postgres_enabled and peertube_config_database_hostname == devture_postgres_identifier and peertube_container_network != devture_postgres_container_network else [])
+      ([postgres_container_network] if postgres_enabled and peertube_config_database_hostname == postgres_identifier and peertube_container_network != postgres_container_network else [])
       +
       ([keydb_container_network] if keydb_enabled and peertube_config_redis_hostname == keydb_identifier else [])
       +
@@ -429,11 +429,11 @@ peertube_container_additional_networks_auto: |
 
 peertube_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
 peertube_container_labels_traefik_docker_network: "{{ mash_playbook_reverse_proxyable_services_additional_network }}"
-peertube_container_labels_traefik_entrypoints: "{{ devture_traefik_entrypoint_primary }}"
-peertube_container_labels_traefik_tls_certResolver: "{{ devture_traefik_certResolver_primary }}"
+peertube_container_labels_traefik_entrypoints: "{{ traefik_entrypoint_primary }}"
+peertube_container_labels_traefik_tls_certResolver: "{{ traefik_certResolver_primary }}"
 
-peertube_config_database_hostname: "{{ devture_postgres_identifier if devture_postgres_enabled else '' }}"
-peertube_config_database_port: "{{ '5432' if devture_postgres_enabled else '' }}"
+peertube_config_database_hostname: "{{ postgres_identifier if postgres_enabled else '' }}"
+peertube_config_database_port: "{{ '5432' if postgres_enabled else '' }}"
 peertube_config_database_username: peertube
 peertube_config_database_password: "{{ '%s' | format(mash_playbook_generic_secret_key) | password_hash('sha512', 'db.peertube', rounds=655555) | to_uuid }}"
 
@@ -443,7 +443,7 @@ peertube_config_redis_hostname: "{{ keydb_identifier if keydb_enabled else '' }}
 
 peertube_systemd_required_services_list_auto: |
   {{
-    ([devture_postgres_identifier ~ '.service'] if devture_postgres_enabled and peertube_config_database_hostname == devture_postgres_identifier else [])
+    ([postgres_identifier ~ '.service'] if postgres_enabled and peertube_config_database_hostname == postgres_identifier else [])
     +
     ([keydb_identifier ~ '.service'] if keydb_enabled | default(false) and peertube_config_redis_hostname == keydb_identifier | default('matrix-keydb') else [])
   }}
@@ -461,7 +461,7 @@ peertube_systemd_wanted_services_list_auto: |
 
 # The cleanup role will delete our custom network, because it's unused unless the timer gets triggered.
 # As a workaround, we just reuse some other network.
-# Some servers don't use a playbook-managed Postgres, so we can't use `devture_postgres_container_network` everywhere.
+# Some servers don't use a playbook-managed Postgres, so we can't use `postgres_container_network` everywhere.
 # The Synapse network is available everywhere where Synapse is enabled though.
 matrix_synapse_auto_compressor_container_network: "{{ matrix_synapse_container_network }}"
 
@@ -521,7 +521,7 @@ devture_systemd_service_manager_services_list_additional: |
 #                                                                      #
 ########################################################################
 
-devture_postgres_managed_databases_additional: |
+postgres_managed_databases_additional: |
   {{
     ([{
       'name': miniflux_database_name,

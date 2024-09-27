@@ -1,64 +1,64 @@
 ---
 # Project source code URL: https://github.com/ldez/traefik-certs-dumper
 
-devture_traefik_certs_dumper_enabled: true
+traefik_certs_dumper_enabled: true
 
-devture_traefik_certs_dumper_version: v2.8.3
+traefik_certs_dumper_version: v2.8.3
 
-devture_traefik_certs_dumper_uid: ''
-devture_traefik_certs_dumper_gid: ''
+traefik_certs_dumper_uid: ''
+traefik_certs_dumper_gid: ''
 
-devture_traefik_certs_dumper_identifier: devture-traefik-certs-dumper
+traefik_certs_dumper_identifier: traefik-certs-dumper
 
-devture_traefik_certs_dumper_base_path: "/{{ devture_traefik_certs_dumper_identifier }}"
-devture_traefik_certs_dumper_bin_dir_path: "{{ devture_traefik_certs_dumper_base_path }}/bin"
+traefik_certs_dumper_base_path: "/{{ traefik_certs_dumper_identifier }}"
+traefik_certs_dumper_bin_dir_path: "{{ traefik_certs_dumper_base_path }}/bin"
 
-# devture_traefik_certs_dumper_dumped_certificates_dir_path will contain the dumped certificates.
+# traefik_certs_dumper_dumped_certificates_dir_path will contain the dumped certificates.
 # It's handled separately from the other paths, because we may wish to have more lax privileges for it,
 # so that the certificates could be consumed by various tools, which run as various users.
-devture_traefik_certs_dumper_dumped_certificates_dir_path: "{{ devture_traefik_certs_dumper_base_path }}/dumped-certificates"
-devture_traefik_certs_dumper_dumped_certificates_dir_owner: "{{ devture_traefik_certs_dumper_uid }}"
-devture_traefik_certs_dumper_dumped_certificates_dir_group: "{{ devture_traefik_certs_dumper_gid }}"
-devture_traefik_certs_dumper_dumped_certificates_dir_mode: "0750"
+traefik_certs_dumper_dumped_certificates_dir_path: "{{ traefik_certs_dumper_base_path }}/dumped-certificates"
+traefik_certs_dumper_dumped_certificates_dir_owner: "{{ traefik_certs_dumper_uid }}"
+traefik_certs_dumper_dumped_certificates_dir_group: "{{ traefik_certs_dumper_gid }}"
+traefik_certs_dumper_dumped_certificates_dir_mode: "0750"
 
-devture_traefik_certs_dumper_systemd_required_services_list: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+traefik_certs_dumper_systemd_required_services_list: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
 
-devture_traefik_certs_dumper_container_image: "{{ devture_traefik_certs_dumper_container_image_registry_prefix }}ldez/traefik-certs-dumper:{{ devture_traefik_certs_dumper_container_image_tag }}"
-devture_traefik_certs_dumper_container_image_tag: "{{ devture_traefik_certs_dumper_version }}"
-devture_traefik_certs_dumper_container_image_registry_prefix: docker.io/
+traefik_certs_dumper_container_image: "{{ traefik_certs_dumper_container_image_registry_prefix }}ldez/traefik-certs-dumper:{{ traefik_certs_dumper_container_image_tag }}"
+traefik_certs_dumper_container_image_tag: "{{ traefik_certs_dumper_version }}"
+traefik_certs_dumper_container_image_registry_prefix: docker.io/
 
-devture_traefik_certs_dumper_container_post_hook: "/bin/sh /certs-dumper-bin/copy-certificates.sh /intermediate /staging /out"
+traefik_certs_dumper_container_post_hook: "/bin/sh /certs-dumper-bin/copy-certificates.sh /intermediate /staging /out"
 
 # A list of extra arguments to pass to the container
-devture_traefik_certs_dumper_container_extra_arguments: "{{ devture_traefik_certs_dumper_container_extra_arguments_default + devture_traefik_certs_dumper_container_extra_arguments_auto + devture_traefik_certs_dumper_container_extra_arguments_custom }}"
-devture_traefik_certs_dumper_container_extra_arguments_default: []
-devture_traefik_certs_dumper_container_extra_arguments_auto: []
-devture_traefik_certs_dumper_container_extra_arguments_custom: []
+traefik_certs_dumper_container_extra_arguments: "{{ traefik_certs_dumper_container_extra_arguments_default + traefik_certs_dumper_container_extra_arguments_auto + traefik_certs_dumper_container_extra_arguments_custom }}"
+traefik_certs_dumper_container_extra_arguments_default: []
+traefik_certs_dumper_container_extra_arguments_auto: []
+traefik_certs_dumper_container_extra_arguments_custom: []
 
 # A list of extra arguments to pass to the container process
-devture_traefik_certs_dumper_container_process_extra_arguments: "{{ devture_traefik_certs_dumper_container_process_extra_arguments_default + devture_traefik_certs_dumper_container_process_extra_arguments_auto + devture_traefik_certs_dumper_container_process_extra_arguments_custom }}"
-devture_traefik_certs_dumper_container_process_extra_arguments_default: []
-devture_traefik_certs_dumper_container_process_extra_arguments_auto: []
-devture_traefik_certs_dumper_container_process_extra_arguments_custom: []
+traefik_certs_dumper_container_process_extra_arguments: "{{ traefik_certs_dumper_container_process_extra_arguments_default + traefik_certs_dumper_container_process_extra_arguments_auto + traefik_certs_dumper_container_process_extra_arguments_custom }}"
+traefik_certs_dumper_container_process_extra_arguments_default: []
+traefik_certs_dumper_container_process_extra_arguments_auto: []
+traefik_certs_dumper_container_process_extra_arguments_custom: []
 
 # We only give it a short grace time, because the container does not handle SIGTERM and we need to wait and kill it.
 # If the container starts respecting SIGTERM, we may switch to a longer interval (e.g. `devture_systemd_docker_base_container_stop_grace_time_seconds`).
-devture_traefik_certs_dumper_container_stop_grace_time_seconds: 1
+traefik_certs_dumper_container_stop_grace_time_seconds: 1
 
 # Contains the path to the Traefik SSL certificates.
 # We would expect a JSON file with certificates there.
-# The name of the file that we expect is defined in `devture_traefik_certs_dumper_ssl_acme_file_name`.
+# The name of the file that we expect is defined in `traefik_certs_dumper_ssl_acme_file_name`.
 # Initially (before Traefik has initialized), the file may not exist.
-devture_traefik_certs_dumper_ssl_dir_path: ''
+traefik_certs_dumper_ssl_dir_path: ''
 
 # Contains the name of the ACME certificates file that we'll dump certificates from.
-# This file is expected to be underneath the directory defined in `devture_traefik_certs_dumper_ssl_dir_path`.
-devture_traefik_certs_dumper_ssl_acme_file_name: acme.json
+# This file is expected to be underneath the directory defined in `traefik_certs_dumper_ssl_dir_path`.
+traefik_certs_dumper_ssl_acme_file_name: acme.json
 
-devture_traefik_certs_dumper_waiter_systemd_required_services_list:
+traefik_certs_dumper_waiter_systemd_required_services_list:
   - docker.service
-  - "{{ devture_traefik_certs_dumper_identifier }}.service"
+  - "{{ traefik_certs_dumper_identifier }}.service"
 
-# The maximum iterations to wait for a file to appear before giving up in `devture-traefik-certs-dumper-wait-for-domain@.service`.
+# The maximum iterations to wait for a file to appear before giving up in `traefik-certs-dumper-wait-for-domain@.service`.
 # There's a 1 second sleep between iterations.
-devture_traefik_certs_dumper_waiter_max_iterations: 180
+traefik_certs_dumper_waiter_max_iterations: 180

@@ -22,12 +22,12 @@ fi
 docker run \
 	$docker_flags \
 	--rm \
-	--user={{ devture_postgres_uid }}:{{ devture_postgres_gid }} \
+	--user={{ postgres_uid }}:{{ postgres_gid }} \
 	--cap-drop=ALL \
-	--env-file={{ devture_postgres_base_path }}/env-postgres-psql \
+	--env-file={{ postgres_base_path }}/env-postgres-psql \
 	--mount type=bind,src=$directory_path,dst=/out \
-	--network={{ devture_postgres_container_network }} \
+	--network={{ postgres_container_network }} \
 	--entrypoint=/bin/sh \
-	{{ devture_postgres_container_image_to_use }} \
+	{{ postgres_container_image_to_use }} \
 	-c \
-	'set -o pipefail && pg_dumpall -h {{ devture_postgres_identifier }} | gzip -c > /out/latest-dump.sql.gz'
+	'set -o pipefail && pg_dumpall -h {{ postgres_identifier }} | zstd --stdout > /out/latest-dump.sql.zst'

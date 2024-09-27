@@ -1,14 +1,14 @@
 ---
 
 - block:
-    - when: devture_postgres_backup_enabled | bool
+    - when: postgres_backup_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
 
-    - when: devture_postgres_backup_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/setup_install.yml"
+    - when: postgres_backup_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
-    - when: devture_postgres_backup_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/setup_install_migrate_old_data.yml"
+    - when: postgres_backup_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install_migrate_old_data.yml"
   tags:
     - setup-all
     - setup-postgres-backup
@@ -16,8 +16,8 @@
     - install-postgres-backup
 
 - block:
-    - when: not devture_postgres_backup_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/setup_uninstall.yml"
+    - when: not postgres_backup_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
   tags:
     - setup-all
     - setup-postgres-backup

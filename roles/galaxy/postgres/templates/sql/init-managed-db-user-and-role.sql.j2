@@ -13,7 +13,7 @@ $$;
 ALTER ROLE "{{ managed_db.username }}" PASSWORD '{{ managed_db.password }}';
 
 -- This will generate an error on subsequent execution
-CREATE DATABASE "{{ managed_db.name }}" WITH LC_CTYPE '{{ devture_postgres_default_lc_type }}' LC_COLLATE '{{ devture_postgres_default_lc_collate }}' OWNER "{{ managed_db.username }}";
+CREATE DATABASE "{{ managed_db.name }}" WITH LC_CTYPE '{{ postgres_default_lc_type }}' LC_COLLATE '{{ postgres_default_lc_collate }}' OWNER "{{ managed_db.username }}";
 
 -- This is useful for changing the database owner subsequently
 ALTER DATABASE "{{ managed_db.name }}" OWNER TO "{{ managed_db.username }}";

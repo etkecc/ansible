@@ -4,10 +4,10 @@
 docker run \
 	-it \
 	--rm \
-	--user={{ devture_postgres_uid }}:{{ devture_postgres_gid }} \
+	--user={{ postgres_uid }}:{{ postgres_gid }} \
 	--cap-drop=ALL \
-	--env-file={{ devture_postgres_base_path }}/env-postgres-psql \
-	--network={{ devture_postgres_container_network }} \
-	{{ devture_postgres_container_image_to_use }} \
-	psql -h {{ devture_postgres_connection_hostname }} \
+	--env-file={{ postgres_base_path }}/env-postgres-psql \
+	--network={{ postgres_container_network }} \
+	{{ postgres_container_image_to_use }} \
+	psql -h {{ postgres_connection_hostname }} \
 	"$@"

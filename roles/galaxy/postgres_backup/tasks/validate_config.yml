@@ -6,12 +6,12 @@
       You need to define a required configuration setting (`{{ item }}`).
   when: "not vars[item]"
   with_items:
-    - devture_postgres_backup_connection_hostname
-    - devture_postgres_backup_connection_username
-    - devture_postgres_backup_connection_password
-    - devture_postgres_backup_uid
-    - devture_postgres_backup_gid
-    - devture_postgres_backup_container_network
+    - postgres_backup_connection_hostname
+    - postgres_backup_connection_username
+    - postgres_backup_connection_password
+    - postgres_backup_uid
+    - postgres_backup_gid
+    - postgres_backup_container_network
 
 - name: (Deprecation) Catch and report renamed settings
   ansible.builtin.fail:
@@ -20,6 +20,6 @@
       Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
   when: "item.old in vars"
   with_items:
-    - {'old': 'devture_postgres_backup_container_image_suffix', 'new': 'devture_postgres_backup_container_image_distro'}
-    - {'old': 'devture_postgres_backup_path', 'new': 'devture_postgres_backup_base_path'}
-    - {'old': 'devture_postgres_backup_docker_image_to_use', 'new': 'devture_postgres_backup_container_image_to_use'}
+    - {'old': 'postgres_backup_container_image_suffix', 'new': 'postgres_backup_container_image_distro'}
+    - {'old': 'postgres_backup_path', 'new': 'postgres_backup_base_path'}
+    - {'old': 'postgres_backup_docker_image_to_use', 'new': 'postgres_backup_container_image_to_use'}

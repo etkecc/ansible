@@ -51,39 +51,39 @@
 
 - name: Ensure Postgres is started
   ansible.builtin.service:
-    name: "{{ devture_postgres_identifier }}"
+    name: "{{ postgres_identifier }}"
     state: started
     daemon_reload: true
-  register: devture_postgres_ensure_started_result
+  register: postgres_ensure_started_result
 
 - name: Wait a bit, so that Postgres can start
   ansible.builtin.wait_for:
     timeout: "{{ postgres_start_wait_time }}"
   delegate_to: 127.0.0.1
   become: false
-  when: "devture_postgres_ensure_started_result.changed | bool"
+  when: "postgres_ensure_started_result.changed | bool"
 
 - name: Import SQLite database from {{ sqlite_database_path }} into Postgres  # noqa name[template]
   ansible.builtin.command:
     cmd: >-
       {{ devture_systemd_docker_base_host_command_docker }} run
       --rm
-      --user={{ devture_postgres_uid }}:{{ devture_postgres_gid }}
+      --user={{ postgres_uid }}:{{ postgres_gid }}
       --cap-drop=ALL
-      --network={{ devture_postgres_container_network }}
+      --network={{ postgres_container_network }}
       --mount type=bind,src={{ sqlite_database_path }},dst=/in.db,ro
       --entrypoint=/bin/sh
-      {{ devture_postgres_pgloader_docker_image }}
+      {{ postgres_pgloader_docker_image }}
       -c
       'pgloader /in.db {{ postgres_db_connection_string }}'
-  register: devture_postgres_import_generic_sqlite_db_import_result
-  changed_when: devture_postgres_import_generic_sqlite_db_import_result.rc == 0
+  register: postgres_import_generic_sqlite_db_import_result
+  changed_when: postgres_import_generic_sqlite_db_import_result.rc == 0
 
 - name: Archive SQLite database ({{ sqlite_database_path }} -> {{ sqlite_database_path }}.backup)  # noqa name[template]
   ansible.builtin.command:
     cmd: "mv {{ sqlite_database_path }} {{ sqlite_database_path }}.backup"
-  register: devture_postgres_import_generic_sqlite_db_move_result
-  changed_when: devture_postgres_import_generic_sqlite_db_move_result.rc == 0
+  register: postgres_import_generic_sqlite_db_move_result
+  changed_when: postgres_import_generic_sqlite_db_move_result.rc == 0
 
 - name: Inject result
   ansible.builtin.set_fact:
@@ -96,8 +96,8 @@
         ]
       }}
 
-- when: "devture_postgres_ensure_started_result.changed | bool"
+- when: "postgres_ensure_started_result.changed | bool"
   name: Ensure Postgres is stopped (if it previously was)
   ansible.builtin.service:
-    name: "{{ devture_postgres_identifier }}"
+    name: "{{ postgres_identifier }}"
     state: stopped

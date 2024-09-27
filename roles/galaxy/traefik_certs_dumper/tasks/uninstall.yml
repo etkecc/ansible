@@ -2,23 +2,23 @@
 
 - name: Check existence of Traefik certs dumper systemd service
   ansible.builtin.stat:
-    path: "{{ devture_systemd_docker_base_systemd_path }}/{{ devture_traefik_certs_dumper_identifier }}.service"
-  register: devture_traefik_certs_dumper_service_stat
+    path: "{{ devture_systemd_docker_base_systemd_path }}/{{ traefik_certs_dumper_identifier }}.service"
+  register: traefik_certs_dumper_service_stat
 
-- when: devture_traefik_certs_dumper_service_stat.stat.exists | bool
+- when: traefik_certs_dumper_service_stat.stat.exists | bool
   block:
     - name: Ensure Traefik is stopped
       ansible.builtin.service:
-        name: "{{ devture_traefik_certs_dumper_identifier }}"
+        name: "{{ traefik_certs_dumper_identifier }}"
         state: stopped
         daemon_reload: true
 
     - name: Ensure Traefik certs dumper systemd service doesn't exist
       ansible.builtin.file:
-        path: "{{ devture_systemd_docker_base_systemd_path }}/{{ devture_traefik_certs_dumper_identifier }}.service"
+        path: "{{ devture_systemd_docker_base_systemd_path }}/{{ traefik_certs_dumper_identifier }}.service"
         state: absent
 
     - name: Remove Traefik certs dumper directory is removed
       ansible.builtin.file:
-        path: "{{ devture_traefik_certs_dumper_base_path }}"
+        path: "{{ traefik_certs_dumper_base_path }}"
         state: absent

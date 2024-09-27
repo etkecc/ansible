@@ -1,10 +1,10 @@
 ---
 
 - block:
-    - when: devture_traefik_certs_dumper_enabled | bool
+    - when: traefik_certs_dumper_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
 
-    - when: devture_traefik_certs_dumper_enabled | bool
+    - when: traefik_certs_dumper_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
   tags:
     - setup-all
@@ -13,7 +13,7 @@
     - install-traefik-certs-dumper
 
 - block:
-    - when: not devture_traefik_certs_dumper_enabled | bool
+    - when: not traefik_certs_dumper_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
   tags:
     - setup-all

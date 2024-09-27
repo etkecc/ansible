@@ -8,7 +8,7 @@ echo 'Copying traefik-certs-dumper certificates ('$in') to '$out' via '$staging
 
 cp -ar $in/. $staging/.
 
-chown -R {{ devture_traefik_certs_dumper_dumped_certificates_dir_owner }}:{{ devture_traefik_certs_dumper_dumped_certificates_dir_group }} $staging
+chown -R {{ traefik_certs_dumper_dumped_certificates_dir_owner }}:{{ traefik_certs_dumper_dumped_certificates_dir_group }} $staging
 
 rm -rf $out/*
 

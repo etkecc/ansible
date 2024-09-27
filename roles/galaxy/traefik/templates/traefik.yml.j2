@@ -3,81 +3,81 @@
 #
 # To extend this:
 # - tweak the individual variables
-# - use `devture_traefik_configuration_extension_yaml` to override statically defined values or introduce new ones
+# - use `traefik_configuration_extension_yaml` to override statically defined values or introduce new ones
 global:
   checkNewVersion: false
   sendAnonymousUsage: false
 
 log:
-  level: {{ devture_traefik_config_log_level | to_json }}
+  level: {{ traefik_config_log_level | to_json }}
 
-{% if devture_traefik_config_accessLog_enabled %}
+{% if traefik_config_accessLog_enabled %}
 accessLog: {}
 {% endif %}
 
 api:
-  dashboard: {{ devture_traefik_config_api_dashboard | to_json }}
+  dashboard: {{ traefik_config_api_dashboard | to_json }}
 
 entryPoints:
 
-{% if devture_traefik_config_entrypoint_web_enabled %}
+{% if traefik_config_entrypoint_web_enabled %}
   web:
-    address: {{ devture_traefik_config_entrypoint_web_address | to_json }}
+    address: {{ traefik_config_entrypoint_web_address | to_json }}
 
-    {% if devture_traefik_config_entrypoint_web_forwardedHeaders_enabled %}
+    {% if traefik_config_entrypoint_web_forwardedHeaders_enabled %}
     forwardedHeaders:
-      {% if devture_traefik_config_entrypoint_web_forwardedHeaders_trustedIPs | length > 0 %}
-      trustedIPs: {{ devture_traefik_config_entrypoint_web_forwardedHeaders_trustedIPs | to_json }}
+      {% if traefik_config_entrypoint_web_forwardedHeaders_trustedIPs | length > 0 %}
+      trustedIPs: {{ traefik_config_entrypoint_web_forwardedHeaders_trustedIPs | to_json }}
       {% endif %}
-      {% if devture_traefik_config_entrypoint_web_forwardedHeaders_insecure %}
+      {% if traefik_config_entrypoint_web_forwardedHeaders_insecure %}
       insecure: true
       {% endif %}
     {% endif %}
 
-    {% if devture_traefik_config_entrypoint_web_to_web_secure_redirection_enabled %}
+    {% if traefik_config_entrypoint_web_to_web_secure_redirection_enabled %}
     http:
       redirections:
         entryPoint:
-          to: {{ devture_traefik_config_entrypoint_web_to_web_secure_redirection_to | to_json }}
-          scheme: {{ devture_traefik_config_entrypoint_web_to_web_secure_redirection_scheme | to_json }}
+          to: {{ traefik_config_entrypoint_web_to_web_secure_redirection_to | to_json }}
+          scheme: {{ traefik_config_entrypoint_web_to_web_secure_redirection_scheme | to_json }}
     {% endif %}
 {% endif %}
 
-{% if devture_traefik_config_entrypoint_web_secure_enabled %}
-  {{ devture_traefik_config_entrypoint_web_secure_name }}:
-    address: {{ devture_traefik_config_entrypoint_web_secure_address | to_json }}
+{% if traefik_config_entrypoint_web_secure_enabled %}
+  {{ traefik_config_entrypoint_web_secure_name }}:
+    address: {{ traefik_config_entrypoint_web_secure_address | to_json }}
 
-    {% if devture_traefik_config_entrypoint_web_secure_http3_enabled %}
-    http3: {{ devture_traefik_config_entrypoint_web_secure_http3_config | to_json }}
+    {% if traefik_config_entrypoint_web_secure_http3_enabled %}
+    http3: {{ traefik_config_entrypoint_web_secure_http3_config | to_json }}
     {% endif %}
 
-    {% if devture_traefik_config_entrypoint_web_secure_forwardedHeaders_enabled %}
+    {% if traefik_config_entrypoint_web_secure_forwardedHeaders_enabled %}
     forwardedHeaders:
-      {% if devture_traefik_config_entrypoint_web_secure_forwardedHeaders_trustedIPs | length > 0 %}
-      trustedIPs: {{ devture_traefik_config_entrypoint_web_secure_forwardedHeaders_trustedIPs | to_json }}
+      {% if traefik_config_entrypoint_web_secure_forwardedHeaders_trustedIPs | length > 0 %}
+      trustedIPs: {{ traefik_config_entrypoint_web_secure_forwardedHeaders_trustedIPs | to_json }}
       {% endif %}
-      {% if devture_traefik_config_entrypoint_web_secure_forwardedHeaders_insecure %}
+      {% if traefik_config_entrypoint_web_secure_forwardedHeaders_insecure %}
       insecure: true
       {% endif %}
     {% endif %}
 {% endif %}
 
-{% if devture_traefik_config_entrypoint_metrics_enabled %}
-  {{ devture_traefik_config_entrypoint_metrics_name }}:
-    address: {{ devture_traefik_config_entrypoint_metrics_address | to_json }}
+{% if traefik_config_entrypoint_metrics_enabled %}
+  {{ traefik_config_entrypoint_metrics_name }}:
+    address: {{ traefik_config_entrypoint_metrics_address | to_json }}
 
-    {% if devture_traefik_config_entrypoint_metrics_forwardedHeaders_enabled %}
+    {% if traefik_config_entrypoint_metrics_forwardedHeaders_enabled %}
     forwardedHeaders:
-      {% if devture_traefik_config_entrypoint_metrics_forwardedHeaders_trustedIPs | length > 0 %}
-      trustedIPs: {{ devture_traefik_config_entrypoint_metrics_forwardedHeaders_trustedIPs | to_json }}
+      {% if traefik_config_entrypoint_metrics_forwardedHeaders_trustedIPs | length > 0 %}
+      trustedIPs: {{ traefik_config_entrypoint_metrics_forwardedHeaders_trustedIPs | to_json }}
       {% endif %}
-      {% if devture_traefik_config_entrypoint_metrics_forwardedHeaders_insecure %}
+      {% if traefik_config_entrypoint_metrics_forwardedHeaders_insecure %}
       insecure: true
       {% endif %}
     {% endif %}
 {% endif %}
 
-{% for additional_entrypoint in devture_traefik_additional_entrypoints %}
+{% for additional_entrypoint in traefik_additional_entrypoints %}
   {% set additional_entrypoint_config = ({
 	  'address': ':' + (additional_entrypoint.port | string),
     }) | combine(additional_entrypoint.config)
@@ -88,35 +88,35 @@ entryPoints:
 
 certificatesResolvers:
 
-{% if devture_traefik_config_certificatesResolvers_acme_enabled %}
-  {{ devture_traefik_config_certificatesResolvers_acme_name }}:
+{% if traefik_config_certificatesResolvers_acme_enabled %}
+  {{ traefik_config_certificatesResolvers_acme_name }}:
     acme:
-      email: {{ devture_traefik_config_certificatesResolvers_acme_email | to_json }}
-      storage: {{ devture_traefik_config_certificatesResolvers_acme_storage | to_json }}
-      caServer: {{ devture_traefik_config_certificatesResolvers_acme_caServer | to_json }}
-      {% if devture_traefik_config_certificatesResolvers_acme_httpChallenge_enabled %}
+      email: {{ traefik_config_certificatesResolvers_acme_email | to_json }}
+      storage: {{ traefik_config_certificatesResolvers_acme_storage | to_json }}
+      caServer: {{ traefik_config_certificatesResolvers_acme_caServer | to_json }}
+      {% if traefik_config_certificatesResolvers_acme_httpChallenge_enabled %}
       httpChallenge:
-        entrypoint: {{ devture_traefik_config_certificatesResolvers_acme_httpChallenge_entrypoint | to_json }}
-      {% elif devture_traefik_config_certificatesResolvers_acme_dnsChallenge_enabled %}
+        entrypoint: {{ traefik_config_certificatesResolvers_acme_httpChallenge_entrypoint | to_json }}
+      {% elif traefik_config_certificatesResolvers_acme_dnsChallenge_enabled %}
       dnsChallenge:
-        provider: {{ devture_traefik_config_certificatesResolvers_acme_dnsChallenge_provider | to_json }}
-        {% if devture_traefik_config_certificatesResolvers_acme_dnsChallenge_delayBeforeCheck %}
-        delayBeforeCheck: {{ devture_traefik_config_certificatesResolvers_acme_dnsChallenge_delayBeforeCheck | to_json }}
+        provider: {{ traefik_config_certificatesResolvers_acme_dnsChallenge_provider | to_json }}
+        {% if traefik_config_certificatesResolvers_acme_dnsChallenge_delayBeforeCheck %}
+        delayBeforeCheck: {{ traefik_config_certificatesResolvers_acme_dnsChallenge_delayBeforeCheck | to_json }}
         {% endif %}
-        resolvers: {{ devture_traefik_config_certificatesResolvers_acme_dnsChallenge_resolvers | to_json }}
+        resolvers: {{ traefik_config_certificatesResolvers_acme_dnsChallenge_resolvers | to_json }}
       {% endif %}
 {% endif %}
 
-{% if devture_traefik_config_metrics_prometheus_enabled %}
+{% if traefik_config_metrics_prometheus_enabled %}
 metrics:
   prometheus:
-    entryPoint: {{ devture_traefik_config_metrics_prometheus_entrypoint | to_json }}
+    entryPoint: {{ traefik_config_metrics_prometheus_entrypoint | to_json }}
 {% endif %}
 
 providers:
   docker:
     exposedByDefault: false
-    network: {{ devture_traefik_config_providers_docker_network | to_json }}
-    endpoint: {{ devture_traefik_config_providers_docker_endpoint | to_json }}
+    network: {{ traefik_config_providers_docker_network | to_json }}
+    endpoint: {{ traefik_config_providers_docker_endpoint | to_json }}
   file:
     filename: /config/provider.yml

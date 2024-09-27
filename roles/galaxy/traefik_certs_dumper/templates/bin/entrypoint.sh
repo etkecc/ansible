@@ -8,12 +8,12 @@
 # - traefik-certs-dumper does not choke when Certificates is null - it just dumps nothing
 # - we use `--watch`, so we whenever Certificates changes to not null, it will be dumped again
 
-/certs-dumper-bin/wait-for-file.sh /in/{{ devture_traefik_certs_dumper_ssl_acme_file_name }} \
+/certs-dumper-bin/wait-for-file.sh /in/{{ traefik_certs_dumper_ssl_acme_file_name }} \
 && \
 /usr/bin/traefik-certs-dumper file \
 --version v2 \
---source /in/{{ devture_traefik_certs_dumper_ssl_acme_file_name }} \
+--source /in/{{ traefik_certs_dumper_ssl_acme_file_name }} \
 --dest /intermediate \
 --watch \
---post-hook "{{ devture_traefik_certs_dumper_container_post_hook }}" \
---domain-subdir {{ devture_traefik_certs_dumper_container_process_extra_arguments | join(" ") }}
+--post-hook "{{ traefik_certs_dumper_container_post_hook }}" \
+--domain-subdir {{ traefik_certs_dumper_container_process_extra_arguments | join(" ") }}

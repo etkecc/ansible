@@ -1,42 +1,42 @@
 ---
 
-- name: Fail if util called incorrectly (missing devture_postgres_db_migration_request)
+- name: Fail if util called incorrectly (missing postgres_db_migration_request)
   ansible.builtin.fail:
-    msg: "The `devture_postgres_db_migration_request` variable needs to be provided to this util."
-  when: "devture_postgres_db_migration_request is not defined"
+    msg: "The `postgres_db_migration_request` variable needs to be provided to this util."
+  when: "postgres_db_migration_request is not defined"
 
-- name: Fail if util called incorrectly (invalid devture_postgres_db_migration_request)
+- name: Fail if util called incorrectly (invalid postgres_db_migration_request)
   ansible.builtin.fail:
-    msg: "The `devture_postgres_db_migration_request` variable needs to contain `{{ item }}`."
+    msg: "The `postgres_db_migration_request` variable needs to contain `{{ item }}`."
   with_items:
     - src
     - dst
     - caller
     - engine_variable_name
     - systemd_services_to_stop
-  when: "item not in devture_postgres_db_migration_request"
+  when: "item not in postgres_db_migration_request"
 
 - name: Check if the provided source database file exists
   ansible.builtin.stat:
-    path: "{{ devture_postgres_db_migration_request.src }}"
-  register: devture_postgres_db_migration_request_src_stat_result
+    path: "{{ postgres_db_migration_request.src }}"
+  register: postgres_db_migration_request_src_stat_result
 
 - name: Fail if provided source database file doesn't exist
   ansible.builtin.fail:
-    msg: "File cannot be found on the server at {{ devture_postgres_db_migration_request.src }}"
-  when: "not devture_postgres_db_migration_request_src_stat_result.stat.exists"
+    msg: "File cannot be found on the server at {{ postgres_db_migration_request.src }}"
+  when: "not postgres_db_migration_request_src_stat_result.stat.exists"
 
-- when: "devture_postgres_pgloader_container_image_self_build | bool"
+- when: "postgres_pgloader_container_image_self_build | bool"
   block:
     - name: Ensure pgloader repository is present on self-build
       ansible.builtin.git:
-        repo: "{{ devture_postgres_pgloader_container_image_self_build_repo }}"
-        dest: "{{ devture_postgres_pgloader_container_image_self_build_src_path }}"
-        version: "{{ devture_postgres_pgloader_container_image_self_build_repo_branch }}"
+        repo: "{{ postgres_pgloader_container_image_self_build_repo }}"
+        dest: "{{ postgres_pgloader_container_image_self_build_src_path }}"
+        version: "{{ postgres_pgloader_container_image_self_build_repo_branch }}"
         force: "yes"
       become: true
-      become_user: "{{ devture_postgres_uid }}"
-      register: devture_postgres_pgloader_git_pull_results
+      become_user: "{{ postgres_uid }}"
+      register: postgres_pgloader_git_pull_results
 
     # If `stable` is used, we hit an error when processing /opt/src/pgloader/build/quicklisp/dists/quicklisp/software/uax-15-20201220-git/data/CompositionExclusions.txt:
     # > the octet sequence #(194) cannot be decoded
@@ -46,7 +46,7 @@
     # Although we're not using the dimitri/pgloader image, the one we're using suffers from the same problem.
     - name: Switch pgloader base image from Debian stable (likely 10.x/Buster) to Bullseye
       ansible.builtin.lineinfile:
-        path: "{{ devture_postgres_pgloader_container_image_self_build_src_path }}/Dockerfile"
+        path: "{{ postgres_pgloader_container_image_self_build_src_path }}/Dockerfile"
         regexp: "{{ item.match }}"
         line: "{{ item.replace }}"
       with_items:
@@ -57,22 +57,22 @@
 
     - name: Ensure pgloader container image is built
       community.docker.docker_image:
-        name: "{{ devture_postgres_pgloader_docker_image }}"
+        name: "{{ postgres_pgloader_docker_image }}"
         source: build
-        force_source: "{{ devture_postgres_pgloader_git_pull_results.changed if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
-        force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else devture_postgres_pgloader_git_pull_results.changed }}"
+        force_source: "{{ postgres_pgloader_git_pull_results.changed if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+        force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else postgres_pgloader_git_pull_results.changed }}"
         build:
           dockerfile: Dockerfile
-          path: "{{ devture_postgres_pgloader_container_image_self_build_src_path }}"
+          path: "{{ postgres_pgloader_container_image_self_build_src_path }}"
           pull: true
 
 - name: Ensure pgloader container image is pulled
   community.docker.docker_image:
-    name: "{{ devture_postgres_pgloader_docker_image }}"
+    name: "{{ postgres_pgloader_docker_image }}"
     source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
-    force_source: "{{ devture_postgres_pgloader_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
-    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else devture_postgres_pgloader_container_image_force_pull }}"
-  when: "not devture_postgres_pgloader_container_image_self_build"
+    force_source: "{{ postgres_pgloader_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else postgres_pgloader_container_image_force_pull }}"
+  when: "not postgres_pgloader_container_image_self_build"
 
 # Defaults
 
@@ -86,17 +86,17 @@
 # Postgres is most likely started already
 - name: Ensure Postgres is started
   ansible.builtin.service:
-    name: "{{ devture_postgres_identifier }}"
+    name: "{{ postgres_identifier }}"
     state: started
     daemon_reload: true
-  register: devture_postgres_ensure_started_result
+  register: postgres_ensure_started_result
 
 - name: Wait a bit, so that Postgres can start
   ansible.builtin.wait_for:
     timeout: "{{ postgres_start_wait_time }}"
   delegate_to: 127.0.0.1
   become: false
-  when: "devture_postgres_ensure_started_result.changed | bool"
+  when: "postgres_ensure_started_result.changed | bool"
 
 # We only stop services here, leaving it to the caller to start them later.
 #
@@ -111,53 +111,53 @@
     name: "{{ item }}"
     state: stopped
   failed_when: false
-  with_items: "{{ devture_postgres_db_migration_request.systemd_services_to_stop }}"
+  with_items: "{{ postgres_db_migration_request.systemd_services_to_stop }}"
 
-- name: Import {{ devture_postgres_db_migration_request.engine_old }} database from {{ devture_postgres_db_migration_request.src }} into Postgres  # noqa name[template]
+- name: Import {{ postgres_db_migration_request.engine_old }} database from {{ postgres_db_migration_request.src }} into Postgres  # noqa name[template]
   ansible.builtin.command:
     cmd: >-
       {{ devture_systemd_docker_base_host_command_docker }} run
       --rm
-      --user={{ devture_postgres_uid }}:{{ devture_postgres_gid }}
+      --user={{ postgres_uid }}:{{ postgres_gid }}
       --cap-drop=ALL
-      --network={{ devture_postgres_container_network }}
-      --mount type=bind,src={{ devture_postgres_db_migration_request.src }},dst=/in.db,ro
+      --network={{ postgres_container_network }}
+      --mount type=bind,src={{ postgres_db_migration_request.src }},dst=/in.db,ro
       --entrypoint=/bin/sh
-      {{ devture_postgres_pgloader_docker_image }}
+      {{ postgres_pgloader_docker_image }}
       -c
-      'pgloader {{ devture_postgres_db_migration_request.pgloader_options | default([]) | join(' ') }} /in.db {{ devture_postgres_db_migration_request.dst }}'
-  register: devture_postgres_migrate_db_to_postgres_import_result
-  changed_when: devture_postgres_migrate_db_to_postgres_import_result.rc == 0
+      'pgloader {{ postgres_db_migration_request.pgloader_options | default([]) | join(' ') }} /in.db {{ postgres_db_migration_request.dst }}'
+  register: postgres_migrate_db_to_postgres_import_result
+  changed_when: postgres_migrate_db_to_postgres_import_result.rc == 0
 
-- when: "devture_postgres_db_migration_request.additional_psql_statements_list | default([]) | length > 0"
+- when: "postgres_db_migration_request.additional_psql_statements_list | default([]) | length > 0"
   block:
     - ansible.builtin.include_role:
         name: "{{ ansible_role_name }}"
         tasks_from: detect_existing_postgres_version
 
     - ansible.builtin.set_fact:
-        devture_postgres_container_image_to_use: "{{ devture_postgres_container_image_latest if devture_postgres_detected_version_corresponding_docker_image == '' else devture_postgres_detected_version_corresponding_docker_image }}"
+        postgres_container_image_to_use: "{{ postgres_container_image_latest if postgres_detected_version_corresponding_docker_image == '' else postgres_detected_version_corresponding_docker_image }}"
 
     - name: Execute additional Postgres SQL migration statements
       ansible.builtin.command:
         cmd: >-
           {{ devture_systemd_docker_base_host_command_docker }} run
           --rm
-          --user={{ devture_postgres_uid }}:{{ devture_postgres_gid }}
+          --user={{ postgres_uid }}:{{ postgres_gid }}
           --cap-drop=ALL
-          --env-file={{ devture_postgres_base_path }}/env-postgres-psql
-          --network={{ devture_postgres_container_network }}
-          {{ devture_postgres_container_image_to_use }}
-          psql --host={{ devture_postgres_identifier }} --dbname={{ devture_postgres_db_migration_request.additional_psql_statements_db_name }} --command='{{ item }}'
-      with_items: "{{ devture_postgres_db_migration_request.additional_psql_statements_list }}"
-      register: devture_postgres_migrate_db_to_postgres_additional_queries_result
-      changed_when: devture_postgres_migrate_db_to_postgres_additional_queries_result.rc == 0
+          --env-file={{ postgres_base_path }}/env-postgres-psql
+          --network={{ postgres_container_network }}
+          {{ postgres_container_image_to_use }}
+          psql --host={{ postgres_identifier }} --dbname={{ postgres_db_migration_request.additional_psql_statements_db_name }} --command='{{ item }}'
+      with_items: "{{ postgres_db_migration_request.additional_psql_statements_list }}"
+      register: postgres_migrate_db_to_postgres_additional_queries_result
+      changed_when: postgres_migrate_db_to_postgres_additional_queries_result.rc == 0
 
-- name: Archive {{ devture_postgres_db_migration_request.engine_old }} database ({{ devture_postgres_db_migration_request.src }} -> {{ devture_postgres_db_migration_request.src }}.backup)  # noqa name[template]
+- name: Archive {{ postgres_db_migration_request.engine_old }} database ({{ postgres_db_migration_request.src }} -> {{ postgres_db_migration_request.src }}.backup)  # noqa name[template]
   ansible.builtin.command:
-    cmd: "mv {{ devture_postgres_db_migration_request.src }} {{ devture_postgres_db_migration_request.src }}.backup"
-  register: devture_postgres_migrate_db_to_postgres_move_result
-  changed_when: devture_postgres_migrate_db_to_postgres_move_result.rc == 0
+    cmd: "mv {{ postgres_db_migration_request.src }} {{ postgres_db_migration_request.src }}.backup"
+  register: postgres_migrate_db_to_postgres_move_result
+  changed_when: postgres_migrate_db_to_postgres_move_result.rc == 0
 
 - name: Inject result
   ansible.builtin.set_fact:
@@ -166,12 +166,12 @@
         devture_playbook_runtime_messages_list | default([])
         +
         [
-          "NOTE: Your {{ devture_postgres_db_migration_request.engine_old }} database file has been imported into Postgres. The original database file has been moved from `{{ devture_postgres_db_migration_request.src }}` to `{{ devture_postgres_db_migration_request.src }}.backup`. When you've confirmed that the import went well and everything works, you should be able to safely delete this file."
+          "NOTE: Your {{ postgres_db_migration_request.engine_old }} database file has been imported into Postgres. The original database file has been moved from `{{ postgres_db_migration_request.src }}` to `{{ postgres_db_migration_request.src }}.backup`. When you've confirmed that the import went well and everything works, you should be able to safely delete this file."
         ]
       }}
 
-- when: "devture_postgres_ensure_started_result.changed | bool"
+- when: "postgres_ensure_started_result.changed | bool"
   name: Ensure Postgres is stopped (if it previously was)
   ansible.builtin.service:
-    name: "{{ devture_postgres_identifier }}"
+    name: "{{ postgres_identifier }}"
     state: stopped

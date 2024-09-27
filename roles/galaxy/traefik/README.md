@@ -13,7 +13,7 @@ Example playbook:
   roles:
     - role: galaxy/com.devture.ansible.role.systemd_docker_base
 
-    - role: galaxy/com.devture.ansible.role.traefik
+    - role: galaxy/traefik
 
     - role: another_role
 ```
@@ -21,10 +21,10 @@ Example playbook:
 Example playbook configuration (`group_vars/servers` or other):
 
 ```yaml
-devture_traefik_container_network: "{{ my_container_network }}"
+traefik_container_network: "{{ my_container_network }}"
 
-devture_traefik_uid: "{{ my_uid }}"
-devture_traefik_gid: "{{ my_gid }}"
+traefik_uid: "{{ my_uid }}"
+traefik_gid: "{{ my_gid }}"
 ```
 
 ## Security hardening
@@ -53,14 +53,14 @@ devture_container_socket_proxy_api_containers_enabled: true
 
 # Base Traefik configuration here (see above).
 
-devture_traefik_config_providers_docker_endpoint: "{{ devture_container_socket_proxy_endpoint if devture_container_socket_proxy_enabled else 'unix:///var/run/docker.sock' }}"
+traefik_config_providers_docker_endpoint: "{{ devture_container_socket_proxy_endpoint if devture_container_socket_proxy_enabled else 'unix:///var/run/docker.sock' }}"
 
-devture_traefik_container_additional_networks: |
+traefik_container_additional_networks: |
   {{
     ([devture_container_socket_proxy_container_network] if devture_container_socket_proxy_enabled else [])
   }}
 
-devture_traefik_systemd_required_services_list: |
+traefik_systemd_required_services_list: |
   {{
     (['docker.service'])
     +

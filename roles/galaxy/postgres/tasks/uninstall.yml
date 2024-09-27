@@ -2,31 +2,31 @@
 
 - name: Check existence of Postgres systemd service
   ansible.builtin.stat:
-    path: "{{ devture_systemd_docker_base_systemd_path }}/{{ devture_postgres_identifier }}.service"
-  register: devture_postgres_service_stat
+    path: "{{ devture_systemd_docker_base_systemd_path }}/{{ postgres_identifier }}.service"
+  register: postgres_service_stat
 
-- when: devture_postgres_service_stat.stat.exists | bool
+- when: postgres_service_stat.stat.exists | bool
   block:
     - name: Ensure Postgres is stopped
       ansible.builtin.service:
-        name: "{{ devture_postgres_identifier }}"
+        name: "{{ postgres_identifier }}"
         state: stopped
         daemon_reload: true
 
     - name: Ensure Postgres systemd service doesn't exist
       ansible.builtin.file:
-        path: "{{ devture_systemd_docker_base_systemd_path }}/{{ devture_postgres_identifier }}.service"
+        path: "{{ devture_systemd_docker_base_systemd_path }}/{{ postgres_identifier }}.service"
         state: absent
 
     - name: Remove Postgres scripts
       ansible.builtin.file:
-        path: "{{ devture_postgres_bin_path }}"
+        path: "{{ postgres_bin_path }}"
         state: absent
 
 - name: Check existence of Postgres local data path
   ansible.builtin.stat:
-    path: "{{ devture_postgres_data_path }}"
-  register: devture_postgres_data_path_stat
+    path: "{{ postgres_data_path }}"
+  register: postgres_data_path_stat
 
 # We just want to notify the user. Deleting data is too destructive.
 - name: Inject warning if Postgres local data remains
@@ -36,7 +36,7 @@
         devture_playbook_runtime_messages_list | default([])
         +
         [
-          "NOTE: You are not using a local PostgreSQL database, but some old data remains from before in `{{ devture_postgres_data_path }}`. Feel free to delete it."
+          "NOTE: You are not using a local PostgreSQL database, but some old data remains from before in `{{ postgres_data_path }}`. Feel free to delete it."
         ]
       }}
-  when: devture_postgres_data_path_stat.stat.exists | bool
+  when: postgres_data_path_stat.stat.exists | bool

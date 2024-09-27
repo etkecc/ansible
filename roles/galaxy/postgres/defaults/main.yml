@@ -1,65 +1,65 @@
 ---
 # Project source code URL: https://github.com/postgres/postgres
 
-devture_postgres_enabled: true
+postgres_enabled: true
 
-# devture_postgres_identifier controls the identifer of this Postgres instance, which influences:
+# postgres_identifier controls the identifer of this Postgres instance, which influences:
 # - the default storage path
 # - the names of systemd services
 # - the names of various helper scripts
 # - the names of temporary files
-devture_postgres_identifier: 'devture-postgres'
+postgres_identifier: 'postgres'
 
-devture_postgres_base_path: "/{{ devture_postgres_identifier }}"
-devture_postgres_data_path: "{{ devture_postgres_base_path }}/data"
-devture_postgres_bin_path: "{{ devture_postgres_base_path }}/bin"
+postgres_base_path: "/{{ postgres_identifier }}"
+postgres_data_path: "{{ postgres_base_path }}/data"
+postgres_bin_path: "{{ postgres_base_path }}/bin"
 
-devture_postgres_uid: ''
-devture_postgres_gid: ''
+postgres_uid: ''
+postgres_gid: ''
 
-devture_postgres_connection_hostname: "{{ devture_postgres_identifier }}"
-devture_postgres_connection_port: 5432
-devture_postgres_connection_username: "root"
-devture_postgres_connection_password: ""
-devture_postgres_db_name: "main"
+postgres_connection_hostname: "{{ postgres_identifier }}"
+postgres_connection_port: 5432
+postgres_connection_username: "root"
+postgres_connection_password: ""
+postgres_db_name: "main"
 
-devture_postgres_default_lc_collate: C
-devture_postgres_default_lc_type: C
-devture_postgres_default_encoding: UTF8
+postgres_default_lc_collate: C
+postgres_default_lc_type: C
+postgres_default_encoding: UTF8
 
 # pgtune.leopard.in.ua implementation in ansible, based on https://github.com/le0pard/pgtune/blob/master/src/features/configuration/configurationSlice.js
 # The following block calculates optimal defaults, based on server's CPU and RAM, all calculations are in kb
-devture_postgres_memtotal_kb: "{{ ansible_memtotal_mb*1024|int }}"
-devture_postgres_data_storage: ssd # possible values: ssd, hdd
-devture_postgres_max_connections: 200
-devture_postgres_shared_buffers: "{{ devture_postgres_memtotal_kb|int/4 }}"
-devture_postgres_effective_cache_size: "{{ (devture_postgres_memtotal_kb|int*3)/4 }}"
-devture_postgres_maintenance_work_mem: "{{ 2097152 if (devture_postgres_memtotal_kb|int/16)/1024 >= 2048 else devture_postgres_memtotal_kb|int/16 }}"
-devture_postgres_checkpoint_completion_target: 0.9
-devture_postgres_wal_buffers: "{{ 16384 if ((devture_postgres_shared_buffers|int*3)/100)/1024 >= 16 else devture_postgres_shared_buffers|int }}" # 16mb
-devture_postgres_min_wal_size: 1048576 # 1gb
-devture_postgres_max_wal_size: 4194304 # 4gb
-devture_postgres_default_statistics_target: 100
-devture_postgres_random_page_cost: "{{ 1.1 if devture_postgres_data_storage == 'ssd' else 4 }}"
-devture_postgres_effective_io_concurrency: "{{ 200 if devture_postgres_data_storage == 'ssd' else 2 }}"
-devture_postgres_max_worker_processes: "{{ ansible_processor_nproc }}"
-devture_postgres_max_parallel_workers: "{{ ansible_processor_nproc }}"
-devture_postgres_max_parallel_workers_per_gather: "{{ (4 if ansible_processor_nproc/2 > 4 else ansible_processor_nproc|int/2) | round(0, 'ceil') | int }}"
-devture_postgres_max_parallel_maintenance_workers: "{{ (4 if ansible_processor_nproc/2 > 4 else ansible_processor_nproc|int/2) | round(0, 'ceil') | int }}"
-devture_postgres_work_mem_raw: "{{ ((devture_postgres_memtotal_kb|int - devture_postgres_shared_buffers|int)/(devture_postgres_max_connections|int*3))/devture_postgres_max_parallel_workers_per_gather|int }}"
-devture_postgres_work_mem: "{{ 64 if devture_postgres_work_mem_raw|int <= 64 else devture_postgres_work_mem_raw|int }}"
-devture_postgres_huge_pages: "{{ 'off' if devture_postgres_memtotal_kb|int/1024/1024 < 32 else 'try' }}"
+postgres_memtotal_kb: "{{ ansible_memtotal_mb*1024|int }}"
+postgres_data_storage: ssd # possible values: ssd, hdd
+postgres_max_connections: 200
+postgres_shared_buffers: "{{ postgres_memtotal_kb|int/4 }}"
+postgres_effective_cache_size: "{{ (postgres_memtotal_kb|int*3)/4 }}"
+postgres_maintenance_work_mem: "{{ 2097152 if (postgres_memtotal_kb|int/16)/1024 >= 2048 else postgres_memtotal_kb|int/16 }}"
+postgres_checkpoint_completion_target: 0.9
+postgres_wal_buffers: "{{ 16384 if ((postgres_shared_buffers|int*3)/100)/1024 >= 16 else postgres_shared_buffers|int }}" # 16mb
+postgres_min_wal_size: 1048576 # 1gb
+postgres_max_wal_size: 4194304 # 4gb
+postgres_default_statistics_target: 100
+postgres_random_page_cost: "{{ 1.1 if postgres_data_storage == 'ssd' else 4 }}"
+postgres_effective_io_concurrency: "{{ 200 if postgres_data_storage == 'ssd' else 2 }}"
+postgres_max_worker_processes: "{{ ansible_processor_nproc }}"
+postgres_max_parallel_workers: "{{ ansible_processor_nproc }}"
+postgres_max_parallel_workers_per_gather: "{{ (4 if ansible_processor_nproc/2 > 4 else ansible_processor_nproc|int/2) | round(0, 'ceil') | int }}"
+postgres_max_parallel_maintenance_workers: "{{ (4 if ansible_processor_nproc/2 > 4 else ansible_processor_nproc|int/2) | round(0, 'ceil') | int }}"
+postgres_work_mem_raw: "{{ ((postgres_memtotal_kb|int - postgres_shared_buffers|int)/(postgres_max_connections|int*3))/postgres_max_parallel_workers_per_gather|int }}"
+postgres_work_mem: "{{ 64 if postgres_work_mem_raw|int <= 64 else postgres_work_mem_raw|int }}"
+postgres_huge_pages: "{{ 'off' if postgres_memtotal_kb|int/1024/1024 < 32 else 'try' }}"
 
-# devture_postgres_initdb_args controls POSTGRES_INITDB_ARGS
-devture_postgres_initdb_args: '--lc-collate {{ devture_postgres_default_lc_collate }} --lc-ctype {{ devture_postgres_default_lc_type }} --encoding {{ devture_postgres_default_encoding }}'
+# postgres_initdb_args controls POSTGRES_INITDB_ARGS
+postgres_initdb_args: '--lc-collate {{ postgres_default_lc_collate }} --lc-ctype {{ postgres_default_lc_type }} --encoding {{ postgres_default_encoding }}'
 
-# devture_postgres_systemd_services_to_stop_for_maintenance_list specifies the list of systemd services to stop before upgrading or vacuuming (for certain vacuum operations).
+# postgres_systemd_services_to_stop_for_maintenance_list specifies the list of systemd services to stop before upgrading or vacuuming (for certain vacuum operations).
 # These services will be restarted after the operation completes.
-devture_postgres_systemd_services_to_stop_for_maintenance_list: "{{ devture_postgres_systemd_services_to_stop_for_maintenance_list_auto + devture_postgres_systemd_services_to_stop_for_maintenance_list_custom }}"
-# devture_postgres_systemd_services_to_stop_for_maintenance_list_auto is for use by the playbook that wraps this role.
-# For your own custom definitions, see devture_postgres_systemd_services_to_stop_for_maintenance_list_custom.
-devture_postgres_systemd_services_to_stop_for_maintenance_list_auto: []
-devture_postgres_systemd_services_to_stop_for_maintenance_list_custom: []
+postgres_systemd_services_to_stop_for_maintenance_list: "{{ postgres_systemd_services_to_stop_for_maintenance_list_auto + postgres_systemd_services_to_stop_for_maintenance_list_custom }}"
+# postgres_systemd_services_to_stop_for_maintenance_list_auto is for use by the playbook that wraps this role.
+# For your own custom definitions, see postgres_systemd_services_to_stop_for_maintenance_list_custom.
+postgres_systemd_services_to_stop_for_maintenance_list_auto: []
+postgres_systemd_services_to_stop_for_maintenance_list_custom: []
 
 # Controls whether this role will stop the Postgres systemd service it had started after having prepared it.
 #
@@ -77,14 +77,14 @@ devture_postgres_systemd_services_to_stop_for_maintenance_list_custom: []
 # We default this to false (don't stop), because it provides for a smoother installation experience with less stopping/starting.
 # Before this setting got introduced, we used to stop the service (if it's us that started it),
 # but this is now seen as wasteful work, which could delay the installation process.
-devture_postgres_systemd_service_stop_originally_stopped_after_preparation: false
+postgres_systemd_service_stop_originally_stopped_after_preparation: false
 
-# devture_postgres_vacuum_presets contains various presets related to vacuuming (`--tags=run-postgres-vacuum`).
+# postgres_vacuum_presets contains various presets related to vacuuming (`--tags=run-postgres-vacuum`).
 # See: https://www.postgresql.org/docs/current/sql-vacuum.html
 #
-# `stopServices` specifies whether services (see `devture_postgres_systemd_services_to_stop_for_maintenance_list`)
+# `stopServices` specifies whether services (see `postgres_systemd_services_to_stop_for_maintenance_list`)
 # need to be stopped before a vacuuming query runs.
-devture_postgres_vacuum_presets:
+postgres_vacuum_presets:
   vacuum-complete:
     query: "VACUUM FULL VERBOSE ANALYZE"
     stopsServices: true
@@ -101,78 +101,79 @@ devture_postgres_vacuum_presets:
     query: "ANALYZE VERBOSE"
     stopsServices: false
 
-# devture_postgres_vacuum_default_databases_list specifies a list of databases to vacuum when running `--tags=run-postgres-vacuum`,
+# postgres_vacuum_default_databases_list specifies a list of databases to vacuum when running `--tags=run-postgres-vacuum`,
 # unless a `postgres_vacuum_databases_list` extra argument is provided
-devture_postgres_vacuum_default_databases_list: |
+postgres_vacuum_default_databases_list: |
   {{
     (
-        ([devture_postgres_db_name])
+        ([postgres_db_name])
         +
-        (devture_postgres_managed_databases | map(attribute='name'))
+        (postgres_managed_databases | map(attribute='name'))
     ) | unique
   }}
 
-devture_postgres_architecture: amd64
+postgres_architecture: amd64
 
-devture_postgres_container_network: "{{ devture_postgres_identifier }}"
+postgres_container_network: "{{ postgres_identifier }}"
 
 docker_postgres_container_image_registry_prefix: "docker.io/"
 
-# devture_postgres_container_image_suffix controls whether we use Alpine-based images (`-alpine`) or the normal Debian-based images.
+# postgres_container_image_suffix controls whether we use Alpine-based images (`-alpine`) or the normal Debian-based images.
 # Alpine-based Postgres images are smaller and we usually prefer them, but they don't work on ARM32 (tested on a Raspberry Pi 3 running Raspbian 10.7).
 # On ARM32, `-alpine` images fail with the following error:
 # > LOG:  startup process (PID 37) was terminated by signal 11: Segmentation fault
-devture_postgres_container_image_suffix: "{{ '-alpine' if devture_postgres_architecture in ['amd64', 'arm64'] else '' }}"
+postgres_container_image_suffix: "{{ '-alpine' if postgres_architecture in ['amd64', 'arm64'] else '' }}"
 
-devture_postgres_container_image_v9: "{{ docker_postgres_container_image_registry_prefix }}postgres:9.6.24{{ devture_postgres_container_image_suffix }}"
-devture_postgres_container_image_v10: "{{ docker_postgres_container_image_registry_prefix }}postgres:10.23{{ devture_postgres_container_image_suffix }}"
-devture_postgres_container_image_v11: "{{ docker_postgres_container_image_registry_prefix }}postgres:11.22{{ devture_postgres_container_image_suffix }}"
-devture_postgres_container_image_v12: "{{ docker_postgres_container_image_registry_prefix }}postgres:12.20{{ devture_postgres_container_image_suffix }}"
-devture_postgres_container_image_v13: "{{ docker_postgres_container_image_registry_prefix }}postgres:13.16{{ devture_postgres_container_image_suffix }}"
-devture_postgres_container_image_v14: "{{ docker_postgres_container_image_registry_prefix }}postgres:14.13{{ devture_postgres_container_image_suffix }}"
-devture_postgres_container_image_v15: "{{ docker_postgres_container_image_registry_prefix }}postgres:15.8{{ devture_postgres_container_image_suffix }}"
-devture_postgres_container_image_v16: "{{ docker_postgres_container_image_registry_prefix }}postgres:16.4{{ devture_postgres_container_image_suffix }}"
-devture_postgres_container_image_latest: "{{ devture_postgres_container_image_v16 }}"
+postgres_container_image_v9: "{{ docker_postgres_container_image_registry_prefix }}postgres:9.6.24{{ postgres_container_image_suffix }}"
+postgres_container_image_v10: "{{ docker_postgres_container_image_registry_prefix }}postgres:10.23{{ postgres_container_image_suffix }}"
+postgres_container_image_v11: "{{ docker_postgres_container_image_registry_prefix }}postgres:11.22{{ postgres_container_image_suffix }}"
+postgres_container_image_v12: "{{ docker_postgres_container_image_registry_prefix }}postgres:12.20{{ postgres_container_image_suffix }}"
+postgres_container_image_v13: "{{ docker_postgres_container_image_registry_prefix }}postgres:13.16{{ postgres_container_image_suffix }}"
+postgres_container_image_v14: "{{ docker_postgres_container_image_registry_prefix }}postgres:14.13{{ postgres_container_image_suffix }}"
+postgres_container_image_v15: "{{ docker_postgres_container_image_registry_prefix }}postgres:15.8{{ postgres_container_image_suffix }}"
+postgres_container_image_v16: "{{ docker_postgres_container_image_registry_prefix }}postgres:16.4{{ postgres_container_image_suffix }}"
+postgres_container_image_v17: "{{ docker_postgres_container_image_registry_prefix }}postgres:17.0{{ postgres_container_image_suffix }}"
+postgres_container_image_latest: "{{ postgres_container_image_v17 }}"
 
 # This variable is assigned at runtime. Overriding its value has no effect.
-devture_postgres_container_image_to_use: '{{ devture_postgres_container_image_latest }}'
+postgres_container_image_to_use: '{{ postgres_container_image_latest }}'
 
-devture_postgres_container_image_force_pull: "{{ devture_postgres_container_image_to_use.endswith(':latest') }}"
+postgres_container_image_force_pull: "{{ postgres_container_image_to_use.endswith(':latest') }}"
 
 # Controls how long to wait for the container to stop gracefully before killing it.
 # Because `devture_systemd_docker_base_container_stop_grace_time_seconds` may be quite short and databases are more important to stop gracefully,
 # we default to at least 30 seconds.
-devture_postgres_container_stop_grace_time_seconds: "{{ [devture_systemd_docker_base_container_stop_grace_time_seconds, 30] | max }}"
+postgres_container_stop_grace_time_seconds: "{{ [devture_systemd_docker_base_container_stop_grace_time_seconds, 30] | max }}"
 
 # A list of extra arguments to pass to the container
-devture_postgres_container_extra_arguments: []
+postgres_container_extra_arguments: []
 
-# devture_postgres_postgres_process_extra_arguments_auto is for use by the playbook that wraps this role.
-# For your own custom definitions, see devture_postgres_postgres_process_extra_arguments_custom.
-devture_postgres_postgres_process_extra_arguments_auto: [
-  "-c 'max_connections={{ devture_postgres_max_connections|int }}'",
-  "-c 'shared_buffers={{ (devture_postgres_shared_buffers|int/1024)|int }}MB'",
-  "-c 'effective_cache_size={{ (devture_postgres_effective_cache_size|int/1024)|int }}MB'",
-  "-c 'maintenance_work_mem={{ (devture_postgres_maintenance_work_mem|int/1024)|int }}MB'",
-  "-c 'checkpoint_completion_target={{ devture_postgres_checkpoint_completion_target }}'",
-  "-c 'wal_buffers={{ (devture_postgres_wal_buffers|int/1024)|int }}MB'",
-  "-c 'default_statistics_target={{ devture_postgres_default_statistics_target|int }}'",
-  "-c 'random_page_cost={{ devture_postgres_random_page_cost }}'",
-  "-c 'effective_io_concurrency={{ devture_postgres_effective_io_concurrency|int }}'",
-  "-c 'work_mem={{ devture_postgres_work_mem|int }}kB'",
-  "-c 'huge_pages={{ devture_postgres_huge_pages }}'",
-  "-c 'min_wal_size={{ (devture_postgres_min_wal_size|int/1024)|int }}MB'",
-  "-c 'max_wal_size={{ (devture_postgres_max_wal_size|int/1024)|int }}MB'",
-  "-c 'max_worker_processes={{ devture_postgres_max_worker_processes|int }}'",
-  "-c 'max_parallel_workers={{ devture_postgres_max_parallel_workers|int }}'",
-  "-c 'max_parallel_workers_per_gather={{ devture_postgres_max_parallel_workers_per_gather|int }}'",
-  "-c 'max_parallel_maintenance_workers={{ devture_postgres_max_parallel_maintenance_workers|int }}'"
+# postgres_postgres_process_extra_arguments_auto is for use by the playbook that wraps this role.
+# For your own custom definitions, see postgres_postgres_process_extra_arguments_custom.
+postgres_postgres_process_extra_arguments_auto: [
+  "-c 'max_connections={{ postgres_max_connections|int }}'",
+  "-c 'shared_buffers={{ (postgres_shared_buffers|int/1024)|int }}MB'",
+  "-c 'effective_cache_size={{ (postgres_effective_cache_size|int/1024)|int }}MB'",
+  "-c 'maintenance_work_mem={{ (postgres_maintenance_work_mem|int/1024)|int }}MB'",
+  "-c 'checkpoint_completion_target={{ postgres_checkpoint_completion_target }}'",
+  "-c 'wal_buffers={{ (postgres_wal_buffers|int/1024)|int }}MB'",
+  "-c 'default_statistics_target={{ postgres_default_statistics_target|int }}'",
+  "-c 'random_page_cost={{ postgres_random_page_cost }}'",
+  "-c 'effective_io_concurrency={{ postgres_effective_io_concurrency|int }}'",
+  "-c 'work_mem={{ postgres_work_mem|int }}kB'",
+  "-c 'huge_pages={{ postgres_huge_pages }}'",
+  "-c 'min_wal_size={{ (postgres_min_wal_size|int/1024)|int }}MB'",
+  "-c 'max_wal_size={{ (postgres_max_wal_size|int/1024)|int }}MB'",
+  "-c 'max_worker_processes={{ postgres_max_worker_processes|int }}'",
+  "-c 'max_parallel_workers={{ postgres_max_parallel_workers|int }}'",
+  "-c 'max_parallel_workers_per_gather={{ postgres_max_parallel_workers_per_gather|int }}'",
+  "-c 'max_parallel_maintenance_workers={{ postgres_max_parallel_maintenance_workers|int }}'"
 ]
-devture_postgres_postgres_process_extra_arguments_custom: []
+postgres_postgres_process_extra_arguments_custom: []
 
 # A list of extra arguments to pass to the postgres process
 # e.g. "-c 'max_connections=200'"
-devture_postgres_process_extra_arguments: "{{ devture_postgres_postgres_process_extra_arguments_auto + devture_postgres_postgres_process_extra_arguments_custom }}"
+postgres_process_extra_arguments: "{{ postgres_postgres_process_extra_arguments_auto + postgres_postgres_process_extra_arguments_custom }}"
 
 # Controls whether the Postgres container exposes a port (tcp/5432 in the
 # container) that can be used to access the database from outside the container (e.g. with psql)
@@ -180,44 +181,44 @@ devture_postgres_process_extra_arguments: "{{ devture_postgres_postgres_process_
 # psql postgresql://username:password@localhost:<port>/database_name
 #
 # Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:5432"), or empty string to not expose.
-devture_postgres_container_postgres_bind_port: ""
+postgres_container_postgres_bind_port: ""
 
-devture_postgres_container_shm_size: "256m"
+postgres_container_shm_size: "256m"
 
-devture_postgres_systemd_required_services_list: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+postgres_systemd_required_services_list: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
 
 # A list of databases (and their credentials) that this role will create and manage on the server.
 #
-# `devture_postgres_managed_databases_auto` is managed by the playbook.
-# Your own definitions should go into `devture_postgres_managed_databases_additional`
-# See `devture_postgres_managed_databases_additional` for the correct syntax.
-devture_postgres_managed_databases: "{{ devture_postgres_managed_databases_auto + devture_postgres_managed_databases_additional }}"
+# `postgres_managed_databases_auto` is managed by the playbook.
+# Your own definitions should go into `postgres_managed_databases_additional`
+# See `postgres_managed_databases_additional` for the correct syntax.
+postgres_managed_databases: "{{ postgres_managed_databases_auto + postgres_managed_databases_additional }}"
 
 # Additional/managed database definitions managed by the playbook.
-# To add your own, use `devture_postgres_managed_databases_additional`
-devture_postgres_managed_databases_auto: []
+# To add your own, use `postgres_managed_databases_additional`
+postgres_managed_databases_auto: []
 
 # Your own additional/managed database definitions.
 #
-# devture_postgres_managed_databases_additional:
+# postgres_managed_databases_additional:
 #   - name: some_database
 #     username: some_username
 #     password: some_password
 #   - name: another_database
 #     username: another_username
 #     password: another_password
-devture_postgres_managed_databases_additional: []
+postgres_managed_databases_additional: []
 
 # A list of roles/users to avoid creating when importing (or upgrading) the database.
-# If a dump file contains the roles and they've also been created beforehand (see `devture_postgres_managed_databases`),
+# If a dump file contains the roles and they've also been created beforehand (see `postgres_managed_databases`),
 # importing would fail.
 # We either need to not create them or to ignore the `CREATE ROLE` statements in the dump.
-devture_postgres_import_roles_to_ignore: |
+postgres_import_roles_to_ignore: |
   {{
     (
-      [devture_postgres_connection_username]
+      [postgres_connection_username]
       +
-      devture_postgres_managed_databases | map(attribute='username') | list
+      postgres_managed_databases | map(attribute='username') | list
     ) | unique
   }}
 
@@ -232,23 +233,23 @@ devture_postgres_import_roles_to_ignore: |
 # If an md5-hashed password is restored on top, Postgres v14+ will refuse to authenticate users with it by default.
 #
 # We also allow for the role name to be quoted, which is rare, but might happen for role names which are special keywords (e.g. `default`).
-devture_postgres_import_roles_ignore_regex: "^(CREATE|ALTER) ROLE \\\"?({{ devture_postgres_import_roles_to_ignore | join('|') }})\\\"?(;| WITH)"  # noqa jinja[spacing]
+postgres_import_roles_ignore_regex: "^(CREATE|ALTER) ROLE \\\"?({{ postgres_import_roles_to_ignore | join('|') }})\\\"?(;| WITH)"  # noqa jinja[spacing]
 
 # A list of databases to avoid creating when importing (or upgrading) the database.
-# If a dump file contains the databases and they've also been created beforehand (see `devture_postgres_managed_databases`),
+# If a dump file contains the databases and they've also been created beforehand (see `postgres_managed_databases`),
 # importing would fail.
 # We either need to not create them or to ignore the `CREATE DATABASE` statements in the dump.
-devture_postgres_import_databases_to_ignore: |
+postgres_import_databases_to_ignore: |
   {{
     (
-      [devture_postgres_db_name]
+      [postgres_db_name]
       +
-      devture_postgres_managed_databases | map(attribute='name') | list
+      postgres_managed_databases | map(attribute='name') | list
     ) | unique
   }}
 
 # We also allow for the database name to be quoted, which is rare, but might happen for database names which are special keywords (e.g. `default`).
-devture_postgres_import_databases_ignore_regex: "^CREATE DATABASE \\\"?({{ devture_postgres_import_databases_to_ignore | join('|') }})\\\"?\\s" # noqa jinja[spacing]
+postgres_import_databases_ignore_regex: "^CREATE DATABASE \\\"?({{ postgres_import_databases_to_ignore | join('|') }})\\\"?\\s" # noqa jinja[spacing]
 
 # The number of seconds to wait after starting Postgres systemd service
 # and before trying to run queries for initializing managed databases/users against it.
@@ -257,16 +258,16 @@ devture_postgres_import_databases_ignore_regex: "^CREATE DATABASE \\\"?({{ devtu
 #
 # On ARM, we wait some more. ARM32 devices are especially known for being slow.
 # ARM64 likely don't need such a long delay, but it doesn't hurt too much having it.
-devture_postgres_managed_databases_postgres_start_wait_timeout_seconds: "{{ 45 if devture_postgres_architecture in ['arm32', 'arm64'] else 15 }}"
+postgres_managed_databases_postgres_start_wait_timeout_seconds: "{{ 45 if postgres_architecture in ['arm32', 'arm64'] else 15 }}"
 
-devture_postgres_pgloader_container_image_self_build: "{{ devture_postgres_architecture != 'amd64' }}"
-devture_postgres_pgloader_container_image_self_build_repo: "https://github.com/illagrenan/pgloader-docker.git"
-devture_postgres_pgloader_container_image_self_build_repo_branch: "v{{ devture_postgres_pgloader_container_image_tag }}"
-devture_postgres_pgloader_container_image_self_build_src_path: "{{ devture_postgres_base_path }}/pgloader-container-src"
+postgres_pgloader_container_image_self_build: "{{ postgres_architecture != 'amd64' }}"
+postgres_pgloader_container_image_self_build_repo: "https://github.com/illagrenan/pgloader-docker.git"
+postgres_pgloader_container_image_self_build_repo_branch: "v{{ postgres_pgloader_container_image_tag }}"
+postgres_pgloader_container_image_self_build_src_path: "{{ postgres_base_path }}/pgloader-container-src"
 
 # We use illagrenan/pgloader, instead of the more official dimitri/pgloader image,
 # because the official one only provides a `latest` tag.
-devture_postgres_pgloader_docker_image: "{{ devture_postgres_pgloader_container_image_name_prefix }}illagrenan/pgloader:{{ devture_postgres_pgloader_container_image_tag }}"
-devture_postgres_pgloader_container_image_name_prefix: "{{ 'localhost/' if devture_postgres_pgloader_container_image_self_build else docker_postgres_container_image_registry_prefix }}"
-devture_postgres_pgloader_container_image_tag: "3.6.2"
-devture_postgres_pgloader_container_image_force_pull: "{{ devture_postgres_pgloader_docker_image.endswith(':latest') }}"
+postgres_pgloader_docker_image: "{{ postgres_pgloader_container_image_name_prefix }}illagrenan/pgloader:{{ postgres_pgloader_container_image_tag }}"
+postgres_pgloader_container_image_name_prefix: "{{ 'localhost/' if postgres_pgloader_container_image_self_build else docker_postgres_container_image_registry_prefix }}"
+postgres_pgloader_container_image_tag: "3.6.2"
+postgres_pgloader_container_image_force_pull: "{{ postgres_pgloader_docker_image.endswith(':latest') }}"

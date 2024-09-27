@@ -6,15 +6,15 @@
     - install-all
     - install-traefik
   block:
-    - when: devture_traefik_enabled | bool
+    - when: traefik_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
 
-    - when: devture_traefik_enabled | bool
+    - when: traefik_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
 - tags:
     - setup-all
     - setup-traefik
   block:
-    - when: not devture_traefik_enabled | bool
+    - when: not traefik_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

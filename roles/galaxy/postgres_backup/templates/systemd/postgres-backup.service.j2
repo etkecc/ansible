@@ -1,7 +1,7 @@
 #jinja2: lstrip_blocks: "True"
 [Unit]
 Description=Automatic Backup of a Postgres server
-{% for service in devture_postgres_backup_systemd_required_services_list %}
+{% for service in postgres_backup_systemd_required_services_list %}
 Requires={{ service }}
 After={{ service }}
 {% endfor %}
@@ -10,32 +10,32 @@ DefaultDependencies=no
 [Service]
 Type=simple
 Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
-ExecStartPre=-{{ devture_systemd_docker_base_host_command_docker }} stop --time={{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ devture_postgres_backup_identifier }}
-ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ devture_postgres_backup_identifier }} 2>/dev/null || true'
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_docker }} stop --time={{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ postgres_backup_identifier }}
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ postgres_backup_identifier }} 2>/dev/null || true'
 
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
 			--rm \
-			--name={{ devture_postgres_backup_identifier }} \
+			--name={{ postgres_backup_identifier }} \
 			--log-driver=none \
-			--user={{ devture_postgres_backup_uid }}:{{ devture_postgres_backup_gid }} \
+			--user={{ postgres_backup_uid }}:{{ postgres_backup_gid }} \
 			--cap-drop=ALL \
 			--read-only \
-			--network={{ devture_postgres_backup_container_network }} \
-			--env-file={{ devture_postgres_backup_config_path }}/env \
-			--mount type=bind,src={{ devture_postgres_backup_data_path }},dst=/backups \
-			{{ devture_postgres_backup_container_image_to_use }}
+			--network={{ postgres_backup_container_network }} \
+			--env-file={{ postgres_backup_config_path }}/env \
+			--mount type=bind,src={{ postgres_backup_data_path }},dst=/backups \
+			{{ postgres_backup_container_image_to_use }}
 
-{% for network in devture_postgres_backup_container_additional_networks %}
-ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ devture_postgres_backup_identifier }}
+{% for network in postgres_backup_container_additional_networks %}
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ postgres_backup_identifier }}
 {% endfor %}
 
-ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ devture_postgres_backup_identifier }}
+ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ postgres_backup_identifier }}
 
-ExecStop=-{{ devture_systemd_docker_base_host_command_docker }} stop --time={{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ devture_postgres_backup_identifier }}
-ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ devture_postgres_backup_identifier }} 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_docker }} stop --time={{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ postgres_backup_identifier }}
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ postgres_backup_identifier }} 2>/dev/null || true'
 Restart=always
 RestartSec=30
-SyslogIdentifier={{ devture_postgres_backup_identifier }}
+SyslogIdentifier={{ postgres_backup_identifier }}
 
 [Install]
 WantedBy=multi-user.target

@@ -34,19 +34,19 @@
 # Single-database dumps may wish to import into a specific database instead by passing an `postgres_default_import_database` extra-vars variable.
 - name: Set postgres_default_import_database, if not provided
   ansible.builtin.set_fact:
-    postgres_default_import_database: "{{ devture_postgres_db_name }}"
+    postgres_default_import_database: "{{ postgres_db_name }}"
   when: "postgres_default_import_database | default('') == ''"
 
 # Actual import work
 
 - name: Ensure Postgres is started
   ansible.builtin.service:
-    name: "{{ devture_postgres_identifier }}"
+    name: "{{ postgres_identifier }}"
     state: started
     daemon_reload: true
-  register: devture_postgres_ensure_started_result
+  register: postgres_ensure_started_result
 
-- when: "devture_postgres_ensure_started_result.changed | bool"
+- when: "postgres_ensure_started_result.changed | bool"
   name: Wait a bit, so that Postgres can start
   ansible.builtin.wait_for:
     timeout: "{{ postgres_start_wait_time }}"
@@ -58,29 +58,29 @@
 - name: Abort, if no existing Postgres version detected
   ansible.builtin.fail:
     msg: "Could not find existing Postgres installation"
-  when: "not devture_postgres_detected_existing | bool"
+  when: "not postgres_detected_existing | bool"
 
 # Starting the database container had automatically created the default
-# role (`devture_postgres_connection_username`) and database (`devture_postgres_db_name`).
+# role (`postgres_connection_username`) and database (`postgres_db_name`).
 # The dump most likely contains those same entries and would try to re-create them, leading to errors.
 # We need to skip over those lines.
 - name: Generate Postgres database import command
   ansible.builtin.set_fact:
-    devture_postgres_import_command: >-
-      {{ devture_systemd_docker_base_host_command_docker }} run --rm --name {{ devture_postgres_identifier }}-import
+    postgres_import_command: >-
+      {{ devture_systemd_docker_base_host_command_docker }} run --rm --name {{ postgres_identifier }}-import
       --log-driver=none
-      --user={{ devture_postgres_uid }}:{{ devture_postgres_gid }}
+      --user={{ postgres_uid }}:{{ postgres_gid }}
       --cap-drop=ALL
-      --network={{ devture_postgres_container_network }}
-      --env-file={{ devture_postgres_base_path }}/env-postgres-psql
+      --network={{ postgres_container_network }}
+      --env-file={{ postgres_base_path }}/env-postgres-psql
       --mount type=bind,src={{ server_path_postgres_dump }},dst=/{{ server_path_postgres_dump | basename }},ro
       --entrypoint=/bin/sh
-      {{ devture_postgres_container_image_latest }}
+      {{ postgres_container_image_latest }}
       -c "set -o pipefail && cat /{{ server_path_postgres_dump | basename }} |
       {{ 'gunzip |' if server_path_postgres_dump.endswith('.gz') else '' }}
-      grep -vE '{{ devture_postgres_import_roles_ignore_regex }}' |
-      grep -vE '{{ devture_postgres_import_databases_ignore_regex }}' |
-      psql -b -v ON_ERROR_STOP=1 -h {{ devture_postgres_identifier }} --dbname={{ postgres_default_import_database }}"
+      grep -vE '{{ postgres_import_roles_ignore_regex }}' |
+      grep -vE '{{ postgres_import_databases_ignore_regex }}' |
+      psql -b -v ON_ERROR_STOP=1 -h {{ postgres_identifier }} --dbname={{ postgres_default_import_database }}"
   tags:
     - skip_ansible_lint
 
@@ -88,28 +88,28 @@
 # See: https://ansibledaily.com/print-to-standard-output-without-escaping/
 #
 # We want to run `debug: msg=".."`, but that dumps it as JSON and escapes double quotes within it,
-# which ruins the command (`devture_postgres_import_command`)
+# which ruins the command (`postgres_import_command`)
 - name: Note about Postgres importing alternative
   ansible.builtin.set_fact:
     dummy: true
   with_items:
     - >-
-        Importing Postgres database using the following command: `{{ devture_postgres_import_command }}`.
-        If this crashes, you can stop Postgres (`systemctl stop {{ devture_postgres_identifier }}`),
-        delete its existing data (`rm -rf {{ devture_postgres_data_path }}/*`), start it again (`systemctl start {{ devture_postgres_identifier }}`)
+        Importing Postgres database using the following command: `{{ postgres_import_command }}`.
+        If this crashes, you can stop Postgres (`systemctl stop {{ postgres_identifier }}`),
+        delete its existing data (`rm -rf {{ postgres_data_path }}/*`), start it again (`systemctl start {{ postgres_identifier }}`)
         and manually run the above import command directly on the server.
 
 - name: Perform Postgres database import
   ansible.builtin.command:
-    cmd: "{{ devture_postgres_import_command }}"
+    cmd: "{{ postgres_import_command }}"
   async: "{{ postgres_import_wait_time }}"
   poll: 10
-  register: devture_postgres_import_postgres_command_result
-  failed_when: not devture_postgres_import_postgres_command_result.finished or devture_postgres_import_postgres_command_result.rc != 0
-  changed_when: devture_postgres_import_postgres_command_result.finished and devture_postgres_import_postgres_command_result.rc == 0
+  register: postgres_import_postgres_command_result
+  failed_when: not postgres_import_postgres_command_result.finished or postgres_import_postgres_command_result.rc != 0
+  changed_when: postgres_import_postgres_command_result.finished and postgres_import_postgres_command_result.rc == 0
 
-- when: "devture_postgres_ensure_started_result.changed | bool"
+- when: "postgres_ensure_started_result.changed | bool"
   name: Ensure Postgres is stopped (if it previously was)
   ansible.builtin.service:
-    name: "{{ devture_postgres_identifier }}"
+    name: "{{ postgres_identifier }}"
     state: stopped

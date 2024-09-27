@@ -9,12 +9,12 @@
 #
 # Upgrading is supposed to be performed separately and explicitly (see `upgrade_postgres.yml`).
 - ansible.builtin.set_fact:
-    devture_postgres_container_image_to_use: "{{ devture_postgres_container_image_latest if devture_postgres_detected_version_corresponding_docker_image == '' else devture_postgres_detected_version_corresponding_docker_image }}"
+    postgres_container_image_to_use: "{{ postgres_container_image_latest if postgres_detected_version_corresponding_docker_image == '' else postgres_detected_version_corresponding_docker_image }}"
 
 - name: Abort if on an unsupported Postgres version
   ansible.builtin.fail:
-    msg: "You're on Postgres {{ devture_postgres_detected_version }}, which is no longer supported. To upgrade, see docs/maintenance-postgres.md"
-  when: "devture_postgres_detected_version.startswith('9.')"
+    msg: "You're on Postgres {{ postgres_detected_version }}, which is no longer supported. To upgrade, see docs/maintenance-postgres.md"
+  when: "postgres_detected_version.startswith('9.')"
 
 - name: Inject warning if on an old version of Postgres
   ansible.builtin.set_fact:
@@ -23,18 +23,18 @@
         devture_playbook_runtime_messages_list | default([])
         +
         [
-          "NOTE: Your setup is on an old Postgres version ({{ devture_postgres_container_image_to_use }}), while {{ devture_postgres_container_image_latest }} is supported. You can upgrade using --tags=upgrade-postgres"
+          "NOTE: Your setup is on an old Postgres version ({{ postgres_container_image_to_use }}), while {{ postgres_container_image_latest }} is supported. You can upgrade using --tags=upgrade-postgres"
         ]
       }}
-  when: "devture_postgres_container_image_to_use != devture_postgres_container_image_latest"
+  when: "postgres_container_image_to_use != postgres_container_image_latest"
 
 # Even if we don't run the internal server, we still need this for running the CLI
 - name: Ensure postgres container image is pulled
   community.docker.docker_image:
-    name: "{{ devture_postgres_container_image_to_use }}"
+    name: "{{ postgres_container_image_to_use }}"
     source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
-    force_source: "{{ devture_postgres_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
-    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else devture_postgres_container_image_force_pull }}"
+    force_source: "{{ postgres_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else postgres_container_image_force_pull }}"
   register: result
   retries: "{{ devture_playbook_help_container_retries_count }}"
   delay: "{{ devture_playbook_help_container_retries_delay }}"
@@ -45,19 +45,19 @@
     path: "{{ item }}"
     state: directory
     mode: 0700
-    owner: "{{ devture_postgres_uid }}"
-    group: "{{ devture_postgres_gid }}"
+    owner: "{{ postgres_uid }}"
+    group: "{{ postgres_gid }}"
   with_items:
-    - "{{ devture_postgres_base_path }}"
-    - "{{ devture_postgres_data_path }}"
-    - "{{ devture_postgres_bin_path }}"
+    - "{{ postgres_base_path }}"
+    - "{{ postgres_data_path }}"
+    - "{{ postgres_bin_path }}"
 
 - name: Ensure Postgres environment variables file created
   ansible.builtin.template:
     src: "{{ role_path }}/templates/{{ item }}.j2"
-    dest: "{{ devture_postgres_base_path }}/{{ item }}"
-    owner: "{{ devture_postgres_uid }}"
-    group: "{{ devture_postgres_gid }}"
+    dest: "{{ postgres_base_path }}/{{ item }}"
+    owner: "{{ postgres_uid }}"
+    group: "{{ postgres_gid }}"
     mode: 0640
   with_items:
     - "env-postgres-psql"
@@ -66,7 +66,7 @@
 - name: Ensure Postgres scripts created
   ansible.builtin.template:
     src: "{{ role_path }}/templates/bin/{{ item }}.j2"
-    dest: "{{ devture_postgres_bin_path }}/{{ item }}"
+    dest: "{{ postgres_bin_path }}/{{ item }}"
     mode: 0755
   with_items:
     - cli
@@ -75,16 +75,16 @@
 
 - name: Ensure Postgres container network is created
   community.general.docker_network:
-    name: "{{ devture_postgres_container_network }}"
+    name: "{{ postgres_container_network }}"
     driver: bridge
     driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
 
 - name: Ensure Postgres systemd service installed
   ansible.builtin.template:
     src: "{{ role_path }}/templates/systemd/postgres.service.j2"
-    dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ devture_postgres_identifier }}.service"
+    dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ postgres_identifier }}.service"
     mode: 0644
-  register: devture_postgres_systemd_service_result
+  register: postgres_systemd_service_result
 
 - name: Ensure managed Postgres databases prepared
   ansible.builtin.include_tasks:
@@ -92,12 +92,12 @@
     apply:
       tags:
         - always
-  when: "devture_postgres_managed_databases|length > 0"
+  when: "postgres_managed_databases|length > 0"
 
 - name: Check existence of Postgres backup data path
   ansible.builtin.stat:
-    path: "{{ devture_postgres_data_path }}-auto-upgrade-backup"
-  register: devture_postgres_data_backup_path_stat
+    path: "{{ postgres_data_path }}-auto-upgrade-backup"
+  register: postgres_data_backup_path_stat
 
 - name: Inject warning if backup data remains
   ansible.builtin.set_fact:
@@ -106,7 +106,7 @@
         devture_playbook_runtime_messages_list | default([])
         +
         [
-          "NOTE: You have some Postgres backup data in `{{ devture_postgres_data_path }}-auto-upgrade-backup`, which was created during the last major Postgres update you ran. If your setup works well after this upgrade, feel free to delete this whole directory."
+          "NOTE: You have some Postgres backup data in `{{ postgres_data_path }}-auto-upgrade-backup`, which was created during the last major Postgres update you ran. If your setup works well after this upgrade, feel free to delete this whole directory."
         ]
       }}
-  when: "devture_postgres_data_backup_path_stat.stat.exists"
+  when: "postgres_data_backup_path_stat.stat.exists"

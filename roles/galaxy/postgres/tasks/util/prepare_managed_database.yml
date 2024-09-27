@@ -14,28 +14,28 @@
 - name: Create managed database initialization SQL file for {{ managed_db.name }}
   ansible.builtin.template:
     src: "{{ role_path }}/templates/sql/init-managed-db-user-and-role.sql.j2"
-    dest: "/tmp/{{ devture_postgres_identifier }}-init-managed-db-user-and-role.sql"
+    dest: "/tmp/{{ postgres_identifier }}-init-managed-db-user-and-role.sql"
     mode: 0600
-    owner: "{{ devture_postgres_uid }}"
-    group: "{{ devture_postgres_gid }}"
+    owner: "{{ postgres_uid }}"
+    group: "{{ postgres_gid }}"
 
 - name: Execute Postgres managed database initialization SQL file for {{ managed_db.name }}
   ansible.builtin.command:
     cmd: >-
       {{ devture_systemd_docker_base_host_command_docker }} run
       --rm
-      --user={{ devture_postgres_uid }}:{{ devture_postgres_gid }}
+      --user={{ postgres_uid }}:{{ postgres_gid }}
       --cap-drop=ALL
-      --env-file={{ devture_postgres_base_path }}/env-postgres-psql
-      --network={{ devture_postgres_container_network_for_preparing_databases }}
-      --mount type=bind,src=/tmp/{{ devture_postgres_identifier }}-init-managed-db-user-and-role.sql,dst=/{{ devture_postgres_identifier }}-init-managed-db-user-and-role.sql,ro
+      --env-file={{ postgres_base_path }}/env-postgres-psql
+      --network={{ postgres_container_network_for_preparing_databases }}
+      --mount type=bind,src=/tmp/{{ postgres_identifier }}-init-managed-db-user-and-role.sql,dst=/{{ postgres_identifier }}-init-managed-db-user-and-role.sql,ro
       --entrypoint=/bin/sh
-      {{ devture_postgres_container_image_to_use }}
+      {{ postgres_container_image_to_use }}
       -c
-      'psql -h {{ devture_postgres_connection_hostname }} --file=/{{ devture_postgres_identifier }}-init-managed-db-user-and-role.sql'
+      'psql -h {{ postgres_connection_hostname }} --file=/{{ postgres_identifier }}-init-managed-db-user-and-role.sql'
   changed_when: true
 
 - name: Delete managed database initialization SQL file for {{ managed_db.name }}
   ansible.builtin.file:
-    path: /tmp/{{ devture_postgres_identifier }}-init-managed-db-user-and-role.sql
+    path: /tmp/{{ postgres_identifier }}-init-managed-db-user-and-role.sql
     state: absent
