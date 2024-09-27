@@ -28,10 +28,8 @@
     - custom/matrix-base
     - galaxy/exim_relay
     - galaxy/container_socket_proxy
-    - when: devture_traefik_enabled | bool
-      role: galaxy/traefik
-    - when: devture_traefik_certs_dumper_enabled | bool
-      role: galaxy/traefik_certs_dumper
+    - galaxy/traefik
+    - galaxy/traefik_certs_dumper
     - galaxy/postgres
     - galaxy/keydb
     - custom/matrix-appservice-double-puppet
