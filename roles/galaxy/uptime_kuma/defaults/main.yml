@@ -9,7 +9,7 @@ uptime_kuma_identifier: uptime-kuma
 uptime_kuma_uid: ''
 uptime_kuma_gid: ''
 
-uptime_kuma_version: 1.23.14
+uptime_kuma_version: 1.23.15
 
 # The hostname at which uptime-kuma is served.
 uptime_kuma_hostname: ''

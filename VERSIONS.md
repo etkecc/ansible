@@ -5,7 +5,7 @@
 * Appservice Kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * Appservice Slack: 2.1.2
 * Appservice Webhooks: v1.0.3-01
-* Baibot: v1.1.1
+* Baibot: v1.2.0
 * Borg: 1.2.8
 * Borgmatic: 1.8.13
 * Buscarron: v1.4.3
@@ -21,7 +21,7 @@
 * Docker Compose: v2.29.2
 * Draupnir: v1.87.0
 * Dynamic Dns: 3.11.2
-* Element: v1.11.78
+* Element: v1.11.79
 * Email2Matrix: 1.1.0
 * Etherpad: 2.2.5
 * Exim Relay: 4.98-r0-1
@@ -44,7 +44,7 @@
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
 * Keydb: 6.3.4
-* Languagetool: 6.4
+* Languagetool: 6.5
 * Ldap Registration Proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * Linkding: latest
 * Linkedin: latest
@@ -83,7 +83,7 @@
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.33.0
 * Sygnal: v0.15.0
-* Synapse: v1.115.0
+* Synapse: v1.116.0
 * Synapse Admin: v0.10.3-etke17
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4
@@ -93,7 +93,7 @@
 * Traefik: v3.1.3
 * Traefik Certs Dumper: v2.8.3
 * Twitter: v0.1.8
-* Uptime Kuma: 1.23.14
+* Uptime Kuma: 1.23.15
 * User Verification Service: v3.0.0
 * Vaultwarden: 1.32.0
 * Wechat: 0.2.4
