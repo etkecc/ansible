@@ -1,4 +1,4 @@
-* Alertmanager Receiver: 2024.9.18
+* Alertmanager Receiver: 2024.10.2
 * Appservice Discord: v4.0.0
 * Appservice Draupnir For All: 1.87.0
 * Appservice Irc: 1.0.1
@@ -33,7 +33,7 @@
 * Go Skype Bridge: latest
 * Googlechat: v0.5.2
 * Gotosocial: 0.16.0
-* Grafana: 11.1.4
+* Grafana: 11.1.7
 * Hangouts: latest
 * Heisenbridge: 1.15.0
 * Honoroit: v0.9.26
@@ -55,7 +55,7 @@
 * Meta Instagram: v0.4.0
 * Meta Messenger: v0.4.0
 * Miniflux: 2.2.1
-* Mjolnir: v1.7.0
+* Mjolnir: v1.8.1
 * Mx Puppet Discord: v0.1.1
 * Mx Puppet Groupme: 533cccc8
 * Mx Puppet Instagram: latest
