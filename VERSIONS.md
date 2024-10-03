@@ -5,7 +5,7 @@
 * Appservice Kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * Appservice Slack: 2.1.2
 * Appservice Webhooks: v1.0.3-01
-* Baibot: v1.3.0
+* Baibot: v1.3.1
 * Borg: 1.2.8
 * Borgmatic: 1.8.13
 * Buscarron: v1.4.3
@@ -55,7 +55,7 @@
 * Meta Instagram: v0.4.0
 * Meta Messenger: v0.4.0
 * Miniflux: 2.2.1
-* Mjolnir: v1.8.1
+* Mjolnir: v1.7.0
 * Mx Puppet Discord: v0.1.1
 * Mx Puppet Groupme: 533cccc8
 * Mx Puppet Instagram: latest
@@ -95,7 +95,7 @@
 * Twitter: v0.1.8
 * Uptime Kuma: 1.23.15
 * User Verification Service: v3.0.0
-* Vaultwarden: 1.32.0
+* Vaultwarden: 1.32.1
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
 * Whatsapp: v0.10.9
