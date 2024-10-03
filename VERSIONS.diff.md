@@ -1,7 +1,7 @@
 **Stable Updates Published**
 
 * [Alertmanager Receiver](https://github.com/metio/matrix-alertmanager-receiver): [2024.9.18](https://github.com/metio/matrix-alertmanager-receiver/releases/tag/2024.9.18) -> [2024.10.2](https://github.com/metio/matrix-alertmanager-receiver/releases/tag/2024.10.2)
-* [Baibot](https://github.com/etkecc/baibot): [v1.1.1](https://github.com/etkecc/baibot/releases/tag/v1.1.1) -> [v1.2.0](https://github.com/etkecc/baibot/releases/tag/v1.2.0)
+* [Baibot](https://github.com/etkecc/baibot): [v1.1.1](https://github.com/etkecc/baibot/releases/tag/v1.1.1) -> [v1.3.0](https://github.com/etkecc/baibot/releases/tag/v1.3.0)
 * [Element](https://github.com/element-hq/element-web): [v1.11.78](https://github.com/element-hq/element-web/releases/tag/v1.11.78) -> [v1.11.79](https://github.com/element-hq/element-web/releases/tag/v1.11.79)
 * [Grafana](https://github.com/grafana/grafana): [11.1.4](https://github.com/grafana/grafana/releases/tag/v11.1.4) -> [11.1.7](https://github.com/grafana/grafana/releases/tag/v11.1.7)
 * [Languagetool](https://github.com/Erikvl87/docker-languagetool): [6.4](https://github.com/Erikvl87/docker-languagetool/releases/tag/v6.4) -> [6.5](https://github.com/Erikvl87/docker-languagetool/releases/tag/v6.5)
