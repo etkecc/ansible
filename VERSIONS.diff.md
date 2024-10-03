@@ -8,4 +8,6 @@
 * [Miniflux](https://github.com/miniflux/v2): [2.2.0](https://github.com/miniflux/v2/releases/tag/2.2.0) -> [2.2.1](https://github.com/miniflux/v2/releases/tag/2.2.1)
 * [Mjolnir](https://github.com/matrix-org/mjolnir): [v1.7.0](https://github.com/matrix-org/mjolnir/releases/tag/v1.7.0) -> [v1.8.1](https://github.com/matrix-org/mjolnir/releases/tag/v1.8.1)
 * [Synapse](https://github.com/element-hq/synapse): [v1.115.0](https://github.com/element-hq/synapse/releases/tag/v1.115.0) -> [v1.116.0](https://github.com/element-hq/synapse/releases/tag/v1.116.0)
+* [Synapse Admin](https://github.com/etkecc/synapse-admin): [v0.10.3-etke17](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.3-etke17) -> [v0.10.3-etke18](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.3-etke18)
+* [Synapse Reverse Proxy Companion](https://github.com/nginx/nginx): [1.27.1-alpine](https://github.com/nginx/nginx/releases/tag/release-1.27.1) -> [1.27.2-alpine](https://github.com/nginx/nginx/releases/tag/release-1.27.2)
 * [Uptime Kuma](https://github.com/louislam/uptime-kuma): [1.23.13](https://github.com/louislam/uptime-kuma/releases/tag/1.23.13) -> [1.23.15](https://github.com/louislam/uptime-kuma/releases/tag/1.23.15)
