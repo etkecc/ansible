@@ -55,7 +55,7 @@
 * Meta Instagram: v0.4.0
 * Meta Messenger: v0.4.0
 * Miniflux: 2.2.1
-* Mjolnir: v1.7.0
+* Mjolnir: v1.8.3
 * Mx Puppet Discord: v0.1.1
 * Mx Puppet Groupme: 533cccc8
 * Mx Puppet Instagram: latest
@@ -82,7 +82,7 @@
 * Spam Checker Mjolnir Antispam Git: v1.6.4
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.33.0
-* Sygnal: v0.15.0
+* Sygnal: v0.15.1
 * Synapse: v1.116.0
 * Synapse Admin: v0.10.3-etke18
 * Synapse Auto Accept Invite: 1.1.3
