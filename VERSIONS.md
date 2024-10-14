@@ -95,7 +95,7 @@
 * Twitter: v0.1.8
 * Uptime Kuma: 1.23.15
 * User Verification Service: v3.0.0
-* Vaultwarden: 1.32.1
+* Vaultwarden: 1.32.2
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
 * Whatsapp: v0.10.9
