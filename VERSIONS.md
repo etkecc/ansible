@@ -21,7 +21,7 @@
 * Docker Compose: v2.29.2
 * Draupnir: v1.87.0
 * Dynamic Dns: 3.11.2
-* Element: v1.11.80
+* Element: v1.11.81
 * Email2Matrix: 1.1.0
 * Etherpad: 2.2.5
 * Exim Relay: 4.98-r0-1
@@ -33,7 +33,7 @@
 * Go Skype Bridge: latest
 * Googlechat: v0.5.2
 * Gotosocial: 0.16.0
-* Grafana: 11.1.7
+* Grafana: 11.2.2
 * Hangouts: latest
 * Heisenbridge: 1.15.0
 * Honoroit: v0.9.26
@@ -83,7 +83,7 @@
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.33.0
 * Sygnal: v0.15.1
-* Synapse: v1.116.0
+* Synapse: v1.117.0
 * Synapse Admin: v0.10.3-etke19
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4
