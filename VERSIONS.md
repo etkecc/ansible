@@ -1,4 +1,4 @@
-* Alertmanager Receiver: 2024.10.2
+* Alertmanager Receiver: 2024.10.16
 * Appservice Discord: v4.0.0
 * Appservice Draupnir For All: 1.87.0
 * Appservice Irc: 1.0.1
@@ -12,7 +12,7 @@
 * Cactus Comments: 0.9.0
 * Cactus Comments Client: 2.33.0
 * Chatgpt: 3.1.4
-* Cinny: v4.2.1
+* Cinny: v4.2.2
 * Container Socket Proxy: 0.2.0
 * Corporal: 3.0.0
 * Coturn: 4.6.2-r11
@@ -28,7 +28,7 @@
 * Facebook: v0.5.1
 * Firezone: 0.7.36
 * Funkwhale: 1.4.0
-* Gmessages: v0.5.0
+* Gmessages: v0.5.1
 * Go Neb: latest
 * Go Skype Bridge: latest
 * Googlechat: v0.5.2
