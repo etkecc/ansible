@@ -98,6 +98,6 @@
 * Vaultwarden: 1.32.2
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
-* Whatsapp: v0.10.9
+* Whatsapp: v0.11.0
 * Wsproxy: latest
 * Wsproxy Syncproxy: latest
