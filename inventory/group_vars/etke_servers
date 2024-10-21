@@ -25,6 +25,8 @@ matrix_synapse_redis_dbid: 15
 matrix_dendrite_max_file_size_bytes: 1073741824
 matrix_conduit_max_request_size: 20_000_000
 matrix_media_repo_metrics_enabled: false
+matrix_authentication_service_config_database_database: 'matrix_authentication_service'
+matrix_authentication_service_config_database_username: 'matrix_authentication_service'
 
 ########################################################################
 #                                                                      #
