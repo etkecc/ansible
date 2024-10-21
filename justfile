@@ -22,7 +22,9 @@ run +extra_args:
     #!/usr/bin/env sh
     set -euo pipefail
     if [ -x "$(command -v etkepass)" ]; then
-        etkepass {{ extra_args }}
+        export SSH_ASKPASS=$(which etkepass)
+        export SSH_ASKPASS_REQUIRE=force
+        export SSH_ASKPASS_DEBUG=1
     fi
     time ansible-playbook play/all.yml {{ extra_args }}
 
