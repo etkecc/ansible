@@ -19,6 +19,11 @@ setup-all *extra_args: (run-tags "setup-all,ensure-users-created,start" extra_ar
 
 # Runs the playbook with the given list of arguments
 run +extra_args:
+    #!/usr/bin/env sh
+    set -euo pipefail
+    if [ -x "$(command -v etkepass)" ]; then
+        etkepass {{ extra_args }}
+    fi
     time ansible-playbook play/all.yml {{ extra_args }}
 
 # Runs the playbook with the given list of comma-separated tags and optional arguments

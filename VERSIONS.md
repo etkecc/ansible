@@ -40,7 +40,7 @@
 * Heisenbridge: 1.15.0
 * Honoroit: v0.9.26
 * Hookshot: 5.4.1
-* Hydrogen: v0.5.0
+* Hydrogen: v0.5.1
 * Instagram: v0.3.1
 * Jitsi: stable-9753
 * Jitsi Ldap: 3
