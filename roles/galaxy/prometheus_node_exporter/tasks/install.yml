@@ -32,6 +32,7 @@
     name: "{{ prometheus_node_exporter_container_network }}"
     driver: bridge
     driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
+  when: prometheus_node_exporter_container_network != 'host'
 
 - name: Ensure prometheus-node-exporter systemd service installed
   ansible.builtin.template:

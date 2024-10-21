@@ -83,7 +83,7 @@ gotosocial_systemd_wanted_services_list_default: []
 gotosocial_systemd_wanted_services_list_auto: []
 gotosocial_systemd_wanted_services_list_custom: []
 
-gotosocial_version: 0.16.0
+gotosocial_version: 0.17.0
 
 gotosocial_container_image: "{{ gotosocial_container_image_registry_prefix }}superseriousbusiness/gotosocial:{{ gotosocial_container_image_tag }}"
 gotosocial_container_image_registry_prefix: docker.io/
@@ -153,10 +153,10 @@ gotosocial_accounts_allow_custom_css: false
 #
 # Example:
 # gotosocial_environment_variables_extension: |
-#   GOTOSOCIAL_STORAGE_BACKEND=s3
-#   GOTOSOCIAL_STORAGE_S3_ENDPOINT=minio:9000
-#   GOTOSOCIAL_STORAGE_S3_BUCKET=something
-#   GOTOSOCIAL_STORAGE_S3_SECRET_KEY=verysecret
+#   GTS_STORAGE_BACKEND=s3
+#   GTS_STORAGE_S3_ENDPOINT=minio:9000
+#   GTS_STORAGE_S3_BUCKET=something
+#   GTS_STORAGE_S3_SECRET_KEY=verysecret
 gotosocial_environment_variables_extension: ''
 
 # gotosocial_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.

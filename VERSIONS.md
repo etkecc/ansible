@@ -5,6 +5,8 @@
 * Appservice Kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * Appservice Slack: 2.1.2
 * Appservice Webhooks: v1.0.3-01
+* Authentication Service: 0.12.0
+* Authentication Service Syn2Mas: 0.12.0
 * Baibot: v1.3.1
 * Borg: 1.2.8
 * Borgmatic: 1.8.13
@@ -32,7 +34,7 @@
 * Go Neb: latest
 * Go Skype Bridge: latest
 * Googlechat: v0.5.2
-* Gotosocial: 0.16.0
+* Gotosocial: 0.17.0
 * Grafana: 11.2.2
 * Hangouts: latest
 * Heisenbridge: 1.15.0
