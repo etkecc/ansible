@@ -1,5 +1,6 @@
 - name: "Run SSH configuration"
   hosts: "{{ target if target is defined else 'etke_servers' }}"
+  gather_facts: false
   become: true
   roles:
     - galaxy/ssh

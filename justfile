@@ -17,6 +17,17 @@ install-service service *extra_args:
 # Runs the playbook with --tags=setup-all,ensure-users-created,start and optional arguments
 setup-all *extra_args: (run-tags "setup-all,ensure-users-created,start" extra_args)
 
+# Rotates SSH keys (uses play/ssh.yml and tags=rotate-ssh-keys)
+rotate-ssh-keys +extra_args:
+    #!/usr/bin/env sh
+    set -euo pipefail
+    if [ -x "$(command -v etkepass)" ]; then
+        export SSH_ASKPASS=$(which etkepass)
+        export SSH_ASKPASS_REQUIRE=force
+        export SSH_ASKPASS_DEBUG=1
+    fi
+    time ansible-playbook play/ssh.yml -t rotate-ssh-keys {{ extra_args }}
+
 # Runs the playbook with the given list of arguments
 run +extra_args:
     #!/usr/bin/env sh

@@ -14,6 +14,15 @@
       key: "{{ item }}"
     with_items: "{{ system_security_ssh_unauthorizedkeys }}"
 
+  tags:
+    - setup-all
+    - setup-ssh
+    - install-all
+    - install-ssh
+    - rotate-ssh-keys
+  when: system_security_ssh_enabled | bool
+
+- block:
   - name: Enforce sshd config
     ansible.builtin.template:
       src: etc/ssh/sshd_config.j2
