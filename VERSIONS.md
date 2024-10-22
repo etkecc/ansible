@@ -23,7 +23,7 @@
 * Docker Compose: v2.29.2
 * Draupnir: v1.87.0
 * Dynamic Dns: 3.11.2
-* Element: v1.11.81
+* Element: v1.11.82
 * Email2Matrix: 1.1.0
 * Etherpad: 2.2.5
 * Exim Relay: 4.98-r0-1
@@ -42,7 +42,7 @@
 * Hookshot: 5.4.1
 * Hydrogen: v0.5.1
 * Instagram: v0.3.1
-* Jitsi: stable-9753
+* Jitsi: stable-9779
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
 * Keydb: 6.3.4
