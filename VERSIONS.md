@@ -86,7 +86,7 @@
 * Static Files: 2.33.0
 * Sygnal: v0.15.1
 * Synapse: v1.117.0
-* Synapse Admin: v0.10.3-etke22
+* Synapse Admin: v0.10.3-etke23
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4
 * Synapse Reverse Proxy Companion: 1.27.2-alpine
