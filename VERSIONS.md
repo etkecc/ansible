@@ -1,4 +1,4 @@
-* Alertmanager Receiver: 2024.10.16
+* Alertmanager Receiver: 2024.10.23
 * Appservice Discord: v4.0.0
 * Appservice Draupnir For All: 1.87.0
 * Appservice Irc: 1.0.1
@@ -86,7 +86,7 @@
 * Static Files: 2.33.0
 * Sygnal: v0.15.1
 * Synapse: v1.117.0
-* Synapse Admin: v0.10.3-etke23
+* Synapse Admin: v0.10.3-etke24
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4
 * Synapse Reverse Proxy Companion: 1.27.2-alpine
