@@ -7,4 +7,4 @@
 * [Gotosocial](https://github.com/superseriousbusiness/gotosocial): [0.16.0](https://github.com/superseriousbusiness/gotosocial/releases/tag/v0.16.0) -> [0.17.0](https://github.com/superseriousbusiness/gotosocial/releases/tag/v0.17.0)
 * [Hydrogen](https://github.com/element-hq/hydrogen-web): [v0.5.0](https://github.com/element-hq/hydrogen-web/releases/tag/v0.5.0) -> [v0.5.1](https://github.com/element-hq/hydrogen-web/releases/tag/v0.5.1)
 * [Jitsi](https://github.com/jitsi/docker-jitsi-meet): [stable-9753](https://github.com/jitsi/docker-jitsi-meet/releases/tag/stable-9753) -> [stable-9779](https://github.com/jitsi/docker-jitsi-meet/releases/tag/stable-9779)
-* [Synapse Admin](https://github.com/etkecc/synapse-admin): [v0.10.3-etke20](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.3-etke20) -> [v0.10.3-etke24](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.3-etke24)
+* [Synapse Admin](https://github.com/etkecc/synapse-admin): [v0.10.3-etke20](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.3-etke20) -> [v0.10.3-etke25](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.3-etke25)
