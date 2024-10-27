@@ -72,7 +72,7 @@
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.8.2
 * Prometheus Postgres Exporter: v0.14.0
-* Radicale: 3.3.0.0
+* Radicale: 3.3.0.1
 * Rageshake: 1.13.0
 * Redis: 7.2.5
 * Registration: v0.7.2
@@ -97,7 +97,7 @@
 * Twitter: v0.1.8
 * Uptime Kuma: 1.23.15
 * User Verification Service: v3.0.0
-* Vaultwarden: 1.32.2
+* Vaultwarden: 1.32.3
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
 * Whatsapp: v0.11.0
