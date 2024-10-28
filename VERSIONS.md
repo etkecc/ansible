@@ -67,7 +67,7 @@
 * Ntfy: v2.10.0
 * Pantalaimon: 0.10.5
 * Peertube: v6.3.2
-* Postmoogle: v0.9.21
+* Postmoogle: v0.9.22
 * Prometheus: v2.54.1
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.8.2

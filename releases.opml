@@ -8,7 +8,7 @@
     <outline text="alpinelinux" title="alpinelinux" type="rss" htmlUrl="https://github.com/alpinelinux/aports/releases" xmlUrl="https://github.com/alpinelinux/aports/releases.atom" />
     <outline text="ansible" title="ansible" type="rss" htmlUrl="https://pypi.org/project/ansible/#history" xmlUrl="https://pypi.org/rss/project/ansible/releases.xml" />
     <outline text="ansible-core" title="ansible-core" type="rss" htmlUrl="https://pypi.org/project/ansible-core/#history" xmlUrl="https://pypi.org/rss/project/ansible-core/releases.xml" />
-    <outline text="appservice-discord" title="appservice-discord" type="rss" htmlUrl="https://github.com/Half-Shot/matrix-appservice-discord" xmlUrl="https://github.com/Half-Shot/matrix-appservice-discord/releases.atom" />
+    <outline text="appservice-discord" title="appservice-discord" type="rss" htmlUrl="https://github.com/matrix-org/matrix-appservice-discord" xmlUrl="https://github.com/matrix-org/matrix-appservice-discord/releases.atom" />
     <outline text="appservice-draupnir-for-all" title="appservice-draupnir-for-all" type="rss" htmlUrl="https://github.com/the-draupnir-project/Draupnir" xmlUrl="https://github.com/the-draupnir-project/Draupnir/releases.atom" />
     <outline text="appservice-irc" title="appservice-irc" type="rss" htmlUrl="https://github.com/matrix-org/matrix-appservice-irc" xmlUrl="https://github.com/matrix-org/matrix-appservice-irc/releases.atom" />
     <outline text="appservice-slack" title="appservice-slack" type="rss" htmlUrl="https://github.com/matrix-org/matrix-appservice-slack" xmlUrl="https://github.com/matrix-org/matrix-appservice-slack/releases.atom" />
