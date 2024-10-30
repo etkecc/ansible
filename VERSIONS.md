@@ -66,7 +66,7 @@
 * Mx Puppet Twitter: latest
 * Ntfy: v2.10.0
 * Pantalaimon: 0.10.5
-* Peertube: v6.3.2
+* Peertube: v6.3.3
 * Postmoogle: v0.9.23
 * Prometheus: v2.54.1
 * Prometheus Nginxlog Exporter: v1.10.0

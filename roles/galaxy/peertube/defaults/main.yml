@@ -6,7 +6,7 @@ peertube_enabled: true
 
 peertube_identifier: peertube-peertube
 
-peertube_version: v6.3.2
+peertube_version: v6.3.3
 peertube_distro_variant: bookworm
 
 peertube_uid: ''
