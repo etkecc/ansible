@@ -48,6 +48,7 @@
     - custom/matrix-bridge-mautrix-whatsapp
     - custom/matrix-bridge-mautrix-discord
     - custom/matrix-bridge-mautrix-slack
+    - custom/matrix-bridge-postmoogle
     - custom/matrix-bridge-heisenbridge
     - custom/matrix-bridge-hookshot
     - custom/matrix-bot-matrix-reminder-bot
@@ -55,7 +56,6 @@
     - custom/matrix-bot-buscarron
     - custom/matrix-bot-baibot
     - custom/matrix-bot-honoroit
-    - custom/matrix-bot-postmoogle
     - custom/matrix-bot-go-neb
     - custom/matrix-bot-chatgpt
     - custom/matrix-synapse
