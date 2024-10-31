@@ -31,18 +31,18 @@
   - name: Allow email receiving (plain)
     community.general.ufw:
       rule: allow
-      port: "{{ matrix_bot_postmoogle_smtp_host_bind_port }}"
+      port: "{{ matrix_postmoogle_smtp_host_bind_port }}"
       proto: tcp
       comment: postmoogle
-    when: matrix_bot_postmoogle_enabled | bool
+    when: matrix_postmoogle_enabled | bool
 
   - name: Allow email receiving (TLS)
     community.general.ufw:
       rule: allow
-      port: "{{ matrix_bot_postmoogle_submission_host_bind_port }}"
+      port: "{{ matrix_postmoogle_submission_host_bind_port }}"
       proto: tcp
       comment: postmoogle
-    when: matrix_bot_postmoogle_enabled | bool
+    when: matrix_postmoogle_enabled | bool
 
   - name: Allow heisenbridge identd
     community.general.ufw:

@@ -69,9 +69,9 @@ matrix_email2matrix_enabled: false
 matrix_email2matrix_smtp_host_bind_port: '25'
 
 # postmoogle integration
-matrix_bot_postmoogle_enabled: false
-matrix_bot_postmoogle_smtp_host_bind_port: '25'
-matrix_bot_postmoogle_submission_host_bind_port: '587'
+matrix_postmoogle_enabled: false
+matrix_postmoogle_smtp_host_bind_port: '25'
+matrix_postmoogle_submission_host_bind_port: '587'
 
 # heisenbridge integration
 matrix_heisenbridge_enabled: false
