@@ -64,7 +64,7 @@
 * Mx Puppet Slack: v0.1.2
 * Mx Puppet Steam: latest
 * Mx Puppet Twitter: latest
-* Ntfy: v2.10.0
+* Ntfy: v2.11.0
 * Pantalaimon: 0.10.5
 * Peertube: v6.3.3
 * Postmoogle: v0.9.23

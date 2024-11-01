@@ -9,7 +9,7 @@ ntfy_base_path: "{{ ntfy_identifier }}"
 ntfy_config_dir_path: "{{ ntfy_base_path }}/config"
 ntfy_data_path: "{{ ntfy_base_path }}/data"
 
-ntfy_version: v2.10.0
+ntfy_version: v2.11.0
 
 ntfy_uid: ''
 ntfy_gid: ''
