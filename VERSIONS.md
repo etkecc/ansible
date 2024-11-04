@@ -8,8 +8,8 @@
 * Authentication Service: 0.12.0
 * Authentication Service Syn2Mas: 0.12.0
 * Baibot: v1.3.1
-* Borg: 1.2.8
-* Borgmatic: 1.8.13
+* Borg: 1.4.0
+* Borgmatic: 1.9.0
 * Buscarron: v1.4.3
 * Cactus Comments: 0.9.0
 * Cactus Comments Client: 2.33.1
