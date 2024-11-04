@@ -83,25 +83,31 @@
     group: "{{ traefik_gid }}"
     mode: 0640
 
+
 # If the Docker API is accessed through a UNIX socket (like we do by default), the container is run as root,
 # which means that the acme.json file is also created as root. For such a privilege container, this root-owned file is OK.
 #
 # When switching to accessing the Docker API via TCP, we run the container with a regular user.
 # An already existing acme.json (owned by root:root) won't be accessible and needs to be fixed up.
-- when: not traefik_config_providers_docker_endpoint_is_unix_socket
-  name: Ensure acme.json file ownership is correct
+#
+# If the permissions for these file are incorrect, Traefik will report this error and ignore the whole certificate resolver:
+# > The ACME resolve is skipped from the resolvers list error="unable to get ACME account: permissions 777 for /ssl/acme.json are too open, please use 600" resolver=default
+#
+# File ownership/permissions may become incorrect for other reasons too, so this is here to ensure we correct it if it happens.
+- when: traefik_ssl_dir_enabled | bool
   block:
     - name: Check existence of acme.json file
       ansible.builtin.stat:
         path: "{{ traefik_ssl_dir_path }}/acme.json"
       register: traefik_ssl_acme_json_stat
 
-    - when: traefik_ssl_acme_json_stat.stat.exists | bool
-      name: Ensure acme.json file ownership set correctly
+    - name: Ensure ACME file permissions are correct
+      when: traefik_ssl_acme_json_stat.stat.exists | bool
       ansible.builtin.file:
         path: "{{ traefik_ssl_dir_path }}/acme.json"
         owner: "{{ traefik_uid }}"
         group: "{{ traefik_gid }}"
+        mode: "0600"
 
 - name: Ensure Traefik container image is pulled via community.docker.docker_image
   when: devture_systemd_docker_base_container_image_pull_method == 'ansible-module'
