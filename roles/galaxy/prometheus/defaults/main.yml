@@ -7,7 +7,7 @@ prometheus_enabled: true
 
 prometheus_identifier: prometheus
 
-prometheus_version: v2.54.1
+prometheus_version: v2.55.1
 
 prometheus_uid: ''
 prometheus_gid: ''
