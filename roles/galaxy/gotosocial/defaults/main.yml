@@ -83,7 +83,7 @@ gotosocial_systemd_wanted_services_list_default: []
 gotosocial_systemd_wanted_services_list_auto: []
 gotosocial_systemd_wanted_services_list_custom: []
 
-gotosocial_version: 0.17.0
+gotosocial_version: 0.17.2
 
 gotosocial_container_image: "{{ gotosocial_container_image_registry_prefix }}superseriousbusiness/gotosocial:{{ gotosocial_container_image_tag }}"
 gotosocial_container_image_registry_prefix: docker.io/
@@ -91,6 +91,9 @@ gotosocial_container_image_tag: "{{ gotosocial_version }}"
 gotosocial_container_image_force_pull: "{{ gotosocial_container_image.endswith(':latest') }}"
 
 gotosocial_container_network: '{{ gotosocial_identifier }}'
+
+# Set the size of the /tmp directory, used for storing media uploads
+gotosocial_container_tmp_size: '2000m'
 
 # The port number in the container
 gotosocial_container_http_port: 8080

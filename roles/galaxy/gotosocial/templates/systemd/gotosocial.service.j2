@@ -27,7 +27,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
                 --network={{ gotosocial_container_network }} \
                 --mount type=bind,src={{ gotosocial_data_path }},dst=/gotosocial/storage \
                 --read-only \
-                --tmpfs=/tmp:rw,noexec,nosuid,size=100m \
+                --tmpfs=/tmp:rw,noexec,nosuid,size={{ gotosocial_container_tmp_size }} \
                 --env-file={{ gotosocial_env_path }} \
                 {{ gotosocial_container_image }}
 

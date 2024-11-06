@@ -34,7 +34,7 @@
 * Go Neb: latest
 * Go Skype Bridge: latest
 * Googlechat: v0.5.2
-* Gotosocial: 0.17.0
+* Gotosocial: 0.17.2
 * Grafana: 11.2.2
 * Hangouts: latest
 * Heisenbridge: 1.15.0
