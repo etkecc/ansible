@@ -29,14 +29,18 @@ aux_directory_default_group: root
 #
 # Example:
 #
-# aux_directory_definitions:
+# aux_directory_definitions_custom:
 #   - dest: /some-directory
 #
 #   - dest: /some-directory/another
 #     mode: '0700'
 #     owner: 'some-user'
 #     group: 'some-group'
-aux_directory_definitions: []
+aux_directory_definitions_custom: []
+# this var is for playbook- or group-level definitions, and should not be used in specific host's `vars.yml`
+aux_directory_definitions_auto: []
+# this var is cumulative of `aux_directory_definitions_custom` and `aux_directory_definitions_auto`
+aux_directory_definitions: "{{ aux_directory_definitions_auto + aux_directory_definitions_custom }}"
 
 # The default file permission mode when creating files using `aux_file_definitions`
 aux_file_default_mode: '0640'
@@ -68,7 +72,7 @@ aux_file_default_group: root
 #
 # Example:
 #
-# aux_file_definitions:
+# aux_file_definitions_custom:
 #   - dest: "{{ some_config_dir_path }}/something.html"
 #     content: |
 #       <!doctype html>
@@ -91,7 +95,11 @@ aux_file_default_group: root
 #     mode: '0600'
 #     owner: 'some-user'
 #     group: 'some-group'
-aux_file_definitions: []
+aux_file_definitions_custom: []
+# this var is for playbook- or group-level definitions, and should not be used in specific host's `vars.yml`
+aux_file_definitions_auto: []
+# this var is cumulative of `aux_file_definitions_custom` and `aux_file_definitions_auto`
+aux_file_definitions: "{{ aux_file_definitions_auto + aux_file_definitions_custom }}"
 
 # The state when installing packages using `aux_package_definitions`
 aux_package_state: present
@@ -101,7 +109,7 @@ aux_package_state: present
 # All definitions will be sent to the single package.name
 #
 # Example:
-# aux_package_definitions:
+# aux_package_definitions_custom:
 #   - httpd
 #   - nginx=1.23.0
 # aux_package_state: latest
@@ -113,7 +121,11 @@ aux_package_state: present
 #     - nginx=1.23.0
 #   state: latest
 # become: true
-aux_package_definitions: []
+aux_package_definitions_custom: []
+# this var is for playbook- or group-level definitions, and should not be used in specific host's `vars.yml`
+aux_package_definitions_auto: []
+# this var is cumulative of `aux_package_definitions_custom` and `aux_package_definitions_auto`
+aux_package_definitions: "{{ aux_package_definitions_auto + aux_package_definitions_custom }}"
 
 # The default become when running commands using `aux_command_definitions`
 aux_command_default_become: false
@@ -135,11 +147,15 @@ aux_command_default_ignore_errors: false
 #
 # Example:
 #
-# aux_command_definitions:
+# aux_command_definitions_custom:
 #   - command: "/usr/bin/make_database.sh db_user db_name creates=/path/to/database" # Run command if /path/to/database does not exist
 #     become: true
 #     become_user: system-user
 #
 #   - command: "/usr/bin/just-run" # Run command no matter what, ignore errors
 #     ignore_errors: true
-aux_command_definitions: []
+aux_command_definitions_custom: []
+# this var is for playbook- or group-level definitions, and should not be used in specific host's `vars.yml`
+aux_command_definitions_auto: []
+# this var is cumulative of `aux_command_definitions_custom` and `aux_command_definitions_auto`
+aux_command_definitions: "{{ aux_command_definitions_auto + aux_command_definitions_custom }}"
