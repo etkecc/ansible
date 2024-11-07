@@ -9,4 +9,5 @@
 * [Postmoogle](https://github.com/etkecc/postmoogle): [v0.9.23](https://github.com/etkecc/postmoogle/releases/tag/v0.9.23) -> [v0.9.24](https://github.com/etkecc/postmoogle/releases/tag/v0.9.24)
 * [Prometheus](https://github.com/prometheus/prometheus): [v2.54.1](https://github.com/prometheus/prometheus/releases/tag/v2.54.1) -> [v2.55.1](https://github.com/prometheus/prometheus/releases/tag/v2.55.1)
 * Static Files: 2.33.0 -> 2.33.1
+* [Synapse Admin](https://github.com/etkecc/synapse-admin): [v0.10.3-etke26](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.3-etke26) -> [v0.10.3-etke29](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.3-etke29)
 * [Traefik](https://github.com/traefik/traefik): [v3.1.3](https://github.com/traefik/traefik/releases/tag/v3.1.3) -> [v3.2.0](https://github.com/traefik/traefik/releases/tag/v3.2.0)
