@@ -9,7 +9,7 @@
 * Authentication Service Syn2Mas: 0.12.0
 * Baibot: v1.3.1
 * Borg: 1.4.0
-* Borgmatic: 1.9.0
+* Borgmatic: 1.9.1
 * Buscarron: v1.4.3
 * Cactus Comments: 0.9.0
 * Cactus Comments Client: 2.33.1
@@ -56,7 +56,7 @@
 * Maubot: v0.5.0
 * Meta Instagram: v0.4.1
 * Meta Messenger: v0.4.1
-* Miniflux: 2.2.2
+* Miniflux: 2.2.3
 * Mjolnir: v1.8.3
 * Mx Puppet Discord: v0.1.1
 * Mx Puppet Groupme: 533cccc8
@@ -97,7 +97,7 @@
 * Twitter: v0.1.8
 * Uptime Kuma: 1.23.15
 * User Verification Service: v3.0.0
-* Vaultwarden: 1.32.3
+* Vaultwarden: 1.32.4
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
 * Whatsapp: v0.11.0

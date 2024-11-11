@@ -1,13 +1,5 @@
 **Stable Updates Published**
 
-* Borg: 1.2.8 -> 1.4.0
-* Borgmatic: 1.8.13 -> 1.9.0
-* [Cactus Comments Client](https://gitlab.com/cactus-comments/cactus-client): [2.33.0](https://gitlab.com/cactus-comments/cactus-client/-/tags/2.33.0) -> [2.33.1](https://gitlab.com/cactus-comments/cactus-client/-/tags/2.33.1)
-* [Element](https://github.com/element-hq/element-web): [v1.11.83](https://github.com/element-hq/element-web/releases/tag/v1.11.83) -> [v1.11.84](https://github.com/element-hq/element-web/releases/tag/v1.11.84)
-* [Gotosocial](https://github.com/superseriousbusiness/gotosocial): [0.17.0](https://github.com/superseriousbusiness/gotosocial/releases/tag/v0.17.0) -> [0.17.2](https://github.com/superseriousbusiness/gotosocial/releases/tag/v0.17.2)
-* [Ntfy](https://github.com/binwiederhier/ntfy): [v2.10.0](https://github.com/binwiederhier/ntfy/releases/tag/v2.10.0) -> [v2.11.0](https://github.com/binwiederhier/ntfy/releases/tag/v2.11.0)
-* [Postmoogle](https://github.com/etkecc/postmoogle): [v0.9.23](https://github.com/etkecc/postmoogle/releases/tag/v0.9.23) -> [v0.9.24](https://github.com/etkecc/postmoogle/releases/tag/v0.9.24)
-* [Prometheus](https://github.com/prometheus/prometheus): [v2.54.1](https://github.com/prometheus/prometheus/releases/tag/v2.54.1) -> [v2.55.1](https://github.com/prometheus/prometheus/releases/tag/v2.55.1)
-* Static Files: 2.33.0 -> 2.33.1
-* [Synapse Admin](https://github.com/etkecc/synapse-admin): [v0.10.3-etke26](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.3-etke26) -> [v0.10.3-etke29](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.3-etke29)
-* [Traefik](https://github.com/traefik/traefik): [v3.1.3](https://github.com/traefik/traefik/releases/tag/v3.1.3) -> [v3.2.0](https://github.com/traefik/traefik/releases/tag/v3.2.0)
+* Borgmatic: 1.9.0 -> 1.9.1
+* [Miniflux](https://github.com/miniflux/v2): [2.2.2](https://github.com/miniflux/v2/releases/tag/2.2.2) -> [2.2.3](https://github.com/miniflux/v2/releases/tag/2.2.3)
+* [Vaultwarden](https://github.com/dani-garcia/vaultwarden): [1.32.3](https://github.com/dani-garcia/vaultwarden/releases/tag/1.32.3) -> [1.32.4](https://github.com/dani-garcia/vaultwarden/releases/tag/1.32.4)
