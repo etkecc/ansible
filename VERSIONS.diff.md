@@ -5,5 +5,6 @@
 * [Cinny](https://github.com/ajbura/cinny): [v4.2.2](https://github.com/ajbura/cinny/releases/tag/v4.2.2) -> [v4.2.3](https://github.com/ajbura/cinny/releases/tag/v4.2.3)
 * [Element](https://github.com/element-hq/element-web): [v1.11.84](https://github.com/element-hq/element-web/releases/tag/v1.11.84) -> [v1.11.85](https://github.com/element-hq/element-web/releases/tag/v1.11.85)
 * [Grafana](https://github.com/grafana/grafana): [11.2.2](https://github.com/grafana/grafana/releases/tag/v11.2.2) -> [11.3.0](https://github.com/grafana/grafana/releases/tag/v11.3.0)
+* [Jitsi](https://github.com/jitsi/docker-jitsi-meet): [stable-9779](https://github.com/jitsi/docker-jitsi-meet/releases/tag/stable-9779) -> [stable-9823](https://github.com/jitsi/docker-jitsi-meet/releases/tag/stable-9823)
 * [Miniflux](https://github.com/miniflux/v2): [2.2.2](https://github.com/miniflux/v2/releases/tag/2.2.2) -> [2.2.3](https://github.com/miniflux/v2/releases/tag/2.2.3)
 * [Vaultwarden](https://github.com/dani-garcia/vaultwarden): [1.32.3](https://github.com/dani-garcia/vaultwarden/releases/tag/1.32.3) -> [1.32.4](https://github.com/dani-garcia/vaultwarden/releases/tag/1.32.4)

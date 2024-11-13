@@ -8,6 +8,7 @@
   - name: Get public destinations
     ansible.builtin.command: "{{ mrs_discovery_command_bin }} {{ mrs_discovery_command_args }}"
     register: raw
+    ignore_errors: true
   - name: Transform public destinations
     set_fact:
       destinations: "{{ raw.stdout_lines[2:(raw.stdout_lines | length) - 1] | map('trim') | list }}"
