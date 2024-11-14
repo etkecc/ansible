@@ -39,7 +39,7 @@
 
     - name: Load basic auth file contents
       ansible.builtin.set_fact:
-        traefik_dashboard_basicauth_file_contents: "{{ traefik_dashboard_basicauth_file_contents_raw['content'] | b64decode }}"
+        traefik_dashboard_basicauth_file_contents: "{{ traefik_dashboard_basicauth_file_contents_raw['content'] | b64decode | trim }}"
 
     - name: Ensure local temporary basic auth file is removed
       ansible.builtin.file:

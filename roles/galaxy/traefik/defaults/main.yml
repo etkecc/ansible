@@ -127,6 +127,16 @@ traefik_config_entrypoint_web_forwardedHeaders_trustedIPs: []
 # Controls `forwardedHeaders.insecure` for this entrypoint.
 # Also see: `traefik_config_entrypoint_web_forwardedHeaders_trustedIPs`
 traefik_config_entrypoint_web_forwardedHeaders_insecure: false
+# Controls `transport.respondingTimeouts.readTimeout` for the `web` entrypoint - timeouts for incoming requests to the Traefik instance.
+# Setting them has no effect for UDP entryPoints.
+# See https://doc.traefik.io/traefik/routing/entrypoints/#respondingtimeouts
+traefik_config_entrypoint_web_transport_respondingTimeouts_readTimeout: 60s
+# Controls `transport.respondingTimeouts.writeTimeout` for the `web` entrypoint - the maximum duration before timing out writes of the response.
+# See https://doc.traefik.io/traefik/routing/entrypoints/#respondingtimeouts
+traefik_config_entrypoint_web_transport_respondingTimeouts_writeTimeout: 0s
+# Controls `transport.respondingTimeouts.idleTimeout` for the `web` entrypoint - the maximum duration an idle (keep-alive) connection will remain idle before closing itself.
+# See https://doc.traefik.io/traefik/routing/entrypoints/#respondingtimeouts
+traefik_config_entrypoint_web_transport_respondingTimeouts_idleTimeout: 180s
 
 # Controls whether the web entrypoint should be redirected to web-secure
 # If web-secure is enabled, we enable this redirection by default.
@@ -140,6 +150,10 @@ traefik_config_entrypoint_web_secure_name: web-secure
 traefik_config_entrypoint_web_secure_port: 443
 traefik_config_entrypoint_web_secure_port_in_container: 8443
 traefik_config_entrypoint_web_secure_address: ":{{ traefik_config_entrypoint_web_secure_port_in_container }}"
+traefik_config_entrypoint_web_secure_http_middlewares: "{{ traefik_config_entrypoint_web_secure_http_middlewares_default + traefik_config_entrypoint_web_secure_http_middlewares_auto + traefik_config_entrypoint_web_secure_http_middlewares_custom }}"
+traefik_config_entrypoint_web_secure_http_middlewares_default: []
+traefik_config_entrypoint_web_secure_http_middlewares_auto: []
+traefik_config_entrypoint_web_secure_http_middlewares_custom: []
 # Controls `forwardedHeaders.trustedIPs`, specifying from which IPs to trust `X-Forwarded-*` headers.
 # By default, we expect that there's no other reverse-proxy in front of us, so we don't trust anything.
 # Also see: `traefik_config_entrypoint_web_secure_forwardedHeaders_insecure`
@@ -147,6 +161,16 @@ traefik_config_entrypoint_web_secure_forwardedHeaders_trustedIPs: []
 # Controls `forwardedHeaders.insecure` for this entrypoint.
 # Also see: `traefik_config_entrypoint_web_secure_forwardedHeaders_trustedIPs`
 traefik_config_entrypoint_web_secure_forwardedHeaders_insecure: false
+# Controls `transport.respondingTimeouts.readTimeout` for the `web-secure` entrypoint - timeouts for incoming requests to the Traefik instance.
+# Setting them has no effect for UDP entryPoints.
+# See https://doc.traefik.io/traefik/routing/entrypoints/#respondingtimeouts
+traefik_config_entrypoint_web_secure_transport_respondingTimeouts_readTimeout: "{{ traefik_config_entrypoint_web_transport_respondingTimeouts_readTimeout }}"
+# Controls `transport.respondingTimeouts.writeTimeout` for the `web-secure` entrypoint - the maximum duration before timing out writes of the response.
+# See https://doc.traefik.io/traefik/routing/entrypoints/#respondingtimeouts
+traefik_config_entrypoint_web_secure_transport_respondingTimeouts_writeTimeout: "{{ traefik_config_entrypoint_web_transport_respondingTimeouts_writeTimeout }}"
+# Controls `transport.respondingTimeouts.idleTimeout` for the `web-secure` entrypoint - the maximum duration an idle (keep-alive) connection will remain idle before closing itself.
+# See https://doc.traefik.io/traefik/routing/entrypoints/#respondingtimeouts
+traefik_config_entrypoint_web_secure_transport_respondingTimeouts_idleTimeout: "{{ traefik_config_entrypoint_web_transport_respondingTimeouts_idleTimeout }}"
 
 traefik_config_entrypoint_web_secure_http3_enabled: true
 traefik_config_entrypoint_web_secure_http3_config_advertisedPort: "{{ traefik_config_entrypoint_web_secure_port }}"
@@ -179,6 +203,69 @@ traefik_config_providers_docker_endpoint: unix:///var/run/docker.sock
 # which controls whether the dashboard is enabled.
 # See: traefik_dashboard_enabled
 traefik_config_api_dashboard: "{{ traefik_dashboard_enabled }}"
+
+# traefik_config_http_middlewares the http.middlewares configuration (see `templates/provider.yml.j2`)
+traefik_config_http_middlewares: "{{ traefik_config_http_middlewares_default | combine (traefik_config_http_middlewares_auto, recursive=True) | combine(traefik_config_http_middlewares_custom, recursive=True) }}"
+traefik_config_http_middlewares_default: |
+  {{
+    {}
+
+    | combine(
+      (
+        {
+          'traefik-dashboard-auth': {
+            'basicauth': {
+              'users': traefik_dashboard_basicauth_file_contents,
+            }
+          }
+        } if traefik_dashboard_basicauth_enabled else {}
+      )
+    )
+
+    | combine(
+      (
+        {
+          traefik_config_http_middlewares_compression_middleware_name: {'compress': traefik_config_http_middlewares_compression_middleware_options}
+        } if traefik_config_http_middlewares_compression_enabled else {}
+      )
+    )
+  }}
+traefik_config_http_middlewares_auto: {}
+traefik_config_http_middlewares_custom: {}
+
+traefik_config_http_middlewares_compression_enabled: true
+traefik_config_http_middlewares_compression_middleware_name: compression
+
+# Specifies the minimum amount of bytes a response body must have to be compressed.
+# See https://doc.traefik.io/traefik/middlewares/http/compress/#minresponsebodybytes
+traefik_config_http_middlewares_compression_middleware_config_minResponseBodyBytes: 1024
+
+# Specifies the list of supported compression encodings.
+# The order of the list also sets the priority, the top entry has the highest priority.
+traefik_config_http_middlewares_compression_middleware_config_encodings: |-
+  {{
+    (
+      (['zstd'] if traefik_config_http_middlewares_compression_middleware_config_encodings_zstd_enabled else [])
+      +
+      (['br'] if traefik_config_http_middlewares_compression_middleware_config_encodings_br_enabled else [])
+      +
+      (['gzip'] if traefik_config_http_middlewares_compression_middleware_config_encodings_gzip_enabled else [])
+    )
+  }}
+traefik_config_http_middlewares_compression_middleware_config_encodings_zstd_enabled: true
+traefik_config_http_middlewares_compression_middleware_config_encodings_br_enabled: true
+traefik_config_http_middlewares_compression_middleware_config_encodings_gzip_enabled: true
+
+traefik_config_http_middlewares_compression_middleware_options: "{{ traefik_config_http_middlewares_compression_middleware_options_default | combine(traefik_config_http_middlewares_compression_middleware_options_auto, recursive=True) | combine(traefik_config_http_middlewares_compression_middleware_options_custom, recursive=True) }}"
+traefik_config_http_middlewares_compression_middleware_options_default: |-
+  {{
+    {
+      'minResponseBodyBytes': traefik_config_http_middlewares_compression_middleware_config_minResponseBodyBytes | int,
+      'encodings': traefik_config_http_middlewares_compression_middleware_config_encodings | join(','),
+    }
+  }}
+traefik_config_http_middlewares_compression_middleware_options_auto: {}
+traefik_config_http_middlewares_compression_middleware_options_custom: {}
 
 # traefik_dashboard_enabled controls whether the Dashboard is enabled.
 # See: https://doc.traefik.io/traefik/operations/dashboard/

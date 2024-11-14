@@ -1,12 +1,7 @@
 #jinja2: lstrip_blocks: "True"
 
 http:
-  middlewares:
-    {% if traefik_dashboard_basicauth_enabled %}
-    traefik-dashboard-auth:
-      basicauth:
-        users: {{ traefik_dashboard_basicauth_file_contents | to_json }}
-    {% endif %}
+  middlewares: {{ traefik_config_http_middlewares | to_json }}
 
   routers:
     {% for domain in traefik_additional_domains_to_obtain_certificates_for %}

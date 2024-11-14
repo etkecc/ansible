@@ -34,6 +34,12 @@ entryPoints:
       {% endif %}
     {% endif %}
 
+    transport:
+      respondingTimeouts:
+        readTimeout: {{ traefik_config_entrypoint_web_transport_respondingTimeouts_readTimeout | to_json }}
+        writeTimeout: {{ traefik_config_entrypoint_web_transport_respondingTimeouts_writeTimeout | to_json }}
+        idleTimeout: {{ traefik_config_entrypoint_web_transport_respondingTimeouts_idleTimeout | to_json }}
+
     {% if traefik_config_entrypoint_web_to_web_secure_redirection_enabled %}
     http:
       redirections:
@@ -46,6 +52,9 @@ entryPoints:
 {% if traefik_config_entrypoint_web_secure_enabled %}
   {{ traefik_config_entrypoint_web_secure_name }}:
     address: {{ traefik_config_entrypoint_web_secure_address | to_json }}
+
+    http:
+      middlewares: {{ traefik_config_entrypoint_web_secure_http_middlewares | to_json }}
 
     {% if traefik_config_entrypoint_web_secure_http3_enabled %}
     http3: {{ traefik_config_entrypoint_web_secure_http3_config | to_json }}
@@ -60,6 +69,12 @@ entryPoints:
       insecure: true
       {% endif %}
     {% endif %}
+
+    transport:
+      respondingTimeouts:
+        readTimeout: {{ traefik_config_entrypoint_web_secure_transport_respondingTimeouts_readTimeout | to_json }}
+        writeTimeout: {{ traefik_config_entrypoint_web_secure_transport_respondingTimeouts_writeTimeout | to_json }}
+        idleTimeout: {{ traefik_config_entrypoint_web_secure_transport_respondingTimeouts_idleTimeout | to_json }}
 {% endif %}
 
 {% if traefik_config_entrypoint_metrics_enabled %}
