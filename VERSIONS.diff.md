@@ -8,4 +8,5 @@
 * [Jitsi](https://github.com/jitsi/docker-jitsi-meet): [stable-9779](https://github.com/jitsi/docker-jitsi-meet/releases/tag/stable-9779) -> [stable-9823](https://github.com/jitsi/docker-jitsi-meet/releases/tag/stable-9823)
 * [Miniflux](https://github.com/miniflux/v2): [2.2.2](https://github.com/miniflux/v2/releases/tag/2.2.2) -> [2.2.3](https://github.com/miniflux/v2/releases/tag/2.2.3)
 * [Synapse](https://github.com/element-hq/synapse): [v1.118.0](https://github.com/element-hq/synapse/releases/tag/v1.118.0) -> [v1.119.0](https://github.com/element-hq/synapse/releases/tag/v1.119.0)
+* [Synapse Admin](https://github.com/etkecc/synapse-admin): [v0.10.3-etke29](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.3-etke29) -> [v0.10.3-etke30](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.3-etke30)
 * [Vaultwarden](https://github.com/dani-garcia/vaultwarden): [1.32.3](https://github.com/dani-garcia/vaultwarden/releases/tag/1.32.3) -> [1.32.4](https://github.com/dani-garcia/vaultwarden/releases/tag/1.32.4)
