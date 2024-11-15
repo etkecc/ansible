@@ -15,12 +15,13 @@
 - name: Fail if required Vaultwarden settings not defined
   ansible.builtin.fail:
     msg: >-
-      You need to define a required configuration setting (`{{ item }}`) for using this role.
-  when: "vars[item] == ''"
+      You need to define a required configuration setting (`{{ item.name }}`) for using this role.
+  when: "item.when | bool and vars[item.name] | length == 0"
   with_items:
-    - vaultwarden_hostname
-    - vaultwarden_uid
-    - vaultwarden_gid
+    - {'name': 'vaultwarden_hostname', when: true}
+    - {'name': 'vaultwarden_uid', when: true}
+    - {'name': 'vaultwarden_gid', when: true}
+    - {'name': 'vaultwarden_container_labels_traefik_compression_middleware_name', when: "{{ vaultwarden_container_labels_traefik_compression_middleware_enabled }}"}
 
 - name: Fail if required Vaultwarden + Postgres integration settings not defined
   ansible.builtin.fail:

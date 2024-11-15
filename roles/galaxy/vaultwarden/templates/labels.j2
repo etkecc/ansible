@@ -5,25 +5,33 @@ traefik.enable=true
 traefik.docker.network={{ vaultwarden_container_labels_traefik_docker_network }}
 {% endif %}
 
+{% set middlewares = [] %}
 
-{# Middlewares #}
+{% if vaultwarden_container_labels_traefik_compression_middleware_enabled %}
+{% set middlewares = middlewares + [vaultwarden_container_labels_traefik_compression_middleware_name] %}
+{% endif %}
+
 {% if vaultwarden_path_prefix != '/' %}
 {#
     This redirect-slash middleware redirects a custom prefix (e.g. `/passwords`) which
     has no trailing slash to the same thing, but with a trailing slash (e.g. `/passwords/`).
     Without this, the UI attempts to load assets (with relative URLs) from the wrong path.
 #}
+{% set middlewares = middlewares + [vaultwarden_identifier + '-no-trailing-slash-redirect'] %}
 traefik.http.middlewares.{{ vaultwarden_identifier }}-no-trailing-slash-redirect.redirectregex.regex=^(https?)://([^/]+){{ vaultwarden_path_prefix | quote }}$
 traefik.http.middlewares.{{ vaultwarden_identifier }}-no-trailing-slash-redirect.redirectregex.replacement=${1}://${2}{{ vaultwarden_path_prefix | quote }}/
 {% endif %}
 
 traefik.http.routers.{{ vaultwarden_identifier }}.rule={{ vaultwarden_container_labels_traefik_rule_ui }}
-{% if vaultwarden_path_prefix != '/' %}
-traefik.http.routers.{{ vaultwarden_identifier }}.middlewares={{ vaultwarden_identifier }}-no-trailing-slash-redirect
+
+{% if middlewares | length > 0 %}
+traefik.http.routers.{{ vaultwarden_identifier }}.middlewares={{ middlewares | join(',') }}
 {% endif %}
+
 {% if vaultwarden_container_labels_traefik_priority | int > 0 %}
 traefik.http.routers.{{ vaultwarden_identifier }}.priority={{ vaultwarden_container_labels_traefik_priority }}
 {% endif %}
+
 traefik.http.routers.{{ vaultwarden_identifier }}.service={{ vaultwarden_identifier }}
 traefik.http.routers.{{ vaultwarden_identifier }}.tls.certResolver={{ vaultwarden_container_labels_traefik_tls_certResolver }}
 traefik.http.routers.{{ vaultwarden_identifier }}.entrypoints={{ vaultwarden_container_labels_traefik_entrypoints }}

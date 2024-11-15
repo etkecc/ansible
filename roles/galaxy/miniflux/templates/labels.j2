@@ -7,6 +7,10 @@ traefik.docker.network={{ miniflux_container_labels_traefik_docker_network }}
 
 {% set middlewares = [] %}
 
+{% if miniflux_container_labels_traefik_compression_middleware_enabled %}
+{% set middlewares = middlewares + [miniflux_container_labels_traefik_compression_middleware_name] %}
+{% endif %}
+
 {% if miniflux_container_labels_traefik_path_prefix != '/' %}
 traefik.http.middlewares.{{ miniflux_identifier }}-slashless-redirect.redirectregex.regex=({{ miniflux_container_labels_traefik_path_prefix | quote }})$
 traefik.http.middlewares.{{ miniflux_identifier }}-slashless-redirect.redirectregex.replacement=${1}/

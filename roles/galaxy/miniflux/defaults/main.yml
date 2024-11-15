@@ -54,6 +54,11 @@ miniflux_container_labels_traefik_entrypoints: web-secure
 miniflux_container_labels_traefik_tls: "{{ miniflux_container_labels_traefik_entrypoints != 'web' }}"
 miniflux_container_labels_traefik_tls_certResolver: default  # noqa var-naming
 
+# Controls whether a compression middleware will be injected into the middlewares list.
+# This compression middleware is supposed to be defined elsewhere (using labels or a File provider, etc.) and is merely referenced by this router.
+miniflux_container_labels_traefik_compression_middleware_enabled: false
+miniflux_container_labels_traefik_compression_middleware_name: ""
+
 # Controls which additional headers to attach to all HTTP responses.
 # To add your own headers, use `miniflux_container_labels_traefik_additional_response_headers_custom`
 miniflux_container_labels_traefik_additional_response_headers: "{{ miniflux_container_labels_traefik_additional_response_headers_auto | combine(miniflux_container_labels_traefik_additional_response_headers_custom) }}"
