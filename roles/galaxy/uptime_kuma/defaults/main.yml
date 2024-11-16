@@ -37,7 +37,9 @@ uptime_kuma_container_network: "{{ uptime_kuma_identifier }}"
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
 # Use this to expose this container to another reverse proxy, which runs in a different container network.
-uptime_kuma_container_additional_networks: []
+uptime_kuma_container_additional_networks: "{{ uptime_kuma_container_additional_networks_auto + uptime_kuma_container_additional_networks_custom }}"
+uptime_kuma_container_additional_networks_auto: []
+uptime_kuma_container_additional_networks_custom: []
 
 uptime_kuma_container_dns_servers: "{{ uptime_kuma_container_dns_servers_default + uptime_kuma_container_dns_servers_custom }}"
 
