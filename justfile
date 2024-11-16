@@ -124,7 +124,7 @@ update-stable:
 # pull new upstream changes
 update-upstream:
     @echo "updating upstream..."
-    @cd ./upstream && git pull -q
+    @cd ./upstream && git checkout master -q && git pull -q
 
 # update VERSIONS.md file using the actual versions from roles' files
 update-versions:

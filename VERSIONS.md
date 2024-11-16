@@ -19,7 +19,7 @@
 * Corporal: 3.0.0
 * Coturn: 4.6.2-r11
 * Dimension: latest
-* Discord: v0.7.0
+* Discord: v0.7.1
 * Docker Compose: v2.29.2
 * Draupnir: v1.87.0
 * Dynamic Dns: 3.11.2
@@ -30,7 +30,7 @@
 * Facebook: v0.5.1
 * Firezone: 0.7.36
 * Funkwhale: 1.4.0
-* Gmessages: v0.5.1
+* Gmessages: v0.5.2
 * Go Neb: latest
 * Go Skype Bridge: latest
 * Googlechat: v0.5.2
@@ -54,8 +54,8 @@
 * Matrix Registration Bot: 1.3.0
 * Matrix Reminder Bot: v0.3.0
 * Maubot: v0.5.0
-* Meta Instagram: v0.4.1
-* Meta Messenger: v0.4.1
+* Meta Instagram: v0.4.2
+* Meta Messenger: v0.4.2
 * Miniflux: 2.2.3
 * Mjolnir: v1.8.3
 * Mx Puppet Discord: v0.1.1
@@ -77,8 +77,8 @@
 * Redis: 7.2.5
 * Registration: v0.7.2
 * Schildichat: 1.11.36-sc.3
-* Signal: v0.7.2
-* Slack: v0.1.2
+* Signal: v0.7.3
+* Slack: v0.1.3
 * Sliding Sync: v0.99.19
 * Sms Bridge: 0.5.9
 * Spam Checker Mjolnir Antispam Git: v1.6.4
@@ -100,6 +100,6 @@
 * Vaultwarden: 1.32.4
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
-* Whatsapp: v0.11.0
+* Whatsapp: v0.11.1
 * Wsproxy: latest
 * Wsproxy Syncproxy: latest
