@@ -7,7 +7,7 @@ vaultwarden_enabled: true
 
 vaultwarden_identifier: vaultwarden
 
-vaultwarden_version: 1.32.4
+vaultwarden_version: 1.32.5
 
 # The fully-qualified name of your Vaultwarden server (e.g. `vaultwarden.example.com`)
 vaultwarden_hostname: ''
@@ -112,6 +112,11 @@ vaultwarden_config_signups_domains_whitelist: []
 # See: https://github.com/dani-garcia/vaultwarden/wiki/Password-hint-display
 vaultwarden_config_show_password_hint: false
 
+# vaultwarden_config_require_device_email controls the REQUIRE_DEVICE_EMAIL environment variable,
+# which controls whether to require new device emails.
+# When a user logs in an email is required to be sent. If sending the email fails the login attempt will fail!
+vaultwarden_config_require_device_email: false
+
 # vaultwarden_config_admin_token controls the ADMIN_TOKEN environment variable,
 # which (if set) exposes an /admin page, where people possesing this token can perform administrative actions.
 # See: https://github.com/dani-garcia/vaultwarden/wiki/Enabling-admin-page
@@ -174,6 +179,11 @@ vaultwarden_config_log_level: info
 # vaultwarden_config_extended_logging controls the EXTENDED_LOGGING environment variable,
 # which (when enabled) shows timestamps and targets in the logs
 vaultwarden_config_extended_logging: false
+
+# vaultwarden_config_experimental_client_feature_flags controls the EXPERIMENTAL_CLIENT_FEATURE_FLAGS environment variable,
+# which enable experimental feature flags for clients.
+# This is a comma-separated list of flags, e.g. "flag1,flag2,flag3".
+vaultwarden_config_experimental_client_feature_flags: ''
 
 # NOTE:
 # Additional environment variables for configuration can be discovered from https://github.com/dani-garcia/vaultwarden/blob/main/.env.template
