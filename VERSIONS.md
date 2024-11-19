@@ -7,9 +7,9 @@
 * Appservice Webhooks: v1.0.3-01
 * Authentication Service: 0.12.0
 * Authentication Service Syn2Mas: 0.12.0
-* Baibot: v1.3.2
+* Baibot: v1.4.0
 * Borg: 1.4.0
-* Borgmatic: 1.9.1
+* Borgmatic: 1.9.2
 * Buscarron: v1.4.3
 * Cactus Comments: 0.9.0
 * Cactus Comments Client: 2.33.1
@@ -23,7 +23,7 @@
 * Docker Compose: v2.29.2
 * Draupnir: v1.87.0
 * Dynamic Dns: 3.11.2
-* Element: v1.11.85
+* Element: v1.11.86
 * Email2Matrix: 1.1.0
 * Etherpad: 2.2.6
 * Exim Relay: 4.98-r0-1
@@ -35,7 +35,7 @@
 * Go Skype Bridge: latest
 * Googlechat: v0.5.2
 * Gotosocial: 0.17.2
-* Grafana: 11.3.0
+* Grafana: 11.3.1
 * Hangouts: latest
 * Heisenbridge: 1.15.0
 * Honoroit: v0.9.26
