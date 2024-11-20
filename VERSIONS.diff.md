@@ -1,5 +1,6 @@
 **Stable Updates Published**
 
+* [Alertmanager Receiver](https://github.com/metio/matrix-alertmanager-receiver): [2024.10.30](https://github.com/metio/matrix-alertmanager-receiver/releases/tag/2024.10.30) -> [2024.11.20](https://github.com/metio/matrix-alertmanager-receiver/releases/tag/2024.11.20)
 * [Baibot](https://github.com/etkecc/baibot): [v1.3.2](https://github.com/etkecc/baibot/releases/tag/v1.3.2) -> [v1.4.0](https://github.com/etkecc/baibot/releases/tag/v1.4.0)
 * Borgmatic: 1.9.1 -> 1.9.2
 * [Discord](https://github.com/mautrix/discord): [v0.7.0](https://github.com/mautrix/discord/releases/tag/v0.7.0) -> [v0.7.1](https://github.com/mautrix/discord/releases/tag/v0.7.1)

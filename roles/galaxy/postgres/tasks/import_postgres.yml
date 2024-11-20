@@ -78,6 +78,7 @@
       {{ postgres_container_image_latest }}
       -c "set -o pipefail && cat /{{ server_path_postgres_dump | basename }} |
       {{ 'gunzip |' if server_path_postgres_dump.endswith('.gz') else '' }}
+      {{ 'unzstd |' if server_path_postgres_dump.endswith('.zst') else '' }}
       grep -vE '{{ postgres_import_roles_ignore_regex }}' |
       grep -vE '{{ postgres_import_databases_ignore_regex }}' |
       psql -b -v ON_ERROR_STOP=1 -h {{ postgres_identifier }} --dbname={{ postgres_default_import_database }}"

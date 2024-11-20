@@ -7,7 +7,7 @@
 
 - name: Set postgres_dump_name, if not provided
   ansible.builtin.set_fact:
-    postgres_dump_name: "{{ postgres_identifier }}-dump.sql.gz"
+    postgres_dump_name: "{{ postgres_identifier }}-dump.sql.zst"
   when: "postgres_dump_name | default('') == ''"
 
 - name: Set postgres_auto_upgrade_backup_data_path, if not provided
@@ -147,6 +147,7 @@
       {{ postgres_container_image_latest }}
       -c "cat /in/{{ postgres_dump_name }} |
       {{ 'gunzip |' if postgres_dump_name.endswith('.gz') else '' }}
+      {{ 'unzstd |' if postgres_dump_name.endswith('.zst') else '' }}
       grep -vE '{{ postgres_import_roles_ignore_regex }}' |
       grep -vE '{{ postgres_import_databases_ignore_regex }}' |
       psql -v ON_ERROR_STOP=1 -h {{ postgres_identifier }}"
