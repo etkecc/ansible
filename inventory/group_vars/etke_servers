@@ -15,8 +15,9 @@ mash_playbook_traefik_labels_enabled: "{{ matrix_playbook_traefik_labels_enabled
 mash_playbook_reverse_proxyable_services_additional_network: "{{ matrix_playbook_reverse_proxyable_services_additional_network }}"
 devture_systemd_docker_base_container_network_creation_method: ansible-module
 
-# keydb customization
-keydb_enabled: "{{ matrix_synapse_workers_enabled or funkwhale_enabled or peertube_enabled or (matrix_hookshot_enabled and matrix_hookshot_experimental_encryption_enabled) }}"
+# valkey customization
+valkey_enabled: "{{ matrix_synapse_workers_enabled or funkwhale_enabled or peertube_enabled or (matrix_hookshot_enabled and matrix_hookshot_experimental_encryption_enabled) }}"
+
 peertube_config_redis_db: 13
 funkwhale_config_redis_database: 14
 matrix_synapse_redis_dbid: 15
@@ -355,13 +356,13 @@ funkwhale_email_from: "{{ exim_relay_sender_address if exim_relay_enabled else '
 funkwhale_account_email_verification_enforce: "{{ exim_relay_enabled | default(false) }}"
 funkwhale_django_secret_key: "{{ '%s' | format(mash_playbook_generic_secret_key) | password_hash('sha512', 'funkwhale', rounds=655555) | to_uuid }}"
 
-funkwhale_config_redis_hostname: "{{ keydb_identifier if keydb_enabled else '' }}"
+funkwhale_config_redis_hostname: "{{ valkey_identifier if valkey_enabled else '' }}"
 
 funkwhale_api_systemd_required_services_list_auto: |
   {{
     ([postgres_identifier ~ '.service'] if postgres_enabled and funkwhale_database_hostname == postgres_identifier else [])
     +
-    ([keydb_identifier ~ '.service'] if keydb_enabled else [])
+    ([valkey_identifier ~ '.service'] if valkey_enabled else [])
   }}
 
 funkwhale_frontend_systemd_required_services_list_auto: |
@@ -377,7 +378,7 @@ funkwhale_api_container_additional_networks_auto: |
     +
     ([exim_relay_container_network | default('matrix-exim-relay')] if (exim_relay_enabled | default(false) and funkwhale_email_host == exim_relay_identifier | default('matrix-exim-relay') and exim_relay_container_network != funkwhale_container_network) else [])
     +
-    ([keydb_container_network] if keydb_enabled and funkwhale_config_redis_hostname == keydb_identifier else [])
+    ([valkey_container_network] if valkey_enabled and funkwhale_config_redis_hostname == valkey_identifier else [])
   }}
 
 funkwhale_frontend_container_additional_networks_auto: |
@@ -427,7 +428,7 @@ peertube_container_additional_networks_auto: |
       +
       ([postgres_container_network] if postgres_enabled and peertube_config_database_hostname == postgres_identifier and peertube_container_network != postgres_container_network else [])
       +
-      ([keydb_container_network] if keydb_enabled and peertube_config_redis_hostname == keydb_identifier else [])
+      ([valkey_container_network] if valkey_enabled and peertube_config_redis_hostname == valkey_identifier else [])
       +
       ([exim_relay_container_network | default('matrix-exim-relay')] if (exim_relay_enabled | default(false) and peertube_config_smtp_hostname == exim_relay_identifier | default('matrix-exim-relay') and exim_relay_container_network != peertube_container_network) else [])
     ) | unique
@@ -443,15 +444,15 @@ peertube_config_database_port: "{{ '5432' if postgres_enabled else '' }}"
 peertube_config_database_username: peertube
 peertube_config_database_password: "{{ '%s' | format(mash_playbook_generic_secret_key) | password_hash('sha512', 'db.peertube', rounds=655555) | to_uuid }}"
 
-# role-specific:keydb
-peertube_config_redis_hostname: "{{ keydb_identifier if keydb_enabled else '' }}"
-# /role-specific:keydb
+# role-specific:valkey
+peertube_config_redis_hostname: "{{ valkey_identifier if valkey_enabled else '' }}"
+# /role-specific:valkey
 
 peertube_systemd_required_services_list_auto: |
   {{
     ([postgres_identifier ~ '.service'] if postgres_enabled and peertube_config_database_hostname == postgres_identifier else [])
     +
-    ([keydb_identifier ~ '.service'] if keydb_enabled | default(false) and peertube_config_redis_hostname == keydb_identifier | default('matrix-keydb') else [])
+    ([valkey_identifier ~ '.service'] if valkey_enabled | default(false) and peertube_config_redis_hostname == valkey_identifier | default('matrix-valkey') else [])
   }}
 
 peertube_systemd_wanted_services_list_auto: |
