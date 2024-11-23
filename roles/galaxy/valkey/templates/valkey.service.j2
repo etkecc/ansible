@@ -1,0 +1,52 @@
+#jinja2: lstrip_blocks: "True"
+[Unit]
+Description=Valkey ({{ valkey_identifier }})
+{% for service in valkey_systemd_required_services_list %}
+Requires={{ service }}
+After={{ service }}
+{% endfor %}
+{% for service in valkey_systemd_wanted_services_list %}
+Wants={{ service }}
+{% endfor %}
+
+[Service]
+Type=simple
+Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop --time={{ valkey_container_stop_grace_time_seconds }} {{ valkey_identifier }} 2>/dev/null || true'
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ valkey_identifier }} 2>/dev/null || true'
+
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
+			--rm \
+			--name={{ valkey_identifier }} \
+			--log-driver=none \
+			--user={{ valkey_uid }}:{{ valkey_gid }} \
+			--cap-drop=ALL \
+			--read-only \
+			--tmpfs=/tmp:rw,noexec,nosuid,size=100m \
+			--network={{ valkey_container_network }} \
+			{% if valkey_container_valkey_bind_port %}
+			-p {{ valkey_container_valkey_bind_port }}:6379 \
+			{% endif %}
+			--mount type=bind,src={{ valkey_config_path }}/valkey.conf,dst=/usr/local/etc/valkey/valkey.conf,ro \
+			--mount type=bind,src={{ valkey_data_path }},dst=/data \
+			{% for arg in valkey_container_extra_arguments %}
+			{{ arg }} \
+			{% endfor %}
+			{{ valkey_container_image }} \
+			valkey-server /usr/local/etc/valkey/valkey.conf
+
+{% for network in valkey_container_additional_networks %}
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ valkey_identifier }}
+{% endfor %}
+
+ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ valkey_identifier }}
+
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop --time={{ valkey_container_stop_grace_time_seconds }} {{ valkey_identifier }} 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ valkey_identifier }} 2>/dev/null || true'
+
+Restart=always
+RestartSec=30
+SyslogIdentifier={{ valkey_identifier }}
+
+[Install]
+WantedBy=multi-user.target

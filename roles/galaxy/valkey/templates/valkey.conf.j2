@@ -1,0 +1,4 @@
+#jinja2: lstrip_blocks: "True"
+{% if valkey_connection_password %}
+requirepass {{ valkey_connection_password }}
+{% endif %}

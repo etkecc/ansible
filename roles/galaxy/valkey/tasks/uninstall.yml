@@ -1,0 +1,39 @@
+---
+
+- name: Check existence of Valkey systemd service
+  ansible.builtin.stat:
+    path: "{{ devture_systemd_docker_base_systemd_path }}/{{ valkey_identifier }}.service"
+  register: valkey_service_stat
+
+- when: valkey_service_stat.stat.exists | bool
+  block:
+    - name: Ensure Valkey is stopped
+      ansible.builtin.systemd:
+        name: "{{ valkey_identifier }}"
+        state: stopped
+        enabled: false
+        daemon_reload: true
+
+    - name: Ensure Valkey systemd service doesn't exist
+      ansible.builtin.file:
+        path: "{{ devture_systemd_docker_base_systemd_path }}/{{ valkey_identifier }}.service"
+        state: absent
+
+- name: Check existence of Valkey local data path
+  ansible.builtin.stat:
+    path: "{{ valkey_data_path }}"
+  register: valkey_data_path_stat
+
+# We just want to notify the user. Deleting data is too destructive.
+- when: valkey_data_path_stat.stat.exists | bool
+  name: Notify if Valkey local data remains
+  ansible.builtin.set_fact:
+    devture_playbook_runtime_messages_list: |
+      {{
+        devture_playbook_runtime_messages_list | default([])
+        +
+        [
+          "Note: You are not using a local Valkey instance, but some old data remains from before in `{{ valkey_data_path }}`. Feel free to delete it."
+        ]
+      }}
+

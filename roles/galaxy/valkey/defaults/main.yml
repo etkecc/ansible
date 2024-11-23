@@ -1,0 +1,60 @@
+---
+
+# Project source code URL: https://github.com/valkey-io/valkey
+
+valkey_enabled: true
+
+valkey_identifier: valkey
+
+valkey_uid: ''
+valkey_gid: ''
+
+valkey_connection_password: ""
+
+valkey_base_path: "{{ valkey_identifier }}"
+valkey_config_path: "{{ valkey_base_path }}/config"
+valkey_data_path: "{{ valkey_base_path }}/data"
+
+valkey_version: 8.0.1
+valkey_arch: x86_64
+
+valkey_container_image: "{{ valkey_container_image_registry_prefix }}valkey/valkey:{{ valkey_container_image_tag }}"
+valkey_container_image_tag: "{{ valkey_version }}-alpine"
+valkey_container_image_registry_prefix: docker.io/
+valkey_container_image_force_pull: "{{ valkey_container_image.endswith(':latest') }}"
+
+# The base container network. It will be auto-created by this role if it doesn't exist already.
+valkey_container_network: "{{ valkey_identifier }}"
+
+# A list of additional container networks that the container would be connected to.
+# The role does not create these networks, so make sure they already exist.
+valkey_container_additional_networks: "{{ (valkey_container_additional_networks_default + valkey_container_additional_networks_auto + valkey_container_additional_networks_custom) | unique }}"
+valkey_container_additional_networks_default: []
+valkey_container_additional_networks_auto: []
+valkey_container_additional_networks_custom: []
+
+# Controls how long to wait for the container to stop gracefully before killing it.
+# Because `devture_systemd_docker_base_container_stop_grace_time_seconds` may be quite short and databases are more important to stop gracefully,
+# we default to at least 30 seconds.
+valkey_container_stop_grace_time_seconds: "{{ [devture_systemd_docker_base_container_stop_grace_time_seconds, 30] | max }}"
+
+# A list of extra arguments to pass to the container
+valkey_container_extra_arguments: []
+
+# List of systemd services that the Valkey systemd service depends on
+valkey_systemd_required_services_list: "{{ (valkey_systemd_required_services_list_default + valkey_systemd_required_services_list_auto + valkey_systemd_required_services_list_custom) | unique }}"
+valkey_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+valkey_systemd_required_services_list_auto: []
+valkey_systemd_required_services_list_custom: []
+
+# List of systemd services that the Valkey systemd service wants
+valkey_systemd_wanted_services_list: "{{ (valkey_systemd_wanted_services_list_default + valkey_systemd_wanted_services_list_auto + valkey_systemd_wanted_services_list_custom) | unique }}"
+valkey_systemd_wanted_services_list_default: []
+valkey_systemd_wanted_services_list_auto: []
+valkey_systemd_wanted_services_list_custom: []
+
+# Controls whether the container exposes a port (tcp/6379 in the container)
+# that can be used to access Valkey from outside the container
+#
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:6379"), or empty string to not expose.
+valkey_container_valkey_bind_port: ""

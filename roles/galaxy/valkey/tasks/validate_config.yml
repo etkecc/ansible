@@ -1,0 +1,19 @@
+---
+
+- name: Fail if required Valkey settings not defined
+  ansible.builtin.fail:
+    msg: >
+      You need to define a required configuration setting (`{{ item }}`).
+  when: "vars[item] | length == 0"
+  with_items:
+    - valkey_identifier
+    - valkey_uid
+    - valkey_gid
+    - valkey_arch
+
+- name: Fail if Valkey architecture is not supported
+  ansible.builtin.fail:
+    msg: >
+      Your configuration specifies a CPU architecture (`{{ valkey_arch }}`) which is not currently supported.
+      This Valkey role also does not support self-building yet, so it's not possible to make use of it.
+  when: "valkey_arch not in ['amd64', 'arm64']"

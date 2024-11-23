@@ -1,0 +1,46 @@
+---
+
+- name: Ensure Valkey paths exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0750
+    owner: "{{ valkey_uid }}"
+    group: "{{ valkey_gid }}"
+  with_items:
+    - "{{ valkey_base_path }}"
+    - "{{ valkey_config_path }}"
+    - "{{ valkey_data_path }}"
+
+- name: Ensure Valkey environment variables file created
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/{{ item }}.j2"
+    dest: "{{ valkey_config_path }}/{{ item }}"
+    mode: 0640
+    owner: "{{ valkey_uid }}"
+    group: "{{ valkey_gid }}"
+  with_items:
+    - "valkey.conf"
+
+- name: Ensure Valkey container image is pulled
+  community.docker.docker_image:
+    name: "{{ valkey_container_image }}"
+    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+    force_source: "{{ valkey_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else valkey_container_image_force_pull }}"
+  register: result
+  retries: "{{ devture_playbook_help_container_retries_count }}"
+  delay: "{{ devture_playbook_help_container_retries_delay }}"
+  until: result is not failed
+
+- name: Ensure Valkey container network is created
+  community.general.docker_network:
+    name: "{{ valkey_container_network }}"
+    driver: bridge
+    driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
+
+- name: Ensure Valkey systemd installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/valkey.service.j2"
+    dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ valkey_identifier }}.service"
+    mode: 0644
