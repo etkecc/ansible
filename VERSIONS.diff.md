@@ -1,5 +1,6 @@
 **Stable Updates Published**
 
 * Borgmatic: 1.9.2 -> 1.9.3
+* [Synapse](https://github.com/element-hq/synapse): [v1.119.0](https://github.com/element-hq/synapse/releases/tag/v1.119.0) -> [v1.120.0](https://github.com/element-hq/synapse/releases/tag/v1.120.0)
 * [Traefik](https://github.com/traefik/traefik): [v3.2.0](https://github.com/traefik/traefik/releases/tag/v3.2.0) -> [v3.2.1](https://github.com/traefik/traefik/releases/tag/v3.2.1)
 * [Valkey](https://github.com/valkey-io/valkey): [8.0.1](https://github.com/valkey-io/valkey/releases/tag/8.0.1) _new_
