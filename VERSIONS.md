@@ -1,4 +1,4 @@
-* Alertmanager Receiver: 2024.11.20
+* Alertmanager Receiver: 2024.11.27
 * Appservice Discord: v4.0.0
 * Appservice Draupnir For All: 1.87.0
 * Appservice Irc: 1.0.1
@@ -72,7 +72,7 @@
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.8.2
 * Prometheus Postgres Exporter: v0.14.0
-* Radicale: 3.3.0.1
+* Radicale: 3.3.1.0
 * Rageshake: 1.13.0
 * Redis: 7.2.5
 * Registration: v0.7.2
@@ -89,7 +89,7 @@
 * Synapse Admin: v0.10.3-etke31
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4
-* Synapse Reverse Proxy Companion: 1.27.2-alpine
+* Synapse Reverse Proxy Companion: 1.27.3-alpine
 * Synapse S3 Storage Provider: 1.5.0
 * Telegram: v0.15.2
 * Traefik: v3.2.1
