@@ -16,7 +16,7 @@
 * Chatgpt: 3.1.4
 * Cinny: v4.2.3
 * Container Socket Proxy: 0.2.0
-* Corporal: 3.0.0
+* Corporal: 3.1.1
 * Coturn: 4.6.2-r11
 * Dimension: latest
 * Discord: v0.7.1
@@ -26,7 +26,7 @@
 * Element: v1.11.86
 * Email2Matrix: 1.1.0
 * Etherpad: 2.2.6
-* Exim Relay: 4.98-r0-1
+* Exim Relay: 4.98-r0-2
 * Facebook: v0.5.1
 * Firezone: 0.7.36
 * Funkwhale: 1.4.0
@@ -39,7 +39,7 @@
 * Hangouts: latest
 * Heisenbridge: 1.15.0
 * Honoroit: v0.9.26
-* Hookshot: 5.4.1
+* Hookshot: 6.0.1
 * Hydrogen: v0.5.1
 * Instagram: v0.3.1
 * Jitsi: stable-9823
@@ -76,7 +76,7 @@
 * Rageshake: 1.13.0
 * Redis: 7.2.5
 * Registration: v0.7.2
-* Schildichat: 1.11.36-sc.3
+* Schildichat: 1.11.86-sc.0.test.0
 * Signal: v0.7.3
 * Slack: v0.1.3
 * Sliding Sync: v0.99.19
