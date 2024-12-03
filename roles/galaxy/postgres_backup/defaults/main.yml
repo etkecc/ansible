@@ -77,7 +77,8 @@ postgres_backup_container_image_v13: "{{ postgres_backup_container_image_registr
 postgres_backup_container_image_v14: "{{ postgres_backup_container_image_registry_prefix }}prodrigestivill/postgres-backup-local:14-{{ postgres_backup_container_image_distro }}-2cf00a5"
 postgres_backup_container_image_v15: "{{ postgres_backup_container_image_registry_prefix }}prodrigestivill/postgres-backup-local:15-{{ postgres_backup_container_image_distro }}-2cf00a5"
 postgres_backup_container_image_v16: "{{ postgres_backup_container_image_registry_prefix }}prodrigestivill/postgres-backup-local:16-{{ postgres_backup_container_image_distro }}-1a66318"
-postgres_backup_container_image_latest: "{{ postgres_backup_container_image_v16 }}"
+postgres_backup_container_image_v17: "{{ postgres_backup_container_image_registry_prefix }}prodrigestivill/postgres-backup-local:17-{{ postgres_backup_container_image_distro }}-234f538"
+postgres_backup_container_image_latest: "{{ postgres_backup_container_image_v17 }}"
 
 # This variable is assigned at runtime if `postgres_backup_postgres_data_path` is not empty. Overriding its value in that case has no effect.
 postgres_backup_container_image_to_use: '{{ postgres_backup_container_image_latest }}'
