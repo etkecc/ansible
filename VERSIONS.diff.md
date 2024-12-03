@@ -7,3 +7,4 @@
 * [Radicale](https://github.com/tomsquest/docker-radicale): [3.3.1.0](https://github.com/tomsquest/docker-radicale/releases/tag/3.3.1.0) -> [3.3.1.1](https://github.com/tomsquest/docker-radicale/releases/tag/3.3.1.1)
 * [Schildichat](https://github.com/SchildiChat/schildichat-desktop): [1.11.36-sc.3](https://github.com/SchildiChat/schildichat-desktop/releases/tag/1.11.36-sc.3) -> [1.11.86-sc.0.test.0](https://github.com/SchildiChat/schildichat-desktop/releases/tag/1.11.86-sc.0.test.0)
 * [Synapse](https://github.com/element-hq/synapse): [v1.120.0](https://github.com/element-hq/synapse/releases/tag/v1.120.0) -> [v1.120.2](https://github.com/element-hq/synapse/releases/tag/v1.120.2)
+* [Synapse Admin](https://github.com/etkecc/synapse-admin): [v0.10.3-etke32](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.3-etke32) -> [v0.10.3-etke33](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.3-etke33)
