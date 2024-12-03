@@ -9,7 +9,7 @@ radicale_identifier: radicale
 radicale_uid: ''
 radicale_gid: ''
 
-radicale_version: 3.3.1.0
+radicale_version: 3.3.1.1
 
 # The hostname at which radicale is served.
 radicale_hostname: ''
