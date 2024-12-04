@@ -12,6 +12,7 @@ system_cleanup_paths: []
 
 # Debian only
 system_cleanup_apt: false
+system_cleanup_apt_ignore_errors: false
 system_cleanup_apt_upgrade_type: safe
 
 # purge-old-kernels (debian only)

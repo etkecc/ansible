@@ -6,9 +6,11 @@
     update_cache: true
     cache_valid_time: 3600
     upgrade: "{{ system_cleanup_apt_upgrade_type }}"
+  ignore_errors: "{{ system_cleanup_apt_ignore_errors }}"
 
 - name: Ensure package manager is clean
   ansible.builtin.apt:
     clean: true
     autoclean: true
     autoremove: true
+  ignore_errors: "{{ system_cleanup_apt_ignore_errors }}"
