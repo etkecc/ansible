@@ -20,7 +20,7 @@ setup-all *extra_args: (run-tags "setup-all,ensure-users-created,start" extra_ar
 # Rotates SSH keys (uses play/ssh.yml and tags=rotate-ssh-keys)
 rotate-ssh-keys +extra_args:
     #!/usr/bin/env sh
-    set -euo pipefail
+    set -eu pipefail
     if [ -x "$(command -v etkepass)" ]; then
         export SSH_ASKPASS=$(which etkepass)
         export SSH_ASKPASS_REQUIRE=force
@@ -31,7 +31,7 @@ rotate-ssh-keys +extra_args:
 # Runs the playbook with the given list of arguments
 run +extra_args:
     #!/usr/bin/env sh
-    set -euo pipefail
+    set -eu pipefail
     if [ -x "$(command -v etkepass)" ]; then
         export SSH_ASKPASS=$(which etkepass)
         export SSH_ASKPASS_REQUIRE=force
@@ -67,7 +67,7 @@ pull-submodules:
 # pull roles
 pull-roles:
     #!/usr/bin/env sh
-    set -euo pipefail
+    set -eu pipefail
     if [ -x "$(command -v agru)" ]; then
         agru ${AGRU_CLEANUP:-}
     else
