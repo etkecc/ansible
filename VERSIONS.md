@@ -16,7 +16,7 @@
 * Chatgpt: 3.1.4
 * Cinny: v4.2.3
 * Container Socket Proxy: 0.2.0
-* Corporal: 3.1.1
+* Corporal: 3.1.2
 * Coturn: 4.6.2-r11
 * Dimension: latest
 * Discord: v0.7.1
@@ -26,7 +26,7 @@
 * Element: v1.11.87
 * Email2Matrix: 1.1.0
 * Etherpad: 2.2.6
-* Exim Relay: 4.98-r0-2
+* Exim Relay: 4.98-r0-3
 * Facebook: v0.5.1
 * Firezone: 0.7.36
 * Funkwhale: 1.4.0
@@ -57,7 +57,7 @@
 * Meta Instagram: v0.4.2
 * Meta Messenger: v0.4.2
 * Miniflux: 2.2.3
-* Mjolnir: v1.8.3
+* Mjolnir: v1.9.0
 * Mx Puppet Discord: v0.1.1
 * Mx Puppet Groupme: 533cccc8
 * Mx Puppet Instagram: latest
