@@ -98,7 +98,7 @@
 * Uptime Kuma: 1.23.15
 * User Verification Service: v3.0.0
 * Valkey: 8.0.1
-* Vaultwarden: 1.32.5
+* Vaultwarden: 1.32.6
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
 * Whatsapp: v0.11.1
