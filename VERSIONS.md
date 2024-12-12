@@ -7,7 +7,7 @@
 * Appservice Webhooks: v1.0.3-01
 * Authentication Service: 0.12.0
 * Authentication Service Syn2Mas: 0.12.0
-* Baibot: v1.4.0
+* Baibot: v1.4.1
 * Borg: 1.4.0
 * Borgmatic: 1.9.4
 * Buscarron: v1.4.3

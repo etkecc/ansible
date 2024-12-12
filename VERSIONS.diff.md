@@ -1,6 +1,7 @@
 **Stable Updates Published**
 
 * [Alertmanager Receiver](https://github.com/metio/matrix-alertmanager-receiver): [2024.11.27](https://github.com/metio/matrix-alertmanager-receiver/releases/tag/2024.11.27) -> [2024.12.11](https://github.com/metio/matrix-alertmanager-receiver/releases/tag/2024.12.11)
+* [Baibot](https://github.com/etkecc/baibot): [v1.4.0](https://github.com/etkecc/baibot/releases/tag/v1.4.0) -> [v1.4.1](https://github.com/etkecc/baibot/releases/tag/v1.4.1)
 * Borgmatic: 1.9.3 -> 1.9.4
 * [Corporal](https://github.com/devture/matrix-corporal): [3.1.1](https://github.com/devture/matrix-corporal/releases/tag/3.1.1) -> [3.1.2](https://github.com/devture/matrix-corporal/releases/tag/3.1.2)
 * [Exim Relay](https://github.com/devture/exim-relay): [4.98-r0-2](https://github.com/devture/exim-relay/releases/tag/4.98-r0-2) -> [4.98-r0-3](https://github.com/devture/exim-relay/releases/tag/4.98-r0-3)
