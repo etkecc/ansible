@@ -1,6 +1,6 @@
 # show help by default
 default:
-    @just --list --justfile {{ justfile() }}
+    @{{ just_executable() }} --list --justfile {{ justfile() }}
 
 ### Playbook recipes
 
@@ -9,7 +9,7 @@ install-all *extra_args: (run-tags "install-all,ensure-users-created,start" extr
 
 # Runs installation tasks for a single service
 install-service service *extra_args:
-    just --justfile {{ justfile() }} run \
+    {{ just_executable() }} --justfile {{ justfile() }} run \
     --tags=install-{{ service }},start-group \
     --extra-vars=group={{ service }} \
     --extra-vars=devture_systemd_service_manager_service_restart_mode=one-by-one {{ extra_args }}
@@ -41,7 +41,7 @@ run +extra_args:
 
 # Runs the playbook with the given list of comma-separated tags and optional arguments
 run-tags tags *extra_args:
-    just --justfile {{ justfile() }} run --tags={{ tags }} {{ extra_args }}
+    {{ just_executable() }} --justfile {{ justfile() }} run --tags={{ tags }} {{ extra_args }}
 
 # Runs the ssh role only with the given list of arguments
 run-ssh *extra_args:
