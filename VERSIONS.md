@@ -1,4 +1,4 @@
-* Alertmanager Receiver: 2024.12.11
+* Alertmanager Receiver: 2024.12.18
 * Appservice Discord: v4.0.0
 * Appservice Draupnir For All: 1.87.0
 * Appservice Irc: 1.0.1
@@ -23,7 +23,7 @@
 * Docker Compose: v2.29.2
 * Draupnir: v1.87.0
 * Dynamic Dns: 3.11.2
-* Element: v1.11.87
+* Element: v1.11.88
 * Email2Matrix: 1.1.0
 * Etherpad: 2.2.6
 * Exim Relay: 4.98-r0-3
@@ -42,7 +42,7 @@
 * Hookshot: 6.0.1
 * Hydrogen: v0.5.1
 * Instagram: v0.3.1
-* Jitsi: stable-9823
+* Jitsi: stable-9909
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
 * Keydb: 6.3.4
@@ -57,7 +57,7 @@
 * Meta Instagram: v0.4.3
 * Meta Messenger: v0.4.3
 * Miniflux: 2.2.3
-* Mjolnir: v1.9.0
+* Mjolnir: v1.9.1
 * Mx Puppet Discord: v0.1.1
 * Mx Puppet Groupme: 533cccc8
 * Mx Puppet Instagram: latest

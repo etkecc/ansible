@@ -2,6 +2,9 @@
 # enable swap file
 system_swap_enabled: true
 
+# ignore errors
+system_swap_ignore_errors: false
+
 # in megabytes
 system_swap_size: 1024
 
