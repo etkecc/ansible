@@ -113,7 +113,11 @@
       role: galaxy/systemd_service_manager
     - custom/matrix-user-creator
     - custom/matrix-common-after
-    - galaxy/playbook_state_preserver
+    - when: devture_playbook_state_preserver_enabled | bool
+      role: galaxy/playbook_state_preserver
+      tags:
+        - setup-all
+        - install-all
     - galaxy/playbook_runtime_messages
     # END MATRIX
 
