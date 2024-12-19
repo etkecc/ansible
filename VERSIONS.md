@@ -23,7 +23,7 @@
 * Docker Compose: v2.29.2
 * Draupnir: v1.87.0
 * Dynamic Dns: 3.11.2
-* Element: v1.11.88
+* Element: v1.11.89
 * Email2Matrix: 1.1.0
 * Etherpad: 2.2.6
 * Exim Relay: 4.98-r0-3
@@ -86,7 +86,7 @@
 * Static Files: 2.34.0
 * Sygnal: v0.15.1
 * Synapse: v1.121.1
-* Synapse Admin: v0.10.3-etke34
+* Synapse Admin: v0.10.3-etke35
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4
 * Synapse Reverse Proxy Companion: 1.27.3-alpine

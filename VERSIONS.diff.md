@@ -2,7 +2,7 @@
 
 * [Alertmanager Receiver](https://github.com/metio/matrix-alertmanager-receiver): [2024.12.11](https://github.com/metio/matrix-alertmanager-receiver/releases/tag/2024.12.11) -> [2024.12.18](https://github.com/metio/matrix-alertmanager-receiver/releases/tag/2024.12.18)
 * [Discord](https://github.com/mautrix/discord): [v0.7.1](https://github.com/mautrix/discord/releases/tag/v0.7.1) -> [v0.7.2](https://github.com/mautrix/discord/releases/tag/v0.7.2)
-* [Element](https://github.com/element-hq/element-web): [v1.11.87](https://github.com/element-hq/element-web/releases/tag/v1.11.87) -> [v1.11.88](https://github.com/element-hq/element-web/releases/tag/v1.11.88)
+* [Element](https://github.com/element-hq/element-web): [v1.11.87](https://github.com/element-hq/element-web/releases/tag/v1.11.87) -> [v1.11.89](https://github.com/element-hq/element-web/releases/tag/v1.11.89)
 * [Gmessages](https://github.com/mautrix/gmessages): [v0.5.2](https://github.com/mautrix/gmessages/releases/tag/v0.5.2) -> [v0.6.0](https://github.com/mautrix/gmessages/releases/tag/v0.6.0)
 * [Jitsi](https://github.com/jitsi/docker-jitsi-meet): [stable-9823](https://github.com/jitsi/docker-jitsi-meet/releases/tag/stable-9823) -> [stable-9909](https://github.com/jitsi/docker-jitsi-meet/releases/tag/stable-9909)
 * [Meta Instagram](https://github.com/mautrix/meta): [v0.4.2](https://github.com/mautrix/meta/releases/tag/v0.4.2) -> [v0.4.3](https://github.com/mautrix/meta/releases/tag/v0.4.3)
@@ -11,5 +11,6 @@
 * [Radicale](https://github.com/tomsquest/docker-radicale): [3.3.1.1](https://github.com/tomsquest/docker-radicale/releases/tag/3.3.1.1) -> [3.3.2.0](https://github.com/tomsquest/docker-radicale/releases/tag/3.3.2.0)
 * [Signal](https://github.com/mautrix/signal): [v0.7.3](https://github.com/mautrix/signal/releases/tag/v0.7.3) -> [v0.7.4](https://github.com/mautrix/signal/releases/tag/v0.7.4)
 * [Slack](https://github.com/mautrix/slack): [v0.1.3](https://github.com/mautrix/slack/releases/tag/v0.1.3) -> [v0.1.4](https://github.com/mautrix/slack/releases/tag/v0.1.4)
+* [Synapse Admin](https://github.com/etkecc/synapse-admin): [v0.10.3-etke34](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.3-etke34) -> [v0.10.3-etke35](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.3-etke35)
 * [Twitter](https://github.com/mautrix/twitter): [v0.1.8](https://github.com/mautrix/twitter/releases/tag/v0.1.8) -> [v0.2.0](https://github.com/mautrix/twitter/releases/tag/v0.2.0)
 * [Whatsapp](https://github.com/mautrix/whatsapp): [v0.11.1](https://github.com/mautrix/whatsapp/releases/tag/v0.11.1) -> [v0.11.2](https://github.com/mautrix/whatsapp/releases/tag/v0.11.2)
