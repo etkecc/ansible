@@ -128,7 +128,8 @@ update-upstream:
 
 # update VERSIONS.md file using the actual versions from roles' files
 update-versions:
-    @echo "generating versions diff..."
+    @echo "Generating versions diff..."
+    @echo "WARNING: for this to work correctly, both main and fresh local branches need to be up-to-date."
     @python bin/versions.py
     @python bin/versions.diff.py
     @python bin/commitmsg.py
