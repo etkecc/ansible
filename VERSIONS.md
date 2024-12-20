@@ -95,10 +95,10 @@
 * Traefik: v3.2.1
 * Traefik Certs Dumper: v2.8.3
 * Twitter: v0.2.0
-* Uptime Kuma: 1.23.15
+* Uptime Kuma: 1.23.16
 * User Verification Service: v3.0.0
 * Valkey: 8.0.1
-* Vaultwarden: 1.32.6
+* Vaultwarden: 1.32.7
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
 * Whatsapp: v0.11.2
