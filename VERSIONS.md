@@ -56,7 +56,7 @@
 * Maubot: v0.5.0
 * Meta Instagram: v0.4.3
 * Meta Messenger: v0.4.3
-* Miniflux: 2.2.3
+* Miniflux: 2.2.4
 * Mjolnir: v1.9.1
 * Mx Puppet Discord: v0.1.1
 * Mx Puppet Groupme: 533cccc8
@@ -66,7 +66,7 @@
 * Mx Puppet Twitter: latest
 * Ntfy: v2.11.0
 * Pantalaimon: 0.10.5
-* Peertube: v6.3.3
+* Peertube: v7.0.0
 * Postmoogle: v0.9.24
 * Prometheus: v2.55.1
 * Prometheus Nginxlog Exporter: v1.10.0
