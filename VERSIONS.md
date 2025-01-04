@@ -53,7 +53,7 @@
 * Ma1Sd: 2.5.0
 * Matrix Registration Bot: 1.3.0
 * Matrix Reminder Bot: v0.3.0
-* Maubot: v0.5.0
+* Maubot: v0.5.1
 * Meta Instagram: v0.4.3
 * Meta Messenger: v0.4.3
 * Miniflux: 2.2.4
@@ -72,7 +72,7 @@
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.8.2
 * Prometheus Postgres Exporter: v0.14.0
-* Radicale: 3.3.2.0
+* Radicale: 3.3.3.0
 * Rageshake: 1.13.0
 * Redis: 7.2.5
 * Registration: v0.7.2
