@@ -9,7 +9,7 @@
 * Authentication Service Syn2Mas: 0.12.0
 * Baibot: v1.4.1
 * Borg: 1.4.0
-* Borgmatic: 1.9.4
+* Borgmatic: 1.9.5
 * Buscarron: v1.4.3
 * Cactus Comments: 0.9.0
 * Cactus Comments Client: 2.34.0
@@ -66,7 +66,7 @@
 * Mx Puppet Twitter: latest
 * Ntfy: v2.11.0
 * Pantalaimon: 0.10.5
-* Peertube: v7.0.0
+* Peertube: v7.0.1
 * Postmoogle: v0.9.24
 * Prometheus: v2.55.1
 * Prometheus Nginxlog Exporter: v1.10.0
