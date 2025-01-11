@@ -1,6 +1,6 @@
 # Ansible Role: Docker
 
-[![CI](https://github.com/geerlingguy/ansible-role-docker/workflows/CI/badge.svg?event=push)](https://github.com/geerlingguy/ansible-role-docker/actions?query=workflow%3ACI)
+[![CI](https://github.com/geerlingguy/ansible-role-docker/actions/workflows/ci.yml/badge.svg)](https://github.com/geerlingguy/ansible-role-docker/actions/workflows/ci.yml)
 
 An Ansible Role that installs [Docker](https://www.docker.com) on Linux.
 
@@ -61,7 +61,7 @@ Docker Compose Plugin installation options. These differ from the below in that 
 
 ```yaml
 docker_install_compose: false
-docker_compose_version: "2.29.2"
+docker_compose_version: "v2.32.1"
 docker_compose_arch: "{{ ansible_architecture }}"
 docker_compose_url: "https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-linux-{{ docker_compose_arch }}"
 docker_compose_path: /usr/local/bin/docker-compose
@@ -84,7 +84,7 @@ The main Docker repo URL, common between Debian and RHEL systems.
 ```yaml
 docker_apt_release_channel: stable
 docker_apt_arch: "{{ 'arm64' if ansible_architecture == 'aarch64' else 'amd64' }}"
-docker_apt_repository: "deb [arch={{ docker_apt_arch }}] {{ docker_repo_url }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} {{ docker_apt_release_channel }}"
+docker_apt_repository: "deb [arch={{ docker_apt_arch }}{{' signed-by=/etc/apt/keyrings/docker.asc' if add_repository_key is not failed}}] {{ docker_repo_url }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} {{ docker_apt_release_channel }}"
 docker_apt_ignore_key_error: True
 docker_apt_gpg_key: "{{ docker_repo_url }}/{{ ansible_distribution | lower }}/gpg"
 docker_apt_filename: "docker"

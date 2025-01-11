@@ -12,7 +12,7 @@
 * Borgmatic: 1.9.5
 * Buscarron: v1.4.3
 * Cactus Comments: 0.9.0
-* Cactus Comments Client: 2.34.0
+* Cactus Comments Client: 2.35.0
 * Chatgpt: 3.1.4
 * Cinny: v4.2.3
 * Container Socket Proxy: 0.2.0
@@ -20,7 +20,7 @@
 * Coturn: 4.6.2-r11
 * Dimension: latest
 * Discord: v0.7.2
-* Docker Compose: v2.29.2
+* Docker Compose: v2.32.1
 * Draupnir: v1.87.0
 * Dynamic Dns: 3.11.2
 * Element: v1.11.89
@@ -72,7 +72,7 @@
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.8.2
 * Prometheus Postgres Exporter: v0.14.0
-* Radicale: 3.3.3.0
+* Radicale: 3.4.0.0
 * Rageshake: 1.13.0
 * Redis: 7.2.5
 * Registration: v0.7.2
@@ -83,7 +83,7 @@
 * Sms Bridge: 0.5.9
 * Spam Checker Mjolnir Antispam Git: v1.6.4
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
-* Static Files: 2.34.0
+* Static Files: 2.35.0
 * Sygnal: v0.15.1
 * Synapse: v1.121.1
 * Synapse Admin: v0.10.3-etke35
