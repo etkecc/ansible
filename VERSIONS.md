@@ -42,7 +42,7 @@
 * Hookshot: 6.0.1
 * Hydrogen: v0.5.1
 * Instagram: v0.3.1
-* Jitsi: stable-9909
+* Jitsi: stable-9955
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
 * Keydb: 6.3.4
