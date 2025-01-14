@@ -23,7 +23,7 @@
 * Docker Compose: v2.32.1
 * Draupnir: v1.87.0
 * Dynamic Dns: 3.11.2
-* Element: v1.11.89
+* Element: v1.11.90
 * Email2Matrix: 1.1.0
 * Etherpad: 2.2.6
 * Exim Relay: 4.98-r0-3
@@ -92,7 +92,7 @@
 * Synapse Reverse Proxy Companion: 1.27.3-alpine
 * Synapse S3 Storage Provider: 1.5.0
 * Telegram: v0.15.2
-* Traefik: v3.2.2
+* Traefik: v3.3.1
 * Traefik Certs Dumper: v2.8.3
 * Twitter: v0.2.0
 * Uptime Kuma: 1.23.16
