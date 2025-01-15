@@ -85,14 +85,14 @@
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.35.0
 * Sygnal: v0.15.1
-* Synapse: v1.121.1
+* Synapse: v1.122.0
 * Synapse Admin: v0.10.3-etke35
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4
 * Synapse Reverse Proxy Companion: 1.27.3-alpine
 * Synapse S3 Storage Provider: 1.5.0
 * Telegram: v0.15.2
-* Traefik: v3.3.1
+* Traefik: v3.3.2
 * Traefik Certs Dumper: v2.8.3
 * Twitter: v0.2.0
 * Uptime Kuma: 1.23.16
