@@ -7,4 +7,5 @@
 * [Radicale](https://github.com/tomsquest/docker-radicale): [3.3.3.0](https://github.com/tomsquest/docker-radicale/releases/tag/3.3.3.0) -> [3.4.0.0](https://github.com/tomsquest/docker-radicale/releases/tag/3.4.0.0)
 * Static Files: 2.34.0 -> 2.35.0
 * [Synapse](https://github.com/element-hq/synapse): [v1.121.1](https://github.com/element-hq/synapse/releases/tag/v1.121.1) -> [v1.122.0](https://github.com/element-hq/synapse/releases/tag/v1.122.0)
+* [Synapse Admin](https://github.com/etkecc/synapse-admin): [v0.10.3-etke35](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.3-etke35) -> [v0.10.3-etke36](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.3-etke36)
 * [Traefik](https://github.com/traefik/traefik): [v3.2.2](https://github.com/traefik/traefik/releases/tag/v3.2.2) -> [v3.3.2](https://github.com/traefik/traefik/releases/tag/v3.3.2)
