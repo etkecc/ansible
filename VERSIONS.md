@@ -77,7 +77,7 @@
 * Redis: 7.2.5
 * Registration: v0.7.2
 * Schildichat: 1.11.86-sc.0.test.0
-* Signal: v0.7.4
+* Signal: v0.7.5
 * Slack: v0.1.4
 * Sliding Sync: v0.99.19
 * Sms Bridge: 0.5.9
@@ -94,7 +94,7 @@
 * Telegram: v0.15.2
 * Traefik: v3.3.2
 * Traefik Certs Dumper: v2.8.3
-* Twitter: v0.2.0
+* Twitter: v0.2.1
 * Uptime Kuma: 1.23.16
 * User Verification Service: v3.0.0
 * Valkey: 8.0.1
