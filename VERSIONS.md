@@ -22,7 +22,7 @@
 * Discord: v0.7.2
 * Docker Compose: v2.32.1
 * Draupnir: v2.0.1
-* Dynamic Dns: 3.11.2
+* Dynamic Dns: 4.0.0
 * Element: v1.11.90
 * Email2Matrix: 1.1.0
 * Etherpad: 2.2.6
