@@ -39,7 +39,7 @@
 * Hangouts: latest
 * Heisenbridge: 1.15.0
 * Honoroit: v0.9.26
-* Hookshot: 6.0.1
+* Hookshot: 6.0.2
 * Hydrogen: v0.5.1
 * Instagram: v0.3.1
 * Jitsi: stable-9955
@@ -57,7 +57,7 @@
 * Meta Instagram: v0.4.3
 * Meta Messenger: v0.4.3
 * Miniflux: 2.2.4
-* Mjolnir: v1.9.1
+* Mjolnir: v1.9.2
 * Mx Puppet Discord: v0.1.1
 * Mx Puppet Groupme: 533cccc8
 * Mx Puppet Instagram: latest
