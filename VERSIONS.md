@@ -1,6 +1,6 @@
 * Alertmanager Receiver: 2024.12.18
 * Appservice Discord: v4.0.0
-* Appservice Draupnir For All: v2.0.1
+* Appservice Draupnir For All: v2.0.2
 * Appservice Irc: 1.0.1
 * Appservice Kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * Appservice Slack: 2.1.2
@@ -21,7 +21,7 @@
 * Dimension: latest
 * Discord: v0.7.2
 * Docker Compose: v2.32.1
-* Draupnir: v2.0.1
+* Draupnir: v2.0.2
 * Dynamic Dns: 4.0.0
 * Element: v1.11.90
 * Email2Matrix: 1.1.0
@@ -98,7 +98,7 @@
 * Uptime Kuma: 1.23.16
 * User Verification Service: v3.0.0
 * Valkey: 8.0.1
-* Vaultwarden: 1.32.7
+* Vaultwarden: 1.33.0
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
 * Whatsapp: v0.11.2
