@@ -45,7 +45,6 @@
 * Jitsi: stable-9955
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
-* Keydb: 6.3.4
 * Languagetool: 6.5
 * Ldap Registration Proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * Linkding: latest
@@ -74,7 +73,6 @@
 * Prometheus Postgres Exporter: v0.14.0
 * Radicale: 3.4.0.0
 * Rageshake: 1.13.0
-* Redis: 7.2.5
 * Registration: v0.7.2
 * Schildichat: 1.11.86-sc.0.test.0
 * Signal: v0.7.5

@@ -48,7 +48,6 @@
     <outline text="hookshot" title="hookshot" type="rss" htmlUrl="https://github.com/matrix-org/matrix-hookshot" xmlUrl="https://github.com/matrix-org/matrix-hookshot/releases.atom" />
     <outline text="hydrogen" title="hydrogen" type="rss" htmlUrl="https://github.com/element-hq/hydrogen-web" xmlUrl="https://github.com/element-hq/hydrogen-web/releases.atom" />
     <outline text="jitsi" title="jitsi" type="rss" htmlUrl="https://github.com/jitsi/docker-jitsi-meet" xmlUrl="https://github.com/jitsi/docker-jitsi-meet/releases.atom" />
-    <outline text="keydb" title="keydb" type="rss" htmlUrl="https://github.com/Snapchat/KeyDB" xmlUrl="https://github.com/Snapchat/KeyDB/releases.atom" />
     <outline text="languagetool" title="languagetool" type="rss" htmlUrl="https://github.com/Erikvl87/docker-languagetool" xmlUrl="https://github.com/Erikvl87/docker-languagetool/releases.atom" />
     <outline text="ldap-registration-proxy" title="ldap-registration-proxy" type="rss" htmlUrl="https://gitlab.com/activism.international/matrix_ldap_registration_proxy" xmlUrl="https://gitlab.com/activism.international/matrix_ldap_registration_proxy/-/tags?format=atom" />
     <outline text="linkding" title="linkding" type="rss" htmlUrl="https://github.com/sissbruecker/linkding" xmlUrl="https://github.com/sissbruecker/linkding/releases.atom" />
@@ -87,7 +86,6 @@
     <outline text="prometheus_postgres_exporter" title="prometheus_postgres_exporter" type="rss" htmlUrl="https://github.com/prometheus-community/postgres_exporter" xmlUrl="https://github.com/prometheus-community/postgres_exporter/releases.atom" />
     <outline text="radicale" title="radicale" type="rss" htmlUrl="https://github.com/tomsquest/docker-radicale" xmlUrl="https://github.com/tomsquest/docker-radicale/releases.atom" />
     <outline text="rageshake" title="rageshake" type="rss" htmlUrl="https://github.com/matrix-org/rageshake" xmlUrl="https://github.com/matrix-org/rageshake/releases.atom" />
-    <outline text="redis" title="redis" type="rss" htmlUrl="https://github.com/redis/redis" xmlUrl="https://github.com/redis/redis/releases.atom" />
     <outline text="registration" title="registration" type="rss" htmlUrl="https://github.com/ZerataX/matrix-registration" xmlUrl="https://github.com/ZerataX/matrix-registration/releases.atom" />
     <outline text="registration-bot" title="registration-bot" type="rss" htmlUrl="https://github.com/moan0s/matrix-registration-bot" xmlUrl="https://github.com/moan0s/matrix-registration-bot/releases.atom" />
     <outline text="reminder-bot" title="reminder-bot" type="rss" htmlUrl="https://github.com/anoadragon453/matrix-reminder-bot" xmlUrl="https://github.com/anoadragon453/matrix-reminder-bot/releases.atom" />
