@@ -36,7 +36,6 @@
 * Googlechat: v0.5.2
 * Gotosocial: 0.17.2
 * Grafana: 11.5.1
-* Hangouts: latest
 * Heisenbridge: 1.15.0
 * Honoroit: v0.9.26
 * Hookshot: 6.0.2
