@@ -1,13 +1,10 @@
 **Stable Updates Published**
 
-* [Appservice Draupnir For All](https://github.com/the-draupnir-project/Draupnir): [1.87.0](https://github.com/the-draupnir-project/Draupnir/releases/tag/v1.87.0) -> [v2.0.2](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.0.2)
-* Borgmatic: 1.9.5 -> 1.9.6
-* [Draupnir](https://github.com/the-draupnir-project/Draupnir): [v1.87.0](https://github.com/the-draupnir-project/Draupnir/releases/tag/v1.87.0) -> [v2.0.2](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.0.2)
-* [Dynamic Dns](https://github.com/linuxserver/docker-ddclient): [3.11.2](https://github.com/linuxserver/docker-ddclient/releases/tag/3.11.2) -> [4.0.0](https://github.com/linuxserver/docker-ddclient/releases/tag/4.0.0)
-* [Element](https://github.com/element-hq/element-web): [v1.11.90](https://github.com/element-hq/element-web/releases/tag/v1.11.90) -> [v1.11.91](https://github.com/element-hq/element-web/releases/tag/v1.11.91)
-* [Hookshot](https://github.com/matrix-org/matrix-hookshot): [6.0.1](https://github.com/matrix-org/matrix-hookshot/releases/tag/6.0.1) -> [6.0.2](https://github.com/matrix-org/matrix-hookshot/releases/tag/6.0.2)
-* [Mjolnir](https://github.com/matrix-org/mjolnir): [v1.9.1](https://github.com/matrix-org/mjolnir/releases/tag/v1.9.1) -> [v1.9.2](https://github.com/matrix-org/mjolnir/releases/tag/v1.9.2)
-* [Radicale](https://github.com/tomsquest/docker-radicale): [3.4.0.0](https://github.com/tomsquest/docker-radicale/releases/tag/3.4.0.0) -> [3.4.1.0](https://github.com/tomsquest/docker-radicale/releases/tag/3.4.1.0)
-* [Synapse](https://github.com/element-hq/synapse): [v1.122.0](https://github.com/element-hq/synapse/releases/tag/v1.122.0) -> [v1.123.0](https://github.com/element-hq/synapse/releases/tag/v1.123.0)
-* [Synapse Admin](https://github.com/etkecc/synapse-admin): [v0.10.3-etke36](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.3-etke36) -> [v0.10.3-etke37](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.3-etke37)
-* [Vaultwarden](https://github.com/dani-garcia/vaultwarden): [1.32.7](https://github.com/dani-garcia/vaultwarden/releases/tag/1.32.7) -> [1.33.0](https://github.com/dani-garcia/vaultwarden/releases/tag/1.33.0)
+* [Appservice Draupnir For All](https://github.com/the-draupnir-project/Draupnir): [v2.0.2](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.0.2) -> [v2.1.0](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.1.0)
+* [Corporal](https://github.com/devture/matrix-corporal): [3.1.2](https://github.com/devture/matrix-corporal/releases/tag/3.1.2) -> [3.1.3](https://github.com/devture/matrix-corporal/releases/tag/3.1.3)
+* [Draupnir](https://github.com/the-draupnir-project/Draupnir): [v2.0.2](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.0.2) -> [v2.1.0](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.1.0)
+* [Exim Relay](https://github.com/devture/exim-relay): [4.98-r0-3](https://github.com/devture/exim-relay/releases/tag/4.98-r0-3) -> [4.98-r0-4](https://github.com/devture/exim-relay/releases/tag/4.98-r0-4)
+* [Grafana](https://github.com/grafana/grafana): [11.4.0](https://github.com/grafana/grafana/releases/tag/v11.4.0) -> [11.5.1](https://github.com/grafana/grafana/releases/tag/v11.5.1)
+* [Jitsi](https://github.com/jitsi/docker-jitsi-meet): [stable-9955](https://github.com/jitsi/docker-jitsi-meet/releases/tag/stable-9955) -> [stable-10008](https://github.com/jitsi/docker-jitsi-meet/releases/tag/stable-10008)
+* [Traefik](https://github.com/traefik/traefik): [v3.3.2](https://github.com/traefik/traefik/releases/tag/v3.3.2) -> [v3.3.3](https://github.com/traefik/traefik/releases/tag/v3.3.3)
+* [Vaultwarden](https://github.com/dani-garcia/vaultwarden): [1.33.0](https://github.com/dani-garcia/vaultwarden/releases/tag/1.33.0) -> [1.33.1](https://github.com/dani-garcia/vaultwarden/releases/tag/1.33.1)

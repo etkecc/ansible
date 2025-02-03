@@ -1,6 +1,6 @@
 * Alertmanager Receiver: 2024.12.18
 * Appservice Discord: v4.0.0
-* Appservice Draupnir For All: v2.0.2
+* Appservice Draupnir For All: v2.1.0
 * Appservice Irc: 1.0.1
 * Appservice Kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * Appservice Slack: 2.1.2
@@ -16,17 +16,17 @@
 * Chatgpt: 3.1.4
 * Cinny: v4.2.3
 * Container Socket Proxy: 0.2.0
-* Corporal: 3.1.2
+* Corporal: 3.1.3
 * Coturn: 4.6.2-r11
 * Dimension: latest
 * Discord: v0.7.2
 * Docker Compose: v2.32.1
-* Draupnir: v2.0.2
+* Draupnir: v2.1.0
 * Dynamic Dns: 4.0.0
 * Element: v1.11.91
 * Email2Matrix: 1.1.0
 * Etherpad: 2.2.6
-* Exim Relay: 4.98-r0-3
+* Exim Relay: 4.98-r0-4
 * Facebook: v0.5.1
 * Firezone: 0.7.36
 * Funkwhale: 1.4.0
@@ -35,14 +35,14 @@
 * Go Skype Bridge: latest
 * Googlechat: v0.5.2
 * Gotosocial: 0.17.2
-* Grafana: 11.4.0
+* Grafana: 11.5.1
 * Hangouts: latest
 * Heisenbridge: 1.15.0
 * Honoroit: v0.9.26
 * Hookshot: 6.0.2
 * Hydrogen: v0.5.1
 * Instagram: v0.3.1
-* Jitsi: stable-9955
+* Jitsi: stable-10008
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
 * Languagetool: 6.5
@@ -90,13 +90,13 @@
 * Synapse Reverse Proxy Companion: 1.27.3-alpine
 * Synapse S3 Storage Provider: 1.5.0
 * Telegram: v0.15.2
-* Traefik: v3.3.2
+* Traefik: v3.3.3
 * Traefik Certs Dumper: v2.8.3
 * Twitter: v0.2.1
 * Uptime Kuma: 1.23.16
 * User Verification Service: v3.0.0
 * Valkey: 8.0.1
-* Vaultwarden: 1.33.0
+* Vaultwarden: 1.33.1
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
 * Whatsapp: v0.11.2
