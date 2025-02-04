@@ -1,6 +1,7 @@
 **Stable Updates Published**
 
 * [Appservice Draupnir For All](https://github.com/the-draupnir-project/Draupnir): [v2.0.2](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.0.2) -> [v2.1.0](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.1.0)
+* Borgmatic: 1.9.6 -> 1.9.9
 * [Corporal](https://github.com/devture/matrix-corporal): [3.1.2](https://github.com/devture/matrix-corporal/releases/tag/3.1.2) -> [3.1.3](https://github.com/devture/matrix-corporal/releases/tag/3.1.3)
 * [Draupnir](https://github.com/the-draupnir-project/Draupnir): [v2.0.2](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.0.2) -> [v2.1.0](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.1.0)
 * [Exim Relay](https://github.com/devture/exim-relay): [4.98-r0-3](https://github.com/devture/exim-relay/releases/tag/4.98-r0-3) -> [4.98-r0-4](https://github.com/devture/exim-relay/releases/tag/4.98-r0-4)
