@@ -1,6 +1,8 @@
 **Stable Updates Published**
 
 * [Appservice Draupnir For All](https://github.com/the-draupnir-project/Draupnir): [v2.0.2](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.0.2) -> [v2.1.0](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.1.0)
+* [Authentication Service](https://github.com/element-hq/matrix-authentication-service): [0.12.0](https://github.com/element-hq/matrix-authentication-service/releases/tag/0.12.0) -> [0.13.0](https://github.com/element-hq/matrix-authentication-service/releases/tag/0.13.0)
+* Authentication Service Syn2Mas: 0.12.0 -> 0.13.0
 * Borgmatic: 1.9.6 -> 1.9.9
 * [Corporal](https://github.com/devture/matrix-corporal): [3.1.2](https://github.com/devture/matrix-corporal/releases/tag/3.1.2) -> [3.1.3](https://github.com/devture/matrix-corporal/releases/tag/3.1.3)
 * [Draupnir](https://github.com/the-draupnir-project/Draupnir): [v2.0.2](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.0.2) -> [v2.1.0](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.1.0)
