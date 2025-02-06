@@ -86,7 +86,7 @@
 * Synapse Admin: v0.10.3-etke37
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4
-* Synapse Reverse Proxy Companion: 1.27.3-alpine
+* Synapse Reverse Proxy Companion: 1.27.4-alpine
 * Synapse S3 Storage Provider: 1.5.0
 * Telegram: v0.15.2
 * Traefik: v3.3.3
