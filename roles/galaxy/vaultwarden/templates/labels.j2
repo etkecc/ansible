@@ -33,7 +33,11 @@ traefik.http.routers.{{ vaultwarden_identifier }}.priority={{ vaultwarden_contai
 {% endif %}
 
 traefik.http.routers.{{ vaultwarden_identifier }}.service={{ vaultwarden_identifier }}
+
+{% if vaultwarden_container_labels_traefik_tls %}
 traefik.http.routers.{{ vaultwarden_identifier }}.tls.certResolver={{ vaultwarden_container_labels_traefik_tls_certResolver }}
+{% endif %}
+
 traefik.http.routers.{{ vaultwarden_identifier }}.entrypoints={{ vaultwarden_container_labels_traefik_entrypoints }}
 traefik.http.services.{{ vaultwarden_identifier }}.loadbalancer.server.port={{ vaultwarden_config_rocket_port }}
 {% endif %}

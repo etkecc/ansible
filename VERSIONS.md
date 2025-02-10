@@ -1,4 +1,4 @@
-* Alertmanager Receiver: 2024.12.18
+* Alertmanager Receiver: 2025.2.9
 * Appservice Discord: v4.0.0
 * Appservice Draupnir For All: v2.1.0
 * Appservice Irc: 1.0.1
@@ -95,7 +95,7 @@
 * Uptime Kuma: 1.23.16
 * User Verification Service: v3.0.0
 * Valkey: 8.0.1
-* Vaultwarden: 1.33.1
+* Vaultwarden: 1.33.2
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
 * Whatsapp: v0.11.2

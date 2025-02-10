@@ -7,7 +7,7 @@ vaultwarden_enabled: true
 
 vaultwarden_identifier: vaultwarden
 
-vaultwarden_version: 1.33.1
+vaultwarden_version: 1.33.2
 
 # The fully-qualified name of your Vaultwarden server (e.g. `vaultwarden.example.com`)
 vaultwarden_hostname: ''
@@ -257,6 +257,7 @@ vaultwarden_container_labels_traefik_path_prefix: "{{ vaultwarden_path_prefix }}
 vaultwarden_container_labels_traefik_rule_ui: "Host(`{{ vaultwarden_container_labels_traefik_hostname }}`){% if vaultwarden_container_labels_traefik_path_prefix != '/' %} && PathPrefix(`{{ vaultwarden_container_labels_traefik_path_prefix | quote }}`){% endif %}"
 vaultwarden_container_labels_traefik_priority: 0
 vaultwarden_container_labels_traefik_entrypoints: web-secure
+vaultwarden_container_labels_traefik_tls: "{{ vaultwarden_container_labels_traefik_entrypoints != 'web' }}"
 vaultwarden_container_labels_traefik_tls_certResolver: default  # noqa var-naming
 
 # Controls whether a compression middleware will be injected into the middlewares list.
