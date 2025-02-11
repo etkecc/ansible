@@ -9,12 +9,12 @@
 * Authentication Service Syn2Mas: 0.13.0
 * Baibot: v1.4.1
 * Borg: 1.4.0
-* Borgmatic: 1.9.9
+* Borgmatic: 1.9.10
 * Buscarron: v1.4.3
 * Cactus Comments: 0.9.0
-* Cactus Comments Client: 2.35.0
+* Cactus Comments Client: 2.36.0
 * Chatgpt: 3.1.4
-* Cinny: v4.2.3
+* Cinny: v4.3.0
 * Container Socket Proxy: 0.2.0
 * Corporal: 3.1.3
 * Coturn: 4.6.2-r11
@@ -23,7 +23,7 @@
 * Docker Compose: v2.32.1
 * Draupnir: v2.1.0
 * Dynamic Dns: 4.0.0
-* Element: v1.11.91
+* Element: v1.11.92
 * Email2Matrix: 1.1.0
 * Etherpad: 2.2.6
 * Exim Relay: 4.98-r0-4
@@ -80,9 +80,9 @@
 * Sms Bridge: 0.5.9
 * Spam Checker Mjolnir Antispam Git: v1.6.4
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
-* Static Files: 2.35.0
+* Static Files: 2.36.0
 * Sygnal: v0.15.1
-* Synapse: v1.123.0
+* Synapse: v1.124.0
 * Synapse Admin: v0.10.3-etke37
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4
