@@ -1,0 +1,109 @@
+---
+
+- name: Restart ntfy service to ensure user database is created
+  ansible.builtin.systemd:
+    name: "{{ ntfy_identifier }}"
+    daemon_reload: true
+    state: restarted
+
+- name: Allow anonymous write access for push messages 
+  command: |
+    {{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} run \
+    --rm \
+    --user={{ ntfy_uid }}:{{ ntfy_gid }} \
+    --mount type=bind,src={{ ntfy_config_dir_path }},dst=/etc/ntfy,ro \
+    --mount type=bind,src={{ ntfy_data_path }},dst=/data \
+    --network none \
+    {{ ntfy_container_image }} \
+     access '*' 'up*' write-only' 
+  ignore_errors: true
+
+- name: Get existing ntfy users
+  command: |
+    {{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} run \
+    --rm \
+    --user={{ ntfy_uid }}:{{ ntfy_gid }} \
+    --mount type=bind,src={{ ntfy_config_dir_path }},dst=/etc/ntfy,ro \
+    --mount type=bind,src={{ ntfy_data_path }},dst=/data \
+    --network none \
+    {{ ntfy_container_image }} \
+    user list'
+  register: ntfy_users_output
+  changed_when: false
+  failed_when: false
+
+- name: Extract existing users
+  set_fact:
+    existing_users: "{{ (ntfy_users_output.stdout + '\n' + ntfy_users_output.stderr) | regex_findall('user ([^ ]+)') }}"
+
+- name: Extract allowed users from credentials
+  set_fact:
+    allowed_users: "{{ ntfy_credentials | map(attribute='username') | list }}"
+
+- name: Identify users to add
+  set_fact:
+    users_to_add: "{{ allowed_users | difference(existing_users) }}"
+
+- name: Create ntfy users
+  command: |
+    {{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} run \
+    --rm \
+    --user={{ ntfy_uid }}:{{ ntfy_gid }} \
+    --mount type=bind,src={{ ntfy_config_dir_path }},dst=/etc/ntfy,ro \
+    --mount type=bind,src={{ ntfy_data_path }},dst=/data \
+    --network none \
+    --env NTFY_PASSWORD={{ item.password }} \
+    {{ ntfy_container_image }} \
+    user add --role={{ item.admin | ternary("admin", "user") }} {{ item.username }}'
+  loop: "{{ ntfy_credentials }}"
+  when: item.username in users_to_add
+  ignore_errors: true
+
+- name: Write ntfy users passwords
+  command: |
+    {{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} run \
+    --rm \
+    --user={{ ntfy_uid }}:{{ ntfy_gid }} \
+    --mount type=bind,src={{ ntfy_config_dir_path }},dst=/etc/ntfy,ro \
+    --mount type=bind,src={{ ntfy_data_path }},dst=/data \
+    --network none \
+    --env NTFY_PASSWORD={{ item.password }} \
+    {{ ntfy_container_image }} \
+    user change-pass {{ item.username }}'
+  loop: "{{ ntfy_credentials }}"
+  when: item.username in existing_users
+  ignore_errors: true
+
+- name: Write ntfy users roles
+  command: |
+    {{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} run \
+    --rm \
+    --user={{ ntfy_uid }}:{{ ntfy_gid }} \
+    --mount type=bind,src={{ ntfy_config_dir_path }},dst=/etc/ntfy,ro \
+    --mount type=bind,src={{ ntfy_data_path }},dst=/data \
+    --network none \
+    {{ ntfy_container_image }} \
+    user change-role {{ item.username }} {{ item.admin | ternary("admin", "user") }}'
+  with_items: "{{ ntfy_credentials }}"
+  loop: "{{ ntfy_credentials }}"
+  when: item.username in existing_users
+  ignore_errors: true
+
+- name: Identify users to delete
+  set_fact:
+    users_to_delete: "{{ existing_users | difference(allowed_users + ['*']) }}"
+
+- name: Delete unwanted users
+  command: |
+    {{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} run \
+    --rm \
+    --user={{ ntfy_uid }}:{{ ntfy_gid }} \
+    --mount type=bind,src={{ ntfy_config_dir_path }},dst=/etc/ntfy,ro \
+    --mount type=bind,src={{ ntfy_data_path }},dst=/data \
+    --network none \
+    {{ ntfy_container_image }} \
+    user del {{ item }}'
+  loop: "{{ users_to_delete }}"
+  when: users_to_delete | length > 0
+  ignore_errors: true
+

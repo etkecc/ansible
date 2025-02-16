@@ -11,3 +11,9 @@ visitor-request-limit-burst: {{ ntfy_visitor_request_limit_burst | to_json }}
 visitor-request-limit-replenish: {{ ntfy_visitor_request_limit_replenish | to_json }}
 
 web-root: {{ ntfy_web_root | to_json }}
+
+
+{% if ntfy_credentials | length > 0 %}
+auth-file: /data/auth.db
+auth-default-access: deny-all
+{% endif %}

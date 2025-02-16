@@ -177,3 +177,17 @@ ntfy_configuration_extension: "{{ ntfy_configuration_extension_yaml | from_yaml 
 # Holds the final ntfy configuration (a combination of the default and its extension).
 # You most likely don't need to touch this variable. Instead, see `ntfy_configuration_yaml`.
 ntfy_configuration: "{{ ntfy_configuration_yaml | from_yaml | combine(ntfy_configuration_extension, recursive=True) }}"
+
+# List of user credentials for ntfy authentication.
+# If left empty (ntfy_credentials: []), authentication will be disabled, 
+# allowing unrestricted access to all topics.
+# To enable authentication, add users with a username and password:
+# ntfy_credentials:
+#   - username: user1
+#     password: password1
+#     admin: true
+#   - username: user2
+#     password: password2
+#     admin: true
+# When credentials are provided, ntfy will enforce authentication.
+ntfy_credentials: []

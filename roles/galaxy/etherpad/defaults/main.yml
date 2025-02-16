@@ -1,3 +1,8 @@
+# SPDX-FileCopyrightText: 2023 - 2024 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2024 Nikita Chernyi
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 ---
 
 # Project source code URL: https://github.com/ether/etherpad-lite
@@ -6,7 +11,7 @@ etherpad_enabled: true
 
 etherpad_identifier: etherpad
 
-etherpad_version: 2.2.6
+etherpad_version: 2.2.7
 
 etherpad_scheme: https
 
