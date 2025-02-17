@@ -74,7 +74,7 @@ jobs:
           cp -r .config/inventory ../
           ansible-playbook play/all.yml -l localhost -t skopeo -e target=localhost
           sh play/.skopeo-parallel
-          rm rf ./*
+          rm -rf ./*
 
 # TODO: test run
 
