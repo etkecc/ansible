@@ -1,7 +1,7 @@
 name: CI
 on:
   push:
-    branches: [ "main", "fresh" ]
+    branches: [ "main", "fresh", "new-fresh-flow" ]
 env:
   alpine: "3.21"
   ansible: "11.2.0"
@@ -15,7 +15,7 @@ jobs:
   build-base:
     name: Build base image
     runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/fresh' }}
+    if: ${{ github.ref == 'refs/heads/new-fresh-flow' }}
     steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
@@ -52,11 +52,35 @@ jobs:
             ANSIBLE=${{ env.ansible }}
             ANSIBLE_CORE=${{ env.ansible_core }}
 
-  build-fresh:
-    name: Build ansible image (fresh)
+  sync-images:
+    name: Sync images
     needs: build-base
     runs-on: self-hosted
-    if: ${{ github.ref == 'refs/heads/fresh' }}
+    if: ${{ github.ref == 'refs/heads/new-fresh-flow' }}
+    container:
+      image: ghcr.io/${{ github.repository }}/base:${{ env.alpine }}-${{ env.ansible_core }}-${{ env.ansible }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sync images
+        env:
+          MATRIX_TOKEN: ${{ secrets.MATRIX_TOKEN }}
+          MATRIX_URL_FRESH: ${{ secrets.MATRIX_URL_FRESH }}
+          CI_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+        run: |
+          apk --no-cache add skopeo parallel curl
+          skopeo login --username etkecc --password ${{ secrets.DOCKER_HUB_PASSWORD }} docker.io
+          cp -r /playbook/.config/inventory /
+          cd /playbook; ansible-playbook play/all.yml -l localhost -t skopeo -e target=localhost
+          sh play/.skopeo-parallel
+          ./bin/ci-notify.sh
+
+# TODO: test run
+
+  build-fresh:
+    name: Build ansible image (fresh)
+    needs: sync-images
+    runs-on: self-hosted
+    if: ${{ github.ref == 'refs/heads/new-fresh-flow' }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up Docker Buildx
@@ -88,28 +112,6 @@ jobs:
             ALPINE=${{ env.alpine }}
             ANSIBLE=${{ env.ansible }}
             ANSIBLE_CORE=${{ env.ansible_core }}
-
-  sync-images:
-    name: Sync images
-    needs: build-fresh
-    runs-on: self-hosted
-    if: ${{ github.ref == 'refs/heads/fresh' }}
-    container:
-      image: ghcr.io/${{ github.repository }}:fresh
-    steps:
-      - uses: actions/checkout@v4
-      - name: Sync images
-        env:
-          MATRIX_TOKEN: ${{ secrets.MATRIX_TOKEN }}
-          MATRIX_URL_FRESH: ${{ secrets.MATRIX_URL_FRESH }}
-          CI_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
-        run: |
-          apk --no-cache add skopeo parallel curl
-          skopeo login --username etkecc --password ${{ secrets.DOCKER_HUB_PASSWORD }} docker.io
-          cp -r /playbook/.config/inventory /
-          cd /playbook; ansible-playbook play/all.yml -l localhost -t skopeo -e target=localhost
-          sh play/.skopeo-parallel
-          ./bin/ci-notify.sh
 
   build-stable:
     name: Build ansible image (stable)
