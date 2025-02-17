@@ -116,7 +116,7 @@ jobs:
             ghcr.io/${{ github.repository }}
             registry.etke.cc/${{ github.repository }}
           tags: |
-            type=raw,value=fresh,enable=${{ github.ref_name == 'fresh' }}
+            type=raw,value=fresh,enable=${{ github.ref_name == 'new-fresh-flow' }}
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
