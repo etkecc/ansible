@@ -14,7 +14,7 @@
 * Cactus Comments: 0.9.0
 * Cactus Comments Client: 2.36.0
 * Chatgpt: 3.1.4
-* Cinny: v4.3.0
+* Cinny: v4.3.2
 * Container Socket Proxy: 0.2.0
 * Corporal: 3.1.3
 * Coturn: 4.6.2-r11
@@ -52,8 +52,8 @@
 * Matrix Registration Bot: 1.3.0
 * Matrix Reminder Bot: v0.3.0
 * Maubot: v0.5.1
-* Meta Instagram: v0.4.3
-* Meta Messenger: v0.4.3
+* Meta Instagram: v0.4.4
+* Meta Messenger: v0.4.4
 * Miniflux: 2.2.4
 * Mjolnir: v1.9.2
 * Mx Puppet Discord: v0.1.1
@@ -98,6 +98,6 @@
 * Vaultwarden: 1.33.2
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
-* Whatsapp: v0.11.2
+* Whatsapp: v0.11.3
 * Wsproxy: latest
 * Wsproxy Syncproxy: latest
