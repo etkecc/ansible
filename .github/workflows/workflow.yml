@@ -125,13 +125,19 @@ jobs:
           TOKEN: ${{ secrets.TESTING_TOKEN }}
           API: ${{ secrets.TESTING_API }}
         run: |
+          # TODO: enable it back
           # trigger maintenance run
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"command": "maintenance"}' "$API/commands")
-          if [ "$STATUS" -eq 204 ]; then echo "Maintenance run triggered"; else echo "Failed to trigger maintenance run (HTTP $STATUS). If that's expected, you can (locally): docker pull gchr.io/${{ github.repository }}:fresh && docker tag ghcr.io/${{ github.repository }}:fresh ghcr.io/${{ github.repository }}:latest && docker tag ghcr.io/${{ github.repository }}:fresh registry.etke.cc/${{ github.repository }}:latest && docker push ghcr.io/${{ github.repository }}:latest && docker push registry.etke.cc/${{ github.repository }}:latest" && exit 1; fi
+          # STATUS=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"command": "maintenance"}' "$API/commands")
+          # if [ "$STATUS" -eq 204 ]; then echo "Maintenance run triggered"; else echo "Failed to trigger maintenance run (HTTP $STATUS). If that's expected, you can (locally): docker pull gchr.io/${{ github.repository }}:fresh && docker tag ghcr.io/${{ github.repository }}:fresh ghcr.io/${{ github.repository }}:latest && docker tag ghcr.io/${{ github.repository }}:fresh registry.etke.cc/${{ github.repository }}:latest && docker push ghcr.io/${{ github.repository }}:latest && docker push registry.etke.cc/${{ github.repository }}:latest" && exit 1; fi
           # check progress
           while true; do STATUS=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $TOKEN" "$API/locks"); if [ "$STATUS" -eq 200 ]; then echo "Maintenance is still in progress, retrying in 1 minute..." && sleep 60; elif [ "$STATUS" -eq 204 ]; then echo "Maintenance has been finished"; break; else echo "Failed to check maintenance progress (HTTP $STATUS)" && exit 1; fi; done
-          # check the result
-          echo "Checking the result... not implemented yet" && exit 1
+          # check result
+          NOTIFICATIONS=$(curl -s -H "Authorization: Bearer $TOKEN" "$API/notifications")
+          ERROR=$(echo "$NOTIFICATIONS" | jq -r --arg date "$(date +%Y-%m-%d)" '[.[] | select(.event_id | startswith("admin-run-maintenance-\($date)"))] | last | select(.error != null) | .error')
+          if [ -n "$ERROR" ]; then echo "Error found in the last maintenance event: $ERROR" && exit 1;else echo "Maintenance finished successfully"; fi
+          echo "$NOTIFICATIONS" | jq
+          # cleanup notifications
+          curl -s -X DELETE -H "Authorization: Bearer $TOKEN" "$API/notifications"
 
 
   ## TODO: enable it once test run is ready
