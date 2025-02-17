@@ -76,23 +76,6 @@ jobs:
           sh play/.skopeo-parallel
           rm -rf ./* && rm -rf .git .github .config
 
-  # TODO: test run
-  # test:
-  #   name: Test
-  #   needs: build-base
-  #   runs-on: self-hosted
-  #   if: ${{ github.ref == 'refs/heads/new-fresh-flow' }}
-  #   container:
-  #     image: ghcr.io/${{ github.repository }}/base
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Trigger maintenance run
-  #       env:
-  #         TOKEN: ${{ secrets.TESTING_TOKEN }}
-  #         API_BASE: ${{ secrets.API_BASE }}
-  #       run: |
-  #         apk --no-cache add curl jq
-
   build-fresh:
     name: Build ansible image (fresh)
     needs: sync-images
@@ -135,9 +118,26 @@ jobs:
           MATRIX_URL_FRESH: ${{ secrets.MATRIX_URL_FRESH }}
           CI_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
         run: |
-          apk --no-cache add curl
-          # TODO: enable it back
+          echo "disabled for now"
+          # TODO: enable it back in the build-stable, once the new flow is ready
           # ./bin/ci-notify.sh
+
+  # TODO: test run
+  # test:
+  #   name: Test
+  #   needs: build-fresh
+  #   runs-on: self-hosted
+  #   if: ${{ github.ref == 'refs/heads/new-fresh-flow' }}
+  #   container:
+  #     image: ghcr.io/${{ github.repository }}/base
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Trigger maintenance run
+  #       env:
+  #         TOKEN: ${{ secrets.TESTING_TOKEN }}
+  #         API_BASE: ${{ secrets.API_BASE }}
+  #       run: |
+  #         apk --no-cache add curl jq
 
   build-stable:
     name: Build ansible image (stable)
