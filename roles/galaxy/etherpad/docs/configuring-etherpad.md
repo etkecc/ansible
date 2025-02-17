@@ -21,7 +21,19 @@ To enable Etherpad with this role, add the following configuration to your `vars
 **Note**: the path should be something like `inventory/host_vars/matrix.example.com/vars.yml` if you use the [MDAD (matrix-docker-ansible-deploy)](https://github.com/spantaleev/matrix-docker-ansible-deploy) Ansible playbook.
 
 ```yaml
+########################################################################
+#                                                                      #
+# etherpad                                                             #
+#                                                                      #
+########################################################################
+
 etherpad_enabled: true
+
+########################################################################
+#                                                                      #
+# /etherpad                                                            #
+#                                                                      #
+########################################################################
 ```
 
 ### Set the hostname
@@ -52,9 +64,16 @@ etherpad_database_username: YOUR_DATABASE_USERNAME_HERE
 etherpad_database_password: YOUR_DATABASE_PASSWORD_HERE
 ```
 
-### Enable admin web UI (optional)
+### Create admin user (optional)
 
-To enable the admin web UI, add the following configuration to your `vars.yml` file. Make sure to replace `YOUR_USERNAME_HERE` and `YOUR_PASSWORD_HERE` with your own values.
+You can create an admin user account for authentication. The admin user account is used by:
+  - default HTTP basic authentication if no plugin handles authentication
+  - authentication plugins
+  - authorization plugins
+
+The admin user can access to `/admin` page. Authentication and authorization plugins may define additional properties. Note that `/admin` page will not be available, if the admin user is not created.
+
+To create the admin user, add the following configuration to your `vars.yml` file. Make sure to replace `YOUR_USERNAME_HERE` and `YOUR_PASSWORD_HERE` with your own values.
 
 ```yaml
 etherpad_admin_username: YOUR_USERNAME_HERE
@@ -112,6 +131,29 @@ Take a look at:
 
 - [`defaults/main.yml`](../defaults/main.yml) for some variables that you can customize via your `vars.yml` file. You can override settings (even those that don't have dedicated playbook variables) using the `etherpad_configuration_extension_json` variable
 
+Here is an example of configuration extension:
+
+```yaml
+etherpad_configuration_extension_json: |
+  {
+   "loadTest": true,
+   "commitRateLimiting": {
+     "duration": 1,
+     "points": 10
+   },
+   "padOptions": {
+     "noColors": true,
+     "showChat": true,
+     "showLineNumbers": false,
+     "rtl": true,
+     "alwaysShowChat": true,
+     "lang": "ar"
+   }
+  }
+```
+
+Check [the official docs](https://etherpad.org/doc/latest/) for available settings.
+
 ## Installing
 
 After configuring the playbook, run the installation command of your playbook as below:
@@ -126,7 +168,7 @@ If you use the [mash-playbook](https://github.com/mother-of-all-self-hosting/mas
 
 The Etherpad UI should be available at the specified hostname like `https://example.com`, while the admin UI (if enabled) should then be available at `https://example.com/admin`.
 
-Check [the official wiki](https://github.com/ether/etherpad-lite/wiki) for details about how to configure and use Etherpad.
+Check [the official docs](https://etherpad.org/doc/latest/) and [the wiki at GitHub](https://github.com/ether/etherpad-lite/wiki) for details about how to configure and use Etherpad.
 
 ### Managing / Deleting old pads
 
