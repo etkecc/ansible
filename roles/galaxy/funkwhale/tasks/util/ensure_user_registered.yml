@@ -6,6 +6,6 @@
       bash -c 'funkwhale-manage fw users create --username {{ user.username | quote }} --email {{ user.initial_email | quote }} --password {{ user.initial_password | quote }} {% if user.initial_type == 'admin' %}--superuser{% else %}--no-superuser{% endif %}'
   register: funkwhale_api_create_account_result
   failed_when:
-    - '"created!" not in funkwhale_api_create_account_result.stdout and "username already exists" not in funkwhale_api_create_account_result.stdout and "already registered with this e-mail address" not in funkwhale_api_create_account_result.stdout'
+    - '"created!" not in funkwhale_api_create_account_result.stdout and "username already exists" not in funkwhale_api_create_account_result.stdout and "already registered with this e-mail address" not in funkwhale_api_create_account_result.stdout' and "use other username." not in funkwhale_api_create_account_result.stdout
   changed_when:
     - '"created!" in funkwhale_api_create_account_result.stdout'
