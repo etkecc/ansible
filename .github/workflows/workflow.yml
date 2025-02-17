@@ -69,12 +69,11 @@ jobs:
           CI_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
           ANISBLE_LOG_PATH: " "
         run: |
-          cp -r ./* /playbook
-          cd /playbook && git submodule update --init --recursive
           apk --no-cache add skopeo parallel curl
           skopeo login --username etkecc --password ${{ secrets.DOCKER_HUB_PASSWORD }} docker.io
-          cp -r /playbook/.config/inventory /
-          cd /playbook; ansible-playbook play/all.yml -l localhost -t skopeo -e target=localhost
+          git submodule update --init --recursive
+          cp -r .config/inventory ../
+          ansible-playbook play/all.yml -l localhost -t skopeo -e target=localhost
           sh play/.skopeo-parallel
           # TODO: enable it back
           # ./bin/ci-notify.sh
