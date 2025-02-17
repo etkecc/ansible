@@ -69,12 +69,13 @@ jobs:
         env:
           ANISBLE_LOG_PATH: " "
         run: |
-          apk --no-cache add skopeo parallel
-          skopeo login --username etkecc --password ${{ secrets.DOCKER_HUB_PASSWORD }} docker.io
-          cp -r .config/inventory ../
-          ansible-playbook play/all.yml -l localhost -t skopeo -e target=localhost
-          sh play/.skopeo-parallel
-          rm -rf ./* && rm -rf .git .github .config
+          echo "TODO: enable it back"
+          # apk --no-cache add skopeo parallel
+          # skopeo login --username etkecc --password ${{ secrets.DOCKER_HUB_PASSWORD }} docker.io
+          # cp -r .config/inventory ../
+          # ansible-playbook play/all.yml -l localhost -t skopeo -e target=localhost
+          # sh play/.skopeo-parallel
+          # rm -rf ./* && rm -rf .git .github .config
 
   build-fresh:
     name: Build ansible image (fresh)
@@ -113,22 +114,26 @@ jobs:
             ANSIBLE=${{ env.ansible }}
             ANSIBLE_CORE=${{ env.ansible_core }}
 
-  # TODO: test run
-  # test:
-  #   name: Test
-  #   needs: build-fresh
-  #   runs-on: self-hosted
-  #   if: ${{ github.ref == 'refs/heads/new-fresh-flow' }}
-  #   container:
-  #     image: ghcr.io/${{ github.repository }}/base
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Trigger maintenance run
-  #       env:
-  #         TOKEN: ${{ secrets.TESTING_TOKEN }}
-  #         API_BASE: ${{ secrets.API_BASE }}
-  #       run: |
-  #         apk --no-cache add curl jq
+  test:
+    name: Test
+    needs: build-fresh
+    runs-on: self-hosted
+    if: ${{ github.ref == 'refs/heads/new-fresh-flow' }}
+    steps:
+      - name: Trigger maintenance run
+        env:
+          TOKEN: ${{ secrets.TESTING_TOKEN }}
+          API: ${{ secrets.TESTING_API }}
+        run: |
+          apk --no-cache add curl jq
+          # trigger maintenance run
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"command": "maintenance"}' "$API/commands")
+          if [ "$STATUS" -eq 204 ]; then echo "Maintenance run triggered"; else echo "Failed to trigger maintenance run (HTTP $STATUS). If that's expected, you can (locally): docker pull gchr.io/${{ github.repository }}:fresh && docker tag ghcr.io/${{ github.repository }}:fresh ghcr.io/${{ github.repository }}:latest && docker tag ghcr.io/${{ github.repository }}:fresh registry.etke.cc/${{ github.repository }}:latest && docker push ghcr.io/${{ github.repository }}:latest && docker push registry.etke.cc/${{ github.repository }}:latest" && exit 1; fi
+          # check progress
+          while true; do STATUS=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $TOKEN" "$API/locks"); if [ "$STATUS" -eq 200 ]; then echo "Maintenance is still in progress, retrying in 1 minute..." && sleep 60; elif [ "$STATUS" -eq 204 ]; then echo "Maintenance has been finished"; break; else echo "Failed to check maintenance progress (HTTP $STATUS)" && exit 1; fi; done
+          # check the result
+          echo "Checking the result... not implemented yet" && exit 1
+
 
   ## TODO: enable it once test run is ready
   # build-stable:
