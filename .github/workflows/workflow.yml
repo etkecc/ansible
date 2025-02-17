@@ -29,8 +29,7 @@ jobs:
         id: check
         run: |
           IMAGE_TAG="ghcr.io/${{ github.repository }}/base:${{ env.alpine }}-${{ env.ansible_core }}-${{ env.ansible }}"
-          # TODO: enable it back
-          # if docker manifest inspect "$IMAGE_TAG" > /dev/null 2>&1; then echo "exists=yes" >> "$GITHUB_OUTPUT"; else echo "exists=no" >> "$GITHUB_OUTPUT"; fi
+          if docker manifest inspect "$IMAGE_TAG" > /dev/null 2>&1; then echo "exists=yes" >> "$GITHUB_OUTPUT"; else echo "exists=no" >> "$GITHUB_OUTPUT"; fi
       - name: Extract metadata (tags, labels) for Docker
         if: ${{ steps.check.outputs.exists == 'no' }}
         id: meta
