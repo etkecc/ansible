@@ -112,15 +112,6 @@ jobs:
             ALPINE=${{ env.alpine }}
             ANSIBLE=${{ env.ansible }}
             ANSIBLE_CORE=${{ env.ansible_core }}
-      - name: Notify about changes
-        env:
-          MATRIX_TOKEN: ${{ secrets.MATRIX_TOKEN }}
-          MATRIX_URL_FRESH: ${{ secrets.MATRIX_URL_FRESH }}
-          CI_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
-        run: |
-          echo "disabled for now"
-          # TODO: enable it back in the build-stable, once the new flow is ready
-          # ./bin/ci-notify.sh
 
   # TODO: test run
   # test:
@@ -141,8 +132,9 @@ jobs:
 
   build-stable:
     name: Build ansible image (stable)
+    needs: test
     runs-on: self-hosted
-    if: ${{ github.ref == 'refs/heads/main' }}
+    if: ${{ github.ref == 'refs/heads/fresh' }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up Docker Buildx
@@ -161,7 +153,7 @@ jobs:
             ghcr.io/${{ github.repository }}
             registry.etke.cc/${{ github.repository }}
           tags: |
-            type=raw,value=latest,enable=${{ github.ref_name == 'main' }}
+            type=raw,value=latest,enable=${{ github.ref_name == 'fresh' }}
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
@@ -174,3 +166,10 @@ jobs:
             ALPINE=${{ env.alpine }}
             ANSIBLE=${{ env.ansible }}
             ANSIBLE_CORE=${{ env.ansible_core }}
+      - name: Notify about changes
+        env:
+          MATRIX_TOKEN: ${{ secrets.MATRIX_TOKEN }}
+          MATRIX_URL_FRESH: ${{ secrets.MATRIX_URL_FRESH }}
+          CI_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+        run: |
+          ./bin/ci-notify.sh
