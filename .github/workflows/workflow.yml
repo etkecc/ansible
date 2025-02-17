@@ -1,7 +1,7 @@
 name: CI
 on:
   push:
-    branches: [ "main", "fresh", "new-fresh-flow" ]
+    branches: [ "main", "fresh" ]
 env:
   alpine: "3.21"
   ansible: "11.2.0"
@@ -15,7 +15,7 @@ jobs:
   build-base:
     name: Build base image
     runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/new-fresh-flow' }}
+    if: ${{ github.ref == 'refs/heads/fresh' }}
     steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
@@ -37,8 +37,8 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository }}/base
           tags: |
-            type=raw,value=latest,enable=${{ github.ref_name == 'new-fresh-flow' }}
-            type=raw,value=${{ env.alpine }}-${{ env.ansible_core }}-${{ env.ansible }},enable=${{ github.ref_name == 'new-fresh-flow' }}
+            type=raw,value=latest,enable=${{ github.ref_name == 'fresh' }}
+            type=raw,value=${{ env.alpine }}-${{ env.ansible_core }}-${{ env.ansible }},enable=${{ github.ref_name == 'fresh' }}
       - name: Build and push
         if: ${{ steps.check.outputs.exists == 'no' }}
         uses: docker/build-push-action@v6
@@ -57,7 +57,7 @@ jobs:
     name: Sync images
     needs: build-base
     runs-on: self-hosted
-    if: ${{ github.ref == 'refs/heads/new-fresh-flow' }}
+    if: ${{ github.ref == 'refs/heads/fresh' }}
     container:
       image: ghcr.io/${{ github.repository }}/base
       options: --user root
@@ -80,7 +80,7 @@ jobs:
     name: Build ansible image (fresh)
     needs: sync-images
     runs-on: self-hosted
-    if: ${{ github.ref == 'refs/heads/new-fresh-flow' }}
+    if: ${{ github.ref == 'refs/heads/fresh' }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up Docker Buildx
@@ -99,7 +99,7 @@ jobs:
             ghcr.io/${{ github.repository }}
             registry.etke.cc/${{ github.repository }}
           tags: |
-            type=raw,value=fresh,enable=${{ github.ref_name == 'new-fresh-flow' }}
+            type=raw,value=fresh,enable=${{ github.ref_name == 'fresh' }}
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
@@ -117,7 +117,7 @@ jobs:
     name: Test
     needs: build-fresh
     runs-on: self-hosted
-    if: ${{ github.ref == 'refs/heads/new-fresh-flow' }}
+    if: ${{ github.ref == 'refs/heads/fresh' }}
     steps:
       - name: Trigger maintenance run
         env:
