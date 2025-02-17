@@ -29,7 +29,8 @@ jobs:
         id: check
         run: |
           IMAGE_TAG="ghcr.io/${{ github.repository }}/base:${{ env.alpine }}-${{ env.ansible_core }}-${{ env.ansible }}"
-          if docker manifest inspect "$IMAGE_TAG" > /dev/null 2>&1; then echo "exists=yes" >> "$GITHUB_OUTPUT"; else echo "exists=no" >> "$GITHUB_OUTPUT"; fi
+          # TODO: enable it back
+          # if docker manifest inspect "$IMAGE_TAG" > /dev/null 2>&1; then echo "exists=yes" >> "$GITHUB_OUTPUT"; else echo "exists=no" >> "$GITHUB_OUTPUT"; fi
       - name: Extract metadata (tags, labels) for Docker
         if: ${{ steps.check.outputs.exists == 'no' }}
         id: meta
@@ -37,7 +38,8 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository }}/base
           tags: |
-            type=raw,value=${{ env.alpine }}-${{ env.ansible_core }}-${{ env.ansible }},enable=${{ github.ref_name == 'fresh' }}
+            type=raw,value=latest,enable=${{ github.ref_name == 'new-fresh-flow' }}
+            type=raw,value=${{ env.alpine }}-${{ env.ansible_core }}-${{ env.ansible }},enable=${{ github.ref_name == 'new-fresh-flow' }}
       - name: Build and push
         if: ${{ steps.check.outputs.exists == 'no' }}
         uses: docker/build-push-action@v6
@@ -58,7 +60,7 @@ jobs:
     runs-on: self-hosted
     if: ${{ github.ref == 'refs/heads/new-fresh-flow' }}
     container:
-      image: ghcr.io/${{ github.repository }}/base:${{ env.alpine }}-${{ env.ansible_core }}-${{ env.ansible }}
+      image: ghcr.io/${{ github.repository }}/base
     steps:
       - uses: actions/checkout@v4
       - name: Sync images
@@ -72,7 +74,8 @@ jobs:
           cp -r /playbook/.config/inventory /
           cd /playbook; ansible-playbook play/all.yml -l localhost -t skopeo -e target=localhost
           sh play/.skopeo-parallel
-          ./bin/ci-notify.sh
+          # TODO: enable it back
+          # ./bin/ci-notify.sh
 
 # TODO: test run
 
