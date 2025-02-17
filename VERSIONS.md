@@ -29,6 +29,7 @@
 * Exim Relay: 4.98-r0-4
 * Facebook: v0.5.1
 * Firezone: 0.7.36
+* Fluffychat: v1.24.0
 * Funkwhale: 1.4.0
 * Gmessages: v0.6.0
 * Go Neb: latest
@@ -74,7 +75,7 @@
 * Rageshake: 1.14.0
 * Registration: v0.7.2
 * Schildichat: 1.11.86-sc.0.test.0
-* Signal: v0.7.5
+* Signal: v0.8.0
 * Slack: v0.1.4
 * Sliding Sync: v0.99.19
 * Sms Bridge: 0.5.9
