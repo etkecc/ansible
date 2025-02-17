@@ -60,23 +60,38 @@ jobs:
     if: ${{ github.ref == 'refs/heads/new-fresh-flow' }}
     container:
       image: ghcr.io/${{ github.repository }}/base
+      options: --user root
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
       - name: Sync images
         env:
           ANISBLE_LOG_PATH: " "
         run: |
           apk --no-cache add skopeo parallel
           skopeo login --username etkecc --password ${{ secrets.DOCKER_HUB_PASSWORD }} docker.io
-          git config --global --add safe.directory /__w/ansible/ansible
-          git submodule update --init --recursive
-          rm -rf ./.git ./upstream/.git
           cp -r .config/inventory ../
           ansible-playbook play/all.yml -l localhost -t skopeo -e target=localhost
           sh play/.skopeo-parallel
-          rm -rf ./* .[!.]* ..?*
+          rm -rf ./.*
 
-# TODO: test run
+  # TODO: test run
+  # test:
+  #   name: Test
+  #   needs: build-base
+  #   runs-on: self-hosted
+  #   if: ${{ github.ref == 'refs/heads/new-fresh-flow' }}
+  #   container:
+  #     image: ghcr.io/${{ github.repository }}/base
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Trigger maintenance run
+  #       env:
+  #         TOKEN: ${{ secrets.TESTING_TOKEN }}
+  #         API_BASE: ${{ secrets.API_BASE }}
+  #       run: |
+  #         apk --no-cache add curl jq
 
   build-fresh:
     name: Build ansible image (fresh)
