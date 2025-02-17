@@ -71,6 +71,7 @@ jobs:
         run: |
           apk --no-cache add skopeo parallel curl
           skopeo login --username etkecc --password ${{ secrets.DOCKER_HUB_PASSWORD }} docker.io
+          git config --global --add safe.directory /__w/ansible/ansible
           git submodule update --init --recursive
           cp -r .config/inventory ../
           ansible-playbook play/all.yml -l localhost -t skopeo -e target=localhost
