@@ -76,38 +76,6 @@
       comment: peertube RTMP
     when: peertube_enabled | bool
 
-  - name: Allow wireguard
-    community.general.ufw:
-      rule: allow
-      port: "{{ custom_wireguard_port }}"
-      proto: udp
-      comment: wireguard server
-    when: custom_wireguard_enabled | bool
-
-  - name: Allow wireguard network
-    community.general.ufw:
-      rule: allow
-      interface: "{{ custom_wireguard_interface }}"
-      direction: in
-      proto: any
-    when: custom_wireguard_enabled | bool
-
-  - name: Allow dnsmasq (UDP)
-    community.general.ufw:
-      rule: allow
-      port: "{{ custom_dnsmasq_port }}"
-      proto: udp
-      comment: dnsmasq
-    when: custom_dnsmasq_enabled | bool
-
-  - name: Allow dnsmasq (TCP)
-    community.general.ufw:
-      rule: allow
-      port: "{{ custom_dnsmasq_port }}"
-      proto: tcp
-      comment: dnsmasq
-    when: custom_dnsmasq_enabled | bool
-
   - name: Start ufw
     community.general.ufw:
       logging: 'on'
