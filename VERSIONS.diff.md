@@ -1,8 +1,8 @@
 **Stable Updates Published**
 
 * [Alertmanager Receiver](https://github.com/metio/matrix-alertmanager-receiver): [2025.2.9](https://github.com/metio/matrix-alertmanager-receiver/releases/tag/2025.2.9) -> [2025.2.19](https://github.com/metio/matrix-alertmanager-receiver/releases/tag/2025.2.19)
-* [Authentication Service](https://github.com/element-hq/matrix-authentication-service): [0.13.0](https://github.com/element-hq/matrix-authentication-service/releases/tag/0.13.0) -> [0.14.0](https://github.com/element-hq/matrix-authentication-service/releases/tag/0.14.0)
-* Authentication Service Syn2Mas: 0.13.0 -> 0.14.0
+* [Authentication Service](https://github.com/element-hq/matrix-authentication-service): [0.13.0](https://github.com/element-hq/matrix-authentication-service/releases/tag/0.13.0) -> [0.14.1](https://github.com/element-hq/matrix-authentication-service/releases/tag/0.14.1)
+* Authentication Service Syn2Mas: 0.13.0 -> 0.14.1
 * [Cinny](https://github.com/ajbura/cinny): [v4.3.0](https://github.com/ajbura/cinny/releases/tag/v4.3.0) -> [v4.3.2](https://github.com/ajbura/cinny/releases/tag/v4.3.2)
 * [Etherpad](https://github.com/ether/etherpad-lite): [2.2.6](https://github.com/ether/etherpad-lite/releases/tag/2.2.6) -> [2.2.7](https://github.com/ether/etherpad-lite/releases/tag/2.2.7)
 * [Fluffychat](https://github.com/krille-chan/fluffychat): [v1.24.0](https://github.com/krille-chan/fluffychat/releases/tag/v1.24.0) _new_

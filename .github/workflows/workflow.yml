@@ -37,6 +37,7 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository }}/base
           tags: |
+            type=raw,value=latest,enable=${{ github.ref_name == 'fresh' }}
             type=raw,value=${{ env.alpine }}-${{ env.ansible_core }}-${{ env.ansible }},enable=${{ github.ref_name == 'fresh' }}
       - name: Build and push
         if: ${{ steps.check.outputs.exists == 'no' }}
@@ -52,9 +53,32 @@ jobs:
             ANSIBLE=${{ env.ansible }}
             ANSIBLE_CORE=${{ env.ansible_core }}
 
+  sync-images:
+    name: Sync images
+    needs: build-base
+    runs-on: self-hosted
+    if: ${{ github.ref == 'refs/heads/fresh' }}
+    container:
+      image: ghcr.io/${{ github.repository }}/base
+      options: --user root
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+      - name: Sync images
+        env:
+          ANISBLE_LOG_PATH: " "
+        run: |
+          apk --no-cache add skopeo parallel
+          skopeo login --username etkecc --password ${{ secrets.DOCKER_HUB_PASSWORD }} docker.io
+          cp -r .config/inventory ../
+          ansible-playbook play/all.yml -l localhost -t skopeo -e target=localhost
+          sh play/.skopeo-parallel
+          rm -rf ./* && rm -rf .git .github .config
+
   build-fresh:
     name: Build ansible image (fresh)
-    needs: build-base
+    needs: sync-images
     runs-on: self-hosted
     if: ${{ github.ref == 'refs/heads/fresh' }}
     steps:
@@ -89,32 +113,39 @@ jobs:
             ANSIBLE=${{ env.ansible }}
             ANSIBLE_CORE=${{ env.ansible_core }}
 
-  sync-images:
-    name: Sync images
+  test:
+    name: Test
     needs: build-fresh
     runs-on: self-hosted
     if: ${{ github.ref == 'refs/heads/fresh' }}
-    container:
-      image: ghcr.io/${{ github.repository }}:fresh
     steps:
-      - uses: actions/checkout@v4
-      - name: Sync images
+      - name: Trigger maintenance run
         env:
-          MATRIX_TOKEN: ${{ secrets.MATRIX_TOKEN }}
-          MATRIX_URL_FRESH: ${{ secrets.MATRIX_URL_FRESH }}
-          CI_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          TOKEN: ${{ secrets.TESTING_TOKEN }}
+          API: ${{ secrets.TESTING_API }}
         run: |
-          apk --no-cache add skopeo parallel curl
-          skopeo login --username etkecc --password ${{ secrets.DOCKER_HUB_PASSWORD }} docker.io
-          cp -r /playbook/.config/inventory /
-          cd /playbook; ansible-playbook play/all.yml -l localhost -t skopeo -e target=localhost
-          sh play/.skopeo-parallel
-          ./bin/ci-notify.sh
+          # trigger maintenance run
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"command": "maintenance"}' "$API/commands")
+          if [ "$STATUS" -eq 204 ]; then echo "Maintenance run triggered"; else echo "Failed to trigger maintenance run (HTTP $STATUS). If that's expected, you can (locally): docker pull gchr.io/${{ github.repository }}:fresh && docker tag ghcr.io/${{ github.repository }}:fresh ghcr.io/${{ github.repository }}:latest && docker tag ghcr.io/${{ github.repository }}:fresh registry.etke.cc/${{ github.repository }}:latest && docker push ghcr.io/${{ github.repository }}:latest && docker push registry.etke.cc/${{ github.repository }}:latest" && exit 1; fi
+          # check progress
+          while true; do STATUS=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $TOKEN" "$API/lock"); if [ "$STATUS" -eq 200 ]; then echo "Maintenance is still in progress, retrying in 1 minute..." && sleep 60; elif [ "$STATUS" -eq 204 ]; then echo "Maintenance has been finished"; break; else echo "Failed to check maintenance progress (HTTP $STATUS)" && exit 1; fi; done
+          # check result
+          NOTIFICATIONS=$(curl -s -H "Authorization: Bearer $TOKEN" "$API/notifications")
+          ERROR=$(echo "$NOTIFICATIONS" | jq -r --arg date "$(date +%Y-%m-%d)" '[.[] | select(.event_id | startswith("admin-run-maintenance-\($date)"))] | last | select(.error != null) | .error')
+          if [ -n "$ERROR" ]; then echo "Error found in the last maintenance event: $ERROR" && exit 1;else echo "Maintenance finished successfully"; fi
+          echo "Notifications:"
+          echo "$NOTIFICATIONS" | jq
+          # cleanup notifications
+          echo "Cleaning up notifications..."
+          curl -s -X DELETE -H "Authorization: Bearer $TOKEN" "$API/notifications"
+          echo "Finished"
+
 
   build-stable:
     name: Build ansible image (stable)
+    needs: test
     runs-on: self-hosted
-    if: ${{ github.ref == 'refs/heads/main' }}
+    if: ${{ github.ref == 'refs/heads/fresh' }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up Docker Buildx
@@ -133,7 +164,7 @@ jobs:
             ghcr.io/${{ github.repository }}
             registry.etke.cc/${{ github.repository }}
           tags: |
-            type=raw,value=latest,enable=${{ github.ref_name == 'main' }}
+            type=raw,value=latest,enable=${{ github.ref_name == 'fresh' }}
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
@@ -146,3 +177,10 @@ jobs:
             ALPINE=${{ env.alpine }}
             ANSIBLE=${{ env.ansible }}
             ANSIBLE_CORE=${{ env.ansible_core }}
+      - name: Notify about changes
+        env:
+          MATRIX_TOKEN: ${{ secrets.MATRIX_TOKEN }}
+          MATRIX_URL_FRESH: ${{ secrets.MATRIX_URL_FRESH }}
+          CI_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+        run: |
+          ./bin/ci-notify.sh
