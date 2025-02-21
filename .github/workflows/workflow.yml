@@ -124,6 +124,8 @@ jobs:
           TOKEN: ${{ secrets.TESTING_TOKEN }}
           API: ${{ secrets.TESTING_API }}
         run: |
+          # wait for any ongoing process to finish
+          while true; do STATUS=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $TOKEN" "$API/lock"); if [ "$STATUS" -eq 200 ]; then echo "Another command is still in progress, retrying in 1 minute..." && sleep 60; elif [ "$STATUS" -eq 204 ]; then echo "No commands are running, the test may proceed"; break; else echo "Failed to check lock (HTTP $STATUS)" && exit 1; fi; done
           # trigger maintenance run
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"command": "maintenance"}' "$API/commands")
           if [ "$STATUS" -eq 204 ]; then echo "Maintenance run triggered"; else echo "Failed to trigger maintenance run (HTTP $STATUS). If that's expected, you can (locally): docker pull gchr.io/${{ github.repository }}:fresh && docker tag ghcr.io/${{ github.repository }}:fresh ghcr.io/${{ github.repository }}:latest && docker tag ghcr.io/${{ github.repository }}:fresh registry.etke.cc/${{ github.repository }}:latest && docker push ghcr.io/${{ github.repository }}:latest && docker push registry.etke.cc/${{ github.repository }}:latest" && exit 1; fi
