@@ -54,6 +54,7 @@
     <outline text="linkding" title="linkding" type="rss" htmlUrl="https://github.com/sissbruecker/linkding" xmlUrl="https://github.com/sissbruecker/linkding/releases.atom" />
     <outline text="ma1sd" title="ma1sd" type="rss" htmlUrl="https://github.com/ma1uta/ma1sd" xmlUrl="https://github.com/ma1uta/ma1sd/releases.atom" />
     <outline text="maubot" title="maubot" type="rss" htmlUrl="https://mau.dev/maubot/maubot" xmlUrl="https://mau.dev/maubot/maubot/-/tags?format=atom" />
+    <outline text="mautrix-bluesky" title="mautrix-bluesky" type="rss" htmlUrl="https://github.com/mautrix/bluesky" xmlUrl="https://github.com/mautrix/bluesky/releases.atom" />
     <outline text="mautrix-discord" title="mautrix-discord" type="rss" htmlUrl="https://github.com/mautrix/discord" xmlUrl="https://github.com/mautrix/discord/releases.atom" />
     <outline text="mautrix-facebook" title="mautrix-facebook" type="rss" htmlUrl="https://github.com/mautrix/facebook" xmlUrl="https://github.com/mautrix/facebook/releases.atom" />
     <outline text="mautrix-gmessages" title="mautrix-gmessages" type="rss" htmlUrl="https://github.com/mautrix/gmessages" xmlUrl="https://github.com/mautrix/gmessages/releases.atom" />

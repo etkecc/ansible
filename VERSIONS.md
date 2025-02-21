@@ -8,6 +8,7 @@
 * Authentication Service: 0.14.1
 * Authentication Service Syn2Mas: 0.14.1
 * Baibot: v1.4.1
+* Bluesky: v0.1.0
 * Borg: 1.4.0
 * Borgmatic: 1.9.10
 * Buscarron: v1.4.3

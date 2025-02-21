@@ -1,4 +1,14 @@
+<!--
+SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
+SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+SPDX-FileCopyrightText: 2025 Suguru Hirahara
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 # BorgBackup Ansible Role
+
+[![REUSE status](https://api.reuse.software/badge/github.com/mother-of-all-self-hosting/ansible-role-backup_borg)](https://api.reuse.software/info/github.com/mother-of-all-self-hosting/ansible-role-backup_borg)
 
 This is an [Ansible](https://www.ansible.com/) role which installs and configures [BorgBackup](https://www.borgbackup.org/) (short: Borg) with [borgmatic](https://torsion.org/borgmatic/) in a [Docker](https://www.docker.com/) container wrapped in a systemd service.
 
@@ -13,7 +23,7 @@ This role *implicitly* depends on:
 
 ## Usage
 
-💡 See the [document](docs/configure-backup-borg.md) for details about setting up BorgBackup.
+💡 See this [document](docs/configuring-backup-borg.md) for details about setting up BorgBackup with this role.
 
 Example playbook:
 
@@ -74,19 +84,4 @@ backup_borg_systemd_required_services_list: |
     +
     ([devture_postgres_identifier ~ '.service'] if devture_postgres_enabled else [])
   }}
-```
-
-A user must set a configuration like this in their `vars.yml`
-```yaml
-backup_borg_enabled: true
-backup_borg_location_repositories:
- - ssh://user@host/./repo
-backup_borg_storage_encryption_passphrase: "verysecret"
-backup_borg_ssh_key_private: |
-  -----BEGIN OPENSSH PRIVATE KEY-----
-  ladlfjahfuinsjklydnhawfmf
-  adsjfajgiuhesrgadsjfahfuihaewuighf
-  adfnkajfkstrhguihewzgkgbkgtrjguishg
-  asdjfioghuifskermvbsjfhawuifui
-  -----END OPENSSH PRIVATE KEY-----
 ```

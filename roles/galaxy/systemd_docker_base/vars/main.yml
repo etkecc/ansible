@@ -1,0 +1,6 @@
+---
+
+# An internal variable used by the `Ensure XXX container network is created via ansible.builtin.command` task
+# Used in special circumstances wherein both `devture_systemd_docker_base_container_network_creation_method` is set to `command`
+# and `devture_systemd_docker_base_container_networks_driver_options` is NOT empty
+devture_systemd_docker_base_container_networks_driver_options_string: "{% for item in devture_systemd_docker_base_container_networks_driver_options | dict2items %}--opt {{ item.key }}={{ item.value }} {% endfor %}"

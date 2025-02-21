@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022-2024 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 ---
 
 - when: postgres_backup_postgres_data_path != ''
@@ -14,7 +18,7 @@
         postgres_backup_container_image_to_use: "{{ postgres_backup_detected_version_corresponding_docker_image }}"
       when: postgres_backup_detected_version_corresponding_docker_image | default('') != ''
 
-- name: Ensure postgres backup Docker image is pulled
+- name: Ensure Postgres backup Docker image is pulled
   community.docker.docker_image:
     name: "{{ postgres_backup_container_image_to_use }}"
     source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"

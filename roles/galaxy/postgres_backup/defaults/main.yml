@@ -1,3 +1,11 @@
+# SPDX-FileCopyrightText: 2022-2024 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2023 Igor Goldenberg
+# SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
+# SPDX-FileCopyrightText: 2024 Nikita Chernyi
+# SPDX-FileCopyrightText: 2024 nevart
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 ---
 
 # Project source code URL: https://github.com/prodrigestivill/docker-postgres-backup-local
@@ -31,7 +39,17 @@ postgres_backup_healthcheck_port: "8080"
 postgres_backup_timezone: 'UTC'
 
 # postgres_backup_databases contains a list of database names to back up
-postgres_backup_databases: []
+# DO NOT set this variable directly, instead use postgres_backup_databases_auto or postgres_backup_databases_custom
+postgres_backup_databases: "{{ postgres_backup_databases_auto + postgres_backup_databases_custom }}"
+
+# The variable postgres_backup_databases_auto can be used by playbooks to automatically set the databases to back up
+# E.g. the mash-playbook automatically sets up postgres databases for services that need them.
+# It therefore makes sense to automatically add them to this variable.
+postgres_backup_databases_auto: []
+
+# postgres_backup_databases_custom is there if you want to manually add databases to the backup
+# e.g. because their setup is not controlled by ansible
+postgres_backup_databases_custom: []
 
 # Specifies where the Postgres data is.
 #

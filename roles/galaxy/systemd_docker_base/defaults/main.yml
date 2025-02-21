@@ -12,23 +12,34 @@ devture_systemd_docker_base_host_command_sh: "/usr/bin/env sh"
 devture_systemd_docker_base_host_command_systemctl: "/usr/bin/env systemctl"
 
 # Controls whether to enable IPv6 for all Docker container networks used by the various services.
-# This variable doesn't do anything by itself - it merely affects services (roles) that are configured to respect it.
 #
-# For IPv6 to work, the Docker daemon needs to be configured for IPv6: https://docs.docker.com/config/daemon/ipv6/
-# You may be able to apply the required Docker Daemon settings via Ansible by using the `docker_daemon_options` variable.
-# See: https://github.com/geerlingguy/ansible-role-docker/blob/dc1c9a16066506c09f426713544581dc9b38e747/defaults/main.yml#L58
+# This variable doesn't do anything by itself. It merely affects services (roles) that are configured
+# to respect it when creating new Docker networks
 #
-# Playbooks that integrate this role may be adjusting the Docker role as well in a similar way as shown below:
-# docker_daemon_options:
-#   experimental: true
-#   ip6tables: true
+# The default value for this variable is still `false` to match the Docker default for creating new networks.
 #
-# Changing `devture_systemd_docker_base_ipv6_enabled` subsequently may not adjust existing container networks.
+# Changing `devture_systemd_docker_base_ipv6_enabled` subsequently will NOT adjust existing container networks.
 # When changing `devture_systemd_docker_base_ipv6_enabled`, consider:
 # - stopping all services (`just stop-all`)
 # - deleting all container networks on the server: `docker network rm $(docker network ls -q)`
 # - re-running the playbook fully: `just install-all`
 devture_systemd_docker_base_ipv6_enabled: false
+
+# Controls whether to enable IPv6 in the Docker daemon options.
+#
+# For IPv6 to work, older Docker daemons needs to be configured for IPv6 via `ip6tables: true` and `experimental: true` flags.
+# Since Docker 27.0.1, Docker defaults to auto-enabling `ip6tables` by default and `experimental: true` is no longer required for `ip6tables`.
+# See: https://docs.docker.com/engine/release-notes/27/#ipv6
+#
+# On older Docker versions, one may be able to apply the required Docker Daemon settings via Ansible by using the `docker_daemon_options` variable.
+# See: https://github.com/geerlingguy/ansible-role-docker/blob/dc1c9a16066506c09f426713544581dc9b38e747/defaults/main.yml#L58
+# Playbooks that integrate this role may be adjusting the Docker role as well in a similar way as shown below:
+# docker_daemon_options:
+#   experimental: true
+#   ip6tables: true
+#
+# Also see: `devture_systemd_docker_base_ipv6_enabled`
+devture_systemd_docker_base_ipv6_daemon_options_changing_enabled: false
 
 # Controls the driver options used when creating/updating container networks.
 #

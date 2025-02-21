@@ -1,4 +1,12 @@
+<!--
+SPDX-FileCopyrightText: 2022-2024 Slavi Pantaleev
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 # Postgres-backup Ansible role
+
+[![REUSE status](https://api.reuse.software/badge/github.com/mother-of-all-self-hosting/ansible-role-postgres-backup)](https://api.reuse.software/info/github.com/mother-of-all-self-hosting/ansible-role-postgres-backup)
 
 This is an [Ansible](https://www.ansible.com/) role which sets up [prodrigestivill/docker-postgres-backup-local](https://github.com/prodrigestivill/docker-postgres-backup-local) for backing up [Postgres](https://www.postgresql.org/) (no matter if it's installed via [mother-of-all-self-hosting/ansible-role-postgres](https://github.com/mother-of-all-self-hosting/ansible-role-postgres) or not).
 
@@ -9,8 +17,9 @@ This role *implicitly* depends on:
 - [`com.devture.ansible.role.playbook_help`](https://github.com/devture/com.devture.ansible.role.playbook_help)
 - [`com.devture.ansible.role.systemd_docker_base`](https://github.com/devture/com.devture.ansible.role.systemd_docker_base)
 
-
 ## Usage
+
+💡 See this [document](docs/configuring-postgres-backup.md) for details about setting up the service with this role.
 
 Example playbook:
 
@@ -47,5 +56,5 @@ postgres_backup_connection_password: ""
 postgres_backup_postgres_data_path: ""
 # Alternatively, you'd need to configure `postgres_backup_container_image_to_use`.
 
-postgres_backup_databases: ['first', 'second', 'third']
+postgres_backup_databases_auto: ['first', 'second', 'third']
 ```

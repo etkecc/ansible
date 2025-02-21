@@ -1,3 +1,10 @@
+# SPDX-FileCopyrightText: 2023 - 2024 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2023 - 2025 Nikita Chernyi
+# SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
+# SPDX-FileCopyrightText: 2025 moanos <julian-samuel@gebuehr.net>
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 ---
 # Project source code URL: https://gitlab.com/etke.cc/borgmatic
 
@@ -38,7 +45,10 @@ backup_borg_container_tmp_size: 4096m
 backup_borg_container_extra_arguments: []
 
 # List of systemd services that matrix-backup-borg.service depends on
-backup_borg_systemd_required_services_list: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+backup_borg_systemd_required_services_list: "{{ backup_borg_systemd_required_services_list_default + backup_borg_systemd_required_services_list_auto + backup_borg_systemd_required_services_list_custom }}"
+backup_borg_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+backup_borg_systemd_required_services_list_auto: []
+backup_borg_systemd_required_services_list_custom: []
 
 # List of systemd services that matrix-backup-borg.service wants
 backup_borg_systemd_wanted_services_list: []
@@ -52,10 +62,23 @@ backup_borg_schedule_randomized_delay_sec: 2h
 # what directories should be added to backup
 backup_borg_location_source_directories: []
 
-# postgres db backup
+# Postgres db backup
 backup_borg_postgresql_enabled: true
 backup_borg_supported_postgres_versions: ['12', '13', '14', '15', '16', '17']
-backup_borg_postgresql_databases: []
+
+# backup_borg_databases contains a list of database names to back up
+# DO NOT set this variable directly, instead use backup_borg_postgresql_databases_auto or backup_borg_postgresql_databases_custom
+backup_borg_postgresql_databases: "{{ backup_borg_postgresql_databases_auto + backup_borg_postgresql_databases_custom }}"
+
+# The variable backup_borg_postgresql_databases_auto can be used by playbooks to automatically set the databases to back up
+# E.g. the mash-playbook automatically sets up postgres databases for services that need them.
+# It therefore makes sense to automatically add them to this variable.
+backup_borg_postgresql_databases_auto: []
+
+# backup_borg_postgresql_databases_custom is there if you want to manually add databases to the backup
+# e.g. because their setup is not controlled by ansible
+backup_borg_postgresql_databases_custom: []
+
 backup_borg_postgresql_databases_hostname: ''
 backup_borg_postgresql_databases_username: "{{ backup_borg_identifier }}"
 backup_borg_postgresql_databases_password: ""
