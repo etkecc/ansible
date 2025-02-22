@@ -159,6 +159,6 @@ languagetool_container_extra_arguments: []
 
 # List of systemd services that languagetool.service depends on
 languagetool_systemd_required_services_list: "{{ languagetool_systemd_required_services_list_default + languagetool_systemd_required_services_list_auto + languagetool_systemd_required_services_list_custom }}"
-languagetool_systemd_required_services_list_default: ['docker.service']
+languagetool_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
 languagetool_systemd_required_services_list_auto: []
 languagetool_systemd_required_services_list_custom: []
