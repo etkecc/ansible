@@ -30,10 +30,16 @@ etherpad_data_path: "{{ etherpad_base_path }}/data"
 etherpad_container_src_path: "{{ etherpad_base_path }}/container-src"
 
 # List of systemd services that Etherpad systemd service depends on.
-etherpad_systemd_required_services_list: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+etherpad_systemd_required_services_list: "{{ etherpad_systemd_required_services_list_default + etherpad_systemd_required_services_list_auto + etherpad_systemd_required_services_list_custom }}"
+etherpad_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+etherpad_systemd_required_services_list_auto: []
+etherpad_systemd_required_services_list_custom: []
 
 # List of systemd services that Etherpad systemd service wants
-etherpad_systemd_wanted_services_list: []
+etherpad_systemd_wanted_services_list: "{{ etherpad_systemd_wanted_services_list_default + etherpad_systemd_wanted_services_list_auto + etherpad_systemd_wanted_services_list_custom }}"
+etherpad_systemd_wanted_services_list_default: []
+etherpad_systemd_wanted_services_list_auto: []
+etherpad_systemd_wanted_services_list_custom: []
 
 # Container user has to be able to write to the source file directories until this bug is fixed:
 # https://github.com/ether/etherpad-lite/issues/2683
@@ -61,7 +67,9 @@ etherpad_container_network: "{{ etherpad_identifier }}"
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
 # Use this to expose this container to another reverse proxy, which runs in a different container network.
-etherpad_container_additional_networks: []
+etherpad_container_additional_networks: "{{ etherpad_container_additional_networks_auto + etherpad_container_additional_networks_custom }}"
+etherpad_container_additional_networks_auto: []
+etherpad_container_additional_networks_custom: []
 
 # etherpad_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
 # See `../templates/labels.j2` for details.

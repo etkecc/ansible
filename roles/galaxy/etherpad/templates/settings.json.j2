@@ -82,10 +82,14 @@ SPDX-License-Identifier: AGPL-3.0-or-later
     "chatAndUsers": false,
     "lang": "en-gb"
   },
-{% if etherpad_admin_username != "" and etherpad_admin_password != "" %}
+{% if etherpad_admin_username != "" %}
   "users": {
     {{ etherpad_admin_username|to_json }}: {
+      {% if etherpad_admin_password != "" %}
       "password": {{ etherpad_admin_password|to_json }},
+      {% else %}
+      "hash": {{ etherpad_admin_hash|to_json }},
+      {% endif %}
       "is_admin": true
     }
   },
