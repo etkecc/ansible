@@ -166,4 +166,7 @@ uptime_kuma_floc_optout_enabled: true
 uptime_kuma_hsts_preload_enabled: false
 
 # List of systemd services that kuma.service depends on
-uptime_kuma_systemd_required_services_list: ['docker.service']
+uptime_kuma_systemd_required_services_list: "{{ uptime_kuma_systemd_required_services_list_default + uptime_kuma_systemd_required_services_list_auto + uptime_kuma_systemd_required_services_list_custom }}"
+uptime_kuma_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+uptime_kuma_systemd_required_services_list_auto: []
+uptime_kuma_systemd_required_services_list_custom: []
