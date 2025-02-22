@@ -31,7 +31,7 @@ traefik_gid: "{{ my_gid }}"
 
 To avoid the Traefik container from mounting and using the Docker UNIX socket (`/var/run/docker.sock`) directly, you can also make it talk to the Docker API via TCP using [Tecnativa/docker-socket-proxy](https://github.com/Tecnativa/docker-socket-proxy). The Traefik container can then run with reduced privileges (non-`root` user, [dropped capabilities](https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities), etc).
 
-To get this socket proxy installed, you can use the [`com.devture.ansible.role.container_socket_proxy` role](https://github.com/devture/com.devture.ansible.role.container_socket_proxy).
+To get this socket proxy installed, you can use the [`ansible-role-container-socket-proxy` role](https://github.com/mother-of-all-self-hosting/ansible-role-container-socket-proxy).
 
 Here's some example configuration (e.g. `group_vars/servers`) which *optionally* wires them together:
 
@@ -39,13 +39,13 @@ Here's some example configuration (e.g. `group_vars/servers`) which *optionally*
 #
 # Container Socket Proxy role configuration
 #
-devture_container_socket_proxy_enabled: true
+container_socket_proxy_enabled: true
 
-devture_container_socket_proxy_uid: "{{ my_uid }}"
-devture_container_socket_proxy_gid: "{{ my_gid }}"
+container_socket_proxy_uid: "{{ my_uid }}"
+container_socket_proxy_gid: "{{ my_gid }}"
 
 # Traefik requires read access to the containers APIs to do its job
-devture_container_socket_proxy_api_containers_enabled: true
+container_socket_proxy_api_containers_enabled: true
 
 #
 # Traefik role configuration
@@ -53,17 +53,15 @@ devture_container_socket_proxy_api_containers_enabled: true
 
 # Base Traefik configuration here (see above).
 
-traefik_config_providers_docker_endpoint: "{{ devture_container_socket_proxy_endpoint if devture_container_socket_proxy_enabled else 'unix:///var/run/docker.sock' }}"
+traefik_config_providers_docker_endpoint: "{{ container_socket_proxy_endpoint if container_socket_proxy_enabled else 'unix:///var/run/docker.sock' }}"
 
-traefik_container_additional_networks: |
+traefik_container_additional_networks_auto: |
   {{
-    ([devture_container_socket_proxy_container_network] if devture_container_socket_proxy_enabled else [])
+    ([container_socket_proxy_container_network] if container_socket_proxy_enabled else [])
   }}
 
-traefik_systemd_required_services_list: |
+traefik_systemd_required_services_list_auto: |
   {{
-    (['docker.service'])
-    +
-    ([devture_container_socket_proxy_identifier + '.service'] if devture_container_socket_proxy_enabled else [])
+    ([container_socket_proxy_identifier + '.service'] if container_socket_proxy_enabled else [])
   }}
 ```

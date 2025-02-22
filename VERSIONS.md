@@ -16,7 +16,7 @@
 * Cactus Comments Client: 2.36.0
 * Chatgpt: 3.1.4
 * Cinny: v4.3.2
-* Container Socket Proxy: 0.2.0
+* Container Socket Proxy: 0.3.0
 * Corporal: 3.1.3
 * Coturn: 4.6.2-r11
 * Dimension: latest

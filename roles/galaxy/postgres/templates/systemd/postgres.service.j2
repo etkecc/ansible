@@ -10,14 +10,14 @@ DefaultDependencies=no
 [Service]
 Type=simple
 Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
-ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop --time={{ postgres_container_stop_grace_time_seconds }} {{ postgres_identifier }} 2>/dev/null || true'
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ postgres_container_stop_grace_time_seconds }} {{ postgres_identifier }} 2>/dev/null || true'
 ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ postgres_identifier }} 2>/dev/null || true'
 
 # We need /dev/shm to be larger than the default to allow VACUUM to work.
 # See:
 # - https://github.com/spantaleev/matrix-docker-ansible-deploy/issues/1362
 # - https://github.com/spantaleev/matrix-docker-ansible-deploy/issues/1268
-ExecStart={{ devture_systemd_docker_base_host_command_docker }} run \
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
 			--rm \
 			--name {{ postgres_identifier }} \
 			--log-driver=none \
@@ -40,7 +40,13 @@ ExecStart={{ devture_systemd_docker_base_host_command_docker }} run \
 			{{ postgres_container_image_to_use }} \
 			postgres {{ postgres_process_extra_arguments|join(' ') }}
 
-ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop --time={{ postgres_container_stop_grace_time_seconds }} {{ postgres_identifier }} 2>/dev/null || true'
+{% for network in postgres_container_additional_networks %}
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ postgres_identifier }}
+{% endfor %}
+
+ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ postgres_identifier }}
+
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ postgres_container_stop_grace_time_seconds }} {{ postgres_identifier }} 2>/dev/null || true'
 ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ postgres_identifier }} 2>/dev/null || true'
 Restart=always
 RestartSec=30

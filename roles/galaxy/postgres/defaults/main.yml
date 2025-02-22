@@ -116,6 +116,12 @@ postgres_architecture: amd64
 
 postgres_container_network: "{{ postgres_identifier }}"
 
+# A list of additional container networks that the container would be connected to.
+# The role does not create these networks, so make sure they already exist.
+postgres_container_additional_networks: "{{ postgres_container_additional_networks_auto + postgres_container_additional_networks_custom }}"
+postgres_container_additional_networks_auto: []
+postgres_container_additional_networks_custom: []
+
 docker_postgres_container_image_registry_prefix: "docker.io/"
 
 # postgres_container_image_suffix controls whether we use Alpine-based images (`-alpine`) or the normal Debian-based images.
