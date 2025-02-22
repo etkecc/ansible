@@ -432,7 +432,15 @@ funkwhale_celery_beat_concurrency: 0
 
 funkwhale_celery_beat_container_network: '{{ funkwhale_container_network }}'
 
-funkwhale_celery_beat_systemd_required_services_list: ['docker.service', '{{ funkwhale_api_identifier }}.service']
+funkwhale_celery_beat_systemd_required_services_list: "{{ funkwhale_celery_beat_systemd_required_services_list_default + funkwhale_celery_beat_systemd_required_services_list_auto + funkwhale_celery_beat_systemd_required_services_list_custom }}"
+funkwhale_celery_beat_systemd_required_services_list_default: |-
+  {{
+    ([devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [])
+    +
+    [funkwhale_api_identifier + '.service']
+  }}
+funkwhale_celery_beat_systemd_required_services_list_auto: []
+funkwhale_celery_beat_systemd_required_services_list_custom: []
 
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
@@ -456,7 +464,15 @@ funkwhale_celery_worker_identifier: "{{ funkwhale_identifier }}-celery-worker"
 
 funkwhale_celery_worker_version: "{{ funkwhale_version }}"
 
-funkwhale_celery_worker_systemd_required_services_list: ['docker.service', '{{ funkwhale_api_identifier }}.service']
+funkwhale_celery_worker_systemd_required_services_list: "{{ funkwhale_celery_worker_systemd_required_services_list_default + funkwhale_celery_worker_systemd_required_services_list_auto + funkwhale_celery_worker_systemd_required_services_list_custom }}"
+funkwhale_celery_worker_systemd_required_services_list_default: |-
+  {{
+    ([devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [])
+    +
+    [funkwhale_api_identifier + '.service']
+  }}
+funkwhale_celery_worker_systemd_required_services_list_auto: []
+funkwhale_celery_worker_systemd_required_services_list_custom: []
 
 # Number of worker processes to execute. Defaults to 0, in which case it uses your number of CPUs
 # Celery workers handle background tasks (such file imports or federation
@@ -487,14 +503,24 @@ funkwhale_celery_worker_process_extra_arguments_custom: []
 
 funkwhale_watch_imports_identifier: "{{ funkwhale_identifier }}-watch-imports"
 
-funkwhale_watch_imports_systemd_required_services_list: ['docker.service', '{{ funkwhale_api_identifier }}.service']
+funkwhale_watch_imports_systemd_required_services_list: "{{ funkwhale_watch_imports_systemd_required_services_list_default + funkwhale_watch_imports_systemd_required_services_list_auto + funkwhale_watch_imports_systemd_required_services_list_custom }}"
+funkwhale_watch_imports_systemd_required_services_list_default: |-
+  {{
+    ([devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [])
+    +
+    [funkwhale_api_identifier + '.service']
+  }}
+funkwhale_watch_imports_systemd_required_services_list_auto: []
+funkwhale_watch_imports_systemd_required_services_list_custom: []
 
 funkwhale_watch_imports_container_network: '{{ funkwhale_container_network }}'
 
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
 # Use this to expose this container to a reverse proxy, which runs in a different container network.
-funkwhale_watch_imports_container_additional_networks: []
+funkwhale_watch_imports_container_additional_networks: "{{ funkwhale_watch_imports_container_additional_networks_auto + funkwhale_watch_imports_container_additional_networks_custom }}"
+funkwhale_watch_imports_container_additional_networks_auto: []
+funkwhale_watch_imports_container_additional_networks_custom: []
 
 # A list of extra arguments to pass to the Funkwhale watch imports process
 # Example: ['--prune', '--replace']

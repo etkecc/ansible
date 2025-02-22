@@ -1,11 +1,5 @@
 ---
 
-- name: Ensure Funkwhale network is created in Docker
-  community.docker.docker_network:
-    name: "{{ funkwhale_container_network }}"
-    driver: bridge
-
-
 - name: Ensure Funkwhale paths exists
   ansible.builtin.file:
     path: "{{ item.path }}"
@@ -37,7 +31,6 @@
     - {path: "{{ funkwhale_frontend_nginx_cache_path }}", when: true}
     - {path: "{{ funkwhale_frontend_nginx_etc_path }}", when: true}
 
-
 - name: Ensure funkwhale traefik labels are installed
   ansible.builtin.template:
     src: "{{ item.src }}"
@@ -68,6 +61,13 @@
     - {image: "{{ funkwhale_frontend_container_image }}"}
     - {image: "{{ funkwhale_api_container_image }}"}
 
+- name: Ensure Funkwhale container network is created
+  community.docker.docker_network:
+    enable_ipv6: "{{ devture_systemd_docker_base_ipv6_enabled }}"
+    name: "{{ funkwhale_container_network }}"
+    driver: bridge
+    driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
+
 - name: Ensure funkwhale.service installed
   ansible.builtin.template:
     src: "{{ item.src }}"
@@ -86,4 +86,3 @@
   with_items:
     - service: "{{ funkwhale_watch_imports_identifier }}.service"
       path: "{{ devture_systemd_docker_base_systemd_path }}/{{ funkwhale_watch_imports_identifier }}.service"
-
