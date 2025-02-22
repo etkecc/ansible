@@ -21,7 +21,7 @@ linkding_hostname: ""
 linkding_path_prefix: /
 
 # Version of linkding to deploy
-linkding_version: latest
+linkding_version: 1.38.0
 
 # Base path for linkding resources
 linkding_base_path: "{{ linkding_identifier }}"
@@ -43,7 +43,9 @@ linkding_container_network: "{{ linkding_identifier }}"
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
 # Use this to expose this container to another reverse proxy, which runs in a different container network.
-linkding_container_additional_networks: []
+linkding_container_additional_networks: "{{ linkding_container_additional_networks_auto + linkding_container_additional_networks_custom }}"
+linkding_container_additional_networks_auto: []
+linkding_container_additional_networks_custom: []
 
 # linkding_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
 # See `../templates/labels.j2` for details.
@@ -87,7 +89,10 @@ linkding_container_labels_additional_labels: ""
 linkding_container_extra_arguments: []
 
 # List of systemd services that linkding.service depends on
-linkding_systemd_required_services_list: ["docker.service"]
+linkding_systemd_required_services_list: "{{ linkding_systemd_required_services_list_default + linkding_systemd_required_services_list_auto + linkding_systemd_required_services_list_custom }}"
+linkding_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+linkding_systemd_required_services_list_auto: []
+linkding_systemd_required_services_list_custom: []
 
 # Specifies the value of the `X-XSS-Protection` header
 # Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
