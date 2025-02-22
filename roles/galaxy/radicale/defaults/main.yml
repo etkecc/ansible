@@ -59,7 +59,9 @@ radicale_container_network: "{{ radicale_identifier }}"
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
 # Use this to expose this container to another reverse proxy, which runs in a different container network.
-radicale_container_additional_networks: []
+radicale_container_additional_networks: "{{ radicale_container_additional_networks_auto + radicale_container_additional_networks_custom }}"
+radicale_container_additional_networks_auto: []
+radicale_container_additional_networks_custom: []
 
 # radicale_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
 # See `../templates/labels.j2` for details.
@@ -182,4 +184,7 @@ radicale_floc_optout_enabled: true
 radicale_hsts_preload_enabled: false
 
 # List of systemd services that radicale.service depends on
-radicale_systemd_required_services_list: ['docker.service']
+radicale_systemd_required_services_list: "{{ radicale_systemd_required_services_list_default + radicale_systemd_required_services_list_auto + radicale_systemd_required_services_list_custom }}"
+radicale_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+radicale_systemd_required_services_list_auto: []
+radicale_systemd_required_services_list_custom: []
