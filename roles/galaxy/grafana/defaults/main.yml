@@ -1,3 +1,9 @@
+# SPDX-FileCopyrightText: 2023 - 2024 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2023 - 2025 Nikita Chernyi
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 ---
 
 # Grafana is open source visualization and analytics software
@@ -7,7 +13,7 @@ grafana_enabled: true
 
 grafana_identifier: grafana
 
-grafana_version: 11.5.1
+grafana_version: 11.5.2
 
 grafana_uid: ''
 grafana_gid: ''
@@ -26,19 +32,19 @@ grafana_base_path: "{{ grafana_identifier }}"
 grafana_config_path: "{{ grafana_base_path }}/config"
 grafana_data_path: "{{ grafana_base_path }}/data"
 
-# Allow viewing Grafana without logging in
+# Allow viewing Grafana without logging in.
 grafana_anonymous_access: false
 
 # When `false`, sends a `X-Frame-Options: deny` HTTP header, which allows Grafana from being embeded in a frame.
 # Read more here: https://grafana.com/docs/grafana/latest/administration/configuration/#allow_embedding
 grafana_allow_embedding: false
 
-# specify organization name that should be used for unauthenticated users
-# if you change this in the Grafana admin panel, this needs to be updated
-# to match to keep anonymous logins working
+# Specify organization name that should be used for unauthenticated users.
+# If you change this in the Grafana admin panel, this needs to be updated
+# to match to keep anonymous logins working.
 grafana_anonymous_access_org_name: 'Main Org.'
 
-# default admin credentials, you are asked to change these on first login
+# Default admin credentials. You are asked to change these on first login.
 grafana_default_admin_user: admin
 grafana_default_admin_password: admin
 
@@ -48,8 +54,8 @@ grafana_default_admin_password: admin
 # [Content Security Policy](https://grafana.com/docs/grafana/latest/administration/configuration/#content_security_policy)
 grafana_content_security_policy: true
 
-# specify content security policy template to customized template
-# added https: and http: url schemes (ignored by browsers supporting 'strict-dynamic') to be backward compatible with older browsers.
+# Specify content security policy template to customized template
+# Added https: and http: url schemes (ignored by browsers supporting 'strict-dynamic') to be backward compatible with older browsers.
 # [Content Security Policy Browser Test] (https://content-security-policy.com/browser-test/)
 # [Content Security Policy Reference](https://content-security-policy.com/script-src/)
 grafana_content_security_policy_customized: false
@@ -74,7 +80,7 @@ grafana_provisioning_dashboard_providers:
     options:
       path: /etc/grafana/dashboards
 
-# Configure smtp settings for sending email notifications
+# Configure SMTP settings for sending email notifications.
 #
 # Example:
 # grafana_smtp_host: "smtp.example.com"
@@ -114,7 +120,7 @@ grafana_container_additional_networks: "{{ grafana_container_additional_networks
 grafana_container_additional_networks_auto: []
 grafana_container_additional_networks_custom: []
 
-# Controls whether the Grafana container exposes its HTTP port (tcp/3000 in the container).
+# Control whether the Grafana container exposes its HTTP port (tcp/3000 in the container).
 #
 # Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:3000"), or empty string to not expose.
 grafana_container_http_host_bind_port: ''
@@ -134,7 +140,7 @@ grafana_container_labels_traefik_entrypoints: web-secure
 grafana_container_labels_traefik_tls: "{{ grafana_container_labels_traefik_entrypoints != 'web' }}"
 grafana_container_labels_traefik_tls_certResolver: default  # noqa var-naming
 
-# Controls which additional headers to attach to all HTTP responses.
+# Control which additional headers to attach to all HTTP responses.
 # To add your own headers, use `grafana_container_labels_traefik_additional_response_headers_custom`
 #
 # Note that Grafana sends these security headers by itself, so we don't have to:
@@ -167,20 +173,26 @@ grafana_container_extra_arguments: []
 grafana_environment_variables_additional_variables: ''
 
 # List of systemd services that the Grafana systemd service depends on
-grafana_systemd_required_services_list: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+grafana_systemd_required_services_list: "{{ grafana_systemd_required_services_list_default + grafana_systemd_required_services_list_auto + grafana_systemd_required_services_list_custom }}"
+grafana_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+grafana_systemd_required_services_list_auto: []
+grafana_systemd_required_services_list_custom: []
 
 # List of systemd services that Grafana systemd service wants
-grafana_systemd_wanted_services_list: []
+grafana_systemd_wanted_services_list: "{{ grafana_systemd_wanted_services_list_default + grafana_systemd_wanted_services_list_auto + grafana_systemd_wanted_services_list_custom }}"
+grafana_systemd_wanted_services_list_default: []
+grafana_systemd_wanted_services_list_auto: []
+grafana_systemd_wanted_services_list_custom: []
 
-# Specifies the value of the `Permission-Policy` header.
+# Specify the value of the `Permission-Policy` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permission-Policy
 grafana_http_header_content_permission_policy: "{{ 'interest-cohort=()' if grafana_floc_optout_enabled else '' }}"
 
-# Specifies the value of the `Strict-Transport-Security` header.
+# Specify the value of the `Strict-Transport-Security` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
 grafana_http_header_strict_transport_security: "max-age=31536000; includeSubDomains{{ '; preload' if grafana_hsts_preload_enabled else '' }}"
 
-# Controls whether to send a "Permissions-Policy interest-cohort=();" header along with all responses
+# Control whether to send a "Permissions-Policy interest-cohort=();" header along with all responses.
 #
 # Learn more about what it is here:
 # - https://www.eff.org/deeplinks/2021/03/googles-floc-terrible-idea
@@ -191,7 +203,7 @@ grafana_http_header_strict_transport_security: "max-age=31536000; includeSubDoma
 # See: `grafana_content_permission_policy`
 grafana_floc_optout_enabled: true
 
-# Controls if HSTS preloading is enabled
+# Control if HSTS preloading is enabled.
 #
 # In its strongest and recommended form, the [HSTS policy](https://www.chromium.org/hsts) includes all subdomains, and
 # indicates a willingness to be "preloaded" into browsers:
