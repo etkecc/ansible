@@ -51,7 +51,7 @@ vaultwarden_cache_dir_path: "{{ vaultwarden_base_path }}/cache"
 vaultwarden_ephemeral_dir_path: "{{ vaultwarden_base_path }}/ephemeral"
 
 vaultwarden_systemd_required_systemd_services_list: "{{ vaultwarden_systemd_required_systemd_services_list_default + vaultwarden_systemd_required_systemd_services_list_auto + vaultwarden_systemd_required_systemd_services_list_custom }}"
-vaultwarden_systemd_required_systemd_services_list_default: ['docker.service']
+vaultwarden_systemd_required_systemd_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
 vaultwarden_systemd_required_systemd_services_list_auto: []
 vaultwarden_systemd_required_systemd_services_list_custom: []
 
