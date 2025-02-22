@@ -41,6 +41,7 @@
 
 - name: Ensure ntfy container network is created
   community.general.docker_network:
+    enable_ipv6: "{{ devture_systemd_docker_base_ipv6_enabled }}"
     name: "{{ ntfy_container_network }}"
     driver: bridge
     driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
@@ -50,4 +51,3 @@
     src: "{{ role_path }}/templates/systemd/ntfy.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ ntfy_identifier }}.service"
     mode: 0644
-

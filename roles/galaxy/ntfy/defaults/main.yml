@@ -40,7 +40,9 @@ ntfy_container_network: "{{ ntfy_identifier }}"
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
 # Use this to expose this container to another reverse proxy, which runs in a different container network.
-ntfy_container_additional_networks: []
+ntfy_container_additional_networks: "{{ ntfy_container_additional_networks_auto + ntfy_container_additional_networks_custom }}"
+ntfy_container_additional_networks_auto: []
+ntfy_container_additional_networks_custom: []
 
 # ntfy_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
 # See `../templates/labels.j2` for details.
@@ -87,7 +89,10 @@ ntfy_container_health_interval: "{{ '5s' if ntfy_container_labels_traefik_enable
 ntfy_container_extra_arguments: []
 
 # List of systemd services that the ntfy systemd service depends on
-ntfy_systemd_required_services_list: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+ntfy_systemd_required_services_list: "{{ ntfy_systemd_required_services_list_default + ntfy_systemd_required_services_list_auto + ntfy_systemd_required_services_list_custom }}"
+ntfy_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+ntfy_systemd_required_services_list_auto: []
+ntfy_systemd_required_services_list_custom: []
 
 # List of systemd services that the ntfy systemd service wants
 ntfy_systemd_wanted_services_list: []
@@ -179,7 +184,7 @@ ntfy_configuration_extension: "{{ ntfy_configuration_extension_yaml | from_yaml 
 ntfy_configuration: "{{ ntfy_configuration_yaml | from_yaml | combine(ntfy_configuration_extension, recursive=True) }}"
 
 # List of user credentials for ntfy authentication.
-# If left empty (ntfy_credentials: []), authentication will be disabled, 
+# If left empty (ntfy_credentials: []), authentication will be disabled,
 # allowing unrestricted access to all topics.
 # To enable authentication, add users with a username and password:
 # ntfy_credentials:

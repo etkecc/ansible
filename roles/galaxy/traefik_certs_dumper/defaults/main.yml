@@ -55,9 +55,12 @@ traefik_certs_dumper_ssl_dir_path: ''
 # This file is expected to be underneath the directory defined in `traefik_certs_dumper_ssl_dir_path`.
 traefik_certs_dumper_ssl_acme_file_name: acme.json
 
-traefik_certs_dumper_waiter_systemd_required_services_list:
-  - docker.service
-  - "{{ traefik_certs_dumper_identifier }}.service"
+traefik_certs_dumper_waiter_systemd_required_services_list: |-
+  {{
+    ([devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [])
+    +
+    [traefik_certs_dumper_identifier + '.service']
+  }}
 
 # The maximum iterations to wait for a file to appear before giving up in `traefik-certs-dumper-wait-for-domain@.service`.
 # There's a 1 second sleep between iterations.

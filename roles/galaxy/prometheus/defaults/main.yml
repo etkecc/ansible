@@ -24,7 +24,10 @@ prometheus_config_path: "{{ prometheus_base_path }}/config"
 prometheus_data_path: "{{ prometheus_base_path }}/data"
 
 # List of systemd services that the Prometheus systemd service depends on
-prometheus_systemd_required_services_list: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+prometheus_systemd_required_services_list: "{{ prometheus_systemd_required_services_list_default + prometheus_systemd_required_services_list_auto + prometheus_systemd_required_services_list_custom }}"
+prometheus_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+prometheus_systemd_required_services_list_auto: []
+prometheus_systemd_required_services_list_custom: []
 
 # List of systemd services that the Prometheus systemd service wants
 prometheus_systemd_wanted_services_list: []

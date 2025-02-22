@@ -38,7 +38,9 @@ prometheus_node_exporter_container_network: "{{ prometheus_node_exporter_identif
 # without exposing all other container services to that other reverse-proxy.
 #
 # For background, see: https://github.com/spantaleev/matrix-docker-ansible-deploy/issues/1498
-prometheus_node_exporter_container_additional_networks: []
+prometheus_node_exporter_container_additional_networks: "{{ prometheus_node_exporter_container_additional_networks_auto + prometheus_node_exporter_container_additional_networks_custom }}"
+prometheus_node_exporter_container_additional_networks_auto: []
+prometheus_node_exporter_container_additional_networks_custom: []
 
 # A list of extra arguments to pass to the container
 prometheus_node_exporter_container_extra_arguments: []
@@ -57,7 +59,10 @@ prometheus_node_exporter_container_extra_arguments: []
 prometheus_node_exporter_process_extra_arguments: []
 
 # List of systemd services that prometheus-node-exporter.service depends on
-prometheus_node_exporter_systemd_required_services_list: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+prometheus_node_exporter_systemd_required_services_list: "{{ prometheus_node_exporter_systemd_required_services_list_default + prometheus_node_exporter_systemd_required_services_list_auto + prometheus_node_exporter_systemd_required_services_list_custom }}"
+prometheus_node_exporter_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+prometheus_node_exporter_systemd_required_services_list_auto: []
+prometheus_node_exporter_systemd_required_services_list_custom: []
 
 # List of systemd services that prometheus-node-exporter.service wants
 prometheus_node_exporter_systemd_wanted_services_list: []

@@ -10,7 +10,7 @@ DefaultDependencies=no
 Type=simple
 Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
 
-ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop --time={{ traefik_certs_dumper_container_stop_grace_time_seconds }} {{ traefik_certs_dumper_identifier }} 2>/dev/null || true'
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ traefik_certs_dumper_container_stop_grace_time_seconds }} {{ traefik_certs_dumper_identifier }} 2>/dev/null || true'
 ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ traefik_certs_dumper_identifier }} 2>/dev/null || true'
 
 # This container runs as root, because:
@@ -33,7 +33,7 @@ ExecStart={{ devture_systemd_docker_base_host_command_docker }} run \
 			{{ traefik_certs_dumper_container_image }} \
 			/certs-dumper-bin/entrypoint.sh
 
-ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop --time={{ traefik_certs_dumper_container_stop_grace_time_seconds }} {{ traefik_certs_dumper_identifier }} 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ traefik_certs_dumper_container_stop_grace_time_seconds }} {{ traefik_certs_dumper_identifier }} 2>/dev/null || true'
 ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ traefik_certs_dumper_identifier }} 2>/dev/null || true'
 
 Restart=always
