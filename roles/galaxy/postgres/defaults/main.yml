@@ -122,7 +122,9 @@ postgres_container_additional_networks: "{{ postgres_container_additional_networ
 postgres_container_additional_networks_auto: []
 postgres_container_additional_networks_custom: []
 
-docker_postgres_container_image_registry_prefix: "docker.io/"
+postgres_container_image_registry_prefix: "{{ postgres_container_image_registry_prefix_upstream }}"
+postgres_container_image_registry_prefix_upstream: "{{ postgres_container_image_registry_prefix_upstream_default }}"
+postgres_container_image_registry_prefix_upstream_default: "docker.io/"
 
 # postgres_container_image_suffix controls whether we use Alpine-based images (`-alpine`) or the normal Debian-based images.
 # Alpine-based Postgres images are smaller and we usually prefer them, but they don't work on ARM32 (tested on a Raspberry Pi 3 running Raspbian 10.7).
@@ -130,15 +132,15 @@ docker_postgres_container_image_registry_prefix: "docker.io/"
 # > LOG:  startup process (PID 37) was terminated by signal 11: Segmentation fault
 postgres_container_image_suffix: "{{ '-alpine' if postgres_architecture in ['amd64', 'arm64'] else '' }}"
 
-postgres_container_image_v9: "{{ docker_postgres_container_image_registry_prefix }}postgres:9.6.24{{ postgres_container_image_suffix }}"
-postgres_container_image_v10: "{{ docker_postgres_container_image_registry_prefix }}postgres:10.23{{ postgres_container_image_suffix }}"
-postgres_container_image_v11: "{{ docker_postgres_container_image_registry_prefix }}postgres:11.22{{ postgres_container_image_suffix }}"
-postgres_container_image_v12: "{{ docker_postgres_container_image_registry_prefix }}postgres:12.20{{ postgres_container_image_suffix }}"
-postgres_container_image_v13: "{{ docker_postgres_container_image_registry_prefix }}postgres:13.18{{ postgres_container_image_suffix }}"
-postgres_container_image_v14: "{{ docker_postgres_container_image_registry_prefix }}postgres:14.15{{ postgres_container_image_suffix }}"
-postgres_container_image_v15: "{{ docker_postgres_container_image_registry_prefix }}postgres:15.10{{ postgres_container_image_suffix }}"
-postgres_container_image_v16: "{{ docker_postgres_container_image_registry_prefix }}postgres:16.6{{ postgres_container_image_suffix }}"
-postgres_container_image_v17: "{{ docker_postgres_container_image_registry_prefix }}postgres:17.2{{ postgres_container_image_suffix }}"
+postgres_container_image_v9: "{{ postgres_container_image_registry_prefix }}postgres:9.6.24{{ postgres_container_image_suffix }}"
+postgres_container_image_v10: "{{ postgres_container_image_registry_prefix }}postgres:10.23{{ postgres_container_image_suffix }}"
+postgres_container_image_v11: "{{ postgres_container_image_registry_prefix }}postgres:11.22{{ postgres_container_image_suffix }}"
+postgres_container_image_v12: "{{ postgres_container_image_registry_prefix }}postgres:12.20{{ postgres_container_image_suffix }}"
+postgres_container_image_v13: "{{ postgres_container_image_registry_prefix }}postgres:13.18{{ postgres_container_image_suffix }}"
+postgres_container_image_v14: "{{ postgres_container_image_registry_prefix }}postgres:14.15{{ postgres_container_image_suffix }}"
+postgres_container_image_v15: "{{ postgres_container_image_registry_prefix }}postgres:15.10{{ postgres_container_image_suffix }}"
+postgres_container_image_v16: "{{ postgres_container_image_registry_prefix }}postgres:16.6{{ postgres_container_image_suffix }}"
+postgres_container_image_v17: "{{ postgres_container_image_registry_prefix }}postgres:17.2{{ postgres_container_image_suffix }}"
 postgres_container_image_latest: "{{ postgres_container_image_v17 }}"
 
 # This variable is assigned at runtime. Overriding its value has no effect.
@@ -273,7 +275,9 @@ postgres_pgloader_container_image_self_build_src_path: "{{ postgres_base_path }}
 
 # We use illagrenan/pgloader, instead of the more official dimitri/pgloader image,
 # because the official one only provides a `latest` tag.
-postgres_pgloader_docker_image: "{{ postgres_pgloader_container_image_name_prefix }}illagrenan/pgloader:{{ postgres_pgloader_container_image_tag }}"
-postgres_pgloader_container_image_name_prefix: "{{ 'localhost/' if postgres_pgloader_container_image_self_build else docker_postgres_container_image_registry_prefix }}"
+postgres_pgloader_docker_image: "{{ postgres_pgloader_container_image_registry_prefix }}illagrenan/pgloader:{{ postgres_pgloader_container_image_tag }}"
+postgres_pgloader_container_image_registry_prefix: "{{ 'localhost/' if postgres_pgloader_container_image_self_build else postgres_pgloader_container_image_registry_prefix_upstream }}"
+postgres_pgloader_container_image_registry_prefix_upstream: "{{ postgres_pgloader_container_image_registry_prefix_upstream_default }}"
+postgres_pgloader_container_image_registry_prefix_upstream_default: "docker.io/"
 postgres_pgloader_container_image_tag: "3.6.2"
 postgres_pgloader_container_image_force_pull: "{{ postgres_pgloader_docker_image.endswith(':latest') }}"

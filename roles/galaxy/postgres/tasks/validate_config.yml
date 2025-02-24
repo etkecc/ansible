@@ -32,3 +32,5 @@
     - {'old': 'postgres_vacuum_database', 'new': '<superseded by postgres_vacuum_default_databases_list>'}
     - {'old': 'postgres_additional_databases', 'new': 'postgres_managed_databases'}
     - {'old': 'postgres_vacuum_command', 'new': '<superseded by postgres_vacuum_presets and postgres_vacuum_preset, or postgres_vacuum_query>'}
+    - {'old': 'docker_postgres_container_image_registry_prefix', 'new': 'postgres_container_image_registry_prefix'}
+    - {'old': 'postgres_pgloader_container_image_name_prefix', 'new': 'postgres_pgloader_container_image_registry_prefix'}

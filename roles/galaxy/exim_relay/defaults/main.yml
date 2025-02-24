@@ -26,8 +26,10 @@ exim_relay_container_image_self_build_repository_url: "https://github.com/devtur
 exim_relay_container_image_self_build_src_files_path: "{{ exim_relay_base_path }}/docker-src"
 exim_relay_container_image_self_build_version: "{{ exim_relay_container_image.split(':')[1] }}"
 
-exim_relay_container_image: "{{ exim_relay_container_image_name_prefix }}devture/exim-relay:{{ exim_relay_version }}"
-exim_relay_container_image_name_prefix: "{{ 'localhost/' if exim_relay_container_image_self_build else 'docker.io/' }}"
+exim_relay_container_image: "{{ exim_relay_container_image_registry_prefix }}devture/exim-relay:{{ exim_relay_version }}"
+exim_relay_container_image_registry_prefix: "{{ 'localhost/' if exim_relay_container_image_self_build else exim_relay_container_image_registry_prefix_upstream }}"
+exim_relay_container_image_registry_prefix_upstream: "{{ exim_relay_container_image_registry_prefix_upstream_default }}"
+exim_relay_container_image_registry_prefix_upstream_default: "docker.io/"
 exim_relay_container_image_force_pull: "{{ exim_relay_container_image.endswith(':latest') }}"
 
 # The user/group that the container runs with.

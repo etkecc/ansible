@@ -21,7 +21,9 @@ container_socket_proxy_systemd_required_services_list_custom: []
 container_socket_proxy_container_image: "{{ container_socket_proxy_container_image_registry_prefix }}tecnativa/docker-socket-proxy:{{ container_socket_proxy_container_image_tag }}"
 container_socket_proxy_container_image_tag: "{{ container_socket_proxy_version }}"
 container_socket_proxy_container_image_force_pull: "{{ container_socket_proxy_container_image_tag.endswith(':latest') or container_socket_proxy_container_image_tag.endswith(':nightly') }}"
-container_socket_proxy_container_image_registry_prefix: ghcr.io/
+container_socket_proxy_container_image_registry_prefix: "{{ container_socket_proxy_container_image_registry_prefix_upstream }}"
+container_socket_proxy_container_image_registry_prefix_upstream: "{{ container_socket_proxy_container_image_registry_prefix_upstream_default }}"
+container_socket_proxy_container_image_registry_prefix_upstream_default: ghcr.io/
 
 container_socket_proxy_container_network: "{{ container_socket_proxy_identifier }}"
 

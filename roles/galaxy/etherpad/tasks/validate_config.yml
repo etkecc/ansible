@@ -4,6 +4,14 @@
 
 ---
 
+- name: (Deprecation) Catch and report renamed Etherpad variables
+  ansible.builtin.fail:
+    msg: >-
+      The variable `{{ item.old }}` is deprecated. Please use `{{ item.new }}` instead.
+  when: "item.old in vars"
+  with_items:
+    - {'old': 'etherpad_container_image_name_prefix', 'new': 'etherpad_container_image_registry_prefix'}
+
 - name: Fail if required Etherpad settings not defined
   ansible.builtin.fail:
     msg: >

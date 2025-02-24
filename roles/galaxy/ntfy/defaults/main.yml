@@ -26,7 +26,9 @@ ntfy_path_prefix: /
 ntfy_base_url: "https://{{ ntfy_hostname }}{{ '' if ntfy_path_prefix == '/' else ntfy_path_prefix }}"
 
 ntfy_container_image: "{{ ntfy_container_image_registry_prefix }}binwiederhier/ntfy:{{ ntfy_version }}"
-ntfy_container_image_registry_prefix: docker.io/
+ntfy_container_image_registry_prefix: "{{ ntfy_container_image_registry_prefix_upstream }}"
+ntfy_container_image_registry_prefix_upstream: "{{ ntfy_container_image_registry_prefix_upstream_default }}"
+ntfy_container_image_registry_prefix_upstream_default: docker.io/
 ntfy_container_image_force_pull: "{{ ntfy_container_image.endswith(':latest') }}"
 
 # Controls whether the container exposes its HTTP port (tcp/80 in the container).

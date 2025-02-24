@@ -79,7 +79,9 @@ postgres_backup_container_additional_networks: "{{ postgres_backup_container_add
 postgres_backup_container_additional_networks_auto: []
 postgres_backup_container_additional_networks_custom: []
 
-postgres_backup_container_image_registry_prefix: "docker.io/"
+postgres_backup_container_image_registry_prefix: "{{ postgres_backup_container_image_registry_prefix_upstream }}"
+postgres_backup_container_image_registry_prefix_upstream: "{{ postgres_backup_container_image_registry_prefix_upstream_default }}"
+postgres_backup_container_image_registry_prefix_upstream_default: "docker.io/"
 
 # postgres_backup_container_image_distro controls whether we use Alpine-based images (`-alpine`) or the normal Debian-based images.
 # Alpine-based Postgres images are smaller and we usually prefer them, but they don't work on ARM32 (tested on a Raspberry Pi 3 running Raspbian 10.7).

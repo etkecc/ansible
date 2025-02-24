@@ -12,6 +12,7 @@
     - {'old': 'prometheus_node_exporter_basicauth_user', 'new': '<superseded by prometheus_node_exporter_container_labels_metrics_middleware_basic_auth_users>'}
     - {'old': 'prometheus_node_exporter_basicauth_password', 'new': '<superseded by prometheus_node_exporter_container_labels_metrics_middleware_basic_auth_users>'}
     - {'old': 'prometheus_node_exporter_basicauth_print', 'new': '<removed>'}
+    - {'old': 'prometheus_node_exporter_docker_image_name_prefix', 'new': 'prometheus_node_exporter_docker_image_registry_prefix'}
 
 - name: Fail if required prometheus-node-exporter settings not defined
   ansible.builtin.fail:

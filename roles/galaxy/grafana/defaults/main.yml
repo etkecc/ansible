@@ -108,7 +108,9 @@ grafana_provisioning_dashboard_template_files: []
 grafana_provisioning_datasources: []
 
 grafana_container_image: "{{ grafana_container_image_registry_prefix }}grafana/grafana-oss:{{ grafana_version }}"
-grafana_container_image_registry_prefix: docker.io/
+grafana_container_image_registry_prefix: "{{ grafana_container_image_registry_prefix_upstream }}"
+grafana_container_image_registry_prefix_upstream: "{{ grafana_container_image_registry_prefix_upstream_default }}"
+grafana_container_image_registry_prefix_upstream_default: docker.io/
 grafana_container_image_force_pull: "{{ grafana_container_image.endswith(':latest') }}"
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.

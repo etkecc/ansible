@@ -46,11 +46,12 @@ etherpad_systemd_wanted_services_list_custom: []
 etherpad_user_uid: '5001'
 etherpad_user_gid: '5001'
 
-etherpad_container_image: "{{ etherpad_container_image_name_prefix }}etherpad/etherpad:{{ etherpad_container_image_tag }}"
-etherpad_container_image_name_prefix: "{{ 'localhost/' if etherpad_container_image_self_build else etherpad_container_image_registry_prefix }}"
+etherpad_container_image: "{{ etherpad_container_image_registry_prefix }}etherpad/etherpad:{{ etherpad_container_image_tag }}"
 etherpad_container_image_tag: "{{ etherpad_version }}"
 etherpad_container_image_force_pull: "{{ etherpad_container_image.endswith(':latest') }}"
-etherpad_container_image_registry_prefix: docker.io/
+etherpad_container_image_registry_prefix: "{{ 'localhost/' if etherpad_container_image_self_build else etherpad_container_image_registry_prefix_upstream }}"
+etherpad_container_image_registry_prefix_upstream: "{{ etherpad_container_image_registry_prefix_upstream_default }}"
+etherpad_container_image_registry_prefix_upstream_default: docker.io/
 
 etherpad_container_image_self_build: false
 etherpad_container_image_self_build_repo: "https://github.com/ether/etherpad-lite"

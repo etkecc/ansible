@@ -4,6 +4,14 @@
 
 ---
 
+- name: (Deprecation) Catch and report renamed exim-relay variables
+  ansible.builtin.fail:
+    msg: >-
+      The variable `{{ item.old }}` is deprecated. Please use `{{ item.new }}` instead.
+  when: "item.old in vars"
+  with_items:
+    - {'old': 'exim_relay_container_image_name_prefix', 'new': 'exim_relay_container_image_registry_prefix'}
+
 - name: Fail if required exim-relay settings not defined
   ansible.builtin.fail:
     msg: >-

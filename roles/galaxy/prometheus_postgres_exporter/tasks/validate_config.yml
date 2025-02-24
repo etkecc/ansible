@@ -13,6 +13,7 @@
     - {'old': 'prometheus_postgres_exporter_basicauth_password', 'new': '<superseded by prometheus_postgres_exporter_container_labels_metrics_middleware_basic_auth_users>'}
     - {'old': 'prometheus_postgres_exporter_basicauth_print', 'new': '<removed>'}
     - {'old': 'prometheus_postgres_exporter_basicauth_file_contents', 'new': '<removed>'}
+    - {'old': 'prometheus_postgres_exporter_docker_image_name_prefix', 'new': 'prometheus_postgres_exporter_docker_image_registry_prefix'}
 
 - name: Fail if required prometheus-postgres-exporter settings not defined
   ansible.builtin.fail:

@@ -25,7 +25,9 @@ traefik_certs_dumper_systemd_required_services_list: "{{ [devture_systemd_docker
 
 traefik_certs_dumper_container_image: "{{ traefik_certs_dumper_container_image_registry_prefix }}ldez/traefik-certs-dumper:{{ traefik_certs_dumper_container_image_tag }}"
 traefik_certs_dumper_container_image_tag: "{{ traefik_certs_dumper_version }}"
-traefik_certs_dumper_container_image_registry_prefix: docker.io/
+traefik_certs_dumper_container_image_registry_prefix: "{{ traefik_certs_dumper_container_image_registry_prefix_upstream }}"
+traefik_certs_dumper_container_image_registry_prefix_upstream: "{{ traefik_certs_dumper_container_image_registry_prefix_upstream_default }}"
+traefik_certs_dumper_container_image_registry_prefix_upstream_default: docker.io/
 
 traefik_certs_dumper_container_post_hook: "/bin/sh /certs-dumper-bin/copy-certificates.sh /intermediate /staging /out"
 

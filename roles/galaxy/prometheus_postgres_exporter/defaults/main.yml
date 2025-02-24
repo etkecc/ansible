@@ -14,8 +14,10 @@ prometheus_postgres_exporter_path_prefix: "/metrics/postgres-exporter"
 prometheus_postgres_exporter_version: v0.14.0
 prometheus_postgres_exporter_port: 9187
 
-prometheus_postgres_exporter_docker_image: "{{ prometheus_postgres_exporter_docker_image_name_prefix }}prometheuscommunity/postgres-exporter:{{ prometheus_postgres_exporter_version }}"
-prometheus_postgres_exporter_docker_image_name_prefix: "quay.io/"
+prometheus_postgres_exporter_docker_image: "{{ prometheus_postgres_exporter_docker_image_registry_prefix }}prometheuscommunity/postgres-exporter:{{ prometheus_postgres_exporter_version }}"
+prometheus_postgres_exporter_docker_image_registry_prefix: "{{ prometheus_postgres_exporter_docker_image_registry_prefix_upstream }}"
+prometheus_postgres_exporter_docker_image_registry_prefix_upstream: "{{ prometheus_postgres_exporter_docker_image_registry_prefix_upstream_default }}"
+prometheus_postgres_exporter_docker_image_registry_prefix_upstream_default: "quay.io/"
 prometheus_postgres_exporter_docker_image_force_pull: "{{ prometheus_postgres_exporter_docker_image.endswith(':latest') }}"
 
 # A path on host where all related files will be saved

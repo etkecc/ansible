@@ -12,8 +12,10 @@ prometheus_node_exporter_hostname: ''
 prometheus_node_exporter_path_prefix: "/metrics/node-exporter"
 
 prometheus_node_exporter_version: v1.8.2
-prometheus_node_exporter_docker_image: "{{ prometheus_node_exporter_docker_image_name_prefix }}prom/node-exporter:{{ prometheus_node_exporter_version }}"
-prometheus_node_exporter_docker_image_name_prefix: "docker.io/"
+prometheus_node_exporter_docker_image: "{{ prometheus_node_exporter_docker_image_registry_prefix }}prom/node-exporter:{{ prometheus_node_exporter_version }}"
+prometheus_node_exporter_docker_image_registry_prefix: "{{ prometheus_node_exporter_docker_image_registry_prefix_upstream }}"
+prometheus_node_exporter_docker_image_registry_prefix_upstream: "{{ prometheus_node_exporter_docker_image_registry_prefix_upstream_default }}"
+prometheus_node_exporter_docker_image_registry_prefix_upstream_default: "docker.io/"
 prometheus_node_exporter_docker_image_force_pull: "{{ prometheus_node_exporter_docker_image.endswith(':latest') }}"
 
 # A path on host where all related files will be saved
