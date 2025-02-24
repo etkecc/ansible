@@ -141,6 +141,16 @@ miniflux_database_password: "{{ '%s' | format(matrix_homeserver_generic_secret_k
 
 ########################################################################
 #                                                                      #
+# Element                                                              #
+#                                                                      #
+########################################################################
+
+# Unlike MDAD, we use https://github.com/etkecc/app (ghcr.io/etkecc/app) which enables some additional features
+matrix_client_element_docker_image: "{{ matrix_client_element_docker_image_registry_prefix }}etkecc/app:{{ matrix_client_element_version }}"
+matrix_client_element_docker_image_registry_prefix_upstream_default: gchr.io/
+
+########################################################################
+#                                                                      #
 # radicale                                                             #
 #                                                                      #
 ########################################################################
