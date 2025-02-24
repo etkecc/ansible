@@ -165,9 +165,9 @@ radicale_config_path: "{{ radicale_base_path }}/conf"
 radicale_uid: "{{ matrix_user_uid }}"
 radicale_gid: "{{ matrix_user_gid }}"
 
-# using https://github.com/etkecc/radicale with radicale-auth-matrix plugin
-radicale_container_image_registry_prefix_upstream: "{{ matrix_container_global_registry_prefix_override if matrix_container_global_registry_prefix_override else radicale_container_image_registry_prefix_upstream_default }}"
+# Unlike MASH, we use https://github.com/etkecc/radicale (ghcr.io/etkecc/radicale) which additionally provides the matrix-auth plugin
 radicale_container_image: "{{ radicale_container_image_registry_prefix }}etkecc/radicale:{{ radicale_container_image_tag }}"
+radicale_container_image_registry_prefix_upstream_default: ghcr.io/
 
 radicale_container_network: "{{ matrix_addons_container_network }}"
 
