@@ -16,7 +16,7 @@ languagetool_hostname: ''
 # This value must either be `/` or not end with a slash (e.g. `/languagetool`).
 languagetool_path_prefix: /
 
-languagetool_version: 6.5
+languagetool_version: 6.5-dockerupdate-1
 
 languagetool_base_path: "/{{ languagetool_identifier }}"
 languagetool_data_path: "{{ languagetool_base_path }}/data"

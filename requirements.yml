@@ -17,7 +17,7 @@
   version: v0.17.4-2
   name: gotosocial
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-languagetool.git
-  version: v6.5-2
+  version: v6.5-3
   name: languagetool
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-linkding.git
   version: v1.38.1-2
