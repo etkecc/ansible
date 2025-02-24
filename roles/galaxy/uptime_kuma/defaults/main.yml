@@ -27,7 +27,9 @@ uptime_kuma_base_path: "/{{ uptime_kuma_identifier }}"
 uptime_kuma_data_path: "{{ uptime_kuma_base_path }}/data"
 
 uptime_kuma_container_image: "{{ uptime_kuma_container_image_registry_prefix }}louislam/uptime-kuma:{{ uptime_kuma_container_image_tag }}"
-uptime_kuma_container_image_registry_prefix: docker.io/
+uptime_kuma_container_image_registry_prefix: "{{ uptime_kuma_container_image_registry_prefix_upstream }}"
+uptime_kuma_container_image_registry_prefix_upstream: "{{ uptime_kuma_container_image_registry_prefix_upstream_default }}"
+uptime_kuma_container_image_registry_prefix_upstream_default: docker.io/
 uptime_kuma_container_image_tag: "{{ uptime_kuma_version }}-alpine"
 uptime_kuma_container_image_force_pull: "{{ uptime_kuma_container_image.endswith(':latest') }}"
 

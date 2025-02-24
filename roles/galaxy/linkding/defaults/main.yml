@@ -31,10 +31,12 @@ linkding_data_path: "{{ linkding_base_path }}/data"
 linkding_superuser_username:
 linkding_superuser_password:
 
-linkding_container_image_registry_prefix: docker.io
+linkding_container_image: "{{ linkding_container_image_registry_prefix }}/{{ linkding_container_image_path }}:{{ linkding_container_image_tag }}"
+linkding_container_image_registry_prefix: "{{ linkding_container_image_registry_prefix_upstream }}"
+linkding_container_image_registry_prefix_upstream: "{{ linkding_container_image_registry_prefix_upstream_default }}"
+linkding_container_image_registry_prefix_upstream_default: docker.io
 linkding_container_image_path: sissbruecker/linkding
 linkding_container_image_tag: "{{ linkding_version }}"
-linkding_container_image: "{{ linkding_container_image_registry_prefix }}/{{ linkding_container_image_path }}:{{ linkding_container_image_tag }}"
 linkding_container_image_force_pull: "{{ linkding_container_image.endswith(':latest') }}"
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.

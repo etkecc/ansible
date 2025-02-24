@@ -40,6 +40,8 @@ languagetool_base_path: "{{ mash_playbook_base_path }}/{{ mash_playbook_service_
 languagetool_uid: "{{ mash_playbook_uid }}"
 languagetool_gid: "{{ mash_playbook_gid }}"
 
+languagetool_container_image_registry_prefix_upstream: "{{ matrix_container_global_registry_prefix_override if matrix_container_global_registry_prefix_override else languagetool_container_image_registry_prefix_upstream_default }}"
+
 languagetool_container_network: "{{ matrix_addons_container_network }}"
 languagetool_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
 languagetool_container_labels_traefik_docker_network: "{{ mash_playbook_reverse_proxyable_services_additional_network }}"
@@ -69,6 +71,8 @@ linkding_systemd_required_services_list_auto: |
   {{
     ([postgres_identifier ~ '.service'] if postgres_enabled and linkding_database_hostname == postgres_identifier else [])
   }}
+
+linkding_container_image_registry_prefix_upstream: "{{ matrix_container_global_registry_prefix_override if matrix_container_global_registry_prefix_override else linkding_container_image_registry_prefix_upstream_default }}"
 
 linkding_container_network: "{{ matrix_addons_container_network }}"
 
@@ -102,6 +106,8 @@ miniflux_base_path: "{{ matrix_base_data_path }}/custom-miniflux"
 
 miniflux_uid: "{{ matrix_user_uid }}"
 miniflux_gid: "{{ matrix_user_gid }}"
+
+miniflux_container_image_registry_prefix_upstream: "{{ matrix_container_global_registry_prefix_override if matrix_container_global_registry_prefix_override else miniflux_container_image_registry_prefix_upstream_default }}"
 
 miniflux_container_network: "{{ matrix_addons_container_network }}"
 
@@ -139,6 +145,8 @@ radicale_config_path: "{{ radicale_base_path }}/conf"
 radicale_uid: "{{ matrix_user_uid }}"
 radicale_gid: "{{ matrix_user_gid }}"
 
+radicale_container_image_registry_prefix_upstream: "{{ matrix_container_global_registry_prefix_override if matrix_container_global_registry_prefix_override else radicale_container_image_registry_prefix_upstream_default }}"
+
 radicale_container_network: "{{ matrix_addons_container_network }}"
 
 radicale_container_additional_networks_auto: |
@@ -165,6 +173,8 @@ uptime_kuma_base_path: "{{ matrix_base_data_path }}/custom-kuma"
 
 uptime_kuma_uid: "{{ matrix_user_uid }}"
 uptime_kuma_gid: "{{ matrix_user_gid }}"
+
+uptime_kuma_container_image_registry_prefix_upstream: "{{ matrix_container_global_registry_prefix_override if matrix_container_global_registry_prefix_override else uptime_kuma_container_image_registry_prefix_upstream_default }}"
 
 uptime_kuma_container_network: "{{ matrix_addons_container_network }}"
 
@@ -200,6 +210,8 @@ gotosocial_systemd_wanted_services_list_auto: |
   {{
     ([(exim_relay_identifier | default('matrix-exim-relay')) ~ '.service'] if (exim_relay_enabled | default(false) and gotosocial_smtp_host == exim_relay_identifier | default('matrix-exim-relay')) else [])
   }}
+
+gotosocial_container_image_registry_prefix_upstream: "{{ matrix_container_global_registry_prefix_override if matrix_container_global_registry_prefix_override else gotosocial_container_image_registry_prefix_upstream_default }}"
 
 gotosocial_container_network: "{{ matrix_addons_container_network }}"
 
@@ -245,6 +257,8 @@ vaultwarden_systemd_required_systemd_services_list_auto: |
   {{
     ([postgres_identifier ~ '.service'] if postgres_enabled and vaultwarden_database_hostname == postgres_identifier else [])
   }}
+
+vaultwarden_container_image_registry_prefix_upstream: "{{ matrix_container_global_registry_prefix_override if matrix_container_global_registry_prefix_override else vaultwarden_container_image_registry_prefix_upstream_default }}"
 
 vaultwarden_container_network: "{{ matrix_addons_container_network }}"
 
@@ -307,6 +321,8 @@ firezone_systemd_required_services_list_auto: |
   {{
     ([postgres_identifier ~ '.service'] if postgres_enabled | default(false) and firezone_database_host == postgres_identifier else [])
   }}
+
+firezone_container_image_registry_prefix_upstream: "{{ matrix_container_global_registry_prefix_override if matrix_container_global_registry_prefix_override else firezone_container_image_registry_prefix_upstream_default }}"
 
 firezone_container_network: "{{ matrix_addons_container_network }}"
 
@@ -394,6 +410,8 @@ funkwhale_frontend_container_labels_traefik_docker_network: "{{ mash_playbook_re
 funkwhale_frontend_container_labels_traefik_entrypoints: "{{ traefik_entrypoint_primary }}"
 funkwhale_frontend_container_labels_traefik_tls_certResolver: "{{ traefik_certResolver_primary }}"
 
+funkwhale_container_image_registry_prefix_upstream: "{{ matrix_container_global_registry_prefix_override if matrix_container_global_registry_prefix_override else funkwhale_container_image_registry_prefix_upstream_default }}"
+
 ########################################################################
 #                                                                      #
 # peertube                                                             #
@@ -414,6 +432,8 @@ peertube_config_smtp_hostname: "{{ exim_relay_identifier if exim_relay_enabled e
 peertube_config_smtp_port: "{{ 8025 if exim_relay_enabled else '' }}"
 peertube_config_smtp_from: "{{ exim_relay_sender_address if exim_relay_enabled else '' }}"
 # /role-specific:exim_relay
+
+peertube_container_image_registry_prefix_upstream: "{{ matrix_container_global_registry_prefix_override if matrix_container_global_registry_prefix_override else peertube_container_image_registry_prefix_upstream_default }}"
 
 peertube_container_additional_networks_auto: |
   {{

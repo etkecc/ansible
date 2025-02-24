@@ -22,7 +22,9 @@ languagetool_base_path: "/{{ languagetool_identifier }}"
 languagetool_data_path: "{{ languagetool_base_path }}/data"
 
 languagetool_container_image: "{{ languagetool_container_image_registry_prefix }}erikvl87/languagetool:{{ languagetool_version }}"
-languagetool_container_image_registry_prefix: docker.io/
+languagetool_container_image_registry_prefix: "{{ languagetool_container_image_registry_prefix_upstream }}"
+languagetool_container_image_registry_prefix_upstream: "{{ languagetool_container_image_registry_prefix_upstream_default }}"
+languagetool_container_image_registry_prefix_upstream_default: docker.io/
 languagetool_container_image_force_pull: "{{ languagetool_container_image.endswith(':latest') }}"
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.

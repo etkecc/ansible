@@ -27,7 +27,9 @@ miniflux_admin_login: ''
 miniflux_admin_password: ''
 
 miniflux_container_image: "{{ miniflux_container_image_registry_prefix }}miniflux/miniflux:{{ miniflux_container_image_tag }}"
-miniflux_container_image_registry_prefix: docker.io/
+miniflux_container_image_registry_prefix: "{{ miniflux_container_image_registry_prefix_upstream }}"
+miniflux_container_image_registry_prefix_upstream: "{{ miniflux_container_image_registry_prefix_upstream_default }}"
+miniflux_container_image_registry_prefix_upstream_default: docker.io/
 miniflux_container_image_tag: "{{ miniflux_version }}"
 miniflux_container_image_force_pull: "{{ miniflux_container_image.endswith(':latest') }}"
 

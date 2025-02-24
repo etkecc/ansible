@@ -118,7 +118,9 @@ peertube_config_object_storage_upload_acl_private: private
 peertube_config_log_level: info
 
 peertube_container_image: "{{ peertube_container_image_registry_prefix }}chocobozzz/peertube:{{ peertube_container_image_tag }}"
-peertube_container_image_registry_prefix: docker.io/
+peertube_container_image_registry_prefix: "{{ peertube_container_image_registry_prefix_upstream }}"
+peertube_container_image_registry_prefix_upstream: "{{ peertube_container_image_registry_prefix_upstream_default }}"
+peertube_container_image_registry_prefix_upstream_default: docker.io/
 peertube_container_image_tag: "{{ peertube_version }}-{{ peertube_distro_variant }}"
 peertube_container_image_force_pull: "{{ peertube_container_image.endswith(':latest') }}"
 

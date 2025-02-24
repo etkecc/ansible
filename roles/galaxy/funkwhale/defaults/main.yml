@@ -94,7 +94,9 @@ funkwhale_users: "{{ funkwhale_users_auto + funkwhale_users_additional }}"
 
 funkwhale_container_network: '{{ funkwhale_identifier }}'
 
-funkwhale_container_image_registry_prefix: docker.io/
+funkwhale_container_image_registry_prefix: "{{ funkwhale_container_image_registry_prefix_upstream }}"
+funkwhale_container_image_registry_prefix_upstream: "{{ funkwhale_container_image_registry_prefix_upstream_default }}"
+funkwhale_container_image_registry_prefix_upstream_default: docker.io/
 
 funkwhale_django_secret_key: ''
 
@@ -112,7 +114,7 @@ funkwhale_api_identifier: "{{ funkwhale_identifier }}-api"
 
 # List of systemd services that funkwhale-api.service depends on
 funkwhale_api_systemd_required_services_list: "{{ funkwhale_api_systemd_required_services_list_default + funkwhale_api_systemd_required_services_list_auto + funkwhale_api_systemd_required_services_list_custom }}"
-funkwhale_api_systemd_required_services_list_default: ['docker.service']
+funkwhale_api_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
 funkwhale_api_systemd_required_services_list_auto: []
 funkwhale_api_systemd_required_services_list_custom: []
 

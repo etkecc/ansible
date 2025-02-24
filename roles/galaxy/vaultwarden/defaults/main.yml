@@ -22,9 +22,11 @@ vaultwarden_hostname: ''
 vaultwarden_path_prefix: '/'
 
 vaultwarden_container_image: "{{ vaultwarden_container_registry_prefix }}dani-garcia/vaultwarden:{{ vaultwarden_container_image_tag }}"
+vaultwarden_container_registry_prefix: "{{ vaultwarden_container_registry_prefix_upstream }}"
+vaultwarden_container_registry_prefix_upstream: "{{ vaultwarden_container_registry_prefix_upstream_default }}"
+vaultwarden_container_registry_prefix_upstream_default: ghcr.io/
 vaultwarden_container_image_tag: "{{ vaultwarden_version }}-alpine"
 vaultwarden_container_image_force_pull: "{{ vaultwarden_container_image.endswith(':latest') }}"
-vaultwarden_container_registry_prefix: ghcr.io/
 vaultwarden_container_hostname: "{{ vaultwarden_hostname }}"
 
 vaultwarden_container_network: "{{ vaultwarden_identifier }}"
