@@ -136,11 +136,11 @@ postgres_container_image_v9: "{{ postgres_container_image_registry_prefix }}post
 postgres_container_image_v10: "{{ postgres_container_image_registry_prefix }}postgres:10.23{{ postgres_container_image_suffix }}"
 postgres_container_image_v11: "{{ postgres_container_image_registry_prefix }}postgres:11.22{{ postgres_container_image_suffix }}"
 postgres_container_image_v12: "{{ postgres_container_image_registry_prefix }}postgres:12.20{{ postgres_container_image_suffix }}"
-postgres_container_image_v13: "{{ postgres_container_image_registry_prefix }}postgres:13.18{{ postgres_container_image_suffix }}"
-postgres_container_image_v14: "{{ postgres_container_image_registry_prefix }}postgres:14.15{{ postgres_container_image_suffix }}"
-postgres_container_image_v15: "{{ postgres_container_image_registry_prefix }}postgres:15.10{{ postgres_container_image_suffix }}"
-postgres_container_image_v16: "{{ postgres_container_image_registry_prefix }}postgres:16.6{{ postgres_container_image_suffix }}"
-postgres_container_image_v17: "{{ postgres_container_image_registry_prefix }}postgres:17.2{{ postgres_container_image_suffix }}"
+postgres_container_image_v13: "{{ postgres_container_image_registry_prefix }}postgres:13.20{{ postgres_container_image_suffix }}"
+postgres_container_image_v14: "{{ postgres_container_image_registry_prefix }}postgres:14.16{{ postgres_container_image_suffix }}"
+postgres_container_image_v15: "{{ postgres_container_image_registry_prefix }}postgres:15.12{{ postgres_container_image_suffix }}"
+postgres_container_image_v16: "{{ postgres_container_image_registry_prefix }}postgres:16.8{{ postgres_container_image_suffix }}"
+postgres_container_image_v17: "{{ postgres_container_image_registry_prefix }}postgres:17.4{{ postgres_container_image_suffix }}"
 postgres_container_image_latest: "{{ postgres_container_image_v17 }}"
 
 # This variable is assigned at runtime. Overriding its value has no effect.
