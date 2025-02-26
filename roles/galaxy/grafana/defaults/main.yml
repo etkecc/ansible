@@ -44,6 +44,13 @@ grafana_allow_embedding: false
 # to match to keep anonymous logins working.
 grafana_anonymous_access_org_name: 'Main Org.'
 
+# Controls whether metrics are enabled.
+#
+# See:
+# - https://grafana.com/docs/grafana/latest/setup-grafana/configure-grafana/#metrics
+# - https://github.com/mother-of-all-self-hosting/ansible-role-grafana/issues/4
+grafana_metrics_enabled: false
+
 # Default admin credentials. You are asked to change these on first login.
 grafana_default_admin_user: admin
 grafana_default_admin_password: admin

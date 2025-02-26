@@ -20,7 +20,7 @@ allow_embedding = {{ grafana_allow_embedding }}
 
 [auth.anonymous]
 # enable anonymous access
-enabled = {{ grafana_anonymous_access }}
+enabled = {{ grafana_anonymous_access | to_json }}
 
 # specify organization name that should be used for unauthenticated users
 org_name = "{{ grafana_anonymous_access_org_name }}"
@@ -30,7 +30,7 @@ default_home_dashboard_path = {{ grafana_default_home_dashboard_path }}
 
 {% if grafana_feature_toggles_enable %}
 [feature_toggles]
-enable = {{ grafana_feature_toggles_enable }}
+enable = true
 {% endif %}
 
 {% if grafana_smtp_enabled %}
@@ -41,3 +41,6 @@ user = {{ grafana_smtp_user }}
 password = """{{ grafana_smtp_password }}"""
 from_address = {{ grafana_smtp_from_address }}
 {% endif %}
+
+[metrics]
+enabled = {{ grafana_metrics_enabled | to_json }}

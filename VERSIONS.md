@@ -1,4 +1,4 @@
-* Alertmanager Receiver: 2025.2.19
+* Alertmanager Receiver: 2025.2.26
 * Appservice Discord: v4.0.0
 * Appservice Draupnir For All: v2.1.0
 * Appservice Irc: 1.0.1
@@ -25,9 +25,8 @@
 * Draupnir: v2.1.0
 * Dynamic Dns: 4.0.0
 * Element: v1.11.93
-* Email2Matrix: 1.1.0
 * Etherpad: 2.2.7
-* Exim Relay: 4.98-r0-4
+* Exim Relay: 4.98.1-r0-0
 * Facebook: v0.5.1
 * Firezone: 0.7.36
 * Fluffychat: v1.25.1

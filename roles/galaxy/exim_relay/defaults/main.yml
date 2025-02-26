@@ -18,8 +18,8 @@ exim_relay_spool_path: "{{ exim_relay_base_path }}/spool"
 exim_relay_uid: ''
 exim_relay_gid: ''
 
-# renovate: datasource=docker depName=devture/exim-relay versioning=semver
-exim_relay_version: 4.98-r0-4
+# renovate: datasource=docker depName=ghcr.io/devture/exim-relay versioning=semver
+exim_relay_version: 4.98.1-r0-0
 
 exim_relay_container_image_self_build: false
 exim_relay_container_image_self_build_repository_url: "https://github.com/devture/exim-relay"
@@ -29,7 +29,7 @@ exim_relay_container_image_self_build_version: "{{ exim_relay_container_image.sp
 exim_relay_container_image: "{{ exim_relay_container_image_registry_prefix }}devture/exim-relay:{{ exim_relay_version }}"
 exim_relay_container_image_registry_prefix: "{{ 'localhost/' if exim_relay_container_image_self_build else exim_relay_container_image_registry_prefix_upstream }}"
 exim_relay_container_image_registry_prefix_upstream: "{{ exim_relay_container_image_registry_prefix_upstream_default }}"
-exim_relay_container_image_registry_prefix_upstream_default: "docker.io/"
+exim_relay_container_image_registry_prefix_upstream_default: "ghcr.io/"
 exim_relay_container_image_force_pull: "{{ exim_relay_container_image.endswith(':latest') }}"
 
 # The user/group that the container runs with.
