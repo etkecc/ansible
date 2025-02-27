@@ -12,5 +12,5 @@
 * [Grafana](https://github.com/grafana/grafana): [11.5.1](https://github.com/grafana/grafana/releases/tag/v11.5.1) -> [11.5.2](https://github.com/grafana/grafana/releases/tag/v11.5.2)
 * [Hookshot](https://github.com/matrix-org/matrix-hookshot): [6.0.2](https://github.com/matrix-org/matrix-hookshot/releases/tag/6.0.2) -> [6.0.3](https://github.com/matrix-org/matrix-hookshot/releases/tag/6.0.3)
 * [Languagetool](https://github.com/Erikvl87/docker-languagetool): [6.5](https://github.com/Erikvl87/docker-languagetool/releases/tag/v6.5) -> [6.5-dockerupdate-1](https://github.com/Erikvl87/docker-languagetool/releases/tag/v6.5-dockerupdate-1)
-* [Linkding](https://github.com/sissbruecker/linkding): [latest](https://github.com/sissbruecker/linkding/releases/tag/latest) -> [1.38.1](https://github.com/sissbruecker/linkding/releases/tag/1.38.1)
+* [Linkding](https://github.com/sissbruecker/linkding): [latest](https://github.com/sissbruecker/linkding/releases/tag/vlatest) -> [1.38.1](https://github.com/sissbruecker/linkding/releases/tag/v1.38.1)
 * [Synapse](https://github.com/element-hq/synapse): [v1.124.0](https://github.com/element-hq/synapse/releases/tag/v1.124.0) -> [v1.125.0](https://github.com/element-hq/synapse/releases/tag/v1.125.0)
