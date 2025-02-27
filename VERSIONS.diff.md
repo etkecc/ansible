@@ -1,6 +1,7 @@
 **Stable Updates Published**
 
 * [Alertmanager Receiver](https://github.com/metio/matrix-alertmanager-receiver): [2025.2.19](https://github.com/metio/matrix-alertmanager-receiver/releases/tag/2025.2.19) -> [2025.2.26](https://github.com/metio/matrix-alertmanager-receiver/releases/tag/2025.2.26)
+* [Baibot](https://github.com/etkecc/baibot): [v1.4.1](https://github.com/etkecc/baibot/releases/tag/v1.4.1) -> [v1.5.0](https://github.com/etkecc/baibot/releases/tag/v1.5.0)
 * [Bluesky](https://github.com/mautrix/bluesky): [v0.1.0](https://github.com/mautrix/bluesky/releases/tag/v0.1.0) _new_
 * [Cinny](https://github.com/ajbura/cinny): [v4.3.2](https://github.com/ajbura/cinny/releases/tag/v4.3.2) -> [v4.4.0](https://github.com/ajbura/cinny/releases/tag/v4.4.0)
 * [Container Socket Proxy](https://github.com/Tecnativa/docker-socket-proxy): [0.2.0](https://github.com/Tecnativa/docker-socket-proxy/releases/tag/v0.2.0) -> [0.3.0](https://github.com/Tecnativa/docker-socket-proxy/releases/tag/v0.3.0)
