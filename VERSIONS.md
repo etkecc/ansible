@@ -24,7 +24,7 @@
 * Docker Compose: v2.32.1
 * Draupnir: v2.1.0
 * Dynamic Dns: 4.0.0
-* Element: v1.11.93
+* Element: v1.11.94
 * Etherpad: 2.2.7
 * Exim Relay: 4.98.1-r0-0
 * Facebook: v0.5.1
