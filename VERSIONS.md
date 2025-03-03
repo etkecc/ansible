@@ -42,7 +42,7 @@
 * Hookshot: 6.0.3
 * Hydrogen: v0.5.1
 * Instagram: v0.3.1
-* Jitsi: stable-10008
+* Jitsi: stable-10078-1
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
 * Languagetool: 6.5-dockerupdate-1
@@ -71,7 +71,7 @@
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.8.2
 * Prometheus Postgres Exporter: v0.14.0
-* Radicale: 3.4.1.0
+* Radicale: 3.4.1.1
 * Rageshake: 1.14.0
 * Registration: v0.7.2
 * Schildichat: 1.11.86-sc.0.test.0
@@ -90,7 +90,7 @@
 * Synapse Reverse Proxy Companion: 1.27.4-alpine
 * Synapse S3 Storage Provider: 1.5.0
 * Telegram: v0.15.2
-* Traefik: v3.3.3
+* Traefik: v3.3.4
 * Traefik Certs Dumper: v2.8.3
 * Twitter: v0.2.1
 * Uptime Kuma: 1.23.16

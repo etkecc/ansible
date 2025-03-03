@@ -6,7 +6,7 @@ traefik_enabled: true
 
 traefik_identifier: traefik
 
-traefik_version: v3.3.3
+traefik_version: v3.3.4
 
 traefik_uid: ''
 traefik_gid: ''
