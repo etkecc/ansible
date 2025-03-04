@@ -34,8 +34,9 @@ matrix_media_repo_metrics_enabled: false
 ########################################################################
 
 # Unlike MDAD, we use https://github.com/etkecc/etherpad (ghcr.io/etkecc/etherpad) which provides additional plugins
-etherpad_container_image: "{{ etherpad_container_image_registry_prefix }}etkecc/etherpad:{{ etherpad_container_image_tag }}"
-etherpad_container_image_registry_prefix_upstream_default: ghcr.io/
+# Disabled due to constant issues with plugins
+# etherpad_container_image: "{{ etherpad_container_image_registry_prefix }}etkecc/etherpad:{{ etherpad_container_image_tag }}"
+# etherpad_container_image_registry_prefix_upstream_default: ghcr.io/
 
 ########################################################################
 #                                                                      #
