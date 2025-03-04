@@ -1,6 +1,6 @@
 * Alertmanager Receiver: 2025.2.26
 * Appservice Discord: v4.0.0
-* Appservice Draupnir For All: v2.1.0
+* Appservice Draupnir For All: v2.2.0
 * Appservice Irc: 1.0.1
 * Appservice Kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * Appservice Slack: 2.1.2
@@ -10,7 +10,7 @@
 * Baibot: v1.5.0
 * Bluesky: v0.1.0
 * Borg: 1.4.0
-* Borgmatic: 1.9.10
+* Borgmatic: 1.9.13
 * Buscarron: v1.4.3
 * Cactus Comments: 0.9.0
 * Cactus Comments Client: 2.36.0
@@ -22,11 +22,11 @@
 * Dimension: latest
 * Discord: v0.7.2
 * Docker Compose: v2.32.1
-* Draupnir: v2.1.0
+* Draupnir: v2.2.0
 * Dynamic Dns: 4.0.0
 * Element: v1.11.94
 * Etherpad: 2.2.7
-* Exim Relay: 4.98.1-r0-0
+* Exim Relay: 4.98.1-r0-1
 * Facebook: v0.5.1
 * Firezone: 0.7.36
 * Fluffychat: v1.25.1
