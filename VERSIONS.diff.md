@@ -19,4 +19,5 @@
 * [Linkding](https://github.com/sissbruecker/linkding): [latest](https://github.com/sissbruecker/linkding/releases/tag/vlatest) -> [1.38.1](https://github.com/sissbruecker/linkding/releases/tag/v1.38.1)
 * [Radicale](https://github.com/tomsquest/docker-radicale): [3.4.1.0](https://github.com/tomsquest/docker-radicale/releases/tag/3.4.1.0) -> [3.4.1.1](https://github.com/tomsquest/docker-radicale/releases/tag/3.4.1.1)
 * [Synapse](https://github.com/element-hq/synapse): [v1.124.0](https://github.com/element-hq/synapse/releases/tag/v1.124.0) -> [v1.125.0](https://github.com/element-hq/synapse/releases/tag/v1.125.0)
+* [Synapse Admin](https://github.com/etkecc/synapse-admin): [v0.10.3-etke37](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.3-etke37) -> [v0.10.3-etke38](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.3-etke38)
 * [Traefik](https://github.com/traefik/traefik): [v3.3.3](https://github.com/traefik/traefik/releases/tag/v3.3.3) -> [v3.3.4](https://github.com/traefik/traefik/releases/tag/v3.3.4)
