@@ -1,4 +1,4 @@
-* Alertmanager Receiver: 2025.2.26
+* Alertmanager Receiver: 2025.3.5
 * Appservice Discord: v4.0.0
 * Appservice Draupnir For All: v2.2.0
 * Appservice Irc: 1.0.1
@@ -15,7 +15,7 @@
 * Cactus Comments: 0.9.0
 * Cactus Comments Client: 2.36.0
 * Chatgpt: 3.1.4
-* Cinny: v4.5.0
+* Cinny: v4.5.1
 * Container Socket Proxy: 0.3.0
 * Corporal: 3.1.4
 * Coturn: 4.6.2-r11

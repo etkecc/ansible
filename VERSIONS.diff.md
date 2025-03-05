@@ -1,11 +1,11 @@
 **Stable Updates Published**
 
-* [Alertmanager Receiver](https://github.com/metio/matrix-alertmanager-receiver): [2025.2.19](https://github.com/metio/matrix-alertmanager-receiver/releases/tag/2025.2.19) -> [2025.2.26](https://github.com/metio/matrix-alertmanager-receiver/releases/tag/2025.2.26)
+* [Alertmanager Receiver](https://github.com/metio/matrix-alertmanager-receiver): [2025.2.19](https://github.com/metio/matrix-alertmanager-receiver/releases/tag/2025.2.19) -> [2025.3.5](https://github.com/metio/matrix-alertmanager-receiver/releases/tag/2025.3.5)
 * [Appservice Draupnir For All](https://github.com/the-draupnir-project/Draupnir): [v2.1.0](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.1.0) -> [v2.2.0](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.2.0)
 * [Baibot](https://github.com/etkecc/baibot): [v1.4.1](https://github.com/etkecc/baibot/releases/tag/v1.4.1) -> [v1.5.0](https://github.com/etkecc/baibot/releases/tag/v1.5.0)
 * [Bluesky](https://github.com/mautrix/bluesky): [v0.1.0](https://github.com/mautrix/bluesky/releases/tag/v0.1.0) _new_
 * Borgmatic: 1.9.10 -> 1.9.13
-* [Cinny](https://github.com/ajbura/cinny): [v4.3.2](https://github.com/ajbura/cinny/releases/tag/v4.3.2) -> [v4.5.0](https://github.com/ajbura/cinny/releases/tag/v4.5.0)
+* [Cinny](https://github.com/ajbura/cinny): [v4.3.2](https://github.com/ajbura/cinny/releases/tag/v4.3.2) -> [v4.5.1](https://github.com/ajbura/cinny/releases/tag/v4.5.1)
 * [Container Socket Proxy](https://github.com/Tecnativa/docker-socket-proxy): [0.2.0](https://github.com/Tecnativa/docker-socket-proxy/releases/tag/v0.2.0) -> [0.3.0](https://github.com/Tecnativa/docker-socket-proxy/releases/tag/v0.3.0)
 * [Corporal](https://github.com/devture/matrix-corporal): [3.1.3](https://github.com/devture/matrix-corporal/releases/tag/3.1.3) -> [3.1.4](https://github.com/devture/matrix-corporal/releases/tag/3.1.4)
 * [Draupnir](https://github.com/the-draupnir-project/Draupnir): [v2.1.0](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.1.0) -> [v2.2.0](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.2.0)
