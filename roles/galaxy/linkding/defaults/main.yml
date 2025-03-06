@@ -21,7 +21,7 @@ linkding_hostname: ""
 linkding_path_prefix: /
 
 # Version of linkding to deploy
-linkding_version: 1.38.1
+linkding_version: 1.39.1
 
 # Base path for linkding resources
 linkding_base_path: "{{ linkding_identifier }}"

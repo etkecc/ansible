@@ -47,7 +47,7 @@
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
 * Languagetool: 6.5-dockerupdate-1
 * Ldap Registration Proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
-* Linkding: 1.38.1
+* Linkding: 1.39.1
 * Linkedin: latest
 * Ma1Sd: 2.5.0
 * Matrix Registration Bot: 1.3.0
