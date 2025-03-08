@@ -27,7 +27,10 @@ vaultwarden_container_registry_prefix_upstream: "{{ vaultwarden_container_regist
 vaultwarden_container_registry_prefix_upstream_default: ghcr.io/
 vaultwarden_container_image_tag: "{{ vaultwarden_version }}-alpine"
 vaultwarden_container_image_force_pull: "{{ vaultwarden_container_image.endswith(':latest') }}"
-vaultwarden_container_hostname: "{{ vaultwarden_hostname }}"
+# Intentionally leaving this blank, instead of defaulting it to `vaultwarden_hostname`, to avoid specifying a hostname
+# and making other services on render other services on that hostname potentially unreachable.
+# See: https://github.com/mother-of-all-self-hosting/mash-playbook/issues/391
+vaultwarden_container_hostname: ""
 
 vaultwarden_container_network: "{{ vaultwarden_identifier }}"
 

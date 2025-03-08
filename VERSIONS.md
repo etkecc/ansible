@@ -26,7 +26,7 @@
 * Dynamic Dns: 4.0.0
 * Element: v1.11.94
 * Etherpad: 2.2.7
-* Exim Relay: 4.98.1-r0-1
+* Exim Relay: 4.98.1-r0-2
 * Facebook: v0.5.1
 * Firezone: 0.7.36
 * Fluffychat: v1.25.1

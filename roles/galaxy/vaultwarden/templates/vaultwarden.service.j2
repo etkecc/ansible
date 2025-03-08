@@ -29,7 +29,9 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
 			--user={{ vaultwarden_uid }}:{{ vaultwarden_gid }} \
 			--cap-drop=ALL \
 			--read-only \
+			{% if vaultwarden_container_hostname %}
 			--hostname={{ vaultwarden_container_hostname }} \
+			{% endif %}
 			{% if vaultwarden_container_http_bind_port %}
 			-p {{ vaultwarden_container_http_bind_port }}:{{ vaultwarden_config_rocket_port }} \
 			{% endif %}
