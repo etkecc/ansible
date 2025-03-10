@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 ---
 
 # Generates a `###`-separated list of `docker network inspect ...` commands, based on the network list in `ntfy_visitor_request_limit_exempt_hosts_container_networks`.

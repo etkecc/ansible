@@ -1,3 +1,11 @@
+# SPDX-FileCopyrightText: 2023 - 2024 Nikita Chernyi
+# SPDX-FileCopyrightText: 2023 - 2024 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2024 Sergio Durigan Junior
+# SPDX-FileCopyrightText: 2025 MASH project contributors
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 ---
 # Project source code URL: https://github.com/binwiederhier/ntfy
 
@@ -53,7 +61,7 @@ ntfy_container_additional_networks_custom: []
 ntfy_container_labels_traefik_enabled: true
 ntfy_container_labels_traefik_docker_network: "{{ ntfy_container_network }}"
 ntfy_container_labels_traefik_hostname: "{{ ntfy_hostname }}"
-# The path prefix must either be `/` or not end with a slash (e.g. `/cinny`).
+# The path prefix must either be `/` or not end with a slash (e.g. `/ntfy`).
 ntfy_container_labels_traefik_path_prefix: "{{ ntfy_path_prefix }}"
 ntfy_container_labels_traefik_rule: "Host(`{{ ntfy_container_labels_traefik_hostname }}`){% if ntfy_container_labels_traefik_path_prefix != '/' %} && PathPrefix(`{{ ntfy_container_labels_traefik_path_prefix }}`){% endif %}"
 ntfy_container_labels_traefik_priority: 0
@@ -99,11 +107,33 @@ ntfy_systemd_required_services_list_custom: []
 # List of systemd services that the ntfy systemd service wants
 ntfy_systemd_wanted_services_list: []
 
+# Controls how email notifications are configured.
+ntfy_smtp_sender_enabled: false
+ntfy_smtp_sender_addr_host: ''  # Hostname
+ntfy_smtp_sender_addr_port: 587
+ntfy_smtp_sender_username: ''  # Username of the SMTP user
+ntfy_smtp_sender_password: ''  # Password of the SMTP user
+ntfy_smtp_sender_from: ''  # Email address of the sender
+
 # Rate limits
+#
+# The total number of topics before the server rejects new topics.
 ntfy_global_topic_limit: 15000  # default
+#
+# The number of subscriptions (open connections) per visitor.
 ntfy_visitor_subscription_limit: 30  # default
+#
+# The initial bucket of requests each visitor has.
 ntfy_visitor_request_limit_burst: 60  # default
+#
+# The rate at which the bucket is refilled (one request per x).
 ntfy_visitor_request_limit_replenish: "5s"  # default
+#
+# The initial bucket of emails each visitor has.
+ntfy_visitor_email_limit_burst: 16  # default
+#
+# The rate at which the bucket is refilled (one email per x).
+ntfy_visitor_email_limit_replenish: "1h"  # default
 
 # Controls the `web-root` configuraiton setting, which specifies what should be served by ntfy at the root path.
 # See: https://github.com/binwiederhier/ntfy/blob/main/server/server.yml
@@ -115,7 +145,7 @@ ntfy_visitor_request_limit_replenish: "5s"  # default
 ntfy_web_root: disable
 
 # Controls the NTFY_VISITOR_REQUEST_LIMIT_EXEMPT_HOSTS environment variable's value.
-# Exempt hosts can be defined as hostnames, IP addresses or network ranges.
+# Exempted hosts can be defined as hostnames, IP addresses or network ranges.
 #
 # Define your own in `ntfy_visitor_request_limit_exempt_hosts_hostnames_custom`.
 #

@@ -1,3 +1,8 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025 MASH project contributors
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 ---
 
 - block:
@@ -7,7 +12,7 @@
     - when: ntfy_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
-    - when: 
+    - when:
         - ntfy_enabled | bool
         - ntfy_credentials | length > 0
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/setup_users.yml"

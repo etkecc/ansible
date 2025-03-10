@@ -1,3 +1,8 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 ---
 
 - name: Fail if required ntfy settings not defined
@@ -32,3 +37,14 @@
         msg: >-
           ntfy_container_labels_traefik_path_prefix (`{{ ntfy_container_labels_traefik_path_prefix }}`) must either be `/` or not end with a slash (e.g. `/ntfy`).
       when: "ntfy_container_labels_traefik_path_prefix != '/' and ntfy_container_labels_traefik_path_prefix[-1] == '/'"
+
+- when: ntfy_smtp_sender_enabled | bool
+  block:
+    - name: Fail if required ntfy email notification settings not defined
+      ansible.builtin.fail:
+        msg: >-
+          You need to define a required configuration setting (`{{ item }}`).
+      when: "vars[item] == ''"
+      with_items:
+        - ntfy_smtp_sender_addr_host
+        - ntfy_smtp_sender_from

@@ -66,13 +66,13 @@
 * Ntfy: v2.11.0
 * Pantalaimon: 0.10.5
 * Peertube: v7.0.1
-* Postmoogle: v0.9.24
+* Postmoogle: v0.9.25
 * Prometheus: v2.55.1
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.8.2
 * Prometheus Postgres Exporter: v0.14.0
 * Radicale: 3.4.1.1
-* Rageshake: 1.14.0
+* Rageshake: 1.15.0
 * Registration: v0.7.2
 * Schildichat: 1.11.86-sc.0.test.0
 * Signal: v0.8.0
@@ -91,7 +91,7 @@
 * Synapse S3 Storage Provider: 1.5.0
 * Telegram: v0.15.2
 * Traefik: v3.3.4
-* Traefik Certs Dumper: v2.8.3
+* Traefik Certs Dumper: v2.10.0
 * Twitter: v0.2.1
 * Uptime Kuma: 1.23.16
 * User Verification Service: v3.0.0
