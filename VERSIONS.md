@@ -1,4 +1,4 @@
-* Alertmanager Receiver: 2025.3.5
+* Alertmanager Receiver: 2025.3.12
 * Appservice Discord: v4.0.0
 * Appservice Draupnir For All: v2.2.0
 * Appservice Irc: 1.0.1
@@ -79,7 +79,7 @@
 * Slack: v0.1.4
 * Sliding Sync: v0.99.19
 * Sms Bridge: 0.5.9
-* Spam Checker Mjolnir Antispam Git: v1.6.4
+* Spam Checker Mjolnir Antispam Git: v1.9.2
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.36.0
 * Sygnal: v0.15.1
