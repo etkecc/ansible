@@ -107,6 +107,9 @@
     - custom/matrix-coturn
     # - custom/matrix-media-repo # unused
     - galaxy/auxiliary
+    - custom/matrix-element-call
+    - galaxy/livekit_server
+    - custom/matrix-livekit-jwt-service
     - galaxy/postgres_backup
     - galaxy/backup_borg
     - when: devture_systemd_service_manager_enabled | bool

@@ -8,7 +8,7 @@
 * Authentication Service: 0.14.1
 * Authentication Service Syn2Mas: 0.14.1
 * Baibot: v1.5.0
-* Bluesky: v0.1.0
+* Bluesky: v0.1.1
 * Borg: 1.4.0
 * Borgmatic: 1.9.13
 * Buscarron: v1.4.3
@@ -25,13 +25,14 @@
 * Draupnir: v2.2.0
 * Dynamic Dns: 4.0.0
 * Element: v1.11.95
+* Element Call: v0.7.2
 * Etherpad: 2.2.7
 * Exim Relay: 4.98.1-r0-2
 * Facebook: v0.5.1
 * Firezone: 0.7.36
 * Fluffychat: v1.25.1
 * Funkwhale: 1.4.0
-* Gmessages: v0.6.0
+* Gmessages: v0.6.1
 * Go Neb: latest
 * Go Skype Bridge: latest
 * Googlechat: v0.5.2
@@ -49,12 +50,14 @@
 * Ldap Registration Proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * Linkding: 1.39.1
 * Linkedin: latest
+* Livekit Jwt Service: 0.2.0
+* Livekit Server: v1.8.4
 * Ma1Sd: 2.5.0
 * Matrix Registration Bot: 1.3.0
 * Matrix Reminder Bot: v0.3.0
 * Maubot: v0.5.1
-* Meta Instagram: v0.4.4
-* Meta Messenger: v0.4.4
+* Meta Instagram: v0.4.5
+* Meta Messenger: v0.4.5
 * Miniflux: 2.2.4
 * Mjolnir: v1.9.2
 * Mx Puppet Discord: v0.1.1
@@ -71,12 +74,12 @@
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.8.2
 * Prometheus Postgres Exporter: v0.14.0
-* Radicale: 3.4.1.1
-* Rageshake: 1.15.0
+* Radicale: 3.5.0.1
+* Rageshake: 1.16.0
 * Registration: v0.7.2
 * Schildichat: 1.11.86-sc.0.test.0
-* Signal: v0.8.0
-* Slack: v0.1.4
+* Signal: v0.8.1
+* Slack: v0.2.0
 * Sliding Sync: v0.99.19
 * Sms Bridge: 0.5.9
 * Spam Checker Mjolnir Antispam Git: v1.9.2
@@ -92,13 +95,13 @@
 * Telegram: v0.15.2
 * Traefik: v3.3.4
 * Traefik Certs Dumper: v2.10.0
-* Twitter: v0.2.1
+* Twitter: v0.3.0
 * Uptime Kuma: 1.23.16
 * User Verification Service: v3.0.0
 * Valkey: 8.0.1
 * Vaultwarden: 1.33.2
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
-* Whatsapp: v0.11.3
+* Whatsapp: v0.11.4
 * Wsproxy: latest
 * Wsproxy Syncproxy: latest

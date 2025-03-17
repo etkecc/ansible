@@ -34,6 +34,7 @@
     <outline text="draupnir" title="draupnir" type="rss" htmlUrl="https://github.com/the-draupnir-project/Draupnir" xmlUrl="https://github.com/the-draupnir-project/Draupnir/releases.atom" />
     <outline text="dynamic-dns" title="dynamic-dns" type="rss" htmlUrl="https://github.com/linuxserver/docker-ddclient" xmlUrl="https://github.com/linuxserver/docker-ddclient/releases.atom" />
     <outline text="element" title="element" type="rss" htmlUrl="https://github.com/element-hq/element-web" xmlUrl="https://github.com/element-hq/element-web/releases.atom" />
+    <outline text="element-call" title="element-call" type="rss" htmlUrl="https://github.com/element-hq/element-call" xmlUrl="https://github.com/element-hq/element-call/releases.atom" />
     <outline text="etherpad" title="etherpad" type="rss" htmlUrl="https://github.com/ether/etherpad-lite" xmlUrl="https://github.com/ether/etherpad-lite/releases.atom" />
     <outline text="exim_relay" title="exim_relay" type="rss" htmlUrl="https://github.com/devture/exim-relay" xmlUrl="https://github.com/devture/exim-relay/releases.atom" />
     <outline text="firezone" title="firezone" type="rss" htmlUrl="https://github.com/firezone/firezone" xmlUrl="https://github.com/firezone/firezone/releases.atom" />
@@ -51,6 +52,8 @@
     <outline text="languagetool" title="languagetool" type="rss" htmlUrl="https://github.com/Erikvl87/docker-languagetool" xmlUrl="https://github.com/Erikvl87/docker-languagetool/releases.atom" />
     <outline text="ldap-registration-proxy" title="ldap-registration-proxy" type="rss" htmlUrl="https://gitlab.com/activism.international/matrix_ldap_registration_proxy" xmlUrl="https://gitlab.com/activism.international/matrix_ldap_registration_proxy/-/tags?format=atom" />
     <outline text="linkding" title="linkding" type="rss" htmlUrl="https://github.com/sissbruecker/linkding" xmlUrl="https://github.com/sissbruecker/linkding/releases.atom" />
+    <outline text="livekit-jwt-service" title="livekit-jwt-service" type="rss" htmlUrl="https://github.com/element-hq/lk-jwt-service" xmlUrl="https://github.com/element-hq/lk-jwt-service/releases.atom" />
+    <outline text="livekit_server" title="livekit_server" type="rss" htmlUrl="https://github.com/livekit/livekit" xmlUrl="https://github.com/livekit/livekit/releases.atom" />
     <outline text="ma1sd" title="ma1sd" type="rss" htmlUrl="https://github.com/ma1uta/ma1sd" xmlUrl="https://github.com/ma1uta/ma1sd/releases.atom" />
     <outline text="maubot" title="maubot" type="rss" htmlUrl="https://mau.dev/maubot/maubot" xmlUrl="https://mau.dev/maubot/maubot/-/tags?format=atom" />
     <outline text="mautrix-bluesky" title="mautrix-bluesky" type="rss" htmlUrl="https://github.com/mautrix/bluesky" xmlUrl="https://github.com/mautrix/bluesky/releases.atom" />
