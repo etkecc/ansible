@@ -36,7 +36,7 @@
 * Go Neb: latest
 * Go Skype Bridge: latest
 * Googlechat: v0.5.2
-* Gotosocial: 0.17.4
+* Gotosocial: 0.18.2
 * Grafana: 11.5.2
 * Heisenbridge: 1.15.0
 * Honoroit: v0.9.27
@@ -68,14 +68,14 @@
 * Mx Puppet Twitter: latest
 * Ntfy: v2.11.0
 * Pantalaimon: 0.10.5
-* Peertube: v7.0.1
+* Peertube: v7.1.0
 * Postmoogle: v0.9.26
 * Prometheus: v2.55.1
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.8.2
 * Prometheus Postgres Exporter: v0.14.0
 * Radicale: 3.5.0.1
-* Rageshake: 1.16.0
+* Rageshake: 1.16.1
 * Registration: v0.7.2
 * Schildichat: 1.11.86-sc.0.test.0
 * Signal: v0.8.1
