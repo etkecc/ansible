@@ -1,4 +1,4 @@
-* Alertmanager Receiver: 2025.3.12
+* Alertmanager Receiver: 2025.3.19
 * Appservice Discord: v4.0.0
 * Appservice Draupnir For All: v2.2.0
 * Appservice Irc: 1.0.1
@@ -38,12 +38,12 @@
 * Googlechat: v0.5.2
 * Gotosocial: 0.18.2
 * Grafana: 11.5.2
-* Heisenbridge: 1.15.0
+* Heisenbridge: 1.15.2
 * Honoroit: v0.9.27
 * Hookshot: 6.0.3
 * Hydrogen: v0.5.1
 * Instagram: v0.3.1
-* Jitsi: stable-10078-1
+* Jitsi: stable-10133
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
 * Languagetool: 6.5-dockerupdate-1
@@ -75,7 +75,7 @@
 * Prometheus Node Exporter: v1.8.2
 * Prometheus Postgres Exporter: v0.14.0
 * Radicale: 3.5.0.1
-* Rageshake: 1.16.1
+* Rageshake: 1.16.2
 * Registration: v0.7.2
 * Schildichat: 1.11.86-sc.0.test.0
 * Signal: v0.8.1
