@@ -83,7 +83,7 @@ gotosocial_systemd_wanted_services_list_default: []
 gotosocial_systemd_wanted_services_list_auto: []
 gotosocial_systemd_wanted_services_list_custom: []
 
-gotosocial_version: 0.18.2
+gotosocial_version: 0.18.3
 
 gotosocial_container_image: "{{ gotosocial_container_image_registry_prefix }}superseriousbusiness/gotosocial:{{ gotosocial_container_image_tag }}"
 gotosocial_container_image_registry_prefix: "{{ gotosocial_container_image_registry_prefix_upstream }}"

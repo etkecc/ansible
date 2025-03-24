@@ -36,7 +36,7 @@
 * Go Neb: latest
 * Go Skype Bridge: latest
 * Googlechat: v0.5.2
-* Gotosocial: 0.18.2
+* Gotosocial: 0.18.3
 * Grafana: 11.5.2
 * Heisenbridge: 1.15.2
 * Honoroit: v0.9.27
@@ -50,7 +50,7 @@
 * Ldap Registration Proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * Linkding: 1.39.1
 * Linkedin: latest
-* Livekit Jwt Service: 0.2.0
+* Livekit Jwt Service: 0.2.1
 * Livekit Server: v1.8.4
 * Ma1Sd: 2.5.0
 * Matrix Registration Bot: 1.3.0
