@@ -43,7 +43,7 @@
 * Hookshot: 6.0.3
 * Hydrogen: v0.5.1
 * Instagram: v0.3.1
-* Jitsi: stable-10133
+* Jitsi: stable-10133-1
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
 * Languagetool: 6.5-dockerupdate-1
@@ -86,7 +86,7 @@
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.36.0
 * Sygnal: v0.15.1
-* Synapse: v1.126.0
+* Synapse: v1.127.0
 * Synapse Admin: v0.10.3-etke38
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4
