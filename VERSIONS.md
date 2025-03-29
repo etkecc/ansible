@@ -25,7 +25,7 @@
 * Draupnir: v2.2.0
 * Dynamic Dns: 4.0.0
 * Element: v1.11.96
-* Element Call: v0.8.0
+* Element Call: v0.9.0
 * Etherpad: 2.2.7
 * Exim Relay: 4.98.1-r0-2
 * Facebook: v0.5.1
