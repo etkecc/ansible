@@ -7,7 +7,7 @@
 * Appservice Webhooks: v1.0.3-01
 * Authentication Service: 0.14.1
 * Authentication Service Syn2Mas: 0.14.1
-* Baibot: v1.5.0
+* Baibot: v1.5.1
 * Bluesky: v0.1.1
 * Borg: 1.4.0
 * Borgmatic: 1.9.13
@@ -15,7 +15,7 @@
 * Cactus Comments: 0.9.0
 * Cactus Comments Client: 2.36.0
 * Chatgpt: 3.1.4
-* Cinny: v4.5.1
+* Cinny: v4.6.0
 * Container Socket Proxy: 0.3.0
 * Corporal: 3.1.4
 * Coturn: 4.6.2-r11
