@@ -1,0 +1,5 @@
+apiVersion: 1
+
+groups: {{ grafana_provisioning_alerts_groups | to_json }}
+
+deleteRules: {{ grafana_provisioning_alerts_deleteRules | to_json }}

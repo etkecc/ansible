@@ -37,7 +37,7 @@
 * Go Skype Bridge: latest
 * Googlechat: v0.5.2
 * Gotosocial: 0.18.3
-* Grafana: 11.5.2
+* Grafana: 11.6.0
 * Heisenbridge: 1.15.2
 * Honoroit: v0.9.27
 * Hookshot: 6.0.3

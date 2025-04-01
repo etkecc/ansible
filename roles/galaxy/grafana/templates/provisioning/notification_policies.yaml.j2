@@ -1,0 +1,5 @@
+apiVersion: 1
+
+policies: {{ grafana_provisioning_notification_policies_policies | to_json }}
+
+resetPolicies: {{ grafana_provisioning_notification_policies_resetPolicies | to_json }}

@@ -1,0 +1,5 @@
+apiVersion: 1
+
+contactPoints: {{ grafana_provisioning_contact_points_contactPoints | to_json }}
+
+deleteContactPoints:: {{ grafana_provisioning_contact_points_deleteContactPoints | to_json }}

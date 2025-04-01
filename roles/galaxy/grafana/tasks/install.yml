@@ -13,6 +13,8 @@
     - "{{ grafana_config_path }}/provisioning"
     - "{{ grafana_config_path }}/provisioning/datasources"
     - "{{ grafana_config_path }}/provisioning/dashboards"
+    - "{{ grafana_config_path }}/provisioning/alerting"
+    - "{{ grafana_config_path }}/provisioning/plugins"
     - "{{ grafana_config_path }}/dashboards"
     - "{{ grafana_data_path }}"
 
@@ -30,6 +32,18 @@
       dst: "{{ grafana_config_path }}/provisioning/datasources/default.yaml"
     - src: provisioning/dashboards.yaml.j2
       dst: "{{ grafana_config_path }}/provisioning/dashboards/default.yaml"
+    - src: provisioning/alerts.yaml.j2
+      dst: "{{ grafana_config_path }}/provisioning/alerting/alerts.yaml"
+    - src: provisioning/contact_points.yaml.j2
+      dst: "{{ grafana_config_path }}/provisioning/alerting/contact_points.yaml"
+    - src: provisioning/mute_timings.yaml.j2
+      dst: "{{ grafana_config_path }}/provisioning/alerting/mute_timings.yaml"
+    - src: provisioning/notification_policies.yaml.j2
+      dst: "{{ grafana_config_path }}/provisioning/alerting/notification_policies.yaml"
+    - src: provisioning/notification_template_groups.yaml.j2
+      dst: "{{ grafana_config_path }}/provisioning/alerting/notification_template_groups.yaml"
+    - src: provisioning/plugins.yaml.j2
+      dst: "{{ grafana_config_path }}/provisioning/plugins/default.yaml"
     - src: labels.j2
       dst: "{{ grafana_base_path }}/labels"
     - src: env.j2

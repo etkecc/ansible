@@ -1,0 +1,5 @@
+apiVersion: 1
+
+templates: {{ grafana_provisioning_notification_template_groups_templates | to_json }}
+
+deleteTemplates: {{ grafana_provisioning_notification_template_groups_deleteTemplates | to_json }}

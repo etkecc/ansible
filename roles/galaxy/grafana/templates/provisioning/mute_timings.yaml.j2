@@ -1,0 +1,5 @@
+apiVersion: 1
+
+muteTimes: {{ grafana_provisioning_mute_timings_muteTimes | to_json }}
+
+deleteMuteTimes: {{ grafana_provisioning_mute_timings_deleteMuteTimes | to_json }}
