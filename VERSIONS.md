@@ -13,7 +13,7 @@
 * Borgmatic: 1.9.13
 * Buscarron: v1.4.3
 * Cactus Comments: 0.9.0
-* Cactus Comments Client: 2.36.0
+* Cactus Comments Client: 2.36.1
 * Chatgpt: 3.1.4
 * Cinny: v4.6.0
 * Container Socket Proxy: 0.3.0
@@ -58,7 +58,7 @@
 * Maubot: v0.5.1
 * Meta Instagram: v0.4.5
 * Meta Messenger: v0.4.5
-* Miniflux: 2.2.4
+* Miniflux: 2.2.7
 * Mjolnir: v1.9.2
 * Mx Puppet Discord: v0.1.1
 * Mx Puppet Groupme: 533cccc8
@@ -72,7 +72,7 @@
 * Postmoogle: v0.9.26
 * Prometheus: v2.55.1
 * Prometheus Nginxlog Exporter: v1.10.0
-* Prometheus Node Exporter: v1.8.2
+* Prometheus Node Exporter: v1.9.1
 * Prometheus Postgres Exporter: v0.14.0
 * Radicale: 3.5.0.1
 * Rageshake: 1.16.2
@@ -84,7 +84,7 @@
 * Sms Bridge: 0.5.9
 * Spam Checker Mjolnir Antispam Git: v1.9.2
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
-* Static Files: 2.36.0
+* Static Files: 2.36.1
 * Sygnal: v0.15.1
 * Synapse: v1.127.1
 * Synapse Admin: v0.10.3-etke38
@@ -93,7 +93,7 @@
 * Synapse Reverse Proxy Companion: 1.27.4-alpine
 * Synapse S3 Storage Provider: 1.5.0
 * Telegram: v0.15.2
-* Traefik: v3.3.4
+* Traefik: v3.3.5
 * Traefik Certs Dumper: v2.10.0
 * Twitter: v0.3.0
 * Uptime Kuma: 1.23.16
