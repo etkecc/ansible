@@ -50,7 +50,7 @@
 * Ldap Registration Proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * Linkding: 1.39.1
 * Linkedin: latest
-* Livekit Jwt Service: 0.2.1
+* Livekit Jwt Service: 0.2.2
 * Livekit Server: v1.8.4
 * Ma1Sd: 2.5.0
 * Matrix Registration Bot: 1.3.0
