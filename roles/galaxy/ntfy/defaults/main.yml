@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2023 - 2024 Nikita Chernyi
-# SPDX-FileCopyrightText: 2023 - 2024 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2024 Sergio Durigan Junior
 # SPDX-FileCopyrightText: 2025 MASH project contributors
 # SPDX-FileCopyrightText: 2025 Suguru Hirahara
@@ -16,7 +16,10 @@ ntfy_identifier: ntfy
 ntfy_base_path: "{{ ntfy_identifier }}"
 ntfy_config_dir_path: "{{ ntfy_base_path }}/config"
 ntfy_data_path: "{{ ntfy_base_path }}/data"
+ntfy_cache_path: "{{ ntfy_base_path }}/cache"
+ntfy_attachment_cache_dir_path: "{{ ntfy_cache_path }}/attachments"
 
+# renovate: datasource=docker depName=docker.io/binwiederhier/ntfy
 ntfy_version: v2.11.0
 
 ntfy_uid: ''
@@ -25,13 +28,15 @@ ntfy_gid: ''
 # The hostname at which ntfy is served.
 ntfy_hostname: ''
 
+ntfy_scheme: https
+
 # The path at which ntfy is exposed.
 # This value must either be `/` or not end with a slash (e.g. `/ntfy`).
 ntfy_path_prefix: /
 
 # Public facing base URL of the ntfy service.
 # It should not end with a slash.
-ntfy_base_url: "https://{{ ntfy_hostname }}{{ '' if ntfy_path_prefix == '/' else ntfy_path_prefix }}"
+ntfy_base_url: "{{ ntfy_scheme }}://{{ ntfy_hostname }}{{ '' if ntfy_path_prefix == '/' else ntfy_path_prefix }}"
 
 ntfy_container_image: "{{ ntfy_container_image_registry_prefix }}binwiederhier/ntfy:{{ ntfy_version }}"
 ntfy_container_image_registry_prefix: "{{ ntfy_container_image_registry_prefix_upstream }}"
@@ -106,6 +111,14 @@ ntfy_systemd_required_services_list_custom: []
 
 # List of systemd services that the ntfy systemd service wants
 ntfy_systemd_wanted_services_list: []
+
+# Control how attachments can be uploaded via PUT.
+ntfy_attachment_enabled: false
+ntfy_attachment_total_size_limit: "5G"
+ntfy_attachment_file_size_limit: "15M"
+ntfy_attachment_expiry_duration: "3h"
+ntfy_visitor_attachment_total_size_limit: "100M"
+ntfy_visitor_attachment_daily_bandwidth_limit: "500M"
 
 # Controls how email notifications are configured.
 ntfy_smtp_sender_enabled: false
@@ -189,6 +202,13 @@ ntfy_visitor_request_limit_exempt_hosts_container_networks: |
 ntfy_visitor_request_limit_exempt_hosts_container_networks_auto: []
 ntfy_visitor_request_limit_exempt_hosts_container_networks_custom: []
 
+# Control whether a /metrics endpoint is exposed for the default ntfy server.
+ntfy_metrics_default_enabled: false
+
+# Control whether the /metrics endpoint is exposed via a specified IP address and/or port.
+# ntfy_metrics_listen_http_host can be omitted.
+ntfy_metrics_listen_http_host: 0.0.0.0
+ntfy_metrics_listen_http_port: ''
 
 # Controls whether the self-check feature should validate SSL certificates.
 ntfy_self_check_validate_certificates: true

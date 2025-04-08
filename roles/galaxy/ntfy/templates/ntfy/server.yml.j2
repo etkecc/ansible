@@ -18,6 +18,16 @@ visitor-request-limit-replenish: {{ ntfy_visitor_request_limit_replenish | to_js
 
 web-root: {{ ntfy_web_root | to_json }}
 
+{% if ntfy_attachment_enabled %}
+attachment-cache-dir: /cache/attachments
+attachment-total-size-limit: {{ ntfy_attachment_total_size_limit | to_json }}
+attachment-file-size-limit: {{ ntfy_attachment_file_size_limit | to_json }}
+attachment-expiry-duration: {{ ntfy_attachment_expiry_duration | to_json }}
+
+# Rate limits
+visitor-attachment-total-size-limit: {{ ntfy_visitor_attachment_total_size_limit | to_json }}
+visitor-attachment-daily-bandwidth-limit: {{ ntfy_visitor_attachment_daily_bandwidth_limit | to_json }}
+{% endif %}
 
 {% if ntfy_credentials | length > 0 %}
 auth-file: /data/auth.db
@@ -33,4 +43,11 @@ smtp-sender-from: "{{ ntfy_smtp_sender_from }}"
 # Rate limits
 visitor-email-limit-burst: {{ ntfy_visitor_email_limit_burst | to_json }}
 visitor-email-limit-replenish: {{ ntfy_visitor_email_limit_replenish | to_json }}
+{% endif %}
+
+{% if ntfy_metrics_default_enabled and ntfy_metrics_listen_http_port == '' %}
+enable-metrics: true
+{% endif %}
+{% if ntfy_metrics_listen_http_port != '' %}
+metrics-listen-http: "{{ ntfy_metrics_listen_http_host }}:{{ ntfy_metrics_listen_http_port }}"
 {% endif %}

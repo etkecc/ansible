@@ -43,6 +43,13 @@ livekit_server_container_rtc_listen_interface: "{{ '' if livekit_server_containe
 # Takes a null/none value (`~`) or 'none' (as a string) to prevent listening.
 livekit_server_container_turn_listen_interface: "{{ '' if livekit_server_container_network != 'host' else 'none' }}"
 
+# Controls whether the LiveKit Server container exposes its metrics and which interface to do it on.
+#
+# Takes an interface "<ip address>" (e.g. "127.0.0.1"), or empty string to listen on all interfaces.
+# Takes a null/none value (`~`) or 'none' (as a string) to prevent listening.
+# See `livekit_server_config_prometheus_port`.
+livekit_server_container_metrics_listen_interface: ~
+
 livekit_server_container_image_self_build: false
 livekit_server_container_repo: "https://github.com/livekit/livekit.git"
 livekit_server_container_repo_version: "{{ 'main' if livekit_server_version == 'latest' else livekit_server_version }}"
@@ -65,6 +72,18 @@ livekit_server_container_labels_traefik_entrypoints: web-secure
 livekit_server_container_labels_traefik_tls: "{{ livekit_server_container_labels_traefik_entrypoints != 'web' }}"
 livekit_server_container_labels_traefik_tls_certResolver: default  # noqa var-naming
 
+# Controls whether labels will be added that expose metrics (see `livekit_server_metrics_proxying_enabled`)
+livekit_server_container_labels_public_metrics_enabled: "{{ livekit_server_config_prometheus_enabled and livekit_server_metrics_proxying_enabled }}"
+livekit_server_container_labels_public_metrics_traefik_path: "{{ livekit_server_metrics_proxying_path }}"
+livekit_server_container_labels_public_metrics_traefik_rule: "Host(`{{ livekit_server_metrics_proxying_hostname }}`) && Path(`{{ livekit_server_container_labels_public_metrics_traefik_path }}`)"
+livekit_server_container_labels_public_metrics_traefik_priority: 0
+livekit_server_container_labels_public_metrics_traefik_entrypoints: "{{ livekit_server_container_labels_traefik_entrypoints }}"
+livekit_server_container_labels_public_metrics_traefik_tls: "{{ livekit_server_container_labels_traefik_tls }}"
+livekit_server_container_labels_public_metrics_traefik_tls_certResolver: "{{ livekit_server_container_labels_traefik_tls_certResolver }}"  # noqa var-naming
+livekit_server_container_labels_public_metrics_middleware_basic_auth_enabled: false
+# See: https://doc.traefik.io/traefik/middlewares/http/basicauth/#users
+livekit_server_container_labels_public_metrics_middleware_basic_auth_users: ''
+
 # livekit_server_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
 # See `../templates/labels.j2` for details.
 #
@@ -74,8 +93,40 @@ livekit_server_container_labels_traefik_tls_certResolver: default  # noqa var-na
 #   another.label="here"
 livekit_server_container_labels_additional_labels: ''
 
+# A list of additional "volumes" to mount in the container.
+# Contains definition objects like this: `{"type": "bind", "src": "/outside", "dst": "/inside", "options": "readonly"}.
+# See the `--mount` documentation for the `docker run` command.
+livekit_server_container_additional_volumes: "{{ livekit_server_container_additional_volumes_auto + livekit_server_container_additional_volumes_custom }}"
+livekit_server_container_additional_volumes_auto: []
+livekit_server_container_additional_volumes_custom: []
+
 # A list of extra arguments to pass to the container
 livekit_server_container_extra_arguments: []
+
+# Specifies the maximum size of the socket receive buffer (`net.core.rmem_max`) kernel parameter on the host (which will cascade into the container) to at least this value.
+# If the host uses a larger value, this will be ignored.
+#
+# We intentionally increase these buffers to 7.5MB, to LiveKit Server happy.
+# It may otherwise report something like:
+# > rtcconfig/rtc_unix.go:31        UDP receive buffer is too small for a production set-up        {"current": 425984, "suggested": 5000000}
+#
+#
+# The reason we apply this at the host level, not via `docker run --sysctl` is that
+# the `docker run --sysctl` option doesn't seem to work here (likely because it's Alpine in the container or something):
+# > Error response from daemon: failed to create task for container: failed to create shim task: OCI runtime create failed: runc create failed: unable to start container process: error during container init: open /proc/sys/net/core/rmem_max: permission denied
+# This same error is produced even if the container is started as root, with all capabilities, and `--privileged`, etc.
+#
+# If this is blank, no sysctl changes will be made.
+livekit_server_host_sysctl_minimum_net_core_rmem_max: 7500000
+
+# Specifies the maximum size of the socket send buffer (`net.core.wmem_max`) kernel parameter on the host (which will cascade into the container) to at least this value.
+# If the host uses a larger value, this will be ignored.
+#
+# See the comment for `livekit_server_host_sysctl_minimum_net_core_rmem_max` for more details
+# about why we need to increase these buffers.
+#
+# If this is blank, no sysctl changes will be made.
+livekit_server_host_sysctl_minimum_net_core_wmem_max: 7500000
 
 # List of systemd services that LiveKit Server service depends on
 livekit_server_systemd_required_services_list: "{{ livekit_server_systemd_required_services_list_default + livekit_server_systemd_required_services_list_auto + livekit_server_systemd_required_services_list_custom }}"
@@ -113,6 +164,9 @@ livekit_server_configuration_extension: "{{ livekit_server_configuration_extensi
 # Controls the `port` configuration property.
 # See: https://docs.livekit.io/home/self-hosting/ports-firewall/
 livekit_server_config_port: 7880
+
+# Controls the `bind_addresses` configuration property.
+livekit_server_config_bind_addresses: ["::"]
 
 ########################################################################################
 #                                                                                      #
@@ -170,11 +224,13 @@ livekit_server_config_turn_enabled: false
 livekit_server_config_turn_domain: "{{ livekit_server_hostname }}"
 
 # Controls the `turn.cert_file` configuration property.
-# Path to the TLS certificate file.
+# Path to the TLS certificate file in the container.
+# Files on the host can be mounted into the container using `livekit_server_container_additional_volumes`.
 livekit_server_config_turn_cert_file: ''
 
 # Controls the `turn.key_file` configuration property.
-# Path to the TLS key file.
+# Path to the TLS key file in the container.
+# Files on the host can be mounted into the container using `livekit_server_container_additional_volumes`.
 livekit_server_config_turn_key_file: ''
 
 # Controls the `turn.external_tls` configuration property.
@@ -194,13 +250,39 @@ livekit_server_config_turn_udp_port: 3478
 #                                                                                      #
 ########################################################################################
 
+########################################################################################
+#                                                                                      #
+# Prometheus                                                                            #
+#                                                                                      #
+########################################################################################
+
+# When set to true, enables Prometheus metrics.
+livekit_server_config_prometheus_enabled: false
+
+# Controls the `prometheus.port` configuration property, which affects the metrics port (in the container) that LiveKit Server exposes.
+livekit_server_config_prometheus_port: 8081
+
+# Controls the `prometheus.username` configuration property.
+# As an alternative, can configure authentication via `livekit_server_container_labels_public_metrics_middleware_basic_auth_users` as well.
+livekit_server_config_prometheus_username: ''
+
+# Controls the `prometheus.password` configuration property.
+# As an alternative, can configure authentication via `livekit_server_container_labels_public_metrics_middleware_basic_auth_users` as well.
+livekit_server_config_prometheus_password: ''
+
+########################################################################################
+#                                                                                      #
+# /Prometheus                                                                           #
+#                                                                                      #
+########################################################################################
+
 # Controls the `keys` configuration property.
 livekit_server_config_keys: "{{ livekit_server_config_keys_auto | combine(livekit_server_config_keys_custom, recursive=True) }}"
 livekit_server_config_keys_auto: {}
 livekit_server_config_keys_custom: {}
 
 # Controls the `logging.level` configuration property.
-# Known values: debug, info, warn, error
+# Valid values: debug, info, warn, error
 livekit_server_config_logging_level: info
 
 # Controls the `logging.pion_level` configuration property
@@ -214,3 +296,8 @@ livekit_server_config_logging_json: false
 # For production setups, enables sampling algorithm.
 # See: https://github.com/uber-go/zap/blob/master/FAQ.md#why-sample-application-logs
 livekit_server_config_logging_sample: false
+
+# Controls whether LiveKitServer's metrics should be proxied (exposed) publicly via Traefik.
+livekit_server_metrics_proxying_enabled: false
+livekit_server_metrics_proxying_hostname: ''
+livekit_server_metrics_proxying_path: /metrics/livekit-server

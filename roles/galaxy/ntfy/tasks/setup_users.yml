@@ -10,7 +10,7 @@
     daemon_reload: true
     state: restarted
 
-- name: Allow anonymous write access for push messages
+- name: Allow anonymous write access for push messages on UnifiedPush
   command: |
     {{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} run \
     --rm \
@@ -19,8 +19,7 @@
     --mount type=bind,src={{ ntfy_data_path }},dst=/data \
     --network none \
     {{ ntfy_container_image }} \
-     access '*' 'up*' write-only'
-  ignore_errors: true
+    access "*" "up*" write-only'
 
 - name: Get existing ntfy users
   command: |

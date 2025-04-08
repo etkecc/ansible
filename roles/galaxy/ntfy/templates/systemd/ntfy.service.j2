@@ -36,6 +36,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_sy
 			--health-interval={{ ntfy_container_health_interval }} \
 			--mount type=bind,src={{ ntfy_config_dir_path }},dst=/etc/ntfy,ro \
 			--mount type=bind,src={{ ntfy_data_path }},dst=/data \
+			--mount type=bind,src={{ ntfy_cache_path }},dst=/cache \
 			{{ ntfy_container_image }} \
 			serve'
 

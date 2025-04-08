@@ -18,7 +18,7 @@ This is an [Ansible](https://www.ansible.com/) role which installs [Etherpad](ht
 
 To enable Etherpad with this role, add the following configuration to your `vars.yml` file.
 
-**Note**: the path should be something like `inventory/host_vars/matrix.example.com/vars.yml` if you use the [MDAD (matrix-docker-ansible-deploy)](https://github.com/spantaleev/matrix-docker-ansible-deploy) Ansible playbook.
+**Note**: the path should be something like `inventory/host_vars/matrix.example.com/vars.yml` if you use the [matrix-docker-ansible-deploy (MDAD)](https://github.com/spantaleev/matrix-docker-ansible-deploy) or [Mother-of-All-Self-Hosting (MASH)](https://github.com/mother-of-all-self-hosting/mash-playbook) Ansible playbook.
 
 ```yaml
 ########################################################################
@@ -162,7 +162,7 @@ After configuring the playbook, run the installation command of your playbook as
 ansible-playbook -i inventory/hosts setup.yml --tags=setup-all,start
 ```
 
-If you use the [mash-playbook](https://github.com/mother-of-all-self-hosting/mash-playbook) or MDAD Ansible playbook, the shortcut commands with the [`just` program](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/docs/just.md) are also available: `just install-all` or `just setup-all`
+If you use the MDAD / MASH playbook, the shortcut commands with the [`just` program](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/docs/just.md) are also available: `just install-all` or `just setup-all`
 
 ## Usage
 
@@ -205,7 +205,7 @@ If you'd like to change the admin user's password, use a tool to change it befor
 
 ## Troubleshooting
 
-As with all other services, you can find the logs in [systemd-journald](https://www.freedesktop.org/software/systemd/man/systemd-journald.service.html) by logging in to the server with SSH and running `journalctl -fu etherpad` (or how you/your playbook named the service, e.g. `matrix-etherpad`).
+You can find the logs in [systemd-journald](https://www.freedesktop.org/software/systemd/man/systemd-journald.service.html) by logging in to the server with SSH and running `journalctl -fu etherpad` (or how you/your playbook named the service, e.g. `matrix-etherpad`).
 
 ### Increase logging verbosity
 

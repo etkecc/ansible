@@ -26,7 +26,7 @@
 * Dynamic Dns: 4.0.0
 * Element: v1.11.96
 * Element Call: v0.9.0
-* Etherpad: 2.2.7
+* Etherpad: 2.3.0
 * Exim Relay: 4.98.1-r0-2
 * Facebook: v0.5.1
 * Firezone: 0.7.36
@@ -50,7 +50,7 @@
 * Ldap Registration Proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
 * Linkding: 1.39.1
 * Linkedin: latest
-* Livekit Jwt Service: 0.2.2
+* Livekit Jwt Service: 0.2.3
 * Livekit Server: v1.8.4
 * Ma1Sd: 2.5.0
 * Matrix Registration Bot: 1.3.0
@@ -68,7 +68,7 @@
 * Mx Puppet Twitter: latest
 * Ntfy: v2.11.0
 * Pantalaimon: 0.10.5
-* Peertube: v7.1.0
+* Peertube: v7.1.1
 * Postmoogle: v0.9.26
 * Prometheus: v2.55.1
 * Prometheus Nginxlog Exporter: v1.10.0

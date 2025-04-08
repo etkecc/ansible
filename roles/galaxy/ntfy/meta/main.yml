@@ -3,7 +3,7 @@ galaxy_info:
   company: etke.cc
   role_name: ntfy
   namespace: etkecc
-  description: Ntfy
+  description: ntfy
   platforms:
     - name: Debian
       versions:

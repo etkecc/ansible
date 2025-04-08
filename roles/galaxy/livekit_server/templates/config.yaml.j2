@@ -2,8 +2,7 @@
 
 port: {{ livekit_server_config_port | int | to_json }}
 
-bind_addresses:
-  - "0.0.0.0"
+bind_addresses: {{ livekit_server_config_bind_addresses | to_json }}
 
 rtc:
   tcp_port: {{ livekit_server_config_rtc_tcp_port | int | to_json }}
@@ -31,6 +30,13 @@ turn:
   tls_port: {{ livekit_server_config_turn_tls_port | int | to_json }}
   udp_port: {{ livekit_server_config_turn_udp_port | int | to_json }}
   external_tls: {{ livekit_server_config_turn_external_tls | to_json }}
+{% endif %}
+
+{% if livekit_server_config_prometheus_enabled %}
+prometheus:
+  port: {{ livekit_server_config_prometheus_port | int | to_json }}
+  username: {{ livekit_server_config_prometheus_username | to_json }}
+  password: {{ livekit_server_config_prometheus_password | to_json }}
 {% endif %}
 
 keys: {{ livekit_server_config_keys | to_json }}
