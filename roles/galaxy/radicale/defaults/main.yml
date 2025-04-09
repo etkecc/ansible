@@ -9,7 +9,7 @@ radicale_identifier: radicale
 radicale_uid: ''
 radicale_gid: ''
 
-radicale_version: 3.5.0.1
+radicale_version: 3.5.1.0
 
 # The hostname at which radicale is served.
 radicale_hostname: ''
@@ -26,7 +26,7 @@ radicale_data_collections_subdir: collections
 
 # default is htpasswd
 radicale_auth_type: htpasswd
-# if you use https://gitlab.com/etke.cc/radicale-auth-matrix
+# if you use https://github.com/etkecc/radicale-auth-matrix
 radicale_auth_matrix_server: ''
 
 # A list of `htpasswd -nb user password` entries

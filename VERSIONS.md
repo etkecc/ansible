@@ -24,7 +24,7 @@
 * Docker Compose: v2.32.1
 * Draupnir: v2.2.0
 * Dynamic Dns: 4.0.0
-* Element: v1.11.96
+* Element: v1.11.97
 * Element Call: v0.9.0
 * Etherpad: 2.3.0
 * Exim Relay: 4.98.1-r0-2
@@ -43,7 +43,7 @@
 * Hookshot: 6.0.3
 * Hydrogen: v0.5.1
 * Instagram: v0.3.1
-* Jitsi: stable-10133-1
+* Jitsi: stable-10169
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
 * Languagetool: 6.5-dockerupdate-1
@@ -74,7 +74,7 @@
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.9.1
 * Prometheus Postgres Exporter: v0.14.0
-* Radicale: 3.5.0.1
+* Radicale: 3.5.1.0
 * Rageshake: 1.16.2
 * Registration: v0.7.2
 * Schildichat: 1.11.86-sc.0.test.0
@@ -86,7 +86,7 @@
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.36.1
 * Sygnal: v0.15.1
-* Synapse: v1.127.1
+* Synapse: v1.128.0
 * Synapse Admin: v0.10.3-etke38
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4

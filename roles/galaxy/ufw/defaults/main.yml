@@ -59,6 +59,22 @@ system_security_ufw_rules:
     rule: allow
     port: '10000'
     proto: udp
+  - name: LiveKit ICE
+    rule: allow
+    port: '7881'
+    proto: tcp
+  - name: LiveKit ICE Mux
+    rule: allow
+    port: '7882'
+    proto: udp
+  - name: LiveKit TURN
+    rule: allow
+    port: '3479'
+    proto: udp
+  - name: LiveKit TURN
+    rule: allow
+    port: '5350'
+    proto: tcp
 
 # postmoogle integration
 matrix_postmoogle_enabled: false
