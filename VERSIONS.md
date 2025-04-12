@@ -7,7 +7,7 @@
 * Appservice Webhooks: v1.0.3-01
 * Authentication Service: 0.14.1
 * Authentication Service Syn2Mas: 0.14.1
-* Baibot: v1.5.1
+* Baibot: v1.6.0
 * Bluesky: v0.1.1
 * Borg: 1.4.0
 * Borgmatic: 1.9.13
@@ -38,12 +38,12 @@
 * Googlechat: v0.5.2
 * Gotosocial: 0.18.3
 * Grafana: 11.6.0
-* Heisenbridge: 1.15.2
+* Heisenbridge: 1.15.3
 * Honoroit: v0.9.27
 * Hookshot: 6.0.3
 * Hydrogen: v0.5.1
 * Instagram: v0.3.1
-* Jitsi: stable-10169
+* Jitsi: stable-10184
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
 * Languagetool: 6.5-dockerupdate-1
