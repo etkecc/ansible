@@ -39,7 +39,7 @@
 * Gotosocial: 0.18.3
 * Grafana: 11.6.0
 * Heisenbridge: 1.15.3
-* Honoroit: v0.9.27
+* Honoroit: v0.9.28
 * Hookshot: 6.0.3
 * Hydrogen: v0.5.1
 * Instagram: v0.3.1
