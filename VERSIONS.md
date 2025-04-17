@@ -1,4 +1,4 @@
-* Alertmanager Receiver: 2025.3.26
+* Alertmanager Receiver: 2025.4.16
 * Appservice Discord: v4.0.0
 * Appservice Draupnir For All: v2.2.0
 * Appservice Irc: 1.0.1
@@ -20,7 +20,7 @@
 * Corporal: 3.1.4
 * Coturn: 4.6.2-r11
 * Dimension: latest
-* Discord: v0.7.2
+* Discord: v0.7.3
 * Docker Compose: v2.32.1
 * Draupnir: v2.2.0
 * Dynamic Dns: 4.0.0
@@ -56,8 +56,8 @@
 * Matrix Registration Bot: 1.3.0
 * Matrix Reminder Bot: v0.3.0
 * Maubot: v0.5.1
-* Meta Instagram: v0.4.5
-* Meta Messenger: v0.4.5
+* Meta Instagram: v0.4.6
+* Meta Messenger: v0.4.6
 * Miniflux: 2.2.7
 * Mjolnir: v1.9.2
 * Mx Puppet Discord: v0.1.1
@@ -78,8 +78,8 @@
 * Rageshake: 1.16.2
 * Registration: v0.7.2
 * Schildichat: 1.11.86-sc.0.test.0
-* Signal: v0.8.1
-* Slack: v0.2.0
+* Signal: v0.8.2
+* Slack: v0.2.1
 * Sliding Sync: v0.99.19
 * Sms Bridge: 0.5.9
 * Spam Checker Mjolnir Antispam Git: v1.9.2
@@ -90,18 +90,18 @@
 * Synapse Admin: v0.10.3-etke39
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4
-* Synapse Reverse Proxy Companion: 1.27.4-alpine
+* Synapse Reverse Proxy Companion: 1.27.5-alpine
 * Synapse S3 Storage Provider: 1.5.0
 * Telegram: v0.15.2
 * Traefik: v3.3.5
 * Traefik Certs Dumper: v2.10.0
-* Twitter: v0.3.0
+* Twitter: v0.4.0
 * Uptime Kuma: 1.23.16
 * User Verification Service: v3.0.0
 * Valkey: 8.0.1
 * Vaultwarden: 1.33.2
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
-* Whatsapp: v0.11.4
+* Whatsapp: v0.12.0
 * Wsproxy: latest
 * Wsproxy Syncproxy: latest
