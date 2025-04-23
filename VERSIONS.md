@@ -1,4 +1,4 @@
-* Alertmanager Receiver: 2025.4.16
+* Alertmanager Receiver: 2025.4.23
 * Appservice Discord: v4.0.0
 * Appservice Draupnir For All: v2.2.0
 * Appservice Irc: 1.0.1
@@ -24,7 +24,7 @@
 * Docker Compose: v2.32.1
 * Draupnir: v2.2.0
 * Dynamic Dns: 4.0.0
-* Element: v1.11.98
+* Element: v1.11.99
 * Element Call: v0.9.0
 * Etherpad: 2.3.0
 * Exim Relay: 4.98.1-r0-2
