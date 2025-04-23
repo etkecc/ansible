@@ -13,7 +13,7 @@ grafana_enabled: true
 
 grafana_identifier: grafana
 
-grafana_version: 11.6.0
+grafana_version: 11.6.0-security-01
 
 grafana_uid: ''
 grafana_gid: ''

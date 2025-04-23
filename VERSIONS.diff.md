@@ -1,16 +1,7 @@
 **Stable Updates Published**
 
-* [Alertmanager Receiver](https://github.com/metio/matrix-alertmanager-receiver): [2025.3.26](https://github.com/metio/matrix-alertmanager-receiver/releases/tag/2025.3.26) -> [2025.4.16](https://github.com/metio/matrix-alertmanager-receiver/releases/tag/2025.4.16)
-* [Baibot](https://github.com/etkecc/baibot): [v1.5.1](https://github.com/etkecc/baibot/releases/tag/v1.5.1) -> [v1.6.0](https://github.com/etkecc/baibot/releases/tag/v1.6.0)
-* [Discord](https://github.com/mautrix/discord): [v0.7.2](https://github.com/mautrix/discord/releases/tag/v0.7.2) -> [v0.7.3](https://github.com/mautrix/discord/releases/tag/v0.7.3)
-* [Heisenbridge](https://github.com/hifi/heisenbridge): [1.15.2](https://github.com/hifi/heisenbridge/releases/tag/1.15.2) -> [1.15.3](https://github.com/hifi/heisenbridge/releases/tag/1.15.3)
-* [Honoroit](https://github.com/etkecc/honoroit): [v0.9.27](https://github.com/etkecc/honoroit/releases/tag/v0.9.27) -> [v0.9.28](https://github.com/etkecc/honoroit/releases/tag/v0.9.28)
-* [Jitsi](https://github.com/jitsi/docker-jitsi-meet): [stable-10169](https://github.com/jitsi/docker-jitsi-meet/releases/tag/stable-10169) -> [stable-10184](https://github.com/jitsi/docker-jitsi-meet/releases/tag/stable-10184)
-* [Meta Instagram](https://github.com/mautrix/meta): [v0.4.5](https://github.com/mautrix/meta/releases/tag/v0.4.5) -> [v0.4.6](https://github.com/mautrix/meta/releases/tag/v0.4.6)
-* [Meta Messenger](https://github.com/mautrix/meta): [v0.4.5](https://github.com/mautrix/meta/releases/tag/v0.4.5) -> [v0.4.6](https://github.com/mautrix/meta/releases/tag/v0.4.6)
-* [Signal](https://github.com/mautrix/signal): [v0.8.1](https://github.com/mautrix/signal/releases/tag/v0.8.1) -> [v0.8.2](https://github.com/mautrix/signal/releases/tag/v0.8.2)
-* [Slack](https://github.com/mautrix/slack): [v0.2.0](https://github.com/mautrix/slack/releases/tag/v0.2.0) -> [v0.2.1](https://github.com/mautrix/slack/releases/tag/v0.2.1)
-* [Synapse Admin](https://github.com/etkecc/synapse-admin): [v0.10.3-etke38](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.3-etke38) -> [v0.10.3-etke39](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.3-etke39)
-* [Synapse Reverse Proxy Companion](https://github.com/nginx/nginx): [1.27.4-alpine](https://github.com/nginx/nginx/releases/tag/release-1.27.4) -> [1.27.5-alpine](https://github.com/nginx/nginx/releases/tag/release-1.27.5)
-* [Twitter](https://github.com/mautrix/twitter): [v0.3.0](https://github.com/mautrix/twitter/releases/tag/v0.3.0) -> [v0.4.0](https://github.com/mautrix/twitter/releases/tag/v0.4.0)
-* [Whatsapp](https://github.com/mautrix/whatsapp): [v0.11.4](https://github.com/mautrix/whatsapp/releases/tag/v0.11.4) -> [v0.12.0](https://github.com/mautrix/whatsapp/releases/tag/v0.12.0)
+* Borg: 1.4.0 -> 1.4.1
+* Borgmatic: 1.9.13 -> 1.9.14
+* [Element](https://github.com/element-hq/element-web): [v1.11.97](https://github.com/element-hq/element-web/releases/tag/v1.11.97) -> [v1.11.98](https://github.com/element-hq/element-web/releases/tag/v1.11.98)
+* [Grafana](https://github.com/grafana/grafana): [11.6.0](https://github.com/grafana/grafana/releases/tag/v11.6.0) -> [11.6.0-security-01](https://github.com/grafana/grafana/releases/tag/v11.6.0-security-01)
+* [Miniflux](https://github.com/miniflux/v2): [2.2.7](https://github.com/miniflux/v2/releases/tag/2.2.7) -> [2.2.8](https://github.com/miniflux/v2/releases/tag/2.2.8)

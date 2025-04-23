@@ -9,8 +9,8 @@
 * Authentication Service Syn2Mas: 0.14.1
 * Baibot: v1.6.0
 * Bluesky: v0.1.1
-* Borg: 1.4.0
-* Borgmatic: 1.9.13
+* Borg: 1.4.1
+* Borgmatic: 1.9.14
 * Buscarron: v1.4.3
 * Cactus Comments: 0.9.0
 * Cactus Comments Client: 2.36.1
@@ -24,7 +24,7 @@
 * Docker Compose: v2.32.1
 * Draupnir: v2.2.0
 * Dynamic Dns: 4.0.0
-* Element: v1.11.97
+* Element: v1.11.98
 * Element Call: v0.9.0
 * Etherpad: 2.3.0
 * Exim Relay: 4.98.1-r0-2
@@ -37,7 +37,7 @@
 * Go Skype Bridge: latest
 * Googlechat: v0.5.2
 * Gotosocial: 0.18.3
-* Grafana: 11.6.0
+* Grafana: 11.6.0-security-01
 * Heisenbridge: 1.15.3
 * Honoroit: v0.9.28
 * Hookshot: 6.0.3
@@ -58,7 +58,7 @@
 * Maubot: v0.5.1
 * Meta Instagram: v0.4.6
 * Meta Messenger: v0.4.6
-* Miniflux: 2.2.7
+* Miniflux: 2.2.8
 * Mjolnir: v1.9.2
 * Mx Puppet Discord: v0.1.1
 * Mx Puppet Groupme: 533cccc8

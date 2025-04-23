@@ -18,7 +18,8 @@ miniflux_hostname: ''
 # This value must either be `/` or not end with a slash (e.g. `/miniflux`).
 miniflux_path_prefix: /
 
-miniflux_version: 2.2.7
+# renovate: datasource=docker depName=docker.io/miniflux/miniflux versioning=semver
+miniflux_version: 2.2.8
 
 miniflux_base_path: "/{{ miniflux_identifier }}"
 
