@@ -5,8 +5,8 @@
 * Appservice Kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * Appservice Slack: 2.1.2
 * Appservice Webhooks: v1.0.3-01
-* Authentication Service: 0.14.1
-* Authentication Service Syn2Mas: 0.14.1
+* Authentication Service: 0.15.0
+* Authentication Service Syn2Mas: 0.15.0
 * Baibot: v1.6.0
 * Bluesky: v0.1.1
 * Borg: 1.4.1
@@ -36,7 +36,7 @@
 * Go Neb: latest
 * Go Skype Bridge: latest
 * Googlechat: v0.5.2
-* Gotosocial: 0.18.3
+* Gotosocial: 0.19.0
 * Grafana: 11.6.0-security-01
 * Heisenbridge: 1.15.3
 * Honoroit: v0.9.28
@@ -90,10 +90,10 @@
 * Synapse Admin: v0.10.3-etke39
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4
-* Synapse Reverse Proxy Companion: 1.27.5-alpine
+* Synapse Reverse Proxy Companion: 1.28.0-alpine
 * Synapse S3 Storage Provider: 1.5.0
 * Telegram: v0.15.2
-* Traefik: v3.3.5
+* Traefik: v3.3.6
 * Traefik Certs Dumper: v2.10.0
 * Twitter: v0.4.0
 * Uptime Kuma: 1.23.16
