@@ -30,7 +30,7 @@
 * Exim Relay: 4.98.1-r0-2
 * Facebook: v0.5.1
 * Firezone: 0.7.36
-* Fluffychat: v1.25.1
+* Fluffychat: v1.26.0
 * Funkwhale: 1.4.0
 * Gmessages: v0.6.1
 * Go Neb: latest
