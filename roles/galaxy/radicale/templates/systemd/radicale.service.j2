@@ -1,3 +1,9 @@
+{#
+SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+#}
+
 #jinja2: lstrip_blocks: "True"
 [Unit]
 Description=radicale ({{ radicale_identifier }})
@@ -5,32 +11,35 @@ Description=radicale ({{ radicale_identifier }})
 Requires={{ service }}
 After={{ service }}
 {% endfor %}
+{% for service in radicale_systemd_wanted_services_list %}
+Wants={{ service }}
+{% endfor %}
 DefaultDependencies=no
 
 [Service]
 Type=simple
 Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
-ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} kill {{ radicale_identifier }} 2>/dev/null || true'
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ radicale_identifier }} 2>/dev/null || true'
 ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ radicale_identifier }} 2>/dev/null || true'
 
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
-			--rm \
-			--name={{ radicale_identifier }} \
-			--log-driver=none \
-			--user={{ radicale_uid }}:{{ radicale_gid }} \
-			--cap-drop=ALL \
-			--cap-add=KILL \
-			--read-only \
-			--network={{ radicale_container_network }} \
-			--env-file={{ radicale_base_path }}/env \
-			--label-file={{ radicale_base_path }}/labels \
-			--health-interval={{ radicale_container_health_interval }} \
-			--mount type=bind,src={{ radicale_config_path }},dst=/config,ro \
-			--mount type=bind,src={{ radicale_data_path }},dst=/data \
-			{% for arg in radicale_container_extra_arguments %}
-			{{ arg }} \
-			{% endfor %}
-			{{ radicale_container_image }}
+      --rm \
+      --name={{ radicale_identifier }} \
+      --log-driver=none \
+      --user={{ radicale_uid }}:{{ radicale_gid }} \
+      --cap-drop=ALL \
+      --cap-add=KILL \
+      --read-only \
+      --network={{ radicale_container_network }} \
+      --env-file={{ radicale_base_path }}/env \
+      --label-file={{ radicale_base_path }}/labels \
+      --health-interval={{ radicale_container_health_interval }} \
+      --mount type=bind,src={{ radicale_config_path }},dst=/config,ro \
+      --mount type=bind,src={{ radicale_data_path }},dst=/data \
+      {% for arg in radicale_container_extra_arguments %}
+      {{ arg }} \
+      {% endfor %}
+      {{ radicale_container_image }}
 
 {% for network in radicale_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ radicale_identifier }}
@@ -38,7 +47,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network conne
 
 ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ radicale_identifier }}
 
-ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} kill {{ radicale_identifier }} 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{  radicale_identifier }} 2>/dev/null || true'
 ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ radicale_identifier }} 2>/dev/null || true'
 
 Restart=always
