@@ -1,3 +1,11 @@
+{#
+SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+SPDX-FileCopyrightText: 2024 Nikita Chernyi
+SPDX-FileCopyrightText: 2025 Suguru Hirahara
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+#}
+
 #jinja2: lstrip_blocks: "True"
 [Unit]
 Description=LanguageTool ({{ languagetool_identifier }})
@@ -5,33 +13,40 @@ Description=LanguageTool ({{ languagetool_identifier }})
 Requires={{ service }}
 After={{ service }}
 {% endfor %}
+{% endfor %}
+{% for service in languagetool_systemd_wanted_services_list %}
+Wants={{ service }}
+{% endfor %}
 DefaultDependencies=no
 
 [Service]
 Type=simple
 Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
-ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} kill {{ languagetool_identifier }} 2>/dev/null || true'
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ languagetool_identifier }} 2>/dev/null || true'
 ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ languagetool_identifier }} 2>/dev/null || true'
 
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
-			--rm \
-			--name={{ languagetool_identifier }} \
-			--log-driver=none \
-			--user={{ languagetool_uid }}:{{ languagetool_gid }} \
-			--cap-drop=ALL \
-			--network={{ languagetool_container_network }} \
-			--health-interval={{ languagetool_container_health_interval }} \
-			{% if languagetool_ngrams_enabled %}
-			--mount type=bind,src={{ languagetool_data_path }},dst=/data,ro \
-			-e langtool_languageModel=/data \
-			{% endif %}
-			--label-file={{ languagetool_base_path }}/labels \
-			-e Java_Xms={{ languagetool_java_heap_min }} \
-			-e Java_Xmx={{ languagetool_java_heap_max }} \
-			{% for arg in languagetool_container_extra_arguments %}
-			{{ arg }} \
-			{% endfor %}
-			{{ languagetool_container_image }}
+      --rm \
+      --name={{ languagetool_identifier }} \
+      --log-driver=none \
+      --user={{ languagetool_uid }}:{{ languagetool_gid }} \
+      --cap-drop=ALL \
+      --network={{ languagetool_container_network }} \
+      {% if languagetool_container_http_host_bind_port %}
+      -p {{ languagetool_container_http_host_bind_port }}:{{ languagetool_container_http_port }} \
+      {% endif %}
+      -e Java_Xms={{ languagetool_java_heap_min }} \
+      -e Java_Xmx={{ languagetool_java_heap_max }} \
+      -e langtool_languageModel=/data \
+      --label-file={{ languagetool_base_path }}/labels \
+      --health-interval={{ languagetool_container_health_interval }} \
+      {% if languagetool_ngrams_enabled %}
+      --mount type=bind,src={{ languagetool_data_path }},dst=/data,ro \
+      {% endif %}
+      {% for arg in languagetool_container_extra_arguments %}
+      {{ arg }} \
+      {% endfor %}
+      {{ languagetool_container_image }}
 
 {% for network in languagetool_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ languagetool_identifier }}
@@ -39,7 +54,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network conne
 
 ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ languagetool_identifier }}
 
-ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} kill {{ languagetool_identifier }} 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ languagetool_identifier }} 2>/dev/null || true'
 ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ languagetool_identifier }} 2>/dev/null || true'
 
 Restart=always

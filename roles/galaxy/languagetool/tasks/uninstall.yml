@@ -1,25 +1,29 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 ---
 
-- name: Check existence of languagetool systemd service
+- name: Check existence of LanguageTool systemd service
   ansible.builtin.stat:
     path: "{{ devture_systemd_docker_base_systemd_path }}/{{ languagetool_identifier }}.service"
   register: languagetool_service_stat
 
 - when: languagetool_service_stat.stat.exists | bool
   block:
-    - name: Ensure languagetool is stopped
+    - name: Ensure LanguageTool is stopped
       ansible.builtin.service:
         name: "{{ languagetool_identifier }}"
         state: stopped
         enabled: false
         daemon_reload: true
 
-    - name: Ensure languagetool systemd service doesn't exist
+    - name: Ensure LanguageTool systemd service doesn't exist
       ansible.builtin.file:
         path: "{{ devture_systemd_docker_base_systemd_path }}/{{ languagetool_identifier }}.service"
         state: absent
 
-    - name: Ensure languagetool path doesn't exist
+    - name: Ensure LanguageTool path doesn't exist
       ansible.builtin.file:
         path: "{{ languagetool_base_path }}"
         state: absent

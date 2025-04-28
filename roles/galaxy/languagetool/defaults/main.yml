@@ -1,34 +1,50 @@
----
+# SPDX-FileCopyrightText: 2023 - 2024 Nikita Chernyi
+# SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2024 Sergio Durigan Junior
+# SPDX-FileCopyrightText: 2025 MASH project contributors
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
 
+---
 # Project source code URL: https://github.com/Erikvl87/docker-languagetool
 
-languagetool_enabled: false
+languagetool_enabled: true
 
 languagetool_identifier: languagetool
+languagetool_base_path: "/{{ languagetool_identifier }}"
+languagetool_data_path: "{{ languagetool_base_path }}/data"
+
+# renovate: datasource=docker depName=erikvl87/languagetool
+languagetool_version: 6.5-dockerupdate-1
 
 languagetool_uid: ''
 languagetool_gid: ''
 
-# The hostname at which languagetool is served.
+# The hostname at which LanguageTool is served.
 languagetool_hostname: ''
 
-# The path at which languagetool is exposed.
+# The path at which LanguageTool is exposed.
 # This value must either be `/` or not end with a slash (e.g. `/languagetool`).
 languagetool_path_prefix: /
 
-languagetool_version: 6.5-dockerupdate-1
-
-languagetool_base_path: "/{{ languagetool_identifier }}"
-languagetool_data_path: "{{ languagetool_base_path }}/data"
-
-languagetool_container_image: "{{ languagetool_container_image_registry_prefix }}erikvl87/languagetool:{{ languagetool_version }}"
+languagetool_container_image: "{{ languagetool_container_image_registry_prefix }}erikvl87/languagetool:{{ languagetool_container_image_tag }}"
+languagetool_container_image_tag: "{{ languagetool_version }}"
 languagetool_container_image_registry_prefix: "{{ languagetool_container_image_registry_prefix_upstream }}"
 languagetool_container_image_registry_prefix_upstream: "{{ languagetool_container_image_registry_prefix_upstream_default }}"
 languagetool_container_image_registry_prefix_upstream_default: docker.io/
 languagetool_container_image_force_pull: "{{ languagetool_container_image.endswith(':latest') }}"
 
+# Controls whether the container exposes its HTTP port (tcp/8010 in the container).
+#
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
+languagetool_container_http_host_bind_port: ''
+
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 languagetool_container_network: "{{ languagetool_identifier }}"
+
+# The port number in the container
+languagetool_container_http_port: 8010
 
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
@@ -58,7 +74,6 @@ languagetool_container_labels_traefik_additional_response_headers_auto: |
   {{
     {}
     | combine ({'X-XSS-Protection': languagetool_http_header_xss_protection} if languagetool_http_header_xss_protection else {})
-    | combine ({'X-Frame-Options': languagetool_http_header_frame_options} if languagetool_http_header_frame_options else {})
     | combine ({'X-Content-Type-Options': languagetool_http_header_content_type_options} if languagetool_http_header_content_type_options else {})
     | combine ({'Content-Security-Policy': languagetool_http_header_content_security_policy} if languagetool_http_header_content_security_policy else {})
     | combine ({'Permission-Policy': languagetool_http_header_content_permission_policy} if languagetool_http_header_content_permission_policy else {})
@@ -74,6 +89,9 @@ languagetool_container_labels_traefik_additional_response_headers_custom: {}
 #   my.label=1
 #   another.label="here"
 languagetool_container_labels_additional_labels: ''
+
+# A list of extra arguments to pass to the container
+languagetool_container_extra_arguments: []
 
 # Specifies how often the container health-check will run.
 #
@@ -93,10 +111,6 @@ languagetool_container_health_interval: "{{ '5s' if languagetool_container_label
 # - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
 # - https://portswigger.net/web-security/cross-site-scripting/reflected
 languagetool_http_header_xss_protection: "1; mode=block"
-
-# Specifies the value of the `X-Frame-Options` header which controls whether framing can happen.
-# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
-languagetool_http_header_frame_options: SAMEORIGIN
 
 # Specifies the value of the `X-Content-Type-Options` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
@@ -137,6 +151,15 @@ languagetool_floc_optout_enabled: true
 # See: `languagetool_http_header_strict_transport_security`
 languagetool_hsts_preload_enabled: false
 
+# List of systemd services that the LanguageTool systemd service depends on
+languagetool_systemd_required_services_list: "{{ languagetool_systemd_required_services_list_default + languagetool_systemd_required_services_list_auto + languagetool_systemd_required_services_list_custom }}"
+languagetool_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+languagetool_systemd_required_services_list_auto: []
+languagetool_systemd_required_services_list_custom: []
+
+# List of systemd services that the LanguageTool systemd service wants
+languagetool_systemd_wanted_services_list: []
+
 # n-grams
 # WARNING: n-grams require A LOT of storage (zip is > 8gb, unpacked - even more!)
 languagetool_ngrams_enabled: false
@@ -155,12 +178,3 @@ languagetool_ngrams_langs:
 
 languagetool_java_heap_min: 256m
 languagetool_java_heap_max: 512m
-
-# A list of extra arguments to pass to the container
-languagetool_container_extra_arguments: []
-
-# List of systemd services that languagetool.service depends on
-languagetool_systemd_required_services_list: "{{ languagetool_systemd_required_services_list_default + languagetool_systemd_required_services_list_auto + languagetool_systemd_required_services_list_custom }}"
-languagetool_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
-languagetool_systemd_required_services_list_auto: []
-languagetool_systemd_required_services_list_custom: []

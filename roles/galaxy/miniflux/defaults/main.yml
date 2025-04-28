@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 ---
 
 # Project source code URL: https://github.com/miniflux/v2
@@ -28,10 +32,10 @@ miniflux_admin_login: ''
 miniflux_admin_password: ''
 
 miniflux_container_image: "{{ miniflux_container_image_registry_prefix }}miniflux/miniflux:{{ miniflux_container_image_tag }}"
+miniflux_container_image_tag: "{{ miniflux_version }}"
 miniflux_container_image_registry_prefix: "{{ miniflux_container_image_registry_prefix_upstream }}"
 miniflux_container_image_registry_prefix_upstream: "{{ miniflux_container_image_registry_prefix_upstream_default }}"
 miniflux_container_image_registry_prefix_upstream_default: docker.io/
-miniflux_container_image_tag: "{{ miniflux_version }}"
 miniflux_container_image_force_pull: "{{ miniflux_container_image.endswith(':latest') }}"
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
@@ -71,7 +75,6 @@ miniflux_container_labels_traefik_additional_response_headers_auto: |
   {{
     {}
     | combine ({'X-XSS-Protection': miniflux_http_header_xss_protection} if miniflux_http_header_xss_protection else {})
-    | combine ({'X-Frame-Options': miniflux_http_header_frame_options} if miniflux_http_header_frame_options else {})
     | combine ({'X-Content-Type-Options': miniflux_http_header_content_type_options} if miniflux_http_header_content_type_options else {})
     | combine ({'Content-Security-Policy': miniflux_http_header_content_security_policy} if miniflux_http_header_content_security_policy else {})
     | combine ({'Permission-Policy': miniflux_http_header_content_permission_policy} if miniflux_http_header_content_permission_policy else {})
@@ -104,10 +107,6 @@ miniflux_systemd_required_services_list_custom: []
 # - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
 # - https://portswigger.net/web-security/cross-site-scripting/reflected
 miniflux_http_header_xss_protection: "1; mode=block"
-
-# Specifies the value of the `X-Frame-Options` header which controls whether framing can happen.
-# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
-miniflux_http_header_frame_options: SAMEORIGIN
 
 # Specifies the value of the `X-Content-Type-Options` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options

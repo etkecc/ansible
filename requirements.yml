@@ -17,13 +17,13 @@
   version: v0.19.0-1
   name: gotosocial
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-languagetool.git
-  version: v6.5-3
+  version: v6.5-4
   name: languagetool
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-linkding.git
   version: v1.39.1-0
   name: linkding
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-miniflux.git
-  version: v2.2.8-0
+  version: v2.2.8-1
   name: miniflux
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-peertube.git
   version: v7.1.1-0
