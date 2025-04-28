@@ -13,7 +13,6 @@ Description=LanguageTool ({{ languagetool_identifier }})
 Requires={{ service }}
 After={{ service }}
 {% endfor %}
-{% endfor %}
 {% for service in languagetool_systemd_wanted_services_list %}
 Wants={{ service }}
 {% endfor %}
