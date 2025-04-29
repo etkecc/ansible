@@ -1,9 +1,13 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 galaxy_info:
   author: etke.cc
   company: etke.cc
   role_name: prometheus_postgres_exporter
   namespace: etkecc
-  description: prometheus postgres exporter role
+  description: Prometheus Postgres Exporter role
   platforms:
     - name: Debian
       versions:
@@ -17,5 +21,5 @@ galaxy_info:
     - name: EL
       versions:
         - 7
-  license: GPL-3.0-or-later
+  license: AGPL-3.0-or-later
   min_ansible_version: '2.1'
