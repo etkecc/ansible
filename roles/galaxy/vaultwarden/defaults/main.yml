@@ -1,13 +1,31 @@
+# SPDX-FileCopyrightText: 2023 Antoine-Ali Zarrouk
+# SPDX-FileCopyrightText: 2023 - 2024 Nikita Chernyi
+# SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2024 Sergio Durigan Junior
+# SPDX-FileCopyrightText: 2025 MASH project contributors
+# SPDX-FileCopyrightText: 2025 spatterlight
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 ---
 
-# Vaultwaden is a lightweight unofficial and compatible implementation of the Bitwarden password manager.
+# Vaultwarden is a lightweight unofficial and compatible implementation of the Bitwarden password manager.
 # Project source code URL: https://github.com/dani-garcia/vaultwarden
 
 vaultwarden_enabled: true
 
 vaultwarden_identifier: vaultwarden
+vaultwarden_base_path: "/vaultwarden"
+vaultwarden_data_dir_path: "{{ vaultwarden_base_path }}/data"
+vaultwarden_cache_dir_path: "{{ vaultwarden_base_path }}/cache"
+vaultwarden_ephemeral_dir_path: "{{ vaultwarden_base_path }}/ephemeral"
 
+# renovate: datasource=docker depName=ghcr.io/dani-garcia/vaultwarden versioning=semver
 vaultwarden_version: 1.33.2
+
+vaultwarden_uid: ''
+vaultwarden_gid: ''
 
 # The fully-qualified name of your Vaultwarden server (e.g. `vaultwarden.example.com`)
 vaultwarden_hostname: ''
@@ -22,16 +40,18 @@ vaultwarden_hostname: ''
 vaultwarden_path_prefix: '/'
 
 vaultwarden_container_image: "{{ vaultwarden_container_registry_prefix }}dani-garcia/vaultwarden:{{ vaultwarden_container_image_tag }}"
+vaultwarden_container_image_tag: "{{ vaultwarden_version }}-alpine"
 vaultwarden_container_registry_prefix: "{{ vaultwarden_container_registry_prefix_upstream }}"
 vaultwarden_container_registry_prefix_upstream: "{{ vaultwarden_container_registry_prefix_upstream_default }}"
 vaultwarden_container_registry_prefix_upstream_default: ghcr.io/
-vaultwarden_container_image_tag: "{{ vaultwarden_version }}-alpine"
 vaultwarden_container_image_force_pull: "{{ vaultwarden_container_image.endswith(':latest') }}"
-# Intentionally leaving this blank, instead of defaulting it to `vaultwarden_hostname`, to avoid specifying a hostname
-# and making other services on render other services on that hostname potentially unreachable.
-# See: https://github.com/mother-of-all-self-hosting/mash-playbook/issues/391
-vaultwarden_container_hostname: ""
 
+# Controls whether the container exposes its HTTP port (tcp/8080 in the container).
+#
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
+vaultwarden_container_http_bind_port: ''
+
+# The base container network. It will be auto-created by this role if it doesn't exist already.
 vaultwarden_container_network: "{{ vaultwarden_identifier }}"
 
 # A list of additional container networks that the container would be connected to.
@@ -47,19 +67,111 @@ vaultwarden_container_additional_networks: "{{ vaultwarden_container_additional_
 vaultwarden_container_additional_networks_auto: []
 vaultwarden_container_additional_networks_custom: []
 
-vaultwarden_uid: ''
-vaultwarden_gid: ''
+# vaultwarden_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
+# See `../templates/labels.j2` for details.
+#
+# To inject your own other container labels, see `vaultwarden_container_labels_additional_labels`.
+vaultwarden_container_labels_traefik_enabled: true
+vaultwarden_container_labels_traefik_docker_network: "{{ vaultwarden_container_network }}"
+vaultwarden_container_labels_traefik_hostname: "{{ vaultwarden_hostname }}"
+# The path prefix must either be `/` or not end with a slash (e.g. `/vaultwarden`).
+vaultwarden_container_labels_traefik_path_prefix: "{{ vaultwarden_path_prefix }}"
+vaultwarden_container_labels_traefik_rule_ui: "Host(`{{ vaultwarden_container_labels_traefik_hostname }}`){% if vaultwarden_container_labels_traefik_path_prefix != '/' %} && PathPrefix(`{{ vaultwarden_container_labels_traefik_path_prefix | quote }}`){% endif %}"
+vaultwarden_container_labels_traefik_priority: 0
+vaultwarden_container_labels_traefik_entrypoints: web-secure
+vaultwarden_container_labels_traefik_tls: "{{ vaultwarden_container_labels_traefik_entrypoints != 'web' }}"
+vaultwarden_container_labels_traefik_tls_certResolver: default  # noqa var-naming
 
-vaultwarden_base_path: "/vaultwarden"
-vaultwarden_data_dir_path: "{{ vaultwarden_base_path }}/data"
-vaultwarden_cache_dir_path: "{{ vaultwarden_base_path }}/cache"
-vaultwarden_ephemeral_dir_path: "{{ vaultwarden_base_path }}/ephemeral"
+# Controls whether a compression middleware will be injected into the middlewares list.
+# This compression middleware is supposed to be defined elsewhere (using labels or a File provider, etc.) and is merely referenced by this router.
+vaultwarden_container_labels_traefik_compression_middleware_enabled: false
+vaultwarden_container_labels_traefik_compression_middleware_name: ""
 
+# Controls which additional headers to attach to all HTTP responses.
+# To add your own headers, use `vaultwarden_container_labels_traefik_additional_response_headers_custom`
+vaultwarden_container_labels_traefik_additional_response_headers: "{{ vaultwarden_container_labels_traefik_additional_response_headers_auto | combine(vaultwarden_container_labels_traefik_additional_response_headers_custom) }}"
+vaultwarden_container_labels_traefik_additional_response_headers_auto: |
+  {{
+    {}
+    | combine ({'X-XSS-Protection': vaultwarden_http_header_xss_protection} if vaultwarden_http_header_xss_protection else {})
+    | combine ({'X-Content-Type-Options': vaultwarden_http_header_content_type_options} if vaultwarden_http_header_content_type_options else {})
+    | combine ({'Content-Security-Policy': vaultwarden_http_header_content_security_policy} if vaultwarden_http_header_content_security_policy else {})
+    | combine ({'Permission-Policy': vaultwarden_http_header_content_permission_policy} if vaultwarden_http_header_content_permission_policy else {})
+    | combine ({'Strict-Transport-Security': vaultwarden_http_header_strict_transport_security} if vaultwarden_http_header_strict_transport_security and vaultwarden_container_labels_traefik_tls else {})
+  }}
+vaultwarden_container_labels_traefik_additional_response_headers_custom: {}
+
+# vaultwarden_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
+# See `../templates/labels.j2` for details.
+#
+# Example:
+# vaultwarden_container_labels_additional_labels: |
+#   my.label=1
+#   another.label="here"
+vaultwarden_container_labels_additional_labels: ''
+
+# A list of extra arguments to pass to the container (`docker run` command)
+vaultwarden_container_extra_arguments: []
+
+# Intentionally leaving this blank, instead of defaulting it to `vaultwarden_hostname`, to avoid specifying a hostname
+# which could render other services on that hostname potentially unreachable.
+# See: https://github.com/mother-of-all-self-hosting/mash-playbook/issues/391
+vaultwarden_container_hostname: ""
+
+# Specifies the value of the `X-XSS-Protection` header
+# Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
+#
+# Learn more about it is here:
+# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
+# - https://portswigger.net/web-security/cross-site-scripting/reflected
+vaultwarden_http_header_xss_protection: "1; mode=block"
+
+# Specifies the value of the `X-Content-Type-Options` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
+vaultwarden_http_header_content_type_options: nosniff
+
+# Specifies the value of the `Content-Security-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
+vaultwarden_http_header_content_security_policy: frame-ancestors 'self'
+
+# Specifies the value of the `Permission-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permission-Policy
+vaultwarden_http_header_content_permission_policy: "{{ 'interest-cohort=()' if vaultwarden_floc_optout_enabled else '' }}"
+
+# Specifies the value of the `Strict-Transport-Security` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+vaultwarden_http_header_strict_transport_security: "max-age=31536000; includeSubDomains{{ '; preload' if vaultwarden_hsts_preload_enabled else '' }}"
+
+# Controls whether to send a "Permissions-Policy interest-cohort=();" header along with all responses
+#
+# Learn more about what it is here:
+# - https://www.eff.org/deeplinks/2021/03/googles-floc-terrible-idea
+# - https://paramdeo.com/blog/opting-your-website-out-of-googles-floc-network
+# - https://amifloced.org/
+#
+# Of course, a better solution is to just stop using browsers (like Chrome), which participate in such tracking practices.
+# See: `vaultwarden_content_permission_policy`
+vaultwarden_floc_optout_enabled: true
+
+# Controls if HSTS preloading is enabled
+#
+# In its strongest and recommended form, the [HSTS policy](https://www.chromium.org/hsts) includes all subdomains, and
+# indicates a willingness to be "preloaded" into browsers:
+# `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload`
+# For more information visit:
+# - https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
+# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+# - https://hstspreload.org/#opt-in
+# See: `vaultwarden_http_header_strict_transport_security`
+vaultwarden_hsts_preload_enabled: false
+
+# List of systemd services that the Vaultwarden systemd service depends on
 vaultwarden_systemd_required_systemd_services_list: "{{ vaultwarden_systemd_required_systemd_services_list_default + vaultwarden_systemd_required_systemd_services_list_auto + vaultwarden_systemd_required_systemd_services_list_custom }}"
 vaultwarden_systemd_required_systemd_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
 vaultwarden_systemd_required_systemd_services_list_auto: []
 vaultwarden_systemd_required_systemd_services_list_custom: []
 
+# List of systemd services that the Vaultwarden systemd service wants
 vaultwarden_systemd_wanted_systemd_services_list: "{{ vaultwarden_systemd_wanted_systemd_services_list_default + vaultwarden_systemd_wanted_systemd_services_list_auto + vaultwarden_systemd_wanted_systemd_services_list_custom }}"
 vaultwarden_systemd_wanted_systemd_services_list_default: []
 vaultwarden_systemd_wanted_systemd_services_list_auto: []
@@ -198,106 +310,6 @@ vaultwarden_config_experimental_client_feature_flags: ''
 # This ultimately influences the json setting of vaultwarden_config_rocket_limits.
 # See: https://github.com/dani-garcia/vaultwarden/wiki/Changing-the-API-request-size-limit
 vaultwarden_max_json_mb: 10
-
-# Specifies the value of the `X-XSS-Protection` header
-# Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
-#
-# Learn more about it is here:
-# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
-# - https://portswigger.net/web-security/cross-site-scripting/reflected
-vaultwarden_http_header_xss_protection: "1; mode=block"
-
-# Specifies the value of the `X-Frame-Options` header which controls whether framing can happen.
-# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
-vaultwarden_http_header_frame_options: SAMEORIGIN
-
-# Specifies the value of the `X-Content-Type-Options` header.
-# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
-vaultwarden_http_header_content_type_options: nosniff
-
-# Specifies the value of the `Content-Security-Policy` header.
-# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
-vaultwarden_http_header_content_security_policy: frame-ancestors 'self'
-
-# Specifies the value of the `Permission-Policy` header.
-# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permission-Policy
-vaultwarden_http_header_content_permission_policy: "{{ 'interest-cohort=()' if vaultwarden_floc_optout_enabled else '' }}"
-
-# Specifies the value of the `Strict-Transport-Security` header.
-# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
-vaultwarden_http_header_strict_transport_security: "max-age=31536000; includeSubDomains{{ '; preload' if vaultwarden_hsts_preload_enabled else '' }}"
-
-# Controls whether to send a "Permissions-Policy interest-cohort=();" header along with all responses
-#
-# Learn more about what it is here:
-# - https://www.eff.org/deeplinks/2021/03/googles-floc-terrible-idea
-# - https://paramdeo.com/blog/opting-your-website-out-of-googles-floc-network
-# - https://amifloced.org/
-#
-# Of course, a better solution is to just stop using browsers (like Chrome), which participate in such tracking practices.
-# See: `vaultwarden_content_permission_policy`
-vaultwarden_floc_optout_enabled: true
-
-# Controls if HSTS preloading is enabled
-#
-# In its strongest and recommended form, the [HSTS policy](https://www.chromium.org/hsts) includes all subdomains, and
-# indicates a willingness to be "preloaded" into browsers:
-# `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload`
-# For more information visit:
-# - https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
-# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
-# - https://hstspreload.org/#opt-in
-# See: `vaultwarden_http_header_strict_transport_security`
-vaultwarden_hsts_preload_enabled: false
-
-# vaultwarden_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
-# See `../templates/labels.j2` for details.
-#
-# To inject your own other container labels, see `vaultwarden_container_labels_additional_labels`.
-vaultwarden_container_labels_traefik_enabled: true
-vaultwarden_container_labels_traefik_docker_network: "{{ vaultwarden_container_network }}"
-vaultwarden_container_labels_traefik_hostname: "{{ vaultwarden_hostname }}"
-# The path prefix must either be `/` or not end with a slash (e.g. `/vaultwarden`).
-vaultwarden_container_labels_traefik_path_prefix: "{{ vaultwarden_path_prefix }}"
-vaultwarden_container_labels_traefik_rule_ui: "Host(`{{ vaultwarden_container_labels_traefik_hostname }}`){% if vaultwarden_container_labels_traefik_path_prefix != '/' %} && PathPrefix(`{{ vaultwarden_container_labels_traefik_path_prefix | quote }}`){% endif %}"
-vaultwarden_container_labels_traefik_priority: 0
-vaultwarden_container_labels_traefik_entrypoints: web-secure
-vaultwarden_container_labels_traefik_tls: "{{ vaultwarden_container_labels_traefik_entrypoints != 'web' }}"
-vaultwarden_container_labels_traefik_tls_certResolver: default  # noqa var-naming
-
-# Controls whether a compression middleware will be injected into the middlewares list.
-# This compression middleware is supposed to be defined elsewhere (using labels or a File provider, etc.) and is merely referenced by this router.
-vaultwarden_container_labels_traefik_compression_middleware_enabled: false
-vaultwarden_container_labels_traefik_compression_middleware_name: ""
-
-# Controls which additional headers to attach to all HTTP responses.
-# To add your own headers, use `vaultwarden_container_labels_traefik_additional_response_headers_custom`
-vaultwarden_container_labels_traefik_additional_response_headers: "{{ vaultwarden_container_labels_traefik_additional_response_headers_auto | combine(vaultwarden_container_labels_traefik_additional_response_headers_custom) }}"
-vaultwarden_container_labels_traefik_additional_response_headers_auto: |
-  {{
-    {}
-    | combine ({'X-XSS-Protection': vaultwarden_http_header_xss_protection} if vaultwarden_http_header_xss_protection else {})
-    | combine ({'X-Frame-Options': vaultwarden_http_header_frame_options} if vaultwarden_http_header_frame_options else {})
-    | combine ({'X-Content-Type-Options': vaultwarden_http_header_content_type_options} if vaultwarden_http_header_content_type_options else {})
-    | combine ({'Content-Security-Policy': vaultwarden_http_header_content_security_policy} if vaultwarden_http_header_content_security_policy else {})
-    | combine ({'Permission-Policy': vaultwarden_http_header_content_permission_policy} if vaultwarden_http_header_content_permission_policy else {})
-    | combine ({'Strict-Transport-Security': vaultwarden_http_header_strict_transport_security} if vaultwarden_http_header_strict_transport_security and vaultwarden_container_labels_traefik_tls else {})
-  }}
-vaultwarden_container_labels_traefik_additional_response_headers_custom: {}
-
-# vaultwarden_container_http_bind_port controls whether (and how) the container exposes its HTTP port (`vaultwarden_config_rocket_port`).
-# Leave empty to not expose it.
-# Example values: `127.0.0.1:8080`, `0.0.0.0:8080`, `8080`.
-vaultwarden_container_http_bind_port: ''
-
-# vaultwarden_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
-# See `../templates/labels.j2` for details.
-#
-# Example:
-# vaultwarden_container_labels_additional_labels: |
-#   my.label=1
-#   another.label="here"
-vaultwarden_container_labels_additional_labels: ''
 
 # vaultwarden_container_additional_environment_variables contains a multiline string with additional environment variables to pass to the container.
 #
