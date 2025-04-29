@@ -105,4 +105,4 @@ prometheus_node_exporter_container_http_host_bind_port: ''
 # prometheus_node_exporter_dashboard_urls contains a list of URLs with Grafana dashboard definitions for the node exporter.
 # This role doesn't make use of this variable, but you can hook this into other roles.
 prometheus_node_exporter_dashboard_urls:
-  - https://raw.githubusercontent.com/rfrail3/grafana-dashboards/master/prometheus/node-exporter-full.json
+  - https://raw.githubusercontent.com/etkecc/grafana-dashboards/344d531917b85cd2e6adc8f234a605043e0732de/prometheus/node-exporter-full.json
