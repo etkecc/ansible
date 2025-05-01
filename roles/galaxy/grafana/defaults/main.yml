@@ -31,7 +31,7 @@ grafana_hostname: ''
 grafana_path_prefix: /
 
 grafana_container_image: "{{ grafana_container_image_registry_prefix }}grafana/grafana-oss:{{ grafana_container_image_tag }}"
-grafana_container_image_tag: "{{ docmost_version }}"
+grafana_container_image_tag: "{{ grafana_version }}"
 grafana_container_image_registry_prefix: "{{ grafana_container_image_registry_prefix_upstream }}"
 grafana_container_image_registry_prefix_upstream: "{{ grafana_container_image_registry_prefix_upstream_default }}"
 grafana_container_image_registry_prefix_upstream_default: docker.io/
