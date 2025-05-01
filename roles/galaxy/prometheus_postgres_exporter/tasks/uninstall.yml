@@ -27,4 +27,3 @@
       ansible.builtin.file:
         path: "{{ prometheus_postgres_exporter_base_path }}"
         state: absent
-

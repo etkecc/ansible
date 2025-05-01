@@ -3,7 +3,7 @@ galaxy_info:
   company: etke.cc
   role_name: prometheus_node_exporter
   namespace: etkecc
-  description: prometheus node exporter role
+  description: Prometheus node exporter role
   platforms:
     - name: Debian
       versions:
@@ -17,5 +17,5 @@ galaxy_info:
     - name: EL
       versions:
         - 7
-  license: GPL-3.0-or-later
+  license: AGPL-3.0-or-later
   min_ansible_version: '2.1'

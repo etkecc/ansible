@@ -1,3 +1,10 @@
+{#
+SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+SPDX-FileCopyrightText: 2024 Tiz
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+#}
+
 {% if prometheus_container_labels_traefik_enabled %}
 traefik.enable=true
 
@@ -29,7 +36,7 @@ traefik.http.routers.{{ prometheus_identifier }}.tls.certResolver={{ prometheus_
 {% endif %}
 traefik.http.routers.{{ prometheus_identifier }}.entrypoints={{ prometheus_container_labels_traefik_entrypoints }}
 {% endif %}
-traefik.http.services.{{ prometheus_identifier }}.loadbalancer.server.port=9090
+traefik.http.services.{{ prometheus_identifier }}.loadbalancer.server.port={{ prometheus_container_http_port }}
 
 
 {{ prometheus_container_labels_additional_labels }}

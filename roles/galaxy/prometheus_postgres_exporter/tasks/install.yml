@@ -4,6 +4,25 @@
 
 ---
 
+- name: Ensure prometheus-postgres-exporter path exist
+  ansible.builtin.file:
+    path: "{{ prometheus_postgres_exporter_base_path }}"
+    state: directory
+    mode: 0700
+    owner: "{{ prometheus_postgres_exporter_uid }}"
+    group: "{{ prometheus_postgres_exporter_gid }}"
+
+- name: Ensure prometheus-postgres-exporter support files installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/{{ item }}.j2"
+    dest: "{{ prometheus_postgres_exporter_base_path }}/{{ item }}"
+    owner: "{{ prometheus_postgres_exporter_uid }}"
+    group: "{{ prometheus_postgres_exporter_gid }}"
+    mode: 0640
+  with_items:
+    - env
+    - labels
+
 - name: Ensure prometheus-postgres-exporter image is pulled
   community.docker.docker_image:
     name: "{{ prometheus_postgres_exporter_container_image }}"
@@ -15,25 +34,6 @@
   delay: "{{ devture_playbook_help_container_retries_delay }}"
   until: result is not failed
 
-- name: Ensure prometheus-postgres-exporter path exist
-  ansible.builtin.file:
-    path: "{{ prometheus_postgres_exporter_base_path }}"
-    state: directory
-    mode: 0700
-    owner: "{{ prometheus_postgres_exporter_uid }}"
-    group: "{{ prometheus_postgres_exporter_gid }}"
-
-- name: Ensure prometheus-postgres-exporter support files are created
-  ansible.builtin.template:
-    src: "{{ role_path }}/templates/{{ item }}.j2"
-    dest: "{{ prometheus_postgres_exporter_base_path }}/{{ item }}"
-    owner: "{{ prometheus_postgres_exporter_uid }}"
-    group: "{{ prometheus_postgres_exporter_gid }}"
-    mode: 0640
-  with_items:
-    - env
-    - labels
-
 - name: Ensure prometheus-postgres-exporter container network is created
   community.general.docker_network:
     enable_ipv6: "{{ devture_systemd_docker_base_ipv6_enabled }}"
@@ -41,7 +41,7 @@
     driver: bridge
     driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
 
-- name: Ensure prometheus-postgres-exporter systemd service installed
+- name: Ensure prometheus-postgres-exporter systemd service is present
   ansible.builtin.template:
     src: "{{ role_path }}/templates/systemd/prometheus-postgres-exporter.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ prometheus_postgres_exporter_identifier }}.service"

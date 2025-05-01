@@ -1,13 +1,25 @@
----
+# SPDX-FileCopyrightText: 2023 - 2024 Nikita Chernyi
+# SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2024 Sergio Durigan Junior
+# SPDX-FileCopyrightText: 2024 Tiz
+# SPDX-FileCopyrightText: 2025 MASH project contributors
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
 
+---
 # Prometheus is an open-source systems monitoring and alerting toolkit
 # Project source code URL: https://github.com/prometheus/prometheus
 
 prometheus_enabled: true
 
 prometheus_identifier: prometheus
+prometheus_base_path: "/{{ prometheus_identifier }}"
+prometheus_config_path: "{{ prometheus_base_path }}/config"
+prometheus_data_path: "{{ prometheus_base_path }}/data"
 
-prometheus_version: v2.55.1
+# renovate: datasource=docker depName=prom/prometheus versioning=semver
+prometheus_version: v3.3.0
 
 prometheus_uid: ''
 prometheus_gid: ''
@@ -19,19 +31,6 @@ prometheus_hostname: ''
 # This value must either be `/` or not end with a slash (e.g. `/prometheus`).
 prometheus_path_prefix: /
 
-prometheus_base_path: "/{{ prometheus_identifier }}"
-prometheus_config_path: "{{ prometheus_base_path }}/config"
-prometheus_data_path: "{{ prometheus_base_path }}/data"
-
-# List of systemd services that the Prometheus systemd service depends on
-prometheus_systemd_required_services_list: "{{ prometheus_systemd_required_services_list_default + prometheus_systemd_required_services_list_auto + prometheus_systemd_required_services_list_custom }}"
-prometheus_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
-prometheus_systemd_required_services_list_auto: []
-prometheus_systemd_required_services_list_custom: []
-
-# List of systemd services that the Prometheus systemd service wants
-prometheus_systemd_wanted_services_list: []
-
 prometheus_container_image: "{{ prometheus_container_image_registry_prefix }}prom/prometheus:{{ prometheus_container_image_tag }}"
 prometheus_container_image_registry_prefix: "{{ prometheus_container_image_registry_prefix_upstream }}"
 prometheus_container_image_registry_prefix_upstream: "{{ prometheus_container_image_registry_prefix_upstream_default }}"
@@ -39,20 +38,22 @@ prometheus_container_image_registry_prefix_upstream_default: docker.io/
 prometheus_container_image_tag: "{{ prometheus_version }}"
 prometheus_container_image_force_pull: "{{ prometheus_container_image.endswith(':latest') }}"
 
+# Controls whether the container exposes its HTTP port (tcp/9090 in the container).
+#
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:9090"), or empty string to not expose.
+prometheus_container_http_host_bind_port: ''
+
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 prometheus_container_network: "{{ prometheus_identifier }}"
+
+# The port number in the container
+prometheus_container_http_port: 9090
 
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
 prometheus_container_additional_networks: "{{ prometheus_container_additional_networks_auto + prometheus_container_additional_networks_custom }}"
 prometheus_container_additional_networks_auto: []
 prometheus_container_additional_networks_custom: []
-
-# Controls whether the container exposes its HTTP port (tcp/9090 in the container).
-#
-# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:9090"), or empty string to not expose.
-prometheus_container_http_host_bind_port: ''
-
 
 # prometheus_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
 # See `../templates/labels.j2` for details.
@@ -82,7 +83,6 @@ prometheus_container_labels_traefik_additional_response_headers_auto: |
   {{
     {}
     | combine ({'X-XSS-Protection': prometheus_http_header_xss_protection} if prometheus_http_header_xss_protection else {})
-    | combine ({'X-Frame-Options': prometheus_http_header_frame_options} if prometheus_http_header_frame_options else {})
     | combine ({'X-Content-Type-Options': prometheus_http_header_content_type_options} if prometheus_http_header_content_type_options else {})
     | combine ({'Content-Security-Policy': prometheus_http_header_content_security_policy} if prometheus_http_header_content_security_policy else {})
     | combine ({'Permission-Policy': prometheus_http_header_content_permission_policy} if prometheus_http_header_content_permission_policy else {})
@@ -99,9 +99,64 @@ prometheus_container_labels_traefik_additional_response_headers_custom: {}
 #   another.label="here"
 prometheus_container_labels_additional_labels: ''
 
-
 # A list of extra arguments to pass to the container
 prometheus_container_extra_arguments: []
+
+# Specifies the value of the `X-XSS-Protection` header
+# Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
+#
+# Learn more about it is here:
+# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
+# - https://portswigger.net/web-security/cross-site-scripting/reflected
+prometheus_http_header_xss_protection: "1; mode=block"
+
+# Specifies the value of the `X-Content-Type-Options` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
+prometheus_http_header_content_type_options: nosniff
+
+# Specifies the value of the `Content-Security-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
+prometheus_http_header_content_security_policy: frame-ancestors 'self'
+
+# Specifies the value of the `Permission-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permission-Policy
+prometheus_http_header_content_permission_policy: "{{ 'interest-cohort=()' if prometheus_floc_optout_enabled else '' }}"
+
+# Specifies the value of the `Strict-Transport-Security` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+prometheus_http_header_strict_transport_security: "max-age=31536000; includeSubDomains{{ '; preload' if prometheus_hsts_preload_enabled else '' }}"
+
+# Controls whether to prometheus a "Permissions-Policy interest-cohort=();" header along with all responses
+#
+# Learn more about what it is here:
+# - https://www.eff.org/deeplinks/2021/03/googles-floc-terrible-idea
+# - https://paramdeo.com/blog/opting-your-website-out-of-googles-floc-network
+# - https://amifloced.org/
+#
+# Of course, a better solution is to just stop using browsers (like Chrome), which participate in such tracking practices.
+# See: `prometheus_content_permission_policy`
+prometheus_floc_optout_enabled: true
+
+# Controls if HSTS preloading is enabled
+#
+# In its strongest and recommended form, the [HSTS policy](https://www.chromium.org/hsts) includes all subdomains, and
+# indicates a willingness to be "preloaded" into browsers:
+# `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload`
+# For more information visit:
+# - https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
+# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+# - https://hstspreload.org/#opt-in
+# See: `prometheus_http_header_strict_transport_security`
+prometheus_hsts_preload_enabled: false
+
+# List of systemd services that the Prometheus systemd service depends on
+prometheus_systemd_required_services_list: "{{ prometheus_systemd_required_services_list_default + prometheus_systemd_required_services_list_auto + prometheus_systemd_required_services_list_custom }}"
+prometheus_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+prometheus_systemd_required_services_list_auto: []
+prometheus_systemd_required_services_list_custom: []
+
+# List of systemd services that the Prometheus systemd service wants
+prometheus_systemd_wanted_services_list: []
 
 # A list of default arguments to pass to the prometheus process
 prometheus_process_default_arguments:

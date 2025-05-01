@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2023 Nikita Chernyi
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 # prometheus_node_exporter
 
 This is an [Ansible](https://www.ansible.com/) role which installs [Prometheus node exporter](https://github.com/prometheus/node_exporter) to run as a [Docker](https://www.docker.com/) container wrapped in a systemd service.
