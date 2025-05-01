@@ -1,3 +1,9 @@
+{#
+SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+#}
+
 #jinja2: lstrip_blocks: "True"
 [Unit]
 Description=Grafana ({{ grafana_identifier }})
@@ -25,7 +31,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
 			--read-only \
 			--network={{ grafana_container_network }} \
 			{% if grafana_container_http_host_bind_port %}
-			-p {{ grafana_container_http_host_bind_port }}:3000 \
+			-p {{ grafana_container_http_host_bind_port }}:{{ grafana_container_http_port }} \
 			{% endif %}
 			--env-file={{ grafana_base_path }}/env \
 			--label-file={{ grafana_base_path }}/labels \

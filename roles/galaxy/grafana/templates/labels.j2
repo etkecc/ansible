@@ -1,3 +1,9 @@
+{#
+SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+#}
+
 {% if grafana_container_labels_traefik_enabled %}
 traefik.enable=true
 
@@ -39,7 +45,7 @@ traefik.http.routers.{{ grafana_identifier }}.tls={{ grafana_container_labels_tr
 traefik.http.routers.{{ grafana_identifier }}.tls.certResolver={{ grafana_container_labels_traefik_tls_certResolver }}
 {% endif %}
 
-traefik.http.services.{{ grafana_identifier }}.loadbalancer.server.port=3000
+traefik.http.services.{{ grafana_identifier }}.loadbalancer.server.port={{ grafana_container_http_port }}
 {% endif %}
 
 {{ grafana_container_labels_additional_labels }}
