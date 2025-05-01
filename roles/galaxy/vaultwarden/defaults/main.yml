@@ -39,11 +39,11 @@ vaultwarden_hostname: ''
 # Example: '/my-secret-warden'
 vaultwarden_path_prefix: '/'
 
-vaultwarden_container_image: "{{ vaultwarden_container_registry_prefix }}dani-garcia/vaultwarden:{{ vaultwarden_container_image_tag }}"
+vaultwarden_container_image: "{{ vaultwarden_container_image_registry_prefix }}dani-garcia/vaultwarden:{{ vaultwarden_container_image_tag }}"
 vaultwarden_container_image_tag: "{{ vaultwarden_version }}-alpine"
-vaultwarden_container_registry_prefix: "{{ vaultwarden_container_registry_prefix_upstream }}"
-vaultwarden_container_registry_prefix_upstream: "{{ vaultwarden_container_registry_prefix_upstream_default }}"
-vaultwarden_container_registry_prefix_upstream_default: ghcr.io/
+vaultwarden_container_image_registry_prefix: "{{ vaultwarden_container_image_registry_prefix_upstream }}"
+vaultwarden_container_image_registry_prefix_upstream: "{{ vaultwarden_container_image_registry_prefix_upstream_default }}"
+vaultwarden_container_image_registry_prefix_upstream_default: ghcr.io/
 vaultwarden_container_image_force_pull: "{{ vaultwarden_container_image.endswith(':latest') }}"
 
 # Controls whether the container exposes its HTTP port (tcp/8080 in the container).
