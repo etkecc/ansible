@@ -49,7 +49,7 @@
 
 - name: Ensure Vaultwarden systemd service installed
   ansible.builtin.template:
-    src: "{{ role_path }}/templates/vaultwarden.service.j2"
+    src: "{{ role_path }}/templates/systemd/vaultwarden.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ vaultwarden_identifier }}.service"
     mode: 0640
 

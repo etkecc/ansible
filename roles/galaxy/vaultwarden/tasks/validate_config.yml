@@ -15,6 +15,14 @@
     - {'old': 'vaultwarden_config_websocket_enabled', 'new': '<Removed. See https://github.com/dani-garcia/vaultwarden/pull/3404>'}
     - {'old': 'vaultwarden_config_websocket_port', 'new': '<Removed. See https://github.com/dani-garcia/vaultwarden/pull/3404>'}
     - {'old': 'vaultwarden_container_websocket_bind_port', 'new': '<Removed. See https://github.com/dani-garcia/vaultwarden/pull/3404>'}
+    - {'old': 'vaultwarden_systemd_required_systemd_services_list', 'new': 'vaultwarden_systemd_required_services_list'}
+    - {'old': 'vaultwarden_systemd_required_systemd_services_list_default', 'new': 'vaultwarden_systemd_required_services_list_default'}
+    - {'old': 'vaultwarden_systemd_required_systemd_services_list_auto', 'new': 'vaultwarden_systemd_required_services_list_auto'}
+    - {'old': 'vaultwarden_systemd_required_systemd_services_list_custom', 'new': 'vaultwarden_systemd_required_services_list_custom'}
+    - {'old': 'vaultwarden_systemd_wanted_systemd_services_list', 'new': 'vaultwarden_systemd_wanted_services_list'}
+    - {'old': 'vaultwarden_systemd_wanted_systemd_services_list_default', 'new': 'vaultwarden_systemd_wanted_services_list_default'}
+    - {'old': 'vaultwarden_systemd_wanted_systemd_services_list_auto', 'new': 'vaultwarden_systemd_wanted_services_list_auto'}
+    - {'old': 'vaultwarden_systemd_wanted_systemd_services_list_custom', 'new': 'vaultwarden_systemd_wanted_services_list_custom'}
 
 - name: Fail if required Vaultwarden settings not defined
   ansible.builtin.fail:
