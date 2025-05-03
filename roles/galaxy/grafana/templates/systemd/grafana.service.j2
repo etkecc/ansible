@@ -30,7 +30,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
 			--cap-drop=ALL \
 			--read-only \
 			--network={{ grafana_container_network }} \
-			{% if grafana_container_http_host_bind_port %}
+			{% if grafana_container_http_host_bind_port and grafana_container_network != 'host' %}
 			-p {{ grafana_container_http_host_bind_port }}:{{ grafana_container_http_port }} \
 			{% endif %}
 			--env-file={{ grafana_base_path }}/env \
@@ -42,9 +42,11 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
 			{% endfor %}
 			{{ grafana_container_image }}
 
+{% if grafana_container_network != 'host' %}
 {% for network in grafana_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ grafana_identifier }}
 {% endfor %}
+{% endif %}
 
 ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ grafana_identifier }}
 

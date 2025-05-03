@@ -94,6 +94,7 @@
     name: "{{ grafana_container_network }}"
     driver: bridge
     driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
+  when: grafana_container_network != 'host'
 
 - name: Ensure Grafana systemd service installed
   ansible.builtin.template:
