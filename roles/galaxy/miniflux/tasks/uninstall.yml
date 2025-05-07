@@ -4,26 +4,26 @@
 
 ---
 
-- name: Check existence of miniflux systemd service
+- name: Check existence of Miniflux systemd service
   ansible.builtin.stat:
     path: "{{ devture_systemd_docker_base_systemd_path }}/{{ miniflux_identifier }}.service"
   register: miniflux_service_stat
 
 - when: miniflux_service_stat.stat.exists | bool
   block:
-    - name: Ensure miniflux systemd service is stopped
+    - name: Ensure Miniflux systemd service is stopped
       ansible.builtin.service:
         name: "{{ miniflux_identifier }}"
         state: stopped
         enabled: false
         daemon_reload: true
 
-    - name: Ensure miniflux systemd service does not exists
+    - name: Ensure Miniflux systemd service does not exists
       ansible.builtin.file:
         path: "{{ devture_systemd_docker_base_systemd_path }}/{{ miniflux_identifier }}.service"
         state: absent
 
-    - name: Ensure miniflux path doesn't exist
+    - name: Ensure Miniflux path doesn't exist
       ansible.builtin.file:
         path: "{{ miniflux_base_path }}"
         state: absent

@@ -3,33 +3,27 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 # Project source code URL: https://github.com/miniflux/v2
 
 miniflux_enabled: true
 
 miniflux_identifier: miniflux
-
-miniflux_uid: ''
-miniflux_gid: ''
-
-miniflux_scheme: https
-
-# The hostname at which miniflux is served.
-miniflux_hostname: ''
-
-# The path at which miniflux is served.
-# This value must either be `/` or not end with a slash (e.g. `/miniflux`).
-miniflux_path_prefix: /
+miniflux_base_path: "/{{ miniflux_identifier }}"
 
 # renovate: datasource=docker depName=docker.io/miniflux/miniflux versioning=semver
 miniflux_version: 2.2.8
 
-miniflux_base_path: "/{{ miniflux_identifier }}"
+miniflux_uid: ''
+miniflux_gid: ''
 
-# Optional admin credentials to be created on startup.
-miniflux_admin_login: ''
-miniflux_admin_password: ''
+# The hostname at which Miniflux is served.
+miniflux_hostname: ''
+
+miniflux_scheme: https
+
+# The path at which Miniflux is served.
+# This value must either be `/` or not end with a slash (e.g. `/miniflux`).
+miniflux_path_prefix: /
 
 miniflux_container_image: "{{ miniflux_container_image_registry_prefix }}miniflux/miniflux:{{ miniflux_container_image_tag }}"
 miniflux_container_image_tag: "{{ miniflux_version }}"
@@ -94,12 +88,6 @@ miniflux_container_labels_additional_labels: ''
 # A list of extra arguments to pass to the container
 miniflux_container_extra_arguments: []
 
-# List of systemd services that miniflux.service depends on
-miniflux_systemd_required_services_list: "{{ miniflux_systemd_required_services_list_default + miniflux_systemd_required_services_list_auto + miniflux_systemd_required_services_list_custom }}"
-miniflux_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
-miniflux_systemd_required_services_list_auto: []
-miniflux_systemd_required_services_list_custom: []
-
 # Specifies the value of the `X-XSS-Protection` header
 # Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
 #
@@ -146,6 +134,19 @@ miniflux_floc_optout_enabled: true
 # - https://hstspreload.org/#opt-in
 # See: `miniflux_http_header_strict_transport_security`
 miniflux_hsts_preload_enabled: false
+
+# List of systemd services that the Miniflux systemd service depends on
+miniflux_systemd_required_services_list: "{{ miniflux_systemd_required_services_list_default + miniflux_systemd_required_services_list_auto + miniflux_systemd_required_services_list_custom }}"
+miniflux_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+miniflux_systemd_required_services_list_auto: []
+miniflux_systemd_required_services_list_custom: []
+
+# List of systemd services that the Miniflux systemd service wants
+miniflux_systemd_wanted_services_list: []
+
+# Optional admin credentials to be created on startup.
+miniflux_admin_login: ''
+miniflux_admin_password: ''
 
 miniflux_database_username: miniflux
 miniflux_database_password: ''
