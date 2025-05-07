@@ -1,5 +1,6 @@
 **Stable Updates Published**
 
+* [Authentication Service](https://github.com/element-hq/matrix-authentication-service): [0.15.0](https://github.com/element-hq/matrix-authentication-service/releases/tag/0.15.0) -> [0.16.0](https://github.com/element-hq/matrix-authentication-service/releases/tag/0.16.0)
 * [Element](https://github.com/element-hq/element-web): [v1.11.99](https://github.com/element-hq/element-web/releases/tag/v1.11.99) -> [v1.11.100](https://github.com/element-hq/element-web/releases/tag/v1.11.100)
 * [Gotosocial](https://github.com/superseriousbusiness/gotosocial): [0.19.0](https://github.com/superseriousbusiness/gotosocial/releases/tag/v0.19.0) -> [0.19.1](https://github.com/superseriousbusiness/gotosocial/releases/tag/v0.19.1)
 * [Maubot](https://mau.dev/maubot/maubot): [v0.5.1](https://mau.dev/maubot/maubot/-/tags/v0.5.1) -> [v0.5.2](https://mau.dev/maubot/maubot/-/tags/v0.5.2)

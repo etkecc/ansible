@@ -5,8 +5,7 @@
 * Appservice Kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * Appservice Slack: 2.1.2
 * Appservice Webhooks: v1.0.3-01
-* Authentication Service: 0.15.0
-* Authentication Service Syn2Mas: 0.15.0
+* Authentication Service: 0.16.0
 * Baibot: v1.6.0
 * Bluesky: v0.1.1
 * Borg: 1.4.1
