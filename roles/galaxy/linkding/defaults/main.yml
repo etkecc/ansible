@@ -1,3 +1,11 @@
+# SPDX-FileCopyrightText: 2023 - 2024 Nikita Chernyi
+# SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2024 Sergio Durigan Junior
+# SPDX-FileCopyrightText: 2025 MASH project contributors
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 ---
 # Project source code URL: https://github.com/sissbruecker/linkding
 
@@ -7,40 +15,44 @@ linkding_enabled: true
 # Identifier string for linkding resources (e.g. container names, network names)
 linkding_identifier: linkding
 
+# Base path for linkding resources
+linkding_base_path: "/{{ linkding_identifier }}"
+linkding_data_path: "{{ linkding_base_path }}/data"
+
+# renovate: datasource=docker depName=sissbruecker/linkding versioning=semver
+linkding_version: 1.39.1
+
 # User ID and Group ID for running linkding service in the container
 linkding_uid: ""
 linkding_gid: ""
 
-# The scheme used for serving linkding (http or https)
-linkding_scheme: https
-
 # The hostname at which linkding is served
 linkding_hostname: ""
 
-# The path at which linkding is served, must either be `/` or not end with a slash (e.g. `/linkding`)
+# The scheme used for serving linkding (http or https)
+linkding_scheme: https
+
+# The path at which linkding is exposed.
+# This value must either be `/` or not end with a slash (e.g. `/linkding`).
 linkding_path_prefix: /
 
-# Version of linkding to deploy
-linkding_version: 1.39.1
-
-# Base path for linkding resources
-linkding_base_path: "{{ linkding_identifier }}"
-linkding_data_path: "{{ linkding_base_path }}/data"
-
-# The username and password for the Linkding superuser
-linkding_superuser_username:
-linkding_superuser_password:
-
-linkding_container_image: "{{ linkding_container_image_registry_prefix }}{{ linkding_container_image_path }}:{{ linkding_container_image_tag }}"
+linkding_container_image: "{{ linkding_container_image_registry_prefix }}sissbruecker/linkding:{{ linkding_container_image_tag }}"
+linkding_container_image_tag: "{{ linkding_version }}"
 linkding_container_image_registry_prefix: "{{ linkding_container_image_registry_prefix_upstream }}"
 linkding_container_image_registry_prefix_upstream: "{{ linkding_container_image_registry_prefix_upstream_default }}"
 linkding_container_image_registry_prefix_upstream_default: docker.io/
-linkding_container_image_path: sissbruecker/linkding
-linkding_container_image_tag: "{{ linkding_version }}"
 linkding_container_image_force_pull: "{{ linkding_container_image.endswith(':latest') }}"
+
+# Controls whether the container exposes its HTTP port (tcp/9090 in the container).
+#
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:8731"), or empty string to not expose.
+linkding_container_http_host_bind_port: ''
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 linkding_container_network: "{{ linkding_identifier }}"
+
+# The port number in the container
+linkding_container_http_port: 9090
 
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
@@ -71,7 +83,6 @@ linkding_container_labels_traefik_additional_response_headers_auto: |
   {{
     {}
     | combine ({'X-XSS-Protection': linkding_http_header_xss_protection} if linkding_http_header_xss_protection else {})
-    | combine ({'X-Frame-Options': linkding_http_header_frame_options} if linkding_http_header_frame_options else {})
     | combine ({'X-Content-Type-Options': linkding_http_header_content_type_options} if linkding_http_header_content_type_options else {})
     | combine ({'Content-Security-Policy': linkding_http_header_content_security_policy} if linkding_http_header_content_security_policy else {})
     | combine ({'Permission-Policy': linkding_http_header_content_permission_policy} if linkding_http_header_content_permission_policy else {})
@@ -90,12 +101,6 @@ linkding_container_labels_additional_labels: ""
 # A list of extra arguments to pass to the container
 linkding_container_extra_arguments: []
 
-# List of systemd services that linkding.service depends on
-linkding_systemd_required_services_list: "{{ linkding_systemd_required_services_list_default + linkding_systemd_required_services_list_auto + linkding_systemd_required_services_list_custom }}"
-linkding_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
-linkding_systemd_required_services_list_auto: []
-linkding_systemd_required_services_list_custom: []
-
 # Specifies the value of the `X-XSS-Protection` header
 # Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
 #
@@ -103,10 +108,6 @@ linkding_systemd_required_services_list_custom: []
 # - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
 # - https://portswigger.net/web-security/cross-site-scripting/reflected
 linkding_http_header_xss_protection: "1; mode=block"
-
-# Specifies the value of the `X-Frame-Options` header which controls whether framing can happen.
-# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
-linkding_http_header_frame_options: SAMEORIGIN
 
 # Specifies the value of the `X-Content-Type-Options` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
@@ -146,6 +147,19 @@ linkding_floc_optout_enabled: true
 # - https://hstspreload.org/#opt-in
 # See: `linkding_http_header_strict_transport_security`
 linkding_hsts_preload_enabled: false
+
+# List of systemd services that the linkding systemd service depends on
+linkding_systemd_required_services_list: "{{ linkding_systemd_required_services_list_default + linkding_systemd_required_services_list_auto + linkding_systemd_required_services_list_custom }}"
+linkding_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+linkding_systemd_required_services_list_auto: []
+linkding_systemd_required_services_list_custom: []
+
+# List of systemd services that the linkding systemd service wants
+linkding_systemd_wanted_services_list: []
+
+# The username and password for the linkding superuser
+linkding_superuser_username:
+linkding_superuser_password:
 
 # Database configuration, defaults to sqlite
 linkding_database_engine: sqlite

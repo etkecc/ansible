@@ -1,32 +1,22 @@
-# GoToSocial Ansible Role
+<!--
+SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
+SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+SPDX-FileCopyrightText: 2025 Suguru Hirahara
 
-![GoToSocial Logo](assets/sloth.png)
+SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
+# GoToSocial Ansible role
 
 ![Lint badge](https://woodpecker.hyteck.de/api/badges/moan0s/role-gotosocial/status.svg)
 
-GoToSocial is a self-hosted [ActivityPub](https://activitypub.rocks/) social network server. This role helps you to set up GoToSocial:
+This is an [Ansible](https://www.ansible.com/) role which installs [GotoSocial](https://gotosocial.org/) to run as a [Docker](https://www.docker.com/) container wrapped in a systemd service.
 
-- with everything run in [Docker](https://www.docker.com/) containers
-- powered by [the official GoToSocial container image](https://hub.docker.com/r/superseriousbusiness/gotosocial/)
+This role *implicitly* depends on:
 
+- [`com.devture.ansible.role.playbook_help`](https://github.com/devture/com.devture.ansible.role.playbook_help)
+- [`com.devture.ansible.role.systemd_docker_base`](https://github.com/devture/com.devture.ansible.role.systemd_docker_base)
 
-## Installing
+Check [defaults/main.yml](defaults/main.yml) for the full list of supported options.
 
-To configure and install GoToSocial on your own server(s), you should use a playbook like [Mother of all self-hosting](https://github.com/mother-of-all-self-hosting/mash-playbook) or write your own.
-
-# Configuring this role for your playbook
-
-```
-gotosocial_enabled: true
-gotosocial_hostname: 'example.org'
-
-gotosocial_db_host:
-
-gotosocial_db_name:
-gotosocial_db_user:
-gotosocial_db_password:
-```
-
-## Support
-
-- Github issues: [moan0s/role-gotosocial/issues](https://github.com/moan0s/role-gotosocial/issues)
+💡 See this [document](docs/configuring-gotosocial.md) for details about setting up the service with this role.

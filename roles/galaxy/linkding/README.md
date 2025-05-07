@@ -1,4 +1,10 @@
-# Docker Ansible Linkding Role
+<!--
+SPDX-FileCopyrightText: 2023 kinduff
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
+# linkding Ansible role
 
 This is an [Ansible](https://www.ansible.com) role which installs [linkding](https://github.com/sissbruecker/linkding) to run as a [Docker](https://www.docker.com) container wrapped in a systemd service.
 

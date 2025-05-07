@@ -16,7 +16,7 @@ radicale_config_path: "{{ radicale_base_path }}/config"
 radicale_data_collections_path: "{{ radicale_data_path }}/{{ radicale_data_collections_subdir }}"
 radicale_data_collections_subdir: collections
 
-# renovate: datasource=docker depName=docker.io/tomsquest/docker-radicale versioning=semver
+# renovate: datasource=docker depName=tomsquest/docker-radicale
 radicale_version: 3.5.2.0
 
 radicale_uid: ''
