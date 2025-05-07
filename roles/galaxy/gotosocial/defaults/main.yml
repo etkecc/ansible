@@ -17,6 +17,7 @@ gotosocial_base_path: "/{{ gotosocial_identifier }}"
 gotosocial_config_path: "{{ gotosocial_base_path }}/config"
 gotosocial_data_path: "{{ gotosocial_base_path }}/data"
 gotosocial_env_path: "{{ gotosocial_config_path }}/env"
+gotosocial_customized_container_src_path: "{{ gotosocial_base_path }}/customized-container-src"
 
 # renovate: datasource=docker depName=superseriousbusiness/gotosocial versioning=semver
 gotosocial_version: 0.19.1
@@ -33,6 +34,36 @@ gotosocial_container_image_registry_prefix_upstream: "{{ gotosocial_container_im
 gotosocial_container_image_registry_prefix_upstream_default: docker.io/
 gotosocial_container_image_tag: "{{ gotosocial_version }}"
 gotosocial_container_image_force_pull: "{{ gotosocial_container_image.endswith(':latest') }}"
+
+# gotosocial_container_image_customized is the name of the locally built GoToSocial image
+# which adds various customizations on top of the original (upstream) GoToSocial image.
+# This image will be based on the upstream `gotosocial_container_image` image, only if `gotosocial_container_image_customizations_enabled: true`.
+gotosocial_container_image_customized: "localhost/gotosocial:{{ gotosocial_container_image_tag }}-customized"
+
+# gotosocial_container_image_final holds the name of the GoToSocial image to run depending on whether or not customizations are enabled.
+gotosocial_container_image_final: "{{ gotosocial_container_image_customized if gotosocial_container_image_customizations_enabled else gotosocial_container_image }}"
+
+# gotosocial_container_image_customization_pride_flags_removal_enabled controls whether to remove the pride flag emojis (🏳️‍🌈, 🏳️‍⚧️) from the footer.
+# Related to: https://codeberg.org/superseriousbusiness/gotosocial/releases/tag/v0.19.1#user-content-pride-trans-flags
+gotosocial_container_image_customization_pride_flags_removal_enabled: true
+
+# gotosocial_container_image_customizations_enabled controls whether a customized GoToSocial image will be built.
+# It automatically becomes true if any specific customization (like removing the pride flag) is enabled.
+gotosocial_container_image_customizations_enabled: |
+  {{
+    (
+      gotosocial_container_image_customization_pride_flags_removal_enabled
+    )
+  }}
+
+# gotosocial_container_image_customizations_dockerfile_body_custom contains your custom Dockerfile steps
+# for building your customized GoToSocial image based on the original (upstream) image (`gotosocial_container_image`).
+# A `FROM ...` clause is included automatically so you don't have to.
+#
+# Example:
+# gotosocial_container_image_customizations_dockerfile_body_custom: |
+#  RUN echo 'This is a custom step for building the customized container image for GoToSocial.'
+gotosocial_container_image_customizations_dockerfile_body_custom: ''
 
 # The port number in the container
 gotosocial_container_http_port: 8080

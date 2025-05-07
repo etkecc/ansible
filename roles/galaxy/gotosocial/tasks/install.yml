@@ -15,6 +15,8 @@
   with_items:
     - {path: "{{ gotosocial_base_path }}", when: true}
     - {path: "{{ gotosocial_config_path }}", when: true}
+    - {path: "{{ gotosocial_customized_container_src_path }}", when: "{{ gotosocial_container_image_customizations_enabled }}"}
+  when: item.when | bool
 
 - name: Ensure gotosocial data path exists
   ansible.builtin.file:
@@ -46,6 +48,28 @@
   community.docker.docker_image:
     name: "{{ gotosocial_container_image }}"
     source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+
+- name: Ensure customized GoToSocial container image is built
+  when: gotosocial_container_image_customizations_enabled | bool
+  block:
+    - name: Ensure customizations Dockerfile is created
+      ansible.builtin.template:
+        src: "{{ role_path }}/templates/customizations/Dockerfile.j2"
+        dest: "{{ gotosocial_customized_container_src_path }}/Dockerfile"
+        mode: 0640
+        owner: "{{ gotosocial_uid }}"
+        group: "{{ gotosocial_gid }}"
+      register: gotosocial_container_image_customizations_dockerfile_result
+
+    - name: Ensure customized container image for GoToSocial is built
+      community.docker.docker_image:
+        name: "{{ gotosocial_container_image_customized }}"
+        source: build
+        force_source: "{{ gotosocial_container_image_customizations_dockerfile_result.changed }}"
+        build:
+          dockerfile: Dockerfile
+          path: "{{ gotosocial_customized_container_src_path }}"
+          pull: true
 
 - name: Ensure gotosocial network is created in Docker
   community.docker.docker_network:

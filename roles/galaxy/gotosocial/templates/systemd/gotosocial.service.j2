@@ -44,7 +44,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% for arg in gotosocial_container_extra_arguments %}
       {{ arg }} \
       {% endfor %}
-      {{ gotosocial_container_image }}
+      {{ gotosocial_container_image_final }}
 
 {% for network in gotosocial_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ gotosocial_identifier }}

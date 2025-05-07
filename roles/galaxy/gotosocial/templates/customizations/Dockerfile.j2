@@ -1,0 +1,8 @@
+FROM {{ gotosocial_container_image }}
+
+{% if gotosocial_container_image_customization_pride_flags_removal_enabled %}
+RUN sed -i 's|🏳️‍🌈||g' /gotosocial/web/template/page_footer.tmpl && \
+    sed -i 's|🏳️‍⚧️||g' /gotosocial/web/template/page_footer.tmpl
+{% endif %}
+
+{{ gotosocial_container_image_customizations_dockerfile_body_custom }}
