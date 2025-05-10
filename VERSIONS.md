@@ -6,7 +6,7 @@
 * Appservice Slack: 2.1.2
 * Appservice Webhooks: v1.0.3-01
 * Authentication Service: 0.16.0
-* Baibot: v1.6.0
+* Baibot: v1.7.0
 * Bluesky: v0.1.1
 * Borg: 1.4.1
 * Borgmatic: 1.9.14
