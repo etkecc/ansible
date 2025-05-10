@@ -1,6 +1,10 @@
+# SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 ---
 
-- name: Ensure kuma paths exist
+- name: Ensure Uptime Kuma paths exist
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
@@ -11,7 +15,7 @@
     - "{{ uptime_kuma_base_path }}"
     - "{{ uptime_kuma_data_path }}"
 
-- name: Ensure uptime-kuma support files installed
+- name: Ensure Uptime Kuma support files installed
   ansible.builtin.template:
     src: "{{ role_path }}/templates/{{ item }}.j2"
     dest: "{{ uptime_kuma_base_path }}/{{ item }}"
@@ -22,21 +26,21 @@
     - env
     - labels
 
-- name: Ensure kuma container image is pulled
+- name: Ensure Uptime Kuma container image is pulled
   community.docker.docker_image:
     name: "{{ uptime_kuma_container_image }}"
     source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
     force_source: "{{ uptime_kuma_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
     force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else uptime_kuma_container_image_force_pull }}"
 
-- name: Ensure uptime-kuma container network is created
+- name: Ensure Uptime Kuma container network is created
   community.general.docker_network:
     enable_ipv6: "{{ devture_systemd_docker_base_ipv6_enabled }}"
     name: "{{ uptime_kuma_container_network }}"
     driver: bridge
     driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
 
-- name: Ensure uptime-kuma systemd service is present
+- name: Ensure Uptime Kuma systemd service is present
   ansible.builtin.template:
     src: "{{ role_path }}/templates/systemd/uptime-kuma.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ uptime_kuma_identifier }}.service"

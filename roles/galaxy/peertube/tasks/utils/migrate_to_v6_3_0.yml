@@ -1,3 +1,9 @@
+# SPDX-FileCopyrightText: 2024 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
 - name: Announce v6.3.0 migration
   ansible.builtin.debug:
     msg: "Performing tasks for PeerTube version `{{ 'unknown' if peertube_detected_version == '' else peertube_detected_version }}`, older than v6.3.0"

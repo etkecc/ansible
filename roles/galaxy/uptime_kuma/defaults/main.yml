@@ -1,36 +1,40 @@
----
+# SPDX-FileCopyrightText: 2023 - 2024 Nikita Chernyi
+# SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
 
+---
 # Project source code URL: https://github.com/louislam/uptime-kuma
 
 uptime_kuma_enabled: true
 
 uptime_kuma_identifier: uptime-kuma
+uptime_kuma_base_path: "/{{ uptime_kuma_identifier }}"
+uptime_kuma_data_path: "{{ uptime_kuma_base_path }}/data"
+
+# renovate: datasource=docker depName=louislam/uptime-kuma versioning=semver
+uptime_kuma_version: 1.23.16
 
 uptime_kuma_uid: ''
 uptime_kuma_gid: ''
 
-uptime_kuma_version: 1.23.16
-
-# The hostname at which uptime-kuma is served.
+# The hostname at which Uptime Kuma is served.
 uptime_kuma_hostname: ''
 
-# The path at which uptime-kuma is served.
+# The path at which Uptime Kuma is served.
 # This value must either be `/` or not end with a slash (e.g. `/kuma`).
 #
-# Hosting under a subpath is not possible yet due to uptime-kuma limitations.
+# Hosting under a subpath is not possible yet due to Uptime Kuma limitations.
 # See:
 # - https://github.com/louislam/uptime-kuma/issues/147
 # - https://github.com/louislam/uptime-kuma/pull/1092
 uptime_kuma_path_prefix: /
 
-uptime_kuma_base_path: "/{{ uptime_kuma_identifier }}"
-uptime_kuma_data_path: "{{ uptime_kuma_base_path }}/data"
-
 uptime_kuma_container_image: "{{ uptime_kuma_container_image_registry_prefix }}louislam/uptime-kuma:{{ uptime_kuma_container_image_tag }}"
+uptime_kuma_container_image_tag: "{{ uptime_kuma_version }}-alpine"
 uptime_kuma_container_image_registry_prefix: "{{ uptime_kuma_container_image_registry_prefix_upstream }}"
 uptime_kuma_container_image_registry_prefix_upstream: "{{ uptime_kuma_container_image_registry_prefix_upstream_default }}"
 uptime_kuma_container_image_registry_prefix_upstream_default: docker.io/
-uptime_kuma_container_image_tag: "{{ uptime_kuma_version }}-alpine"
 uptime_kuma_container_image_force_pull: "{{ uptime_kuma_container_image.endswith(':latest') }}"
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
@@ -42,23 +46,6 @@ uptime_kuma_container_network: "{{ uptime_kuma_identifier }}"
 uptime_kuma_container_additional_networks: "{{ uptime_kuma_container_additional_networks_auto + uptime_kuma_container_additional_networks_custom }}"
 uptime_kuma_container_additional_networks_auto: []
 uptime_kuma_container_additional_networks_custom: []
-
-uptime_kuma_container_dns_servers: "{{ uptime_kuma_container_dns_servers_default + uptime_kuma_container_dns_servers_custom }}"
-
-uptime_kuma_container_dns_servers_default:
-  # Cloudflare DNS
-  - '1.1.1.1'
-  - '1.0.0.1'
-
-  # Google DNS
-  - '8.8.8.8'
-  - '8.8.4.4'
-
-  # dns.quad9.net
-  - '9.9.9.9'
-  - '149.112.112.112'
-
-uptime_kuma_container_dns_servers_custom: []
 
 # uptime_kuma_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
 # See `../templates/labels.j2` for details.
@@ -82,7 +69,6 @@ uptime_kuma_container_labels_traefik_additional_response_headers_auto: |
   {{
     {}
     | combine ({'X-XSS-Protection': uptime_kuma_http_header_xss_protection} if uptime_kuma_http_header_xss_protection else {})
-    | combine ({'X-Frame-Options': uptime_kuma_http_header_frame_options} if uptime_kuma_http_header_frame_options else {})
     | combine ({'X-Content-Type-Options': uptime_kuma_http_header_content_type_options} if uptime_kuma_http_header_content_type_options else {})
     | combine ({'Content-Security-Policy': uptime_kuma_http_header_content_security_policy} if uptime_kuma_http_header_content_security_policy else {})
     | combine ({'Permission-Policy': uptime_kuma_http_header_content_permission_policy} if uptime_kuma_http_header_content_permission_policy else {})
@@ -113,9 +99,6 @@ uptime_kuma_container_health_interval: "{{ '5s' if uptime_kuma_container_labels_
 # A list of extra arguments to pass to the container
 uptime_kuma_container_extra_arguments: []
 
-# Additional environment variables.
-uptime_kuma_environment_variables_additional_variables: ''
-
 # Specifies the value of the `X-XSS-Protection` header
 # Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
 #
@@ -123,10 +106,6 @@ uptime_kuma_environment_variables_additional_variables: ''
 # - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
 # - https://portswigger.net/web-security/cross-site-scripting/reflected
 uptime_kuma_http_header_xss_protection: "1; mode=block"
-
-# Specifies the value of the `X-Frame-Options` header which controls whether framing can happen.
-# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
-uptime_kuma_http_header_frame_options: SAMEORIGIN
 
 # Specifies the value of the `X-Content-Type-Options` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
@@ -172,3 +151,26 @@ uptime_kuma_systemd_required_services_list: "{{ uptime_kuma_systemd_required_ser
 uptime_kuma_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
 uptime_kuma_systemd_required_services_list_auto: []
 uptime_kuma_systemd_required_services_list_custom: []
+
+# List of systemd services that the Prometheus systemd service wants
+uptime_kuma_systemd_wanted_services_list: []
+
+uptime_kuma_container_dns_servers: "{{ uptime_kuma_container_dns_servers_default + uptime_kuma_container_dns_servers_custom }}"
+
+uptime_kuma_container_dns_servers_default:
+  # Cloudflare DNS
+  - '1.1.1.1'
+  - '1.0.0.1'
+
+  # Google DNS
+  - '8.8.8.8'
+  - '8.8.4.4'
+
+  # dns.quad9.net
+  - '9.9.9.9'
+  - '149.112.112.112'
+
+uptime_kuma_container_dns_servers_custom: []
+
+# Additional environment variables.
+uptime_kuma_environment_variables_additional_variables: ''

@@ -1,6 +1,10 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 ---
 
-- name: Fail if required uptime-kuma settings not defined
+- name: Fail if required Uptime Kuma settings not defined
   ansible.builtin.fail:
     msg: >
       You need to define a required configuration setting (`{{ item }}`).
@@ -13,17 +17,17 @@
     - uptime_kuma_path_prefix
     - uptime_kuma_container_network
 
-- name: Fail if uptime-kuma hosted at a subpath
+- name: Fail if Uptime Kuma hosted at a subpath
   ansible.builtin.fail:
     msg: >
-      uptime-kuma can only be hosted at the base path (`/`), not at a subpath like `{{ uptime_kuma_path_prefix }}`).
+      Uptime Kuma can only be hosted at the base path (`/`), not at a subpath like `{{ uptime_kuma_path_prefix }}`).
       See: https://github.com/louislam/uptime-kuma/issues/147
   when: "uptime_kuma_path_prefix != '/'"
 
-- name: Validate uptime-kuma Traefik settings
+- name: Validate Uptime Kuma Traefik settings
   when: uptime_kuma_container_labels_traefik_enabled | bool
   block:
-    - name: Fail if required uptime-kuma Traefik settings not defined
+    - name: Fail if required Uptime Kuma Traefik settings not defined
       ansible.builtin.fail:
         msg: >-
           You need to define a required configuration setting (`{{ item }}`).

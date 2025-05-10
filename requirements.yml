@@ -26,7 +26,7 @@
   version: v2.2.8-2
   name: miniflux
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-peertube.git
-  version: v7.1.1-0
+  version: v7.1.1-1
   name: peertube
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-radicale.git
   version: v3.5.2.0-1
@@ -41,7 +41,7 @@
   version: main
   name: ufw
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-uptime_kuma.git
-  version: v1.23.16-2
+  version: v1.23.16-3
   name: uptime_kuma
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-vaultwarden.git
   version: v1.33.2-7

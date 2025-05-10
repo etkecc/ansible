@@ -1,26 +1,30 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 ---
 
-- name: Perform uptime-kuma installation tasks
+- name: Perform Uptime Kuma installation tasks
   tags:
     - setup-all
     - setup-uptime-kuma
     - install-all
     - install-uptime-kuma
   block:
-    - name: Validate uptime-kuma configuration
+    - name: Validate Uptime Kuma configuration
       when: uptime_kuma_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
 
-    - name: Install uptime-kuma
+    - name: Install Uptime Kuma
       when: uptime_kuma_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
 
-- name: Perform uptime-kuma uninstallation tasks
+- name: Perform Uptime Kuma uninstallation tasks
   tags:
     - setup-all
     - setup-uptime-kuma
   block:
-    - name: Uninstall uptime-kuma
+    - name: Uninstall Uptime Kuma
       when: not uptime_kuma_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
