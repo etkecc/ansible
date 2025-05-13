@@ -145,7 +145,6 @@ if __name__ == "__main__":
         exit(0)
 
     with open(os.path.join(os.getcwd(), 'VERSIONS.diff.md'), 'w') as f:
-        f.write("**Stable Updates Published**\n\n")
         for component, old_version, new_version in added_or_changed_lines:
             if old_version == new_version or new_version is None:
                 continue
