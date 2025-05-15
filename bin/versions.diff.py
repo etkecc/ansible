@@ -162,6 +162,6 @@ if __name__ == "__main__":
             if old_version is None:
                 f.write(f"* {component_link}: {new_version_url} _new_\n")
             else:
-                f.write(f"* {component_link}: {old_version_url} -> {new_version_url}\n")
+                f.write(f"* {component_link}: {old_version_url} ⇾ {new_version_url}\n")
 
     print("VERSIONS.diff.md generated successfully")
