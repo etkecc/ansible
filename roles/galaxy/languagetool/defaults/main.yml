@@ -16,7 +16,7 @@ languagetool_base_path: "/{{ languagetool_identifier }}"
 languagetool_data_path: "{{ languagetool_base_path }}/data"
 
 # renovate: datasource=docker depName=erikvl87/languagetool
-languagetool_version: 6.5-dockerupdate-1
+languagetool_version: 6.6
 
 languagetool_uid: ''
 languagetool_gid: ''
