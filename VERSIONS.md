@@ -31,7 +31,7 @@
 * Firezone: 0.7.36
 * Fluffychat: v1.26.1
 * Funkwhale: 1.4.0
-* Gmessages: v0.6.1
+* Gmessages: v0.6.2
 * Go Neb: latest
 * Go Skype Bridge: latest
 * Googlechat: v0.5.2
@@ -77,7 +77,7 @@
 * Rageshake: 1.16.2
 * Registration: v0.7.2
 * Schildichat: 1.11.86-sc.0.test.0
-* Signal: v0.8.2
+* Signal: v0.8.3
 * Slack: v0.2.1
 * Sliding Sync: v0.99.19
 * Sms Bridge: 0.5.9
@@ -95,13 +95,13 @@
 * Telegram: v0.15.2
 * Traefik: v3.4.0
 * Traefik Certs Dumper: v2.10.0
-* Twitter: v0.4.0
+* Twitter: v0.4.1
 * Uptime Kuma: 1.23.16
 * User Verification Service: v3.0.0
 * Valkey: 8.1.1
 * Vaultwarden: 1.33.2
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
-* Whatsapp: v0.12.0
+* Whatsapp: v0.12.1
 * Wsproxy: latest
 * Wsproxy Syncproxy: latest
