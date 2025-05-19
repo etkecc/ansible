@@ -19,7 +19,7 @@ prometheus_config_path: "{{ prometheus_base_path }}/config"
 prometheus_data_path: "{{ prometheus_base_path }}/data"
 
 # renovate: datasource=docker depName=prom/prometheus versioning=semver
-prometheus_version: v3.3.1
+prometheus_version: v3.4.0
 
 prometheus_uid: ''
 prometheus_gid: ''
@@ -126,7 +126,7 @@ prometheus_http_header_content_permission_policy: "{{ 'interest-cohort=()' if pr
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
 prometheus_http_header_strict_transport_security: "max-age=31536000; includeSubDomains{{ '; preload' if prometheus_hsts_preload_enabled else '' }}"
 
-# Controls whether to prometheus a "Permissions-Policy interest-cohort=();" header along with all responses
+# Controls whether to send a "Permissions-Policy interest-cohort=();" header along with all responses
 #
 # Learn more about what it is here:
 # - https://www.eff.org/deeplinks/2021/03/googles-floc-terrible-idea

@@ -14,7 +14,7 @@
 * Cactus Comments: 0.9.0
 * Cactus Comments Client: 2.36.1
 * Chatgpt: 3.1.4
-* Cinny: v4.6.0
+* Cinny: v4.7.0
 * Container Socket Proxy: 0.3.0
 * Corporal: 3.1.4
 * Coturn: 4.6.2-r11
@@ -24,7 +24,7 @@
 * Draupnir: v2.2.0
 * Dynamic Dns: 4.0.0
 * Element: v1.11.100
-* Element Call: v0.10.0
+* Element Call: v0.11.0
 * Etherpad: 2.3.0
 * Exim Relay: 4.98.1-r0-2
 * Facebook: v0.5.1
@@ -39,7 +39,7 @@
 * Grafana: 11.6.1
 * Heisenbridge: 1.15.3
 * Honoroit: v0.9.28
-* Hookshot: 6.0.3
+* Hookshot: 7.0.0
 * Hydrogen: v0.5.1
 * Instagram: v0.3.1
 * Jitsi: stable-10184
@@ -47,7 +47,7 @@
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
 * Languagetool: 6.6-dockerupdate-1
 * Ldap Registration Proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
-* Linkding: 1.39.1
+* Linkding: 1.40.0
 * Linkedin: latest
 * Livekit Jwt Service: 0.2.3
 * Livekit Server: v1.8.4
@@ -69,7 +69,7 @@
 * Pantalaimon: 0.10.5
 * Peertube: v7.1.1
 * Postmoogle: v0.9.26
-* Prometheus: v3.3.1
+* Prometheus: v3.4.0
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.9.1
 * Prometheus Postgres Exporter: v0.17.1
@@ -86,10 +86,10 @@
 * Static Files: 2.36.1
 * Sygnal: v0.15.1
 * Synapse: v1.129.0
-* Synapse Admin: v0.10.4-etke40
+* Synapse Admin: v0.10.4-etke41
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4
-* Synapse Http Antispam Git: v0.3.0
+* Synapse Http Antispam Git: v0.4.0
 * Synapse Reverse Proxy Companion: 1.28.0-alpine
 * Synapse S3 Storage Provider: 1.5.0
 * Telegram: v0.15.2
