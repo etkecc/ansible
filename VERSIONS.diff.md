@@ -1,10 +1,12 @@
 * [Cinny](https://github.com/ajbura/cinny): [v4.6.0](https://github.com/ajbura/cinny/releases/tag/v4.6.0) ⇾ [v4.7.0](https://github.com/ajbura/cinny/releases/tag/v4.7.0)
-* [Element Call](https://github.com/element-hq/element-call): [v0.10.0](https://github.com/element-hq/element-call/releases/tag/v0.10.0) ⇾ [v0.11.0](https://github.com/element-hq/element-call/releases/tag/v0.11.0)
+* [Element](https://github.com/element-hq/element-web): [v1.11.100](https://github.com/element-hq/element-web/releases/tag/v1.11.100) ⇾ [v1.11.101](https://github.com/element-hq/element-web/releases/tag/v1.11.101)
+* [Element Call](https://github.com/element-hq/element-call): [v0.10.0](https://github.com/element-hq/element-call/releases/tag/v0.10.0) ⇾ [v0.11.1](https://github.com/element-hq/element-call/releases/tag/v0.11.1)
 * [Gmessages](https://github.com/mautrix/gmessages): [v0.6.1](https://github.com/mautrix/gmessages/releases/tag/v0.6.1) ⇾ [v0.6.2](https://github.com/mautrix/gmessages/releases/tag/v0.6.2)
 * [Hookshot](https://github.com/matrix-org/matrix-hookshot): [6.0.3](https://github.com/matrix-org/matrix-hookshot/releases/tag/6.0.3) ⇾ [7.0.0](https://github.com/matrix-org/matrix-hookshot/releases/tag/7.0.0)
 * [Linkding](https://github.com/sissbruecker/linkding): [1.39.1](https://github.com/sissbruecker/linkding/releases/tag/v1.39.1) ⇾ [1.40.0](https://github.com/sissbruecker/linkding/releases/tag/v1.40.0)
 * [Prometheus](https://github.com/prometheus/prometheus): [v3.3.1](https://github.com/prometheus/prometheus/releases/tag/v3.3.1) ⇾ [v3.4.0](https://github.com/prometheus/prometheus/releases/tag/v3.4.0)
 * [Signal](https://github.com/mautrix/signal): [v0.8.2](https://github.com/mautrix/signal/releases/tag/v0.8.2) ⇾ [v0.8.3](https://github.com/mautrix/signal/releases/tag/v0.8.3)
+* [Synapse](https://github.com/element-hq/synapse): [v1.129.0](https://github.com/element-hq/synapse/releases/tag/v1.129.0) ⇾ [v1.130.0](https://github.com/element-hq/synapse/releases/tag/v1.130.0)
 * [Synapse Admin](https://github.com/etkecc/synapse-admin): [v0.10.4-etke40](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.4-etke40) ⇾ [v0.10.4-etke41](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.4-etke41)
 * Synapse Http Antispam Git: v0.3.0 ⇾ v0.4.0
 * [Twitter](https://github.com/mautrix/twitter): [v0.4.0](https://github.com/mautrix/twitter/releases/tag/v0.4.0) ⇾ [v0.4.1](https://github.com/mautrix/twitter/releases/tag/v0.4.1)
