@@ -1,4 +1,5 @@
-* [Cinny](https://github.com/ajbura/cinny): [v4.6.0](https://github.com/ajbura/cinny/releases/tag/v4.6.0) ⇾ [v4.7.0](https://github.com/ajbura/cinny/releases/tag/v4.7.0)
+* [Alertmanager Receiver](https://github.com/metio/matrix-alertmanager-receiver): [2025.4.23](https://github.com/metio/matrix-alertmanager-receiver/releases/tag/2025.4.23) ⇾ [2025.5.21](https://github.com/metio/matrix-alertmanager-receiver/releases/tag/2025.5.21)
+* [Cinny](https://github.com/ajbura/cinny): [v4.6.0](https://github.com/ajbura/cinny/releases/tag/v4.6.0) ⇾ [v4.7.1](https://github.com/ajbura/cinny/releases/tag/v4.7.1)
 * [Element](https://github.com/element-hq/element-web): [v1.11.100](https://github.com/element-hq/element-web/releases/tag/v1.11.100) ⇾ [v1.11.101](https://github.com/element-hq/element-web/releases/tag/v1.11.101)
 * [Element Call](https://github.com/element-hq/element-call): [v0.10.0](https://github.com/element-hq/element-call/releases/tag/v0.10.0) ⇾ [v0.11.1](https://github.com/element-hq/element-call/releases/tag/v0.11.1)
 * [Gmessages](https://github.com/mautrix/gmessages): [v0.6.1](https://github.com/mautrix/gmessages/releases/tag/v0.6.1) ⇾ [v0.6.2](https://github.com/mautrix/gmessages/releases/tag/v0.6.2)
