@@ -52,7 +52,7 @@ traefik.http.routers.{{ radicale_identifier }}.tls={{ radicale_container_labels_
 traefik.http.routers.{{ radicale_identifier }}.tls.certResolver={{ radicale_container_labels_traefik_tls_certResolver }}
 {% endif %}
 
-traefik.http.services.{{ radicale_identifier }}.loadbalancer.server.port=5232
+traefik.http.services.{{ radicale_identifier }}.loadbalancer.server.port={{ radicale_server_http_port }}
 {% endif %}
 
 {{ radicale_container_labels_additional_labels }}

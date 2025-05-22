@@ -4,11 +4,14 @@
 
 ---
 
-- block:
-    - when: radicale_enabled | bool
+- name: Perform Radicale installation tasks
+  block:
+    - name: Validate Radicale configuration
+      when: radicale_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
 
-    - when: radicale_enabled | bool
+    - name: Install Radicale
+      when: radicale_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
   tags:
     - setup-all
@@ -16,8 +19,10 @@
     - install-all
     - install-radicale
 
-- block:
-    - when: not radicale_enabled | bool
+- name: Perform Radicale uninstallation tasks
+  block:
+    - name: Uninstall Radicale
+      when: not radicale_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
   tags:
     - setup-all

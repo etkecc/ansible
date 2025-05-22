@@ -6,6 +6,7 @@
 * [Hookshot](https://github.com/matrix-org/matrix-hookshot): [6.0.3](https://github.com/matrix-org/matrix-hookshot/releases/tag/6.0.3) ⇾ [7.0.0](https://github.com/matrix-org/matrix-hookshot/releases/tag/7.0.0)
 * [Linkding](https://github.com/sissbruecker/linkding): [1.39.1](https://github.com/sissbruecker/linkding/releases/tag/v1.39.1) ⇾ [1.40.0](https://github.com/sissbruecker/linkding/releases/tag/v1.40.0)
 * [Prometheus](https://github.com/prometheus/prometheus): [v3.3.1](https://github.com/prometheus/prometheus/releases/tag/v3.3.1) ⇾ [v3.4.0](https://github.com/prometheus/prometheus/releases/tag/v3.4.0)
+* [Radicale](https://github.com/tomsquest/docker-radicale): [3.5.2.0](https://github.com/tomsquest/docker-radicale/releases/tag/3.5.2.0) ⇾ [3.5.3.1](https://github.com/tomsquest/docker-radicale/releases/tag/3.5.3.1)
 * [Signal](https://github.com/mautrix/signal): [v0.8.2](https://github.com/mautrix/signal/releases/tag/v0.8.2) ⇾ [v0.8.3](https://github.com/mautrix/signal/releases/tag/v0.8.3)
 * [Synapse](https://github.com/element-hq/synapse): [v1.129.0](https://github.com/element-hq/synapse/releases/tag/v1.129.0) ⇾ [v1.130.0](https://github.com/element-hq/synapse/releases/tag/v1.130.0)
 * [Synapse Admin](https://github.com/etkecc/synapse-admin): [v0.10.4-etke40](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.4-etke40) ⇾ [v0.10.4-etke41](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.4-etke41)

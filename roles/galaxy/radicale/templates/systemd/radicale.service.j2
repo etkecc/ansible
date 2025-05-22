@@ -4,9 +4,8 @@ SPDX-FileCopyrightText: 2023 Slavi Pantaleev
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
 
-#jinja2: lstrip_blocks: "True"
 [Unit]
-Description=radicale ({{ radicale_identifier }})
+Description=Radicale ({{ radicale_identifier }})
 {% for service in radicale_systemd_required_services_list %}
 Requires={{ service }}
 After={{ service }}

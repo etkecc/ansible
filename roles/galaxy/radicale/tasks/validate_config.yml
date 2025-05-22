@@ -4,7 +4,7 @@
 
 ---
 
-- name: Fail if required radicale settings not defined
+- name: Fail if required Radicale settings not defined
   ansible.builtin.fail:
     msg: >
       You need to define a required configuration setting (`{{ item }}`).
@@ -19,7 +19,7 @@
 
 - when: radicale_container_labels_traefik_enabled | bool
   block:
-    - name: Fail if required radicale Traefik settings not defined
+    - name: Fail if required Radicale Traefik settings not defined
       ansible.builtin.fail:
         msg: >-
           You need to define a required configuration setting (`{{ item }}`).

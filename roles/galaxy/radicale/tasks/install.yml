@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: Ensure radicale paths exist
+- name: Ensure Radicale paths exist
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
@@ -17,14 +17,14 @@
     - "{{ radicale_data_path }}"
     - "{{ radicale_data_collections_path }}"
 
-- name: Convert radicale credentials to htpasswd entries
+- name: Convert Radicale credentials to htpasswd entries
   ansible.builtin.include_tasks: "{{ role_path }}/tasks/includes/convert_credentials_to_htpasswd.yml"
   with_items: "{{ radicale_credentials | unique }}"
   when: radicale_auth_type == 'htpasswd'
   loop_control:
     loop_var: credential_entry
 
-- name: Ensure radicale config files are present
+- name: Ensure Radicale configuration files installed
   ansible.builtin.template:
     src: "{{ role_path }}/templates/config/{{ item.path }}.j2"
     dest: "{{ radicale_config_path }}/{{ item.path }}"
@@ -36,7 +36,7 @@
     - { path: config, valid: true }
     - { path: htpasswd, valid: "{{ radicale_auth_type == 'htpasswd' }}" }
 
-- name: Ensure radicale support files installed
+- name: Ensure Radicale support files installed
   ansible.builtin.template:
     src: "{{ role_path }}/templates/{{ item }}.j2"
     dest: "{{ radicale_base_path }}/{{ item }}"
@@ -47,7 +47,7 @@
     - env
     - labels
 
-- name: Ensure radicale container image is pulled
+- name: Ensure Radicale container image is pulled
   community.docker.docker_image:
     name: "{{ radicale_container_image }}"
     source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
@@ -58,14 +58,15 @@
   delay: "{{ devture_playbook_help_container_retries_delay }}"
   until: result is not failed
 
-- name: Ensure radicale container network is created
+- name: Ensure Radicale container network is created
   community.general.docker_network:
     enable_ipv6: "{{ devture_systemd_docker_base_ipv6_enabled }}"
     name: "{{ radicale_container_network }}"
     driver: bridge
     driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
 
-- name: Ensure radicale systemd service is present
+- name: Ensure Radicale systemd service is present
   ansible.builtin.template:
     src: "{{ role_path }}/templates/systemd/radicale.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ radicale_identifier }}.service"
+    mode: 0644

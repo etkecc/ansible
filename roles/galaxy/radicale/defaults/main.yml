@@ -17,15 +17,15 @@ radicale_data_collections_path: "{{ radicale_data_path }}/{{ radicale_data_colle
 radicale_data_collections_subdir: collections
 
 # renovate: datasource=docker depName=tomsquest/docker-radicale
-radicale_version: 3.5.2.0
+radicale_version: 3.5.3.1
 
 radicale_uid: ''
 radicale_gid: ''
 
-# The hostname at which radicale is served.
+# The hostname at which Radicale is served.
 radicale_hostname: ''
 
-# The path at which radicale is served.
+# The path at which Radicale is served.
 # This value must either be `/` or not end with a slash (e.g. `/radicale`).
 radicale_path_prefix: /
 
@@ -38,6 +38,9 @@ radicale_container_image_force_pull: "{{ radicale_container_image.endswith(':lat
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 radicale_container_network: "{{ radicale_identifier }}"
+
+# The port number of the server
+radicale_server_http_port: 5232
 
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
