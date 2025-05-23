@@ -18,7 +18,7 @@ grafana_config_path: "{{ grafana_base_path }}/config"
 grafana_data_path: "{{ grafana_base_path }}/data"
 
 # renovate: datasource=docker depName=grafana/grafana-oss versioning=semver
-grafana_version: 11.6.1
+grafana_version: 11.6.2
 
 grafana_uid: ''
 grafana_gid: ''

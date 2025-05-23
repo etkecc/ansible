@@ -4,21 +4,26 @@
 
 ---
 
-- tags:
+- name: Perform Grafana installation tasks
+  block:
+    - name: Validate Grafana configuration
+      when: grafana_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+
+    - name: Install Grafana
+      when: grafana_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+  tags:
     - setup-all
     - setup-grafana
     - install-all
     - install-grafana
+
+- name: Perform Grafana uninstallation tasks
   block:
-    - when: grafana_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
-
-    - when: grafana_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
-
-- tags:
+    - name: Uninstall Grafana
+      when: not grafana_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
+  tags:
     - setup-all
     - setup-grafana
-  block:
-    - when: not grafana_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

@@ -5,11 +5,11 @@
 
 ---
 
-- name: Ensure grafana paths exists
+- name: Ensure Grafana paths exist
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    mode: "0750"
+    mode: 0750
     owner: "{{ grafana_uid }}"
     group: "{{ grafana_gid }}"
   with_items:
@@ -23,11 +23,11 @@
     - "{{ grafana_config_path }}/dashboards"
     - "{{ grafana_data_path }}"
 
-- name: Ensure Grafana support files present
+- name: Ensure Grafana support files installed
   ansible.builtin.template:
     src: "{{ role_path }}/templates/{{ item.src }}"
     dest: "{{ item.dst }}"
-    mode: "0440"
+    mode: 0440
     owner: "{{ grafana_uid }}"
     group: "{{ grafana_gid }}"
   with_items:
@@ -54,12 +54,12 @@
     - src: env.j2
       dst: "{{ grafana_base_path }}/env"
 
-- name: Ensure dashboard(s) downloaded
+- name: Ensure Grafana dashboard(s) downloaded
   ansible.builtin.get_url:
     url: "{{ item }}"
     dest: "{{ grafana_config_path }}/dashboards/"
     force: true
-    mode: "0440"
+    mode: 0440
     owner: "{{ grafana_uid }}"
     group: "{{ grafana_gid }}"
   with_items: "{{ grafana_dashboard_download_urls }}"
@@ -68,11 +68,11 @@
   delay: "{{ devture_playbook_help_geturl_retries_delay }}"
   until: result is not failed
 
-- name: Ensure dashboard templates installed
+- name: Ensure Grafana dashboard templates installed
   ansible.builtin.template:
     src: "{{ item.path }}"
     dest: "{{ grafana_config_path }}/provisioning/dashboards/{{ item.name }}"
-    mode: "0440"
+    mode: 0440
     owner: "{{ grafana_uid }}"
     group: "{{ grafana_gid }}"
   with_items: "{{ grafana_provisioning_dashboard_template_files }}"
@@ -96,8 +96,8 @@
     driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
   when: grafana_container_network != 'host'
 
-- name: Ensure Grafana systemd service installed
+- name: Ensure Grafana systemd service is present
   ansible.builtin.template:
     src: "{{ role_path }}/templates/systemd/grafana.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ grafana_identifier }}.service"
-    mode: "0644"
+    mode: 0644

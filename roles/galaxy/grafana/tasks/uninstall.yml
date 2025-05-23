@@ -11,19 +11,19 @@
 
 - when: grafana_service_stat.stat.exists | bool
   block:
-    - name: Ensure Grafana is stopped
+    - name: Ensure Grafana systemd service is stopped
       ansible.builtin.service:
         name: "{{ grafana_identifier }}"
         state: stopped
         enabled: false
         daemon_reload: true
 
-    - name: Ensure Grafana systemd service doesn't exist
+    - name: Ensure Grafana systemd service does not exist
       ansible.builtin.file:
-        path: "{{ devture_systemd_docker_base_systemd_path }}/{{ grafana_identifier }}"
+        path: "{{ devture_systemd_docker_base_systemd_path }}/{{ grafana_identifier }}.service"
         state: absent
 
-    - name: Ensure Grafana base path doesn't exist
+    - name: Ensure Grafana path does not exist
       ansible.builtin.file:
         path: "{{ grafana_base_path }}"
         state: absent
