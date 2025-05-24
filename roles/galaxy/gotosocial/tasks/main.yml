@@ -1,20 +1,18 @@
 # SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
+# SPDX-FileCopyrightText: 2024 Slavi Pantaleev
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
 
-- block:
-    - when: gotosocial_enabled | bool
+- name: Perform GoToSocial installation tasks
+  block:
+    - name: Validate GoToSocial configuration
+      when: gotosocial_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
-  tags:
-    - setup-all
-    - setup-gotosocial
-    - install-all
-    - install-gotosocial
 
-- block:
-    - when: gotosocial_enabled | bool
+    - name: Install GoToSocial
+      when: gotosocial_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
   tags:
     - setup-all
@@ -22,21 +20,27 @@
     - install-all
     - install-gotosocial
 
-- block:
-    - when: not gotosocial_enabled | bool
+- name: Perform GoToSocial uninstallation tasks
+  block:
+    - name: Uninstall GoToSocial
+      when: not gotosocial_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
   tags:
     - setup-all
     - setup-gotosocial
 
-- block:
-    - when: gotosocial_enabled | bool
+- name: Perform tasks to add users automatically to GoToSocial
+  block:
+    - name: Add users to GoToSocial automatically
+      when: gotosocial_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/add_users_auto.yml"
   tags:
     - ensure-gotosocial-users-created
     - ensure-users-created
 
-- block:
+- name: Perform tasks to add users manually to GoToSocial
+  block:
+    - name: Add users to GoToSocial manually
     - when: gotosocial_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/add_user_manual.yml"
   tags:

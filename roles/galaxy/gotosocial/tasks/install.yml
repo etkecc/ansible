@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
-# SPDX-FileCopyrightText: 2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
 
-- name: Ensure gotosocial path exists
+- name: Ensure GoToSocial paths exist
   ansible.builtin.file:
     path: "{{ item.path }}"
     state: directory
@@ -18,36 +18,37 @@
     - {path: "{{ gotosocial_customized_container_src_path }}", when: "{{ gotosocial_container_image_customizations_enabled }}"}
   when: item.when | bool
 
-- name: Ensure gotosocial data path exists
+- name: Ensure GoToSocial data path exists
   ansible.builtin.file:
-    path: "{{ item.path }}"
+    path: "{{ item }}"
     state: directory
     mode: 0755
     owner: "{{ gotosocial_uid }}"
     group: "{{ gotosocial_gid }}"
   with_items:
-    - {path: "{{ gotosocial_data_path }}", when: true}
+    - "{{ gotosocial_data_path }}"
 
-- name: Ensure gotosocial traefik labels are installed
+- name: Ensure GoToSocial support files installed
   ansible.builtin.template:
-    src: "{{ role_path }}/templates/labels.j2"
-    dest: "{{ gotosocial_config_path }}/labels"
+    src: "{{ role_path }}/templates/{{ item }}.j2"
+    dest: "{{ gotosocial_base_path }}/{{ item }}"
+    mode: 0640
     owner: "{{ gotosocial_uid }}"
     group: "{{ gotosocial_gid }}"
-    mode: 0640
+  with_items:
+    - env
+    - labels
 
-- name: Ensure gotosocial configuration is deployed
-  ansible.builtin.template:
-    src: "{{ role_path }}/templates/env.j2"
-    dest: "{{ gotosocial_config_path }}/env"
-    owner: "{{ gotosocial_uid }}"
-    group: "{{ gotosocial_gid }}"
-    mode: 0640
-
-- name: Ensure gotosocial container image is pulled
+- name: Ensure GoToSocial container image is pulled
   community.docker.docker_image:
     name: "{{ gotosocial_container_image }}"
     source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+    force_source: "{{ gotosocial_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else gotosocial_container_image_force_pull }}"
+  register: result
+  retries: "{{ devture_playbook_help_container_retries_count }}"
+  delay: "{{ devture_playbook_help_container_retries_delay }}"
+  until: result is not failed
 
 - name: Ensure customized GoToSocial container image is built
   when: gotosocial_container_image_customizations_enabled | bool
@@ -71,14 +72,14 @@
           path: "{{ gotosocial_customized_container_src_path }}"
           pull: true
 
-- name: Ensure gotosocial network is created in Docker
+- name: Ensure GoToSocial container network is created
   community.docker.docker_network:
     enable_ipv6: "{{ devture_systemd_docker_base_ipv6_enabled }}"
     name: "{{ gotosocial_container_network }}"
     driver: bridge
     driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
 
-- name: Ensure gotosocial.service installed
+- name: Ensure GoToSocial systemd service is present
   ansible.builtin.template:
     src: "{{ role_path }}/templates/systemd/gotosocial.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ gotosocial_identifier }}.service"

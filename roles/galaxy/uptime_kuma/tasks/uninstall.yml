@@ -22,3 +22,8 @@
       ansible.builtin.file:
         path: "{{ devture_systemd_docker_base_systemd_path }}/{{ uptime_kuma_identifier }}.service"
         state: absent
+
+    - name: Ensure Uptime Kuma path does not exist
+      ansible.builtin.file:
+        path: "{{ uptime_kuma_base_path }}"
+        state: absent

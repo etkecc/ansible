@@ -18,12 +18,12 @@
         enabled: false
         daemon_reload: true
 
-    - name: Ensure Vaultwarden systemd service does not exists
+    - name: Ensure Vaultwarden systemd service does not exist
       ansible.builtin.file:
         path: "{{ devture_systemd_docker_base_systemd_path }}/{{ vaultwarden_identifier }}.service"
         state: absent
 
-    - name: Ensure Vaultwarden path doesn't exist
+    - name: Ensure Vaultwarden path does not exist
       ansible.builtin.file:
         path: "{{ vaultwarden_base_path }}"
         state: absent

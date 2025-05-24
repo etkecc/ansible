@@ -19,7 +19,6 @@
       when: uptime_kuma_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
-
 - name: Perform Uptime Kuma uninstallation tasks
   tags:
     - setup-all

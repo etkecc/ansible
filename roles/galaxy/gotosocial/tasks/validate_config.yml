@@ -1,11 +1,21 @@
 # SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2024 Nikita Chernyi
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
 
-- name: Fail if required gotosocial settings not defined
+- name: (Deprecation) Catch and report renamed settings
+  ansible.builtin.fail:
+    msg: >-
+      Your configuration contains a variable, which now has a different name.
+      Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
+  when: "item.old in vars"
+  with_items:
+    - {'old': 'gotosocial_environment_variables_extension', 'new': 'gotosocial_environment_variables_additional_variables'}
+
+- name: Fail if required GoToSocial settings not defined
   ansible.builtin.fail:
     msg: >-
       You need to define a required configuration setting (`{{ item }}`) for using this role.

@@ -9,7 +9,7 @@
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    mode: "0750"
+    mode: 0750
     owner: "{{ vaultwarden_uid }}"
     group: "{{ vaultwarden_gid }}"
   with_items:
@@ -18,7 +18,7 @@
     - "{{ vaultwarden_cache_dir_path }}"
     - "{{ vaultwarden_ephemeral_dir_path }}"
 
-- name: Ensure Vaultwarden support files created
+- name: Ensure Vaultwarden support files installed
   ansible.builtin.template:
     src: "{{ role_path }}/templates/{{ item }}.j2"
     dest: "{{ vaultwarden_base_path }}/{{ item }}"
@@ -47,11 +47,11 @@
     driver: bridge
     driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
 
-- name: Ensure Vaultwarden systemd service installed
+- name: Ensure Vaultwarden systemd service is present
   ansible.builtin.template:
     src: "{{ role_path }}/templates/systemd/vaultwarden.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ vaultwarden_identifier }}.service"
-    mode: 0640
+    mode: 0644
 
 - name: Check if Vaultwarden config exists
   ansible.builtin.stat:

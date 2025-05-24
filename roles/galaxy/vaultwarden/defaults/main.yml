@@ -304,17 +304,17 @@ vaultwarden_config_experimental_client_feature_flags: ''
 
 # NOTE:
 # Additional environment variables for configuration can be discovered from https://github.com/dani-garcia/vaultwarden/blob/main/.env.template
-# and configured using vaultwarden_container_additional_environment_variables
+# and configured using vaultwarden_environment_variables_additional_variables
 
 # vaultwarden_max_json_mb the maximum size of uploaded JSON payloads.
 # This ultimately influences the json setting of vaultwarden_config_rocket_limits.
 # See: https://github.com/dani-garcia/vaultwarden/wiki/Changing-the-API-request-size-limit
 vaultwarden_max_json_mb: 10
 
-# vaultwarden_container_additional_environment_variables contains a multiline string with additional environment variables to pass to the container.
+# vaultwarden_environment_variables_additional_variables contains a multiline string with additional environment variables to pass to the container.
 #
 # Example:
-# vaultwarden_container_additional_environment_variables: |
+# vaultwarden_environment_variables_additional_variables: |
 #   VAR=1
 #   ANOTHER=value
-vaultwarden_container_additional_environment_variables: ''
+vaultwarden_environment_variables_additional_variables: ''

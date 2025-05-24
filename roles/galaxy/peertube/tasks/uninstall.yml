@@ -18,12 +18,12 @@
         enabled: false
         daemon_reload: true
 
-    - name: Ensure PeerTube systemd service does not exists
+    - name: Ensure PeerTube systemd service does not exist
       ansible.builtin.file:
         path: "{{ devture_systemd_docker_base_systemd_path }}/{{ peertube_identifier }}.service"
         state: absent
 
-    - name: Ensure PeerTube path doesn't exist
+    - name: Ensure PeerTube path does not exist
       ansible.builtin.file:
         path: "{{ peertube_base_path }}"
         state: absent

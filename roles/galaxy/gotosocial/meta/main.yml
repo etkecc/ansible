@@ -1,7 +1,3 @@
-# SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
-#
-# SPDX-License-Identifier: AGPL-3.0-or-later
-
 galaxy_info:
   role_name: gotosocial
   author: Julian-Samuel Gebühr

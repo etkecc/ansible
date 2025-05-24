@@ -4,11 +4,14 @@
 
 ---
 
-- block:
-    - when: peertube_enabled | bool
+- name: Perform PeerTube installation tasks
+  block:
+    - name: Validate PeerTube configuration
+      when: peertube_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
 
-    - when: peertube_enabled | bool
+    - name: Install PeerTube
+      when: peertube_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
   tags:
     - setup-all
@@ -16,8 +19,10 @@
     - install-all
     - install-peertube
 
-- block:
-    - when: not peertube_enabled | bool
+- name: Perform PeerTube uninstallation tasks
+  block:
+    - name: Uninstall PeerTube
+      when: not peertube_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
   tags:
     - setup-all
