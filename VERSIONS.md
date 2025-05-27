@@ -57,7 +57,7 @@
 * Maubot: v0.5.2
 * Meta Instagram: v0.4.6
 * Meta Messenger: v0.4.6
-* Miniflux: 2.2.8
+* Miniflux: 2.2.9
 * Mjolnir: v1.10.0
 * Mx Puppet Discord: v0.1.1
 * Mx Puppet Groupme: 533cccc8
@@ -99,7 +99,7 @@
 * Uptime Kuma: 1.23.16
 * User Verification Service: v3.0.0
 * Valkey: 8.1.1
-* Vaultwarden: 1.34.0
+* Vaultwarden: 1.34.1
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
 * Whatsapp: v0.12.1
