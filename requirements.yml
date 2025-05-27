@@ -23,7 +23,7 @@
   version: v1.40.0-0
   name: linkding
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-miniflux.git
-  version: v2.2.8-4
+  version: v2.2.9-0
   name: miniflux
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-peertube.git
   version: v7.1.1-3

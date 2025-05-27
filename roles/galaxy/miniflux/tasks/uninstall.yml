@@ -18,12 +18,12 @@
         enabled: false
         daemon_reload: true
 
-    - name: Ensure Miniflux systemd service does not exists
+    - name: Ensure Miniflux systemd service does not exist
       ansible.builtin.file:
         path: "{{ devture_systemd_docker_base_systemd_path }}/{{ miniflux_identifier }}.service"
         state: absent
 
-    - name: Ensure Miniflux path doesn't exist
+    - name: Ensure Miniflux path does not exist
       ansible.builtin.file:
         path: "{{ miniflux_base_path }}"
         state: absent

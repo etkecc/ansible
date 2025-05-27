@@ -4,7 +4,7 @@
 
 ---
 
-- name: Ensure Miniflux paths exist
+- name: Ensure Miniflux path exists
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
