@@ -22,7 +22,7 @@ vaultwarden_cache_dir_path: "{{ vaultwarden_base_path }}/cache"
 vaultwarden_ephemeral_dir_path: "{{ vaultwarden_base_path }}/ephemeral"
 
 # renovate: datasource=docker depName=ghcr.io/dani-garcia/vaultwarden versioning=semver
-vaultwarden_version: 1.34.0
+vaultwarden_version: 1.34.1
 
 vaultwarden_uid: ''
 vaultwarden_gid: ''
