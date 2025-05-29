@@ -24,7 +24,7 @@
 * Draupnir: v2.2.0
 * Dynamic Dns: 4.0.0
 * Element: v1.11.101
-* Element Call: v0.11.1
+* Element Call: v0.12.0
 * Etherpad: 2.3.0
 * Exim Relay: 4.98.1-r0-2
 * Facebook: v0.5.1
@@ -93,7 +93,7 @@
 * Synapse Reverse Proxy Companion: 1.28.0-alpine
 * Synapse S3 Storage Provider: 1.5.0
 * Telegram: v0.15.2
-* Traefik: v3.4.0
+* Traefik: v3.4.1
 * Traefik Certs Dumper: v2.10.0
 * Twitter: v0.4.1
 * Uptime Kuma: 1.23.16

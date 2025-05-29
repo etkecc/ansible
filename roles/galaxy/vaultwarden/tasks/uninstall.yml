@@ -3,13 +3,13 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: Check existence of Vaultwarden systemd service
   ansible.builtin.stat:
     path: "{{ devture_systemd_docker_base_systemd_path }}/{{ vaultwarden_identifier }}.service"
   register: vaultwarden_service_stat
 
-- when: vaultwarden_service_stat.stat.exists | bool
+- name: Uninstall Vaultwarden systemd services and files
+  when: vaultwarden_service_stat.stat.exists | bool
   block:
     - name: Ensure Vaultwarden systemd service is stopped
       ansible.builtin.service:

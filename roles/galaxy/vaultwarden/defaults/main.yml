@@ -235,7 +235,7 @@ vaultwarden_config_show_password_hint: false
 vaultwarden_config_require_device_email: false
 
 # vaultwarden_config_admin_token controls the ADMIN_TOKEN environment variable,
-# which (if set) exposes an /admin page, where people possesing this token can perform administrative actions.
+# which (if set) exposes an /admin page, where people possessing this token can perform administrative actions.
 # See: https://github.com/dani-garcia/vaultwarden/wiki/Enabling-admin-page
 vaultwarden_config_admin_token: ''
 

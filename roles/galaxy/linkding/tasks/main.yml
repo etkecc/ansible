@@ -1,23 +1,28 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2023 kinduff
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- block:
-    - when: linkding_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
-
-    - when: linkding_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+- name: Perform linkding installation tasks
   tags:
     - setup-all
     - setup-linkding
     - install-all
     - install-linkding
+  block:
+    - name: Validate linkding configuration
+      when: linkding_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Install linkding
+      when: linkding_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
-- block:
-    - when: not linkding_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
+- name: Perform linkding uninstallation tasks
   tags:
     - setup-all
     - setup-linkding
+  block:
+    - name: Uninstall linkding
+      when: not linkding_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

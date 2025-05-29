@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: (Deprecation) Catch and report renamed settings
   ansible.builtin.fail:
     msg: >-
@@ -11,19 +10,19 @@
       Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
   when: "item.old in vars"
   with_items:
-    - {'old': 'vaultwarden_container_labels_traefik_rule_websocket', 'new': '<Removed. See https://github.com/dani-garcia/vaultwarden/pull/3404>'}
-    - {'old': 'vaultwarden_config_websocket_enabled', 'new': '<Removed. See https://github.com/dani-garcia/vaultwarden/pull/3404>'}
-    - {'old': 'vaultwarden_config_websocket_port', 'new': '<Removed. See https://github.com/dani-garcia/vaultwarden/pull/3404>'}
-    - {'old': 'vaultwarden_container_websocket_bind_port', 'new': '<Removed. See https://github.com/dani-garcia/vaultwarden/pull/3404>'}
-    - {'old': 'vaultwarden_systemd_required_systemd_services_list', 'new': 'vaultwarden_systemd_required_services_list'}
-    - {'old': 'vaultwarden_systemd_required_systemd_services_list_default', 'new': 'vaultwarden_systemd_required_services_list_default'}
-    - {'old': 'vaultwarden_systemd_required_systemd_services_list_auto', 'new': 'vaultwarden_systemd_required_services_list_auto'}
-    - {'old': 'vaultwarden_systemd_required_systemd_services_list_custom', 'new': 'vaultwarden_systemd_required_services_list_custom'}
-    - {'old': 'vaultwarden_systemd_wanted_systemd_services_list', 'new': 'vaultwarden_systemd_wanted_services_list'}
-    - {'old': 'vaultwarden_systemd_wanted_systemd_services_list_default', 'new': 'vaultwarden_systemd_wanted_services_list_default'}
-    - {'old': 'vaultwarden_systemd_wanted_systemd_services_list_auto', 'new': 'vaultwarden_systemd_wanted_services_list_auto'}
-    - {'old': 'vaultwarden_systemd_wanted_systemd_services_list_custom', 'new': 'vaultwarden_systemd_wanted_services_list_custom'}
-    - {'old': 'vaultwarden_container_additional_environment_variables', 'new': 'vaultwarden_environment_variables_additional_variables'}
+    - { "old": "vaultwarden_container_labels_traefik_rule_websocket", "new": "<Removed. See https://github.com/dani-garcia/vaultwarden/pull/3404>" }
+    - { "old": "vaultwarden_config_websocket_enabled", "new": "<Removed. See https://github.com/dani-garcia/vaultwarden/pull/3404>" }
+    - { "old": "vaultwarden_config_websocket_port", "new": "<Removed. See https://github.com/dani-garcia/vaultwarden/pull/3404>" }
+    - { "old": "vaultwarden_container_websocket_bind_port", "new": "<Removed. See https://github.com/dani-garcia/vaultwarden/pull/3404>" }
+    - { "old": "vaultwarden_systemd_required_systemd_services_list", "new": "vaultwarden_systemd_required_services_list" }
+    - { "old": "vaultwarden_systemd_required_systemd_services_list_default", "new": "vaultwarden_systemd_required_services_list_default" }
+    - { "old": "vaultwarden_systemd_required_systemd_services_list_auto", "new": "vaultwarden_systemd_required_services_list_auto" }
+    - { "old": "vaultwarden_systemd_required_systemd_services_list_custom", "new": "vaultwarden_systemd_required_services_list_custom" }
+    - { "old": "vaultwarden_systemd_wanted_systemd_services_list", "new": "vaultwarden_systemd_wanted_services_list" }
+    - { "old": "vaultwarden_systemd_wanted_systemd_services_list_default", "new": "vaultwarden_systemd_wanted_services_list_default" }
+    - { "old": "vaultwarden_systemd_wanted_systemd_services_list_auto", "new": "vaultwarden_systemd_wanted_services_list_auto" }
+    - { "old": "vaultwarden_systemd_wanted_systemd_services_list_custom", "new": "vaultwarden_systemd_wanted_services_list_custom" }
+    - { "old": "vaultwarden_container_additional_environment_variables", "new": "vaultwarden_environment_variables_additional_variables" }
 
 - name: Fail if required Vaultwarden settings not defined
   ansible.builtin.fail:
@@ -31,10 +30,11 @@
       You need to define a required configuration setting (`{{ item.name }}`) for using this role.
   when: "item.when | bool and vars[item.name] | length == 0"
   with_items:
-    - {'name': 'vaultwarden_hostname', when: true}
-    - {'name': 'vaultwarden_uid', when: true}
-    - {'name': 'vaultwarden_gid', when: true}
-    - {'name': 'vaultwarden_container_labels_traefik_compression_middleware_name', when: "{{ vaultwarden_container_labels_traefik_compression_middleware_enabled }}"}
+    - { "name": "vaultwarden_hostname", when: true }
+    - { "name": "vaultwarden_uid", when: true }
+    - { "name": "vaultwarden_gid", when: true }
+    - "name": "vaultwarden_container_labels_traefik_compression_middleware_name"
+      when: "{{ vaultwarden_container_labels_traefik_compression_middleware_enabled }}"
 
 - name: Fail if required Vaultwarden + Postgres integration settings not defined
   ansible.builtin.fail:
@@ -45,7 +45,8 @@
     - vaultwarden_database_username
     - vaultwarden_database_password
 
-- when: vaultwarden_container_labels_traefik_enabled | bool
+- name: Run if Traefik is enabled
+  when: vaultwarden_container_labels_traefik_enabled | bool
   block:
     - name: Fail if required Vaultwarden Traefik settings not defined
       ansible.builtin.fail:

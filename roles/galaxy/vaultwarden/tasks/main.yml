@@ -3,27 +3,25 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: Perform Vaultwarden installation tasks
-  block:
-    - name: Validate Vaultwarden configuration
-      when: vaultwarden_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
-
-    - name: Install Vaultwarden
-      when: vaultwarden_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
   tags:
     - setup-all
     - setup-vaultwarden
     - install-all
     - install-vaultwarden
+  block:
+    - name: Validate Vaultwarden configuration
+      when: vaultwarden_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Install Vaultwarden
+      when: vaultwarden_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
 - name: Perform Vaultwarden uninstallation tasks
+  tags:
+    - setup-all
+    - setup-vaultwarden
   block:
     - name: Uninstall Vaultwarden
       when: not vaultwarden_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
-  tags:
-    - setup-all
-    - setup-vaultwarden

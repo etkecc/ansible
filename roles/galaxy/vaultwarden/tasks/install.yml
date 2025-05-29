@@ -4,12 +4,11 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: Ensure Vaultwarden paths exist
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    mode: 0750
+    mode: "0750"
     owner: "{{ vaultwarden_uid }}"
     group: "{{ vaultwarden_gid }}"
   with_items:
@@ -24,7 +23,7 @@
     dest: "{{ vaultwarden_base_path }}/{{ item }}"
     owner: "{{ vaultwarden_uid }}"
     group: "{{ vaultwarden_gid }}"
-    mode: 0640
+    mode: "0640"
   with_items:
     - env
     - labels
@@ -51,7 +50,7 @@
   ansible.builtin.template:
     src: "{{ role_path }}/templates/systemd/vaultwarden.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ vaultwarden_identifier }}.service"
-    mode: 0644
+    mode: "0644"
 
 - name: Check if Vaultwarden config exists
   ansible.builtin.stat:
