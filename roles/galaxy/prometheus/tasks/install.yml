@@ -4,12 +4,11 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: Ensure Prometheus paths exist
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    mode: 0750
+    mode: "0750"
     owner: "{{ prometheus_uid }}"
     group: "{{ prometheus_gid }}"
   with_items:
@@ -21,7 +20,7 @@
   ansible.builtin.copy:
     content: "{{ prometheus_configuration | to_nice_yaml(indent=2, width=999999) }}"
     dest: "{{ prometheus_config_path }}/prometheus.yml"
-    mode: 0644
+    mode: "0644"
     owner: "{{ prometheus_uid }}"
     group: "{{ prometheus_gid }}"
 
@@ -29,9 +28,9 @@
   ansible.builtin.template:
     src: "{{ role_path }}/templates/{{ item }}.j2"
     dest: "{{ prometheus_base_path }}/{{ item }}"
+    mode: "0640"
     owner: "{{ prometheus_uid }}"
     group: "{{ prometheus_gid }}"
-    mode: 0640
   with_items:
     - labels
 
@@ -57,4 +56,4 @@
   ansible.builtin.template:
     src: "{{ role_path }}/templates/systemd/prometheus.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ prometheus_identifier }}.service"
-    mode: 0644
+    mode: "0644"

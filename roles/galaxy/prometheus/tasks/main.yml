@@ -3,24 +3,25 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
-- name: Run Prometheus installation tasks
+- name: Perform Prometheus installation tasks
   tags:
     - setup-all
     - setup-prometheus
     - install-all
     - install-prometheus
   block:
-    - when: prometheus_enabled | bool
+    - name: Validate Prometheus configuration
+      when: prometheus_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
-
-    - when: prometheus_enabled | bool
+    - name: Install Prometheus
+      when: prometheus_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
-- name: Run Prometheus uninstallation tasks
+- name: Perform Prometheus uninstallation tasks
   tags:
     - setup-all
     - setup-prometheus
   block:
-    - when: not prometheus_enabled | bool
+    - name: Uninstall Prometheus
+      when: not prometheus_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

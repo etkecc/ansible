@@ -1,6 +1,6 @@
 * Alertmanager Receiver: 2025.5.21
 * Appservice Discord: v4.0.0
-* Appservice Draupnir For All: v2.2.0
+* Appservice Draupnir For All: v2.3.1
 * Appservice Irc: 1.0.1
 * Appservice Kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * Appservice Slack: 2.1.2
@@ -21,7 +21,7 @@
 * Dimension: latest
 * Discord: v0.7.3
 * Docker Compose: v2.32.1
-* Draupnir: v2.2.0
+* Draupnir: v2.3.1
 * Dynamic Dns: 4.0.0
 * Element: v1.11.101
 * Element Call: v0.12.0
@@ -69,7 +69,7 @@
 * Pantalaimon: 0.10.5
 * Peertube: v7.1.1
 * Postmoogle: v0.9.26
-* Prometheus: v3.4.0
+* Prometheus: v3.4.1
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.9.1
 * Prometheus Postgres Exporter: v0.17.1

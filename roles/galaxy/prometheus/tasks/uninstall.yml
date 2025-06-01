@@ -3,13 +3,13 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: Check existence of Prometheus systemd service
   ansible.builtin.stat:
     path: "{{ devture_systemd_docker_base_systemd_path }}/{{ prometheus_identifier }}.service"
   register: prometheus_service_stat
 
-- when: prometheus_service_stat.stat.exists | bool
+- name: Uninstall Prometheus systemd services and files
+  when: prometheus_service_stat.stat.exists | bool
   block:
     - name: Ensure Prometheus systemd service is stopped
       ansible.builtin.service:
@@ -18,13 +18,12 @@
         enabled: false
         daemon_reload: true
 
-    - name: Ensure Prometheus systemd service does not exists
+    - name: Ensure Prometheus systemd service does not exist
       ansible.builtin.file:
         path: "{{ devture_systemd_docker_base_systemd_path }}/{{ prometheus_identifier }}.service"
         state: absent
 
-    - name: Ensure Prometheus files deleted
+    - name: Ensure Prometheus path does not exist
       ansible.builtin.file:
         path: "{{ prometheus_base_path }}"
         state: absent
-
