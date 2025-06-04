@@ -1,5 +1,7 @@
 * [Appservice Draupnir For All](https://github.com/the-draupnir-project/Draupnir): [v2.2.0](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.2.0) ⇾ [v2.3.1](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.3.1)
+* [Cactus Comments Client](https://gitlab.com/cactus-comments/cactus-client): [2.36.1](https://gitlab.com/cactus-comments/cactus-client/-/tags/2.36.1) ⇾ [2.37.0](https://gitlab.com/cactus-comments/cactus-client/-/tags/2.37.0)
 * [Draupnir](https://github.com/the-draupnir-project/Draupnir): [v2.2.0](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.2.0) ⇾ [v2.3.1](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.3.1)
 * [Element](https://github.com/element-hq/element-web): [v1.11.101](https://github.com/element-hq/element-web/releases/tag/v1.11.101) ⇾ [v1.11.102](https://github.com/element-hq/element-web/releases/tag/v1.11.102)
 * [Prometheus](https://github.com/prometheus/prometheus): [v3.4.0](https://github.com/prometheus/prometheus/releases/tag/v3.4.0) ⇾ [v3.4.1](https://github.com/prometheus/prometheus/releases/tag/v3.4.1)
+* Static Files: 2.36.1 ⇾ 2.37.0
 * [Synapse](https://github.com/element-hq/synapse): [v1.130.0](https://github.com/element-hq/synapse/releases/tag/v1.130.0) ⇾ [v1.131.0](https://github.com/element-hq/synapse/releases/tag/v1.131.0)
