@@ -5,13 +5,13 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: Check existence of LiveKit Server service
   ansible.builtin.stat:
     path: "{{ devture_systemd_docker_base_systemd_path }}/{{ livekit_server_identifier }}.service"
   register: livekit_server_service_stat
 
-- when: livekit_server_service_stat.stat.exists | bool
+- name: Uninstall LiveKit Server systemd services and files
+  when: livekit_server_service_stat.stat.exists | bool
   block:
     - name: Ensure LiveKit Server is stopped
       ansible.builtin.service:
@@ -20,12 +20,12 @@
         enabled: false
         daemon_reload: true
 
-    - name: Ensure LiveKit Server systemd service doesn't exist
+    - name: Ensure LiveKit Server systemd service does not exist
       ansible.builtin.file:
         path: "{{ devture_systemd_docker_base_systemd_path }}/{{ livekit_server_identifier }}.service"
         state: absent
 
-    - name: Ensure LiveKit Server paths don't exist
+    - name: Ensure LiveKit Server path does not exist
       ansible.builtin.file:
         path: "{{ livekit_server_base_path }}"
         state: absent

@@ -5,22 +5,25 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
-- tags:
+- name: Perform LiveKit Server installation tasks
+  tags:
     - setup-all
     - setup-livekit-server
     - install-all
     - install-livekit-server
   block:
-    - when: livekit_server_enabled | bool
+    - name: Validate LiveKit Server configuration
+      when: livekit_server_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
-
-    - when: livekit_server_enabled | bool
+    - name: Install LiveKit Server
+      when: livekit_server_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
-- tags:
+- name: Perform LiveKit Server uninstallation tasks
+  tags:
     - setup-all
     - setup-livekit-server
   block:
-    - when: not livekit_server_enabled | bool
+    - name: Uninstall LiveKit Server
+      when: not livekit_server_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

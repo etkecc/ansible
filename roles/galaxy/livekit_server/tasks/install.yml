@@ -5,25 +5,24 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: Ensure LiveKit Server paths exist
   ansible.builtin.file:
     path: "{{ item.path }}"
     state: directory
-    mode: 0750
+    mode: "0750"
     owner: "{{ livekit_server_uid }}"
     group: "{{ livekit_server_gid }}"
   with_items:
-    - {path: "{{ livekit_server_base_path }}", when: true}
-    - {path: "{{ livekit_server_config_path }}", when: true}
-    - {path: "{{ livekit_server_container_src_files_path }}", when: "{{ livekit_server_container_image_self_build }}"}
+    - { path: "{{ livekit_server_base_path }}", when: true }
+    - { path: "{{ livekit_server_config_path }}", when: true }
+    - { path: "{{ livekit_server_container_src_files_path }}", when: "{{ livekit_server_container_image_self_build }}" }
   when: "item.when | bool"
 
 - name: Ensure LiveKit Server configuration installed
   ansible.builtin.copy:
     content: "{{ livekit_server_configuration | to_nice_yaml(indent=2, width=999999) }}"
     dest: "{{ livekit_server_config_path }}/config.yaml"
-    mode: 0640
+    mode: "0640"
     owner: "{{ livekit_server_uid }}"
     group: "{{ livekit_server_gid }}"
 
@@ -31,7 +30,7 @@
   ansible.builtin.template:
     src: "{{ role_path }}/templates/labels.j2"
     dest: "{{ livekit_server_base_path }}/labels"
-    mode: 0640
+    mode: "0640"
     owner: "{{ livekit_server_uid }}"
     group: "{{ livekit_server_gid }}"
 
@@ -47,7 +46,8 @@
   delay: "{{ devture_playbook_help_container_retries_delay }}"
   until: result is not failed
 
-- when: "livekit_server_container_image_self_build | bool"
+- name: Run if self-building of LiveKit Server container image is enabled
+  when: "livekit_server_container_image_self_build | bool"
   block:
     - name: Ensure LiveKit Server repository is present on self-build
       ansible.builtin.git:
@@ -81,4 +81,4 @@
   ansible.builtin.template:
     src: "{{ role_path }}/templates/systemd/livekit-server.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ livekit_server_identifier }}.service"
-    mode: 0644
+    mode: "0644"
