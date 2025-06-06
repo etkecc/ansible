@@ -24,12 +24,12 @@
 * Draupnir: v2.3.1
 * Dynamic Dns: 4.0.0
 * Element: v1.11.102
-* Element Call: v0.12.0
+* Element Call: v0.12.2
 * Etherpad: 2.3.0
 * Exim Relay: 4.98.1-r0-2
 * Facebook: v0.5.1
 * Firezone: 0.7.36
-* Fluffychat: v1.26.1
+* Fluffychat: v1.27.0
 * Funkwhale: 1.4.0
 * Gmessages: v0.6.2
 * Go Neb: latest
@@ -42,7 +42,7 @@
 * Hookshot: 7.0.0
 * Hydrogen: v0.5.1
 * Instagram: v0.3.1
-* Jitsi: stable-10184
+* Jitsi: stable-10314
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
 * Languagetool: 6.6-dockerupdate-1
