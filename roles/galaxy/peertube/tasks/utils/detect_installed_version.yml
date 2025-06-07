@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: Initialize PeerTube version determination variables (default to empty)
   ansible.builtin.set_fact:
     peertube_detected_existing_installation: false
@@ -15,9 +14,11 @@
     path: "{{ peertube_base_path }}"
   register: result_base_path_stat
 
-- when: result_base_path_stat.stat.exists | bool
+- name: Run if PeerTube installation exists
+  when: result_base_path_stat.stat.exists | bool
   block:
-    - ansible.builtin.set_fact:
+    - name: Set facts related to existing installation
+      ansible.builtin.set_fact:
         peertube_detected_existing_installation: true
 
     - name: Determine existing PeerTube version (check INSTALLED_VERSION file)
@@ -25,7 +26,8 @@
         path: "{{ peertube_version_marker_file_path }}"
       register: result_installed_version_stat
 
-    - ansible.builtin.set_fact:
+    - name: Set facts related to existing version
+      ansible.builtin.set_fact:
         peertube_detected_existing_version: true
       when: "result_installed_version_stat.stat.exists"
 

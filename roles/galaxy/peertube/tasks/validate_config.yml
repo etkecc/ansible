@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: (Deprecation) Catch and report renamed PeerTube settings
   ansible.builtin.fail:
     msg: >-
@@ -11,9 +10,9 @@
       Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
   when: "item.old in vars"
   with_items:
-    - {'old': 'peertube_config_object_storage_videos_bucket_name', 'new': 'peertube_config_object_storage_web_videos_bucket_name'}
-    - {'old': 'peertube_config_object_storage_videos_prefix', 'new': 'peertube_config_object_storage_web_videos_prefix'}
-    - {'old': 'peertube_config_object_storage_videos_base_url', 'new': 'peertube_config_object_storage_web_videos_base_url'}
+    - { "old": "peertube_config_object_storage_videos_bucket_name", "new": "peertube_config_object_storage_web_videos_bucket_name" }
+    - { "old": "peertube_config_object_storage_videos_prefix", "new": "peertube_config_object_storage_web_videos_prefix" }
+    - { "old": "peertube_config_object_storage_videos_base_url", "new": "peertube_config_object_storage_web_videos_base_url" }
 
 - name: Fail if required PeerTube settings not defined
   ansible.builtin.fail:
@@ -48,7 +47,8 @@
     - peertube_config_object_storage_streaming_playlists_bucket_name
     - peertube_config_object_storage_web_videos_bucket_name
 
-- when: peertube_container_labels_traefik_enabled | bool
+- name: Run if Traefik is enabled
+  when: peertube_container_labels_traefik_enabled | bool
   block:
     - name: Fail if required PeerTube Traefik settings not defined
       ansible.builtin.fail:
@@ -71,5 +71,5 @@
     - name: Fail if PeerTube hosted at a subpath
       ansible.builtin.fail:
         msg: >
-         PeerTube can only be hosted at the base path (`/`), not at a subpath like `{{ peertube_container_labels_traefik_path_prefix }}`).
+          PeerTube can only be hosted at the base path (`/`), not at a subpath like `{{ peertube_container_labels_traefik_path_prefix }}`).
       when: "peertube_container_labels_traefik_path_prefix != '/'"

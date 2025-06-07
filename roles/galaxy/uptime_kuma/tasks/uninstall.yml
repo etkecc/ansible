@@ -8,7 +8,7 @@
     path: "{{ devture_systemd_docker_base_systemd_path }}/{{ uptime_kuma_identifier }}.service"
   register: uptime_kuma_service_stat
 
-- name: Stop and uninstall Uptime Kuma systemd service
+- name: Uninstall Uptime Kuma systemd services and files
   when: uptime_kuma_service_stat.stat.exists | bool
   block:
     - name: Ensure Uptime Kuma systemd service is stopped

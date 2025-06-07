@@ -3,27 +3,24 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: Perform Miniflux installation tasks
-  block:
-    - name: Validate Miniflux configuration
-      when: miniflux_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
-
-    - name: Install Miniflux
-      when: miniflux_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+  when: miniflux_enabled | bool
   tags:
     - setup-all
     - setup-miniflux
     - install-all
     - install-miniflux
+  block:
+    - name: Validate Miniflux configuration
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Install Miniflux
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
 - name: Perform Miniflux uninstallation tasks
-  block:
-    - name: Uninstall Miniflux
-      when: not miniflux_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
+  when: not miniflux_enabled | bool
   tags:
     - setup-all
     - setup-miniflux
+  block:
+    - name: Uninstall Miniflux
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

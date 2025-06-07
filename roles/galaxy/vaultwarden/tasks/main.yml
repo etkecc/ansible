@@ -4,6 +4,7 @@
 
 ---
 - name: Perform Vaultwarden installation tasks
+  when: vaultwarden_enabled | bool
   tags:
     - setup-all
     - setup-vaultwarden
@@ -11,17 +12,15 @@
     - install-vaultwarden
   block:
     - name: Validate Vaultwarden configuration
-      when: vaultwarden_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
     - name: Install Vaultwarden
-      when: vaultwarden_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
 - name: Perform Vaultwarden uninstallation tasks
+  when: not vaultwarden_enabled | bool
   tags:
     - setup-all
     - setup-vaultwarden
   block:
     - name: Uninstall Vaultwarden
-      when: not vaultwarden_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

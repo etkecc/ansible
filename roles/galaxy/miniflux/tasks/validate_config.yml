@@ -3,24 +3,25 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: Fail if required Miniflux settings not defined
   ansible.builtin.fail:
     msg: >
       You need to define a required configuration setting (`{{ item.name }}`).
   when: "item.when | bool and vars[item.name] | length == 0"
   with_items:
-    - {'name': 'miniflux_identifier', when: true}
-    - {'name': 'miniflux_uid', when: true}
-    - {'name': 'miniflux_gid', when: true}
-    - {'name': 'miniflux_hostname', when: true}
-    - {'name': 'miniflux_path_prefix', when: true}
-    - {'name': 'miniflux_container_network', when: true}
-    - {'name': 'miniflux_database_hostname', when: true}
-    - {'name': 'miniflux_database_password', when: true}
-    - {'name': 'miniflux_container_labels_traefik_compression_middleware_name', when: "{{ miniflux_container_labels_traefik_compression_middleware_enabled }}"}
+    - { "name": "miniflux_identifier", when: true }
+    - { "name": "miniflux_uid", when: true }
+    - { "name": "miniflux_gid", when: true }
+    - { "name": "miniflux_hostname", when: true }
+    - { "name": "miniflux_path_prefix", when: true }
+    - { "name": "miniflux_container_network", when: true }
+    - { "name": "miniflux_database_hostname", when: true }
+    - { "name": "miniflux_database_password", when: true }
+    - "name": "miniflux_container_labels_traefik_compression_middleware_name"
+      when: "{{ miniflux_container_labels_traefik_compression_middleware_enabled }}"
 
-- when: miniflux_container_labels_traefik_enabled | bool
+- name: Run if Traefik is enabled
+  when: miniflux_container_labels_traefik_enabled | bool
   block:
     - name: Fail if required Miniflux Traefik settings not defined
       ansible.builtin.fail:

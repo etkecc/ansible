@@ -5,6 +5,7 @@
 
 ---
 - name: Perform linkding installation tasks
+  when: linkding_enabled | bool
   tags:
     - setup-all
     - setup-linkding
@@ -12,17 +13,15 @@
     - install-linkding
   block:
     - name: Validate linkding configuration
-      when: linkding_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
     - name: Install linkding
-      when: linkding_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
 - name: Perform linkding uninstallation tasks
+  when: not linkding_enabled | bool
   tags:
     - setup-all
     - setup-linkding
   block:
     - name: Uninstall linkding
-      when: not linkding_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

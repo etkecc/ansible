@@ -3,27 +3,24 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: Perform PeerTube installation tasks
-  block:
-    - name: Validate PeerTube configuration
-      when: peertube_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
-
-    - name: Install PeerTube
-      when: peertube_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+  when: peertube_enabled | bool
   tags:
     - setup-all
     - setup-peertube
     - install-all
     - install-peertube
+  block:
+    - name: Validate PeerTube configuration
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Install PeerTube
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
 - name: Perform PeerTube uninstallation tasks
-  block:
-    - name: Uninstall PeerTube
-      when: not peertube_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
+  when: not peertube_enabled | bool
   tags:
     - setup-all
     - setup-peertube
+  block:
+    - name: Uninstall PeerTube
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

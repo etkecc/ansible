@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: Announce v6.3.0 migration
   ansible.builtin.debug:
     msg: "Performing tasks for PeerTube version `{{ 'unknown' if peertube_detected_version == '' else peertube_detected_version }}`, older than v6.3.0"
@@ -11,10 +10,12 @@
 - name: Populate service facts
   ansible.builtin.service_facts:
 
-- set_fact:
+- name: Set facts related to the service name
+  ansible.builtin.set_fact:
     peertube_service_name: "{{ peertube_identifier + '.service' }}"
 
-- set_fact:
+- name: Set facts related to a running PeerTube instance
+  ansible.builtin.set_fact:
     peertube_was_running: "{{ ansible_facts.services[peertube_service_name] | default(none) is not none and ansible_facts.services[peertube_service_name].state == 'running' }}"
 
 # We always restart, to ensure that PeerTube is powered by the newest version (that we just installed).
