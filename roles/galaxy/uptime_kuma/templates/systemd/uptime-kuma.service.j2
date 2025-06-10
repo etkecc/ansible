@@ -31,6 +31,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
 			--label-file={{ uptime_kuma_base_path }}/labels \
 			--health-interval={{ uptime_kuma_container_health_interval }} \
 			--mount type=bind,src={{ uptime_kuma_data_path }},dst=/app/data \
+			--tmpfs=/.npm:rw,noexec,nosuid,size=100m \
 			{% for arg in uptime_kuma_container_extra_arguments %}
 			{{ arg }} \
 			{% endfor %}
