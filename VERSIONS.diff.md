@@ -1,3 +1,5 @@
+* [Baibot](https://github.com/etkecc/baibot): [v1.7.2](https://github.com/etkecc/baibot/releases/tag/v1.7.2) ⇾ [v1.7.3](https://github.com/etkecc/baibot/releases/tag/v1.7.3)
+* [Element](https://github.com/element-hq/element-web): [v1.11.102](https://github.com/element-hq/element-web/releases/tag/v1.11.102) ⇾ [v1.11.103](https://github.com/element-hq/element-web/releases/tag/v1.11.103)
 * [Element Call](https://github.com/element-hq/element-call): [v0.12.0](https://github.com/element-hq/element-call/releases/tag/v0.12.0) ⇾ [v0.12.2](https://github.com/element-hq/element-call/releases/tag/v0.12.2)
 * [Fluffychat](https://github.com/krille-chan/fluffychat): [v1.26.1](https://github.com/krille-chan/fluffychat/releases/tag/v1.26.1) ⇾ [v1.27.0](https://github.com/krille-chan/fluffychat/releases/tag/v1.27.0)
 * [Jitsi](https://github.com/jitsi/docker-jitsi-meet): [stable-10184](https://github.com/jitsi/docker-jitsi-meet/releases/tag/stable-10184) ⇾ [stable-10314](https://github.com/jitsi/docker-jitsi-meet/releases/tag/stable-10314)

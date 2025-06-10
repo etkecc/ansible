@@ -6,7 +6,7 @@
 * Appservice Slack: 2.1.2
 * Appservice Webhooks: v1.0.3-01
 * Authentication Service: 0.16.0
-* Baibot: v1.7.2
+* Baibot: v1.7.3
 * Bluesky: v0.1.1
 * Borg: 1.4.1
 * Borgmatic: 1.9.14
@@ -23,7 +23,7 @@
 * Docker Compose: v2.32.1
 * Draupnir: v2.3.1
 * Dynamic Dns: 4.0.0
-* Element: v1.11.102
+* Element: v1.11.103
 * Element Call: v0.12.2
 * Etherpad: 2.3.0
 * Exim Relay: 4.98.1-r0-2
