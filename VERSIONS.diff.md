@@ -5,3 +5,4 @@
 * [Fluffychat](https://github.com/krille-chan/fluffychat): [v1.26.1](https://github.com/krille-chan/fluffychat/releases/tag/v1.26.1) ⇾ [v1.27.0](https://github.com/krille-chan/fluffychat/releases/tag/v1.27.0)
 * [Jitsi](https://github.com/jitsi/docker-jitsi-meet): [stable-10184](https://github.com/jitsi/docker-jitsi-meet/releases/tag/stable-10184) ⇾ [stable-10314](https://github.com/jitsi/docker-jitsi-meet/releases/tag/stable-10314)
 * [Schildichat](https://github.com/SchildiChat/schildichat-desktop): [1.11.86-sc.0.test.0](https://github.com/SchildiChat/schildichat-desktop/releases/tag/1.11.86-sc.0.test.0) ⇾ [1.11.103-sc.0.test.0](https://github.com/SchildiChat/schildichat-desktop/releases/tag/1.11.103-sc.0.test.0)
+* [Synapse Admin](https://github.com/etkecc/synapse-admin): [v0.10.4-etke41](https://github.com/etkecc/synapse-admin/releases/tag/v0.10.4-etke41) ⇾ [v0.11.1-etke44](https://github.com/etkecc/synapse-admin/releases/tag/v0.11.1-etke44)
