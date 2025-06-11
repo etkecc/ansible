@@ -76,7 +76,7 @@
 * Radicale: 3.5.4.0
 * Rageshake: 1.16.2
 * Registration: v0.7.2
-* Schildichat: 1.11.86-sc.0.test.0
+* Schildichat: 1.11.103-sc.0.test.0
 * Signal: v0.8.3
 * Slack: v0.2.1
 * Sliding Sync: v0.99.19
