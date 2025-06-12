@@ -13,7 +13,7 @@ valkey_config_path: "{{ valkey_base_path }}/config"
 valkey_data_path: "{{ valkey_base_path }}/data"
 
 # renovate: datasource=docker depName=valkey/valkey versioning=semver
-valkey_version: 8.1.1
+valkey_version: 8.1.2
 
 valkey_uid: ''
 valkey_gid: ''
@@ -33,6 +33,9 @@ valkey_container_valkey_bind_port: ""
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 valkey_container_network: "{{ valkey_identifier }}"
+
+# The port number in the container
+valkey_container_http_port: 6379
 
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
