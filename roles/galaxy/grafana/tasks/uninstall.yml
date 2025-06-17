@@ -3,13 +3,13 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: Check existence of Grafana systemd service
   ansible.builtin.stat:
     path: "{{ devture_systemd_docker_base_systemd_path }}/{{ grafana_identifier }}.service"
   register: grafana_service_stat
 
-- when: grafana_service_stat.stat.exists | bool
+- name: Uninstall Grafana systemd services and files
+  when: grafana_service_stat.stat.exists | bool
   block:
     - name: Ensure Grafana systemd service is stopped
       ansible.builtin.service:

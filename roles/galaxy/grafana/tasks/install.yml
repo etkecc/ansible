@@ -4,12 +4,11 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: Ensure Grafana paths exist
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    mode: 0750
+    mode: "0750"
     owner: "{{ grafana_uid }}"
     group: "{{ grafana_gid }}"
   with_items:
@@ -27,7 +26,7 @@
   ansible.builtin.template:
     src: "{{ role_path }}/templates/{{ item.src }}"
     dest: "{{ item.dst }}"
-    mode: 0440
+    mode: "0440"
     owner: "{{ grafana_uid }}"
     group: "{{ grafana_gid }}"
   with_items:
@@ -59,7 +58,7 @@
     url: "{{ item }}"
     dest: "{{ grafana_config_path }}/dashboards/"
     force: true
-    mode: 0440
+    mode: "0440"
     owner: "{{ grafana_uid }}"
     group: "{{ grafana_gid }}"
   with_items: "{{ grafana_dashboard_download_urls }}"
@@ -72,7 +71,7 @@
   ansible.builtin.template:
     src: "{{ item.path }}"
     dest: "{{ grafana_config_path }}/provisioning/dashboards/{{ item.name }}"
-    mode: 0440
+    mode: "0440"
     owner: "{{ grafana_uid }}"
     group: "{{ grafana_gid }}"
   with_items: "{{ grafana_provisioning_dashboard_template_files }}"
@@ -100,4 +99,4 @@
   ansible.builtin.template:
     src: "{{ role_path }}/templates/systemd/grafana.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ grafana_identifier }}.service"
-    mode: 0644
+    mode: "0644"

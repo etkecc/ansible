@@ -5,7 +5,7 @@
 * Appservice Kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * Appservice Slack: 2.1.2
 * Appservice Webhooks: v1.0.3-01
-* Authentication Service: 0.16.0
+* Authentication Service: 0.17.1
 * Baibot: v1.7.4
 * Bluesky: v0.1.1
 * Borg: 1.4.1
@@ -23,7 +23,7 @@
 * Docker Compose: v2.32.1
 * Draupnir: v2.3.1
 * Dynamic Dns: 4.0.0
-* Element: v1.11.103
+* Element: v1.11.104
 * Element Call: v0.12.2
 * Etherpad: 2.3.0
 * Exim Relay: 4.98.1-r0-2
@@ -36,7 +36,7 @@
 * Go Skype Bridge: latest
 * Googlechat: v0.5.2
 * Gotosocial: 0.19.1
-* Grafana: 11.6.2
+* Grafana: 11.6.3
 * Heisenbridge: 1.15.3
 * Honoroit: v0.9.28
 * Hookshot: 7.0.0
@@ -85,7 +85,7 @@
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.37.0
 * Sygnal: v0.15.1
-* Synapse: v1.131.0
+* Synapse: v1.132.0
 * Synapse Admin: v0.11.1-etke44
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4

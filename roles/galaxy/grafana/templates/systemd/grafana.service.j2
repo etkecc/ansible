@@ -22,24 +22,24 @@ ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_s
 ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ grafana_identifier }} 2>/dev/null || true'
 
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
-			--rm \
-			--name={{ grafana_identifier }} \
-			--log-driver=none \
-			--user={{ grafana_uid }}:{{ grafana_gid }} \
-			--cap-drop=ALL \
-			--read-only \
-			--network={{ grafana_container_network }} \
-			{% if grafana_container_http_host_bind_port and grafana_container_network != 'host' %}
-			-p {{ grafana_container_http_host_bind_port }}:{{ grafana_container_http_port }} \
-			{% endif %}
-			--env-file={{ grafana_base_path }}/env \
-			--label-file={{ grafana_base_path }}/labels \
-			--mount type=bind,src={{ grafana_config_path }},dst=/etc/grafana \
-			--mount type=bind,src={{ grafana_data_path }},dst=/var/lib/grafana \
-			{% for arg in grafana_container_extra_arguments %}
-			{{ arg }} \
-			{% endfor %}
-			{{ grafana_container_image }}
+      --rm \
+      --name={{ grafana_identifier }} \
+      --log-driver=none \
+      --user={{ grafana_uid }}:{{ grafana_gid }} \
+      --cap-drop=ALL \
+      --read-only \
+      --network={{ grafana_container_network }} \
+      {% if grafana_container_http_host_bind_port and grafana_container_network != 'host' %}
+      -p {{ grafana_container_http_host_bind_port }}:{{ grafana_container_http_port }} \
+      {% endif %}
+      --env-file={{ grafana_base_path }}/env \
+      --label-file={{ grafana_base_path }}/labels \
+      --mount type=bind,src={{ grafana_config_path }},dst=/etc/grafana \
+      --mount type=bind,src={{ grafana_data_path }},dst=/var/lib/grafana \
+      {% for arg in grafana_container_extra_arguments %}
+      {{ arg }} \
+      {% endfor %}
+      {{ grafana_container_image }}
 
 {% if grafana_container_network != 'host' %}
 {% for network in grafana_container_additional_networks %}

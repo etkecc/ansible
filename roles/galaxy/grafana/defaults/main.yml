@@ -18,7 +18,7 @@ grafana_config_path: "{{ grafana_base_path }}/config"
 grafana_data_path: "{{ grafana_base_path }}/data"
 
 # renovate: datasource=docker depName=grafana/grafana-oss versioning=semver
-grafana_version: 11.6.2
+grafana_version: 11.6.3
 
 grafana_uid: ''
 grafana_gid: ''
@@ -152,7 +152,7 @@ grafana_dashboard_download_urls: []
 # Allow viewing Grafana without logging in.
 grafana_anonymous_access: false
 
-# When `false`, sends a `X-Frame-Options: deny` HTTP header, which allows Grafana from being embeded in a frame.
+# When `false`, sends a `X-Frame-Options: deny` HTTP header, which allows Grafana from being embedded in a frame.
 # Read more here: https://grafana.com/docs/grafana/latest/administration/configuration/#allow_embedding
 grafana_allow_embedding: false
 

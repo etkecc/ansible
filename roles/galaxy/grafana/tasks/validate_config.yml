@@ -4,7 +4,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: (Deprecation) Catch and report renamed settings
   ansible.builtin.fail:
     msg: >-
@@ -12,9 +11,9 @@
       Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
   when: "item.old in vars"
   with_items:
-    - {'old': 'grafana_container_additional_networks_additional', 'new': 'grafana_container_additional_networks_custom'}
-    - {'old': 'grafana_provisioning_datasources', 'new': 'grafana_provisioning_datasources_datasources'}
-    - {'old': 'grafana_provisioning_dashboard_providers', 'new': 'grafana_provisioning_dashboards_providers'}
+    - { "old": "grafana_container_additional_networks_additional", "new": "grafana_container_additional_networks_custom" }
+    - { "old": "grafana_provisioning_datasources", "new": "grafana_provisioning_datasources_datasources" }
+    - { "old": "grafana_provisioning_dashboard_providers", "new": "grafana_provisioning_dashboards_providers" }
 
 - name: Fail if required Grafana settings not defined
   ansible.builtin.fail:
@@ -29,7 +28,8 @@
     - grafana_path_prefix
     - grafana_container_network
 
-- when: grafana_container_labels_traefik_enabled | bool
+- name: Run if Traefik is enabled
+  when: grafana_container_labels_traefik_enabled | bool
   block:
     - name: Fail if required Grafana Traefik settings not defined
       ansible.builtin.fail:
