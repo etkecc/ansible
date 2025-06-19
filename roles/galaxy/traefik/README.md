@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2022 - 2024 Slavi Pantaleev
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 # Traefik reverse-proxy Ansible role
 
 This is an [Ansible](https://www.ansible.com/) role which installs [Traefik](https://traefik.io/) to run as a [Docker](https://www.docker.com/) container wrapped in a systemd service.
@@ -65,3 +71,9 @@ traefik_systemd_required_services_list_auto: |
     ([container_socket_proxy_identifier + '.service'] if container_socket_proxy_enabled else [])
   }}
 ```
+
+## Development
+
+You can optionally install [pre-commit](https://pre-commit.com/) so that simple mistakes are checked and noticed before changes are pushed to a remote branch. See [`.pre-commit-config.yaml`](./.pre-commit-config.yaml) for which hooks are to be executed.
+
+See [this section](https://pre-commit.com/#usage) on the official documentation for usage.
