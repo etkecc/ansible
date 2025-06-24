@@ -1,1 +1,4 @@
+* [Appservice Draupnir For All](https://github.com/the-draupnir-project/Draupnir): [v2.3.1](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.3.1) ⇾ [v2.4.1](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.4.1)
+* [Draupnir](https://github.com/the-draupnir-project/Draupnir): [v2.3.1](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.3.1) ⇾ [v2.4.1](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.4.1)
 * [Fluffychat](https://github.com/krille-chan/fluffychat): [v1.27.0](https://github.com/krille-chan/fluffychat/releases/tag/v1.27.0) ⇾ [v2.0.0](https://github.com/krille-chan/fluffychat/releases/tag/v2.0.0)
+* [Miniflux](https://github.com/miniflux/v2): [2.2.9](https://github.com/miniflux/v2/releases/tag/2.2.9) ⇾ [2.2.10](https://github.com/miniflux/v2/releases/tag/2.2.10)

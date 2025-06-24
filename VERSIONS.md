@@ -1,6 +1,6 @@
 * Alertmanager Receiver: 2025.5.21
 * Appservice Discord: v4.0.0
-* Appservice Draupnir For All: v2.3.1
+* Appservice Draupnir For All: v2.4.1
 * Appservice Irc: 1.0.1
 * Appservice Kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * Appservice Slack: 2.1.2
@@ -21,7 +21,7 @@
 * Dimension: latest
 * Discord: v0.7.4
 * Docker Compose: v2.32.1
-* Draupnir: v2.3.1
+* Draupnir: v2.4.1
 * Dynamic Dns: 4.0.0
 * Element: v1.11.104
 * Element Call: v0.12.2
@@ -57,7 +57,7 @@
 * Maubot: v0.5.2
 * Meta Instagram: v0.5.1
 * Meta Messenger: v0.5.1
-* Miniflux: 2.2.9
+* Miniflux: 2.2.10
 * Mjolnir: v1.10.0
 * Mx Puppet Discord: v0.1.1
 * Mx Puppet Groupme: 533cccc8

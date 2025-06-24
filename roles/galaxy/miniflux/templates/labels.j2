@@ -24,8 +24,8 @@ traefik.http.middlewares.{{ miniflux_identifier }}-slashless-redirect.redirectre
 {% endif %}
 
 {#
-	Intentionally not adding a stripPrefix middleware.
-	Miniflux seems to serve itself under the same prefix it sees in the BASE_URL environment variable.
+  Intentionally not adding a stripPrefix middleware.
+  Miniflux seems to serve itself under the same prefix it sees in the BASE_URL environment variable.
 #}
 
 {% if miniflux_container_labels_traefik_additional_response_headers.keys() | length > 0 %}
