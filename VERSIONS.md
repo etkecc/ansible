@@ -1,4 +1,4 @@
-* Alertmanager Receiver: 2025.5.21
+* Alertmanager Receiver: 2025.6.25
 * Appservice Discord: v4.0.0
 * Appservice Draupnir For All: v2.4.1
 * Appservice Irc: 1.0.1
@@ -90,7 +90,7 @@
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4
 * Synapse Http Antispam Git: v0.4.0
-* Synapse Reverse Proxy Companion: 1.28.0-alpine
+* Synapse Reverse Proxy Companion: 1.29.0-alpine
 * Synapse S3 Storage Provider: 1.5.0
 * Telegram: v0.15.2
 * Traefik: v3.4.1

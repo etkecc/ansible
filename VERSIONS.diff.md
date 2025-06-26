@@ -1,4 +1,6 @@
+* [Alertmanager Receiver](https://github.com/metio/matrix-alertmanager-receiver): [2025.5.21](https://github.com/metio/matrix-alertmanager-receiver/releases/tag/2025.5.21) ⇾ [2025.6.25](https://github.com/metio/matrix-alertmanager-receiver/releases/tag/2025.6.25)
 * [Appservice Draupnir For All](https://github.com/the-draupnir-project/Draupnir): [v2.3.1](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.3.1) ⇾ [v2.4.1](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.4.1)
 * [Draupnir](https://github.com/the-draupnir-project/Draupnir): [v2.3.1](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.3.1) ⇾ [v2.4.1](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.4.1)
 * [Fluffychat](https://github.com/krille-chan/fluffychat): [v1.27.0](https://github.com/krille-chan/fluffychat/releases/tag/v1.27.0) ⇾ [v2.0.0](https://github.com/krille-chan/fluffychat/releases/tag/v2.0.0)
 * [Miniflux](https://github.com/miniflux/v2): [2.2.9](https://github.com/miniflux/v2/releases/tag/2.2.9) ⇾ [2.2.10](https://github.com/miniflux/v2/releases/tag/2.2.10)
+* [Synapse Reverse Proxy Companion](https://github.com/nginx/nginx): [1.28.0-alpine](https://github.com/nginx/nginx/releases/tag/release-1.28.0) ⇾ [1.29.0-alpine](https://github.com/nginx/nginx/releases/tag/release-1.29.0)
