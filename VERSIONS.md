@@ -6,7 +6,7 @@
 * Appservice Slack: 2.1.2
 * Appservice Webhooks: v1.0.3-01
 * Authentication Service: 0.17.1
-* Baibot: v1.7.4
+* Baibot: v1.7.5
 * Bluesky: v0.1.1
 * Borg: 1.4.1
 * Borgmatic: 1.9.14
@@ -69,7 +69,7 @@
 * Pantalaimon: 0.10.5
 * Peertube: v7.1.1
 * Postmoogle: v0.9.26
-* Prometheus: v3.4.1
+* Prometheus: v3.4.2
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.9.1
 * Prometheus Postgres Exporter: v0.17.1
@@ -89,11 +89,11 @@
 * Synapse Admin: v0.11.1-etke44
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4
-* Synapse Http Antispam Git: v0.4.0
+* Synapse Http Antispam Git: v0.5.0
 * Synapse Reverse Proxy Companion: 1.29.0-alpine
 * Synapse S3 Storage Provider: 1.5.0
 * Telegram: v0.15.2
-* Traefik: v3.4.1
+* Traefik: v3.4.3
 * Traefik Certs Dumper: v2.10.0
 * Twitter: v0.4.2
 * Uptime Kuma: 1.23.16

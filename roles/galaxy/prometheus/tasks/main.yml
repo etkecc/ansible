@@ -4,6 +4,7 @@
 
 ---
 - name: Perform Prometheus installation tasks
+  when: prometheus_enabled | bool
   tags:
     - setup-all
     - setup-prometheus
@@ -11,17 +12,15 @@
     - install-prometheus
   block:
     - name: Validate Prometheus configuration
-      when: prometheus_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
     - name: Install Prometheus
-      when: prometheus_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
 - name: Perform Prometheus uninstallation tasks
+  when: not prometheus_enabled | bool
   tags:
     - setup-all
     - setup-prometheus
   block:
     - name: Uninstall Prometheus
-      when: not prometheus_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
