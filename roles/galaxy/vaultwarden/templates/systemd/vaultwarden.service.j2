@@ -23,10 +23,10 @@ ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_s
 ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ vaultwarden_identifier }} 2>/dev/null'
 
 {#
-	The `--health-interval` health check parameter was changed because by default:
-	- health checks start immediately.. and they always fail, because the HTTP server takes a bit of time to start
-	- the recheck interval is too long (60s) and the service is considered `starting`
-	- when a service is not `healthy`, Traefik does not reverse-proxy to it -- leading to 1 minute downtime every single time this restarts
+  The `--health-interval` health check parameter was changed because by default:
+  - health checks start immediately.. and they always fail, because the HTTP server takes a bit of time to start
+  - the recheck interval is too long (60s) and the service is considered `starting`
+  - when a service is not `healthy`, Traefik does not reverse-proxy to it -- leading to 1 minute downtime every single time this restarts
 #}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --rm \
@@ -52,7 +52,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% for arg in vaultwarden_container_extra_arguments %}
       {{ arg }} \
       {% endfor %}
-      {{ vaultwarden_container_image }}
+      {{ vaultwarden_container_image_self_build_name if vaultwarden_container_image_self_build else vaultwarden_container_image }}
 
 {% for network in vaultwarden_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ vaultwarden_identifier }}

@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: 2023 kinduff
-# SPDX-FileCopyrightText: 2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -26,23 +27,73 @@
     - env
     - labels
 
-- name: Ensure linkding container image is pulled
-  community.docker.docker_image:
-    name: "{{ linkding_container_image }}"
-    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
-    force_source: "{{ linkding_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
-    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else linkding_container_image_force_pull }}"
-  register: result
-  retries: "{{ devture_playbook_help_container_retries_count }}"
-  delay: "{{ devture_playbook_help_container_retries_delay }}"
-  until: result is not failed
+- name: Run if self-building of linkding container image is not enabled
+  when: "not linkding_container_image_self_build | bool"
+  block:
+    - name: Ensure linkding container image is pulled via community.docker.docker_image
+      when: devture_systemd_docker_base_container_image_pull_method == 'ansible-module'
+      community.docker.docker_image:
+        name: "{{ linkding_container_image }}"
+        source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+        force_source: "{{ linkding_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+        force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else linkding_container_image_force_pull }}"
+      register: result
+      retries: "{{ devture_playbook_help_container_retries_count }}"
+      delay: "{{ devture_playbook_help_container_retries_delay }}"
+      until: result is not failed
 
-- name: Ensure linkding container network is created
-  community.general.docker_network:
+    - name: Ensure linkding container image is pulled via ansible.builtin.command
+      when: devture_systemd_docker_base_container_image_pull_method == 'command'
+      ansible.builtin.command:
+        cmd: "{{ devture_systemd_docker_base_host_command_docker }} pull {{ linkding_container_image }}"
+      register: result
+      retries: "{{ devture_playbook_help_container_retries_count }}"
+      delay: "{{ devture_playbook_help_container_retries_delay }}"
+      until: result is not failed
+      changed_when: "'Downloaded newer image' in result.stdout"
+
+- name: Run if self-building of linkding container image is enabled
+  when: "linkding_container_image_self_build | bool"
+  block:
+    - name: Ensure linkding repository is present on self-build
+      ansible.builtin.git:
+        repo: "{{ linkding_container_image_self_build_repo }}"
+        version: "{{ linkding_container_image_self_build_repo_version }}"
+        dest: "{{ linkding_container_image_self_build_src_files_path }}"
+        force: "yes"
+      register: linkding_git_pull_results
+
+    - name: Ensure linkding container image is built
+      community.docker.docker_image:
+        name: "{{ linkding_container_image_self_build_name }}"
+        source: build
+        force_source: "{{ linkding_git_pull_results.changed if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+        force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else linkding_git_pull_results.changed }}"
+        build:
+          dockerfile: docker/default.Dockerfile
+          path: "{{ linkding_container_image_self_build_src_files_path }}"
+          pull: true
+          args:
+
+- name: Ensure linkding container network is created via community.docker.docker_network
+  when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+  community.docker.docker_network:
     enable_ipv6: "{{ devture_systemd_docker_base_ipv6_enabled }}"
     name: "{{ linkding_container_network }}"
     driver: bridge
     driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
+
+- name: Ensure linkding container network is created via ansible.builtin.command
+  when: devture_systemd_docker_base_container_network_creation_method == 'command'
+  ansible.builtin.command:
+    cmd: >-
+      {{ devture_systemd_docker_base_host_command_docker }} network create
+      {% if devture_systemd_docker_base_ipv6_enabled %}--ipv6{% endif %}
+      {{ devture_systemd_docker_base_container_networks_driver_options_string }}
+      {{ linkding_container_network }}
+  register: network_creation_result
+  changed_when: network_creation_result.rc == 0
+  failed_when: network_creation_result.rc != 0 and 'already exists' not in network_creation_result.stderr
 
 - name: Ensure linkding systemd service is present
   ansible.builtin.template:

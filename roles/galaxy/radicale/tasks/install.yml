@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2023 Nikita Chernyi
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -8,7 +9,7 @@
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    mode: 0750
+    mode: "0750"
     owner: "{{ radicale_uid }}"
     group: "{{ radicale_gid }}"
   with_items:
@@ -30,7 +31,7 @@
     dest: "{{ radicale_config_path }}/{{ item.path }}"
     owner: "{{ radicale_uid }}"
     group: "{{ radicale_gid }}"
-    mode: 0644
+    mode: "0644"
   when: item.valid
   with_items:
     - { path: config, valid: true }
@@ -40,33 +41,83 @@
   ansible.builtin.template:
     src: "{{ role_path }}/templates/{{ item }}.j2"
     dest: "{{ radicale_base_path }}/{{ item }}"
-    mode: 0640
+    mode: "0640"
     owner: "{{ radicale_uid }}"
     group: "{{ radicale_gid }}"
   with_items:
     - env
     - labels
 
-- name: Ensure Radicale container image is pulled
-  community.docker.docker_image:
-    name: "{{ radicale_container_image }}"
-    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
-    force_source: "{{ radicale_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
-    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else radicale_container_image_force_pull }}"
-  register: result
-  retries: "{{ devture_playbook_help_container_retries_count }}"
-  delay: "{{ devture_playbook_help_container_retries_delay }}"
-  until: result is not failed
+- name: Run if self-building of Radicale container image is not enabled
+  when: "not radicale_container_image_self_build | bool"
+  block:
+    - name: Ensure Radicale container image is pulled via community.docker.docker_image
+      when: devture_systemd_docker_base_container_image_pull_method == 'ansible-module'
+      community.docker.docker_image:
+        name: "{{ radicale_container_image }}"
+        source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+        force_source: "{{ radicale_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+        force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else radicale_container_image_force_pull }}"
+      register: result
+      retries: "{{ devture_playbook_help_container_retries_count }}"
+      delay: "{{ devture_playbook_help_container_retries_delay }}"
+      until: result is not failed
 
-- name: Ensure Radicale container network is created
-  community.general.docker_network:
+    - name: Ensure Radicale container image is pulled via ansible.builtin.command
+      when: devture_systemd_docker_base_container_image_pull_method == 'command'
+      ansible.builtin.command:
+        cmd: "{{ devture_systemd_docker_base_host_command_docker }} pull {{ radicale_container_image }}"
+      register: result
+      retries: "{{ devture_playbook_help_container_retries_count }}"
+      delay: "{{ devture_playbook_help_container_retries_delay }}"
+      until: result is not failed
+      changed_when: "'Downloaded newer image' in result.stdout"
+
+- name: Run if self-building of Radicale container image is enabled
+  when: "radicale_container_image_self_build | bool"
+  block:
+    - name: Ensure Radicale repository is present on self-build
+      ansible.builtin.git:
+        repo: "{{ radicale_container_image_self_build_repo }}"
+        version: "{{ radicale_container_image_self_build_repo_version }}"
+        dest: "{{ radicale_container_image_self_build_src_files_path }}"
+        force: "yes"
+      register: radicale_git_pull_results
+
+    - name: Ensure Radicale container image is built
+      community.docker.docker_image:
+        name: "{{ radicale_container_image_self_build_name }}"
+        source: build
+        force_source: "{{ radicale_git_pull_results.changed if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+        force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else radicale_git_pull_results.changed }}"
+        build:
+          dockerfile: Dockerfile
+          path: "{{ radicale_container_image_self_build_src_files_path }}"
+          pull: true
+          args:
+
+- name: Ensure Radicale container network is created via community.docker.docker_network
+  when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+  community.docker.docker_network:
     enable_ipv6: "{{ devture_systemd_docker_base_ipv6_enabled }}"
     name: "{{ radicale_container_network }}"
     driver: bridge
     driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
 
+- name: Ensure Radicale container network is created via ansible.builtin.command
+  when: devture_systemd_docker_base_container_network_creation_method == 'command'
+  ansible.builtin.command:
+    cmd: >-
+      {{ devture_systemd_docker_base_host_command_docker }} network create
+      {% if devture_systemd_docker_base_ipv6_enabled %}--ipv6{% endif %}
+      {{ devture_systemd_docker_base_container_networks_driver_options_string }}
+      {{ radicale_container_network }}
+  register: network_creation_result
+  changed_when: network_creation_result.rc == 0
+  failed_when: network_creation_result.rc != 0 and 'already exists' not in network_creation_result.stderr
+
 - name: Ensure Radicale systemd service is present
   ansible.builtin.template:
     src: "{{ role_path }}/templates/systemd/radicale.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ radicale_identifier }}.service"
-    mode: 0644
+    mode: "0644"

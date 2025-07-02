@@ -38,7 +38,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% for arg in radicale_container_extra_arguments %}
       {{ arg }} \
       {% endfor %}
-      {{ radicale_container_image }}
+      {{ radicale_container_image_self_build_name if radicale_container_image_self_build else radicale_container_image }}
 
 {% for network in radicale_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ radicale_identifier }}

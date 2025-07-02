@@ -20,7 +20,7 @@ linkding_base_path: "/{{ linkding_identifier }}"
 linkding_data_path: "{{ linkding_base_path }}/data"
 
 # renovate: datasource=docker depName=sissbruecker/linkding versioning=semver
-linkding_version: 1.40.0
+linkding_version: 1.41.0
 
 # User ID and Group ID for running linkding service in the container
 linkding_uid: ""
@@ -42,6 +42,12 @@ linkding_container_image_registry_prefix: "{{ linkding_container_image_registry_
 linkding_container_image_registry_prefix_upstream: "{{ linkding_container_image_registry_prefix_upstream_default }}"
 linkding_container_image_registry_prefix_upstream_default: docker.io/
 linkding_container_image_force_pull: "{{ linkding_container_image.endswith(':latest') }}"
+
+linkding_container_image_self_build: false
+linkding_container_image_self_build_name: "sissbruecker/linkding:{{ linkding_container_image_self_build_repo_version }}"
+linkding_container_image_self_build_repo: "https://github.com/sissbruecker/linkding.git"
+linkding_container_image_self_build_repo_version: "{{ 'v' + linkding_version if linkding_version != 'latest' else 'master' }}"
+linkding_container_image_self_build_src_files_path: "{{ linkding_base_path }}/docker-src"
 
 # Controls whether the container exposes its HTTP port (tcp/9090 in the container).
 #

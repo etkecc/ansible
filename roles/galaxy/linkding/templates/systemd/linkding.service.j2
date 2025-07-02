@@ -39,7 +39,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% for arg in linkding_container_extra_arguments %}
       {{ arg }} \
       {% endfor %}
-      {{ linkding_container_image }}
+      {{ linkding_container_image_self_build_name if linkding_container_image_self_build else linkding_container_image }}
 
 {% for network in linkding_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ linkding_identifier }}

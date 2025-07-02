@@ -1,11 +1,11 @@
-* Alertmanager Receiver: 2025.6.25
+* Alertmanager Receiver: 2025.7.2
 * Appservice Discord: v4.0.0
 * Appservice Draupnir For All: v2.4.1
 * Appservice Irc: 1.0.1
 * Appservice Kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * Appservice Slack: 2.1.2
 * Appservice Webhooks: v1.0.3-01
-* Authentication Service: 0.17.1
+* Authentication Service: 0.18.0
 * Baibot: v1.7.5
 * Bluesky: v0.1.1
 * Borg: 1.4.1
@@ -23,8 +23,8 @@
 * Docker Compose: v2.32.1
 * Draupnir: v2.4.1
 * Dynamic Dns: 4.0.0
-* Element: v1.11.104
-* Element Call: v0.12.2
+* Element: v1.11.105
+* Element Call: v0.13.0
 * Etherpad: 2.3.0
 * Exim Relay: 4.98.1-r0-2
 * Facebook: v0.5.1
@@ -47,7 +47,7 @@
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
 * Languagetool: 6.6-dockerupdate-1
 * Ldap Registration Proxy: 296246afc6a9b3105e67fcf6621cf05ebc74b873
-* Linkding: 1.40.0
+* Linkding: 1.41.0
 * Linkedin: latest
 * Livekit Jwt Service: 0.2.3
 * Livekit Server: v1.9.0
@@ -85,7 +85,7 @@
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.37.0
 * Sygnal: v0.15.1
-* Synapse: v1.132.0
+* Synapse: v1.133.0
 * Synapse Admin: v0.11.1-etke44
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4

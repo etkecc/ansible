@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2023 Nikita Chernyi
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -35,6 +36,12 @@ radicale_container_image_registry_prefix: "{{ radicale_container_image_registry_
 radicale_container_image_registry_prefix_upstream: "{{ radicale_container_image_registry_prefix_upstream_default }}"
 radicale_container_image_registry_prefix_upstream_default: docker.io/
 radicale_container_image_force_pull: "{{ radicale_container_image.endswith(':latest') }}"
+
+radicale_container_image_self_build: false
+radicale_container_image_self_build_name: "kozea/radicale:{{ radicale_container_image_self_build_repo_version }}" # The image name must be lowercase
+radicale_container_image_self_build_repo: "https://github.com/Kozea/Radicale.git"
+radicale_container_image_self_build_repo_version: "{{ 'v' + radicale_version.split('.')[0:3] | join('.') if radicale_version != 'latest' else 'main' }}" # Remove the last digit and its dot (x.x.x.0) from "radicale_version"
+radicale_container_image_self_build_src_files_path: "{{ radicale_base_path }}/docker-src"
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 radicale_container_network: "{{ radicale_identifier }}"

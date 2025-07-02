@@ -46,6 +46,13 @@ vaultwarden_container_image_registry_prefix_upstream: "{{ vaultwarden_container_
 vaultwarden_container_image_registry_prefix_upstream_default: ghcr.io/
 vaultwarden_container_image_force_pull: "{{ vaultwarden_container_image.endswith(':latest') }}"
 
+vaultwarden_container_image_self_build: false
+vaultwarden_container_image_self_build_name: "dani-garcia/vaultwarden:{{ vaultwarden_container_image_self_build_repo_version }}"
+vaultwarden_container_image_self_build_repo: "https://github.com/dani-garcia/vaultwarden.git"
+vaultwarden_container_image_self_build_repo_version: "{{ vaultwarden_version if vaultwarden_version != 'latest' else 'main' }}"
+vaultwarden_container_image_self_build_src_files_path: "{{ vaultwarden_base_path }}/docker-src"
+vaultwarden_container_image_self_build_environment_buildplatform: linux/amd64
+
 # Controls whether the container exposes its HTTP port (tcp/8080 in the container).
 #
 # Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
