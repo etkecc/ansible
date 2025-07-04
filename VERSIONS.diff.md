@@ -1,10 +1,1 @@
-* [Alertmanager Receiver](https://github.com/metio/matrix-alertmanager-receiver): [2025.6.25](https://github.com/metio/matrix-alertmanager-receiver/releases/tag/2025.6.25) ⇾ [2025.7.2](https://github.com/metio/matrix-alertmanager-receiver/releases/tag/2025.7.2)
-* [Authentication Service](https://github.com/element-hq/matrix-authentication-service): [0.17.1](https://github.com/element-hq/matrix-authentication-service/releases/tag/0.17.1) ⇾ [0.18.0](https://github.com/element-hq/matrix-authentication-service/releases/tag/0.18.0)
-* [Baibot](https://github.com/etkecc/baibot): [v1.7.4](https://github.com/etkecc/baibot/releases/tag/v1.7.4) ⇾ [v1.7.5](https://github.com/etkecc/baibot/releases/tag/v1.7.5)
-* [Element](https://github.com/element-hq/element-web): [v1.11.104](https://github.com/element-hq/element-web/releases/tag/v1.11.104) ⇾ [v1.11.105](https://github.com/element-hq/element-web/releases/tag/v1.11.105)
-* [Element Call](https://github.com/element-hq/element-call): [v0.12.2](https://github.com/element-hq/element-call/releases/tag/v0.12.2) ⇾ [v0.13.0](https://github.com/element-hq/element-call/releases/tag/v0.13.0)
-* [Linkding](https://github.com/sissbruecker/linkding): [1.40.0](https://github.com/sissbruecker/linkding/releases/tag/v1.40.0) ⇾ [1.41.0](https://github.com/sissbruecker/linkding/releases/tag/v1.41.0)
-* [Prometheus](https://github.com/prometheus/prometheus): [v3.4.1](https://github.com/prometheus/prometheus/releases/tag/v3.4.1) ⇾ [v3.4.2](https://github.com/prometheus/prometheus/releases/tag/v3.4.2)
-* [Synapse](https://github.com/element-hq/synapse): [v1.132.0](https://github.com/element-hq/synapse/releases/tag/v1.132.0) ⇾ [v1.133.0](https://github.com/element-hq/synapse/releases/tag/v1.133.0)
-* Synapse Http Antispam Git: v0.4.0 ⇾ v0.5.0
-* [Traefik](https://github.com/traefik/traefik): [v3.4.1](https://github.com/traefik/traefik/releases/tag/v3.4.1) ⇾ [v3.4.3](https://github.com/traefik/traefik/releases/tag/v3.4.3)
+* [Element Call](https://github.com/element-hq/element-call): [v0.13.0](https://github.com/element-hq/element-call/releases/tag/v0.13.0) ⇾ [v0.13.1](https://github.com/element-hq/element-call/releases/tag/v0.13.1)
