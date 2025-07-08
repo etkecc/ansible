@@ -3,13 +3,13 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: Check existence of Etherpad systemd service
   ansible.builtin.stat:
     path: "{{ devture_systemd_docker_base_systemd_path }}/{{ etherpad_identifier }}.service"
   register: etherpad_service_stat
 
-- when: etherpad_service_stat.stat.exists | bool
+- name: Uninstall Etherpad systemd services and files
+  when: etherpad_service_stat.stat.exists | bool
   block:
     - name: Ensure Etherpad systemd service is stopped
       ansible.builtin.service:
@@ -18,12 +18,12 @@
         enabled: false
         daemon_reload: true
 
-    - name: Ensure Etherpad systemd service doesn't exist
+    - name: Ensure Etherpad systemd service does not exist
       ansible.builtin.file:
         path: "{{ devture_systemd_docker_base_systemd_path }}/{{ etherpad_identifier }}.service"
         state: absent
 
-    - name: Ensure Etherpad base directory doesn't exist
+    - name: Ensure Etherpad path does not exist
       ansible.builtin.file:
         path: "{{ etherpad_base_path }}"
         state: absent

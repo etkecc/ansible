@@ -14,7 +14,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
   "skinName": "colibris",
   "skinVariants": "super-light-toolbar super-light-editor light-background",
   "ip": "::",
-  "port": 9001,
+  "port": {{ etherpad_container_http_port|to_json }},
   "showSettingsInAdminPage": true,
   "dbType": {{ etherpad_database_engine|to_json }},
   "dbSettings": {

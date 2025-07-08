@@ -5,7 +5,6 @@ SPDX-FileCopyrightText: 2024 Nikita Chernyi
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
 
-#jinja2: lstrip_blocks: "True"
 [Unit]
 Description=Etherpad ({{ etherpad_identifier }})
 {% for service in etherpad_systemd_required_services_list %}
@@ -24,27 +23,27 @@ ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_s
 ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ etherpad_identifier }} 2>/dev/null || true'
 
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
-			--rm \
-			--name={{ etherpad_identifier }} \
-			--log-driver=none \
-			--user={{ etherpad_user_uid }}:{{ etherpad_user_gid }} \
-			--cap-drop=ALL \
-			--network={{ etherpad_container_network }} \
-			{% if etherpad_container_http_host_bind_port %}
-			-p {{ etherpad_container_http_host_bind_port }}:9001 \
-			{% endif %}
-			--label-file={{ etherpad_base_path }}/labels \
-			--health-interval={{ etherpad_container_health_interval }} \
-			--mount type=bind,src={{ etherpad_config_path }},dst=/config,ro \
-			--mount type=bind,src={{ etherpad_data_path }},dst=/data \
-			{% for arg in etherpad_container_extra_arguments %}
-			{{ arg }} \
-			{% endfor %}
-			{{ etherpad_container_image }} \
-			pnpm run prod \
-				--settings /config/settings.json \
-				--credentials /data/credentials.json \
-				--apikey /data/apikey.json
+      --rm \
+      --name={{ etherpad_identifier }} \
+      --log-driver=none \
+      --user={{ etherpad_user_uid }}:{{ etherpad_user_gid }} \
+      --cap-drop=ALL \
+      --network={{ etherpad_container_network }} \
+      {% if etherpad_container_http_host_bind_port %}
+      -p {{ etherpad_container_http_host_bind_port }}:{{ etherpad_container_http_port }} \
+      {% endif %}
+      --label-file={{ etherpad_base_path }}/labels \
+      --health-interval={{ etherpad_container_health_interval }} \
+      --mount type=bind,src={{ etherpad_config_path }},dst=/config,ro \
+      --mount type=bind,src={{ etherpad_data_path }},dst=/data \
+      {% for arg in etherpad_container_extra_arguments %}
+      {{ arg }} \
+      {% endfor %}
+      {{ etherpad_container_image_self_build_name if etherpad_container_image_self_build else etherpad_container_image }} \
+      pnpm run prod \
+        --settings /config/settings.json \
+        --credentials /data/credentials.json \
+        --apikey /data/apikey.json
 
 {% for network in etherpad_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ etherpad_identifier }}

@@ -45,7 +45,7 @@ traefik.http.routers.{{ etherpad_identifier }}.tls={{ etherpad_container_labels_
 traefik.http.routers.{{ etherpad_identifier }}.tls.certResolver={{ etherpad_container_labels_traefik_tls_certResolver }}
 {% endif %}
 
-traefik.http.services.{{ etherpad_identifier }}.loadbalancer.server.port=9001
+traefik.http.services.{{ etherpad_identifier }}.loadbalancer.server.port={{ etherpad_container_http_port }}
 {% endif %}
 
 {{ etherpad_container_labels_additional_labels }}

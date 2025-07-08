@@ -4,58 +4,44 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 # Project source code URL: https://github.com/ether/etherpad-lite
 
 etherpad_enabled: true
 
 etherpad_identifier: etherpad
-
-etherpad_version: 2.3.0
-
-etherpad_scheme: https
-
-# The hostname at which Etherpad is served.
-etherpad_hostname: ''
-
-# The path at which Etherpad is exposed.
-# This value must either be `/` or not end with a slash (e.g. `/etherpad`).
-etherpad_path_prefix: /
-
-etherpad_base_url: "{{ etherpad_scheme }}://{{ etherpad_hostname }}{{ etherpad_path_prefix }}{{ '' if etherpad_path_prefix == '/' else '/' }}"
-
 etherpad_base_path: "/{{ etherpad_identifier }}"
 etherpad_config_path: "{{ etherpad_base_path }}/config"
 etherpad_data_path: "{{ etherpad_base_path }}/data"
-etherpad_container_src_path: "{{ etherpad_base_path }}/container-src"
 
-# List of systemd services that Etherpad systemd service depends on.
-etherpad_systemd_required_services_list: "{{ etherpad_systemd_required_services_list_default + etherpad_systemd_required_services_list_auto + etherpad_systemd_required_services_list_custom }}"
-etherpad_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
-etherpad_systemd_required_services_list_auto: []
-etherpad_systemd_required_services_list_custom: []
-
-# List of systemd services that Etherpad systemd service wants
-etherpad_systemd_wanted_services_list: "{{ etherpad_systemd_wanted_services_list_default + etherpad_systemd_wanted_services_list_auto + etherpad_systemd_wanted_services_list_custom }}"
-etherpad_systemd_wanted_services_list_default: []
-etherpad_systemd_wanted_services_list_auto: []
-etherpad_systemd_wanted_services_list_custom: []
+# renovate: datasource=docker depName=etherpad/etherpad versioning=semver
+etherpad_version: 2.3.2
 
 # Container user has to be able to write to the source file directories until this bug is fixed:
 # https://github.com/ether/etherpad-lite/issues/2683
 etherpad_user_uid: '5001'
 etherpad_user_gid: '5001'
 
+# The hostname at which Etherpad is served.
+etherpad_hostname: ''
+
+etherpad_scheme: https
+
+# The path at which Etherpad is exposed.
+# This value must either be `/` or not end with a slash (e.g. `/etherpad`).
+etherpad_path_prefix: /
+
 etherpad_container_image: "{{ etherpad_container_image_registry_prefix }}etherpad/etherpad:{{ etherpad_container_image_tag }}"
 etherpad_container_image_tag: "{{ etherpad_version }}"
-etherpad_container_image_force_pull: "{{ etherpad_container_image.endswith(':latest') }}"
 etherpad_container_image_registry_prefix: "{{ 'localhost/' if etherpad_container_image_self_build else etherpad_container_image_registry_prefix_upstream }}"
 etherpad_container_image_registry_prefix_upstream: "{{ etherpad_container_image_registry_prefix_upstream_default }}"
 etherpad_container_image_registry_prefix_upstream_default: docker.io/
+etherpad_container_image_force_pull: "{{ etherpad_container_image.endswith(':latest') }}"
 
 etherpad_container_image_self_build: false
-etherpad_container_image_self_build_repo: "https://github.com/ether/etherpad-lite"
-etherpad_container_image_self_build_repo_version: "{{ etherpad_version }}"
+etherpad_container_image_self_build_name: "etherpad/etherpad:{{ etherpad_container_image_self_build_repo_version }}"
+etherpad_container_image_self_build_repo: "https://github.com/ether/etherpad-lite.git"
+etherpad_container_image_self_build_repo_version: "{{ etherpad_version if etherpad_version != 'latest' else 'main' }}"
+etherpad_container_image_self_build_src_files_path: "{{ etherpad_base_path }}/docker-src"
 
 # Controls whether the container exposes its HTTP port (tcp/9001 in the container).
 #
@@ -64,6 +50,9 @@ etherpad_container_http_host_bind_port: ''
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 etherpad_container_network: "{{ etherpad_identifier }}"
+
+# The port number in the container
+etherpad_container_http_port: 9001
 
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
@@ -94,7 +83,6 @@ etherpad_container_labels_traefik_additional_response_headers_auto: |
   {{
     {}
     | combine ({'X-XSS-Protection': etherpad_http_header_xss_protection} if etherpad_http_header_xss_protection else {})
-    | combine ({'X-Frame-Options': etherpad_http_header_frame_options} if etherpad_http_header_frame_options else {})
     | combine ({'X-Content-Type-Options': etherpad_http_header_content_type_options} if etherpad_http_header_content_type_options else {})
     | combine ({'Content-Security-Policy': etherpad_http_header_content_security_policy} if etherpad_http_header_content_security_policy else {})
     | combine ({'Permission-Policy': etherpad_http_header_content_permission_policy} if etherpad_http_header_content_permission_policy else {})
@@ -132,10 +120,6 @@ etherpad_container_extra_arguments: []
 # - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
 # - https://portswigger.net/web-security/cross-site-scripting/reflected
 etherpad_http_header_xss_protection: "1; mode=block"
-
-# Specifies the value of the `X-Frame-Options` header which controls whether framing can happen.
-# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
-etherpad_http_header_frame_options: "{{ '' if etherpad_framing_enabled else 'SAMEORIGIN'  }}"
 
 # Specifies the value of the `X-Content-Type-Options` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
@@ -180,6 +164,20 @@ etherpad_floc_optout_enabled: true
 # See: `etherpad_http_header_strict_transport_security`
 etherpad_hsts_preload_enabled: false
 
+# List of systemd services that Etherpad systemd service depends on.
+etherpad_systemd_required_services_list: "{{ etherpad_systemd_required_services_list_default + etherpad_systemd_required_services_list_auto + etherpad_systemd_required_services_list_custom }}"
+etherpad_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+etherpad_systemd_required_services_list_auto: []
+etherpad_systemd_required_services_list_custom: []
+
+# List of systemd services that Etherpad systemd service wants
+etherpad_systemd_wanted_services_list: "{{ etherpad_systemd_wanted_services_list_default + etherpad_systemd_wanted_services_list_auto + etherpad_systemd_wanted_services_list_custom }}"
+etherpad_systemd_wanted_services_list_default: []
+etherpad_systemd_wanted_services_list_auto: []
+etherpad_systemd_wanted_services_list_custom: []
+
+etherpad_base_url: "{{ etherpad_scheme }}://{{ etherpad_hostname }}{{ etherpad_path_prefix }}{{ '' if etherpad_path_prefix == '/' else '/' }}"
+
 # Controls whether putting Etherpad in a frame on another website will be allowed.
 etherpad_framing_enabled: true
 
@@ -204,6 +202,7 @@ etherpad_database_connection_string: 'postgres://{{ etherpad_database_username }
 etherpad_title: 'Etherpad'
 etherpad_abiword: null
 etherpad_soffice: null
+etherpad_plugins: []
 etherpad_default_pad_text: |
   Welcome to Etherpad!
 

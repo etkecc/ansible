@@ -1,26 +1,28 @@
 # SPDX-FileCopyrightText: 2023 Slavi Pantaleev
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
+
 ---
-
-- block:
-    - when: etherpad_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
-
-    - when: etherpad_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
-
-    - when: etherpad_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/migrate.yml"
+- name: Perform Etherpad installation tasks
+  when: etherpad_enabled | bool
   tags:
     - setup-all
     - setup-etherpad
     - install-all
     - install-etherpad
+  block:
+    - name: Validate Etherpad configuration
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Install Etherpad
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+    - name: Migrate old Etherpad settings.json file
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/migrate.yml"
 
-- block:
-    - when: not etherpad_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
+- name: Perform Etherpad uninstallation tasks
+  when: not etherpad_enabled | bool
   tags:
     - setup-all
     - setup-etherpad
+  block:
+    - name: Uninstall Etherpad
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

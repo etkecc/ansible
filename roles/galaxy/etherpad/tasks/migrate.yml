@@ -3,13 +3,13 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: Check existence of old Etherpad settings.json file
   ansible.builtin.stat:
     path: "{{ etherpad_base_path }}/settings.json"
   register: etherpad_old_settings_file_stat
 
-- when: etherpad_old_settings_file_stat.stat.exists | bool
+- name: Migrate the old Etherpad settings.json file
+  when: etherpad_old_settings_file_stat.stat.exists | bool
   block:
     # settings.json is recreated in etherpad_config_path automatically.
     # There's no need to relocate it. This one may be outdated too.

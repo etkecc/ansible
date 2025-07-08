@@ -67,9 +67,10 @@ etherpad_database_password: YOUR_DATABASE_PASSWORD_HERE
 ### Create admin user (optional)
 
 You can create an admin user account for authentication. The admin user account is used by:
-  - default HTTP basic authentication if no plugin handles authentication
-  - authentication plugins
-  - authorization plugins
+
+- default HTTP Basic authentication if no plugin handles authentication
+- authentication plugins
+- authorization plugins
 
 The admin user can access to `/admin` page. Authentication and authorization plugins may define additional properties. Note that `/admin` page will not be available, if the admin user is not created.
 
@@ -123,6 +124,21 @@ etherpad_default_pad_text: |
   Get involved with Etherpad at https://etherpad.org
 ```
 
+### Define plugins to install (optional)
+
+You can also define plugins that should be installed with the variable `etherpad_plugins`. Defining plugins also requires self-building the Etherpad Docker image with the `etherpad_container_image_self_build` variable.
+
+Etherpad plugins can also be managed from the admin page (if enabled). You can view a list of the plugins [on this page](https://static.etherpad.org/index.html).
+
+To specify plugins to install, add the following configuration to your `vars.yml` file (adapt to your needs). No plugins are installed by default.
+
+```yaml
+etherpad_container_image_self_build: true
+etherpad_plugins:
+  - YOUR_FIRST_PLUGIN_HERE
+  - YOUR_SECOND_PLUGIN_HERE
+```
+
 ### Extending the configuration
 
 There are some additional things you may wish to configure about the component.
@@ -172,7 +188,7 @@ Check [the official docs](https://etherpad.org/doc/latest/) and [the wiki at Git
 
 ### Install plugins
 
-If you have created an admin user, it is possible to install plugins at the admin interface available at https://example.com/admin/plugins after logging in to the admin user account.
+If you have created an admin user, it is possible to install plugins at the admin interface available at `https://example.com/admin/plugins` after logging in to the admin user account.
 
 The list of the plugins hosted on npm is available at the [Plugins website](https://static.etherpad.org).
 

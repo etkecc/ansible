@@ -1,1 +1,2 @@
 * [Element Call](https://github.com/element-hq/element-call): [v0.13.0](https://github.com/element-hq/element-call/releases/tag/v0.13.0) ⇾ [v0.13.1](https://github.com/element-hq/element-call/releases/tag/v0.13.1)
+* [Etherpad](https://github.com/ether/etherpad-lite): [2.3.0](https://github.com/ether/etherpad-lite/releases/tag/2.3.0) ⇾ [2.3.2](https://github.com/ether/etherpad-lite/releases/tag/2.3.2)
