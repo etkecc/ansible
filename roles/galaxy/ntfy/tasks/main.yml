@@ -5,33 +5,40 @@
 
 ---
 
-- block:
-    - when: ntfy_enabled | bool
+- name: Perform ntfy installation tasks
+  block:
+    - name: Validate ntfy configuration
+      when: ntfy_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
 
-    - when: ntfy_enabled | bool
+    - name: Install ntfy
+      when: ntfy_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
-    - when:
+    - name: Set up ntfy users
+      when:
         - ntfy_enabled | bool
         - ntfy_credentials | length > 0
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/setup_users.yml"
-
   tags:
     - setup-all
     - setup-ntfy
     - install-all
     - install-ntfy
 
-- block:
-    - when: not ntfy_enabled | bool
+- name: Perform ntfy uninstallation tasks
+  block:
+    - name: Uninstall ntfy
+      when: not ntfy_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
   tags:
     - setup-all
     - setup-ntfy
 
-- block:
-    - when: ntfy_enabled | bool
+- name: Perform ntfy self-check tasks
+  block:
+    - name: Run self-check for ntfy
+      when: ntfy_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/self_check.yml"
   tags:
     - self-check

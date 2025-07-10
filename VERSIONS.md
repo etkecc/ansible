@@ -1,6 +1,6 @@
 * Alertmanager Receiver: 2025.7.2
 * Appservice Discord: v4.0.0
-* Appservice Draupnir For All: v2.4.1
+* Appservice Draupnir For All: v2.5.0
 * Appservice Irc: 1.0.1
 * Appservice Kakaotalk: 86c038fd2ffee5e0aebf65136f085cce7e38b54e
 * Appservice Slack: 2.1.2
@@ -21,7 +21,7 @@
 * Dimension: latest
 * Discord: v0.7.4
 * Docker Compose: v2.32.1
-* Draupnir: v2.4.1
+* Draupnir: v2.5.0
 * Dynamic Dns: 4.0.0
 * Element: v1.11.105
 * Element Call: v0.13.1
@@ -65,7 +65,7 @@
 * Mx Puppet Slack: v0.1.2
 * Mx Puppet Steam: latest
 * Mx Puppet Twitter: latest
-* Ntfy: v2.11.0
+* Ntfy: v2.12.0
 * Pantalaimon: 0.10.5
 * Peertube: v7.1.1
 * Postmoogle: v0.9.26
@@ -98,7 +98,7 @@
 * Twitter: v0.4.2
 * Uptime Kuma: 1.23.16
 * User Verification Service: v3.0.0
-* Valkey: 8.1.2
+* Valkey: 8.1.3
 * Vaultwarden: 1.34.1
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1

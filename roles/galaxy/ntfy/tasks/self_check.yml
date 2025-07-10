@@ -17,7 +17,6 @@
     validate_certs: "{{ ntfy_self_check_validate_certificates }}"
   register: ntfy_self_check_result
   check_mode: false
-  ignore_errors: true
   delegate_to: 127.0.0.1
   become: false
 

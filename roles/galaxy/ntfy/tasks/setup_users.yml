@@ -60,7 +60,7 @@
     user add --role={{ item.admin | ternary("admin", "user") }} {{ item.username }}'
   loop: "{{ ntfy_credentials }}"
   when: item.username in users_to_add
-  ignore_errors: true
+  no_log: true  # suppress the output which includes credentials
 
 - name: Write ntfy users passwords
   command: |
@@ -75,7 +75,7 @@
     user change-pass {{ item.username }}'
   loop: "{{ ntfy_credentials }}"
   when: item.username in existing_users
-  ignore_errors: true
+  no_log: true  # suppress the output which includes credentials
 
 - name: Write ntfy users roles
   command: |
@@ -90,7 +90,7 @@
   with_items: "{{ ntfy_credentials }}"
   loop: "{{ ntfy_credentials }}"
   when: item.username in existing_users
-  ignore_errors: true
+  no_log: true  # suppress the output which includes credentials
 
 - name: Identify users to delete
   set_fact:
@@ -108,4 +108,3 @@
     user del {{ item }}'
   loop: "{{ users_to_delete }}"
   when: users_to_delete | length > 0
-  ignore_errors: true

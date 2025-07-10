@@ -13,14 +13,14 @@ ntfy_enabled: true
 
 ntfy_identifier: ntfy
 
-ntfy_base_path: "{{ ntfy_identifier }}"
+ntfy_base_path: "/{{ ntfy_identifier }}"
 ntfy_config_dir_path: "{{ ntfy_base_path }}/config"
 ntfy_data_path: "{{ ntfy_base_path }}/data"
 ntfy_cache_path: "{{ ntfy_base_path }}/cache"
 ntfy_attachment_cache_dir_path: "{{ ntfy_cache_path }}/attachments"
 
 # renovate: datasource=docker depName=docker.io/binwiederhier/ntfy
-ntfy_version: v2.11.0
+ntfy_version: v2.12.0
 
 ntfy_uid: ''
 ntfy_gid: ''
@@ -52,6 +52,9 @@ ntfy_container_http_host_bind_port: ''
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 ntfy_container_network: "{{ ntfy_identifier }}"
 
+# The port number in the container
+ntfy_container_http_port: 8080
+
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
 # Use this to expose this container to another reverse proxy, which runs in a different container network.
@@ -77,7 +80,15 @@ ntfy_container_labels_traefik_tls_certResolver: default  # noqa var-naming
 # Controls which additional headers to attach to all HTTP responses.
 # To add your own headers, use `ntfy_container_labels_traefik_additional_response_headers_custom`
 ntfy_container_labels_traefik_additional_response_headers: "{{ ntfy_container_labels_traefik_additional_response_headers_auto | combine(ntfy_container_labels_traefik_additional_response_headers_custom) }}"
-ntfy_container_labels_traefik_additional_response_headers_auto: {}
+ntfy_container_labels_traefik_additional_response_headers_auto: |
+  {{
+    {}
+    | combine ({'X-XSS-Protection': ntfy_http_header_xss_protection} if ntfy_http_header_xss_protection else {})
+    | combine ({'X-Content-Type-Options': ntfy_http_header_content_type_options} if ntfy_http_header_content_type_options else {})
+    | combine ({'Content-Security-Policy': ntfy_http_header_content_security_policy} if ntfy_http_header_content_security_policy else {})
+    | combine ({'Permission-Policy': ntfy_http_header_content_permission_policy} if ntfy_http_header_content_permission_policy else {})
+    | combine ({'Strict-Transport-Security': ntfy_http_header_strict_transport_security} if ntfy_http_header_strict_transport_security and ntfy_container_labels_traefik_tls else {})
+  }}
 ntfy_container_labels_traefik_additional_response_headers_custom: {}
 
 # ntfy_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
@@ -102,6 +113,53 @@ ntfy_container_health_interval: "{{ '5s' if ntfy_container_labels_traefik_enable
 
 # A list of extra arguments to pass to the container (`docker run` command)
 ntfy_container_extra_arguments: []
+
+# Specifies the value of the `X-XSS-Protection` header
+# Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
+#
+# Learn more about it is here:
+# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
+# - https://portswigger.net/web-security/cross-site-scripting/reflected
+ntfy_http_header_xss_protection: "1; mode=block"
+
+# Specifies the value of the `X-Content-Type-Options` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
+ntfy_http_header_content_type_options: nosniff
+
+# Specifies the value of the `Content-Security-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
+ntfy_http_header_content_security_policy: frame-ancestors 'self'
+
+# Specifies the value of the `Permission-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permission-Policy
+ntfy_http_header_content_permission_policy: "{{ 'interest-cohort=()' if ntfy_floc_optout_enabled else '' }}"
+
+# Specifies the value of the `Strict-Transport-Security` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+ntfy_http_header_strict_transport_security: "max-age=31536000; includeSubDomains{{ '; preload' if ntfy_hsts_preload_enabled else '' }}"
+
+# Controls whether to send a "Permissions-Policy interest-cohort=();" header along with all responses
+#
+# Learn more about what it is here:
+# - https://www.eff.org/deeplinks/2021/03/googles-floc-terrible-idea
+# - https://paramdeo.com/blog/opting-your-website-out-of-googles-floc-network
+# - https://amifloced.org/
+#
+# Of course, a better solution is to just stop using browsers (like Chrome), which participate in such tracking practices.
+# See: `ntfy_content_permission_policy`
+ntfy_floc_optout_enabled: true
+
+# Controls if HSTS preloading is enabled
+#
+# In its strongest and recommended form, the [HSTS policy](https://www.chromium.org/hsts) includes all subdomains, and
+# indicates a willingness to be "preloaded" into browsers:
+# `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload`
+# For more information visit:
+# - https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
+# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+# - https://hstspreload.org/#opt-in
+# See: `ntfy_http_header_strict_transport_security`
+ntfy_hsts_preload_enabled: false
 
 # List of systemd services that the ntfy systemd service depends on
 ntfy_systemd_required_services_list: "{{ ntfy_systemd_required_services_list_default + ntfy_systemd_required_services_list_auto + ntfy_systemd_required_services_list_custom }}"

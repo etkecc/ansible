@@ -17,28 +17,28 @@ ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_s
 ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ ntfy_identifier }} 2>/dev/null || true'
 
 ExecStartPre={{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} create \
-			--rm \
-			--name={{ ntfy_identifier }} \
-			--log-driver=none \
-			--user={{ ntfy_uid }}:{{ ntfy_gid }} \
-			--cap-drop=ALL \
-			--cap-add=NET_BIND_SERVICE \
-			--read-only \
-			--env NTFY_VISITOR_REQUEST_LIMIT_EXEMPT_HOSTS={{ ntfy_visitor_request_limit_exempt_hosts }} \
-			{% for arg in ntfy_container_extra_arguments %}
-			{{ arg }} \
-			{% endfor %}
-			--network={{ ntfy_container_network }} \
-			{% if ntfy_container_http_host_bind_port %}
-			-p {{ ntfy_container_http_host_bind_port }}:8080 \
-			{% endif %}
-			--label-file={{ ntfy_base_path }}/labels \
-			--health-interval={{ ntfy_container_health_interval }} \
-			--mount type=bind,src={{ ntfy_config_dir_path }},dst=/etc/ntfy,ro \
-			--mount type=bind,src={{ ntfy_data_path }},dst=/data \
-			--mount type=bind,src={{ ntfy_cache_path }},dst=/cache \
-			{{ ntfy_container_image }} \
-			serve'
+      --rm \
+      --name={{ ntfy_identifier }} \
+      --log-driver=none \
+      --user={{ ntfy_uid }}:{{ ntfy_gid }} \
+      --cap-drop=ALL \
+      --cap-add=NET_BIND_SERVICE \
+      --read-only \
+      --env NTFY_VISITOR_REQUEST_LIMIT_EXEMPT_HOSTS={{ ntfy_visitor_request_limit_exempt_hosts }} \
+      {% for arg in ntfy_container_extra_arguments %}
+      {{ arg }} \
+      {% endfor %}
+      --network={{ ntfy_container_network }} \
+      {% if ntfy_container_http_host_bind_port %}
+      -p {{ ntfy_container_http_host_bind_port }}:{{ ntfy_container_http_port }} \
+      {% endif %}
+      --label-file={{ ntfy_base_path }}/labels \
+      --health-interval={{ ntfy_container_health_interval }} \
+      --mount type=bind,src={{ ntfy_config_dir_path }},dst=/etc/ntfy,ro \
+      --mount type=bind,src={{ ntfy_data_path }},dst=/data \
+      --mount type=bind,src={{ ntfy_cache_path }},dst=/cache \
+      {{ ntfy_container_image }} \
+      serve'
 
 {% for network in ntfy_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ ntfy_identifier }}

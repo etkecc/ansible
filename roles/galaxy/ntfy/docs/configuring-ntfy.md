@@ -244,7 +244,7 @@ Take a look at:
 
 - [`defaults/main.yml`](../defaults/main.yml) for some variables that you can customize via your `vars.yml` file. You can override settings (even those that don't have dedicated playbook variables) using the `ntfy_configuration_extension_yaml` variable
 
-For a complete list of ntfy config options that you could put in `ntfy_configuration_extension_yaml`, see the [ntfy config documentation](https://docs.ntfy.sh/config/#config-options).
+See [this section on the official documentation](https://docs.ntfy.sh/config/#config-options) for a complete list of ntfy config options that you could put in `ntfy_configuration_extension_yaml`.
 
 ## Installing
 

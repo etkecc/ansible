@@ -1,4 +1,5 @@
 # SPDX-FileCopyrightText: 2024 - 2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -13,7 +14,7 @@ valkey_config_path: "{{ valkey_base_path }}/config"
 valkey_data_path: "{{ valkey_base_path }}/data"
 
 # renovate: datasource=docker depName=valkey/valkey versioning=semver
-valkey_version: 8.1.2
+valkey_version: 8.1.3
 
 valkey_uid: ''
 valkey_gid: ''
@@ -24,6 +25,13 @@ valkey_container_image_registry_prefix: "{{ valkey_container_image_registry_pref
 valkey_container_image_registry_prefix_upstream: "{{ valkey_container_image_registry_prefix_upstream_default }}"
 valkey_container_image_registry_prefix_upstream_default: docker.io/
 valkey_container_image_force_pull: "{{ valkey_container_image.endswith(':latest') }}"
+
+valkey_container_image_self_build: false
+valkey_container_image_self_build_name: "valkey-io/valkey-container:{{ valkey_container_image_self_build_repo_version }}"
+valkey_container_image_self_build_repo: "https://github.com/valkey-io/valkey-container.git"
+valkey_container_image_self_build_repo_version: "mainline"
+valkey_container_image_self_build_src_files_path: "{{ valkey_base_path }}/docker-src"
+valkey_container_image_self_build_repo_dockerfile_dir: "{{ valkey_container_image_self_build_src_files_path }}/{{ valkey_version.split('.')[0] }}.{{ valkey_version.split('.')[1] }}/alpine" # where Dockerfile and docker-entrypoint.sh exist
 
 # Controls whether the container exposes a port (tcp/6379 in the container)
 # that can be used to access Valkey from outside the container

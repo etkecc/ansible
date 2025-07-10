@@ -6,7 +6,7 @@
 
 ---
 
-- name: Ensure ntfy paths exists
+- name: Ensure ntfy paths exist
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
@@ -20,7 +20,7 @@
     - "{{ ntfy_cache_path }}"
     - "{{ ntfy_attachment_cache_dir_path }}"
 
-- name: Ensure ntfy config installed
+- name: Ensure ntfy configuration file installed
   ansible.builtin.copy:
     content: "{{ ntfy_configuration | to_nice_yaml(indent=2, width=999999) }}"
     dest: "{{ ntfy_config_dir_path }}/server.yml"
@@ -48,13 +48,13 @@
   until: result is not failed
 
 - name: Ensure ntfy container network is created
-  community.general.docker_network:
+  community.docker.docker_network:
     enable_ipv6: "{{ devture_systemd_docker_base_ipv6_enabled }}"
     name: "{{ ntfy_container_network }}"
     driver: bridge
     driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
 
-- name: Ensure ntfy.service installed
+- name: Ensure ntfy systemd service is present
   ansible.builtin.template:
     src: "{{ role_path }}/templates/systemd/ntfy.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ ntfy_identifier }}.service"
