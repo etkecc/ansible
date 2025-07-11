@@ -19,14 +19,15 @@ repos:
     rev: v0.45.0
     hooks:
       - id: markdownlint
-        args: [
-          --disable=MD013,  # https://github.com/DavidAnson/markdownlint/blob/main/doc/md013.md
-          --disable=MD033
-        ]
+        args: [--disable=MD013]  # https://github.com/DavidAnson/markdownlint/blob/main/doc/md013.md
   - repo: https://github.com/codespell-project/codespell
     rev: v2.4.1
     hooks:
       - id: codespell
+  - repo: https://github.com/renovatebot/pre-commit-hooks
+    rev: 41.23.5
+    hooks:
+      - id: renovate-config-validator
   - repo: https://github.com/fsfe/reuse-tool  # https://reuse.software/dev/#pre-commit-hook
     rev: v5.0.2
     hooks:

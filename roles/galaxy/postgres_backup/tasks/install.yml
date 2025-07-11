@@ -18,7 +18,7 @@
         postgres_backup_container_image_to_use: "{{ postgres_backup_detected_version_corresponding_docker_image }}"
       when: postgres_backup_detected_version_corresponding_docker_image | default('') != ''
 
-- name: Ensure Postgres backup Docker image is pulled
+- name: Ensure postgres-backup Docker image is pulled
   community.docker.docker_image:
     name: "{{ postgres_backup_container_image_to_use }}"
     source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
@@ -29,7 +29,7 @@
   delay: "{{ devture_playbook_help_container_retries_delay }}"
   until: result is not failed
 
-- name: Ensure Postgres backup paths exist
+- name: Ensure postgres-backup paths exist
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
@@ -41,7 +41,7 @@
     - "{{ postgres_backup_config_path }}"
     - "{{ postgres_backup_data_path }}"
 
-- name: Ensure Postgres backup environment variables file created
+- name: Ensure postgres-backup environment variables file installed
   ansible.builtin.template:
     src: "{{ role_path }}/templates/env.j2"
     dest: "{{ postgres_backup_config_path }}/env"
@@ -56,7 +56,7 @@
     driver: bridge
     driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
 
-- name: Ensure postgres-backup systemd service installed
+- name: Ensure postgres-backup systemd service is present
   ansible.builtin.template:
     src: "{{ role_path }}/templates/systemd/postgres-backup.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ postgres_backup_identifier }}.service"

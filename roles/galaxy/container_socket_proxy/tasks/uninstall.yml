@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 ---
 
 - name: Check existence of container-socket-proxy systemd service
@@ -5,7 +9,8 @@
     path: "{{ devture_systemd_docker_base_systemd_path }}/{{ container_socket_proxy_identifier }}.service"
   register: container_socket_proxy_service_stat
 
-- when: container_socket_proxy_service_stat.stat.exists | bool
+- name: Uninstall container-socket-proxy systemd services and files
+  when: container_socket_proxy_service_stat.stat.exists | bool
   block:
     - name: Ensure container-socket-proxy systemd service is stopped
       ansible.builtin.systemd:
@@ -13,12 +18,12 @@
         state: stopped
         daemon_reload: true
 
-    - name: Ensure container-socket-proxy systemd service doesn't exist
+    - name: Ensure container-socket-proxy systemd service does not exist
       ansible.builtin.file:
         path: "{{ devture_systemd_docker_base_systemd_path }}/{{ container_socket_proxy_identifier }}.service"
         state: absent
 
-    - name: Remove container-socket-proxy directory is removed
+    - name: Ensure container-socket-proxy path does not exist
       ansible.builtin.file:
         path: "{{ container_socket_proxy_base_path }}"
         state: absent

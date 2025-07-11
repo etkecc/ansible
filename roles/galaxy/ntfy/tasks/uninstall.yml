@@ -1,15 +1,16 @@
 # SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: Check existence of ntfy systemd service
   ansible.builtin.stat:
     path: "{{ devture_systemd_docker_base_systemd_path }}/{{ ntfy_identifier }}.service"
   register: ntfy_service_stat
 
-- when: ntfy_service_stat.stat.exists | bool
+- name: Uninstall ntfy systemd services and files
+  when: ntfy_service_stat.stat.exists | bool
   block:
     - name: Ensure ntfy systemd service is stopped
       ansible.builtin.service:
@@ -22,6 +23,21 @@
       ansible.builtin.file:
         path: "{{ devture_systemd_docker_base_systemd_path }}/{{ ntfy_identifier }}.service"
         state: absent
+
+    - name: Ensure ntfy container network does not exist via community.docker.docker_network
+      when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+      community.docker.docker_network:
+        name: "{{ ntfy_container_network }}"
+        state: absent
+
+    - name: Ensure ntfy container network does not exist via ansible.builtin.command
+      when: devture_systemd_docker_base_container_network_creation_method == 'command'
+      ansible.builtin.command:
+        cmd: >-
+          {{ devture_systemd_docker_base_host_command_docker }} network rm
+          {{ ntfy_container_network }}
+      register: network_deletion_result
+      changed_when: ntfy_container_network in network_deletion_result.stdout
 
     - name: Ensure ntfy path does not exist
       ansible.builtin.file:

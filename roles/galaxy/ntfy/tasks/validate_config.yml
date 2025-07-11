@@ -4,10 +4,9 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: Fail if required ntfy settings not defined
   ansible.builtin.fail:
-    msg: >
+    msg: >-
       You need to define a required configuration setting (`{{ item }}`).
   when: "vars[item] == ''"
   with_items:
@@ -18,7 +17,8 @@
     - ntfy_path_prefix
     - ntfy_container_network
 
-- when: ntfy_container_labels_traefik_enabled | bool
+- name: Run if Traefik is enabled
+  when: ntfy_container_labels_traefik_enabled | bool
   block:
     - name: Fail if required ntfy Traefik settings not defined
       ansible.builtin.fail:
@@ -38,7 +38,8 @@
           ntfy_container_labels_traefik_path_prefix (`{{ ntfy_container_labels_traefik_path_prefix }}`) must either be `/` or not end with a slash (e.g. `/ntfy`).
       when: "ntfy_container_labels_traefik_path_prefix != '/' and ntfy_container_labels_traefik_path_prefix[-1] == '/'"
 
-- when: ntfy_smtp_sender_enabled | bool
+- name: Run if ntfy email notification is enabled
+  when: ntfy_smtp_sender_enabled | bool
   block:
     - name: Fail if required ntfy email notification settings not defined
       ansible.builtin.fail:

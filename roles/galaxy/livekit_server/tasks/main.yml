@@ -6,6 +6,7 @@
 
 ---
 - name: Perform LiveKit Server installation tasks
+  when: livekit_server_enabled | bool
   tags:
     - setup-all
     - setup-livekit-server
@@ -13,17 +14,15 @@
     - install-livekit-server
   block:
     - name: Validate LiveKit Server configuration
-      when: livekit_server_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
     - name: Install LiveKit Server
-      when: livekit_server_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
 - name: Perform LiveKit Server uninstallation tasks
+  when: not livekit_server_enabled | bool
   tags:
     - setup-all
     - setup-livekit-server
   block:
     - name: Uninstall LiveKit Server
-      when: not livekit_server_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

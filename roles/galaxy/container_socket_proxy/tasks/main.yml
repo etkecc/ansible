@@ -1,20 +1,27 @@
+# SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 ---
 
-- tags:
+- name: Perform container-socket-proxy installation tasks
+  when: container_socket_proxy_enabled | bool
+  tags:
     - setup-all
     - setup-container-socket-proxy
     - install-all
     - install-container-socket-proxy
   block:
-    - when: container_socket_proxy_enabled | bool
+    - name: Validate container-socket-proxy configuration
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
-
-    - when: container_socket_proxy_enabled | bool
+    - name: Install container-socket-proxy
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
-- tags:
+- name: Perform container-socket-proxy uninstallation tasks
+  when: not container_socket_proxy_enabled | bool
+  tags:
     - setup-all
     - setup-container-socket-proxy
   block:
-    - when: not container_socket_proxy_enabled | bool
+    - name: Uninstall container-socket-proxy
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

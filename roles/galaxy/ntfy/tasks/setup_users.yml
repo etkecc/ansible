@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: Restart ntfy service to ensure user database is created
   ansible.builtin.systemd:
     name: "{{ ntfy_identifier }}"
@@ -11,7 +10,7 @@
     state: restarted
 
 - name: Allow anonymous write access for push messages on UnifiedPush
-  command: |
+  ansible.builtin.command: |
     {{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} run \
     --rm \
     --user={{ ntfy_uid }}:{{ ntfy_gid }} \
@@ -20,9 +19,11 @@
     --network none \
     {{ ntfy_container_image }} \
     access "*" "up*" write-only'
+  register: allow_up_write_access
+  changed_when: true
 
 - name: Get existing ntfy users
-  command: |
+  ansible.builtin.command: |
     {{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} run \
     --rm \
     --user={{ ntfy_uid }}:{{ ntfy_gid }} \
@@ -32,23 +33,22 @@
     {{ ntfy_container_image }} \
     user list'
   register: ntfy_users_output
-  changed_when: false
-  failed_when: false
+  changed_when: true
 
 - name: Extract existing users
-  set_fact:
+  ansible.builtin.set_fact:
     existing_users: "{{ (ntfy_users_output.stdout + '\n' + ntfy_users_output.stderr) | regex_findall('user ([^ ]+)') }}"
 
 - name: Extract allowed users from credentials
-  set_fact:
+  ansible.builtin.set_fact:
     allowed_users: "{{ ntfy_credentials | map(attribute='username') | list }}"
 
 - name: Identify users to add
-  set_fact:
+  ansible.builtin.set_fact:
     users_to_add: "{{ allowed_users | difference(existing_users) }}"
 
 - name: Create ntfy users
-  command: |
+  ansible.builtin.command: |
     {{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} run \
     --rm \
     --user={{ ntfy_uid }}:{{ ntfy_gid }} \
@@ -61,9 +61,11 @@
   loop: "{{ ntfy_credentials }}"
   when: item.username in users_to_add
   no_log: true  # suppress the output which includes credentials
+  register: create_ntfy_users
+  changed_when: true
 
 - name: Write ntfy users passwords
-  command: |
+  ansible.builtin.command: |
     {{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} run \
     --rm \
     --user={{ ntfy_uid }}:{{ ntfy_gid }} \
@@ -76,9 +78,11 @@
   loop: "{{ ntfy_credentials }}"
   when: item.username in existing_users
   no_log: true  # suppress the output which includes credentials
+  register: create_ntfy_users
+  changed_when: true
 
 - name: Write ntfy users roles
-  command: |
+  ansible.builtin.command: |
     {{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} run \
     --rm \
     --user={{ ntfy_uid }}:{{ ntfy_gid }} \
@@ -91,13 +95,15 @@
   loop: "{{ ntfy_credentials }}"
   when: item.username in existing_users
   no_log: true  # suppress the output which includes credentials
+  register: write_ntfy_users_roles
+  changed_when: true
 
 - name: Identify users to delete
-  set_fact:
+  ansible.builtin.set_fact:
     users_to_delete: "{{ existing_users | difference(allowed_users + ['*']) }}"
 
-- name: Delete unwanted users
-  command: |
+- name: Delete unwanted ntfy users
+  ansible.builtin.command: |
     {{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} run \
     --rm \
     --user={{ ntfy_uid }}:{{ ntfy_gid }} \
@@ -108,3 +114,5 @@
     user del {{ item }}'
   loop: "{{ users_to_delete }}"
   when: users_to_delete | length > 0
+  register: delete_ntfy_users
+  changed_when: true

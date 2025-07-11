@@ -3,11 +3,11 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 # Query an arbitrary ntfy topic using ntfy's UnifiedPush topic name syntax.
 # Expect an empty response (because we query 'since=1s').
 
-- ansible.builtin.set_fact:
+- name: Set facts related to a public endpoint URL
+  ansible.builtin.set_fact:
     ntfy_url_endpoint_public: "{{ ntfy_base_url }}/upSELFCHECK123/json?poll=1&since=1s"
 
 - name: Check ntfy

@@ -20,37 +20,37 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_sh }} -c 'current_wmem=
 {% endif %}
 
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
-	--rm \
-	--name={{ livekit_server_identifier }} \
-	--log-driver=none \
-	--user={{ livekit_server_uid }}:{{ livekit_server_gid }} \
-	--cap-drop=ALL \
-	--network={{ livekit_server_container_network }} \
-	{% if livekit_server_container_rtc_listen_interface is not in [none, 'none'] %}
-	-p {{ livekit_server_container_rtc_listen_interface }}{{ ':' if livekit_server_container_rtc_listen_interface else '' }}{{ livekit_server_config_rtc_tcp_port }}:{{ livekit_server_config_rtc_tcp_port }} \
-	{% endif %}
-	{% if livekit_server_container_rtc_listen_interface is not in [none, 'none'] and livekit_server_config_rtc_port_range_start and livekit_server_config_rtc_port_range_end %}
-	-p {{ livekit_server_container_rtc_listen_interface }}{{ ':' if livekit_server_container_rtc_listen_interface else '' }}{{ livekit_server_config_rtc_port_range_start }}-{{ livekit_server_config_rtc_port_range_end }}:{{ livekit_server_config_rtc_port_range_start }}-{{ livekit_server_config_rtc_port_range_end }}/udp \
-	{% endif %}
-	{% if livekit_server_container_rtc_listen_interface is not in [none, 'none'] and livekit_server_config_rtc_udp_port %}
-	-p {{ livekit_server_container_rtc_listen_interface }}{{ ':' if livekit_server_container_rtc_listen_interface else '' }}{{ livekit_server_config_rtc_udp_port }}:{{ livekit_server_config_rtc_udp_port }}/udp \
-	{% endif %}
-	{% if livekit_server_container_turn_listen_interface is not in [none, 'none'] and livekit_server_config_turn_enabled %}
-	-p {{ livekit_server_container_turn_listen_interface }}{{ ':' if livekit_server_container_turn_listen_interface else '' }}{{ livekit_server_config_turn_tls_port }}:{{ livekit_server_config_turn_tls_port }} \
-	{% endif %}
-	{% if livekit_server_container_turn_listen_interface is not in [none, 'none'] and livekit_server_config_turn_enabled %}
-	-p {{ livekit_server_container_turn_listen_interface }}{{ ':' if livekit_server_container_turn_listen_interface else '' }}{{ livekit_server_config_turn_udp_port }}:{{ livekit_server_config_turn_udp_port }}/udp \
-	{% endif %}
-	{% if livekit_server_container_metrics_listen_interface is not in [none, 'none'] and livekit_server_config_prometheus_enabled %}
-	-p {{ livekit_server_container_metrics_listen_interface }}{{ ':' if livekit_server_container_metrics_listen_interface else '' }}{{ livekit_server_config_prometheus_port }}:{{ livekit_server_config_prometheus_port }} \
-	{% endif %}
-	--mount type=bind,src={{ livekit_server_config_path }}/config.yaml,dst=/livekit-config.yaml,ro \
-	{% for volume in livekit_server_container_additional_volumes %}
-	--mount type={{ volume.type | default('bind' if '/' in volume.src else 'volume') }},src={{ volume.src }},dst={{ volume.dst }}{{ (',' + volume.options) if volume.options else '' }} \
-	{% endfor %}
-	--label-file={{ livekit_server_base_path }}/labels \
-	{{ livekit_server_container_image }} \
-	--config /livekit-config.yaml
+      --rm \
+      --name={{ livekit_server_identifier }} \
+      --log-driver=none \
+      --user={{ livekit_server_uid }}:{{ livekit_server_gid }} \
+      --cap-drop=ALL \
+      --network={{ livekit_server_container_network }} \
+      {% if livekit_server_container_rtc_listen_interface is not in [none, 'none'] %}
+      -p {{ livekit_server_container_rtc_listen_interface }}{{ ':' if livekit_server_container_rtc_listen_interface else '' }}{{ livekit_server_config_rtc_tcp_port }}:{{ livekit_server_config_rtc_tcp_port }} \
+      {% endif %}
+      {% if livekit_server_container_rtc_listen_interface is not in [none, 'none'] and livekit_server_config_rtc_port_range_start and livekit_server_config_rtc_port_range_end %}
+      -p {{ livekit_server_container_rtc_listen_interface }}{{ ':' if livekit_server_container_rtc_listen_interface else '' }}{{ livekit_server_config_rtc_port_range_start }}-{{ livekit_server_config_rtc_port_range_end }}:{{ livekit_server_config_rtc_port_range_start }}-{{ livekit_server_config_rtc_port_range_end }}/udp \
+      {% endif %}
+      {% if livekit_server_container_rtc_listen_interface is not in [none, 'none'] and livekit_server_config_rtc_udp_port %}
+      -p {{ livekit_server_container_rtc_listen_interface }}{{ ':' if livekit_server_container_rtc_listen_interface else '' }}{{ livekit_server_config_rtc_udp_port }}:{{ livekit_server_config_rtc_udp_port }}/udp \
+      {% endif %}
+      {% if livekit_server_container_turn_listen_interface is not in [none, 'none'] and livekit_server_config_turn_enabled %}
+      -p {{ livekit_server_container_turn_listen_interface }}{{ ':' if livekit_server_container_turn_listen_interface else '' }}{{ livekit_server_config_turn_tls_port }}:{{ livekit_server_config_turn_tls_port }} \
+      {% endif %}
+      {% if livekit_server_container_turn_listen_interface is not in [none, 'none'] and livekit_server_config_turn_enabled %}
+      -p {{ livekit_server_container_turn_listen_interface }}{{ ':' if livekit_server_container_turn_listen_interface else '' }}{{ livekit_server_config_turn_udp_port }}:{{ livekit_server_config_turn_udp_port }}/udp \
+      {% endif %}
+      {% if livekit_server_container_metrics_listen_interface is not in [none, 'none'] and livekit_server_config_prometheus_enabled %}
+      -p {{ livekit_server_container_metrics_listen_interface }}{{ ':' if livekit_server_container_metrics_listen_interface else '' }}{{ livekit_server_config_prometheus_port }}:{{ livekit_server_config_prometheus_port }} \
+      {% endif %}
+      --mount type=bind,src={{ livekit_server_config_path }}/config.yaml,dst=/livekit-config.yaml,ro \
+      {% for volume in livekit_server_container_additional_volumes %}
+      --mount type={{ volume.type | default('bind' if '/' in volume.src else 'volume') }},src={{ volume.src }},dst={{ volume.dst }}{{ (',' + volume.options) if volume.options else '' }} \
+      {% endfor %}
+      --label-file={{ livekit_server_base_path }}/labels \
+      {{ livekit_server_container_image_self_build_name if livekit_server_container_image_self_build else livekit_server_container_image }} \
+      --config /livekit-config.yaml
 
 {% for network in livekit_server_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ livekit_server_identifier }}

@@ -6,7 +6,7 @@
 * Appservice Slack: 2.1.2
 * Appservice Webhooks: v1.0.3-01
 * Authentication Service: 0.18.0
-* Baibot: v1.7.5
+* Baibot: v1.7.6
 * Bluesky: v0.1.1
 * Borg: 1.4.1
 * Borgmatic: 1.9.14
@@ -65,7 +65,7 @@
 * Mx Puppet Slack: v0.1.2
 * Mx Puppet Steam: latest
 * Mx Puppet Twitter: latest
-* Ntfy: v2.12.0
+* Ntfy: v2.13.0
 * Pantalaimon: 0.10.5
 * Peertube: v7.1.1
 * Postmoogle: v0.9.26

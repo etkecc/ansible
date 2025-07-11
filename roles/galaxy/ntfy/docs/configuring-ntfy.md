@@ -26,23 +26,26 @@ See the project's [documentation](https://docs.ntfy.sh/) to learn what ntfy does
 
 **Note**: you need to install [the ntfy Android/iOS app](https://docs.ntfy.sh/subscribe/phone/) on your device in order to receive push notifications from the ntfy server. Notifications can also be sent/received on the ntfy's web app. Refer [this section](#usage) for details about how to use the apps.
 
+## Implementation
+
 ### UnifiedPush support
 
 ⚠️ [UnifiedPush does not work on iOS.](https://unifiedpush.org/users/faq/#will-unifiedpush-ever-work-on-ios)
 
 ntfy implements [UnifiedPush](https://unifiedpush.org), the standard which makes it possible to send and receive push notifications without using Google's Firebase Cloud Messaging (FCM) service.
 
-Working as a **Push Server**, a ntfy server can forward messages to a **Distributor** running on Android and other devices (see [here](https://unifiedpush.org/users/distributors/#definitions) for the definition of the Push Server and the Distributor).
+Working as a **Push Server**, a ntfy server can forward messages to a **Distributor** running on Android and other devices (see [definitions on the official documentation of UnifiedPush](https://unifiedpush.org/users/distributors/#definitions) for the definition of the Push Server and the Distributor).
 
 This role installs and manages a self-hosted ntfy server as the Push Server, which the Distributor (such as the ntfy Android app) on your device listens to.
 
-Your UnifiedPush-compatible applications (such as [Tusky](https://tusky.app/) and [DAVx⁵](https://www.davx5.com/)) listen to the Distributor, and push notitications are "distributed" from it. This means that the UnifiedPush-compatible applications cannot receive push notifications from the Push Server without the Distributor.
+Your UnifiedPush-compatible applications (such as [Tusky](https://tusky.app/) and [DAVx⁵](https://www.davx5.com/)) listen to the Distributor, and push notifications are "distributed" from it. This means that the UnifiedPush-compatible applications cannot receive push notifications from the Push Server without the Distributor.
 
 As the ntfy Android app functions as the Distributor too, you do not have to install something else on your device.
 
 💡 **Notes**:
+
 - Refer [this official documentation of UnifiedPush](https://unifiedpush.org/users/troubleshooting/#understand-unifiedpush) for a simple explanation about relationship among UnifiedPush-compatible application, Distributor, Push Server, and the application's server.
-- [Here](https://unifiedpush.org/users/apps/) is a non-exhaustive list of the end-user applications that use UnifiedPush.
+- See [this page](https://unifiedpush.org/users/apps/) for a non-exhaustive list of the end-user applications that use UnifiedPush.
 - Unlike push notifications using Google's FCM or Apple's APNs, each end-user can choose the Push Server which one prefer. This means that deploying a ntfy server cannot enforce a UnifiedPush-compatible application (and its users) to use the exact server.
 
 ### iOS instant notification
@@ -103,17 +106,17 @@ ntfy_credentials:
 
 If the variable is left empty (`ntfy_credentials: []`), authentication will be disabled, allowing unrestricted access to any topics.
 
-See [here](https://docs.ntfy.sh/config/#access-control) on the official documentation about authentication.
+See [this section](https://docs.ntfy.sh/config/#access-control) on the official documentation about authentication.
 
-UnifiedPush requires application servers to be provided anonymous write access to the topic which will be used for pushing messages, according to the ntfy's documentation [here](https://docs.ntfy.sh/config/#example-unifiedpush). As this role takes care of the configuration when creating users (see: [tasks/setup_users.yml](../tasks/setup_users.yml)), you do not need to allow it manually by running `ntfy access` command as described on the documentation.
+UnifiedPush requires application servers to be provided anonymous write access to the topic which will be used for pushing messages, according to [this ntfy's documentation](https://docs.ntfy.sh/config/#example-unifiedpush). As this role takes care of the configuration when creating users (see: [tasks/setup_users.yml](../tasks/setup_users.yml)), you do not need to allow it manually by running `ntfy access` command as described on the documentation.
 
 ### Enable web app (optional)
 
-The ntfy server can be accessed via its web app where you can subscribe to and push to topics from the browser. Note that since the web app only runs in the browser locally after downloading assets for it, there is not additional security risk of running it (refer [here](https://docs.ntfy.sh/faq/#can-i-disable-the-web-app-can-i-protect-it-with-a-login-screen)).
+The ntfy server can be accessed via its web app where you can subscribe to and push to topics from the browser. Note that since the web app only runs in the browser locally after downloading assets for it, there is not additional security risk of running it (refer [this FAQ entry](https://docs.ntfy.sh/faq/#can-i-disable-the-web-app-can-i-protect-it-with-a-login-screen)).
 
 💡 If you are concerned for abuse of your ntfy server, it is recommended to enable access control with authentication.
 
-The web app is not enabled on this role by default, because it doesn't work when `ntfy_path_prefix` is not `/` (see: https://github.com/binwiederhier/ntfy/issues/256).
+The web app is not enabled on this role by default, because it doesn't work when `ntfy_path_prefix` is not `/` (see: <https://github.com/binwiederhier/ntfy/issues/256>).
 
 To enable it, add the following configuration to your `vars.yml` file:
 
@@ -155,6 +158,7 @@ ntfy_smtp_sender_from: ''  # Email address of the sender
 ```
 
 ⚠️ **Notes**:
+
 - Your IP address is included in the notification email's body in order to prevent abuse.
 - Without setting an authentication method such as DKIM, SPF, and DMARC for your hostname, notification email is most likely to be quarantined as spam at recipient's mail servers. If you have set up a mail server with [our exim-relay Ansible role](https://github.com/mother-of-all-self-hosting/ansible-role-exim-relay), you can enable DKIM signing with it. Refer [its documentation](https://github.com/mother-of-all-self-hosting/ansible-role-exim-relay/blob/main/docs/configuring-exim-relay.md#enable-dkim-support-optional) for details.
 
@@ -268,7 +272,7 @@ To set up the Android app, you can follow the steps below:
 2. In its Settings -> `General: Default server`, enter the ntfy server URL, such as `https://ntfy.example.com`.
 3. In its Settings -> `Advanced: Connection protocol`, choose `WebSockets`.
 
-If you are setting up the iOS app, download the app [here](https://apps.apple.com/us/app/ntfy/id1625396347) and follow the same steps.
+If you are setting up the iOS app, download the app [from this page](https://apps.apple.com/us/app/ntfy/id1625396347) and follow the same steps.
 
 ### Log in to your account (optional)
 
@@ -280,7 +284,7 @@ If you use the web app, go to the Settings from its main UI, and click the "Add 
 
 ### Subscribe to a topic
 
-*This step can be skipped if you use the app solely as a Distributor for the UnifiedPush-compatible applications.*
+*This step can be skipped if you use the app solely as a Distributor for UnifiedPush-compatible applications.*
 
 After installing the app, you can create or subscribe to a topic where messages will be published. **Because anyone can subscribe a topic (unless authentication is enabled), choose ones which cannot be guessed easily.**
 
@@ -300,7 +304,7 @@ See [this page](https://docs.ntfy.sh/subscribe/web/) of the official documentati
 
 #### Progressive Web App (PWA)
 
-ntfy is built as [progressive web app (PWA)](https://docs.ntfy.sh/subscribe/pwa/), which can be installed **both on desktop and mobile devices**. See [here](https://docs.ntfy.sh/subscribe/web/#background-notifications) for more information.
+ntfy is built as [progressive web app (PWA)](https://docs.ntfy.sh/subscribe/pwa/), which can be installed **both on desktop and mobile devices**. See [this section](https://docs.ntfy.sh/subscribe/web/#background-notifications) for more information.
 
 ### UnifiedPush-compatible application
 

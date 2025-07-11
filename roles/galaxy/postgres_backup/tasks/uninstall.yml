@@ -33,7 +33,7 @@
   register: postgres_backup_data_path_stat
 
 # We just want to notify the user. Deleting data is too destructive.
-- name: Inject warning if Postgres backup data remains
+- name: Inject warning if postgres-backup data remains
   ansible.builtin.set_fact:
     devture_playbook_runtime_messages_list: |
       {{

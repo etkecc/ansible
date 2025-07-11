@@ -1,22 +1,20 @@
----
+# SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
 
+---
 # Project source code URL: https://github.com/Tecnativa/docker-socket-proxy
 
 container_socket_proxy_enabled: true
 
 container_socket_proxy_identifier: container-socket-proxy
+container_socket_proxy_base_path: "/{{ container_socket_proxy_identifier }}"
 
+# renovate: datasource=docker depName=ghcr.io/tecnativa/docker-socket-proxy versioning=semver
 container_socket_proxy_version: 0.3.0
 
 container_socket_proxy_uid: ''
 container_socket_proxy_gid: ''
-
-container_socket_proxy_base_path: "/{{ container_socket_proxy_identifier }}"
-
-container_socket_proxy_systemd_required_services_list: "{{ container_socket_proxy_systemd_required_services_list_default + container_socket_proxy_systemd_required_services_list_auto + container_socket_proxy_systemd_required_services_list_custom }}"
-container_socket_proxy_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
-container_socket_proxy_systemd_required_services_list_auto: []
-container_socket_proxy_systemd_required_services_list_custom: []
 
 container_socket_proxy_container_image: "{{ container_socket_proxy_container_image_registry_prefix }}tecnativa/docker-socket-proxy:{{ container_socket_proxy_container_image_tag }}"
 container_socket_proxy_container_image_tag: "{{ container_socket_proxy_version }}"
@@ -25,6 +23,7 @@ container_socket_proxy_container_image_registry_prefix: "{{ container_socket_pro
 container_socket_proxy_container_image_registry_prefix_upstream: "{{ container_socket_proxy_container_image_registry_prefix_upstream_default }}"
 container_socket_proxy_container_image_registry_prefix_upstream_default: ghcr.io/
 
+# The base container network. It will be auto-created by this role if it doesn't exist already.
 container_socket_proxy_container_network: "{{ container_socket_proxy_identifier }}"
 
 # A list of additional container networks that the container would be connected to.
@@ -33,8 +32,26 @@ container_socket_proxy_container_additional_networks: "{{ container_socket_proxy
 container_socket_proxy_container_additional_networks_auto: []
 container_socket_proxy_container_additional_networks_custom: []
 
+# container_socket_proxy_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
+# See `../templates/labels.j2` for details.
+#
+# Example:
+# container_socket_proxy_labels_additional_labels: |
+#   my.label=1
+#   another.label="here"
+container_socket_proxy_labels_additional_labels: ''
+
 # A list of extra arguments to pass to the container
 container_socket_proxy_container_extra_arguments: []
+
+# List of systemd services that the Container Socket Proxy systemd service depends on
+container_socket_proxy_systemd_required_services_list: "{{ container_socket_proxy_systemd_required_services_list_default + container_socket_proxy_systemd_required_services_list_auto + container_socket_proxy_systemd_required_services_list_custom }}"
+container_socket_proxy_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+container_socket_proxy_systemd_required_services_list_auto: []
+container_socket_proxy_systemd_required_services_list_custom: []
+
+# List of systemd services that the Container Socket Proxy systemd service wants
+container_socket_proxy_systemd_wanted_services_list: []
 
 # Specifies the container socket path on the host
 container_socket_proxy_container_socket_path: /var/run/docker.sock
@@ -121,12 +138,3 @@ container_socket_proxy_api_volumes_enabled: false
 #   NETWORKS=1
 #   SESSION=1
 container_socket_proxy_environment_variables: ''
-
-# container_socket_proxy_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
-# See `../templates/labels.j2` for details.
-#
-# Example:
-# container_socket_proxy_labels_additional_labels: |
-#   my.label=1
-#   another.label="here"
-container_socket_proxy_labels_additional_labels: ''

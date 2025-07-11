@@ -21,6 +21,10 @@ rtc:
 
   use_external_ip: {{ livekit_server_config_rtc_use_external_ip | to_json }}
 
+  {% if livekit_server_config_rtc_node_ip %}
+  node_ip: {{ livekit_server_config_rtc_node_ip | to_json }}
+  {% endif %}
+
 turn:
   enabled: {{ livekit_server_config_turn_enabled | to_json }}
 {% if livekit_server_config_turn_enabled %}

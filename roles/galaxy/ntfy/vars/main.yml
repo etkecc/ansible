@@ -9,7 +9,7 @@
 # Example:
 # $(/usr/bin/env docker network inspect first-network -f "{{ (index .IPAM.Config 0).Subnet }}")###$(/usr/bin/env docker network inspect second-network -f "{{ (index .IPAM.Config 0).Subnet }}")
 ntfy_visitor_request_limit_exempt_hosts_container_networks_inspect_commands_string: |-
-  {% for network in ntfy_visitor_request_limit_exempt_hosts_container_networks %}$({{devture_systemd_docker_base_host_command_docker}} network inspect {{network}} -f "{% raw %}{{ (index .IPAM.Config 0).Subnet }}{% endraw %}"){% if not loop.last %}###{% endif %}{% endfor -%}
+  {% for network in ntfy_visitor_request_limit_exempt_hosts_container_networks %}$({{ devture_systemd_docker_base_host_command_docker }} network inspect {{ network }} -f "{% raw %}{{ (index .IPAM.Config 0).Subnet }}{% endraw %}"){% if not loop.last %}###{% endif %}{% endfor -%}
 
 # Converts the `###`-separated list of `docker network inspect ...` commands into a regular list
 # Example:

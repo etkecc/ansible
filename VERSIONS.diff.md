@@ -1,6 +1,2 @@
-* [Appservice Draupnir For All](https://github.com/the-draupnir-project/Draupnir): [v2.4.1](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.4.1) ⇾ [v2.5.0](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.5.0)
-* [Draupnir](https://github.com/the-draupnir-project/Draupnir): [v2.4.1](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.4.1) ⇾ [v2.5.0](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.5.0)
-* [Element Call](https://github.com/element-hq/element-call): [v0.13.0](https://github.com/element-hq/element-call/releases/tag/v0.13.0) ⇾ [v0.13.1](https://github.com/element-hq/element-call/releases/tag/v0.13.1)
-* [Etherpad](https://github.com/ether/etherpad-lite): [2.3.0](https://github.com/ether/etherpad-lite/releases/tag/2.3.0) ⇾ [2.3.2](https://github.com/ether/etherpad-lite/releases/tag/2.3.2)
-* [Ntfy](https://github.com/binwiederhier/ntfy): [v2.11.0](https://github.com/binwiederhier/ntfy/releases/tag/v2.11.0) ⇾ [v2.12.0](https://github.com/binwiederhier/ntfy/releases/tag/v2.12.0)
-* [Valkey](https://github.com/valkey-io/valkey): [8.1.2](https://github.com/valkey-io/valkey/releases/tag/8.1.2) ⇾ [8.1.3](https://github.com/valkey-io/valkey/releases/tag/8.1.3)
+* [Baibot](https://github.com/etkecc/baibot): [v1.7.5](https://github.com/etkecc/baibot/releases/tag/v1.7.5) ⇾ [v1.7.6](https://github.com/etkecc/baibot/releases/tag/v1.7.6)
+* [Ntfy](https://github.com/binwiederhier/ntfy): [v2.12.0](https://github.com/binwiederhier/ntfy/releases/tag/v2.12.0) ⇾ [v2.13.0](https://github.com/binwiederhier/ntfy/releases/tag/v2.13.0)
