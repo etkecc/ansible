@@ -9,8 +9,8 @@ system_security_ssh_port: 22
 matrix_coturn_turn_udp_min_port: 49152
 matrix_coturn_turn_udp_max_port: 49573
 
-# UFW default rules (for matrix)
-system_security_ufw_rules:
+# Default (base) UFW rules (for matrix) - you definitely do NOT want to change this
+system_security_ufw_rules_base:
   - name: SSH
     rule: allow
     port: "{{ system_security_ssh_port }}"
@@ -75,6 +75,16 @@ system_security_ufw_rules:
     rule: allow
     port: '5350'
     proto: tcp
+
+# UFW rules to create in addition to the base (system_security_ufw_rules_base) and playbook- or group-defined rules
+# You want to use this var to define your own rules
+system_security_ufw_rules_custom: []
+
+# this var is for playbook- or group-defined rules, you definitely do NOT want to change this in your vars.yml
+system_security_ufw_rules_auto: []
+
+# this var is the final (cumulative) list of UFW rules to apply. Use system_security_ufw_rules_custom to add your own rules.
+system_security_ufw_rules: "{{ system_security_ufw_rules_base + system_security_ufw_rules_auto + system_security_ufw_rules_custom }}"
 
 # postmoogle integration
 matrix_postmoogle_enabled: false
