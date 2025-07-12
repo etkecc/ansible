@@ -1,10 +1,14 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 ---
 
 - name: Ensure Traefik certs dumper paths exist
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    mode: "0750"
+    mode: 0750
     owner: "{{ traefik_certs_dumper_uid }}"
     group: "{{ traefik_certs_dumper_gid }}"
   with_items:
@@ -37,7 +41,7 @@
     - copy-certificates.sh
     - entrypoint.sh
 
-- name: Ensure Traefik certs dumper systemd services installed
+- name: Ensure Traefik certs dumper systemd services are present
   ansible.builtin.template:
     src: "{{ role_path }}/templates/systemd/{{ item.src }}"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ item.dest }}"

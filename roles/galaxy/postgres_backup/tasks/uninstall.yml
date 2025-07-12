@@ -1,15 +1,16 @@
 # SPDX-FileCopyrightText: 2022-2024 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: Check existence of postgres-backup systemd service
   ansible.builtin.stat:
     path: "{{ devture_systemd_docker_base_systemd_path }}/{{ postgres_backup_identifier }}.service"
   register: postgres_backup_service_stat
 
-- when: postgres_backup_service_stat.stat.exists | bool
+- name: Uninstall postgres-backup systemd services and files
+  when: postgres_backup_service_stat.stat.exists | bool
   block:
     - name: Ensure postgres-backup systemd service is stopped
       ansible.builtin.service:
@@ -18,7 +19,7 @@
         enabled: false
         daemon_reload: true
 
-    - name: Ensure postgres-backup paths don't exist
+    - name: Ensure postgres-backup paths do not exist
       ansible.builtin.file:
         path: "{{ item }}"
         state: absent
@@ -27,6 +28,21 @@
         - "{{ devture_systemd_docker_base_systemd_path }}/{{ postgres_backup_identifier }}.service"
         - "{{ postgres_backup_config_path }}"
 
+    - name: Ensure postgres-backup container network does not exist via community.docker.docker_network
+      when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+      community.docker.docker_network:
+        name: "{{ postgres_backup_container_network }}"
+        state: absent
+
+    - name: Ensure postgres-backup container network does not exist via ansible.builtin.command
+      when: devture_systemd_docker_base_container_network_creation_method == 'command'
+      ansible.builtin.command:
+        cmd: >-
+          {{ devture_systemd_docker_base_host_command_docker }} network rm
+          {{ postgres_backup_container_network }}
+      register: network_deletion_result
+      changed_when: postgres_backup_container_network in network_deletion_result.stdout
+
 - name: Check existence of postgres-backup backup path
   ansible.builtin.stat:
     path: "{{ postgres_backup_data_path }}"
@@ -34,13 +50,13 @@
 
 # We just want to notify the user. Deleting data is too destructive.
 - name: Inject warning if postgres-backup data remains
+  when: postgres_backup_data_path_stat.stat.exists | bool
   ansible.builtin.set_fact:
     devture_playbook_runtime_messages_list: |
       {{
         devture_playbook_runtime_messages_list | default([])
         +
         [
-          "NOTE: You are not using the local backup service to backup the PostgreSQL database, but some old data remains from before in `{{ postgres_backup_data_path }}`. Feel free to delete it."
+          "Note: You are not using the local backup service to backup the PostgreSQL database, but some old data remains from before in `{{ postgres_backup_data_path }}`. Feel free to delete it."
         ]
       }}
-  when: postgres_backup_data_path_stat.stat.exists | bool

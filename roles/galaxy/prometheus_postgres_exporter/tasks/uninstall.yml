@@ -3,27 +3,27 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
-- name: Check existence of prometheus-postgres-exporter service
+- name: Check existence of Prometheus Postgres exporter service
   ansible.builtin.stat:
     path: "{{ devture_systemd_docker_base_systemd_path }}/{{ prometheus_postgres_exporter_identifier }}.service"
   register: prometheus_postgres_exporter_service_stat
 
-- when: prometheus_postgres_exporter_service_stat.stat.exists | bool
+- name: Uninstall Prometheus Postgres exporter systemd services and files
+  when: prometheus_postgres_exporter_service_stat.stat.exists | bool
   block:
-    - name: Ensure prometheus-postgres-exporter is stopped
+    - name: Ensure Prometheus Postgres exporter systemd service is stopped
       ansible.builtin.service:
         name: "{{ prometheus_postgres_exporter_identifier }}"
         state: stopped
         enabled: false
         daemon_reload: true
 
-    - name: Ensure prometheus-postgres-exporter systemd service doesn't exist
+    - name: Ensure Prometheus Postgres exporter systemd service does not exist
       ansible.builtin.file:
         path: "{{ devture_systemd_docker_base_systemd_path }}/{{ prometheus_postgres_exporter_identifier }}.service"
         state: absent
 
-    - name: Ensure prometheus-postgres-exporter base path doesn't exist
+    - name: Ensure Prometheus Postgres exporter path does not exist
       ansible.builtin.file:
         path: "{{ prometheus_postgres_exporter_base_path }}"
         state: absent

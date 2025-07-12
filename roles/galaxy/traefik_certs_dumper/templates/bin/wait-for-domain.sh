@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # This script waits for certificate files for the given domain to become available.
 #
 # We only wait a fixed number of iterations and then give up,

@@ -34,7 +34,7 @@ prometheus_node_exporter_container_image_registry_prefix_upstream: "{{ prometheu
 prometheus_node_exporter_container_image_registry_prefix_upstream_default: "docker.io/"
 prometheus_node_exporter_container_image_force_pull: "{{ prometheus_node_exporter_container_image.endswith(':latest') }}"
 
-# Controls whether the prometheus-node-exporter container exposes its HTTP port (tcp/9100 in the container).
+# Controls whether the Prometheus node exporter container exposes its HTTP port (tcp/9100 in the container).
 #
 # Takes an "<ip>:<port>" value (e.g. "127.0.0.1:9100"), just a port number or empty string to not expose.
 prometheus_node_exporter_container_http_host_bind_port: ''
@@ -43,7 +43,7 @@ prometheus_node_exporter_container_http_host_bind_port: ''
 #
 # Official recommendations are to run this container with `--net=host`,
 # but we don't do that, since it:
-# - exposes the metrics web server way too publicly (we'd potentially like to add HTTP Basic Auth, etc.)
+# - exposes the metrics web server way too publicly (we'd potentially like to add HTTP Basic authentication, etc.)
 # - or listens on a loopback interface only (--net=host and 127.0.0.1:9100), which is not reachable from a local Prometheus container
 #
 # Not using `--net=host` means that our network statistic reports are likely broken (inaccurate),

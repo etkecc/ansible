@@ -4,7 +4,6 @@ SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
 
-#jinja2: lstrip_blocks: "True"
 [Unit]
 Description=Prometheus Postgres Exporter ({{ prometheus_postgres_exporter_identifier }})
 {% for service in prometheus_postgres_exporter_systemd_required_services_list %}

@@ -12,7 +12,7 @@
 
 postgres_backup_enabled: true
 
-# postgres_backup_identifier controls the identifer of this Postgres backup instance, which influences:
+# postgres_backup_identifier controls the identifier of this Postgres backup instance, which influences:
 # - the default storage path
 # - the names of systemd services
 postgres_backup_identifier: 'postgres-backup'

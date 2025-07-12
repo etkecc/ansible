@@ -1,9 +1,9 @@
-# SPDX-FileCopyrightText: 2022-2024 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2022 - 2024 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2022 - 2025 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 # We used to store backups directly in the base path.
 # postgres-backup used to create 'daily', 'last', 'monthly' and 'weekly' subdirectories.
 # We want to move these to the data path now.
@@ -15,12 +15,29 @@
     use_regex: true
   register: postgres_backup_old_directories_result
 
-- name: Move old postgres-backup data directories
+- name: Move the old postgres-backup data directories
   ansible.builtin.command:
     cmd: "mv {{ item.path }} {{ postgres_backup_data_path }}/{{ item.path | basename }}"
   with_items: "{{ postgres_backup_old_directories_result.files }}"
+  register: result
+  changed_when: result.rc == 0
 
-- name: Ensure old env-postgres-backup environment variables file is deleted
-  ansible.builtin.file:
-    path: "{{ postgres_backup_base_path }}/env-postgres-backup"
-    state: absent
+- name: Verify that the old postgres-backup data directories have been moved
+  ansible.builtin.stat:
+    path: "{{ postgres_backup_data_path }}/{{ item.path | basename }}"
+  with_items: "{{ postgres_backup_old_directories_result.files }}"
+  register: moved_files
+
+- name: Set changed status based on verification
+  when: item.stat.exists
+  loop: "{{ moved_files.results }}"
+  ansible.builtin.set_fact:
+    verified: true
+
+- name: Run if verification has completed
+  when: verified | default(false) | bool
+  block:
+    - name: Ensure old env-postgres-backup environment variables file does not exist
+      ansible.builtin.file:
+        path: "{{ postgres_backup_base_path }}/env-postgres-backup"
+        state: absent

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 ---
 
 - name: Check existence of Traefik certs dumper systemd service
@@ -7,18 +11,18 @@
 
 - when: traefik_certs_dumper_service_stat.stat.exists | bool
   block:
-    - name: Ensure Traefik is stopped
+    - name: Ensure Traefik systemd service is stopped
       ansible.builtin.service:
         name: "{{ traefik_certs_dumper_identifier }}"
         state: stopped
         daemon_reload: true
 
-    - name: Ensure Traefik certs dumper systemd service doesn't exist
+    - name: Ensure Traefik certs dumper systemd service does not exist
       ansible.builtin.file:
         path: "{{ devture_systemd_docker_base_systemd_path }}/{{ traefik_certs_dumper_identifier }}.service"
         state: absent
 
-    - name: Remove Traefik certs dumper directory is removed
+    - name: Ensure Traefik certs dumper path does not exist
       ansible.builtin.file:
         path: "{{ traefik_certs_dumper_base_path }}"
         state: absent

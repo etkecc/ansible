@@ -20,16 +20,16 @@ ExecStartPre=-{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ d
 ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ postgres_backup_identifier }} 2>/dev/null || true'
 
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
-			--rm \
-			--name={{ postgres_backup_identifier }} \
-			--log-driver=none \
-			--user={{ postgres_backup_uid }}:{{ postgres_backup_gid }} \
-			--cap-drop=ALL \
-			--read-only \
-			--network={{ postgres_backup_container_network }} \
-			--env-file={{ postgres_backup_config_path }}/env \
-			--mount type=bind,src={{ postgres_backup_data_path }},dst=/backups \
-			{{ postgres_backup_container_image_to_use }}
+      --rm \
+      --name={{ postgres_backup_identifier }} \
+      --log-driver=none \
+      --user={{ postgres_backup_uid }}:{{ postgres_backup_gid }} \
+      --cap-drop=ALL \
+      --read-only \
+      --network={{ postgres_backup_container_network }} \
+      --env-file={{ postgres_backup_config_path }}/env \
+      --mount type=bind,src={{ postgres_backup_data_path }},dst=/backups \
+      {{ postgres_backup_container_image_to_use }}
 
 {% for network in postgres_backup_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ postgres_backup_identifier }}

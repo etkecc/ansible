@@ -3,22 +3,24 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
-- block:
-    - when: prometheus_postgres_exporter_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
-
-    - when: prometheus_postgres_exporter_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+- name: Perform Prometheus Postgres exporter installation tasks
+  when: prometheus_postgres_exporter_enabled | bool
   tags:
     - setup-all
     - setup-prometheus-postgres-exporter
     - install-all
     - install-prometheus-postgres-exporter
+  block:
+    - name: Validate Prometheus Postgres exporter configuration
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Install Prometheus Postgres exporter
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
-- block:
-    - when: not prometheus_postgres_exporter_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
+- name: Perform Prometheus Postgres exporter uninstallation tasks
+  when: not prometheus_postgres_exporter_enabled | bool
   tags:
     - setup-all
     - setup-prometheus-postgres-exporter
+  block:
+    - name: Uninstall prometheus-postgres-exporter
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# SPDX-FileCopyrightText: 2023 - 2024 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # Wating for the file via `wait-for-file.sh` is enough.
 # We don't need to use `jq` and wait for Certificates within it to be populated,
 # as seen here: https://github.com/ldez/traefik-certs-dumper/blob/c11dd6630f87684ceb0bd102b1a0a0f5245d72ac/docs/docker-compose-traefik-v2.yml#L27-L38

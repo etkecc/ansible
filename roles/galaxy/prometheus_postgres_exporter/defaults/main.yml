@@ -118,6 +118,6 @@ prometheus_postgres_exporter_dashboard_urls:
 # Additional environment variables to pass to the container
 #
 # Example:
-# prometheus_postgres_exporter_environment_variables_extension: |
+# prometheus_postgres_exporter_environment_variables_additional_variables: |
 #   KEY=VALUE
-prometheus_postgres_exporter_environment_variables_extension: ''
+prometheus_postgres_exporter_environment_variables_additional_variables: ''

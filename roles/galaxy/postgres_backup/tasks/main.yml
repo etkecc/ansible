@@ -1,27 +1,28 @@
-# SPDX-FileCopyrightText: 2022-2024 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2022 - 2024 Slavi Pantaleev
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
-- block:
-    - when: postgres_backup_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
-
-    - when: postgres_backup_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
-
-    - when: postgres_backup_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install_migrate_old_data.yml"
+- name: Perform postgres-backup installation tasks
+  when: postgres_backup_enabled | bool
   tags:
     - setup-all
     - setup-postgres-backup
     - install-all
     - install-postgres-backup
+  block:
+    - name: Validate postgres-backup configuration
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Install postgres-backup
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+    - name: Migrate old postgres-backup
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install_migrate_old_data.yml"
 
-- block:
-    - when: not postgres_backup_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
+- name: Perform postgres-backup uninstallation tasks
+  when: not postgres_backup_enabled | bool
   tags:
     - setup-all
     - setup-postgres-backup
+  block:
+    - name: Uninstall postgres-backup
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

@@ -4,26 +4,27 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: Check existence of prometheus-node-exporter service
+- name: Check existence of Prometheus node exporter service
   ansible.builtin.stat:
     path: "{{ devture_systemd_docker_base_systemd_path }}/{{ prometheus_node_exporter_identifier }}.service"
   register: prometheus_node_exporter_service_stat
 
-- name: Ensure prometheus-node-exporter is removed
+- name: Uninstall Prometheus node exporter systemd services and files
   when: prometheus_node_exporter_service_stat.stat.exists | bool
   block:
-    - name: Ensure prometheus-node-exporter is stopped
+    - name: Ensure Prometheus node exporter systemd service is stopped
       ansible.builtin.service:
         name: "{{ prometheus_node_exporter_identifier }}"
         state: stopped
         enabled: false
         daemon_reload: true
-    - name: Ensure prometheus-node-exporter service doesn't exist
+
+    - name: Ensure Prometheus node exporter service does not exist
       ansible.builtin.file:
         path: "{{ devture_systemd_docker_base_systemd_path }}/{{ prometheus_node_exporter_identifier }}.service"
         state: absent
 
-    - name: Ensure prometheus-node-exporter base path doesn't exist
+    - name: Ensure Prometheus node exporter path does not exist
       ansible.builtin.file:
         path: "{{ prometheus_node_exporter_base_path }}"
         state: absent
