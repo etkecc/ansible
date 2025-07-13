@@ -4,6 +4,9 @@ system_security_ufw_enabled: true
 
 # integration with ssh
 system_security_ssh_port: 22
+# true - allow unrestricted SSH access by default, false - deny unrestricted SSH access by default
+# You can add your own rules to allow SSH access from specific IPs or networks, keeping this var set to false
+system_security_ufw_ssh_allowed: true
 
 # integration with mdad
 matrix_coturn_turn_udp_min_port: 49152
@@ -11,10 +14,6 @@ matrix_coturn_turn_udp_max_port: 49573
 
 # Default (base) UFW rules (for matrix) - you definitely do NOT want to change this
 system_security_ufw_rules_base:
-  - name: SSH
-    rule: allow
-    port: "{{ system_security_ssh_port }}"
-    proto: tcp
   - name: HTTP
     rule: allow
     port: '80'

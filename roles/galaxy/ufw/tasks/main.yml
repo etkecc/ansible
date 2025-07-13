@@ -22,6 +22,14 @@
       delete: "{{ item.delete | default(false) }}"
     with_items: "{{ system_security_ufw_rules }}"
 
+  - name: Configure SSH access
+    community.general.ufw:
+      rule: allow
+      port: "{{ system_security_ssh_port }}"
+      proto: tcp
+      comment: SSH
+      delete: "{{ not system_security_ufw_ssh_allowed | bool }}"
+
   - name: Allow email receiving (plain)
     community.general.ufw:
       rule: allow
