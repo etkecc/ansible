@@ -102,7 +102,7 @@ linkding_container_labels_traefik_tls_certResolver: "{{ traefik_certResolver_pri
 
 linkding_database_hostname: "{{ postgres_connection_hostname if postgres_enabled else '' }}"
 linkding_database_password: "{{ '%s' | format(mash_playbook_generic_secret_key) | password_hash('sha512', 'linkding.db', rounds=655555) | to_uuid }}"
-linkding_database_engine: "{{ 'postgres' if postgres_enabled and linkding_database_hostname == postgres_connection_hostname else 'sqlite' }}"
+linkding_database_type: "{{ 'postgres' if postgres_enabled and linkding_database_hostname == postgres_connection_hostname else 'sqlite' }}"
 
 ########################################################################
 #                                                                      #
@@ -578,7 +578,7 @@ postgres_managed_databases_additional: |
       'name': linkding_database_name,
       'username': linkding_database_username,
       'password': linkding_database_password,
-    }] if linkding_enabled and linkding_database_engine == 'postgres' else [])
+    }] if linkding_enabled and linkding_database_type == 'postgres' else [])
     +
     ([{
       'name': gotosocial_database_name,
