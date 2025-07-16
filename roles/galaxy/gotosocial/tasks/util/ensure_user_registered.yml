@@ -22,3 +22,5 @@
       /gotosocial/gotosocial admin account promote
       --username {{ user.username | quote }}
   when: user.initial_type == 'admin'
+  register: gotosocial_promote_account_result
+  changed_when: gotosocial_promote_account_result.rc == 0

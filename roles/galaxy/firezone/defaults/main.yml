@@ -1,3 +1,10 @@
+# SPDX-FileCopyrightText: 2023 Antoine-Ali Zarrouk
+# SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
+# SPDX-FileCopyrightText: 2024 Nikita Chernyi
+# SPDX-FileCopyrightText: 2024 - 2025 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 ---
 # Project source code URL: https://github.com/firezone/firezone
 firezone_enabled: true
@@ -26,6 +33,7 @@ firezone_systemd_wanted_services_list_default: []
 firezone_systemd_wanted_services_list_auto: []
 firezone_systemd_wanted_services_list_custom: []
 
+# renovate: datasource=docker depName=firezone/firezone
 firezone_version: 0.7.36
 
 firezone_container_image: "{{ firezone_container_image_registry_prefix }}firezone/firezone:{{ firezone_container_image_tag }}"

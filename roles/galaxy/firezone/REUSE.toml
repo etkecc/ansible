@@ -7,13 +7,10 @@ version = 1
 # Computer-generated files and other files which cannot be copyrighted
 [[annotations]]
 path = [
-    ".ansible-lint",
-    ".github/renovate.json",
-    ".github/workflows/pre-commit.yml",
+    ".config/ansible-lint.yml",
     ".gitignore",
-    ".pre-commit-config.yaml",
+    ".github/renovate.json",
     ".woodpecker.yml",
-    ".yamllint.yml",
     "meta/main.yml"
 ]
 SPDX-FileCopyrightText = "NONE"

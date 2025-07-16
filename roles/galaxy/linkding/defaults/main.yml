@@ -168,7 +168,7 @@ linkding_superuser_username:
 linkding_superuser_password:
 
 # Database configuration, defaults to sqlite
-linkding_database_engine: sqlite
+linkding_database_type: sqlite
 linkding_database_hostname: "localhost"
 linkding_database_username: linkding
 linkding_database_password:
@@ -181,7 +181,7 @@ linkding_database_name: linkding
 linkding_environment_variable_context_path: "{{ '' if linkding_path_prefix == '/' else linkding_path_prefix_no_slash[1:] + '/' }}"
 
 # Controls the LD_DB_ENGINE environment variable
-linkding_environment_variable_database_engine: "{{ linkding_database_engine }}"
+linkding_environment_variable_database_engine: "{{ linkding_database_type }}"
 
 # Controls the LD_DB_USER environment variable
 linkding_environment_variable_database_username: "{{ linkding_database_username }}"

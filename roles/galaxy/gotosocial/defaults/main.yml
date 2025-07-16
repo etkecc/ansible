@@ -14,9 +14,7 @@ gotosocial_enabled: true
 
 gotosocial_identifier: gotosocial
 gotosocial_base_path: "/{{ gotosocial_identifier }}"
-gotosocial_config_path: "{{ gotosocial_base_path }}/config"
 gotosocial_data_path: "{{ gotosocial_base_path }}/data"
-gotosocial_env_path: "{{ gotosocial_config_path }}/env"
 gotosocial_customized_container_src_path: "{{ gotosocial_base_path }}/customized-container-src"
 
 # renovate: datasource=docker depName=superseriousbusiness/gotosocial versioning=semver
@@ -245,7 +243,7 @@ gotosocial_instance_languages: []
 # https://docs.gotosocial.org/en/latest/advanced/metrics/
 gotosocial_metrics_enabled: false
 
-# Bool. Enable HTTP Basic Authentication for Prometheus metrics endpoint.
+# Bool. Enable HTTP Basic authentication for Prometheus metrics endpoint.
 # You also have to set gotosocial_metrics_auth_username gotosocial_metrics_auth_password
 gotosocial_metrics_auth_enabled: false
 gotosocial_metrics_auth_username: ""
@@ -288,10 +286,10 @@ gotosocial_media_description_min_chars: 0
 gotosocial_media_description_max_chars: 1500
 
 # Include the client IP in the log GTS log
-gotosocial_log_client_IP: true
+gotosocial_log_client_ip: true
 
 # Allow custom CSS: https://docs.gotosocial.org/en/latest/user_guide/custom_css/
-# Make sure you undestand the security implications when overwriting this setting: https://docs.gotosocial.org/en/latest/configuration/accounts/
+# Make sure you understand the security implications when overwriting this setting: https://docs.gotosocial.org/en/latest/configuration/accounts/
 gotosocial_accounts_allow_custom_css: false
 
 # Additional environment variables to pass to the GoToSocial container.

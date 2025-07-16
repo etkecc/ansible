@@ -5,7 +5,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: (Deprecation) Catch and report renamed settings
   ansible.builtin.fail:
     msg: >-
@@ -13,17 +12,20 @@
       Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
   when: "item.old in vars"
   with_items:
-    - {'old': 'gotosocial_environment_variables_extension', 'new': 'gotosocial_environment_variables_additional_variables'}
+    - { "old": "gotosocial_config_path", "new": "<Removed>" }
+    - { "old": "gotosocial_database_host", "new": "gotosocial_database_hostname" }
+    - { "old": "gotosocial_env_path", "new": "<Removed>" }
+    - { "old": "gotosocial_environment_variables_extension", "new": "gotosocial_environment_variables_additional_variables" }
 
 - name: Fail if required GoToSocial settings not defined
   ansible.builtin.fail:
     msg: >-
-      You need to define a required configuration setting (`{{ item }}`) for using this role.
+      You need to define a required configuration setting (`{{ item }}`).
   when: "vars[item] == ''"
   with_items:
     - gotosocial_hostname
 
-- name: Fail when SMTP settings are missing (and SMTP is enabled by setting host)
+- name: Fail if SMTP settings are missing (and SMTP is enabled by setting host)
   ansible.builtin.fail:
     msg: >-
       You need to define a required configuration setting (`{{ item }}`) to correctly set up email via SMTP.

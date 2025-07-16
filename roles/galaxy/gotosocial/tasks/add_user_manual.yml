@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: Fail if playbook called incorrectly
   ansible.builtin.fail:
     msg: "The `username` variable needs to be provided to this playbook, via --extra-vars"
@@ -19,23 +18,25 @@
     msg: "The `password` variable needs to be provided to this playbook, via --extra-vars"
   when: "password is not defined or password == '<password>'"
 
-- ansible.builtin.set_fact:
+- name: Set fact for a normal user
+  ansible.builtin.set_fact:
     initial_role: user
   tags:
-  - gotosocial-add-user
+    - gotosocial-add-user
 
-- ansible.builtin.set_fact:
+- name: Set fact for an admin user
+  ansible.builtin.set_fact:
     initial_role: admin
   tags:
-  - gotosocial-add-admin
+    - gotosocial-add-admin
 
-- ansible.builtin.set_fact:
+- name: Set fact for adding a user
+  ansible.builtin.set_fact:
     user:
       username: "{{ username }}"
       initial_email: "{{ email }}"
       initial_password: "{{ password }}"
       initial_type: "{{ initial_role }}"
-
 
 - name: Ensure GoToSocial is started
   ansible.builtin.service:

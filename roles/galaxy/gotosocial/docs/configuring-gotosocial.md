@@ -185,7 +185,7 @@ serverA$ systemctl stop gotosocial
 
 Then, dump the database by running the command below. Note that you might have to adjust the command, depending on your existing installation.
 
-```
+```sh
 serverA$ pg_dump gotosocial > latest.sql
 ```
 

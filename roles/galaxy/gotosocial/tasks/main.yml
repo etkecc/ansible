@@ -4,45 +4,42 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: Perform GoToSocial installation tasks
-  block:
-    - name: Validate GoToSocial configuration
-      when: gotosocial_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
-
-    - name: Install GoToSocial
-      when: gotosocial_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+  when: gotosocial_enabled | bool
   tags:
     - setup-all
     - setup-gotosocial
     - install-all
     - install-gotosocial
+  block:
+    - name: Validate GoToSocial configuration
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Install GoToSocial
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
 - name: Perform GoToSocial uninstallation tasks
-  block:
-    - name: Uninstall GoToSocial
-      when: not gotosocial_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
+  when: not gotosocial_enabled | bool
   tags:
     - setup-all
     - setup-gotosocial
+  block:
+    - name: Uninstall GoToSocial
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
 
 - name: Perform tasks to add users automatically to GoToSocial
-  block:
-    - name: Add users to GoToSocial automatically
-      when: gotosocial_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/add_users_auto.yml"
+  when: gotosocial_enabled | bool
   tags:
     - ensure-gotosocial-users-created
     - ensure-users-created
+  block:
+    - name: Add users to GoToSocial automatically
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/add_users_auto.yml"
 
 - name: Perform tasks to add users manually to GoToSocial
-  block:
-    - name: Add users to GoToSocial manually
-      when: gotosocial_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/add_user_manual.yml"
+  when: gotosocial_enabled | bool
   tags:
     - gotosocial-add-user
     - gotosocial-add-admin
+  block:
+    - name: Add users to GoToSocial manually
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/add_user_manual.yml"

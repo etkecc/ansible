@@ -1,7 +1,9 @@
+---
 galaxy_info:
-  role_name: gotosocial
   author: Julian-Samuel Gebühr
   company: Hyteck
+  role_name: gotosocial
+  namespace: mash
   description: Ansible role to install gotosocial, a self-hosted ActivityPub social network server.
   platforms:
     - name: Debian
@@ -17,4 +19,4 @@ galaxy_info:
       versions:
         - all
   license: AGPL-3.0-or-later
-  min_ansible_version: '2.1'
+  min_ansible_version: "2.1"

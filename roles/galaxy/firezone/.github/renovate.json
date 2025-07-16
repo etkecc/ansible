@@ -7,16 +7,6 @@
   "labels": [
     "dependencies"
   ],
-  "packageRules": [
-    {
-      "matchFileNames": [".pre-commit-config.yaml"],
-      "enabled": true,
-      "automerge": true,
-      "automergeType": "branch",
-      "schedule": ["* 0-6 1 * *"],
-      "automergeSchedule": ["* 0-6 1 * *"]
-    }
-  ],
   "customManagers": [
     {
       "customType": "regex",
