@@ -3,7 +3,7 @@ on:
   push:
     branches: [ "main", "fresh" ]
 env:
-  alpine: "3.21"
+  alpine: "3.22"
   ansible: "11.8.0"
   ansible_core: "2.18.7"
 permissions:
