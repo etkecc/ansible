@@ -1,5 +1,6 @@
 * [Authentication Service](https://github.com/element-hq/matrix-authentication-service): [0.18.0](https://github.com/element-hq/matrix-authentication-service/releases/tag/0.18.0) ⇾ [0.19.0](https://github.com/element-hq/matrix-authentication-service/releases/tag/0.19.0)
 * [Baibot](https://github.com/etkecc/baibot): [v1.7.5](https://github.com/etkecc/baibot/releases/tag/v1.7.5) ⇾ [v1.7.6](https://github.com/etkecc/baibot/releases/tag/v1.7.6)
+* [Element](https://github.com/element-hq/element-web): [v1.11.105](https://github.com/element-hq/element-web/releases/tag/v1.11.105) ⇾ [v1.11.106](https://github.com/element-hq/element-web/releases/tag/v1.11.106)
 * [Ntfy](https://github.com/binwiederhier/ntfy): [v2.12.0](https://github.com/binwiederhier/ntfy/releases/tag/v2.12.0) ⇾ [v2.13.0](https://github.com/binwiederhier/ntfy/releases/tag/v2.13.0)
 * [Prometheus](https://github.com/prometheus/prometheus): [v3.4.2](https://github.com/prometheus/prometheus/releases/tag/v3.4.2) ⇾ [v3.5.0](https://github.com/prometheus/prometheus/releases/tag/v3.5.0)
 * [Synapse](https://github.com/element-hq/synapse): [v1.133.0](https://github.com/element-hq/synapse/releases/tag/v1.133.0) ⇾ [v1.134.0](https://github.com/element-hq/synapse/releases/tag/v1.134.0)
