@@ -1,4 +1,14 @@
-* [Authentication Service](https://github.com/element-hq/matrix-authentication-service): [0.18.0](https://github.com/element-hq/matrix-authentication-service/releases/tag/0.18.0) ⇾ [0.19.0](https://github.com/element-hq/matrix-authentication-service/releases/tag/0.19.0)
+## Weekly Recap
+
+> The following changes were introduced this week and mentioned in #updates:etke.cc. This summary ensures no one missed them.
+
+---
+
+### Component Updates
+
+#### Version Changes
+
+* Authentication Service: 0.18.0 ⇾ 0.19.0
 * [Baibot](https://github.com/etkecc/baibot): [v1.7.5](https://github.com/etkecc/baibot/releases/tag/v1.7.5) ⇾ [v1.7.6](https://github.com/etkecc/baibot/releases/tag/v1.7.6)
 * [Bluesky](https://github.com/mautrix/bluesky): [v0.1.1](https://github.com/mautrix/bluesky/releases/tag/v0.1.1) ⇾ [v0.1.2](https://github.com/mautrix/bluesky/releases/tag/v0.1.2)
 * [Discord](https://github.com/mautrix/discord): [v0.7.4](https://github.com/mautrix/discord/releases/tag/v0.7.4) ⇾ [v0.7.5](https://github.com/mautrix/discord/releases/tag/v0.7.5)

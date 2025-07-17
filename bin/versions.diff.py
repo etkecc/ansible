@@ -2,13 +2,38 @@
 
 import git
 import os
+import yaml
 from urllib.parse import urlparse
 
 PROJECT_SOURCE_URL_STR = '# Project source code URL:'
 FORK_SOURCE_URL_STR = '# Fork source code URL:'
 
 
-def get_roles_files_from_dir(root_dir):
+def get_active_roles_from_play(play_file):
+    roles = []
+    with open(play_file, 'r') as f:
+        play = yaml.safe_load(f)
+        for role in play[0].get('roles', []):
+            if isinstance(role, str):
+                roles.append(role)
+            elif isinstance(role, dict) and 'role' in role:
+                roles.append(role['role'])
+            else:
+                print(f"Unexpected role format in {play_file}: {role}")
+        return roles
+
+def get_roles_files_from_dir(root_dir, active_roles):
+    file_paths = []
+    for dir_name, _, file_list in os.walk(root_dir):
+        if not any(role in dir_name for role in active_roles):
+            continue
+        for file_name in file_list:
+            if dir_name.endswith('defaults') and file_name == 'main.yml':
+                file_paths.append(os.path.join(dir_name, file_name))
+    return file_paths
+
+
+def get_roles_files_from_dir_old(root_dir):
     file_paths = []
     for dir_name, _, file_list in os.walk(root_dir):
         for file_name in file_list:
@@ -137,7 +162,8 @@ if __name__ == "__main__":
     new_branch = "fresh"
     file_path = "VERSIONS.md"
 
-    role_files = get_roles_files_from_dir(repo_path)
+    roles = get_active_roles_from_play(os.path.join(repo_path, 'play', 'all.yml'))
+    role_files = get_roles_files_from_dir(repo_path, roles)
     git_repos = get_git_repos_from_files(role_files)
     added_or_changed_lines = get_version_diff(repo_path, old_branch, new_branch, file_path)
 
@@ -146,6 +172,12 @@ if __name__ == "__main__":
         exit(0)
 
     with open(os.path.join(os.getcwd(), 'VERSIONS.diff.md'), 'w') as f:
+        f.write("## Weekly Recap\n\n")
+        f.write("> The following changes were introduced this week and mentioned in #updates:etke.cc. ")
+        f.write("This summary ensures no one missed them.\n\n")
+        f.write("---\n\n")
+        f.write("### Component Updates\n\n")
+        f.write("#### Version Changes\n\n")
         for component, old_version, new_version in added_or_changed_lines:
             if old_version == new_version or new_version is None:
                 continue
