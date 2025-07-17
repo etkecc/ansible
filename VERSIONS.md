@@ -7,7 +7,7 @@
 * Appservice Webhooks: v1.0.3-01
 * Authentication Service: 0.19.0
 * Baibot: v1.7.6
-* Bluesky: v0.1.1
+* Bluesky: v0.1.2
 * Borg: 1.4.1
 * Borgmatic: 1.9.14
 * Buscarron: v1.4.3
@@ -19,7 +19,7 @@
 * Corporal: 3.1.4
 * Coturn: 4.6.2-r11
 * Dimension: latest
-* Discord: v0.7.4
+* Discord: v0.7.5
 * Docker Compose: v2.32.1
 * Draupnir: v2.5.0
 * Dynamic Dns: 4.0.0
@@ -31,7 +31,7 @@
 * Firezone: 0.7.36
 * Fluffychat: v2.0.0
 * Funkwhale: 1.4.0
-* Gmessages: v0.6.3
+* Gmessages: v0.6.4
 * Go Neb: latest
 * Go Skype Bridge: latest
 * Googlechat: v0.5.2
@@ -55,8 +55,8 @@
 * Matrix Registration Bot: 1.3.0
 * Matrix Reminder Bot: v0.3.0
 * Maubot: v0.5.2
-* Meta Instagram: v0.5.1
-* Meta Messenger: v0.5.1
+* Meta Instagram: v0.5.2
+* Meta Messenger: v0.5.2
 * Miniflux: 2.2.10
 * Mjolnir: v1.10.0
 * Mx Puppet Discord: v0.1.1
@@ -77,8 +77,8 @@
 * Rageshake: 1.16.2
 * Registration: v0.7.2
 * Schildichat: 1.11.103-sc.0.test.0
-* Signal: v0.8.4
-* Slack: v0.2.1
+* Signal: v0.8.5
+* Slack: v0.2.2
 * Sliding Sync: v0.99.19
 * Sms Bridge: 0.5.9
 * Spam Checker Mjolnir Antispam Git: v1.10.0
@@ -92,16 +92,16 @@
 * Synapse Http Antispam Git: v0.5.0
 * Synapse Reverse Proxy Companion: 1.29.0-alpine
 * Synapse S3 Storage Provider: 1.5.0
-* Telegram: v0.15.2
+* Telegram: v0.15.3
 * Traefik: v3.4.4
 * Traefik Certs Dumper: v2.10.0
-* Twitter: v0.4.2
+* Twitter: v0.4.3
 * Uptime Kuma: 1.23.16
 * User Verification Service: v3.0.0
 * Valkey: 8.1.3
 * Vaultwarden: 1.34.1
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
-* Whatsapp: v0.12.2
+* Whatsapp: v0.12.3
 * Wsproxy: latest
 * Wsproxy Syncproxy: latest
