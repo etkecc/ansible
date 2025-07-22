@@ -12,7 +12,7 @@
 * Borgmatic: 1.9.14
 * Buscarron: v1.4.3
 * Cactus Comments: 0.9.0
-* Cactus Comments Client: 2.37.0
+* Cactus Comments Client: 2.38.0
 * Chatgpt: 3.1.4
 * Cinny: v4.8.1
 * Container Socket Proxy: 0.3.0
@@ -67,7 +67,7 @@
 * Mx Puppet Twitter: latest
 * Ntfy: v2.13.0
 * Pantalaimon: 0.10.5
-* Peertube: v7.1.1
+* Peertube: v7.2.3
 * Postmoogle: v0.9.26
 * Prometheus: v3.5.0
 * Prometheus Nginxlog Exporter: v1.10.0
@@ -83,7 +83,7 @@
 * Sms Bridge: 0.5.9
 * Spam Checker Mjolnir Antispam Git: v1.10.0
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
-* Static Files: 2.37.0
+* Static Files: 2.38.0
 * Sygnal: v0.15.1
 * Synapse: v1.134.0
 * Synapse Admin: v0.11.1-etke45

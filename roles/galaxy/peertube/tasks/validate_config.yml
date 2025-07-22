@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: (Deprecation) Catch and report renamed PeerTube settings
+- name: (Deprecation) Catch and report renamed settings
   ansible.builtin.fail:
     msg: >-
       Your configuration contains a variable, which now has a different name.
@@ -17,7 +17,7 @@
 - name: Fail if required PeerTube settings not defined
   ansible.builtin.fail:
     msg: >-
-      You need to define a required configuration setting (`{{ item }}`) for using this role.
+      You need to define a required configuration setting (`{{ item }}`).
   when: "vars[item] | string == ''"
   with_items:
     - peertube_identifier
@@ -37,7 +37,7 @@
 - name: Fail if required PeerTube Object Storage settings not defined
   ansible.builtin.fail:
     msg: >-
-      You need to define a required configuration setting (`{{ item }}`) for using this role.
+      You need to define a required configuration setting (`{{ item }}`).
   when: "peertube_config_object_storage_enabled | bool and vars[item] == ''"
   with_items:
     - peertube_config_object_storage_endpoint
@@ -70,6 +70,6 @@
 
     - name: Fail if PeerTube hosted at a subpath
       ansible.builtin.fail:
-        msg: >
+        msg: >-
           PeerTube can only be hosted at the base path (`/`), not at a subpath like `{{ peertube_container_labels_traefik_path_prefix }}`).
       when: "peertube_container_labels_traefik_path_prefix != '/'"
