@@ -22,7 +22,7 @@
 * Go Skype Bridge: latest
 * Googlechat: v0.5.2
 * Gotosocial: 0.19.1
-* Grafana: 11.6.3
+* Grafana: 11.6.4
 * Heisenbridge: 1.15.3
 * Honoroit: v0.9.28
 * Hookshot: 7.0.0
@@ -56,7 +56,7 @@
 * Spam Checker Mjolnir Antispam Git: v1.10.0
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.38.0
-* Sygnal: v0.15.1
+* Sygnal: v0.16.0
 * Synapse: v1.134.0
 * Synapse Admin: v0.11.1-etke45
 * Synapse Auto Accept Invite: 1.1.3
@@ -65,7 +65,7 @@
 * Synapse Reverse Proxy Companion: 1.29.0-alpine
 * Synapse S3 Storage Provider: 1.5.0
 * Telegram: v0.15.3
-* Traefik: v3.4.4
+* Traefik: v3.5.0
 * Traefik Certs Dumper: v2.10.0
 * Twitter: v0.4.3
 * Uptime Kuma: 1.23.16
