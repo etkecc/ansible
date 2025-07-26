@@ -42,9 +42,9 @@ class CallbackModule(CallbackBase):
         task_name = result._task.get_name().strip()
         if 'stderr' in result and result['stderr']:
             stderr = result.get('stderr', '').replace('\n', '\\n').replace('\r', '\\r')
-            return "[%s] %s | %s | rc=%s | (stdout) %s (stderr) %s" % (hostname, caption, task_name, result.get('rc', -1), stdout, stderr)
+            return "%s | %s | rc=%s | (stdout) %s (stderr) %s" % (caption, task_name, result.get('rc', -1), stdout, stderr)
         else:
-            return "[%s] %s | %s | rc=%s | (stdout) %s" % (hostname, caption, task_name, result.get('rc', -1), stdout)
+            return "%s | %s | rc=%s | (stdout) %s" % (caption, task_name, result.get('rc', -1), stdout)
 
     def v2_runner_on_failed(self, result, ignore_errors=False):
         if 'exception' in result._result:
@@ -58,7 +58,7 @@ class CallbackModule(CallbackBase):
         if self._last_task_banner == result._task._uuid:
             return
         self._last_task_banner = result._task._uuid
-        self._display.display("[%s] x | %s => %s" % (result._host.get_name(), result._task.get_name().strip(), self._dump_results(result._result, indent=2).replace("\\\\r\\\\n", "\n")), color=C.COLOR_ERROR)
+        self._display.display("x | %s => %s" % (result._task.get_name().strip(), self._dump_results(result._result, indent=2).replace("\\\\r\\\\n", "\n")), color=C.COLOR_ERROR)
 
     def v2_runner_on_ok(self, result):
         if result._result.get('changed', False):
@@ -68,7 +68,7 @@ class CallbackModule(CallbackBase):
             color = C.COLOR_OK
             state = '✓'
 
-        msg = "[%s] %s | %s" % (result._host.get_name(), state, result._task.get_name().strip())
+        msg = "%s | %s" % (state, result._task.get_name().strip())
         if self._run_is_verbose(result):
             msg += " => %s" % (self._dump_results(result._result, indent=2))
         self._clean_results(result._result, result._task.action)
@@ -82,14 +82,13 @@ class CallbackModule(CallbackBase):
         if self._last_task_banner == result._task._uuid:
             return
         self._last_task_banner = result._task._uuid
-        self._display.display("[%s] ☠ => %s" % (result._host.get_name(), result._result.get('msg', '')), color=C.COLOR_UNREACHABLE)
+        self._display.display("☠ => %s" % (result._result.get('msg', '')), color=C.COLOR_UNREACHABLE)
 
     def v2_runner_on_skipped(self, result):
         pass
 
     def __item_line(self, state, result):
-        length = len("[%s]" % (result._host.get_name()))
-        return "%s %s | %s" % (" " * length, state, self._get_item_label(result._result))
+        return "%s | %s" % (state, self._get_item_label(result._result))
 
 
     def v2_runner_item_on_ok(self, result):
@@ -136,7 +135,7 @@ class CallbackModule(CallbackBase):
             t = stats.summarize(h)
 
             self._display.display(
-                u"%s : %s %s %s %s %s %s %s" % (
+                u"%s: %s %s %s %s %s %s %s" % (
                     hostcolor(h, t),
                     colorize(u'ok', t['ok'], C.COLOR_OK),
                     colorize(u'changed', t['changed'], C.COLOR_CHANGED),
@@ -150,7 +149,7 @@ class CallbackModule(CallbackBase):
             )
 
             self._display.display(
-                u"%s : %s %s %s %s %s %s %s" % (
+                u"%s: %s %s %s %s %s %s %s" % (
                     hostcolor(h, t, False),
                     colorize(u'ok', t['ok'], None),
                     colorize(u'changed', t['changed'], None),
