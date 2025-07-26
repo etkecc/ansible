@@ -9,7 +9,7 @@
     msg: >-
       Your configuration contains a variable, which now has a different name.
       Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
-  when: "item.old in vars"
+  when: "lookup('ansible.builtin.varnames', ('^' + item.old + '$'), wantlist=True) | length > 0"
   with_items:
     - { "old": "linkding_database_engine", "new": "linkding_database_type" }
 
@@ -17,7 +17,7 @@
   ansible.builtin.fail:
     msg: >-
       You need to define a required configuration setting (`{{ item }}`).
-  when: "vars[item] == ''"
+  when: "lookup('vars', item, default='') | string | length == 0"
   with_items:
     - linkding_identifier
     - linkding_uid
@@ -35,7 +35,7 @@
       ansible.builtin.fail:
         msg: >-
           You need to define a required configuration setting (`{{ item }}`).
-      when: "vars[item] == ''"
+      when: "lookup('vars', item, default='') | string | length == 0"
       with_items:
         - linkding_container_labels_traefik_hostname
         - linkding_container_labels_traefik_path_prefix

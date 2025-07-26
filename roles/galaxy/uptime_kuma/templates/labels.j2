@@ -45,7 +45,7 @@ traefik.http.routers.{{ uptime_kuma_identifier }}.tls={{ uptime_kuma_container_l
 traefik.http.routers.{{ uptime_kuma_identifier }}.tls.certResolver={{ uptime_kuma_container_labels_traefik_tls_certResolver }}
 {% endif %}
 
-traefik.http.services.{{ uptime_kuma_identifier }}.loadbalancer.server.port=3001
+traefik.http.services.{{ uptime_kuma_identifier }}.loadbalancer.server.port={{ uptime_kuma_container_http_port }}
 {% endif %}
 
 {{ uptime_kuma_container_labels_additional_labels }}

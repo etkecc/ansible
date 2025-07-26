@@ -5,9 +5,9 @@
 ---
 - name: Fail if required Miniflux settings not defined
   ansible.builtin.fail:
-    msg: >
+    msg: >-
       You need to define a required configuration setting (`{{ item.name }}`).
-  when: "item.when | bool and vars[item.name] | length == 0"
+  when: "item.when | bool and lookup('vars', item.name, default='') | string | length == 0"
   with_items:
     - { "name": "miniflux_identifier", when: true }
     - { "name": "miniflux_uid", when: true }
@@ -27,7 +27,7 @@
       ansible.builtin.fail:
         msg: >-
           You need to define a required configuration setting (`{{ item }}`).
-      when: "vars[item] == ''"
+      when: "lookup('vars', item, default='') | string | length == 0"
       with_items:
         - miniflux_container_labels_traefik_hostname
         - miniflux_container_labels_traefik_path_prefix

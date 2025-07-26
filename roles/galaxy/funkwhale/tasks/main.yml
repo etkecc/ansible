@@ -1,42 +1,46 @@
+# SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 ---
-
-- block:
-    - when: funkwhale_enabled | bool
+- name: Perform Funkwhale installation tasks
+  when: funkwhale_enabled | bool
+  tags:
+    - setup-all
+    - setup-funkwhale
+    - install-all
+    - install-funkwhale
+  block:
+    - name: Validate Funkwhale configuration
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
-  tags:
-    - setup-all
-    - setup-funkwhale
-    - install-all
-    - install-funkwhale
-
-- block:
-    - when: funkwhale_enabled | bool
+    - name: Install Funkwhale
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+
+- name: Perform Funkwhale uninstallation tasks
+  when: not funkwhale_enabled | bool
   tags:
     - setup-all
     - setup-funkwhale
-    - install-all
-    - install-funkwhale
-
-- block:
-    - when: not funkwhale_enabled | bool
+  block:
+    - name: Uninstall Funkwhale
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
-  tags:
-    - setup-all
-    - setup-funkwhale
 
-
-- block:
-    - when: funkwhale_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/add_users_auto.yml"
+- name: Perform tasks to add users automatically to Funkwhale
+  when: funkwhale_enabled | bool
   tags:
     - ensure-funkwhale-users-created
     - ensure-users-created
+  block:
+    - name: Add users to Funkwhale automatically
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/add_users_auto.yml"
 
-- block:
-    - when: funkwhale_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/add_user_manual.yml"
+- name: Perform tasks to add users manually to Funkwhale
+  when: funkwhale_enabled | bool
   tags:
     - funkwhale-add-user
     - funkwhale-add-admin
     - funkwhale-add-superuser
+  block:
+    - name: Add users to Funkwhale manually
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/add_user_manual.yml"

@@ -64,12 +64,16 @@ exim_relay_systemd_wanted_services_list: []
 
 exim_relay_hostname: ""
 
-# path to the file containing the DKIM private key
-exim_relay_dkim_privkey_path: "{{ exim_relay_base_path }}/dkim.private"
-# contents of the DKIM private key
-exim_relay_dkim_privkey_contents: ""
-
 exim_relay_sender_address: ""
+
+# Controls the `DKIM_SELECTOR` environment variable, which specifies which DKIM selector is to be used.
+exim_relay_dkim_selector: default
+
+# Path to the file containing the DKIM private key
+exim_relay_dkim_privkey_path: "{{ exim_relay_base_path }}/dkim.private"
+
+# Contents of the DKIM private key
+exim_relay_dkim_privkey_contents: ""
 
 exim_relay_relay_use: false
 exim_relay_relay_host_name: "mail.example.com"
@@ -84,6 +88,3 @@ exim_relay_relay_auth_password: ""
 # To allow relaying from everywhere, use a value of `["*"]`.
 # As long as exim is not exposed outside of the container network (which it isn't by default), allowing relaying from everywhere is also safe.
 exim_relay_relay_from_hosts: ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "fc00::/7"]
-
-# Controls the `DKIM_SELECTOR` environment variable, which specifies which DKIM selector is to be used.
-exim_relay_dkim_selector: default

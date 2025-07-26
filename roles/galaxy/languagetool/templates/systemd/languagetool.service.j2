@@ -6,7 +6,6 @@ SPDX-FileCopyrightText: 2025 Suguru Hirahara
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
 
-#jinja2: lstrip_blocks: "True"
 [Unit]
 Description=LanguageTool ({{ languagetool_identifier }})
 {% for service in languagetool_systemd_required_services_list %}

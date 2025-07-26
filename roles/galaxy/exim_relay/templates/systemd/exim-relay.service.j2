@@ -6,7 +6,7 @@ SPDX-FileCopyrightText: 2024 Bergrübe
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
 
-#jinja2: lstrip_blocks: "True"
+#jinja2: lstrip_blocks: True
 [Unit]
 Description={{ exim_relay_identifier }}
 {% for service in exim_relay_systemd_required_services_list %}

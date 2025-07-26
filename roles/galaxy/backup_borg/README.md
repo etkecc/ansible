@@ -43,9 +43,9 @@ Example playbook:
 Example playbook configuration (`group_vars/servers` or other):
 
 ```yaml
-# The configuration below wires the backup-borg role with the MASH/Postgres role (https://github.com/mother-of-all-self-hosting/ansible-role-postgres)
+# The configuration below wires the BorgBackup role with the MASH/Postgres role (https://github.com/mother-of-all-self-hosting/ansible-role-postgres)
 # This is just an example, however.
-# You can use this backup borg role without it Postgres integration or with another Postgres instance.
+# You can use this BorgBackup role without it Postgres integration or with another Postgres instance.
 
 backup_borg_enabled: false
 
@@ -83,3 +83,9 @@ backup_borg_systemd_required_services_list_auto: |
     ([postgres_identifier ~ '.service'] if postgres_enabled else [])
   }}
 ```
+
+## Development
+
+You can optionally install [pre-commit](https://pre-commit.com/) so that simple mistakes are checked and noticed before changes are pushed to a remote branch. See [`.pre-commit-config.yaml`](./.pre-commit-config.yaml) for which hooks are to be executed.
+
+See [this section](https://pre-commit.com/#usage) on the official documentation for usage.

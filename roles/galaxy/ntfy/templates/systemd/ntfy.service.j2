@@ -1,4 +1,4 @@
-#jinja2: lstrip_blocks: "True"
+#jinja2: lstrip_blocks: True
 [Unit]
 Description=ntfy ({{ ntfy_identifier }})
 {% for service in ntfy_systemd_required_services_list %}

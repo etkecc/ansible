@@ -1,0 +1,43 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":semanticCommitsDisabled"
+  ],
+  "labels": [
+    "dependencies"
+  ],
+  "separateMajorMinor": true,
+  "packageRules": [
+    {
+      "matchPackageNames": ["/postgres/"],
+      "matchUpdateTypes": ["major", "patch"],
+      "enabled": false
+    },
+    {
+      "matchFileNames": [".pre-commit-config.yaml"],
+      "enabled": true,
+      "automerge": true,
+      "automergeType": "branch",
+      "schedule": ["* 0-6 1 * *"],
+      "automergeSchedule": ["* 0-6 1 * *"]
+    }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/defaults/main.yml$/"
+      ],
+      "matchStrings": [
+        "(?<name>postgres_container_image_v\\d+):\\s*[\"']?{{\\s*[^}]+\\s*}}\\s*postgres:(?<currentValue>[^}]+)\\s*\\{\\{\\s*[^}]+\\s*\\}\\}"
+      ],
+      "depNameTemplate": "postgres",
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "semver-coerced"
+    }
+  ],
+  "pre-commit": {
+    "enabled": true
+  }
+}

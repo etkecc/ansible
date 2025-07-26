@@ -1,38 +1,38 @@
 # SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: Check existence of n-grams
+- name: Check existence of n-grams data files
   ansible.builtin.stat:
     path: "{{ languagetool_data_path }}/{{ item }}"
   register: ngrams
 
-- name: Download n-grams
-  ansible.builtin.get_url:
-    url: "{{ languagetool_ngrams_langs[item] }}"
-    dest: "{{ languagetool_ngrams_tmp }}/{{ item }}.zip"
-    mode: 0644
-  when: not ngrams.stat.exists|bool
+- name: Install n-gram data files
+  when: "not ngrams.stat.exists | bool"
+  block:
+    - name: Download n-grams data ZIP files
+      ansible.builtin.get_url:
+        url: "{{ languagetool_ngrams_langs[item] }}"
+        dest: "{{ languagetool_ngrams_tmp }}/{{ item }}.zip"
+        mode: "0644"
 
-- name: Ensure unzip installed
-  ansible.builtin.package:
-    name: unzip
-    state: present
-  ignore_errors: true
+    - name: Ensure unzip package is installed
+      ansible.builtin.package:
+        name: unzip
+        state: present
 
-- name: Unpack n-grams
-  ansible.builtin.unarchive:
-    src: "{{ languagetool_ngrams_tmp }}/{{ item }}.zip"
-    keep_newer: true
-    remote_src: true
-    dest: "{{ languagetool_data_path }}"
-    owner: "{{ languagetool_uid }}"
-    group: "{{ languagetool_gid }}"
-  when: not ngrams.stat.exists|bool
+    - name: Unpack n-grams data ZIP files
+      ansible.builtin.unarchive:
+        src: "{{ languagetool_ngrams_tmp }}/{{ item }}.zip"
+        keep_newer: true
+        remote_src: true
+        dest: "{{ languagetool_data_path }}"
+        owner: "{{ languagetool_uid }}"
+        group: "{{ languagetool_gid }}"
 
-- name: Remove n-rams tmp
-  ansible.builtin.file:
-    path: "{{ languagetool_ngrams_tmp }}/{{ item }}.zip"
-    state: absent
-  when: not ngrams.stat.exists|bool
+    - name: Ensure n-grams data ZIP files do not exist
+      ansible.builtin.file:
+        path: "{{ languagetool_ngrams_tmp }}/{{ item }}.zip"
+        state: absent

@@ -1,9 +1,14 @@
+{#
+SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+#}
+
 [Unit]
 Description=Funkwhale Celery Worker ({{ funkwhale_celery_worker_identifier }})
 Requires={{ funkwhale_api_identifier }}.service
 After={{ funkwhale_api_identifier }}.service
 DefaultDependencies=no
-
 
 [Service]
 Type=simple

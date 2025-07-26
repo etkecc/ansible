@@ -24,20 +24,20 @@ ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_s
 # - it needs to be privileged enough to chown the output files (/out) as requested
 #   in `traefik_certs_dumper_dumped_certificates_dir_owner` and `traefik_certs_dumper_dumped_certificates_dir_group`
 ExecStart={{ devture_systemd_docker_base_host_command_docker }} run \
-			--rm \
-			--name={{ traefik_certs_dumper_identifier }} \
-			--log-driver=none \
-			--mount type=bind,src={{ traefik_certs_dumper_bin_dir_path }},dst=/certs-dumper-bin,ro \
-			--mount type=bind,src={{ traefik_certs_dumper_ssl_dir_path }},dst=/in,ro \
-			--mount type=bind,src={{ traefik_certs_dumper_dumped_certificates_dir_path }},dst=/out \
-			--tmpfs=/intermediate:rw,noexec,nosuid,size=100m \
-			--tmpfs=/staging:rw,noexec,nosuid,size=100m \
-			--entrypoint=/bin/sh \
-			{% for arg in traefik_certs_dumper_container_process_extra_arguments %}
-			{{ arg }} \
-			{% endfor %}
-			{{ traefik_certs_dumper_container_image }} \
-			/certs-dumper-bin/entrypoint.sh
+      --rm \
+      --name={{ traefik_certs_dumper_identifier }} \
+      --log-driver=none \
+      --mount type=bind,src={{ traefik_certs_dumper_bin_dir_path }},dst=/certs-dumper-bin,ro \
+      --mount type=bind,src={{ traefik_certs_dumper_ssl_dir_path }},dst=/in,ro \
+      --mount type=bind,src={{ traefik_certs_dumper_dumped_certificates_dir_path }},dst=/out \
+      --tmpfs=/intermediate:rw,noexec,nosuid,size=100m \
+      --tmpfs=/staging:rw,noexec,nosuid,size=100m \
+      --entrypoint=/bin/sh \
+      {% for arg in traefik_certs_dumper_container_process_extra_arguments %}
+      {{ arg }} \
+      {% endfor %}
+      {{ traefik_certs_dumper_container_image }} \
+      /certs-dumper-bin/entrypoint.sh
 
 ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ traefik_certs_dumper_container_stop_grace_time_seconds }} {{ traefik_certs_dumper_identifier }} 2>/dev/null || true'
 ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ traefik_certs_dumper_identifier }} 2>/dev/null || true'

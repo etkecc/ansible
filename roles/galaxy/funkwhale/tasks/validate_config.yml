@@ -1,10 +1,23 @@
----
+# SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
 
-- name: Fail if required funkwhale settings not defined
+---
+- name: (Deprecation) Catch and report renamed settings
   ansible.builtin.fail:
     msg: >-
-      You need to define a required configuration setting (`{{ item }}`) for using this role.
-  when: "vars[item] == ''"
+      Your configuration contains a variable, which now has a different name.
+      Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
+  when: "lookup('ansible.builtin.varnames', ('^' + item.old + '$'), wantlist=True) | length > 0"
+  with_items:
+    - { "old": "funkwhale_api_env_path", "new": "<Removed>" }
+    - { "old": "funkwhale_frontend_env_path", "new": "<Removed>" }
+
+- name: Fail if required Funkwhale settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`).
+  when: "lookup('vars', item, default='') | string | length == 0"
   with_items:
     - funkwhale_hostname
     - funkwhale_database_hostname

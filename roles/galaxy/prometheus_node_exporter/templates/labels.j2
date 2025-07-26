@@ -12,8 +12,6 @@ traefik.enable=true
 traefik.docker.network={{ prometheus_node_exporter_container_labels_traefik_docker_network }}
 {% endif %}
 
-traefik.http.services.{{ prometheus_node_exporter_identifier }}.loadbalancer.server.port={{ prometheus_node_exporter_container_http_port }}
-
 {% set middlewares = [] %}
 
 {% if prometheus_node_exporter_container_labels_metrics_middleware_basic_auth_enabled %}
@@ -26,18 +24,17 @@ traefik.http.middlewares.{{ prometheus_node_exporter_identifier }}-replacepath.r
 
 traefik.http.routers.{{ prometheus_node_exporter_identifier }}.rule={{ prometheus_node_exporter_container_labels_traefik_rule }}
 
+traefik.http.routers.{{ prometheus_node_exporter_identifier }}.service={{ prometheus_node_exporter_identifier }}
 {% if middlewares | length > 0 %}
 traefik.http.routers.{{ prometheus_node_exporter_identifier }}.middlewares={{ middlewares | join(',') }}
 {% endif %}
-
-traefik.http.routers.{{ prometheus_node_exporter_identifier }}.service={{ prometheus_node_exporter_identifier }}
 traefik.http.routers.{{ prometheus_node_exporter_identifier }}.entrypoints={{ prometheus_node_exporter_container_labels_traefik_entrypoints }}
-
-
 traefik.http.routers.{{ prometheus_node_exporter_identifier }}.tls={{ prometheus_node_exporter_container_labels_traefik_tls | to_json }}
 {% if prometheus_node_exporter_container_labels_traefik_tls %}
 traefik.http.routers.{{ prometheus_node_exporter_identifier }}.tls.certResolver={{ prometheus_node_exporter_container_labels_traefik_tls_certResolver }}
 {% endif %}
+
+traefik.http.services.{{ prometheus_node_exporter_identifier }}.loadbalancer.server.port={{ prometheus_node_exporter_container_http_port }}
 {% endif %}
 
 {{ prometheus_node_exporter_container_labels_additional_labels }}

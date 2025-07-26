@@ -8,7 +8,7 @@
   ansible.builtin.fail:
     msg: >-
       You need to define a required configuration setting (`{{ item }}`).
-  when: "vars[item] == ''"
+  when: "lookup('vars', item, default='') | string | length == 0"
   with_items:
     - ntfy_identifier
     - ntfy_uid
@@ -24,7 +24,7 @@
       ansible.builtin.fail:
         msg: >-
           You need to define a required configuration setting (`{{ item }}`).
-      when: "vars[item] == ''"
+      when: "lookup('vars', item, default='') | string | length == 0"
       with_items:
         - ntfy_container_labels_traefik_hostname
         - ntfy_container_labels_traefik_path_prefix
@@ -45,7 +45,7 @@
       ansible.builtin.fail:
         msg: >-
           You need to define a required configuration setting (`{{ item }}`).
-      when: "vars[item] == ''"
+      when: "lookup('vars', item, default='') | string | length == 0"
       with_items:
         - ntfy_smtp_sender_addr_host
         - ntfy_smtp_sender_from

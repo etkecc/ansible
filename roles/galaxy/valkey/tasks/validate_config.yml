@@ -7,7 +7,7 @@
   ansible.builtin.fail:
     msg: >-
       You need to define a required configuration setting (`{{ item }}`).
-  when: "vars[item] | length == 0"
+  when: "lookup('vars', item, default='') | string | length == 0"
   with_items:
     - valkey_identifier
     - valkey_uid

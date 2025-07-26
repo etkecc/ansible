@@ -17,7 +17,7 @@
 # If Postgres is up from before, but it had originally been installed on a different container network,
 # trying to prepare databases by connecting to `postgres_container_network` would fail.
 # For this reason, we determine and use the currently used network.
-# Restarting the service later would put it in the corrent network.
+# Restarting the service later would put it in the current network.
 - name: Check Postgres container network
   ansible.builtin.command: "{{ devture_systemd_docker_base_host_command_docker }} container inspect {{ postgres_identifier }} --format '{% raw %}{{.HostConfig.NetworkMode}}{% endraw %}'"
   register: postgres_container_network_check_result

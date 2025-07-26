@@ -3,15 +3,15 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: Check existence of Traefik certs dumper systemd service
   ansible.builtin.stat:
     path: "{{ devture_systemd_docker_base_systemd_path }}/{{ traefik_certs_dumper_identifier }}.service"
   register: traefik_certs_dumper_service_stat
 
-- when: traefik_certs_dumper_service_stat.stat.exists | bool
+- name: Uninstall Traefik certs dumper systemd services and files
+  when: traefik_certs_dumper_service_stat.stat.exists | bool
   block:
-    - name: Ensure Traefik systemd service is stopped
+    - name: Ensure Traefik certs dumper systemd service is stopped
       ansible.builtin.service:
         name: "{{ traefik_certs_dumper_identifier }}"
         state: stopped

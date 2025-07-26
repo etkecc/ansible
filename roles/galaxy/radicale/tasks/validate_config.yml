@@ -5,9 +5,9 @@
 ---
 - name: Fail if required Radicale settings not defined
   ansible.builtin.fail:
-    msg: >
+    msg: >-
       You need to define a required configuration setting (`{{ item }}`).
-  when: "vars[item] == ''"
+  when: "lookup('vars', item, default='') | string | length == 0"
   with_items:
     - radicale_identifier
     - radicale_uid
@@ -23,7 +23,7 @@
       ansible.builtin.fail:
         msg: >-
           You need to define a required configuration setting (`{{ item }}`).
-      when: "vars[item] == ''"
+      when: "lookup('vars', item, default='') | string | length == 0"
       with_items:
         - radicale_container_labels_traefik_hostname
         - radicale_container_labels_traefik_path_prefix

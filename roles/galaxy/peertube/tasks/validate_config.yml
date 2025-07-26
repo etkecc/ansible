@@ -8,17 +8,18 @@
     msg: >-
       Your configuration contains a variable, which now has a different name.
       Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
-  when: "item.old in vars"
+  when: "lookup('ansible.builtin.varnames', ('^' + item.old + '$'), wantlist=True) | length > 0"
   with_items:
     - { "old": "peertube_config_object_storage_videos_bucket_name", "new": "peertube_config_object_storage_web_videos_bucket_name" }
     - { "old": "peertube_config_object_storage_videos_prefix", "new": "peertube_config_object_storage_web_videos_prefix" }
     - { "old": "peertube_config_object_storage_videos_base_url", "new": "peertube_config_object_storage_web_videos_base_url" }
+    - { "old": "peertube_container_additional_environment_variables", "new": "peertube_environment_variables_additional_variables" }
 
 - name: Fail if required PeerTube settings not defined
   ansible.builtin.fail:
     msg: >-
       You need to define a required configuration setting (`{{ item }}`).
-  when: "vars[item] | string == ''"
+  when: "lookup('vars', item, default='') | string | length == 0"
   with_items:
     - peertube_identifier
     - peertube_uid
@@ -38,7 +39,7 @@
   ansible.builtin.fail:
     msg: >-
       You need to define a required configuration setting (`{{ item }}`).
-  when: "peertube_config_object_storage_enabled | bool and vars[item] == ''"
+  when: "peertube_config_object_storage_enabled | bool and lookup('vars', item, default='') | string | length == 0"
   with_items:
     - peertube_config_object_storage_endpoint
     - peertube_config_object_storage_region
@@ -54,7 +55,7 @@
       ansible.builtin.fail:
         msg: >-
           You need to define a required configuration setting (`{{ item }}`).
-      when: "vars[item] == ''"
+      when: "lookup('vars', item, default='') | string | length == 0"
       with_items:
         - peertube_container_labels_traefik_hostname
         - peertube_container_labels_traefik_path_prefix

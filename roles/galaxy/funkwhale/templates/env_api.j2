@@ -1,10 +1,17 @@
+{#
+SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
+SPDX-FileCopyrightText: 2024 Nikita Chernyi
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+#}
+
 FUNKWHALE_HOSTNAME={{ funkwhale_hostname }}
 
 # Log level (debug, info, warning, error, critical)
 LOGLEVEL={{ funkwhale_loglevel }}
 
-# Configure e-mail sending using this variale
-# By default, funkwhale will output e-mails sent to stdout
+# Configure e-mail sending using this variable
+# By default, Funkwhale will output e-mails sent to stdout
 # here are a few examples for this setting
 # EMAIL_CONFIG=consolemail://         # output e-mails to console (the default)
 # EMAIL_CONFIG=dummymail://          # disable e-mail sending completely
@@ -27,7 +34,7 @@ ACCOUNT_EMAIL_VERIFICATION_ENFORCE={{ funkwhale_account_email_verification_enfor
 # The e-mail address to use to send system e-mails.
 DEFAULT_FROM_EMAIL={{ funkwhale_email_from }}
 
-# Depending on the reverse proxy used in front of your funkwhale instance,
+# Depending on the reverse proxy used in front of your Funkwhale instance,
 # the API will use different kind of headers to serve audio files
 # Allowed values: nginx, apache2
 REVERSE_PROXY_TYPE=nginx
@@ -40,7 +47,6 @@ REVERSE_PROXY_TYPE=nginx
 #  DATABASE_URL=postgresql://funkwhale:passw0rd@localhost:5432/funkwhale_database
 # Use the next one if you followed Debian installation guide
 DATABASE_URL=postgresql://{{ funkwhale_database_username }}:{{ funkwhale_database_password }}@{{ funkwhale_database_hostname }}:{{ funkwhale_database_port }}/{{ funkwhale_database_name }}
-
 
 CACHE_URL={{ funkwhale_config_redis_url }}
 CELERY_BROKER_URL={{ funkwhale_config_redis_url }}
@@ -67,7 +73,6 @@ DJANGO_SETTINGS_MODULE=config.settings.production
 
 # Generate one using `openssl rand -base64 45`, for example
 DJANGO_SECRET_KEY={{ funkwhale_django_secret_key }}
-
 
 FUNKWHALE_API_PORT={{ funkwhale_api_container_port }}
 

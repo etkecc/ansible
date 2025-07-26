@@ -8,7 +8,7 @@
     msg: >-
       Your configuration contains a variable, which now has a different name.
       Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
-  when: "item.old in vars"
+  when: "lookup('ansible.builtin.varnames', ('^' + item.old + '$'), wantlist=True) | length > 0"
   with_items:
     - { "old": "vaultwarden_container_labels_traefik_rule_websocket", "new": "<Removed. See https://github.com/dani-garcia/vaultwarden/pull/3404>" }
     - { "old": "vaultwarden_config_websocket_enabled", "new": "<Removed. See https://github.com/dani-garcia/vaultwarden/pull/3404>" }
@@ -28,7 +28,7 @@
   ansible.builtin.fail:
     msg: >-
       You need to define a required configuration setting (`{{ item.name }}`) for using this role.
-  when: "item.when | bool and vars[item.name] | length == 0"
+  when: "item.when | bool and lookup('vars', item.name, default='') | string | length == 0"
   with_items:
     - { "name": "vaultwarden_hostname", when: true }
     - { "name": "vaultwarden_uid", when: true }
@@ -40,7 +40,7 @@
   ansible.builtin.fail:
     msg: >-
       You need to define a required configuration setting (`{{ item }}`) when `vaultwarden_database_type` is `postgres`
-  when: "vaultwarden_database_type == 'postgres' and vars[item] == ''"
+  when: "vaultwarden_database_type == 'postgres' and lookup('vars', item, default='') | string | length == 0"
   with_items:
     - vaultwarden_database_username
     - vaultwarden_database_password
@@ -52,7 +52,7 @@
       ansible.builtin.fail:
         msg: >-
           You need to define a required configuration setting (`{{ item }}`).
-      when: "vars[item] == ''"
+      when: "lookup('vars', item, default='') | string | length == 0"
       with_items:
         - vaultwarden_container_labels_traefik_hostname
         - vaultwarden_container_labels_traefik_path_prefix

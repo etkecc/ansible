@@ -3,22 +3,24 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
-- block:
-    - when: languagetool_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
-
-    - when: languagetool_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+- name: Perform LanguageTool installation tasks
+  when: languagetool_enabled | bool
   tags:
     - setup-all
     - setup-languagetool
     - install-all
     - install-languagetool
+  block:
+    - name: Validate LanguageTool configuration
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Install LanguageTool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
-- block:
-    - when: not languagetool_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
+- name: Perform LanguageTool uninstallation tasks
+  when: not languagetool_enabled | bool
   tags:
     - setup-all
     - setup-languagetool
+  block:
+    - name: Uninstall LanguageTool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

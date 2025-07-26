@@ -4,7 +4,6 @@ SPDX-FileCopyrightText: 2022-2024 Slavi Pantaleev
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
 
-#jinja2: lstrip_blocks: "True"
 [Unit]
 Description=Automatic Backup of a Postgres server
 {% for service in postgres_backup_systemd_required_services_list %}

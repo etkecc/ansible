@@ -1,8 +1,9 @@
+---
 galaxy_info:
   role_name: funkwhale
   author: Julian-Samuel Gebühr
   company: Hyteck
-  description: Ansible role to install a funkwhale instance that lets you listen and share music and audio within a decentralized, open network.
+  description: Ansible role to install a Funkwhale instance that lets you listen and share music and audio within a decentralized, open network.
   platforms:
     - name: Debian
       versions:
@@ -17,4 +18,4 @@ galaxy_info:
       versions:
         - all
   license: AGPL-3.0-or-later
-  min_ansible_version: '2.1'
+  min_ansible_version: "2.1"

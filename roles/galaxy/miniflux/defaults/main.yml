@@ -41,6 +41,9 @@ miniflux_container_image_self_build_src_files_path: "{{ miniflux_base_path }}/do
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 miniflux_container_network: "{{ miniflux_identifier }}"
 
+# The port number in the container
+miniflux_container_http_port: 8080
+
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
 # Use this to expose this container to another reverse proxy, which runs in a different container network.

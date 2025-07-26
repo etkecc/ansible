@@ -10,7 +10,7 @@
     msg: >-
       Your configuration contains a variable, which now has a different name.
       Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
-  when: "item.old in vars"
+  when: "lookup('ansible.builtin.varnames', ('^' + item.old + '$'), wantlist=True) | length > 0"
   with_items:
     - { "old": "livekit_server_container_repo", "new": "livekit_server_container_image_self_build_repo" }
     - { "old": "livekit_server_container_repo_version", "new": "livekit_server_container_image_self_build_repo_version" }
@@ -18,9 +18,9 @@
 
 - name: Fail if required LiveKit Server settings are not defined
   ansible.builtin.fail:
-    msg: >
+    msg: >-
       You need to define a required configuration setting (`{{ item.name }}`).
-  when: "item.when | bool and vars[item.name] | length == 0"
+  when: "item.when | bool and lookup('vars', item.name, default='') | string | length == 0"
   with_items:
     - { "name": "livekit_server_hostname", when: true }
     - { "name": "livekit_server_identifier", when: true }
@@ -32,7 +32,7 @@
 
 - name: Fail if LiveKit Server port range configuration is invalid
   ansible.builtin.fail:
-    msg: >
+    msg: >-
       You need to either define both port range settings (livekit_server_config_rtc_port_range_start and livekit_server_config_rtc_port_range_end)
       or define a single UDP port (livekit_server_config_rtc_udp_port).
   when: >

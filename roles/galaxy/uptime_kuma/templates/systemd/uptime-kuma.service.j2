@@ -1,4 +1,4 @@
-#jinja2: lstrip_blocks: "True"
+#jinja2: lstrip_blocks: True
 [Unit]
 Description=Uptime Kuma ({{ uptime_kuma_identifier }})
 {% for service in uptime_kuma_systemd_required_services_list %}
@@ -17,26 +17,26 @@ ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_s
 ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ uptime_kuma_identifier }} 2>/dev/null || true'
 
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
-			--rm \
-			--name={{ uptime_kuma_identifier }} \
-			--log-driver=none \
-			--user={{ uptime_kuma_uid }}:{{ uptime_kuma_gid }} \
-			--entrypoint="/usr/bin/dumb-init" \
-			--cap-drop=ALL \
-			--network={{ uptime_kuma_container_network }} \
-			{% for dns in uptime_kuma_container_dns_servers %}
-			--dns={{ dns }} \
-			{% endfor %}
-			--env-file={{ uptime_kuma_base_path }}/env \
-			--label-file={{ uptime_kuma_base_path }}/labels \
-			--health-interval={{ uptime_kuma_container_health_interval }} \
-			--mount type=bind,src={{ uptime_kuma_data_path }},dst=/app/data \
-			--tmpfs=/.npm:rw,noexec,nosuid,size=100m \
-			{% for arg in uptime_kuma_container_extra_arguments %}
-			{{ arg }} \
-			{% endfor %}
-			{{ uptime_kuma_container_image }} \
-			node server/server.js
+      --rm \
+      --name={{ uptime_kuma_identifier }} \
+      --log-driver=none \
+      --user={{ uptime_kuma_uid }}:{{ uptime_kuma_gid }} \
+      --entrypoint="/usr/bin/dumb-init" \
+      --cap-drop=ALL \
+      --network={{ uptime_kuma_container_network }} \
+      {% for dns in uptime_kuma_container_dns_servers %}
+      --dns={{ dns }} \
+      {% endfor %}
+      --env-file={{ uptime_kuma_base_path }}/env \
+      --label-file={{ uptime_kuma_base_path }}/labels \
+      --health-interval={{ uptime_kuma_container_health_interval }} \
+      --mount type=bind,src={{ uptime_kuma_data_path }},dst=/app/data \
+      --tmpfs=/.npm:rw,noexec,nosuid,size=100m \
+      {% for arg in uptime_kuma_container_extra_arguments %}
+      {{ arg }} \
+      {% endfor %}
+      {{ uptime_kuma_container_image }} \
+      node server/server.js
 
 {% for network in uptime_kuma_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ uptime_kuma_identifier }}

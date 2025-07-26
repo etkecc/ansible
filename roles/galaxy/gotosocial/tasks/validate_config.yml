@@ -10,7 +10,7 @@
     msg: >-
       Your configuration contains a variable, which now has a different name.
       Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
-  when: "item.old in vars"
+  when: "lookup('ansible.builtin.varnames', ('^' + item.old + '$'), wantlist=True) | length > 0"
   with_items:
     - { "old": "gotosocial_config_path", "new": "<Removed>" }
     - { "old": "gotosocial_database_host", "new": "gotosocial_database_hostname" }
@@ -21,7 +21,7 @@
   ansible.builtin.fail:
     msg: >-
       You need to define a required configuration setting (`{{ item }}`).
-  when: "vars[item] == ''"
+  when: "lookup('vars', item, default='') | string | length == 0"
   with_items:
     - gotosocial_hostname
 
@@ -29,6 +29,6 @@
   ansible.builtin.fail:
     msg: >-
       You need to define a required configuration setting (`{{ item }}`) to correctly set up email via SMTP.
-  when: "gotosocial_smtp_host !='' and vars[item] == ''"
+  when: "gotosocial_smtp_host != '' and lookup('vars', item, default='') | string | length == 0"
   with_items:
     - gotosocial_smtp_from

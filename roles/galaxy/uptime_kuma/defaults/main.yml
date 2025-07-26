@@ -40,6 +40,9 @@ uptime_kuma_container_image_force_pull: "{{ uptime_kuma_container_image.endswith
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 uptime_kuma_container_network: "{{ uptime_kuma_identifier }}"
 
+# The port number in the container
+uptime_kuma_container_http_port: 3001
+
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
 # Use this to expose this container to another reverse proxy, which runs in a different container network.

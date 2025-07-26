@@ -9,7 +9,7 @@
     msg: >-
       Your configuration contains a variable, which now has a different name.
       Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
-  when: "item.old in vars"
+  when: "lookup('ansible.builtin.varnames', ('^' + item.old + '$'), wantlist=True) | length > 0"
   with_items:
     - { "old": "prometheus_node_exporter_server_fqn", "new": "prometheus_node_exporter_hostname" }
     - { "old": "prometheus_node_exporter_basicauth_enabled", "new": "prometheus_node_exporter_container_labels_metrics_middleware_basic_auth_enabled" }
@@ -30,7 +30,7 @@
   ansible.builtin.fail:
     msg: >-
       You need to define a required configuration setting (`{{ item }}`).
-  when: "vars[item] == ''"
+  when: "lookup('vars', item, default='') | string | length == 0"
   with_items:
     - prometheus_node_exporter_uid
     - prometheus_node_exporter_gid
@@ -43,7 +43,7 @@
       ansible.builtin.fail:
         msg: >-
           You need to define a required configuration setting (`{{ item }}`).
-      when: "vars[item] == ''"
+      when: "lookup('vars', item, default='') | string | length == 0"
       with_items:
         - prometheus_node_exporter_container_labels_traefik_hostname
         - prometheus_node_exporter_container_labels_traefik_path_prefix

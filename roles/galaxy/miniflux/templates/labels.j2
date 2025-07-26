@@ -49,7 +49,7 @@ traefik.http.routers.{{ miniflux_identifier }}.tls={{ miniflux_container_labels_
 traefik.http.routers.{{ miniflux_identifier }}.tls.certResolver={{ miniflux_container_labels_traefik_tls_certResolver }}
 {% endif %}
 
-traefik.http.services.{{ miniflux_identifier }}.loadbalancer.server.port=8080
+traefik.http.services.{{ miniflux_identifier }}.loadbalancer.server.port={{ miniflux_container_http_port }}
 {% endif %}
 
 {{ miniflux_container_labels_additional_labels }}

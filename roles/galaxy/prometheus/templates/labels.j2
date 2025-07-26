@@ -12,8 +12,6 @@ traefik.enable=true
 traefik.docker.network={{ prometheus_container_labels_traefik_docker_network }}
 {% endif %}
 
-traefik.http.services.{{ prometheus_identifier }}.loadbalancer.server.port=9100
-
 {% set middlewares = [] %}
 
 {% if prometheus_container_labels_metrics_middleware_basic_auth_enabled %}
@@ -36,7 +34,7 @@ traefik.http.routers.{{ prometheus_identifier }}.tls.certResolver={{ prometheus_
 {% endif %}
 traefik.http.routers.{{ prometheus_identifier }}.entrypoints={{ prometheus_container_labels_traefik_entrypoints }}
 {% endif %}
-traefik.http.services.{{ prometheus_identifier }}.loadbalancer.server.port={{ prometheus_container_http_port }}
 
+traefik.http.services.{{ prometheus_identifier }}.loadbalancer.server.port={{ prometheus_container_http_port }}
 
 {{ prometheus_container_labels_additional_labels }}

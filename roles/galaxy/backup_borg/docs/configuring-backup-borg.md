@@ -18,13 +18,13 @@ BorgBackup is a deduplicating backup program with optional compression and encry
 
 ### Set up a remote server for storing backups
 
-You will need a remote server where borg will store the backups. There are hosted, borg compatible solutions available, such as [BorgBase](https://www.borgbase.com).
+You will need a remote server where BorgBackup will store the backups. There are hosted, BorgBackup compatible solutions available, such as [BorgBase](https://www.borgbase.com).
 
 ### Check the Postgres version
 
 For some playbooks, if you're using the integrated Postgres database server, backups with BorgBackup will also include dumps of your Postgres database by default.
 
-Unless you disable the Postgres-backup support, make sure that the Postgres version of your homeserver's database is compatible with borgmatic. You can check the compatible versions [here](../defaults/main.yml).
+Unless you disable the Postgres-backup support, make sure that the Postgres version of your homeserver's database is compatible with borgmatic. You can check the compatible versions on [`defaults/main.yml`](../defaults/main.yml).
 
 An alternative solution for backing up the Postgres database is [Postgres backup](https://github.com/mother-of-all-self-hosting/ansible-role-postgres-backup). If you decide to go with another solution, you can disable Postgres-backup support for BorgBackup using the `backup_borg_postgresql_enabled` variable.
 
@@ -47,8 +47,8 @@ If you are using a hosted solution, follow their instructions. If you have your 
 ```sh
 # Example to append the new PUBKEY contents, where:
 # - PUBKEY is path to the public key
-# - USER is a ssh user on a provider / server
-# - HOST is a ssh host of a provider / server
+# - USER is a SSH user on a provider / server
+# - HOST is a SSH host of a provider / server
 cat PUBKEY | ssh USER@HOST 'dd of=.ssh/authorized_keys oflag=append conv=notrunc'
 ```
 
@@ -70,8 +70,8 @@ To enable BorgBackup, add the following configuration to your `vars.yml` file (a
 backup_borg_enabled: true
 
 # Set the repository location, where:
-# - USER is a ssh user on a provider / server
-# - HOST is a ssh host of a provider / server
+# - USER is a SSH user on a provider / server
+# - HOST is a SSH host of a provider / server
 # - REPO is a BorgBackup repository name
 backup_borg_location_repositories:
  - ssh://USER@HOST/./REPO
@@ -129,7 +129,7 @@ To edit the schedule, add the following configuration to your `vars.yml` file (a
 backup_borg_schedule: "*-*-* 04:00:00"
 ```
 
-**Note**: the actual job may run with a delay. See `backup_borg_schedule_randomized_delay_sec` [here](https://github.com/mother-of-all-self-hosting/ansible-role-backup_borg/blob/f5d5b473d48c6504be10b3d946255ef5c186c2a6/defaults/main.yml#L50) for its default value.
+**Note**: the actual job may run with a delay. See `backup_borg_schedule_randomized_delay_sec` on [`defaults/main.yml`](https://github.com/mother-of-all-self-hosting/ansible-role-backup_borg/blob/f5d5b473d48c6504be10b3d946255ef5c186c2a6/defaults/main.yml#L50) for its default value.
 
 ### Set include and/or exclude directories (optional)
 

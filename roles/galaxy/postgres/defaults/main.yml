@@ -3,7 +3,7 @@
 
 postgres_enabled: true
 
-# postgres_identifier controls the identifer of this Postgres instance, which influences:
+# postgres_identifier controls the identifier of this Postgres instance, which influences:
 # - the default storage path
 # - the names of systemd services
 # - the names of various helper scripts
@@ -135,7 +135,7 @@ postgres_container_image_suffix: "{{ '-alpine' if postgres_architecture in ['amd
 postgres_container_image_v9: "{{ postgres_container_image_registry_prefix }}postgres:9.6.24{{ postgres_container_image_suffix }}"
 postgres_container_image_v10: "{{ postgres_container_image_registry_prefix }}postgres:10.23{{ postgres_container_image_suffix }}"
 postgres_container_image_v11: "{{ postgres_container_image_registry_prefix }}postgres:11.22{{ postgres_container_image_suffix }}"
-postgres_container_image_v12: "{{ postgres_container_image_registry_prefix }}postgres:12.20{{ postgres_container_image_suffix }}"
+postgres_container_image_v12: "{{ postgres_container_image_registry_prefix }}postgres:12.22{{ postgres_container_image_suffix }}"
 postgres_container_image_v13: "{{ postgres_container_image_registry_prefix }}postgres:13.21{{ postgres_container_image_suffix }}"
 postgres_container_image_v14: "{{ postgres_container_image_registry_prefix }}postgres:14.18{{ postgres_container_image_suffix }}"
 postgres_container_image_v15: "{{ postgres_container_image_registry_prefix }}postgres:15.13{{ postgres_container_image_suffix }}"

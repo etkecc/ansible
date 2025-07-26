@@ -1,5 +1,9 @@
----
+# SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
+# SPDX-FileCopyrightText: 2024 Nikita Chernyi
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
 
+---
 - name: Fail if playbook called incorrectly
   ansible.builtin.fail:
     msg: "The `username` variable needs to be provided to this playbook, via --extra-vars"
@@ -15,18 +19,21 @@
     msg: "The `password` variable needs to be provided to this playbook, via --extra-vars"
   when: "password is not defined or password == '<password>'"
 
-- ansible.builtin.set_fact:
+- name: Set the initial role to 'user' when running 'funkwhale-add-user'
+  ansible.builtin.set_fact:
     initial_role: user
   tags:
     - funkwhale-add-user
 
-- ansible.builtin.set_fact:
+- name: Set the initial role to 'admin' when running 'funkwhale-add-superuser' or 'funkwhale-add-admin'
+  ansible.builtin.set_fact:
     initial_role: admin
   tags:
     - funkwhale-add-superuser
     - funkwhale-add-admin
 
-- ansible.builtin.set_fact:
+- name: Set user details
+  ansible.builtin.set_fact:
     user:
       username: "{{ username }}"
       initial_email: "{{ email }}"

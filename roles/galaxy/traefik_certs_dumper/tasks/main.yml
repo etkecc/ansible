@@ -3,27 +3,24 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: Perform Traefik certs dumper installation tasks
-  block:
-    - name: Validate Traefik certs dumper configuration
-      when: traefik_certs_dumper_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
-
-    - name: Install Traefik certs dumper
-      when: traefik_certs_dumper_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+  when: traefik_certs_dumper_enabled | bool
   tags:
     - setup-all
     - setup-traefik-certs-dumper
     - install-all
     - install-traefik-certs-dumper
+  block:
+    - name: Validate Traefik certs dumper configuration
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Install Traefik certs dumper
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
 - name: Perform Traefik certs dumper uninstallation tasks
-  block:
-    - name: Uninstall Traefik certs dumper
-      when: not traefik_certs_dumper_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
+  when: not traefik_certs_dumper_enabled | bool
   tags:
     - setup-all
     - setup-traefik-certs-dumper
+  block:
+    - name: Uninstall Traefik certs dumper
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

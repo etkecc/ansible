@@ -54,7 +54,7 @@ When a certificate file appears or whenever it changes in the future, all of its
 
 The directory tree would look like this:
 
-```
+```txt
 /traefik-certs-dumper/dumped-certificates/
 ├── example.com
 │   ├── certificate.crt
@@ -72,7 +72,7 @@ To help you launch other services which depend on these dumped certificate files
 
 You can adjust your systemd `.service` file definitions to add `Requires` and `After` clauses like this:
 
-```
+```txt
 Requires=traefik-certs-dumper-wait-for-domain@DOMAIN_NAME.service
 After=traefik-certs-dumper-wait-for-domain@DOMAIN_NAME.service
 ```
@@ -84,3 +84,9 @@ Then, upon launching your service:
 - it will wait for certificates for the specified domain (`DOMAIN_NAME`) to become available (e.g. `/traefik-certs-dumper/dumped-certificates/DOMAIN_NAME/certificate.crt` and `/traefik-certs-dumper/dumped-certificates/DOMAIN_NAME/privatekey.key`)
 
 By default, the "waiter" service waits for 30 seconds (configurable via `traefik_certs_dumper_waiter_max_iterations`) before giving up and aborting execution of your service.
+
+## Development
+
+You can optionally install [pre-commit](https://pre-commit.com/) so that simple mistakes are checked and noticed before changes are pushed to a remote branch. See [`.pre-commit-config.yaml`](./.pre-commit-config.yaml) for which hooks are to be executed.
+
+See [this section](https://pre-commit.com/#usage) on the official documentation for usage.

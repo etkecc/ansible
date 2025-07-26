@@ -4,21 +4,21 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
-- name: Remove all files regarding prosody mod auth_matrix_user_verification
+- name: Remove all files regarding Prosody mod auth_matrix_user_verification
   ansible.builtin.file:
     path: "{{ item }}"
     state: absent
   loop:
     - "{{ jitsi_prosody_auth_matrix_user_verification_repo_target }}"
-    - "{{ jitsi_prosody_auth_matrix_files | map(attribute='path') | map('regex_replace', '^', jitsi_prosody_plugins_path+'/') | list | flatten }}"
+    - "{{ jitsi_prosody_auth_matrix_files | map(attribute='path') | map('regex_replace', '^', jitsi_prosody_plugins_path + '/') | list | flatten }}"
   register: jitsi_prosody_auth_matrix_user_verification_uninstalled
 
-- when: jitsi_prosody_auth_matrix_user_verification_uninstalled.changed
+- name: Run if Prosody mod auth_matrix_user_verification is uninstalled
+  when: jitsi_prosody_auth_matrix_user_verification_uninstalled.changed
   block:
     - name: Populate service facts
       ansible.builtin.service_facts:
 
-    - name: Ensure prosody is restarted later on if currently running
+    - name: Ensure Prosody is restarted later on if currently running
       ansible.builtin.set_fact:
         jitsi_prosody_require_restart: "{{ true if ansible_facts.services[jitsi_identifier + '-prosody.service']['state'] == 'running' else false }}"

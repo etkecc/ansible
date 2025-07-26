@@ -50,7 +50,7 @@
   failed_when: not peertube_migration_command_result.finished or peertube_migration_command_result.rc != 0
   changed_when: peertube_migration_command_result.finished and peertube_migration_command_result.rc == 0
 
-- name: Ensure PeerTube is stopped if it previously was
+- name: Ensure PeerTube systemd service is stopped (if it previously was)
   when: not peertube_was_running
   ansible.builtin.service:
     name: "{{ peertube_identifier }}"

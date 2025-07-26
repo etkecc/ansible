@@ -21,16 +21,16 @@ Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
 # the same name for each invocation and potentially killing other (simultaneously running) instances
 # from `ExecStartPre` / `ExecStop` cleanup tasks.
 ExecStart={{ devture_systemd_docker_base_host_command_docker }} run \
-			--rm \
-			--log-driver=none \
-			--mount type=bind,src={{ traefik_certs_dumper_bin_dir_path }},dst=/certs-dumper-bin,ro \
-			--mount type=bind,src={{ traefik_certs_dumper_dumped_certificates_dir_path }},dst={{ traefik_certs_dumper_dumped_certificates_dir_path }},ro \
-			--entrypoint=/bin/sh \
-			{% for arg in traefik_certs_dumper_container_process_extra_arguments %}
-			{{ arg }} \
-			{% endfor %}
-			{{ traefik_certs_dumper_container_image }} \
-			-c '/certs-dumper-bin/wait-for-domain.sh %i'
+      --rm \
+      --log-driver=none \
+      --mount type=bind,src={{ traefik_certs_dumper_bin_dir_path }},dst=/certs-dumper-bin,ro \
+      --mount type=bind,src={{ traefik_certs_dumper_dumped_certificates_dir_path }},dst={{ traefik_certs_dumper_dumped_certificates_dir_path }},ro \
+      --entrypoint=/bin/sh \
+      {% for arg in traefik_certs_dumper_container_process_extra_arguments %}
+      {{ arg }} \
+      {% endfor %}
+      {{ traefik_certs_dumper_container_image }} \
+      -c '/certs-dumper-bin/wait-for-domain.sh %i'
 
 SyslogIdentifier={{ traefik_certs_dumper_identifier }}-%i
 

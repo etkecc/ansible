@@ -1,9 +1,14 @@
+{#
+SPDX-FileCopyrightText: 2023 MASH project contributors
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+#}
+
 [Unit]
 Description=Funkwhale Watch Imports Service ({{ funkwhale_watch_imports_identifier }})
 Requires={{ funkwhale_api_identifier }}.service
 After={{ funkwhale_api_identifier }}.service
 DefaultDependencies=no
-
 
 [Service]
 Type=simple

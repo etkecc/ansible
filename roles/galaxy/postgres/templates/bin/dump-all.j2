@@ -1,33 +1,33 @@
 #!/bin/bash
 
 if [ $# -ne 1 ]; then
-	echo "Usage: "$0" <directory_path>"
-	echo "A latest-dump.sql.gz file will be dumped to the specified directory"
-	exit 1
+    echo "Usage: "$0" <directory_path>"
+    echo "A latest-dump.sql.gz file will be dumped to the specified directory"
+    exit 1
 fi
 
 directory_path=$1
 
 if [ ! -d "$directory_path" ]; then
-	echo "$directory_path does not exist."
-	exit 1
+    echo "$directory_path does not exist."
+    exit 1
 fi
 
 docker_flags=''
 if [ -t 1 ]; then
-	# Got tty
-	docker_flags='-it'
+    # Got tty
+    docker_flags='-it'
 fi
 
 docker run \
-	$docker_flags \
-	--rm \
-	--user={{ postgres_uid }}:{{ postgres_gid }} \
-	--cap-drop=ALL \
-	--env-file={{ postgres_base_path }}/env-postgres-psql \
-	--mount type=bind,src=$directory_path,dst=/out \
-	--network={{ postgres_container_network }} \
-	--entrypoint=/bin/sh \
-	{{ postgres_container_image_to_use }} \
-	-c \
-	'set -o pipefail && pg_dumpall -h {{ postgres_identifier }} | zstd --stdout > /out/latest-dump.sql.zst'
+    $docker_flags \
+    --rm \
+    --user={{ postgres_uid }}:{{ postgres_gid }} \
+    --cap-drop=ALL \
+    --env-file={{ postgres_base_path }}/env-postgres-psql \
+    --mount type=bind,src=$directory_path,dst=/out \
+    --network={{ postgres_container_network }} \
+    --entrypoint=/bin/sh \
+    {{ postgres_container_image_to_use }} \
+    -c \
+    'set -o pipefail && pg_dumpall -h {{ postgres_identifier }} | zstd --stdout > /out/latest-dump.sql.zst'

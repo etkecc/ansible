@@ -71,7 +71,7 @@ peertube_container_additional_networks_custom: []
 peertube_container_additional_volumes: []
 
 # peertube_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
-# See `roles/peertube/peertube/templates/labels.j2` for details.
+# See `../templates/labels.j2` for details.
 #
 # To inject your own other container labels, see `peertube_container_labels_additional_labels`.
 peertube_container_labels_traefik_enabled: true
@@ -100,7 +100,7 @@ peertube_container_labels_traefik_additional_response_headers_auto: |
 peertube_container_labels_traefik_additional_response_headers_custom: {}
 
 # peertube_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
-# See `roles/peertube/peertube/templates/labels.j2` for details.
+# See `../templates/labels.j2` for details.
 #
 # Example:
 # peertube_container_labels_additional_labels: |
@@ -111,13 +111,13 @@ peertube_container_labels_additional_labels: ''
 # A list of extra arguments to pass to the container
 peertube_container_extra_arguments: []
 
-# peertube_container_additional_environment_variables contains a multiline string with additional environment variables to pass to the container.
+# peertube_environment_variables_additional_variables contains a multiline string with additional environment variables to pass to the container.
 #
 # Example:
-# peertube_container_additional_environment_variables: |
+# peertube_environment_variables_additional_variables: |
 #   VAR=1
 #   ANOTHER=value
-peertube_container_additional_environment_variables: ''
+peertube_environment_variables_additional_variables: ''
 
 # Specifies the value of the `X-XSS-Protection` header
 # Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
