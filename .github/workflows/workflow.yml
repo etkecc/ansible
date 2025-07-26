@@ -4,8 +4,8 @@ on:
     branches: [ "main", "fresh" ]
 env:
   alpine: "3.22"
-  ansible: "11.8.0"
-  ansible_core: "2.18.7"
+  ansible: "12.0.0b1"
+  ansible_core: "2.19.0"
 permissions:
   checks: write
   contents: write
