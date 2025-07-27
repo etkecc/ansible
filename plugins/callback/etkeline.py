@@ -39,7 +39,8 @@ class CallbackModule(CallbackBase):
         super(CallbackModule, self).__init__()
 
     def _ts(self):
-        return datetime.now(timezone.utc).strftime('%H:%M:%S')
+        now = datetime.now(timezone.utc)
+        return now.strftime('%H:%M:%S') + f'.{int(now.microsecond / 1000):03d}'
 
     def _command_generic_msg(self, hostname, result, caption):
         ts = self._ts()
