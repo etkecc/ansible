@@ -3,6 +3,7 @@ FROM alpine:${ALPINE}
 ARG ANSIBLE
 ARG ANSIBLE_CORE
 ENV PATH="/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin"
+ENV PYTHONPYCACHEPREFIX="/root/.cache/python"
 
 RUN apk --no-cache add python3 py3-cryptography py3-jinja2 py3-packaging py3-paramiko py3-resolvelib py3-passlib py3-yaml \
 		git openssh && \
@@ -16,6 +17,8 @@ RUN apk --no-cache add python3 py3-cryptography py3-jinja2 py3-packaging py3-par
 		rm -rf /var/cache/apk/* && \
 		rm -rf /root/.cache/pip && \
 		find /usr/lib/python3.12/site-packages/ansible_collections -mindepth 1 -maxdepth 1 -type d ! -name 'community' ! -name 'ansible' -exec rm -rf {} + && \
+		find /root/.cache/python/usr/lib/python3.12/site-packages/ansible_collections -mindepth 1 -maxdepth 1 -type d ! -name 'community' ! -name 'ansible' -exec rm -rf {} + && \
 		find /usr/lib/python3.12/site-packages/ansible_collections/ansible -mindepth 1 -maxdepth 1 -type d ! -name 'utils' ! -name 'posix' -exec rm -rf {} + && \
 		find /usr/lib/python3.12/site-packages/ansible_collections/community -mindepth 1 -maxdepth 1 -type d ! -name 'general' ! -name 'docker' -exec rm -rf {} + && \
-		find /usr/lib/python3.12 -maxdepth 10 -name '*.pyc' -exec rm {} +;
+		find /root/.cache/python/usr/lib/python3.12/site-packages/ansible_collections/community -mindepth 1 -maxdepth 1 -type d ! -name 'general' ! -name 'docker' -exec rm -rf {} + && \
+		rm -rf /root/.cache/python/usr/lib/python3.12/site-packages/pip
