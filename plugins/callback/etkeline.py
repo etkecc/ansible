@@ -110,14 +110,14 @@ class CallbackModule(CallbackBase):
     def v2_runner_item_on_failed(self, result, ignore_errors=False):
         if 'exception' in result._result:
             msg = "An exception occurred during task execution. The full traceback is:\n" + result._result['exception']
-            if result._task.action in C.MODULE_NO_JSON and 'module_stderr' not in result._result:
+            if result.task.action in C.MODULE_NO_JSON and 'module_stderr' not in result._result:
                 self._display.display(self._command_generic_msg(result._host.get_name(), result._result, '✖'), color=C.COLOR_ERROR)
             else:
                 self._display.display(msg, color=C.COLOR_ERROR)
 
         msg = "%s => %s" % (self.__item_line("x", result), self._dump_results(result._result, indent=2).replace("\\\\r\\\\n", "\n"))
-        self._clean_results(result._result, result._task.action)
-        if self._last_task_banner != result._task._uuid:
+        self._clean_results(result._result, result.task.action)
+        if self._last_task_banner != result.task._uuid:
             self.v2_runner_on_failed(result)
         self._display.display(msg, color=C.COLOR_ERROR)
 
