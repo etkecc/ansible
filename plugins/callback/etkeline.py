@@ -20,6 +20,7 @@ DOCUMENTATION = '''
 from ansible import constants as C
 from ansible.plugins.callback import CallbackBase
 from ansible.utils.color import colorize, hostcolor
+from datetime import datetime, timezone
 
 
 class CallbackModule(CallbackBase):
@@ -37,16 +38,21 @@ class CallbackModule(CallbackBase):
         self._last_task_banner = None
         super(CallbackModule, self).__init__()
 
+    def _ts(self):
+        return datetime.now(timezone.utc).strftime('%H:%M:%S')
+
     def _command_generic_msg(self, hostname, result, caption):
+        ts = self._ts()
         stdout = result.get('stdout', '').replace('\n', '\\n').replace('\r', '\\r')
         task_name = result._task.get_name().strip()
         if 'stderr' in result and result['stderr']:
             stderr = result.get('stderr', '').replace('\n', '\\n').replace('\r', '\\r')
-            return "%s | %s | rc=%s | (stdout) %s (stderr) %s" % (caption, task_name, result.get('rc', -1), stdout, stderr)
+            return "%s %s | %s | rc=%s | (stdout) %s (stderr) %s" % (ts, caption, task_name, result.get('rc', -1), stdout, stderr)
         else:
-            return "%s | %s | rc=%s | (stdout) %s" % (caption, task_name, result.get('rc', -1), stdout)
+            return "%s %s | %s | rc=%s | (stdout) %s" % (ts, caption, task_name, result.get('rc', -1), stdout)
 
     def v2_runner_on_failed(self, result, ignore_errors=False):
+        ts = self._ts()
         if 'exception' in result._result:
             msg = "An exception occurred during task execution. The full traceback is:\n" + result._result['exception']
             if result._task.action in C.MODULE_NO_JSON and 'module_stderr' not in result._result:
@@ -58,9 +64,10 @@ class CallbackModule(CallbackBase):
         if self._last_task_banner == result._task._uuid:
             return
         self._last_task_banner = result._task._uuid
-        self._display.display("x | %s => %s" % (result._task.get_name().strip(), self._dump_results(result._result, indent=2).replace("\\\\r\\\\n", "\n")), color=C.COLOR_ERROR)
+        self._display.display("%s x | %s => %s" % (ts, result._task.get_name().strip(), self._dump_results(result._result, indent=2).replace("\\\\r\\\\n", "\n")), color=C.COLOR_ERROR)
 
     def v2_runner_on_ok(self, result):
+        ts = self._ts()
         if result._result.get('changed', False):
             color = C.COLOR_CHANGED
             state = '+'
@@ -68,7 +75,7 @@ class CallbackModule(CallbackBase):
             color = C.COLOR_OK
             state = '✓'
 
-        msg = "%s | %s" % (state, result._task.get_name().strip())
+        msg = "%s %s | %s" % (ts, state, result._task.get_name().strip())
         if self._run_is_verbose(result):
             msg += " => %s" % (self._dump_results(result._result, indent=2))
         self._clean_results(result._result, result._task.action)
@@ -78,17 +85,19 @@ class CallbackModule(CallbackBase):
         self._display.display(msg, color=color)
 
     def v2_runner_on_unreachable(self, result):
+        ts = self._ts()
         self._clean_results(result._result, result._task.action)
         if self._last_task_banner == result._task._uuid:
             return
         self._last_task_banner = result._task._uuid
-        self._display.display("☠ => %s" % (result._result.get('msg', '')), color=C.COLOR_UNREACHABLE)
+        self._display.display("%s ☠ => %s" % (ts, result._result.get('msg', '')), color=C.COLOR_UNREACHABLE)
 
     def v2_runner_on_skipped(self, result):
         pass
 
     def __item_line(self, state, result):
-        return "%s | %s" % (state, self._get_item_label(result._result))
+        ts = self._ts()
+        return "%s %s | %s" % (ts, state, self._get_item_label(result._result))
 
 
     def v2_runner_item_on_ok(self, result):
