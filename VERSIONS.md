@@ -10,7 +10,7 @@
 * Coturn: 4.6.2-r11
 * Discord: v0.7.5
 * Draupnir: v2.5.0
-* Element: v1.11.106
+* Element: v1.11.107
 * Element Call: v0.13.1
 * Etherpad: 2.3.2
 * Exim Relay: 4.98.1-r0-2
@@ -19,7 +19,6 @@
 * Funkwhale: 1.4.0
 * Gmessages: v0.6.4
 * Go Neb: latest
-* Go Skype Bridge: latest
 * Googlechat: v0.5.2
 * Gotosocial: 0.19.1
 * Grafana: 11.6.4
@@ -70,7 +69,7 @@
 * Twitter: v0.4.3
 * Uptime Kuma: 1.23.16
 * Valkey: 8.1.3
-* Vaultwarden: 1.34.1
+* Vaultwarden: 1.34.2
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
 * Whatsapp: v0.12.3

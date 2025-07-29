@@ -215,7 +215,7 @@ etherpad_default_pad_text: |
 #
 # For a more advanced customization, you can extend the default (see `etherpad_configuration_extension_json`)
 # or completely replace this variable with your own template.
-etherpad_configuration_default: "{{ lookup('template', 'templates/settings.json.j2') | from_json }}"
+etherpad_configuration_default: "{{ lookup('template', 'templates/settings.json.j2', convert_data=False) | from_json }}"
 
 # Your custom JSON configuration for Etherpad goes here.
 # This configuration extends the default starting configuration (`etherpad_configuration_json`).
