@@ -8,7 +8,7 @@
 
 #### Version Changes
 
-* [Element](https://github.com/element-hq/element-web): [v1.11.106](https://github.com/element-hq/element-web/releases/tag/v1.11.106) ⇾ [v1.11.107](https://github.com/element-hq/element-web/releases/tag/v1.11.107)
+* [Element](https://github.com/element-hq/element-web): [v1.11.106](https://github.com/element-hq/element-web/releases/tag/v1.11.106) ⇾ [v1.11.108](https://github.com/element-hq/element-web/releases/tag/v1.11.108)
 * [Grafana](https://github.com/grafana/grafana): [11.6.3](https://github.com/grafana/grafana/releases/tag/v11.6.3) ⇾ [11.6.4](https://github.com/grafana/grafana/releases/tag/v11.6.4)
 * [Jitsi](https://github.com/jitsi/docker-jitsi-meet): [stable-10314](https://github.com/jitsi/docker-jitsi-meet/releases/tag/stable-10314) ⇾ [stable-10431](https://github.com/jitsi/docker-jitsi-meet/releases/tag/stable-10431)
 * [Livekit Jwt Service](https://github.com/element-hq/lk-jwt-service): [0.2.3](https://github.com/element-hq/lk-jwt-service/releases/tag/0.2.3) ⇾ [0.3.0](https://github.com/element-hq/lk-jwt-service/releases/tag/0.3.0)
