@@ -1,5 +1,8 @@
----
+# SPDX-FileCopyrightText: 2024 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
 
+---
 - block:
     - name: Update apt cache
       when: devture_playbook_help_apt_cache_prewarming_enabled and ansible_os_family == 'Debian'

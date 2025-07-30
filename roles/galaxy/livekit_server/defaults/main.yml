@@ -184,6 +184,25 @@ livekit_server_config_bind_addresses: ["::"]
 
 ########################################################################################
 #                                                                                      #
+# Room                                                                                 #
+#                                                                                      #
+########################################################################################
+
+# Controls the `room.auto_create` configuration property.
+# (Allow rooms to be automatically created when participants join).
+#
+# This defaults to true based on upstream defaults.
+# Ref: https://github.com/livekit/livekit/blob/5e483e7554e5afbf254acf84e3ec0aa6e108e758/config-sample.yaml#L168-L170
+livekit_server_config_room_auto_create: true
+
+########################################################################################
+#                                                                                      #
+# /Room                                                                                #
+#                                                                                      #
+########################################################################################
+
+########################################################################################
+#                                                                                      #
 # RTC                                                                                  #
 #                                                                                      #
 ########################################################################################

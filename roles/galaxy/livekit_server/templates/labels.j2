@@ -21,7 +21,7 @@ traefik.http.services.{{ livekit_server_identifier }}-metrics.loadbalancer.serve
 {% set middlewares = [] %}
 
 {% if livekit_server_container_labels_traefik_path_prefix != '/' %}
-traefik.http.middlewares.{{ livekit_server_identifier }}-slashless-redirect.redirectregex.regex=({{ livekit_server_container_labels_traefik_path_prefix | quote }})$
+traefik.http.middlewares.{{ livekit_server_identifier }}-slashless-redirect.redirectregex.regex=^({{ livekit_server_container_labels_traefik_path_prefix | quote }})$
 traefik.http.middlewares.{{ livekit_server_identifier }}-slashless-redirect.redirectregex.replacement=${1}/
 {% set middlewares = middlewares + [livekit_server_identifier + '-slashless-redirect'] %}
 

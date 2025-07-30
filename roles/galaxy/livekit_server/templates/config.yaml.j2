@@ -4,6 +4,9 @@ port: {{ livekit_server_config_port | int | to_json }}
 
 bind_addresses: {{ livekit_server_config_bind_addresses | to_json }}
 
+room:
+  auto_create: {{ livekit_server_config_room_auto_create | to_json }}
+
 rtc:
   tcp_port: {{ livekit_server_config_rtc_tcp_port | int | to_json }}
 

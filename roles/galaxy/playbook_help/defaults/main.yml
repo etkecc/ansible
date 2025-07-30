@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 - 2025 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 ---
 
 # Each docker pull will retry on failed attempt 10 times with delay of 10 seconds between each attempt.

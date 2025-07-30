@@ -32,7 +32,7 @@
 * Languagetool: 6.6-dockerupdate-1
 * Linkding: 1.41.0
 * Linkedin: latest
-* Livekit Jwt Service: 0.2.3
+* Livekit Jwt Service: 0.3.0
 * Livekit Server: v1.9.0
 * Ma1Sd: 2.5.0
 * Matrix Reminder Bot: v0.3.0
