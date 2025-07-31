@@ -11,7 +11,7 @@
 * Discord: v0.7.5
 * Draupnir: v2.5.0
 * Element: v1.11.108
-* Element Call: v0.13.1
+* Element Call: v0.14.0
 * Etherpad: 2.3.2
 * Exim Relay: 4.98.1-r0-2
 * Firezone: 0.7.36
@@ -69,7 +69,7 @@
 * Twitter: v0.4.3
 * Uptime Kuma: 1.23.16
 * Valkey: 8.1.3
-* Vaultwarden: 1.34.2
+* Vaultwarden: 1.34.3
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
 * Whatsapp: v0.12.3

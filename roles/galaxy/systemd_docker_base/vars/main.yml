@@ -1,6 +1,10 @@
 ---
 
 # An internal variable used by the `Ensure XXX container network is created via ansible.builtin.command` task
-# Used in special circumstances wherein both `devture_systemd_docker_base_container_network_creation_method` is set to `command`
-# and `devture_systemd_docker_base_container_networks_driver_options` is NOT empty
-devture_systemd_docker_base_container_networks_driver_options_string: "{% for item in devture_systemd_docker_base_container_networks_driver_options | dict2items %}--opt {{ item.key }}={{ item.value }} {% endfor %}"
+# Used in special circumstances wherein both `devture_systemd_docker_base_container_network_creation_method` is set to `command`.
+#
+# We prefix the for loop with `{{ '' }}` to ensure that this variable always (even on ansible-core>=2.19.0) ends up storing a string (not `null`),
+# which provides backward compatibility and matches expectations we have and used to have.
+# See: https://github.com/devture/com.devture.ansible.role.systemd_docker_base/issues/1
+devture_systemd_docker_base_container_networks_driver_options_string: |-
+  {{ '' }}{% for item in devture_systemd_docker_base_container_networks_driver_options | dict2items %}--opt {{ item.key }}={{ item.value }} {% endfor %}

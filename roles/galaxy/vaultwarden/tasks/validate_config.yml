@@ -10,6 +10,7 @@
       Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
   when: "lookup('ansible.builtin.varnames', ('^' + item.old + '$'), wantlist=True) | length > 0"
   with_items:
+    - { "old": "vaultwarden_container_labels_traefik_rule_ui", "new": "vaultwarden_container_labels_traefik_rule" }
     - { "old": "vaultwarden_container_labels_traefik_rule_websocket", "new": "<Removed. See https://github.com/dani-garcia/vaultwarden/pull/3404>" }
     - { "old": "vaultwarden_config_websocket_enabled", "new": "<Removed. See https://github.com/dani-garcia/vaultwarden/pull/3404>" }
     - { "old": "vaultwarden_config_websocket_port", "new": "<Removed. See https://github.com/dani-garcia/vaultwarden/pull/3404>" }
@@ -48,7 +49,7 @@
 - name: Run if Traefik is enabled
   when: vaultwarden_container_labels_traefik_enabled | bool
   block:
-    - name: Fail if required Vaultwarden Traefik settings not defined
+    - name: Fail if Traefik settings required for Vaultwarden are not defined
       ansible.builtin.fail:
         msg: >-
           You need to define a required configuration setting (`{{ item }}`).

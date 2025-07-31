@@ -22,7 +22,7 @@ vaultwarden_cache_dir_path: "{{ vaultwarden_base_path }}/cache"
 vaultwarden_ephemeral_dir_path: "{{ vaultwarden_base_path }}/ephemeral"
 
 # renovate: datasource=docker depName=ghcr.io/dani-garcia/vaultwarden versioning=semver
-vaultwarden_version: 1.34.2
+vaultwarden_version: 1.34.3
 
 vaultwarden_uid: ''
 vaultwarden_gid: ''
@@ -83,7 +83,7 @@ vaultwarden_container_labels_traefik_docker_network: "{{ vaultwarden_container_n
 vaultwarden_container_labels_traefik_hostname: "{{ vaultwarden_hostname }}"
 # The path prefix must either be `/` or not end with a slash (e.g. `/vaultwarden`).
 vaultwarden_container_labels_traefik_path_prefix: "{{ vaultwarden_path_prefix }}"
-vaultwarden_container_labels_traefik_rule_ui: "Host(`{{ vaultwarden_container_labels_traefik_hostname }}`){% if vaultwarden_container_labels_traefik_path_prefix != '/' %} && PathPrefix(`{{ vaultwarden_container_labels_traefik_path_prefix | quote }}`){% endif %}"
+vaultwarden_container_labels_traefik_rule: "Host(`{{ vaultwarden_container_labels_traefik_hostname }}`){% if vaultwarden_container_labels_traefik_path_prefix != '/' %} && PathPrefix(`{{ vaultwarden_container_labels_traefik_path_prefix | quote }}`){% endif %}"
 vaultwarden_container_labels_traefik_priority: 0
 vaultwarden_container_labels_traefik_entrypoints: web-secure
 vaultwarden_container_labels_traefik_tls: "{{ vaultwarden_container_labels_traefik_entrypoints != 'web' }}"
@@ -94,8 +94,14 @@ vaultwarden_container_labels_traefik_tls_certResolver: default  # noqa var-namin
 vaultwarden_container_labels_traefik_compression_middleware_enabled: false
 vaultwarden_container_labels_traefik_compression_middleware_name: ""
 
+# Controls which additional headers to attach to all HTTP requests.
+# To add your own custom request headers, use `vaultwarden_container_labels_traefik_additional_request_headers_custom`
+vaultwarden_container_labels_traefik_additional_request_headers: "{{ vaultwarden_container_labels_traefik_additional_request_headers_auto | combine(vaultwarden_container_labels_traefik_additional_request_headers_custom) }}"
+vaultwarden_container_labels_traefik_additional_request_headers_auto: {}
+vaultwarden_container_labels_traefik_additional_request_headers_custom: {}
+
 # Controls which additional headers to attach to all HTTP responses.
-# To add your own headers, use `vaultwarden_container_labels_traefik_additional_response_headers_custom`
+# To add your own custom response headers, use `vaultwarden_container_labels_traefik_additional_response_headers_custom`
 vaultwarden_container_labels_traefik_additional_response_headers: "{{ vaultwarden_container_labels_traefik_additional_response_headers_auto | combine(vaultwarden_container_labels_traefik_additional_response_headers_custom) }}"
 vaultwarden_container_labels_traefik_additional_response_headers_auto: |
   {{
