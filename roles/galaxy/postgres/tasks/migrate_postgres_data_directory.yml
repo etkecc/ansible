@@ -1,5 +1,4 @@
 ---
-
 # We used to store Postgres data directly under `/{service}/postgres` (what is now considered `postgres_base_path`).
 #
 # From now on, we expect to store Postgres data one directory below now (`/{service}/postgres/data` - `postgres_data_path`).
@@ -47,7 +46,7 @@
   ansible.builtin.file:
     path: "{{ postgres_data_path }}"
     state: directory
-    mode: 0700
+    mode: "0700"
     owner: "{{ postgres_uid }}"
     group: "{{ postgres_gid }}"
   when: "result_pg_old_data_dir_stat.stat.exists"

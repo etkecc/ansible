@@ -1,5 +1,4 @@
 ---
-
 - name: Set default postgres_dump_dir, if not provided
   ansible.builtin.set_fact:
     postgres_dump_dir: "/tmp"
@@ -67,8 +66,8 @@
     daemon_reload: true
   register: postgres_ensure_started_result
 
-- when: postgres_ensure_started_result.changed | bool
-  name: Wait a bit, so that Postgres can start
+- name: Wait a bit, so that Postgres can start
+  when: postgres_ensure_started_result.changed | bool
   ansible.builtin.wait_for:
     timeout: "{{ postgres_start_wait_time }}"
   delegate_to: 127.0.0.1
@@ -164,10 +163,10 @@
     dummy: true
   with_items:
     - >-
-        Importing Postgres database using the following command: `{{ postgres_import_command }}`.
-        If this crashes, you can stop Postgres (`systemctl stop {{ postgres_identifier }}`),
-        delete the new database data (`rm -rf {{ postgres_data_path }}`)
-        and restore the automatically-made backup (`mv {{ postgres_auto_upgrade_backup_data_path }} {{ postgres_data_path }}`).
+      Importing Postgres database using the following command: `{{ postgres_import_command }}`.
+      If this crashes, you can stop Postgres (`systemctl stop {{ postgres_identifier }}`),
+      delete the new database data (`rm -rf {{ postgres_data_path }}`)
+      and restore the automatically-made backup (`mv {{ postgres_auto_upgrade_backup_data_path }} {{ postgres_data_path }}`).
 
 - name: Perform Postgres database import
   ansible.builtin.command:
@@ -180,8 +179,8 @@
     path: "{{ postgres_dump_dir }}/{{ postgres_dump_name }}"
     state: absent
 
-- when: "postgres_ensure_started_result.changed | bool"
-  name: Ensure Postgres is stopped (if it previously was)
+- name: Ensure Postgres is stopped (if it previously was)
+  when: "postgres_ensure_started_result.changed | bool"
   ansible.builtin.service:
     name: "{{ postgres_identifier }}"
     state: stopped

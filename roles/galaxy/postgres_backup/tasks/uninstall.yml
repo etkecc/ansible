@@ -57,6 +57,6 @@
         devture_playbook_runtime_messages_list | default([])
         +
         [
-          "Note: You are not using the local backup service to backup the PostgreSQL database, but some old data remains from before in `{{ postgres_backup_data_path }}`. Feel free to delete it."
+          "Note: You are not using the local backup service to backup the PostgreSQL database, but some old data remains from before in `" + postgres_backup_data_path + "`. Feel free to delete it."
         ]
       }}

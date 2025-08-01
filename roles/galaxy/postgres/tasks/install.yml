@@ -1,5 +1,4 @@
 ---
-
 - ansible.builtin.import_tasks: "{{ role_path }}/tasks/migrate_postgres_data_directory.yml"
 
 - ansible.builtin.import_tasks: "{{ role_path }}/tasks/detect_existing_postgres_version.yml"
@@ -23,7 +22,7 @@
         devture_playbook_runtime_messages_list | default([])
         +
         [
-          "NOTE: Your setup is on an old Postgres version ({{ postgres_container_image_to_use }}), while {{ postgres_container_image_latest }} is supported. You can upgrade using --tags=upgrade-postgres"
+          "NOTE: Your setup is on an old Postgres version (" + postgres_container_image_to_use + "), while " + postgres_container_image_latest + " is supported. You can upgrade using --tags=upgrade-postgres"
         ]
       }}
   when: "postgres_container_image_to_use != postgres_container_image_latest"
@@ -44,7 +43,7 @@
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    mode: 0700
+    mode: "0700"
     owner: "{{ postgres_uid }}"
     group: "{{ postgres_gid }}"
   with_items:
@@ -58,7 +57,7 @@
     dest: "{{ postgres_base_path }}/{{ item }}"
     owner: "{{ postgres_uid }}"
     group: "{{ postgres_gid }}"
-    mode: 0640
+    mode: "0640"
   with_items:
     - "env-postgres-psql"
     - "env-postgres-server"
@@ -67,7 +66,7 @@
   ansible.builtin.template:
     src: "{{ role_path }}/templates/bin/{{ item }}.j2"
     dest: "{{ postgres_bin_path }}/{{ item }}"
-    mode: 0755
+    mode: "0755"
   with_items:
     - cli
     - cli-non-interactive
@@ -84,7 +83,7 @@
   ansible.builtin.template:
     src: "{{ role_path }}/templates/systemd/postgres.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ postgres_identifier }}.service"
-    mode: 0644
+    mode: "0644"
   register: postgres_systemd_service_result
 
 - name: Ensure managed Postgres databases prepared
@@ -107,7 +106,7 @@
         devture_playbook_runtime_messages_list | default([])
         +
         [
-          "NOTE: You have some Postgres backup data in `{{ postgres_data_path }}-auto-upgrade-backup`, which was created during the last major Postgres update you ran. If your setup works well after this upgrade, feel free to delete this whole directory."
+          "NOTE: You have some Postgres backup data in `" + postgres_data_path + "-auto-upgrade-backup`, which was created during the last major Postgres update you ran. If your setup works well after this upgrade, feel free to delete this whole directory."
         ]
       }}
   when: "postgres_data_backup_path_stat.stat.exists"

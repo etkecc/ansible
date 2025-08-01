@@ -1,5 +1,4 @@
 ---
-
 - name: Generate Postgres database vacuum command
   ansible.builtin.set_fact:
     postgres_vacuum_run_command: >-

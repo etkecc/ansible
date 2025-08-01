@@ -1,5 +1,4 @@
 ---
-
 # This utility aims to determine if there is some existing Postgres version in use or not.
 # If there is, it also tries to detect the container image that corresponds to that version.
 #

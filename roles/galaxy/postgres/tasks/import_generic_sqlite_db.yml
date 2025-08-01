@@ -1,5 +1,4 @@
 ---
-
 # Pre-checks
 
 - name: Fail if playbook called incorrectly
@@ -20,7 +19,7 @@
 # We either expect `postgres_db_connection_string` specifying a full Postgres database connection string,
 # or `postgres_connection_string_variable_name`, specifying a name of a variable, which contains a valid connection string.
 
-- when: 'postgres_connection_string_variable_name is defined'
+- when: "postgres_connection_string_variable_name is defined"
   block:
     - name: Fail if postgres_connection_string_variable_name points to an undefined variable
       ansible.builtin.fail:
@@ -38,14 +37,12 @@
       Example: `--extra-vars="postgres_db_connection_string=postgresql://username:password@localhost:<port>/database_name"` or `--extra-vars="postgres_connection_string_variable_name=some_variable_connString"`
   when: "postgres_db_connection_string is not defined or not postgres_db_connection_string.startswith('postgresql://')"
 
-
 # Defaults
 
 - name: Set postgres_start_wait_time, if not provided
   ansible.builtin.set_fact:
     postgres_start_wait_time: 15
   when: "postgres_start_wait_time | default('') == ''"
-
 
 # Actual import work
 
@@ -63,7 +60,7 @@
   become: false
   when: "postgres_ensure_started_result.changed | bool"
 
-- name: Import SQLite database from {{ sqlite_database_path }} into Postgres  # noqa name[template]
+- name: Import SQLite database from {{ sqlite_database_path }} into Postgres # noqa name[template]
   ansible.builtin.command:
     cmd: >-
       {{ devture_systemd_docker_base_host_command_docker }} run
@@ -79,7 +76,7 @@
   register: postgres_import_generic_sqlite_db_import_result
   changed_when: postgres_import_generic_sqlite_db_import_result.rc == 0
 
-- name: Archive SQLite database ({{ sqlite_database_path }} -> {{ sqlite_database_path }}.backup)  # noqa name[template]
+- name: Archive SQLite database ({{ sqlite_database_path }} -> {{ sqlite_database_path }}.backup) # noqa name[template]
   ansible.builtin.command:
     cmd: "mv {{ sqlite_database_path }} {{ sqlite_database_path }}.backup"
   register: postgres_import_generic_sqlite_db_move_result
@@ -92,12 +89,12 @@
         devture_playbook_runtime_messages_list | default([])
         +
         [
-          "NOTE: Your SQLite database file has been imported into Postgres. The original file has been moved from `{{ sqlite_database_path }}` to `{{ sqlite_database_path }}.backup`. When you've confirmed that the import went well and everything works, you should be able to safely delete this file."
+          "NOTE: Your SQLite database file has been imported into Postgres. The original file has been moved from `" + sqlite_database_path + "` to `" + sqlite_database_path + ".backup`. When you've confirmed that the import went well and everything works, you should be able to safely delete this file."
         ]
       }}
 
-- when: "postgres_ensure_started_result.changed | bool"
-  name: Ensure Postgres is stopped (if it previously was)
+- name: Ensure Postgres is stopped (if it previously was)
+  when: "postgres_ensure_started_result.changed | bool"
   ansible.builtin.service:
     name: "{{ postgres_identifier }}"
     state: stopped

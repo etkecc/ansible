@@ -1,5 +1,4 @@
 ---
-
 - name: Fail if util called incorrectly (missing postgres_db_migration_request)
   ansible.builtin.fail:
     msg: "The `postgres_db_migration_request` variable needs to be provided to this util."
@@ -50,10 +49,10 @@
         regexp: "{{ item.match }}"
         line: "{{ item.replace }}"
       with_items:
-        - match: '^FROM debian:stable-slim as builder$'
-          replace: 'FROM debian:bullseye-slim as builder'
-        - match: '^FROM debian:stable-slim$'
-          replace: 'FROM debian:bullseye-slim'
+        - match: "^FROM debian:stable-slim as builder$"
+          replace: "FROM debian:bullseye-slim as builder"
+        - match: "^FROM debian:stable-slim$"
+          replace: "FROM debian:bullseye-slim"
 
     - name: Ensure pgloader container image is built
       community.docker.docker_image:
@@ -113,7 +112,7 @@
   failed_when: false
   with_items: "{{ postgres_db_migration_request.systemd_services_to_stop }}"
 
-- name: Import {{ postgres_db_migration_request.engine_old }} database from {{ postgres_db_migration_request.src }} into Postgres  # noqa name[template]
+- name: Import {{ postgres_db_migration_request.engine_old }} database from {{ postgres_db_migration_request.src }} into Postgres # noqa name[template]
   ansible.builtin.command:
     cmd: >-
       {{ devture_systemd_docker_base_host_command_docker }} run
@@ -153,7 +152,7 @@
       register: postgres_migrate_db_to_postgres_additional_queries_result
       changed_when: postgres_migrate_db_to_postgres_additional_queries_result.rc == 0
 
-- name: Archive {{ postgres_db_migration_request.engine_old }} database ({{ postgres_db_migration_request.src }} -> {{ postgres_db_migration_request.src }}.backup)  # noqa name[template]
+- name: Archive {{ postgres_db_migration_request.engine_old }} database ({{ postgres_db_migration_request.src }} -> {{ postgres_db_migration_request.src }}.backup) # noqa name[template]
   ansible.builtin.command:
     cmd: "mv {{ postgres_db_migration_request.src }} {{ postgres_db_migration_request.src }}.backup"
   register: postgres_migrate_db_to_postgres_move_result
@@ -166,12 +165,13 @@
         devture_playbook_runtime_messages_list | default([])
         +
         [
-          "NOTE: Your {{ postgres_db_migration_request.engine_old }} database file has been imported into Postgres. The original database file has been moved from `{{ postgres_db_migration_request.src }}` to `{{ postgres_db_migration_request.src }}.backup`. When you've confirmed that the import went well and everything works, you should be able to safely delete this file."
+          "NOTE: Your " + postgres_db_migration_request.engine_old + " database file has been imported into Postgres. The original database file has been moved from `" + postgres_db_migration_request.src + "` to `" + postgres_db_migration_request.src + ".backup`. When you've confirmed that the import went well and everything works, you should be able to safely delete this file."
+
         ]
       }}
 
-- when: "postgres_ensure_started_result.changed | bool"
-  name: Ensure Postgres is stopped (if it previously was)
+- name: Ensure Postgres is stopped (if it previously was)
+  when: "postgres_ensure_started_result.changed | bool"
   ansible.builtin.service:
     name: "{{ postgres_identifier }}"
     state: stopped

@@ -1,5 +1,4 @@
 ---
-
 # Pre-checks
 
 - name: Fail if playbook called incorrectly
@@ -16,7 +15,6 @@
   ansible.builtin.fail:
     msg: "File cannot be found on the server at {{ server_path_postgres_dump }}"
   when: "not result_server_path_postgres_dump_stat.stat.exists"
-
 
 # Defaults
 
@@ -46,8 +44,8 @@
     daemon_reload: true
   register: postgres_ensure_started_result
 
-- when: "postgres_ensure_started_result.changed | bool"
-  name: Wait a bit, so that Postgres can start
+- name: Wait a bit, so that Postgres can start
+  when: "postgres_ensure_started_result.changed | bool"
   ansible.builtin.wait_for:
     timeout: "{{ postgres_start_wait_time }}"
   delegate_to: 127.0.0.1
@@ -95,10 +93,10 @@
     dummy: true
   with_items:
     - >-
-        Importing Postgres database using the following command: `{{ postgres_import_command }}`.
-        If this crashes, you can stop Postgres (`systemctl stop {{ postgres_identifier }}`),
-        delete its existing data (`rm -rf {{ postgres_data_path }}/*`), start it again (`systemctl start {{ postgres_identifier }}`)
-        and manually run the above import command directly on the server.
+      Importing Postgres database using the following command: `{{ postgres_import_command }}`.
+      If this crashes, you can stop Postgres (`systemctl stop {{ postgres_identifier }}`),
+      delete its existing data (`rm -rf {{ postgres_data_path }}/*`), start it again (`systemctl start {{ postgres_identifier }}`)
+      and manually run the above import command directly on the server.
 
 - name: Perform Postgres database import
   ansible.builtin.command:
@@ -109,8 +107,8 @@
   failed_when: not postgres_import_postgres_command_result.finished or postgres_import_postgres_command_result.rc != 0
   changed_when: postgres_import_postgres_command_result.finished and postgres_import_postgres_command_result.rc == 0
 
-- when: "postgres_ensure_started_result.changed | bool"
-  name: Ensure Postgres is stopped (if it previously was)
+- name: Ensure Postgres is stopped (if it previously was)
+  when: "postgres_ensure_started_result.changed | bool"
   ansible.builtin.service:
     name: "{{ postgres_identifier }}"
     state: stopped
