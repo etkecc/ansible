@@ -12,7 +12,7 @@
 * Draupnir: v2.5.0
 * Element: v1.11.108
 * Element Call: v0.14.0
-* Etherpad: 2.3.2
+* Etherpad: 2.4.2
 * Exim Relay: 4.98.1-r0-2
 * Firezone: 0.7.36
 * Fluffychat: v2.0.0
@@ -29,7 +29,7 @@
 * Jitsi: stable-10431
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
-* Languagetool: 6.6-dockerupdate-1
+* Languagetool: 6.6-dockerupdate-2
 * Linkding: 1.41.0
 * Linkedin: latest
 * Livekit Jwt Service: 0.3.0

@@ -16,7 +16,7 @@ languagetool_base_path: "/{{ languagetool_identifier }}"
 languagetool_data_path: "{{ languagetool_base_path }}/data"
 
 # renovate: datasource=docker depName=erikvl87/languagetool
-languagetool_version: 6.6-dockerupdate-1
+languagetool_version: 6.6-dockerupdate-2
 
 languagetool_uid: ''
 languagetool_gid: ''
@@ -67,8 +67,14 @@ languagetool_container_labels_traefik_entrypoints: web-secure
 languagetool_container_labels_traefik_tls: "{{ languagetool_container_labels_traefik_entrypoints != 'web' }}"
 languagetool_container_labels_traefik_tls_certResolver: default  # noqa var-naming
 
+# Controls which additional headers to attach to all HTTP requests.
+# To add your own custom request headers, use `languagetool_container_labels_traefik_additional_request_headers_custom`
+languagetool_container_labels_traefik_additional_request_headers: "{{ languagetool_container_labels_traefik_additional_request_headers_auto | combine(languagetool_container_labels_traefik_additional_request_headers_custom) }}"
+languagetool_container_labels_traefik_additional_request_headers_auto: {}
+languagetool_container_labels_traefik_additional_request_headers_custom: {}
+
 # Controls which additional headers to attach to all HTTP responses.
-# To add your own headers, use `languagetool_container_labels_traefik_additional_response_headers_custom`
+# To add your own custom response headers, use `languagetool_container_labels_traefik_additional_response_headers_custom`
 languagetool_container_labels_traefik_additional_response_headers: "{{ languagetool_container_labels_traefik_additional_response_headers_auto | combine(languagetool_container_labels_traefik_additional_response_headers_custom) }}"
 languagetool_container_labels_traefik_additional_response_headers_auto: |
   {{
