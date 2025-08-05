@@ -11,7 +11,7 @@
 * Discord: v0.7.5
 * Draupnir: v2.5.0
 * Element: v1.11.108
-* Element Call: v0.14.0
+* Element Call: v0.14.1
 * Etherpad: 2.4.2
 * Exim Relay: 4.98.1-r0-2
 * Firezone: 0.7.36
@@ -40,7 +40,7 @@
 * Meta Instagram: v0.5.2
 * Meta Messenger: v0.5.2
 * Miniflux: 2.2.11
-* Ntfy: v2.13.0
+* Ntfy: v2.14.0
 * Peertube: v7.2.3
 * Postmoogle: v0.9.26
 * Prometheus: v3.5.0
