@@ -13,3 +13,4 @@
 * [Element](https://github.com/element-hq/element-web): [v1.11.108](https://github.com/element-hq/element-web/releases/tag/v1.11.108) ⇾ [v1.11.109](https://github.com/element-hq/element-web/releases/tag/v1.11.109)
 * Spam Checker Mjolnir Antispam Git: v1.10.0 ⇾ v1.11.0
 * [Synapse](https://github.com/element-hq/synapse): [v1.135.0](https://github.com/element-hq/synapse/releases/tag/v1.135.0) ⇾ [v1.136.0](https://github.com/element-hq/synapse/releases/tag/v1.136.0)
+* [Synapse Reverse Proxy Companion](https://github.com/nginx/nginx): [1.29.0-alpine](https://github.com/nginx/nginx/releases/tag/release-1.29.0) ⇾ [1.29.1-alpine](https://github.com/nginx/nginx/releases/tag/release-1.29.1)
