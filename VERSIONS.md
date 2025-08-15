@@ -23,7 +23,7 @@
 * Gotosocial: 0.19.1
 * Grafana: 11.6.4
 * Heisenbridge: 1.15.3
-* Honoroit: v0.9.28
+* Honoroit: v0.9.29
 * Hookshot: 7.0.0
 * Hydrogen: v0.5.1
 * Jitsi: stable-10431
@@ -48,7 +48,7 @@
 * Prometheus Postgres Exporter: v0.17.1
 * Radicale: 3.5.4.0
 * Registration: v0.7.2
-* Schildichat: 1.11.103-sc.0.test.0
+* Schildichat: 1.11.109-sc.0.test.0
 * Signal: v0.8.5
 * Slack: v0.2.2
 * Sliding Sync: v0.99.19
