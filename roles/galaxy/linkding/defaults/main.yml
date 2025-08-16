@@ -20,7 +20,7 @@ linkding_base_path: "/{{ linkding_identifier }}"
 linkding_data_path: "{{ linkding_base_path }}/data"
 
 # renovate: datasource=docker depName=sissbruecker/linkding versioning=semver
-linkding_version: 1.41.0
+linkding_version: 1.42.0
 
 # User ID and Group ID for running linkding service in the container
 linkding_uid: ""
@@ -82,8 +82,14 @@ linkding_container_labels_traefik_entrypoints: web-secure
 linkding_container_labels_traefik_tls: "{{ linkding_container_labels_traefik_entrypoints != 'web' }}"
 linkding_container_labels_traefik_tls_certResolver: default # noqa var-naming
 
+# Controls which additional headers to attach to all HTTP requests.
+# To add your own custom request headers, use `linkding_container_labels_traefik_additional_request_headers_custom`
+linkding_container_labels_traefik_additional_request_headers: "{{ linkding_container_labels_traefik_additional_request_headers_auto | combine(linkding_container_labels_traefik_additional_request_headers_custom) }}"
+linkding_container_labels_traefik_additional_request_headers_auto: {}
+linkding_container_labels_traefik_additional_request_headers_custom: {}
+
 # Controls which additional headers to attach to all HTTP responses.
-# To add your own headers, use `linkding_container_labels_traefik_additional_response_headers_custom`
+# To add your own custom response headers, use `linkding_container_labels_traefik_additional_response_headers_custom`
 linkding_container_labels_traefik_additional_response_headers: "{{ linkding_container_labels_traefik_additional_response_headers_auto | combine(linkding_container_labels_traefik_additional_response_headers_custom) }}"
 linkding_container_labels_traefik_additional_response_headers_auto: |
   {{

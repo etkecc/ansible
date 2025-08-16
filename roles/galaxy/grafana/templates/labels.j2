@@ -14,7 +14,7 @@ traefik.docker.network={{ grafana_container_labels_traefik_docker_network }}
 {% set middlewares = [] %}
 
 {% if grafana_container_labels_traefik_path_prefix != '/' %}
-traefik.http.middlewares.{{ grafana_identifier }}-slashless-redirect.redirectregex.regex=({{ grafana_container_labels_traefik_path_prefix | quote }})$
+traefik.http.middlewares.{{ grafana_identifier }}-slashless-redirect.redirectregex.regex=^({{ grafana_container_labels_traefik_path_prefix | quote }})$
 traefik.http.middlewares.{{ grafana_identifier }}-slashless-redirect.redirectregex.replacement=${1}/
 {% set middlewares = middlewares + [grafana_identifier + '-slashless-redirect'] %}
 {% endif %}
@@ -24,11 +24,18 @@ traefik.http.middlewares.{{ grafana_identifier }}-strip-prefix.stripprefix.prefi
 {% set middlewares = middlewares + [grafana_identifier + '-strip-prefix'] %}
 {% endif %}
 
+{% if grafana_container_labels_traefik_additional_request_headers.keys() | length > 0 %}
+{% for name, value in grafana_container_labels_traefik_additional_request_headers.items() %}
+traefik.http.middlewares.{{ grafana_identifier }}-add-request-headers.headers.customrequestheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [grafana_identifier + '-add-request-headers'] %}
+{% endif %}
+
 {% if grafana_container_labels_traefik_additional_response_headers.keys() | length > 0 %}
 {% for name, value in grafana_container_labels_traefik_additional_response_headers.items() %}
-traefik.http.middlewares.{{ grafana_identifier }}-add-headers.headers.customresponseheaders.{{ name }}={{ value }}
+traefik.http.middlewares.{{ grafana_identifier }}-add-response-headers.headers.customresponseheaders.{{ name }}={{ value }}
 {% endfor %}
-{% set middlewares = middlewares + [grafana_identifier + '-add-headers'] %}
+{% set middlewares = middlewares + [grafana_identifier + '-add-response-headers'] %}
 {% endif %}
 
 traefik.http.routers.{{ grafana_identifier }}.rule={{ grafana_container_labels_traefik_rule }}

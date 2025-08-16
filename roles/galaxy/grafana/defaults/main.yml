@@ -18,7 +18,7 @@ grafana_config_path: "{{ grafana_base_path }}/config"
 grafana_data_path: "{{ grafana_base_path }}/data"
 
 # renovate: datasource=docker depName=grafana/grafana-oss versioning=semver
-grafana_version: 11.6.4
+grafana_version: 11.6.5
 
 grafana_uid: ''
 grafana_gid: ''
@@ -74,8 +74,14 @@ grafana_container_labels_traefik_entrypoints: web-secure
 grafana_container_labels_traefik_tls: "{{ grafana_container_labels_traefik_entrypoints != 'web' }}"
 grafana_container_labels_traefik_tls_certResolver: default  # noqa var-naming
 
+# Controls which additional headers to attach to all HTTP requests.
+# To add your own custom request headers, use `grafana_container_labels_traefik_additional_request_headers_custom`
+grafana_container_labels_traefik_additional_request_headers: "{{ grafana_container_labels_traefik_additional_request_headers_auto | combine(grafana_container_labels_traefik_additional_request_headers_custom) }}"
+grafana_container_labels_traefik_additional_request_headers_auto: {}
+grafana_container_labels_traefik_additional_request_headers_custom: {}
+
 # Control which additional headers to attach to all HTTP responses.
-# To add your own headers, use `grafana_container_labels_traefik_additional_response_headers_custom`
+# To add your own custom response headers, use `grafana_container_labels_traefik_additional_response_headers_custom`
 #
 # Note that Grafana sends these security headers by itself, so we don't have to:
 # - X-XSS-Protection

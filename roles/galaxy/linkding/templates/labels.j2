@@ -1,5 +1,6 @@
 {#
 SPDX-FileCopyrightText: 2023 kinduff
+SPDX-FileCopyrightText: 2023 Slavi Pantaleev
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
@@ -14,16 +15,28 @@ traefik.docker.network={{ linkding_container_labels_traefik_docker_network }}
 {% set middlewares = [] %}
 
 {% if linkding_container_labels_traefik_path_prefix != '/' %}
-traefik.http.middlewares.{{ linkding_identifier }}-slashless-redirect.redirectregex.regex=({{ linkding_container_labels_traefik_path_prefix | quote }})$
+traefik.http.middlewares.{{ linkding_identifier }}-slashless-redirect.redirectregex.regex=^({{ linkding_container_labels_traefik_path_prefix | quote }})$
 traefik.http.middlewares.{{ linkding_identifier }}-slashless-redirect.redirectregex.replacement=${1}/
 {% set middlewares = middlewares + [linkding_identifier + '-slashless-redirect'] %}
 {% endif %}
 
+{% if linkding_container_labels_traefik_path_prefix != '/' %}
+traefik.http.middlewares.{{ linkding_identifier }}-strip-prefix.stripprefix.prefixes={{ linkding_container_labels_traefik_path_prefix }}
+{% set middlewares = middlewares + [linkding_identifier + '-strip-prefix'] %}
+{% endif %}
+
+{% if linkding_container_labels_traefik_additional_request_headers.keys() | length > 0 %}
+{% for name, value in linkding_container_labels_traefik_additional_request_headers.items() %}
+traefik.http.middlewares.{{ linkding_identifier }}-add-request-headers.headers.customrequestheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [linkding_identifier + '-add-request-headers'] %}
+{% endif %}
+
 {% if linkding_container_labels_traefik_additional_response_headers.keys() | length > 0 %}
 {% for name, value in linkding_container_labels_traefik_additional_response_headers.items() %}
-traefik.http.middlewares.{{ linkding_identifier }}-add-headers.headers.customresponseheaders.{{ name }}={{ value }}
+traefik.http.middlewares.{{ linkding_identifier }}-add-response-headers.headers.customresponseheaders.{{ name }}={{ value }}
 {% endfor %}
-{% set middlewares = middlewares + [linkding_identifier + '-add-headers'] %}
+{% set middlewares = middlewares + [linkding_identifier + '-add-response-headers'] %}
 {% endif %}
 
 traefik.http.routers.{{ linkding_identifier }}.rule={{ linkding_container_labels_traefik_rule }}

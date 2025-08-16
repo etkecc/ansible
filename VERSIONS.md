@@ -17,28 +17,28 @@
 * Firezone: 0.7.36
 * Fluffychat: v2.0.0
 * Funkwhale: 1.4.0
-* Gmessages: v0.6.4
+* Gmessages: v0.6.5
 * Go Neb: latest
 * Googlechat: v0.5.2
 * Gotosocial: 0.19.1
-* Grafana: 11.6.4
+* Grafana: 11.6.5
 * Heisenbridge: 1.15.3
 * Honoroit: v0.9.29
-* Hookshot: 7.0.0
+* Hookshot: 7.1.0
 * Hydrogen: v0.5.1
 * Jitsi: stable-10431
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
 * Languagetool: 6.6-dockerupdate-2
-* Linkding: 1.41.0
+* Linkding: 1.42.0
 * Linkedin: latest
 * Livekit Jwt Service: 0.3.0
 * Livekit Server: v1.9.0
 * Ma1Sd: 2.5.0
 * Matrix Reminder Bot: v0.3.0
 * Maubot: v0.5.2
-* Meta Instagram: v0.5.2
-* Meta Messenger: v0.5.2
+* Meta Instagram: v0.5.3
+* Meta Messenger: v0.5.3
 * Miniflux: 2.2.11
 * Ntfy: v2.14.0
 * Peertube: v7.2.3
@@ -49,8 +49,8 @@
 * Radicale: 3.5.4.0
 * Registration: v0.7.2
 * Schildichat: 1.11.109-sc.0.test.0
-* Signal: v0.8.5
-* Slack: v0.2.2
+* Signal: v0.8.6
+* Slack: v0.2.3
 * Sliding Sync: v0.99.19
 * Spam Checker Mjolnir Antispam Git: v1.11.0
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
@@ -66,10 +66,10 @@
 * Telegram: v0.15.3
 * Traefik: v3.5.0
 * Traefik Certs Dumper: v2.10.0
-* Twitter: v0.4.3
+* Twitter: v0.5.0
 * Uptime Kuma: 1.23.16
 * Valkey: 8.1.3
 * Vaultwarden: 1.34.3
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
-* Whatsapp: v0.12.3
+* Whatsapp: v0.12.4
