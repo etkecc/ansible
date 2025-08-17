@@ -5,7 +5,7 @@
 * Borgmatic: 1.9.14
 * Buscarron: v1.4.3
 * Chatgpt: 3.1.4
-* Cinny: v4.9.0
+* Cinny: v4.9.1
 * Container Socket Proxy: 0.3.0
 * Coturn: 4.6.2-r11
 * Discord: v0.7.5
@@ -15,7 +15,7 @@
 * Etherpad: 2.4.2
 * Exim Relay: 4.98.1-r0-2
 * Firezone: 0.7.36
-* Fluffychat: v2.0.0
+* Fluffychat: v2.1.0
 * Funkwhale: 1.4.0
 * Gmessages: v0.6.5
 * Go Neb: latest
