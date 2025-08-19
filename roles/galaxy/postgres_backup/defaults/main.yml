@@ -104,3 +104,13 @@ postgres_backup_container_image_latest: "{{ postgres_backup_container_image_v17 
 postgres_backup_container_image_to_use: '{{ postgres_backup_container_image_latest }}'
 
 postgres_backup_container_image_force_pull: "{{ postgres_backup_container_image_to_use.endswith(':latest') }}"
+
+# Additional environment variables.
+#
+# Example:
+# postgres_backup_environment_variables_additional_variables: |
+#   WEBHOOK_URL=https://example.com/webhook
+#   WEBHOOK_ERROR_URL=https://example.com/webhook-error
+#
+# Ref: https://github.com/prodrigestivill/docker-postgres-backup-local/blob/8181772cbe50ebaaa1950f585b915035a2c02128/README.md#environment-variables
+postgres_backup_environment_variables_additional_variables: ''
