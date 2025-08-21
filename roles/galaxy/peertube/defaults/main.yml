@@ -68,7 +68,9 @@ peertube_container_additional_networks_custom: []
 # if you wish to mount your own files into the container.
 # Contains definition objects like this: `{"type": "bind", "src": "/outside", "dst": "/inside", "options": "readonly"}.
 # See the `--mount` documentation for the `docker run` command.
-peertube_container_additional_volumes: []
+peertube_container_additional_volumes: "{{ peertube_container_additional_volumes_auto + peertube_container_additional_volumes_custom }}"
+peertube_container_additional_volumes_auto: []
+peertube_container_additional_volumes_custom: []
 
 # peertube_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
 # See `../templates/labels.j2` for details.
@@ -85,8 +87,14 @@ peertube_container_labels_traefik_entrypoints: web-secure
 peertube_container_labels_traefik_tls: "{{ peertube_container_labels_traefik_entrypoints != 'web' }}"
 peertube_container_labels_traefik_tls_certResolver: default  # noqa var-naming
 
+# Controls which additional headers to attach to all HTTP requests.
+# To add your own custom request headers, use `peertube_container_labels_traefik_additional_request_headers_custom`
+peertube_container_labels_traefik_additional_request_headers: "{{ peertube_container_labels_traefik_additional_request_headers_auto | combine(peertube_container_labels_traefik_additional_request_headers_custom) }}"
+peertube_container_labels_traefik_additional_request_headers_auto: {}
+peertube_container_labels_traefik_additional_request_headers_custom: {}
+
 # Controls which additional headers to attach to all HTTP responses.
-# To add your own headers, use `peertube_container_labels_traefik_additional_response_headers_custom`
+# To add your own custom response headers, use `peertube_container_labels_traefik_additional_response_headers_custom`
 peertube_container_labels_traefik_additional_response_headers: "{{ peertube_container_labels_traefik_additional_response_headers_auto | combine(peertube_container_labels_traefik_additional_response_headers_custom) }}"
 peertube_container_labels_traefik_additional_response_headers_auto: |
   {{
@@ -206,11 +214,12 @@ peertube_trusted_proxies_values_custom: []
 peertube_start_wait_time: 15
 peertube_migration_wait_time: 1800
 
-peertube_config_database_hostname: ''
-peertube_config_database_port: 5432
-peertube_config_database_name: peertube
-peertube_config_database_username: ''
-peertube_config_database_password: ''
+peertube_database_hostname: ''
+peertube_database_port: 5432
+peertube_database_name: peertube
+peertube_database_username: ''
+peertube_database_password: ''
+peertube_database_sslmode: false
 
 peertube_config_smtp_hostname: ''
 peertube_config_smtp_port: 587
@@ -242,10 +251,10 @@ peertube_config_secret: ''
 peertube_config_admin_email: ''
 
 # Controls the PEERTUBE_REDIS_HOSTNAME environment variable
-peertube_config_redis_hostname: ''
+peertube_redis_hostname: ''
 
 # Control the PEERTUBE_REDIS_DB environment variable
-peertube_config_redis_db: 0
+peertube_redis_db: 0
 
 # Controls the PT_INITIAL_ROOT_PASSWORD environment variable, which configures the initial password of the automatically created `root` user.
 # See: https://github.com/Chocobozzz/PeerTube/blob/develop/support/doc/production.md#technologist-administrator

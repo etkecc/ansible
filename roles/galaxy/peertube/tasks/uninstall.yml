@@ -53,7 +53,7 @@
         devture_playbook_runtime_messages_list | default([])
         +
         [
-          "Note: As the local PeerTube instance has been removed, some old config remains in `{{ peertube_config_dir_path }}`. Feel free to delete it."
+          "Note: As the local PeerTube instance has been removed, some old config remains in `" + peertube_config_dir_path + "`. Feel free to delete it."
         ]
       }}
 
@@ -71,6 +71,6 @@
         devture_playbook_runtime_messages_list | default([])
         +
         [
-          "Note: As the local PeerTube instance has been removed, some old data including video files remain in `{{ peertube_data_dir_path }}`. Feel free to delete it."
+          "Note: As the local PeerTube instance has been removed, some old data including video files remain in `" + peertube_data_dir_path + "`. Feel free to delete it."
         ]
       }}

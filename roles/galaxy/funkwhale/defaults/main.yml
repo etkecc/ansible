@@ -58,10 +58,10 @@ funkwhale_database_password: ''
 # By default, we expect a local container (without SSL), so attempting SSL connections is not necessary.
 funkwhale_database_sslmode: disable
 
-funkwhale_config_redis_hostname: ''
-funkwhale_config_redis_port: 6379
-funkwhale_config_redis_database: 0
-funkwhale_config_redis_url: "redis://{{ funkwhale_config_redis_hostname }}:{{ funkwhale_config_redis_port }}/{{ funkwhale_config_redis_database }}"
+funkwhale_redis_hostname: ''
+funkwhale_redis_port: 6379
+funkwhale_redis_database: 0
+funkwhale_redis_url: "redis://{{ funkwhale_redis_hostname }}:{{ funkwhale_redis_port }}/{{ funkwhale_redis_database }}"
 
 # Can be one of `consolemail://`, `dummymail://`, `smtp://`, `smtp+ssl://` and `smtp+tls://`
 # the default outputs e-mail in the console (journalctl -fu mash-funkwhale-api)
@@ -154,13 +154,13 @@ funkwhale_api_container_labels_traefik_tls: "{{ funkwhale_api_container_labels_t
 funkwhale_api_container_labels_traefik_tls_certResolver: default  # noqa var-naming
 
 # Controls which additional headers to attach to all HTTP requests.
-# To add your own custom request headers, use `funkwhale_container_labels_traefik_additional_response_headers_custom`
+# To add your own custom request headers, use `funkwhale_api_container_labels_traefik_additional_request_headers_custom`
 funkwhale_api_container_labels_traefik_additional_request_headers: "{{ funkwhale_api_container_labels_traefik_additional_request_headers_auto | combine(funkwhale_api_container_labels_traefik_additional_request_headers_custom) }}"
 funkwhale_api_container_labels_traefik_additional_request_headers_auto: {}
 funkwhale_api_container_labels_traefik_additional_request_headers_custom: {}
 
 # Controls which additional headers to attach to all HTTP responses.
-# To add your own custom response headers, use `funkwhale_container_labels_traefik_additional_response_headers_custom`
+# To add your own custom response headers, use `funkwhale_api_container_labels_traefik_additional_response_headers_custom`
 funkwhale_api_container_labels_traefik_additional_response_headers: "{{ funkwhale_api_container_labels_traefik_additional_response_headers_auto | combine(funkwhale_api_container_labels_traefik_additional_response_headers_custom) }}"
 funkwhale_api_container_labels_traefik_additional_response_headers_auto: |
   {{
@@ -313,13 +313,13 @@ funkwhale_frontend_container_labels_traefik_tls: "{{ funkwhale_api_container_lab
 funkwhale_frontend_container_labels_traefik_tls_certResolver: default  # noqa var-naming
 
 # Controls which additional headers to attach to all HTTP requests.
-# To add your own custom request headers, use `funkwhale_container_labels_traefik_additional_response_headers_custom`
+# To add your own custom request headers, use `funkwhale_frontend_container_labels_traefik_additional_request_headers_custom`
 funkwhale_frontend_container_labels_traefik_additional_request_headers: "{{ funkwhale_frontend_container_labels_traefik_additional_request_headers_auto | combine(funkwhale_frontend_container_labels_traefik_additional_request_headers_custom) }}"
 funkwhale_frontend_container_labels_traefik_additional_request_headers_auto: {}
 funkwhale_frontend_container_labels_traefik_additional_request_headers_custom: {}
 
 # Controls which additional headers to attach to all HTTP responses.
-# To add your own custom response headers, use `funkwhale_container_labels_traefik_additional_response_headers_custom`
+# To add your own custom response headers, use `funkwhale_frontend_container_labels_traefik_additional_response_headers_custom`
 funkwhale_frontend_container_labels_traefik_additional_response_headers: "{{ funkwhale_frontend_container_labels_traefik_additional_response_headers_auto | combine(funkwhale_frontend_container_labels_traefik_additional_response_headers_custom) }}"
 funkwhale_frontend_container_labels_traefik_additional_response_headers_auto: |
   {{

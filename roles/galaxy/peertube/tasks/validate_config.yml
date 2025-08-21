@@ -10,9 +10,15 @@
       Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
   when: "lookup('ansible.builtin.varnames', ('^' + item.old + '$'), wantlist=True) | length > 0"
   with_items:
+    - { "old": "peertube_config_database_hostname", "new": "peertube_database_hostname" }
+    - { "old": "peertube_config_database_port", "new": "peertube_database_port" }
+    - { "old": "peertube_config_database_username", "new": "peertube_database_username" }
+    - { "old": "peertube_config_database_password", "new": "peertube_database_password" }
     - { "old": "peertube_config_object_storage_videos_bucket_name", "new": "peertube_config_object_storage_web_videos_bucket_name" }
     - { "old": "peertube_config_object_storage_videos_prefix", "new": "peertube_config_object_storage_web_videos_prefix" }
     - { "old": "peertube_config_object_storage_videos_base_url", "new": "peertube_config_object_storage_web_videos_base_url" }
+    - { "old": "peertube_config_redis_hostname", "new": "peertube_redis_hostname" }
+    - { "old": "peertube_config_redis_db", "new": "peertube_redis_db" }
     - { "old": "peertube_container_additional_environment_variables", "new": "peertube_environment_variables_additional_variables" }
 
 - name: Fail if required PeerTube settings not defined
@@ -27,12 +33,12 @@
     - peertube_container_network
     - peertube_hostname
     - peertube_path_prefix
-    - peertube_config_database_hostname
-    - peertube_config_database_username
-    - peertube_config_database_password
+    - peertube_database_hostname
+    - peertube_database_username
+    - peertube_database_password
     - peertube_config_secret
     - peertube_config_admin_email
-    - peertube_config_redis_hostname
+    - peertube_redis_hostname
     - peertube_config_root_user_initial_password
 
 - name: Fail if required PeerTube Object Storage settings not defined
@@ -51,7 +57,7 @@
 - name: Run if Traefik is enabled
   when: peertube_container_labels_traefik_enabled | bool
   block:
-    - name: Fail if required PeerTube Traefik settings not defined
+    - name: Fail if Traefik settings required for PeerTube are not defined
       ansible.builtin.fail:
         msg: >-
           You need to define a required configuration setting (`{{ item }}`).

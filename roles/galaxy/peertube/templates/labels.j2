@@ -24,11 +24,18 @@ traefik.http.middlewares.{{ peertube_identifier }}-strip-prefix.stripprefix.pref
 {% set middlewares = middlewares + [peertube_identifier + '-strip-prefix'] %}
 {% endif %}
 
+{% if peertube_container_labels_traefik_additional_request_headers.keys() | length > 0 %}
+{% for name, value in peertube_container_labels_traefik_additional_request_headers.items() %}
+traefik.http.middlewares.{{ peertube_identifier }}-add-request-headers.headers.customrequestheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [peertube_identifier + '-add-request-headers'] %}
+{% endif %}
+
 {% if peertube_container_labels_traefik_additional_response_headers.keys() | length > 0 %}
 {% for name, value in peertube_container_labels_traefik_additional_response_headers.items() %}
-traefik.http.middlewares.{{ peertube_identifier }}-add-headers.headers.customresponseheaders.{{ name }}={{ value }}
+traefik.http.middlewares.{{ peertube_identifier }}-add-response-headers.headers.customresponseheaders.{{ name }}={{ value }}
 {% endfor %}
-{% set middlewares = middlewares + [peertube_identifier + '-add-headers'] %}
+{% set middlewares = middlewares + [peertube_identifier + '-add-response-headers'] %}
 {% endif %}
 
 traefik.http.routers.{{ peertube_identifier }}.rule={{ peertube_container_labels_traefik_rule }}

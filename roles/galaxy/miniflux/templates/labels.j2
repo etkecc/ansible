@@ -18,7 +18,7 @@ traefik.docker.network={{ miniflux_container_labels_traefik_docker_network }}
 {% endif %}
 
 {% if miniflux_container_labels_traefik_path_prefix != '/' %}
-traefik.http.middlewares.{{ miniflux_identifier }}-slashless-redirect.redirectregex.regex=({{ miniflux_container_labels_traefik_path_prefix | quote }})$
+traefik.http.middlewares.{{ miniflux_identifier }}-slashless-redirect.redirectregex.regex=^({{ miniflux_container_labels_traefik_path_prefix | quote }})$
 traefik.http.middlewares.{{ miniflux_identifier }}-slashless-redirect.redirectregex.replacement=${1}/
 {% set middlewares = middlewares + [miniflux_identifier + '-slashless-redirect'] %}
 {% endif %}
@@ -28,11 +28,18 @@ traefik.http.middlewares.{{ miniflux_identifier }}-slashless-redirect.redirectre
   Miniflux seems to serve itself under the same prefix it sees in the BASE_URL environment variable.
 #}
 
+{% if miniflux_container_labels_traefik_additional_request_headers.keys() | length > 0 %}
+{% for name, value in miniflux_container_labels_traefik_additional_request_headers.items() %}
+traefik.http.middlewares.{{ miniflux_identifier }}-add-request-headers.headers.customrequestheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [miniflux_identifier + '-add-request-headers'] %}
+{% endif %}
+
 {% if miniflux_container_labels_traefik_additional_response_headers.keys() | length > 0 %}
 {% for name, value in miniflux_container_labels_traefik_additional_response_headers.items() %}
-traefik.http.middlewares.{{ miniflux_identifier }}-add-headers.headers.customresponseheaders.{{ name }}={{ value }}
+traefik.http.middlewares.{{ miniflux_identifier }}-add-response-headers.headers.customresponseheaders.{{ name }}={{ value }}
 {% endfor %}
-{% set middlewares = middlewares + [miniflux_identifier + '-add-headers'] %}
+{% set middlewares = middlewares + [miniflux_identifier + '-add-response-headers'] %}
 {% endif %}
 
 traefik.http.routers.{{ miniflux_identifier }}.rule={{ miniflux_container_labels_traefik_rule }}

@@ -11,6 +11,10 @@
   when: "lookup('ansible.builtin.varnames', ('^' + item.old + '$'), wantlist=True) | length > 0"
   with_items:
     - { "old": "funkwhale_api_env_path", "new": "<Removed>" }
+    - { "old": "funkwhale_config_redis_hostname", "new": "funkwhale_redis_hostname" }
+    - { "old": "funkwhale_config_redis_port", "new": "funkwhale_redis_port" }
+    - { "old": "funkwhale_config_redis_database", "new": "funkwhale_redis_database" }
+    - { "old": "funkwhale_config_redis_url", "new": "funkwhale_redis_url" }
     - { "old": "funkwhale_frontend_env_path", "new": "<Removed>" }
 
 - name: Fail if required Funkwhale settings not defined
@@ -24,4 +28,4 @@
     - funkwhale_database_username
     - funkwhale_database_password
     - funkwhale_django_secret_key
-    - funkwhale_config_redis_hostname
+    - funkwhale_redis_hostname

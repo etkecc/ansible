@@ -48,8 +48,8 @@ REVERSE_PROXY_TYPE=nginx
 # Use the next one if you followed Debian installation guide
 DATABASE_URL=postgresql://{{ funkwhale_database_username }}:{{ funkwhale_database_password }}@{{ funkwhale_database_hostname }}:{{ funkwhale_database_port }}/{{ funkwhale_database_name }}
 
-CACHE_URL={{ funkwhale_config_redis_url }}
-CELERY_BROKER_URL={{ funkwhale_config_redis_url }}
+CACHE_URL={{ funkwhale_redis_url }}
+CELERY_BROKER_URL={{ funkwhale_redis_url }}
 
 AWS_ACCESS_KEY_ID={{ funkwhale_aws_access_key_id }}
 AWS_SECRET_ACCESS_KEY={{ funkwhale_aws_secret_access_key }}

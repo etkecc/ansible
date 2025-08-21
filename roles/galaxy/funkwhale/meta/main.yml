@@ -1,8 +1,9 @@
 ---
 galaxy_info:
-  role_name: funkwhale
   author: Julian-Samuel Gebühr
   company: Hyteck
+  role_name: funkwhale
+  namespace: mash
   description: Ansible role to install a Funkwhale instance that lets you listen and share music and audio within a decentralized, open network.
   platforms:
     - name: Debian

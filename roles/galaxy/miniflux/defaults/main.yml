@@ -11,7 +11,7 @@ miniflux_identifier: miniflux
 miniflux_base_path: "/{{ miniflux_identifier }}"
 
 # renovate: datasource=docker depName=docker.io/miniflux/miniflux versioning=semver
-miniflux_version: 2.2.11
+miniflux_version: 2.2.12
 
 miniflux_uid: ''
 miniflux_gid: ''
@@ -71,8 +71,14 @@ miniflux_container_labels_traefik_tls_certResolver: default  # noqa var-naming
 miniflux_container_labels_traefik_compression_middleware_enabled: false
 miniflux_container_labels_traefik_compression_middleware_name: ""
 
+# Controls which additional headers to attach to all HTTP requests.
+# To add your own custom request headers, use `miniflux_container_labels_traefik_additional_request_headers_custom`
+miniflux_container_labels_traefik_additional_request_headers: "{{ miniflux_container_labels_traefik_additional_request_headers_auto | combine(miniflux_container_labels_traefik_additional_request_headers_custom) }}"
+miniflux_container_labels_traefik_additional_request_headers_auto: {}
+miniflux_container_labels_traefik_additional_request_headers_custom: {}
+
 # Controls which additional headers to attach to all HTTP responses.
-# To add your own headers, use `miniflux_container_labels_traefik_additional_response_headers_custom`
+# To add your own custom response headers, use `miniflux_container_labels_traefik_additional_response_headers_custom`
 miniflux_container_labels_traefik_additional_response_headers: "{{ miniflux_container_labels_traefik_additional_response_headers_auto | combine(miniflux_container_labels_traefik_additional_response_headers_custom) }}"
 miniflux_container_labels_traefik_additional_response_headers_auto: |
   {{

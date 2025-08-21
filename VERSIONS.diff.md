@@ -18,6 +18,7 @@
 * [Linkding](https://github.com/sissbruecker/linkding): [1.41.0](https://github.com/sissbruecker/linkding/releases/tag/v1.41.0) ⇾ [1.42.0](https://github.com/sissbruecker/linkding/releases/tag/v1.42.0)
 * [Meta Instagram](https://github.com/mautrix/meta): [v0.5.2](https://github.com/mautrix/meta/releases/tag/v0.5.2) ⇾ [v0.5.3](https://github.com/mautrix/meta/releases/tag/v0.5.3)
 * [Meta Messenger](https://github.com/mautrix/meta): [v0.5.2](https://github.com/mautrix/meta/releases/tag/v0.5.2) ⇾ [v0.5.3](https://github.com/mautrix/meta/releases/tag/v0.5.3)
+* [Miniflux](https://github.com/miniflux/v2): [2.2.11](https://github.com/miniflux/v2/releases/tag/2.2.11) ⇾ [2.2.12](https://github.com/miniflux/v2/releases/tag/2.2.12)
 * [Schildichat](https://github.com/SchildiChat/schildichat-desktop): [1.11.103-sc.0.test.0](https://github.com/SchildiChat/schildichat-desktop/releases/tag/v1.11.103-sc.0.test.0) ⇾ [1.11.109-sc.0.test.0](https://github.com/SchildiChat/schildichat-desktop/releases/tag/v1.11.109-sc.0.test.0)
 * [Signal](https://github.com/mautrix/signal): [v0.8.5](https://github.com/mautrix/signal/releases/tag/v0.8.5) ⇾ [v0.8.6](https://github.com/mautrix/signal/releases/tag/v0.8.6)
 * [Slack](https://github.com/mautrix/slack): [v0.2.2](https://github.com/mautrix/slack/releases/tag/v0.2.2) ⇾ [v0.2.3](https://github.com/mautrix/slack/releases/tag/v0.2.3)
