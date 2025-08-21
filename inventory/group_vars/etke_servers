@@ -18,7 +18,7 @@ devture_systemd_docker_base_container_network_creation_method: ansible-module
 # valkey customization
 valkey_enabled: "{{ matrix_synapse_workers_enabled or funkwhale_enabled or peertube_enabled or (matrix_hookshot_enabled and matrix_hookshot_encryption_enabled) or matrix_element_call_enabled }}"
 
-peertube_config_redis_db: 13
+peertube_redis_db: 13
 funkwhale_redis_database: 14
 matrix_synapse_redis_dbid: 15
 
@@ -471,9 +471,9 @@ peertube_container_additional_networks_auto: |
     (
       ([mash_playbook_reverse_proxyable_services_additional_network] if mash_playbook_reverse_proxyable_services_additional_network else [])
       +
-      ([postgres_container_network] if postgres_enabled and peertube_config_database_hostname == postgres_identifier and peertube_container_network != postgres_container_network else [])
+      ([postgres_container_network] if postgres_enabled and peertube_database_hostname == postgres_identifier and peertube_container_network != postgres_container_network else [])
       +
-      ([valkey_container_network] if valkey_enabled and peertube_config_redis_hostname == valkey_identifier else [])
+      ([valkey_container_network] if valkey_enabled and peertube_redis_hostname == valkey_identifier else [])
       +
       ([exim_relay_container_network | default('matrix-exim-relay')] if (exim_relay_enabled | default(false) and peertube_config_smtp_hostname == exim_relay_identifier | default('matrix-exim-relay') and exim_relay_container_network != peertube_container_network) else [])
     ) | unique
@@ -484,20 +484,20 @@ peertube_container_labels_traefik_docker_network: "{{ mash_playbook_reverse_prox
 peertube_container_labels_traefik_entrypoints: "{{ traefik_entrypoint_primary }}"
 peertube_container_labels_traefik_tls_certResolver: "{{ traefik_certResolver_primary }}"
 
-peertube_config_database_hostname: "{{ postgres_identifier if postgres_enabled else '' }}"
-peertube_config_database_port: "{{ '5432' if postgres_enabled else '' }}"
-peertube_config_database_username: peertube
-peertube_config_database_password: "{{ '%s' | format(mash_playbook_generic_secret_key) | password_hash('sha512', 'db.peertube', rounds=655555) | to_uuid }}"
+peertube_database_hostname: "{{ postgres_identifier if postgres_enabled else '' }}"
+peertube_database_port: "{{ '5432' if postgres_enabled else '' }}"
+peertube_database_username: peertube
+peertube_database_password: "{{ '%s' | format(mash_playbook_generic_secret_key) | password_hash('sha512', 'db.peertube', rounds=655555) | to_uuid }}"
 
 # role-specific:valkey
-peertube_config_redis_hostname: "{{ valkey_identifier if valkey_enabled else '' }}"
+peertube_redis_hostname: "{{ valkey_identifier if valkey_enabled else '' }}"
 # /role-specific:valkey
 
 peertube_systemd_required_services_list_auto: |
   {{
-    ([postgres_identifier ~ '.service'] if postgres_enabled and peertube_config_database_hostname == postgres_identifier else [])
+    ([postgres_identifier ~ '.service'] if postgres_enabled and peertube_database_hostname == postgres_identifier else [])
     +
-    ([valkey_identifier ~ '.service'] if valkey_enabled | default(false) and peertube_config_redis_hostname == valkey_identifier | default('matrix-valkey') else [])
+    ([valkey_identifier ~ '.service'] if valkey_enabled | default(false) and peertube_redis_hostname == valkey_identifier | default('matrix-valkey') else [])
   }}
 
 peertube_systemd_wanted_services_list_auto: |
@@ -612,9 +612,9 @@ postgres_managed_databases_additional: |
       }] if funkwhale_enabled else [])
     +
     ([{
-      'name': peertube_config_database_hostname,
-      'username': peertube_config_database_username,
-      'password': peertube_config_database_password,
+      'name': peertube_database_hostname,
+      'username': peertube_database_username,
+      'password': peertube_database_password,
     }] if peertube_enabled else [])
   }}
 
