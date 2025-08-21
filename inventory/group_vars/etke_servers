@@ -612,7 +612,7 @@ postgres_managed_databases_additional: |
       }] if funkwhale_enabled else [])
     +
     ([{
-      'name': peertube_config_database_name,
+      'name': peertube_config_database_hostname,
       'username': peertube_config_database_username,
       'password': peertube_config_database_password,
     }] if peertube_enabled else [])
