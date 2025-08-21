@@ -19,7 +19,7 @@ devture_systemd_docker_base_container_network_creation_method: ansible-module
 valkey_enabled: "{{ matrix_synapse_workers_enabled or funkwhale_enabled or peertube_enabled or (matrix_hookshot_enabled and matrix_hookshot_encryption_enabled) or matrix_element_call_enabled }}"
 
 peertube_config_redis_db: 13
-funkwhale_config_redis_database: 14
+funkwhale_redis_database: 14
 matrix_synapse_redis_dbid: 15
 
 # ansible v2.19+
@@ -397,7 +397,7 @@ funkwhale_email_from: "{{ exim_relay_sender_address if exim_relay_enabled else '
 funkwhale_account_email_verification_enforce: "{{ exim_relay_enabled | default(false) }}"
 funkwhale_django_secret_key: "{{ '%s' | format(mash_playbook_generic_secret_key) | password_hash('sha512', 'funkwhale', rounds=655555) | to_uuid }}"
 
-funkwhale_config_redis_hostname: "{{ valkey_identifier if valkey_enabled else '' }}"
+funkwhale_redis_hostname: "{{ valkey_identifier if valkey_enabled else '' }}"
 
 funkwhale_api_systemd_required_services_list_auto: |
   {{
@@ -419,7 +419,7 @@ funkwhale_api_container_additional_networks_auto: |
     +
     ([exim_relay_container_network | default('matrix-exim-relay')] if (exim_relay_enabled | default(false) and funkwhale_email_host == exim_relay_identifier | default('matrix-exim-relay') and exim_relay_container_network != funkwhale_container_network) else [])
     +
-    ([valkey_container_network] if valkey_enabled and funkwhale_config_redis_hostname == valkey_identifier else [])
+    ([valkey_container_network] if valkey_enabled and funkwhale_redis_hostname == valkey_identifier else [])
   }}
 
 funkwhale_frontend_container_additional_networks_auto: |
