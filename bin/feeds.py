@@ -127,6 +127,8 @@ def format_feeds_from_git_repos(git_repos):
                 atomFilePath = git_repo.replace('.git', '') + '/-/tags?format=atom'
             elif 'git.osgeo.org' in git_repo: # gitea
                 atomFilePath = git_repo.replace('.git', '') + '.atom'
+            elif 'forgejo.ellis.link' in git_repo: # forgejo
+                atomFilePath = git_repo.rstrip('/') + '/atom/'
             elif 'dev.funkwhale.audio' in git_repo: # gitlab
                 atomFilePath = git_repo.replace('.git', '') + '/-/tags?format=atom'
             else:
