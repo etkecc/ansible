@@ -14,7 +14,7 @@ traefik.docker.network={{ uptime_kuma_container_labels_traefik_docker_network }}
 {% set middlewares = [] %}
 
 {% if uptime_kuma_container_labels_traefik_path_prefix != '/' %}
-traefik.http.middlewares.{{ uptime_kuma_identifier }}-slashless-redirect.redirectregex.regex=({{ uptime_kuma_container_labels_traefik_path_prefix | quote }})$
+traefik.http.middlewares.{{ uptime_kuma_identifier }}-slashless-redirect.redirectregex.regex=^({{ uptime_kuma_container_labels_traefik_path_prefix | quote }})$
 traefik.http.middlewares.{{ uptime_kuma_identifier }}-slashless-redirect.redirectregex.replacement=${1}/
 {% set middlewares = middlewares + [uptime_kuma_identifier + '-slashless-redirect'] %}
 {% endif %}
@@ -22,6 +22,13 @@ traefik.http.middlewares.{{ uptime_kuma_identifier }}-slashless-redirect.redirec
 {% if uptime_kuma_container_labels_traefik_path_prefix != '/' %}
 traefik.http.middlewares.{{ uptime_kuma_identifier }}-strip-prefix.stripprefix.prefixes={{ uptime_kuma_container_labels_traefik_path_prefix }}
 {% set middlewares = middlewares + [uptime_kuma_identifier + '-strip-prefix'] %}
+{% endif %}
+
+{% if uptime_kuma_container_labels_traefik_additional_request_headers.keys() | length > 0 %}
+{% for name, value in uptime_kuma_container_labels_traefik_additional_request_headers.items() %}
+traefik.http.middlewares.{{ uptime_kuma_identifier }}-add-request-headers.headers.customrequestheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [uptime_kuma_identifier + '-add-request-headers'] %}
 {% endif %}
 
 {% if uptime_kuma_container_labels_traefik_additional_response_headers.keys() | length > 0 %}

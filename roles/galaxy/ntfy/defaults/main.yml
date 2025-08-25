@@ -174,7 +174,10 @@ ntfy_systemd_required_services_list_auto: []
 ntfy_systemd_required_services_list_custom: []
 
 # List of systemd services that the ntfy systemd service wants
-ntfy_systemd_wanted_services_list: []
+ntfy_systemd_wanted_services_list: "{{ ntfy_systemd_wanted_services_list_default + ntfy_systemd_wanted_services_list_auto + ntfy_systemd_wanted_services_list_custom }}"
+ntfy_systemd_wanted_services_list_default: []
+ntfy_systemd_wanted_services_list_auto: []
+ntfy_systemd_wanted_services_list_custom: []
 
 # Control how attachments can be uploaded via PUT.
 ntfy_attachment_enabled: false

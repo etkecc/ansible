@@ -37,11 +37,11 @@
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-swap.git
   version: main
   name: swap
-- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-ufw.git
-  version: main
-  name: ufw
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-uptime_kuma.git
-  version: v1.23.16-7
+  version: v1.23.16-8
+  name: uptime_kuma
+- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-uptime_kuma.git
+  version: v1.23.16-8
   name: uptime_kuma
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-vaultwarden.git
   version: v1.34.3-0

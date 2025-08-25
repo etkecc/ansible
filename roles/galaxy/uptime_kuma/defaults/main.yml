@@ -65,6 +65,12 @@ uptime_kuma_container_labels_traefik_entrypoints: web-secure
 uptime_kuma_container_labels_traefik_tls: "{{ uptime_kuma_container_labels_traefik_entrypoints != 'web' }}"
 uptime_kuma_container_labels_traefik_tls_certResolver: default  # noqa var-naming
 
+# Controls which additional headers to attach to all HTTP requests.
+# To add your own custom request headers, use `uptime_kuma_container_labels_traefik_additional_request_headers_custom`
+uptime_kuma_container_labels_traefik_additional_request_headers: "{{ uptime_kuma_container_labels_traefik_additional_request_headers_auto | combine(uptime_kuma_container_labels_traefik_additional_request_headers_custom) }}"
+uptime_kuma_container_labels_traefik_additional_request_headers_auto: {}
+uptime_kuma_container_labels_traefik_additional_request_headers_custom: {}
+
 # Controls which additional headers to attach to all HTTP responses.
 # To add your own custom response headers, use `uptime_kuma_container_labels_traefik_additional_response_headers_custom`
 uptime_kuma_container_labels_traefik_additional_response_headers: "{{ uptime_kuma_container_labels_traefik_additional_response_headers_auto | combine(uptime_kuma_container_labels_traefik_additional_response_headers_custom) }}"  # noqa yaml[line-length]
@@ -149,14 +155,17 @@ uptime_kuma_floc_optout_enabled: true
 # See: `uptime_kuma_http_header_strict_transport_security`
 uptime_kuma_hsts_preload_enabled: false
 
-# List of systemd services that kuma.service depends on
+# List of systemd services that the Uptime Kuma systemd service depends on
 uptime_kuma_systemd_required_services_list: "{{ uptime_kuma_systemd_required_services_list_default + uptime_kuma_systemd_required_services_list_auto + uptime_kuma_systemd_required_services_list_custom }}"
 uptime_kuma_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
 uptime_kuma_systemd_required_services_list_auto: []
 uptime_kuma_systemd_required_services_list_custom: []
 
-# List of systemd services that the Prometheus systemd service wants
-uptime_kuma_systemd_wanted_services_list: []
+# List of systemd services that the Uptime Kuma systemd service wants
+uptime_kuma_systemd_wanted_services_list: "{{ uptime_kuma_systemd_wanted_services_list_default + uptime_kuma_systemd_wanted_services_list_auto + uptime_kuma_systemd_wanted_services_list_custom }}"
+uptime_kuma_systemd_wanted_services_list_default: []
+uptime_kuma_systemd_wanted_services_list_auto: []
+uptime_kuma_systemd_wanted_services_list_custom: []
 
 uptime_kuma_container_dns_servers: "{{ uptime_kuma_container_dns_servers_default + uptime_kuma_container_dns_servers_custom }}"
 

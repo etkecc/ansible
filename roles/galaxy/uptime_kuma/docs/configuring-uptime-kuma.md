@@ -85,7 +85,7 @@ If you use the MASH playbook, the shortcut commands with the [`just` program](ht
 
 After running the command for installation, Uptime Kuma becomes available at the specified hostname like `https://example.com`.
 
-To get started, go to the URL on a web browser and create your admin account. You can then add monitors for web services as many as you like.
+To get started, open the URL on a web browser and create your admin account. You can then add monitors for web services as many as you like.
 
 ## Troubleshooting
 
