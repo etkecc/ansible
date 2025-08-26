@@ -11,8 +11,8 @@ peertube_enabled: true
 
 peertube_identifier: peertube-peertube
 peertube_base_path: "{{ peertube_playbook_base_path }}/peertube"
-peertube_config_dir_path: "{{ peertube_base_path }}/config"
-peertube_data_dir_path: "{{ peertube_base_path }}/data"
+peertube_config_path: "{{ peertube_base_path }}/config"
+peertube_data_path: "{{ peertube_base_path }}/data"
 
 # renovate: datasource=docker depName=chocobozzz/peertube versioning=semver
 peertube_version: v7.2.3
@@ -188,7 +188,10 @@ peertube_systemd_required_services_list_auto: []
 peertube_systemd_required_services_list_custom: []
 
 # List of systemd services that the PeerTube systemd service wants
-peertube_systemd_wanted_services_list: []
+peertube_systemd_wanted_services_list: "{{ peertube_systemd_wanted_services_list_default + peertube_systemd_wanted_services_list_auto + peertube_systemd_wanted_services_list_custom }}"
+peertube_systemd_wanted_services_list_default: []
+peertube_systemd_wanted_services_list_auto: []
+peertube_systemd_wanted_services_list_custom: []
 
 # Controls which values to register in PEERTUBE_TRUST_PROXY
 # See `peertube_config_trust_proxy`.
@@ -217,7 +220,7 @@ peertube_migration_wait_time: 1800
 peertube_database_hostname: ''
 peertube_database_port: 5432
 peertube_database_name: peertube
-peertube_database_username: ''
+peertube_database_username: peertube
 peertube_database_password: ''
 peertube_database_sslmode: false
 

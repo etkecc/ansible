@@ -41,36 +41,36 @@
 
 - name: Check existence of PeerTube config path
   ansible.builtin.stat:
-    path: "{{ peertube_config_dir_path }}"
-  register: peertube_config_dir_path_stat
+    path: "{{ peertube_config_path }}"
+  register: peertube_config_path_stat
 
 # We just want to notify the user. Deleting data is too destructive.
 - name: Notify if PeerTube config remains
-  when: peertube_config_dir_path_stat.stat.exists | bool
+  when: peertube_config_path_stat.stat.exists | bool
   ansible.builtin.set_fact:
     devture_playbook_runtime_messages_list: |
       {{
         devture_playbook_runtime_messages_list | default([])
         +
         [
-          "Note: As the local PeerTube instance has been removed, some old config remains in `" + peertube_config_dir_path + "`. Feel free to delete it."
+          "Note: As the local PeerTube instance has been removed, some old config remains in `" + peertube_config_path + "`. Feel free to delete it."
         ]
       }}
 
 - name: Check existence of PeerTube local data path
   ansible.builtin.stat:
-    path: "{{ peertube_data_dir_path }}"
-  register: peertube_data_dir_path_stat
+    path: "{{ peertube_data_path }}"
+  register: peertube_data_path_stat
 
 # We just want to notify the user. Deleting data is too destructive.
 - name: Notify if PeerTube local data remains
-  when: peertube_data_dir_path_stat.stat.exists | bool
+  when: peertube_data_path_stat.stat.exists | bool
   ansible.builtin.set_fact:
     devture_playbook_runtime_messages_list: |
       {{
         devture_playbook_runtime_messages_list | default([])
         +
         [
-          "Note: As the local PeerTube instance has been removed, some old data including video files remain in `" + peertube_data_dir_path + "`. Feel free to delete it."
+          "Note: As the local PeerTube instance has been removed, some old data including video files remain in `" + peertube_data_path + "`. Feel free to delete it."
         ]
       }}

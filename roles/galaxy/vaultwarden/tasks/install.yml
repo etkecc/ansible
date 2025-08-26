@@ -14,9 +14,9 @@
     group: "{{ vaultwarden_gid }}"
   with_items:
     - "{{ vaultwarden_base_path }}"
-    - "{{ vaultwarden_data_dir_path }}"
-    - "{{ vaultwarden_cache_dir_path }}"
-    - "{{ vaultwarden_ephemeral_dir_path }}"
+    - "{{ vaultwarden_data_path }}"
+    - "{{ vaultwarden_cache_path }}"
+    - "{{ vaultwarden_ephemeral_path }}"
 
 - name: Ensure Vaultwarden support files installed
   ansible.builtin.template:
@@ -106,12 +106,12 @@
 
 - name: Check if Vaultwarden config exists
   ansible.builtin.stat:
-    path: "{{ vaultwarden_data_dir_path }}/config.json"
+    path: "{{ vaultwarden_data_path }}/config.json"
   register: config
 
 - name: Clear potentially-existing previous admin_token config value if vaultwarden_config_admin_token is unset
   ansible.builtin.lineinfile:
-    name: "{{ vaultwarden_data_dir_path }}/config.json"
+    name: "{{ vaultwarden_data_path }}/config.json"
     line: "admin_token"
     state: absent
   when:

@@ -15,8 +15,8 @@
     group: "{{ peertube_gid }}"
   with_items:
     - "{{ peertube_base_path }}"
-    - "{{ peertube_config_dir_path }}"
-    - "{{ peertube_data_dir_path }}"
+    - "{{ peertube_config_path }}"
+    - "{{ peertube_data_path }}"
 
 - name: Ensure PeerTube support files installed
   ansible.builtin.template:

@@ -45,9 +45,9 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --health-interval=10s \
       --env-file={{ vaultwarden_base_path }}/env \
       --label-file={{ vaultwarden_base_path }}/labels \
-      --mount type=bind,src={{ vaultwarden_data_dir_path }},dst=/data \
-      --mount type=bind,src={{ vaultwarden_cache_dir_path }},dst=/cache \
-      --mount type=bind,src={{ vaultwarden_ephemeral_dir_path }},dst=/ephemeral \
+      --mount type=bind,src={{ vaultwarden_data_path }},dst=/data \
+      --mount type=bind,src={{ vaultwarden_cache_path }},dst=/cache \
+      --mount type=bind,src={{ vaultwarden_ephemeral_path }},dst=/ephemeral \
       --tmpfs=/tmp:rw,noexec,nosuid,size=128m \
       {% for arg in vaultwarden_container_extra_arguments %}
       {{ arg }} \

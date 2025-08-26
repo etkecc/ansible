@@ -40,9 +40,9 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% endif %}
       --env-file={{ peertube_base_path }}/env \
       --label-file={{ peertube_base_path }}/labels \
-      --mount type=bind,src={{ peertube_config_dir_path }},dst=/config \
-      --mount type=bind,src={{ peertube_data_dir_path }},dst=/data \
-      --mount type=bind,src={{ peertube_data_dir_path }},dst=/app/storage \
+      --mount type=bind,src={{ peertube_config_path }},dst=/config \
+      --mount type=bind,src={{ peertube_data_path }},dst=/data \
+      --mount type=bind,src={{ peertube_data_path }},dst=/app/storage \
       {% for volume in peertube_container_additional_volumes %}
       --mount type={{ volume.type | default('bind' if '/' in volume.src else 'volume') }},src={{ volume.src }},dst={{ volume.dst }}{{ (',' + volume.options) if volume.options else '' }} \
       {% endfor %}

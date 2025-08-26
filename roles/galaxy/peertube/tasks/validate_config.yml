@@ -10,6 +10,8 @@
       Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
   when: "lookup('ansible.builtin.varnames', ('^' + item.old + '$'), wantlist=True) | length > 0"
   with_items:
+    - { "old": "peertube_config_dir_path", "new": "peertube_config_path" }
+    - { "old": "peertube_data_dir_path", "new": "peertube_data_path" }
     - { "old": "peertube_config_database_hostname", "new": "peertube_database_hostname" }
     - { "old": "peertube_config_database_port", "new": "peertube_database_port" }
     - { "old": "peertube_config_database_username", "new": "peertube_database_username" }
@@ -34,7 +36,6 @@
     - peertube_hostname
     - peertube_path_prefix
     - peertube_database_hostname
-    - peertube_database_username
     - peertube_database_password
     - peertube_config_secret
     - peertube_config_admin_email
