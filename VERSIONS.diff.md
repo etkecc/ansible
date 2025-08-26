@@ -22,5 +22,6 @@
 * [Schildichat](https://github.com/SchildiChat/schildichat-desktop): [1.11.103-sc.0.test.0](https://github.com/SchildiChat/schildichat-desktop/releases/tag/v1.11.103-sc.0.test.0) ⇾ [1.11.109-sc.0.test.0](https://github.com/SchildiChat/schildichat-desktop/releases/tag/v1.11.109-sc.0.test.0)
 * [Signal](https://github.com/mautrix/signal): [v0.8.5](https://github.com/mautrix/signal/releases/tag/v0.8.5) ⇾ [v0.8.6](https://github.com/mautrix/signal/releases/tag/v0.8.6)
 * [Slack](https://github.com/mautrix/slack): [v0.2.2](https://github.com/mautrix/slack/releases/tag/v0.2.2) ⇾ [v0.2.3](https://github.com/mautrix/slack/releases/tag/v0.2.3)
+* [Synapse](https://github.com/element-hq/synapse): [v1.136.0](https://github.com/element-hq/synapse/releases/tag/v1.136.0) ⇾ [v1.137.0](https://github.com/element-hq/synapse/releases/tag/v1.137.0)
 * [Twitter](https://github.com/mautrix/twitter): [v0.4.3](https://github.com/mautrix/twitter/releases/tag/v0.4.3) ⇾ [v0.5.0](https://github.com/mautrix/twitter/releases/tag/v0.5.0)
 * [Whatsapp](https://github.com/mautrix/whatsapp): [v0.12.3](https://github.com/mautrix/whatsapp/releases/tag/v0.12.3) ⇾ [v0.12.4](https://github.com/mautrix/whatsapp/releases/tag/v0.12.4)
