@@ -24,6 +24,19 @@
         path: "{{ devture_systemd_docker_base_systemd_path }}/{{ vaultwarden_identifier }}.service"
         state: absent
 
+    - name: Ensure Vaultwarden support files do not exist
+      ansible.builtin.file:
+        path: "{{ vaultwarden_base_path }}/{{ item }}"
+        state: absent
+      with_items:
+        - env
+        - labels
+
+    - name: Ensure Vaultwarden image source files path does not exist
+      ansible.builtin.file:
+        path: "{{ vaultwarden_container_image_self_build_src_files_path }}"
+        state: absent
+
     - name: Ensure Vaultwarden container network does not exist via community.docker.docker_network
       when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
       community.docker.docker_network:
@@ -39,7 +52,20 @@
       register: network_deletion_result
       changed_when: vaultwarden_container_network in network_deletion_result.stdout
 
-    - name: Ensure Vaultwarden path does not exist
-      ansible.builtin.file:
-        path: "{{ vaultwarden_base_path }}"
-        state: absent
+- name: Check existence of Vaultwarden local data path
+  ansible.builtin.stat:
+    path: "{{ vaultwarden_data_path }}"
+  register: vaultwarden_data_path_stat
+
+# We just want to notify the user. Deleting data is too destructive.
+- name: Notify if Vaultwarden local data remains
+  when: vaultwarden_data_path_stat.stat.exists | bool
+  ansible.builtin.set_fact:
+    devture_playbook_runtime_messages_list: |
+      {{
+        devture_playbook_runtime_messages_list | default([])
+        +
+        [
+          "Note: As the local Vaultwarden instance has been removed, some old data remains in `" + vaultwarden_data_path + "`. Feel free to delete it."
+        ]
+      }}

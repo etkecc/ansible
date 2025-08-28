@@ -10,6 +10,8 @@
 
 * [Cinny](https://github.com/ajbura/cinny): [v4.9.0](https://github.com/ajbura/cinny/releases/tag/v4.9.0) ⇾ [v4.9.1](https://github.com/ajbura/cinny/releases/tag/v4.9.1)
 * [Draupnir](https://github.com/the-draupnir-project/Draupnir): [v2.6.0](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.6.0) ⇾ [v2.6.1](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.6.1)
+* [Element](https://github.com/element-hq/element-web): [v1.11.109](https://github.com/element-hq/element-web/releases/tag/v1.11.109) ⇾ [v1.11.110](https://github.com/element-hq/element-web/releases/tag/v1.11.110)
+* [Element Call](https://github.com/element-hq/element-call): [v0.14.1](https://github.com/element-hq/element-call/releases/tag/v0.14.1) ⇾ [v0.15.0](https://github.com/element-hq/element-call/releases/tag/v0.15.0)
 * [Fluffychat](https://github.com/krille-chan/fluffychat): [v2.0.0](https://github.com/krille-chan/fluffychat/releases/tag/v2.0.0) ⇾ [v2.1.0](https://github.com/krille-chan/fluffychat/releases/tag/v2.1.0)
 * [Gmessages](https://github.com/mautrix/gmessages): [v0.6.4](https://github.com/mautrix/gmessages/releases/tag/v0.6.4) ⇾ [v0.6.5](https://github.com/mautrix/gmessages/releases/tag/v0.6.5)
 * [Grafana](https://github.com/grafana/grafana): [11.6.4](https://github.com/grafana/grafana/releases/tag/v11.6.4) ⇾ [11.6.5](https://github.com/grafana/grafana/releases/tag/v11.6.5)

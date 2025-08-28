@@ -190,10 +190,11 @@ vaultwarden_systemd_wanted_services_list_default: []
 vaultwarden_systemd_wanted_services_list_auto: []
 vaultwarden_systemd_wanted_services_list_custom: []
 
+# Valid values: mysql, postgres, sqlite
 vaultwarden_database_type: postgres
+
 vaultwarden_database_hostname: ''
 vaultwarden_database_port: 5432
-vaultwarden_database_name: vaultwarden
 vaultwarden_database_username: vaultwarden
 vaultwarden_database_password: ''
 # Use this to set the sslmode parameter of the SSL connection
@@ -202,15 +203,28 @@ vaultwarden_database_password: ''
 # See: https://github.com/dani-garcia/vaultwarden/issues/2386
 vaultwarden_database_sslmode: disable
 
+vaultwarden_database_mysql_hostname: ''
+vaultwarden_database_mysql_port: 3306
+vaultwarden_database_mysql_username: vaultwarden
+vaultwarden_database_mysql_password: ''
+
+vaultwarden_database_name: vaultwarden
+
 # vaultwarden_config_database_url controls the DATABASE_URL environment variable.
-# See https://github.com/dani-garcia/vaultwarden/wiki/Using-the-PostgreSQL-Backend
+# See https://github.com/dani-garcia/vaultwarden/wiki/Using-the-PostgreSQL-Backend,
+# https://github.com/dani-garcia/vaultwarden/blob/main/.env.template,
 # and the other database-related Wiki articles
 vaultwarden_config_database_url: |-
   {{
     ('postgresql://' + vaultwarden_database_username + ':' + vaultwarden_database_password + '@' + vaultwarden_database_hostname + ':' + vaultwarden_database_port | string + '/' + vaultwarden_database_name + '?sslmode=' + vaultwarden_database_sslmode)
-    if vaultwarden_database_type == 'postgres'
-    else ''
   }}
+
+vaultwarden_config_database_mysql_url: |-
+  {{
+    ('mysql://' + vaultwarden_database_mysql_username + ':' + vaultwarden_database_mysql_password + '@' + vaultwarden_database_mysql_hostname + ':' + vaultwarden_database_mysql_port | string + '/' + vaultwarden_database_name)
+  }}
+
+vaultwarden_config_database_sqlite_url: "data/db.sqlite3"
 
 # vaultwarden_config_domain controls the DOMAIN environment variable,
 # which tells Vaultwarden its full URL (e.g. `https://vaultwarden.DOMAIN/prefix`)
@@ -264,7 +278,7 @@ vaultwarden_config_rocket_limits: "{json={{ vaultwarden_max_json_mb | int * 1024
 
 # vaultwarden_config_smtp_from controls the SMTP_FROM environment variable.
 # See: https://github.com/dani-garcia/vaultwarden/wiki/SMTP-Configuration
-vaultwarden_config_smtp_from: "noreply@{{ vaultwarden_hostname }}"
+vaultwarden_config_smtp_from: ""
 
 # vaultwarden_config_smtp_host controls the SMTP_HOST environment variable.
 # See: https://github.com/dani-garcia/vaultwarden/wiki/SMTP-Configuration
