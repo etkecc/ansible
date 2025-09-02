@@ -11,7 +11,7 @@ container_socket_proxy_identifier: container-socket-proxy
 container_socket_proxy_base_path: "/{{ container_socket_proxy_identifier }}"
 
 # renovate: datasource=docker depName=ghcr.io/tecnativa/docker-socket-proxy versioning=semver
-container_socket_proxy_version: 0.3.0
+container_socket_proxy_version: v0.4.0
 
 container_socket_proxy_uid: ''
 container_socket_proxy_gid: ''
@@ -51,7 +51,10 @@ container_socket_proxy_systemd_required_services_list_auto: []
 container_socket_proxy_systemd_required_services_list_custom: []
 
 # List of systemd services that the Container Socket Proxy systemd service wants
-container_socket_proxy_systemd_wanted_services_list: []
+container_socket_proxy_systemd_wanted_services_list: "{{ container_socket_proxy_systemd_wanted_services_list_default + container_socket_proxy_systemd_wanted_services_list_auto + container_socket_proxy_systemd_wanted_services_list_custom }}"
+container_socket_proxy_systemd_wanted_services_list_default: []
+container_socket_proxy_systemd_wanted_services_list_auto: []
+container_socket_proxy_systemd_wanted_services_list_custom: []
 
 # Specifies the container socket path on the host
 container_socket_proxy_container_socket_path: /var/run/docker.sock

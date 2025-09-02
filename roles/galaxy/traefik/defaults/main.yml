@@ -17,7 +17,7 @@ traefik_ssl_dir_path: "{{ traefik_base_path }}/ssl"
 traefik_plugins_dir_path: "{{ traefik_base_path }}/plugins-storage"
 
 # renovate: datasource=docker depName=library/traefik versioning=semver
-traefik_version: v3.5.0
+traefik_version: v3.5.1
 
 traefik_uid: ''
 traefik_gid: ''
@@ -63,7 +63,9 @@ traefik_container_additional_networks_custom: []
 # if you wish to mount your own files into the container.
 # Contains definition objects like this: `{"type": "bind", "src": "/outside", "dst": "/inside", "options": "readonly"}.
 # See the `--mount` documentation for the `docker run` command.
-traefik_container_additional_volumes: []
+traefik_container_additional_volumes: "{{ traefik_container_additional_volumes_auto + traefik_container_additional_volumes_custom }}"
+traefik_container_additional_volumes_auto: []
+traefik_container_additional_volumes_custom: []
 
 # traefik_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
 # See `../templates/labels.j2` for details.
@@ -92,7 +94,10 @@ traefik_systemd_required_services_list_auto: []
 traefik_systemd_required_services_list_custom: []
 
 # List of systemd services that the Traefik systemd service wants
-traefik_systemd_wanted_services_list: []
+traefik_systemd_wanted_services_list: "{{ traefik_systemd_wanted_services_list_default + traefik_systemd_wanted_services_list_auto + traefik_systemd_wanted_services_list_custom }}"
+traefik_systemd_wanted_services_list_default: []
+traefik_systemd_wanted_services_list_auto: []
+traefik_systemd_wanted_services_list_custom: []
 
 traefik_ssl_dir_enabled: "{{ traefik_config_certificatesResolvers_acme_enabled }}"
 
