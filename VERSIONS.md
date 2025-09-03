@@ -57,7 +57,7 @@
 * Static Files: 2.38.0
 * Sygnal: v0.15.1
 * Synapse: v1.137.0
-* Synapse Admin: v0.11.1-etke46
+* Synapse Admin: v0.11.1-etke47
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4
 * Synapse Http Antispam Git: v0.5.0
