@@ -36,7 +36,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --health-interval={{ etherpad_container_health_interval }} \
       --mount type=bind,src={{ etherpad_config_path }},dst=/config,ro \
       --mount type=bind,src={{ etherpad_data_path }},dst=/data \
-      --mount type=bind,src={{ etherpad_plugins_path }},dst=:/opt/etherpad-lite/src/plugin_packages \
+      --mount type=bind,src={{ etherpad_plugins_path }},dst=/opt/etherpad-lite/src/plugin_packages \
       --mount type=bind,src={{ etherpad_var_path }},dst=/opt/etherpad-lite/var \
       {% for arg in etherpad_container_extra_arguments %}
       {{ arg }} \
