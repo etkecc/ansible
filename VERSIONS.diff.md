@@ -8,6 +8,7 @@
 
 #### Version Changes
 
+* [Baibot](https://github.com/etkecc/baibot): [v1.7.6](https://github.com/etkecc/baibot/releases/tag/v1.7.6) ⇾ [v1.8.0](https://github.com/etkecc/baibot/releases/tag/v1.8.0)
 * [Container Socket Proxy](https://github.com/Tecnativa/docker-socket-proxy): [v0.4.0](https://github.com/Tecnativa/docker-socket-proxy/releases/tag/v0.4.0) ⇾ [v0.4.1](https://github.com/Tecnativa/docker-socket-proxy/releases/tag/v0.4.1)
 * [Etherpad](https://github.com/ether/etherpad-lite): [2.4.2](https://github.com/ether/etherpad-lite/releases/tag/2.4.2) ⇾ [2.5.0](https://github.com/ether/etherpad-lite/releases/tag/2.5.0)
 * [Gotosocial](https://github.com/superseriousbusiness/gotosocial): [0.19.1](https://github.com/superseriousbusiness/gotosocial/releases/tag/v0.19.1) ⇾ [0.19.2](https://github.com/superseriousbusiness/gotosocial/releases/tag/v0.19.2)

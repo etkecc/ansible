@@ -1,5 +1,5 @@
 * Appservice Discord: v4.0.0
-* Baibot: v1.7.6
+* Baibot: v1.8.0
 * Bluesky: v0.1.2
 * Borg: 1.4.1
 * Borgmatic: 1.9.14
