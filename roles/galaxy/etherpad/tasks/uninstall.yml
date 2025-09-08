@@ -24,6 +24,21 @@
         path: "{{ devture_systemd_docker_base_systemd_path }}/{{ etherpad_identifier }}.service"
         state: absent
 
+    - name: Ensure Etherpad config path does not exist
+      ansible.builtin.file:
+        path: "{{ etherpad_config_path }}"
+        state: absent
+
+    - name: Ensure Etherpad support file does not exist
+      ansible.builtin.file:
+        path: "{{ etherpad_base_path }}/labels"
+        state: absent
+
+    - name: Ensure Etherpad image source files path does not exist
+      ansible.builtin.file:
+        path: "{{ etherpad_container_image_self_build_src_files_path }}"
+        state: absent
+
     - name: Ensure Etherpad container network does not exist via community.docker.docker_network
       when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
       community.docker.docker_network:
@@ -39,7 +54,34 @@
       register: network_deletion_result
       changed_when: etherpad_container_network in network_deletion_result.stdout
 
-    - name: Ensure Etherpad path does not exist
-      ansible.builtin.file:
-        path: "{{ etherpad_base_path }}"
-        state: absent
+    - name: Ensure Etherpad local data path does not exist if empty
+      ansible.builtin.command:
+        cmd: "rmdir {{ etherpad_data_path }}"
+      register: etherpad_data_path_deletion_result
+      changed_when: etherpad_data_path_deletion_result.rc == 0
+      failed_when: false
+
+    - name: Ensure Etherpad base path does not exist if empty
+      ansible.builtin.command:
+        cmd: "rmdir {{ etherpad_base_path }}"
+      register: etherpad_base_path_deletion_result
+      changed_when: etherpad_base_path_deletion_result.rc == 0
+      failed_when: false
+
+- name: Check existence of Etherpad local data path
+  ansible.builtin.stat:
+    path: "{{ etherpad_data_path }}"
+  register: etherpad_data_path_stat
+
+# We just want to notify the user. Deleting data is too destructive.
+- name: Notify if Etherpad local data remains
+  when: etherpad_data_path_stat.stat.exists | bool
+  ansible.builtin.set_fact:
+    devture_playbook_runtime_messages_list: |
+      {{
+        devture_playbook_runtime_messages_list | default([])
+        +
+        [
+          "Note: As the local Etherpad instance has been removed, some old data remains in `" + etherpad_data_path + "`. Feel free to delete it."
+        ]
+      }}

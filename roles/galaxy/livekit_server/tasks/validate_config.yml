@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2022 MDAD project contributors
+# SPDX-FileCopyrightText: 2023 - 2024 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2024 wjbeckett
-# SPDX-FileCopyrightText: 2024 Slavi Pantaleev
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -39,3 +39,9 @@
     (livekit_server_config_rtc_port_range_start | string | length > 0 and livekit_server_config_rtc_port_range_end | string | length == 0) or
     (livekit_server_config_rtc_port_range_start | string | length == 0 and livekit_server_config_rtc_port_range_end | string | length > 0) or
     (livekit_server_config_rtc_port_range_start | string | length == 0 and livekit_server_config_rtc_port_range_end | string | length == 0 and livekit_server_config_rtc_udp_port | string | length == 0)
+
+- name: Fail if LiveKit Server logging level is invalid
+  ansible.builtin.fail:
+    msg: >-
+      livekit_server_config_logging_level must be 'debug', 'info', 'warn', or 'error'
+  when: "livekit_server_config_logging_level not in ['debug', 'info', 'warn', 'error']"

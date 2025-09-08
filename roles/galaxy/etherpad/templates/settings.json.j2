@@ -1,6 +1,7 @@
 {#
 SPDX-FileCopyrightText: 2023-2024 Slavi Pantaleev
 SPDX-FileCopyrightText: 2024 Nikita Chernyi
+SPDX-FileCopyrightText: 2025 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
@@ -9,29 +10,64 @@ SPDX-License-Identifier: AGPL-3.0-or-later
   for details about how these settings work.
 #}
 {
-  "title": {{ etherpad_title|to_json }},
+  "title": {{ etherpad_configuration_title|to_json }},
   "favicon": "favicon.ico",
   "skinName": "colibris",
   "skinVariants": "super-light-toolbar super-light-editor light-background",
   "ip": "::",
   "port": {{ etherpad_container_http_port|to_json }},
   "showSettingsInAdminPage": true,
-  "dbType": {{ etherpad_database_type|to_json }},
+{% if etherpad_database_type == 'mysql' %}
+  "dbType": "mysql",
   "dbSettings": {
-    "database": {{ etherpad_database_name|to_json }},
-    "host":     {{ etherpad_database_hostname|to_json }},
-    "password": {{ etherpad_database_password|to_json }},
-    "port":     {{ etherpad_database_port|to_json }},
-    "user":     {{ etherpad_database_username|to_json }}
+    "host":     {{ etherpad_database_mysql_hostname | to_json }},
+    "port":     {{ etherpad_database_mysql_port | to_json }},
+    "user":     {{ etherpad_database_mysql_username | to_json }},
+    "password": {{ etherpad_database_mysql_password | to_json }},
+    "database": {{ etherpad_database_name | to_json }}
   },
-  "defaultPadText" : {{ etherpad_default_pad_text|to_json }},
+{% endif %}
+{% if etherpad_database_type == 'postgres' %}
+  "dbType": "postgres",
+  "dbSettings": {
+    "host":     {{ etherpad_database_hostname|to_json }},
+    "port":     {{ etherpad_database_port|to_json }},
+    "user":     {{ etherpad_database_username|to_json }},
+    "password": {{ etherpad_database_password|to_json }},
+    "database": {{ etherpad_database_name|to_json }}
+  },
+{% endif %}
+{% if etherpad_database_type == 'redis' %}
+  "dbType": "redis",
+  "dbSettings": {
+    "host":     {{ etherpad_redis_hostname | to_json }},
+    "port":     {{ etherpad_redis_port | to_json }},
+{% if etherpad_redis_username %}
+    "user":     {{ etherpad_redis_username | to_json }},
+{% endif %}
+{% if etherpad_redis_password %}
+    "password": {{ etherpad_redis_password | to_json }},
+{% endif %}
+    "database": {{ etherpad_redis_database | to_json }}
+  },
+{% endif %}
+{% if etherpad_database_type == 'sqlite' %}
+  "dbType": "sqlite",
+  "dbSettings": {
+    "filename": {{ etherpad_database_sqlite_path | to_json }}
+  },
+{% endif %}
+{% if etherpad_database_type == 'memory' %}
+  "dbType": "memory",
+{% endif %}
+  "defaultPadText" : {{ etherpad_configuration_defaultpadtext|to_json }},
   "suppressErrorsInPadText": false,
   "requireSession": false,
   "editOnly": false,
-  "minify": true,
+  "minify": {{ etherpad_configuration_minify | to_json }},
   "maxAge": 21600,
-  "abiword": {{ etherpad_abiword|to_json }},
-  "soffice": {{ etherpad_soffice|to_json }},
+  "abiword": {{ etherpad_configuration_abiword|to_json }},
+  "soffice": {{ etherpad_configuration_soffice|to_json }},
   "allowUnknownFileEnds": true,
   "requireAuthentication": false,
   "requireAuthorization": false,
@@ -119,7 +155,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
     "pageDown": true
   },
   "socketTransportProtocols" : ["websocket", "polling"],
-  "loglevel": "WARN",
+  "loglevel": {{ etherpad_configuration_loglevel | to_json }},
   "customLocaleStrings": {},
   "enableAdminUITests": false
 }

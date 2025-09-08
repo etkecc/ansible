@@ -10,11 +10,11 @@
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-funkwhale.git
   version: v1.4.0-12
   name: funkwhale
-- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-funkwhale.git
-  version: v1.4.0-12
-  name: funkwhale
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-gotosocial.git
-  version: v0.19.1-6
+  version: v0.19.2-0
+  name: gotosocial
+- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-gotosocial.git
+  version: v0.19.2-0
   name: gotosocial
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-linkding.git
   version: v1.42.0-0

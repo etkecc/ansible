@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: 2023 - 2024 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2024 Nikita Chernyi
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -12,9 +13,11 @@ etherpad_identifier: etherpad
 etherpad_base_path: "/{{ etherpad_identifier }}"
 etherpad_config_path: "{{ etherpad_base_path }}/config"
 etherpad_data_path: "{{ etherpad_base_path }}/data"
+etherpad_plugins_path: "{{ etherpad_base_path }}/plugins"
+etherpad_var_path: "{{ etherpad_base_path }}/var"
 
 # renovate: datasource=docker depName=etherpad/etherpad versioning=semver
-etherpad_version: 2.4.2
+etherpad_version: 2.5.0
 
 # Container user has to be able to write to the source file directories until this bug is fixed:
 # https://github.com/ether/etherpad-lite/issues/2683
@@ -176,7 +179,7 @@ etherpad_systemd_required_services_list_default: "{{ [devture_systemd_docker_bas
 etherpad_systemd_required_services_list_auto: []
 etherpad_systemd_required_services_list_custom: []
 
-# List of systemd services that Etherpad systemd service wants
+# List of systemd services that the Etherpad systemd service wants
 etherpad_systemd_wanted_services_list: "{{ etherpad_systemd_wanted_services_list_default + etherpad_systemd_wanted_services_list_auto + etherpad_systemd_wanted_services_list_custom }}"
 etherpad_systemd_wanted_services_list_default: []
 etherpad_systemd_wanted_services_list_auto: []
@@ -189,32 +192,46 @@ etherpad_framing_enabled: true
 
 # Database-related configuration fields.
 #
-# Etherpad requires a dedicated database
-etherpad_database_type: 'postgres'
-
-etherpad_database_username: etherpad
-etherpad_database_password: 'some-password'
-etherpad_database_hostname: ''
+# Also see: https://etherpad.org/doc/latest/#_database and https://www.npmjs.com/package/ueberdb2
+etherpad_database_type: "postgres"
+etherpad_database_mysql_hostname: ""
+etherpad_database_mysql_port: 3306
+etherpad_database_mysql_username: etherpad
+etherpad_database_mysql_password: ""
+etherpad_database_hostname: ""
 etherpad_database_port: 5432
-etherpad_database_name: 'etherpad'
+etherpad_database_username: etherpad
+etherpad_database_password: ""
+etherpad_database_name: "etherpad"
+etherpad_redis_hostname: ""
+etherpad_redis_port: 6379
+etherpad_redis_username: ""
+etherpad_redis_password: ""
+etherpad_redis_database: 0
+etherpad_database_sqlite_path: "/data/db.sqlite"
 
 # If a admin username and password is set, the /admin web page will be available.
 etherpad_admin_username: ''
 etherpad_admin_password: ''
 
-etherpad_database_connection_string: 'postgres://{{ etherpad_database_username }}:{{ etherpad_database_password }}@{{ etherpad_database_hostname }}:{{ etherpad_database_port }}/{{ etherpad_database_name }}'
+# Specify plugins to install
+etherpad_plugins: []
 
 # Variables configuring the etherpad
-etherpad_title: 'Etherpad'
-etherpad_abiword: null
-etherpad_soffice: null
-etherpad_plugins: []
-etherpad_default_pad_text: |
+etherpad_configuration_title: 'Etherpad'
+etherpad_configuration_minify: true
+etherpad_configuration_abiword: null
+etherpad_configuration_soffice: null
+etherpad_configuration_defaultpadtext: |
   Welcome to Etherpad!
 
   This pad text is synchronized as you type, so that everyone viewing this page sees the same text. This allows you to collaborate seamlessly on documents!
 
   Get involved with Etherpad at https://etherpad.org
+
+# Specify log level
+# Valid values: DEBUG, INFO, WARN, ERROR
+etherpad_configuration_loglevel: WARN
 
 # Default Etherpad configuration template which covers the generic use case.
 # You can customize it by controlling the various variables inside it.

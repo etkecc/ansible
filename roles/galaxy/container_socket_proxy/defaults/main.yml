@@ -11,7 +11,7 @@ container_socket_proxy_identifier: container-socket-proxy
 container_socket_proxy_base_path: "/{{ container_socket_proxy_identifier }}"
 
 # renovate: datasource=docker depName=ghcr.io/tecnativa/docker-socket-proxy versioning=semver
-container_socket_proxy_version: v0.4.0
+container_socket_proxy_version: v0.4.1
 
 container_socket_proxy_uid: ''
 container_socket_proxy_gid: ''

@@ -8,8 +8,16 @@
 
 #### Version Changes
 
-* [Cinny](https://github.com/ajbura/cinny): [v4.9.1](https://github.com/ajbura/cinny/releases/tag/v4.9.1) ⇾ [v4.10.0](https://github.com/ajbura/cinny/releases/tag/v4.10.0)
-* [Container Socket Proxy](https://github.com/Tecnativa/docker-socket-proxy): [0.3.0](https://github.com/Tecnativa/docker-socket-proxy/releases/tag/v0.3.0) ⇾ [v0.4.0](https://github.com/Tecnativa/docker-socket-proxy/releases/tag/v0.4.0)
-* [Fluffychat](https://github.com/krille-chan/fluffychat): [v2.1.0](https://github.com/krille-chan/fluffychat/releases/tag/v2.1.0) ⇾ [v2.1.1](https://github.com/krille-chan/fluffychat/releases/tag/v2.1.1)
-* [Synapse Admin](https://github.com/etkecc/synapse-admin): [v0.11.1-etke45](https://github.com/etkecc/synapse-admin/releases/tag/v0.11.1-etke45) ⇾ [v0.11.1-etke47](https://github.com/etkecc/synapse-admin/releases/tag/v0.11.1-etke47)
-* [Traefik](https://github.com/traefik/traefik): [v3.5.0](https://github.com/traefik/traefik/releases/tag/v3.5.0) ⇾ [v3.5.1](https://github.com/traefik/traefik/releases/tag/v3.5.1)
+* [Container Socket Proxy](https://github.com/Tecnativa/docker-socket-proxy): [v0.4.0](https://github.com/Tecnativa/docker-socket-proxy/releases/tag/v0.4.0) ⇾ [v0.4.1](https://github.com/Tecnativa/docker-socket-proxy/releases/tag/v0.4.1)
+* [Etherpad](https://github.com/ether/etherpad-lite): [2.4.2](https://github.com/ether/etherpad-lite/releases/tag/2.4.2) ⇾ [2.5.0](https://github.com/ether/etherpad-lite/releases/tag/2.5.0)
+* [Gotosocial](https://github.com/superseriousbusiness/gotosocial): [0.19.1](https://github.com/superseriousbusiness/gotosocial/releases/tag/v0.19.1) ⇾ [0.19.2](https://github.com/superseriousbusiness/gotosocial/releases/tag/v0.19.2)
+* [Livekit Server](https://github.com/livekit/livekit): [v1.9.0](https://github.com/livekit/livekit/releases/tag/v1.9.0) ⇾ [v1.9.1](https://github.com/livekit/livekit/releases/tag/v1.9.1)
+* Postgres Container Image V10: 10.23 _new_
+* Postgres Container Image V11: 11.22 _new_
+* Postgres Container Image V12: 12.22 _new_
+* Postgres Container Image V13: 13.22 _new_
+* Postgres Container Image V14: 14.19 _new_
+* Postgres Container Image V15: 15.14 _new_
+* Postgres Container Image V16: 16.10 _new_
+* Postgres Container Image V17: 17.6 _new_
+* Postgres Container Image V9: 9.6.24 _new_

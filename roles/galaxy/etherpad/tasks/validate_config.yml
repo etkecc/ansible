@@ -1,4 +1,7 @@
-# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
+# SPDX-FileCopyrightText: 2023 MASH project contributors
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -13,6 +16,10 @@
     - { "old": "etherpad_container_image_name_prefix", "new": "etherpad_container_image_registry_prefix" }
     - { "old": "etherpad_container_src_path", "new": "etherpad_container_image_self_build_src_files_path" }
     - { "old": "etherpad_database_engine", "new": "etherpad_database_type" }
+    - { "old": "etherpad_title", "new": "etherpad_configuration_title" }
+    - { "old": "etherpad_abiword", "new": "etherpad_configuration_abiword" }
+    - { "old": "etherpad_soffice", "new": "etherpad_configuration_soffice" }
+    - { "old": "etherpad_default_pad_text", "new": "etherpad_configuration_defaultpadtext" }
 
 - name: Fail if required Etherpad settings not defined
   ansible.builtin.fail:
@@ -22,8 +29,39 @@
   with_items:
     - etherpad_hostname
     - etherpad_path_prefix
-    - etherpad_database_hostname
     - etherpad_container_network
+
+- name: Fail if Etherpad logging level is invalid
+  ansible.builtin.fail:
+    msg: >-
+      etherpad_configuration_loglevel must be 'DEBUG', 'INFO', 'WARN', or 'ERROR'
+  when: "etherpad_configuration_loglevel not in ['DEBUG', 'INFO', 'WARN', 'ERROR']"
+
+- name: Fail if required Etherpad + MySQL integration settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`) when `etherpad_database_type` is `mysql`
+  when: "etherpad_database_type == 'mysql' and lookup('vars', item, default='') | string | length == 0"
+  with_items:
+    - etherpad_database_mysql_hostname
+    - etherpad_database_mysql_password
+
+- name: Fail if required Etherpad + Postgres integration settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`) when `etherpad_database_type` is `postgres`
+  when: "etherpad_database_type == 'postgres' and lookup('vars', item, default='') | string | length == 0"
+  with_items:
+    - etherpad_database_hostname
+    - etherpad_database_password
+
+- name: Fail if required Etherpad + Redis integration settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`) when `etherpad_database_type` is `redis`
+  when: "etherpad_database_type == 'redis' and lookup('vars', item, default='') | string | length == 0"
+  with_items:
+    - etherpad_redis_hostname
 
 - name: Run if Traefik is enabled
   when: etherpad_container_labels_traefik_enabled | bool

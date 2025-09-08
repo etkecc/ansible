@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: Ensure GoToSocial is started
+- name: Ensure GoToSocial service is started
   ansible.builtin.service:
     name: "{{ gotosocial_identifier }}"
     state: started

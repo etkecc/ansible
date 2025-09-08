@@ -25,6 +25,14 @@
       owner: "{{ etherpad_user_uid }}"
       group: "{{ etherpad_user_gid }}"
       when: true
+    - path: "{{ etherpad_plugins_path }}"
+      owner: "{{ etherpad_user_uid }}"
+      group: "{{ etherpad_user_gid }}"
+      when: true
+    - path: "{{ etherpad_var_path }}"
+      owner: "{{ etherpad_user_uid }}"
+      group: "{{ etherpad_user_gid }}"
+      when: true
     - path: "{{ etherpad_container_image_self_build_src_files_path }}"
       owner: root
       group: root
@@ -90,7 +98,7 @@
         chdir: "{{ etherpad_container_image_self_build_src_files_path }}"
         cmd: |
           {{ devture_systemd_docker_base_host_command_docker }} build \
-          --build-arg ETHERPAD_PLUGINS="{{ etherpad_plugins|join(' ') }}" \
+          --build-arg ETHERPAD_PLUGINS="{{ etherpad_plugins | join(' ') }}" \
           -t "{{ etherpad_container_image_self_build_name }}" \
           -f Dockerfile \
           .

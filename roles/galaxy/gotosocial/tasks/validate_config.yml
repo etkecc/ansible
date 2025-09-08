@@ -23,7 +23,14 @@
       You need to define a required configuration setting (`{{ item }}`).
   when: "lookup('vars', item, default='') | string | length == 0"
   with_items:
+    - gotosocial_identifier
+    - gotosocial_uid
+    - gotosocial_gid
     - gotosocial_hostname
+    - gotosocial_path_prefix
+    - gotosocial_container_network
+    - gotosocial_database_hostname
+    - gotosocial_database_password
 
 - name: Fail if SMTP settings are missing (and SMTP is enabled by setting host)
   ansible.builtin.fail:
@@ -32,3 +39,31 @@
   when: "gotosocial_smtp_host != '' and lookup('vars', item, default='') | string | length == 0"
   with_items:
     - gotosocial_smtp_from
+
+- name: Run if Traefik is enabled
+  when: gotosocial_container_labels_traefik_enabled | bool
+  block:
+    - name: Fail if Traefik settings required for GoToSocial are not defined
+      ansible.builtin.fail:
+        msg: >-
+          You need to define a required configuration setting (`{{ item }}`).
+      when: "lookup('vars', item, default='') | string | length == 0"
+      with_items:
+        - gotosocial_container_labels_traefik_hostname
+        - gotosocial_container_labels_traefik_path_prefix
+
+    - name: Fail if gotosocial_container_labels_traefik_path_prefix is different than /
+      ansible.builtin.fail:
+        msg: >-
+          gotosocial_container_labels_traefik_path_prefix (`{{ gotosocial_container_labels_traefik_path_prefix }}`) must be `/`.
+          GoToSocial does not support hosting under a subpath yet.
+      when: "gotosocial_container_labels_traefik_path_prefix != '/'"
+
+    # We ensure it doesn't end with a slash, because we handle both (slash and no-slash).
+    # Knowing that `gotosocial_container_labels_traefik_path_prefix` does not end with a slash
+    # ensures we know how to set these routes up without having to do "does it end with a slash" checks elsewhere.
+    - name: Fail if gotosocial_container_labels_traefik_path_prefix ends with a slash
+      ansible.builtin.fail:
+        msg: >-
+          gotosocial_container_labels_traefik_path_prefix (`{{ gotosocial_container_labels_traefik_path_prefix }}`) must either be `/` or not end with a slash (e.g. `/gotosocial`).
+      when: "gotosocial_container_labels_traefik_path_prefix != '/' and gotosocial_container_labels_traefik_path_prefix[-1] == '/'"

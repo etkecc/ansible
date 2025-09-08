@@ -15,7 +15,7 @@ livekit_server_base_path: "/{{ livekit_server_identifier }}"
 livekit_server_config_path: "{{ livekit_server_base_path }}/config"
 
 # renovate: datasource=docker depName=docker.io/livekit/livekit-server
-livekit_server_version: v1.9.0
+livekit_server_version: v1.9.1
 
 livekit_server_uid: ''
 livekit_server_gid: ''
@@ -128,6 +128,12 @@ livekit_server_systemd_required_services_list: "{{ livekit_server_systemd_requir
 livekit_server_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
 livekit_server_systemd_required_services_list_auto: []
 livekit_server_systemd_required_services_list_custom: []
+
+# List of systemd services that the LiveKit Server systemd service wants
+livekit_server_systemd_wanted_services_list: "{{ livekit_server_systemd_wanted_services_list_default + livekit_server_systemd_wanted_services_list_auto + livekit_server_systemd_wanted_services_list_custom }}"
+livekit_server_systemd_wanted_services_list_default: []
+livekit_server_systemd_wanted_services_list_auto: []
+livekit_server_systemd_wanted_services_list_custom: []
 
 # Holds the final LiveKit Server configuration (a combination of the default and its extension).
 # You most likely don't need to touch this variable. Instead, see `livekit_server_configuration_yaml` or `livekit_server_configuration_extension_yaml`.

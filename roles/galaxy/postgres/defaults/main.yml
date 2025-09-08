@@ -132,15 +132,35 @@ postgres_container_image_registry_prefix_upstream_default: "docker.io/"
 # > LOG:  startup process (PID 37) was terminated by signal 11: Segmentation fault
 postgres_container_image_suffix: "{{ '-alpine' if postgres_architecture in ['amd64', 'arm64'] else '' }}"
 
-postgres_container_image_v9: "{{ postgres_container_image_registry_prefix }}postgres:9.6.24{{ postgres_container_image_suffix }}"
-postgres_container_image_v10: "{{ postgres_container_image_registry_prefix }}postgres:10.23{{ postgres_container_image_suffix }}"
-postgres_container_image_v11: "{{ postgres_container_image_registry_prefix }}postgres:11.22{{ postgres_container_image_suffix }}"
-postgres_container_image_v12: "{{ postgres_container_image_registry_prefix }}postgres:12.22{{ postgres_container_image_suffix }}"
-postgres_container_image_v13: "{{ postgres_container_image_registry_prefix }}postgres:13.22{{ postgres_container_image_suffix }}"
-postgres_container_image_v14: "{{ postgres_container_image_registry_prefix }}postgres:14.19{{ postgres_container_image_suffix }}"
-postgres_container_image_v15: "{{ postgres_container_image_registry_prefix }}postgres:15.14{{ postgres_container_image_suffix }}"
-postgres_container_image_v16: "{{ postgres_container_image_registry_prefix }}postgres:16.10{{ postgres_container_image_suffix }}"
-postgres_container_image_v17: "{{ postgres_container_image_registry_prefix }}postgres:17.6{{ postgres_container_image_suffix }}"
+postgres_container_image_name: postgres
+
+postgres_container_image_v9: "{{ postgres_container_image_registry_prefix }}{{ postgres_container_image_name }}:{{ postgres_container_image_v9_version }}{{ postgres_container_image_suffix }}"
+postgres_container_image_v9_version: "9.6.24"
+
+postgres_container_image_v10: "{{ postgres_container_image_registry_prefix }}{{ postgres_container_image_name }}:{{ postgres_container_image_v10_version }}{{ postgres_container_image_suffix }}"
+postgres_container_image_v10_version: "10.23"
+
+postgres_container_image_v11: "{{ postgres_container_image_registry_prefix }}{{ postgres_container_image_name }}:{{ postgres_container_image_v11_version }}{{ postgres_container_image_suffix }}"
+postgres_container_image_v11_version: "11.22"
+
+postgres_container_image_v12: "{{ postgres_container_image_registry_prefix }}{{ postgres_container_image_name }}:{{ postgres_container_image_v12_version }}{{ postgres_container_image_suffix }}"
+postgres_container_image_v12_version: "12.22"
+
+postgres_container_image_v13: "{{ postgres_container_image_registry_prefix }}{{ postgres_container_image_name }}:{{ postgres_container_image_v13_version }}{{ postgres_container_image_suffix }}"
+postgres_container_image_v13_version: "13.22"
+
+postgres_container_image_v14: "{{ postgres_container_image_registry_prefix }}{{ postgres_container_image_name }}:{{ postgres_container_image_v14_version }}{{ postgres_container_image_suffix }}"
+postgres_container_image_v14_version: "14.19"
+
+postgres_container_image_v15: "{{ postgres_container_image_registry_prefix }}{{ postgres_container_image_name }}:{{ postgres_container_image_v15_version }}{{ postgres_container_image_suffix }}"
+postgres_container_image_v15_version: "15.14"
+
+postgres_container_image_v16: "{{ postgres_container_image_registry_prefix }}{{ postgres_container_image_name }}:{{ postgres_container_image_v16_version }}{{ postgres_container_image_suffix }}"
+postgres_container_image_v16_version: "16.10"
+
+postgres_container_image_v17: "{{ postgres_container_image_registry_prefix }}{{ postgres_container_image_name }}:{{ postgres_container_image_v17_version }}{{ postgres_container_image_suffix }}"
+postgres_container_image_v17_version: "17.6"
+
 postgres_container_image_latest: "{{ postgres_container_image_v17 }}"
 
 # This variable is assigned at runtime. Overriding its value has no effect.

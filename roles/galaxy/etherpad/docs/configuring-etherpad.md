@@ -1,10 +1,21 @@
 <!--
+SPDX-FileCopyrightText: 2020 - 2024 MDAD project contributors
+SPDX-FileCopyrightText: 2020 - 2024 Slavi Pantaleev
+SPDX-FileCopyrightText: 2020 Aaron Raimist
+SPDX-FileCopyrightText: 2020 Chris van Dijk
+SPDX-FileCopyrightText: 2020 Dominik Zajac
+SPDX-FileCopyrightText: 2020 Mickaël Cornière
 SPDX-FileCopyrightText: 2021 Béla Becker
-SPDX-FileCopyrightText: 2021 - 2024 Slavi Pantaleev
 SPDX-FileCopyrightText: 2021 pushytoxin
-SPDX-FileCopyrightText: 2022 Jim Myhrberg
-SPDX-FileCopyrightText: 2022 Nikita Chernyi
 SPDX-FileCopyrightText: 2022 felixx9
+SPDX-FileCopyrightText: 2022 François Darveau
+SPDX-FileCopyrightText: 2022 Jim Myhrberg
+SPDX-FileCopyrightText: 2022 Julian Foad
+SPDX-FileCopyrightText: 2022 Nikita Chernyi
+SPDX-FileCopyrightText: 2022 Warren Bailey
+SPDX-FileCopyrightText: 2023 Antonis Christofides
+SPDX-FileCopyrightText: 2023 Felix Stupp
+SPDX-FileCopyrightText: 2023 Pierre 'McFly' Marty
 SPDX-FileCopyrightText: 2024 - 2025 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
@@ -13,6 +24,14 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 # Setting up Etherpad
 
 This is an [Ansible](https://www.ansible.com/) role which installs [Etherpad](https://etherpad.org), an open source collaborative text editor, to run as a [Docker](https://www.docker.com/) container wrapped in a systemd service.
+
+See the project's [documentation](https://docs.etherpad.org/) to learn what Etherpad does and why it might be useful to you.
+
+## Prerequisites
+
+To run an Etherpad instance it is necessary to prepare a database supported by [ueberdb2](https://www.npmjs.com/package/ueberdb2). The role supports [MariaDB](https://mariadb.org), [Postgres](https://www.postgresql.org/), [Redis](https://redis.io/), [SQLite](https://www.sqlite.org/), as well as `memory` (an in-memory ephemeral database). By default it is configured to use Postgres.
+
+If you are looking for an Ansible role for MariaDB, Postgres, and Redis, you can check out [ansible-role-postgres](https://github.com/mother-of-all-self-hosting/ansible-role-postgres), [ansible-role-mariadb](https://github.com/mother-of-all-self-hosting/ansible-role-mariadb), and [ansible-role-redis](https://github.com/mother-of-all-self-hosting/ansible-role-redis), all of which are maintained by the [Mother-of-All-Self-Hosting (MASH)](https://github.com/mother-of-all-self-hosting) team. The roles for [KeyDB](https://keydb.dev/) ([ansible-role-keydb](https://github.com/mother-of-all-self-hosting/ansible-role-keydb)) and [Valkey](https://valkey.io/) ([ansible-role-valkey](https://github.com/mother-of-all-self-hosting/ansible-role-valkey)) are available as well.
 
 ## Adjusting the playbook configuration
 
@@ -38,7 +57,8 @@ etherpad_enabled: true
 
 ### Set the hostname
 
-**Note**: if you use the MDAD Ansible playbook, it installs Etherpad on the `etherpad.` subdomain (`etherpad.example.com`) by default, so this setting is optional.
+>[!NOTE]
+> If you use the MDAD Ansible playbook, it installs Etherpad on the `etherpad.` subdomain (`etherpad.example.com`) by default, so this setting is optional.
 
 To serve Etherpad you need to set the hostname as well. To do so, add the following configuration to your `vars.yml` file. Make sure to replace `example.com` with your own value.
 
@@ -51,18 +71,66 @@ etherpad_hostname: "example.com"
 
 After adjusting the hostname, make sure to adjust your DNS records to point the Etherpad domain to your server.
 
-### Set the username and password of database
+### Configure database
 
-**Note**: if you use the MDAD Ansible playbook, these settings are not needed as they are specified by default. See its [`matrix_servers`](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/group_vars/matrix_servers) for details.
+>[!NOTE]
+> If you use the MDAD Ansible playbook, any additional configurations are not required as they are specified by default. See its [`matrix_servers`](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/group_vars/matrix_servers) for details.
 
-Add the following configuration to your `vars.yml` file for the database, which Etherpad is going to use.
+Etherpad supports databases available with [ueberdb2](https://www.npmjs.com/package/ueberdb2), including MariaDB and Postgres. By default the role is configured to use Postgres for its database.
 
-Make sure to replace `YOUR_DATABASE_USERNAME_HERE` and `YOUR_DATABASE_PASSWORD_HERE` with your own values. **Do not use the default password**, which is set to `some-password` on the `main.yml` file.
+#### MariaDB
+
+To set up MariaDB for the Etherpad instance, add the following configuration to your `vars.yml` file:
+
+```yaml
+etherpad_database_type: mysql
+etherpad_database_mysql_username: YOUR_DATABASE_USERNAME_HERE
+etherpad_database_mysql_password: YOUR_DATABASE_PASSWORD_HERE
+```
+
+Make sure to replace `YOUR_DATABASE_USERNAME_HERE` and `YOUR_DATABASE_PASSWORD_HERE` with your own values.
+
+#### Postgres
+
+To use Postgres, add the following configuration to your `vars.yml` file:
 
 ```yaml
 etherpad_database_username: YOUR_DATABASE_USERNAME_HERE
 etherpad_database_password: YOUR_DATABASE_PASSWORD_HERE
 ```
+
+#### Redis
+
+To use a Redis data-store (or compatible service like Valkey), add the following configuration to your `vars.yml` file:
+
+```yaml
+etherpad_database_type: redis
+etherpad_redis_hostname: YOUR_REDIS_SERVER_HOSTNAME_HERE
+```
+
+Make sure to replace `YOUR_REDIS_SERVER_HOSTNAME_HERE` with the hostname of your Redis (or the compatible) instance.
+
+#### SQLite
+
+To use a SQLite, you need to specify its path by adding the following configuration to your `vars.yml` file:
+
+```yaml
+etherpad_database_type: sqlite
+```
+
+The database file will be created inside the directory mounted with `{{ etherpad_data_path }}`.
+
+#### In-memory database
+
+It is also possible to use an in-memory ephemeral database by adding the following configuration to your `vars.yml` file:
+
+```yaml
+etherpad_database_type: memory
+```
+
+#### Other databases
+
+For other databases like [CouchDB](https://couchdb.apache.org/), add custom configurations to `etherpad_configuration_extension_json`. Refer to [the template settings.json file](https://github.com/ether/etherpad-lite/blob/develop/settings.json.template) for details about necessary settings.
 
 ### Create admin user (optional)
 
@@ -106,17 +174,18 @@ Setting `false` to the variable disallows Etherpad to be embedded on a website w
 The name of the instance is set to "Etherpad" by default. To change it, add the following configuration to your `vars.yml` file (adapt to your needs):
 
 ```yaml
-etherpad_title: YOUR_INSTANCE_NAME_HERE
+etherpad_configuration_title: YOUR_INSTANCE_NAME_HERE
 ```
 
 ### Set the default text (optional)
 
-You can also edit the default text on a new pad with the variable `etherpad_default_pad_text`. To do so, add the following configuration to your `vars.yml` file (adapt to your needs).
+You can also edit the default text on a new pad with the variable `etherpad_configuration_defaultpadtext`. To do so, add the following configuration to your `vars.yml` file (adapt to your needs).
 
-**Note**: the whole text (all of its belonging lines) under the variable needs to be indented with 2 spaces.
+>[!NOTE]
+> The whole text (all of its belonging lines) under the variable needs to be indented with 2 spaces.
 
 ```yaml
-etherpad_default_pad_text: |
+etherpad_configuration_defaultpadtext: |
   Welcome to Etherpad!
 
   This pad text is synchronized as you type, so that everyone viewing this page sees the same text. This allows you to collaborate seamlessly on documents!
@@ -228,9 +297,6 @@ You can find the logs in [systemd-journald](https://www.freedesktop.org/software
 The default logging level for this component is `WARN`. If you want to increase the verbosity, add the following configuration to your `vars.yml` file and re-run the playbook:
 
 ```yaml
-# Valid values: ERROR, WARN, INFO, DEBUG
-etherpad_configuration_extension_json: |
- {
-  "loglevel": "DEBUG",
- }
+# Valid values: DEBUG, INFO, WARN, ERROR
+etherpad_configuration_loglevel: DEBUG
 ```

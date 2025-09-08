@@ -6,13 +6,13 @@
 * Buscarron: v1.4.3
 * Chatgpt: 3.1.4
 * Cinny: v4.10.0
-* Container Socket Proxy: v0.4.0
+* Container Socket Proxy: v0.4.1
 * Coturn: 4.6.2-r11
 * Discord: v0.7.5
 * Draupnir: v2.6.1
 * Element: v1.11.110
 * Element Call: v0.15.0
-* Etherpad: 2.4.2
+* Etherpad: 2.5.0
 * Exim Relay: 4.98.1-r0-2
 * Firezone: 0.7.36
 * Fluffychat: v2.1.1
@@ -20,7 +20,7 @@
 * Gmessages: v0.6.5
 * Go Neb: latest
 * Googlechat: v0.5.2
-* Gotosocial: 0.19.1
+* Gotosocial: 0.19.2
 * Grafana: 11.6.5
 * Heisenbridge: 1.15.3
 * Honoroit: v0.9.29
@@ -33,7 +33,7 @@
 * Linkding: 1.42.0
 * Linkedin: latest
 * Livekit Jwt Service: 0.3.0
-* Livekit Server: v1.9.0
+* Livekit Server: v1.9.1
 * Ma1Sd: 2.5.0
 * Matrix Reminder Bot: v0.3.0
 * Maubot: v0.5.2
@@ -42,6 +42,15 @@
 * Miniflux: 2.2.12
 * Ntfy: v2.14.0
 * Peertube: v7.2.3
+* Postgres Container Image V10: 10.23
+* Postgres Container Image V11: 11.22
+* Postgres Container Image V12: 12.22
+* Postgres Container Image V13: 13.22
+* Postgres Container Image V14: 14.19
+* Postgres Container Image V15: 15.14
+* Postgres Container Image V16: 16.10
+* Postgres Container Image V17: 17.6
+* Postgres Container Image V9: 9.6.24
 * Postmoogle: v0.9.26
 * Prometheus: v3.5.0
 * Prometheus Node Exporter: v1.9.1

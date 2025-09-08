@@ -5,6 +5,9 @@ Description=LiveKit Server
 After={{ service }}
 Requires={{ service }}
 {% endfor %}
+{% for service in livekit_server_systemd_wanted_services_list %}
+Wants={{ service }}
+{% endfor %}
 
 [Service]
 Type=simple

@@ -30,7 +30,7 @@
         "/defaults/main.yml$/"
       ],
       "matchStrings": [
-        "(?<name>postgres_container_image_v\\d+):\\s*[\"']?{{\\s*[^}]+\\s*}}\\s*postgres:(?<currentValue>[^}]+)\\s*\\{\\{\\s*[^}]+\\s*\\}\\}"
+        "(?<name>postgres_container_image_v\\d+_version):\\s*\"(?<currentValue>[^\"]+)\""
       ],
       "depNameTemplate": "postgres",
       "datasourceTemplate": "docker",

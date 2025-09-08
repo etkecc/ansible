@@ -38,7 +38,7 @@
       initial_password: "{{ password }}"
       initial_type: "{{ initial_role }}"
 
-- name: Ensure GoToSocial is started
+- name: Ensure GoToSocial service is started
   ansible.builtin.service:
     name: "{{ gotosocial_identifier }}"
     state: started

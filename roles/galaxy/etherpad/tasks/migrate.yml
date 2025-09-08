@@ -17,16 +17,3 @@
       ansible.builtin.file:
         path: "{{ etherpad_base_path }}/settings.json"
         state: absent
-
-    - name: Ensure other Etherpad config files are relocated
-      ansible.builtin.command:
-        cmd: "mv {{ item.src }} {{ item.dst }}"
-        creates: "{{ item.dst }}"
-        removes: "{{ item.src }}"
-      with_items:
-        # The old file had a typo in its name
-        - src: "{{ etherpad_base_path }}/apijey.json"
-          dst: "{{ etherpad_data_path }}/apikey.json"
-
-        - src: "{{ etherpad_base_path }}/sessionkey.json"
-          dst: "{{ etherpad_data_path }}/sessionkey.json"
