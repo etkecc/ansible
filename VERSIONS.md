@@ -63,7 +63,7 @@
 * Sliding Sync: v0.99.19
 * Spam Checker Mjolnir Antispam Git: v1.11.0
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
-* Static Files: 2.38.0
+* Static Files: 2.38.1
 * Sygnal: v0.15.1
 * Synapse: v1.137.0
 * Synapse Admin: v0.11.1-etke47

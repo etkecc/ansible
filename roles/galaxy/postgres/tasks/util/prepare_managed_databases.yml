@@ -1,5 +1,5 @@
 ---
-- name: Ensure Postgres is started
+- name: Ensure Postgres service is started
   ansible.builtin.service:
     name: "{{ postgres_identifier }}"
     state: started

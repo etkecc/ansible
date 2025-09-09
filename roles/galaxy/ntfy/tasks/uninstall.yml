@@ -24,6 +24,37 @@
         path: "{{ devture_systemd_docker_base_systemd_path }}/{{ ntfy_identifier }}.service"
         state: absent
 
+    - name: Ensure ntfy support file does not exist
+      ansible.builtin.file:
+        path: "{{ ntfy_base_path }}/{{ item }}"
+        state: absent
+      with_items:
+        - labels
+
+    # See `ntfy_*_path` on defaults/main.yml for the list of directories created by installing the service.
+    - name: Ensure ntfy paths except data path do not exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - "{{ ntfy_config_path }}"
+        - "{{ ntfy_cache_path }}"
+        - "{{ ntfy_attachment_cache_path }}"
+
+    - name: Ensure ntfy local data path does not exist if empty
+      ansible.builtin.command:
+        cmd: "rmdir {{ ntfy_data_path }}"
+      register: ntfy_data_path_deletion_result
+      changed_when: ntfy_data_path_deletion_result.rc == 0
+      failed_when: false
+
+    - name: Ensure ntfy base path does not exist if empty
+      ansible.builtin.command:
+        cmd: "rmdir {{ ntfy_base_path }}"
+      register: ntfy_base_path_deletion_result
+      changed_when: ntfy_base_path_deletion_result.rc == 0
+      failed_when: false
+
     - name: Ensure ntfy container network does not exist via community.docker.docker_network
       when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
       community.docker.docker_network:
@@ -39,7 +70,20 @@
       register: network_deletion_result
       changed_when: ntfy_container_network in network_deletion_result.stdout
 
-    - name: Ensure ntfy path does not exist
-      ansible.builtin.file:
-        path: "{{ ntfy_base_path }}"
-        state: absent
+- name: Check existence of ntfy local data path
+  ansible.builtin.stat:
+    path: "{{ ntfy_data_path }}"
+  register: ntfy_data_path_stat
+
+# We just want to notify the user. Deleting data is too destructive.
+- name: Notify if ntfy local data remains
+  when: ntfy_data_path_stat.stat.exists | bool
+  ansible.builtin.set_fact:
+    devture_playbook_runtime_messages_list: |
+      {{
+        devture_playbook_runtime_messages_list | default([])
+        +
+        [
+          "Note: As the local ntfy instance has been removed, some old data remains in `" + ntfy_data_path + "`. Feel free to delete it."
+        ]
+      }}

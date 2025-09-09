@@ -27,8 +27,12 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --name {{ postgres_identifier }} \
       --log-driver=none \
       --user={{ postgres_uid }}:{{ postgres_gid }} \
+      {% if postgres_container_cap_drop_all_enabled %}
       --cap-drop=ALL \
+      {% endif %}
+      {% if postgres_container_read_only_enabled %}
       --read-only \
+      {% endif %}
       --tmpfs=/tmp:rw,noexec,nosuid,size=100m \
       --tmpfs=/run/postgresql:rw,noexec,nosuid,size=100m \
       --shm-size={{ postgres_container_shm_size }} \
@@ -38,7 +42,9 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% endif %}
       --env-file={{ postgres_base_path }}/env-postgres-server \
       --mount type=bind,src={{ postgres_data_path }},dst=/var/lib/postgresql/data \
+      {% if postgres_container_mount_etc_passwd_enabled %}
       --mount type=bind,src=/etc/passwd,dst=/etc/passwd,ro \
+      {% endif %}
       {% for arg in postgres_container_extra_arguments %}
       {{ arg }} \
       {% endfor %}

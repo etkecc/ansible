@@ -51,7 +51,15 @@ postgres_work_mem: "{{ 64 if postgres_work_mem_raw|int <= 64 else postgres_work_
 postgres_huge_pages: "{{ 'off' if postgres_memtotal_kb|int/1024/1024 < 32 else 'try' }}"
 
 # postgres_initdb_args controls POSTGRES_INITDB_ARGS
-postgres_initdb_args: '--lc-collate {{ postgres_default_lc_collate }} --lc-ctype {{ postgres_default_lc_type }} --encoding {{ postgres_default_encoding }}'
+postgres_initdb_args: "{{ postgres_initdb_args_list | join(' ') }}"
+
+postgres_initdb_args_list: "{{ postgres_initdb_args_list_default + postgres_initdb_args_list_auto + postgres_initdb_args_list_custom }}"
+postgres_initdb_args_list_default:
+  - "--lc-collate {{ postgres_default_lc_collate }}"
+  - "--lc-ctype {{ postgres_default_lc_type }}"
+  - "--encoding {{ postgres_default_encoding }}"
+postgres_initdb_args_list_auto: []
+postgres_initdb_args_list_custom: []
 
 # postgres_systemd_services_to_stop_for_maintenance_list specifies the list of systemd services to stop before upgrading or vacuuming (for certain vacuum operations).
 # These services will be restarted after the operation completes.
@@ -173,12 +181,24 @@ postgres_container_image_force_pull: "{{ postgres_container_image_to_use.endswit
 # we default to at least 30 seconds.
 postgres_container_stop_grace_time_seconds: "{{ [devture_systemd_docker_base_container_stop_grace_time_seconds, 30] | max }}"
 
+# Controls whether the container will be started with a read-only filesystem.
+postgres_container_read_only_enabled: true
+
+# Controls whether the container will be started with dropped privileges (`--cap-drop=ALL`)
+postgres_container_cap_drop_all_enabled: true
+
+# Controls whether the host's /etc/passwd file is mounted (as read-only) into the container (at /etc/passwd).
+#
+# When running as root, we don't need to do this, as the container would likely swich to an account it already contains in its own /etc/passwd file.
+#
+# When running as non-root, we likely need to do this as we'd like for the UID (`postgres_uid`) we run as to resolve to a named user,
+# which likely already exists in the host's /etc/passwd file.
+postgres_container_mount_etc_passwd_enabled: "{{ postgres_uid != 0 }}"
+
 # A list of extra arguments to pass to the container
 postgres_container_extra_arguments: []
 
-# postgres_postgres_process_extra_arguments_auto is for use by the playbook that wraps this role.
-# For your own custom definitions, see postgres_postgres_process_extra_arguments_custom.
-postgres_postgres_process_extra_arguments_auto: [
+postgres_postgres_process_extra_arguments_default: [
   "-c 'max_connections={{ postgres_max_connections|int }}'",
   "-c 'shared_buffers={{ (postgres_shared_buffers|int/1024)|int }}MB'",
   "-c 'effective_cache_size={{ (postgres_effective_cache_size|int/1024)|int }}MB'",
@@ -197,11 +217,14 @@ postgres_postgres_process_extra_arguments_auto: [
   "-c 'max_parallel_workers_per_gather={{ postgres_max_parallel_workers_per_gather|int }}'",
   "-c 'max_parallel_maintenance_workers={{ postgres_max_parallel_maintenance_workers|int }}'"
 ]
+# postgres_postgres_process_extra_arguments_auto is for use by the playbook that wraps this role.
+# For your own custom definitions, see postgres_postgres_process_extra_arguments_custom.
+postgres_postgres_process_extra_arguments_auto: []
 postgres_postgres_process_extra_arguments_custom: []
 
 # A list of extra arguments to pass to the postgres process
 # e.g. "-c 'max_connections=200'"
-postgres_process_extra_arguments: "{{ postgres_postgres_process_extra_arguments_auto + postgres_postgres_process_extra_arguments_custom }}"
+postgres_process_extra_arguments: "{{ postgres_postgres_process_extra_arguments_default + postgres_postgres_process_extra_arguments_auto + postgres_postgres_process_extra_arguments_custom }}"
 
 # Controls whether the Postgres container exposes a port (tcp/5432 in the
 # container) that can be used to access the database from outside the container (e.g. with psql)

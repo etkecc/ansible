@@ -124,6 +124,16 @@ To enable it, add the following configuration to your `vars.yml` file:
 ntfy_web_root: "app"
 ```
 
+### Message cache
+
+By default the ntfy instance is configured to keep notifications in an on-disk cache, so that notifications can be retaied across restarts. The cache file is stored in the directory specified with `ntfy_data_path`.
+
+To use an in-memory cache instead, add the following configuration to your `vars.yml` file:
+
+```yaml
+ntfy_cache_file_enabled: false
+```
+
 ### Allow attachments (optional)
 
 The ntfy server can be configured to allow users to [attach files](https://docs.ntfy.sh/publish/#attachments) to notifications (default: max. 15M per file, 5G in total).

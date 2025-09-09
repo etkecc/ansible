@@ -14,15 +14,15 @@
     group: "{{ ntfy_gid }}"
   with_items:
     - "{{ ntfy_base_path }}"
-    - "{{ ntfy_config_dir_path }}"
+    - "{{ ntfy_config_path }}"
     - "{{ ntfy_data_path }}"
     - "{{ ntfy_cache_path }}"
-    - "{{ ntfy_attachment_cache_dir_path }}"
+    - "{{ ntfy_attachment_cache_path }}"
 
 - name: Ensure ntfy configuration file installed
   ansible.builtin.copy:
     content: "{{ ntfy_configuration | to_nice_yaml(indent=2, width=999999) }}"
-    dest: "{{ ntfy_config_dir_path }}/server.yml"
+    dest: "{{ ntfy_config_path }}/server.yml"
     mode: "0644"
     owner: "{{ ntfy_uid }}"
     group: "{{ ntfy_gid }}"

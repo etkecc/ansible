@@ -6,7 +6,11 @@
 
 base_url: {{ ntfy_base_url }}
 behind_proxy: true
+
+{% if ntfy_cache_file_enabled %}
 cache_file: /data/cache.db
+{% endif %}
+
 listen-http: :8080
 
 # Rate Limits

@@ -14,7 +14,7 @@
     {{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} run \
     --rm \
     --user={{ ntfy_uid }}:{{ ntfy_gid }} \
-    --mount type=bind,src={{ ntfy_config_dir_path }},dst=/etc/ntfy,ro \
+    --mount type=bind,src={{ ntfy_config_path }},dst=/etc/ntfy,ro \
     --mount type=bind,src={{ ntfy_data_path }},dst=/data \
     --network none \
     {{ ntfy_container_image }} \
@@ -27,7 +27,7 @@
     {{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} run \
     --rm \
     --user={{ ntfy_uid }}:{{ ntfy_gid }} \
-    --mount type=bind,src={{ ntfy_config_dir_path }},dst=/etc/ntfy,ro \
+    --mount type=bind,src={{ ntfy_config_path }},dst=/etc/ntfy,ro \
     --mount type=bind,src={{ ntfy_data_path }},dst=/data \
     --network none \
     {{ ntfy_container_image }} \
@@ -52,7 +52,7 @@
     {{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} run \
     --rm \
     --user={{ ntfy_uid }}:{{ ntfy_gid }} \
-    --mount type=bind,src={{ ntfy_config_dir_path }},dst=/etc/ntfy,ro \
+    --mount type=bind,src={{ ntfy_config_path }},dst=/etc/ntfy,ro \
     --mount type=bind,src={{ ntfy_data_path }},dst=/data \
     --network none \
     --env NTFY_PASSWORD={{ item.password }} \
@@ -69,7 +69,7 @@
     {{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} run \
     --rm \
     --user={{ ntfy_uid }}:{{ ntfy_gid }} \
-    --mount type=bind,src={{ ntfy_config_dir_path }},dst=/etc/ntfy,ro \
+    --mount type=bind,src={{ ntfy_config_path }},dst=/etc/ntfy,ro \
     --mount type=bind,src={{ ntfy_data_path }},dst=/data \
     --network none \
     --env NTFY_PASSWORD={{ item.password }} \
@@ -86,7 +86,7 @@
     {{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} run \
     --rm \
     --user={{ ntfy_uid }}:{{ ntfy_gid }} \
-    --mount type=bind,src={{ ntfy_config_dir_path }},dst=/etc/ntfy,ro \
+    --mount type=bind,src={{ ntfy_config_path }},dst=/etc/ntfy,ro \
     --mount type=bind,src={{ ntfy_data_path }},dst=/data \
     --network none \
     {{ ntfy_container_image }} \
@@ -107,7 +107,7 @@
     {{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} run \
     --rm \
     --user={{ ntfy_uid }}:{{ ntfy_gid }} \
-    --mount type=bind,src={{ ntfy_config_dir_path }},dst=/etc/ntfy,ro \
+    --mount type=bind,src={{ ntfy_config_path }},dst=/etc/ntfy,ro \
     --mount type=bind,src={{ ntfy_data_path }},dst=/data \
     --network none \
     {{ ntfy_container_image }} \

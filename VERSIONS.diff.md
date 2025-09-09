@@ -22,3 +22,4 @@
 * Postgres Container Image V16: 16.10 _new_
 * Postgres Container Image V17: 17.6 _new_
 * Postgres Container Image V9: 9.6.24 _new_
+* Static Files: 2.38.0 ⇾ 2.38.1
