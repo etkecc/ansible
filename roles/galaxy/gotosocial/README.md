@@ -10,7 +10,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 ![Lint badge](https://woodpecker.hyteck.de/api/badges/moan0s/role-gotosocial/status.svg)
 
-This is an [Ansible](https://www.ansible.com/) role which installs [GotoSocial](https://gotosocial.org/) to run as a [Docker](https://www.docker.com/) container wrapped in a systemd service.
+This is an [Ansible](https://www.ansible.com/) role which installs [GoToSocial](https://gotosocial.org/) to run as a [Docker](https://www.docker.com/) container wrapped in a systemd service.
 
 This role *implicitly* depends on:
 

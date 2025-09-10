@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
 # SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -13,6 +14,7 @@
     group: "{{ gotosocial_gid }}"
   with_items:
     - { path: "{{ gotosocial_base_path }}", when: true }
+    - { path: "{{ gotosocial_database_path }}", when: true }
     - { path: "{{ gotosocial_customized_container_src_path }}", when: "{{ gotosocial_container_image_customizations_enabled }}" }
   when: item.when | bool
 

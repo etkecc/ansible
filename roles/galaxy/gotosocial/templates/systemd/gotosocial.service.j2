@@ -7,7 +7,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 #}
 
 [Unit]
-Description=GotoSocial ActivityPub Server ({{ gotosocial_identifier }})
+Description=GoToSocial ActivityPub Server ({{ gotosocial_identifier }})
 {% for service in gotosocial_systemd_required_services_list %}
 Requires={{ service }}
 After={{ service }}
@@ -37,6 +37,9 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --env-file={{ gotosocial_base_path }}/env \
       --label-file={{ gotosocial_base_path }}/labels \
       --mount type=bind,src={{ gotosocial_data_path }},dst=/gotosocial/storage \
+      {% if gotosocial_database_type == 'sqlite' %}
+      --mount type=bind,src={{ gotosocial_database_path }},dst=/opt/gotosocial \
+      {% endif %}
       {% for volume in gotosocial_container_additional_volumes %}
       --mount type={{ volume.type | default('bind' if '/' in volume.src else 'volume') }},src={{ volume.src }},dst={{ volume.dst }}{{ (',' + volume.options) if volume.options else '' }} \
       {% endfor %}

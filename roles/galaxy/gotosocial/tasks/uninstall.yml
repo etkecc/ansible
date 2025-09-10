@@ -25,6 +25,40 @@
         path: "{{ devture_systemd_docker_base_systemd_path }}/{{ gotosocial_identifier }}.service"
         state: absent
 
+    - name: Ensure GoToSocial support files do not exist
+      ansible.builtin.file:
+        path: "{{ gotosocial_base_path }}/{{ item }}"
+        state: absent
+      with_items:
+        - env
+        - labels
+
+    - name: Ensure GoToSocial image source files path does not exist
+      ansible.builtin.file:
+        path: "{{ gotosocial_customized_container_src_path }}"
+        state: absent
+
+    - name: Ensure GoToSocial local database path does not exist if empty
+      ansible.builtin.command:
+        cmd: "rmdir {{ gotosocial_database_path }}"
+      register: gotosocial_database_path_deletion_result
+      changed_when: gotosocial_database_path_deletion_result.rc == 0
+      failed_when: false
+
+    - name: Ensure GoToSocial local data path does not exist if empty
+      ansible.builtin.command:
+        cmd: "rmdir {{ gotosocial_data_path }}"
+      register: gotosocial_data_path_deletion_result
+      changed_when: gotosocial_data_path_deletion_result.rc == 0
+      failed_when: false
+
+    - name: Ensure GoToSocial base path does not exist if empty
+      ansible.builtin.command:
+        cmd: "rmdir {{ gotosocial_base_path }}"
+      register: gotosocial_base_path_deletion_result
+      changed_when: gotosocial_base_path_deletion_result.rc == 0
+      failed_when: false
+
     - name: Ensure GoToSocial container network does not exist via community.docker.docker_network
       when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
       community.docker.docker_network:
@@ -40,7 +74,20 @@
       register: network_deletion_result
       changed_when: gotosocial_container_network in network_deletion_result.stdout
 
-    - name: Ensure GoToSocial path does not exist
-      ansible.builtin.file:
-        path: "{{ gotosocial_base_path }}"
-        state: absent
+- name: Check existence of GoToSocial local data path
+  ansible.builtin.stat:
+    path: "{{ gotosocial_data_path }}"
+  register: gotosocial_data_path_stat
+
+# We just want to notify the user. Deleting data is too destructive.
+- name: Notify if GoToSocial local data remains
+  when: gotosocial_data_path_stat.stat.exists | bool
+  ansible.builtin.set_fact:
+    devture_playbook_runtime_messages_list: |
+      {{
+        devture_playbook_runtime_messages_list | default([])
+        +
+        [
+          "Note: As the local GoToSocial instance has been removed, some old data remains in `" + gotosocial_data_path + "`. Feel free to delete it."
+        ]
+      }}

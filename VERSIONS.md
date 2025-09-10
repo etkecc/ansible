@@ -10,7 +10,7 @@
 * Coturn: 4.6.2-r11
 * Discord: v0.7.5
 * Draupnir: v2.6.1
-* Element: v1.11.110
+* Element: v1.11.111
 * Element Call: v0.15.0
 * Etherpad: 2.5.0
 * Exim Relay: 4.98.1-r0-2
@@ -65,7 +65,7 @@
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.38.1
 * Sygnal: v0.15.1
-* Synapse: v1.137.0
+* Synapse: v1.138.0
 * Synapse Admin: v0.11.1-etke47
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.1.4
@@ -73,7 +73,7 @@
 * Synapse Reverse Proxy Companion: 1.29.1-alpine
 * Synapse S3 Storage Provider: 1.5.0
 * Telegram: v0.15.3
-* Traefik: v3.5.1
+* Traefik: v3.5.2
 * Traefik Certs Dumper: v2.10.0
 * Twitter: v0.5.0
 * Uptime Kuma: 1.23.16

@@ -15,6 +15,7 @@ gotosocial_enabled: true
 gotosocial_identifier: gotosocial
 gotosocial_base_path: "/{{ gotosocial_identifier }}"
 gotosocial_data_path: "{{ gotosocial_base_path }}/data"
+gotosocial_database_path: "{{ gotosocial_data_path }}/database"
 gotosocial_customized_container_src_path: "{{ gotosocial_base_path }}/customized-container-src"
 
 # renovate: datasource=docker depName=superseriousbusiness/gotosocial versioning=semver
@@ -260,6 +261,10 @@ gotosocial_metrics_auth_password: ""
 # Set the size of the /tmp directory, used for storing media uploads
 gotosocial_container_tmp_size: '2000m'
 
+# Specify database to use
+# Valid values: postgres, sqlite
+gotosocial_database_type: sqlite
+
 gotosocial_database_hostname: ''
 gotosocial_database_port: 5432
 gotosocial_database_name: gotosocial
@@ -268,6 +273,8 @@ gotosocial_database_password: ''
 # Use this to set the sslmode parameter of the SSL connection
 # By default, we expect a local container (without SSL), so attempting SSL connections is not necessary.
 gotosocial_database_sslmode: disable
+
+gotosocial_database_address_sqlite: "/opt/gotosocial/sqlite.db"
 
 # REGISTRATION
 gotosocial_accounts_registration_open: false

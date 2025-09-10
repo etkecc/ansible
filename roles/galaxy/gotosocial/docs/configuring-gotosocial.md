@@ -17,19 +17,19 @@ SPDX-FileCopyrightText: 2024 - 2025 Suguru Hirahara
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-# Setting up GotoSocial
+# Setting up GoToSocial
 
-This is an [Ansible](https://www.ansible.com/) role which installs [GotoSocial](https://gotosocial.org/) to run as a [Docker](https://www.docker.com/) container wrapped in a systemd service.
+This is an [Ansible](https://www.ansible.com/) role which installs [GoToSocial](https://gotosocial.org/) to run as a [Docker](https://www.docker.com/) container wrapped in a systemd service.
 
 GoToSocial is a self-hosted [ActivityPub](https://activitypub.rocks/) social network server. With GoToSocial, you can keep in touch with your friends, post, read, and share images and articles.
 
-See the project's [documentation](https://docs.gotosocial.org/) to learn what GotoSocial does and why it might be useful to you.
+See the project's [documentation](https://docs.gotosocial.org/) to learn what GoToSocial does and why it might be useful to you.
 
 ## Prerequisites
 
-To run a GotoSocial instance it is necessary to prepare a [Postgres](https://www.postgresql.org) database server.
+To run a GoToSocial instance it is necessary to prepare a database. You can use a [SQLite](https://www.sqlite.org/) or [Postgres](https://www.postgresql.org/). By default it is configured to use SQLite.
 
-If you are looking for an Ansible role for it, you can check out [this role (ansible-role-postgres)](https://github.com/mother-of-all-self-hosting/ansible-role-postgres) maintained by the [Mother-of-All-Self-Hosting (MASH)](https://github.com/mother-of-all-self-hosting) team.
+If you are looking for an Ansible role for Postgres, you can check out [this role (ansible-role-postgres)](https://github.com/mother-of-all-self-hosting/ansible-role-postgres) maintained by the [Mother-of-All-Self-Hosting (MASH)](https://github.com/mother-of-all-self-hosting) team.
 
 ## Adjusting the playbook configuration
 
@@ -83,19 +83,17 @@ gotosocial_account_domain: "example.com"
 
 **Note**: if you enable it, please have a look at [this page on the official documentation](https://docs.gotosocial.org/en/latest/advanced/host-account-domain/) as you will have to configure the instance for it.
 
-### Set variables for connecting to a Postgres database server
+### Specify database (optional)
 
-To use a Postgres server, add the following configuration to your `vars.yml` file.
+You can specify a database used by GoToSocial. By default it is configured to use SQLite. It is sufficient for small instances and single-board computers, where a dedicated database would be overkill. The SQLite database is stored in the directory specified with `gotosocial_database_path`.
 
-```yml
-gotosocial_database_hostname: YOUR_POSTGRES_SERVER_HOSTNAME_HERE
-gotosocial_database_port: 5432
-gotosocial_database_name: YOUR_POSTGRES_SERVER_DATABASE_NAME_HERE
-gotosocial_database_username: YOUR_POSTGRES_SERVER_USERNAME_HERE
-gotosocial_database_password: YOUR_POSTGRES_SERVER_PASSWORD_HERE
+To use Postgres, add the following configuration to your `vars.yml` file:
+
+```yaml
+gotosocial_database_type: postgres
 ```
 
-Make sure to replace values for variables with yours.
+For other settings, check variables such as `gotosocial_database_*` on [`defaults/main.yml`](../defaults/main.yml).
 
 ### Configure the mailer
 
@@ -144,13 +142,13 @@ After running the command for installation, you can create user account(s).
 Run this command to create an **administrator** user account:
 
 ```sh
-ansible-playbook -i inventory/hosts setup.yml --tags=gotosocial-add-admin --extra-vars=username=YOUR_USERNAME_HERE --extra-vars=password=YOUR_PASSWORD_HERE --extra-vars=email=YOUR_EMAIL_ADDRESS_HERE
+ansible-playbook -i inventory/hosts setup.yml --tags=gotosocial-add-admin -e username=YOUR_USERNAME_HERE -e password=YOUR_PASSWORD_HERE -e email=YOUR_EMAIL_ADDRESS_HERE
 ```
 
 Run this command to create a **regular** (non-administrator) user account:
 
 ```sh
-ansible-playbook -i inventory/hosts setup.yml --tags=gotosocial-add-user --extra-vars=username=YOUR_USERNAME_HERE --extra-vars=password=YOUR_PASSWORD_HERE --extra-vars=email=YOUR_EMAIL_ADDRESS_HERE
+ansible-playbook -i inventory/hosts setup.yml --tags=gotosocial-add-user -e username=YOUR_USERNAME_HERE -e password=YOUR_PASSWORD_HERE -e email=YOUR_EMAIL_ADDRESS_HERE
 ```
 
 Now you should be able to visit the URL at the specified hostname like `https://social.example.com` and check your instance.
@@ -169,7 +167,7 @@ docker exec -it gotosocial /gotosocial/gotosocial admin account demote --usernam
 
 ## Migrate an existing instance
 
-If you want to migrate your existing GoToSocial instance to another server, you can follow the procedure described as below.
+If you want to migrate your existing GoToSocial instance with a Postgres database to another server, you can follow the procedure described as below.
 
 **Note**: the following assumes you will migrate from **serverA** to **serverB**. Adjust the commands for copying files, if you are migrating on the same server (from an existing GoToSocial instance to the new one to start managing it with a playbook, for example).
 
@@ -219,13 +217,13 @@ yourPC$ ansible-playbook -i inventory/hosts setup.yml --tags=install-all
 After installing it, import the database by running the playbook as below:
 
 ```sh
-yourPC$ ansible-playbook -i inventory/hosts setup.yml --tags=import-postgres --extra-vars=server_path_postgres_dump=/gotosocial/latest.sql --extra-vars=postgres_default_import_database=YOUR_POSTGRES_SERVER_DATABASE_NAME_HERE
+yourPC$ ansible-playbook -i inventory/hosts setup.yml --tags=import-postgres -e server_path_postgres_dump=/gotosocial/latest.sql -e postgres_default_import_database=YOUR_POSTGRES_SERVER_DATABASE_NAME_HERE
 ```
 
 Make sure to change the path and replace `YOUR_POSTGRES_SERVER_DATABASE_NAME_HERE` with yours (specified with `gotosocial_database_name`).
 
 >[!NOTE]
-> If you use the MASH Ansible playbook, run this command to import the database: `ansible-playbook -i inventory/hosts setup.yml --tags=import-postgres --extra-vars=server_path_postgres_dump=/mash/gotosocial/latest.sql --extra-vars=postgres_default_import_database=mash-gotosocial`
+> If you use the MASH Ansible playbook, run this command to import the database: `ansible-playbook -i inventory/hosts setup.yml --tags=import-postgres -e server_path_postgres_dump=/mash/gotosocial/latest.sql -e postgres_default_import_database=mash-gotosocial`
 
 ### Start the services
 

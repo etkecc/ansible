@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
 # SPDX-FileCopyrightText: 2023 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2024 Nikita Chernyi
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -29,6 +30,19 @@
     - gotosocial_hostname
     - gotosocial_path_prefix
     - gotosocial_container_network
+
+- name: Fail if GoToSocial database type invalid
+  ansible.builtin.fail:
+    msg: >-
+      gotosocial_database_type must be 'postgres' or 'sqlite'
+  when: "gotosocial_database_type not in ['postgres', 'sqlite']"
+
+- name: Fail if required GoToSocial + Postgres integration settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`) when `gotosocial_database_type` is `postgres`
+  when: "gotosocial_database_type == 'postgres' and lookup('vars', item, default='') | string | length == 0"
+  with_items:
     - gotosocial_database_hostname
     - gotosocial_database_password
 
