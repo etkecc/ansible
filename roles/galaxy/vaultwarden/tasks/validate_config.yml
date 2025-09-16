@@ -29,6 +29,7 @@
     - { "old": "vaultwarden_systemd_wanted_systemd_services_list_auto", "new": "vaultwarden_systemd_wanted_services_list_auto" }
     - { "old": "vaultwarden_systemd_wanted_systemd_services_list_custom", "new": "vaultwarden_systemd_wanted_services_list_custom" }
     - { "old": "vaultwarden_container_additional_environment_variables", "new": "vaultwarden_environment_variables_additional_variables" }
+    - { "old": "vaultwarden_http_header_content_permission_policy", "new": "vaultwarden_http_header_permissions_policy" }
 
 - name: Fail if required Vaultwarden settings not defined
   ansible.builtin.fail:

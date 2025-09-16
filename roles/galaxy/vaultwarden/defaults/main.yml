@@ -17,8 +17,8 @@ vaultwarden_enabled: true
 
 vaultwarden_identifier: vaultwarden
 vaultwarden_base_path: "/vaultwarden"
-vaultwarden_data_path: "{{ vaultwarden_base_path }}/data"
 vaultwarden_cache_path: "{{ vaultwarden_base_path }}/cache"
+vaultwarden_data_path: "{{ vaultwarden_base_path }}/data"
 vaultwarden_ephemeral_path: "{{ vaultwarden_base_path }}/ephemeral"
 
 # renovate: datasource=docker depName=ghcr.io/dani-garcia/vaultwarden versioning=semver
@@ -109,7 +109,7 @@ vaultwarden_container_labels_traefik_additional_response_headers_auto: |
     | combine ({'X-XSS-Protection': vaultwarden_http_header_xss_protection} if vaultwarden_http_header_xss_protection else {})
     | combine ({'X-Content-Type-Options': vaultwarden_http_header_content_type_options} if vaultwarden_http_header_content_type_options else {})
     | combine ({'Content-Security-Policy': vaultwarden_http_header_content_security_policy} if vaultwarden_http_header_content_security_policy else {})
-    | combine ({'Permission-Policy': vaultwarden_http_header_content_permission_policy} if vaultwarden_http_header_content_permission_policy else {})
+    | combine ({'Permissions-Policy': vaultwarden_http_header_permissions_policy} if vaultwarden_http_header_permissions_policy else {})
     | combine ({'Strict-Transport-Security': vaultwarden_http_header_strict_transport_security} if vaultwarden_http_header_strict_transport_security and vaultwarden_container_labels_traefik_tls else {})
   }}
 vaultwarden_container_labels_traefik_additional_response_headers_custom: {}
@@ -137,7 +137,9 @@ vaultwarden_container_hostname: ""
 # Learn more about it is here:
 # - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
 # - https://portswigger.net/web-security/cross-site-scripting/reflected
-vaultwarden_http_header_xss_protection: "1; mode=block"
+#
+# We intentionally don't set this, because Vaultwarden does it and we'd rather not override its (better) value.
+vaultwarden_http_header_xss_protection: ""
 
 # Specifies the value of the `X-Content-Type-Options` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
@@ -145,11 +147,17 @@ vaultwarden_http_header_content_type_options: nosniff
 
 # Specifies the value of the `Content-Security-Policy` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
-vaultwarden_http_header_content_security_policy: frame-ancestors 'self'
+#
+# We intentionally don't set this, because Vaultwarden does it and we'd rather not override its (better) value.
+# See: `vaultwarden_config_allowed_iframe_ancestors` and `vaultwarden_config_allowed_connect_src` for ways to
+# influence the `Content-Security-Policy` value set by Vaultwarden.
+vaultwarden_http_header_content_security_policy: ""
 
-# Specifies the value of the `Permission-Policy` header.
-# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permission-Policy
-vaultwarden_http_header_content_permission_policy: "{{ 'interest-cohort=()' if vaultwarden_floc_optout_enabled else '' }}"
+# Specifies the value of the `Permissions-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy
+#
+# We intentionally don't set this, because Vaultwarden does it and we'd rather not override its (better) value.
+vaultwarden_http_header_permissions_policy: ""
 
 # Specifies the value of the `Strict-Transport-Security` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
@@ -328,6 +336,24 @@ vaultwarden_config_extended_logging: false
 # which enable experimental feature flags for clients.
 # This is a comma-separated list of flags, e.g. "flag1,flag2,flag3".
 vaultwarden_config_experimental_client_feature_flags: ''
+
+# vaultwarden_config_allowed_iframe_ancestors controls the ALLOWED_IFRAME_ANCESTORS environment variable,
+# which controls the additional allowed origins for the `frame-ancestors` Content-Security-Policy directive automatically set by Vaultwarden.
+# See: https://github.com/dani-garcia/vaultwarden/blob/5d84f17600e179280e44c391b92ee9eecc2b7cdc/src/util.rs#L92-L122
+#
+# Example: "https://example.com, https://example.org"
+#
+# If `vaultwarden_http_header_content_security_policy` is explicitly set, this will be ignored.
+vaultwarden_config_allowed_iframe_ancestors: ''
+
+# vaultwarden_config_allowed_connect_src controls the ALLOWED_CONNECT_SRC environment variable,
+# which controls the additional allowed origins for the `connect-src` Content-Security-Policy directive automatically set by Vaultwarden.
+# See: https://github.com/dani-garcia/vaultwarden/blob/5d84f17600e179280e44c391b92ee9eecc2b7cdc/src/util.rs#L124-L127
+#
+# Example: "https://example.com, https://example.org"
+#
+# If `vaultwarden_http_header_content_security_policy` is explicitly set, this will be ignored.
+vaultwarden_config_allowed_connect_src: ''
 
 # NOTE:
 # Additional environment variables for configuration can be discovered from https://github.com/dani-garcia/vaultwarden/blob/main/.env.template

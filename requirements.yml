@@ -35,5 +35,5 @@
   version: main
   name: swap
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-vaultwarden.git
-  version: v1.34.3-2
+  version: v1.34.3-3
   name: vaultwarden
