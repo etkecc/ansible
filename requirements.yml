@@ -37,6 +37,3 @@
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-vaultwarden.git
   version: v1.34.3-2
   name: vaultwarden
-- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-vaultwarden.git
-  version: v1.34.3-2
-  name: vaultwarden
