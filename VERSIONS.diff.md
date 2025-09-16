@@ -8,21 +8,7 @@
 
 #### Version Changes
 
-* [Baibot](https://github.com/etkecc/baibot): [v1.7.6](https://github.com/etkecc/baibot/releases/tag/v1.7.6) ⇾ [v1.8.0](https://github.com/etkecc/baibot/releases/tag/v1.8.0)
-* [Container Socket Proxy](https://github.com/Tecnativa/docker-socket-proxy): [v0.4.0](https://github.com/Tecnativa/docker-socket-proxy/releases/tag/v0.4.0) ⇾ [v0.4.1](https://github.com/Tecnativa/docker-socket-proxy/releases/tag/v0.4.1)
-* [Element](https://github.com/element-hq/element-web): [v1.11.110](https://github.com/element-hq/element-web/releases/tag/v1.11.110) ⇾ [v1.11.111](https://github.com/element-hq/element-web/releases/tag/v1.11.111)
-* [Etherpad](https://github.com/ether/etherpad-lite): [2.4.2](https://github.com/ether/etherpad-lite/releases/tag/2.4.2) ⇾ [2.5.0](https://github.com/ether/etherpad-lite/releases/tag/2.5.0)
-* [Gotosocial](https://github.com/superseriousbusiness/gotosocial): [0.19.1](https://github.com/superseriousbusiness/gotosocial/releases/tag/v0.19.1) ⇾ [0.19.2](https://github.com/superseriousbusiness/gotosocial/releases/tag/v0.19.2)
-* [Livekit Server](https://github.com/livekit/livekit): [v1.9.0](https://github.com/livekit/livekit/releases/tag/v1.9.0) ⇾ [v1.9.1](https://github.com/livekit/livekit/releases/tag/v1.9.1)
-* Postgres Container Image V10: 10.23 _new_
-* Postgres Container Image V11: 11.22 _new_
-* Postgres Container Image V12: 12.22 _new_
-* Postgres Container Image V13: 13.22 _new_
-* Postgres Container Image V14: 14.19 _new_
-* Postgres Container Image V15: 15.14 _new_
-* Postgres Container Image V16: 16.10 _new_
-* Postgres Container Image V17: 17.6 _new_
-* Postgres Container Image V9: 9.6.24 _new_
-* Static Files: 2.38.0 ⇾ 2.38.1
-* [Synapse](https://github.com/element-hq/synapse): [v1.137.0](https://github.com/element-hq/synapse/releases/tag/v1.137.0) ⇾ [v1.138.0](https://github.com/element-hq/synapse/releases/tag/v1.138.0)
-* [Traefik](https://github.com/traefik/traefik): [v3.5.1](https://github.com/traefik/traefik/releases/tag/v3.5.1) ⇾ [v3.5.2](https://github.com/traefik/traefik/releases/tag/v3.5.2)
+* [Baibot](https://github.com/etkecc/baibot): [v1.8.0](https://github.com/etkecc/baibot/releases/tag/v1.8.0) ⇾ [v1.8.1](https://github.com/etkecc/baibot/releases/tag/v1.8.1)
+* [Radicale](https://github.com/tomsquest/docker-radicale): [3.5.4.0](https://github.com/tomsquest/docker-radicale/releases/tag/3.5.4.0) ⇾ [3.5.6.0](https://github.com/tomsquest/docker-radicale/releases/tag/3.5.6.0)
+* [Synapse Auto Compressor](https://github.com/matrix-org/rust-synapse-compress-state): [v0.1.4](https://github.com/matrix-org/rust-synapse-compress-state/releases/tag/v0.1.4) ⇾ [v0.0.3](https://github.com/matrix-org/rust-synapse-compress-state/releases/tag/v0.0.3)
+* Synapse Rust Synapse Compress State Docker Image: v0.0.3 _new_

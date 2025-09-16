@@ -18,7 +18,7 @@ radicale_data_collections_path: "{{ radicale_data_path }}/{{ radicale_data_colle
 radicale_data_collections_subdir: collections
 
 # renovate: datasource=docker depName=tomsquest/docker-radicale
-radicale_version: 3.5.4.0
+radicale_version: 3.5.6.0
 
 radicale_uid: ''
 radicale_gid: ''
@@ -72,7 +72,7 @@ radicale_container_labels_traefik_tls: "{{ radicale_container_labels_traefik_ent
 radicale_container_labels_traefik_tls_certResolver: default  # noqa var-naming
 
 # Controls which additional headers to attach to all HTTP requests.
-# To add your own custom request headers, use `radicale_container_labels_traefik_additional_response_headers_custom`
+# To add your own custom request headers, use `radicale_container_labels_traefik_additional_request_headers_custom`
 radicale_container_labels_traefik_additional_request_headers: "{{ radicale_container_labels_traefik_additional_request_headers_auto | combine(radicale_container_labels_traefik_additional_request_headers_custom) }}"
 radicale_container_labels_traefik_additional_request_headers_auto: |
   {{
@@ -172,7 +172,10 @@ radicale_systemd_required_services_list_auto: []
 radicale_systemd_required_services_list_custom: []
 
 # List of systemd services that the Radicale systemd service wants
-radicale_systemd_wanted_services_list: []
+radicale_systemd_wanted_services_list: "{{ radicale_systemd_wanted_services_list_default + radicale_systemd_wanted_services_list_auto + radicale_systemd_wanted_services_list_custom }}"
+radicale_systemd_wanted_services_list_default: []
+radicale_systemd_wanted_services_list_auto: []
+radicale_systemd_wanted_services_list_custom: []
 
 # Controls the TAKE_FILE_OWNERSHIP environment variable
 radicale_environment_variable_take_file_ownership: false

@@ -23,8 +23,10 @@
     cmd: >-
       {{ devture_systemd_docker_base_host_command_docker }} run
       --rm
-      --user={{ postgres_uid }}:{{ postgres_gid }}
+      --user={{ postgres_container_uid }}:{{ postgres_container_gid }}
+      {% if postgres_container_cap_drop_all_enabled %}
       --cap-drop=ALL
+      {% endif %}
       --env-file={{ postgres_base_path }}/env-postgres-psql
       --network={{ postgres_container_network_for_preparing_databases }}
       --mount type=bind,src=/tmp/{{ postgres_identifier }}-init-managed-db-user-and-role.sql,dst=/{{ postgres_identifier }}-init-managed-db-user-and-role.sql,ro

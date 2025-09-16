@@ -181,6 +181,12 @@ postgres_container_image_force_pull: "{{ postgres_container_image_to_use.endswit
 # we default to at least 30 seconds.
 postgres_container_stop_grace_time_seconds: "{{ [devture_systemd_docker_base_container_stop_grace_time_seconds, 30] | max }}"
 
+# Controls the user that the container runs as. Set to `0` to run as root.
+postgres_container_uid: "{{ postgres_uid }}"
+
+# Controls the group that the container runs as. Set to `0` to run as root.
+postgres_container_gid: "{{ postgres_gid }}"
+
 # Controls whether the container will be started with a read-only filesystem.
 postgres_container_read_only_enabled: true
 
@@ -189,7 +195,7 @@ postgres_container_cap_drop_all_enabled: true
 
 # Controls whether the host's /etc/passwd file is mounted (as read-only) into the container (at /etc/passwd).
 #
-# When running as root, we don't need to do this, as the container would likely swich to an account it already contains in its own /etc/passwd file.
+# When running as root, we don't need to do this, as the container would likely switch to an account it already contains in its own /etc/passwd file.
 #
 # When running as non-root, we likely need to do this as we'd like for the UID (`postgres_uid`) we run as to resolve to a named user,
 # which likely already exists in the host's /etc/passwd file.
@@ -258,6 +264,10 @@ postgres_managed_databases_auto: []
 #   - name: another_database
 #     username: another_username
 #     password: another_password
+#     additional_sql_queries:
+#       - "SOME QUERY AGAINST MAIN DATABASE HERE;"
+#       - "\c another_database;"
+#       - "SOME QUERY AGAINST another_database HERE;"
 postgres_managed_databases_additional: []
 
 # A list of roles/users to avoid creating when importing (or upgrading) the database.

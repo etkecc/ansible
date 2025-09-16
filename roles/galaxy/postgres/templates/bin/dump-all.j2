@@ -22,7 +22,7 @@ fi
 docker run \
     $docker_flags \
     --rm \
-    --user={{ postgres_uid }}:{{ postgres_gid }} \
+    --user={{ postgres_container_uid }}:{{ postgres_container_gid }} \
     --cap-drop=ALL \
     --env-file={{ postgres_base_path }}/env-postgres-psql \
     --mount type=bind,src=$directory_path,dst=/out \

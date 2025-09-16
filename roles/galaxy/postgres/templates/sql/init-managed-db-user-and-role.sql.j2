@@ -17,3 +17,5 @@ CREATE DATABASE "{{ managed_db.name }}" WITH LC_CTYPE '{{ postgres_default_lc_ty
 
 -- This is useful for changing the database owner subsequently
 ALTER DATABASE "{{ managed_db.name }}" OWNER TO "{{ managed_db.username }}";
+
+{{ managed_db.additional_sql_queries | default([]) | join("\n") }}

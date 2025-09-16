@@ -65,7 +65,7 @@
     cmd: >-
       {{ devture_systemd_docker_base_host_command_docker }} run
       --rm
-      --user={{ postgres_uid }}:{{ postgres_gid }}
+      --user={{ postgres_container_uid }}:{{ postgres_container_gid }}
       --cap-drop=ALL
       --network={{ postgres_container_network }}
       --mount type=bind,src={{ sqlite_database_path }},dst=/in.db,ro

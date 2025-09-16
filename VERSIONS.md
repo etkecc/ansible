@@ -1,5 +1,5 @@
 * Appservice Discord: v4.0.0
-* Baibot: v1.8.0
+* Baibot: v1.8.1
 * Bluesky: v0.1.2
 * Borg: 1.4.1
 * Borgmatic: 1.9.14
@@ -55,7 +55,7 @@
 * Prometheus: v3.5.0
 * Prometheus Node Exporter: v1.9.1
 * Prometheus Postgres Exporter: v0.17.1
-* Radicale: 3.5.4.0
+* Radicale: 3.5.6.0
 * Registration: v0.7.2
 * Schildichat: 1.11.109-sc.0.test.0
 * Signal: v0.8.6
@@ -68,9 +68,10 @@
 * Synapse: v1.138.0
 * Synapse Admin: v0.11.1-etke47
 * Synapse Auto Accept Invite: 1.1.3
-* Synapse Auto Compressor: v0.1.4
+* Synapse Auto Compressor: v0.0.3
 * Synapse Http Antispam Git: v0.5.0
 * Synapse Reverse Proxy Companion: 1.29.1-alpine
+* Synapse Rust Synapse Compress State Docker Image: v0.0.3
 * Synapse S3 Storage Provider: 1.5.0
 * Telegram: v0.15.3
 * Traefik: v3.5.2
