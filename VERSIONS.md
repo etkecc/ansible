@@ -17,7 +17,7 @@
 * Firezone: 0.7.36
 * Fluffychat: v2.1.1
 * Funkwhale: 1.4.0
-* Gmessages: v0.6.5
+* Gmessages: v0.7.0
 * Go Neb: latest
 * Googlechat: v0.5.2
 * Gotosocial: 0.19.2
@@ -58,7 +58,7 @@
 * Radicale: 3.5.6.0
 * Registration: v0.7.2
 * Schildichat: 1.11.109-sc.0.test.0
-* Signal: v0.8.6
+* Signal: v0.8.7
 * Slack: v0.2.3
 * Sliding Sync: v0.99.19
 * Spam Checker Mjolnir Antispam Git: v1.11.0
@@ -82,4 +82,4 @@
 * Vaultwarden: 1.34.3
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
-* Whatsapp: v0.12.4
+* Whatsapp: v0.12.5
