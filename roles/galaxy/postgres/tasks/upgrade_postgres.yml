@@ -86,7 +86,7 @@
       --user={{ postgres_container_uid }}:{{ postgres_container_gid }}
       --network={{ postgres_container_network }}
       --env-file={{ postgres_base_path }}/env-postgres-psql
-      --entrypoint=/bin/sh
+      --entrypoint={{ postgres_container_shell_path }}
       --mount type=bind,src={{ postgres_dump_dir }},dst=/out
       {{ postgres_detected_version_corresponding_docker_image }}
       -c "pg_dumpall -h {{ postgres_identifier }}
@@ -141,7 +141,7 @@
       --cap-drop=ALL
       --network={{ postgres_container_network }}
       --env-file={{ postgres_base_path }}/env-postgres-psql
-      --entrypoint=/bin/sh
+      --entrypoint={{ postgres_container_shell_path }}
       --mount type=bind,src={{ postgres_dump_dir }},dst=/in,ro
       {{ postgres_container_image_latest }}
       -c "cat /in/{{ postgres_dump_name }} |

@@ -69,7 +69,7 @@
       --cap-drop=ALL
       --network={{ postgres_container_network }}
       --mount type=bind,src={{ sqlite_database_path }},dst=/in.db,ro
-      --entrypoint=/bin/sh
+      --entrypoint={{ postgres_container_shell_path }}
       {{ postgres_pgloader_docker_image }}
       -c
       'pgloader /in.db {{ postgres_db_connection_string }}'

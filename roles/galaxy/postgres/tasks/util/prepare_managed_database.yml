@@ -30,7 +30,7 @@
       --env-file={{ postgres_base_path }}/env-postgres-psql
       --network={{ postgres_container_network_for_preparing_databases }}
       --mount type=bind,src=/tmp/{{ postgres_identifier }}-init-managed-db-user-and-role.sql,dst=/{{ postgres_identifier }}-init-managed-db-user-and-role.sql,ro
-      --entrypoint=/bin/sh
+      --entrypoint={{ postgres_container_shell_path }}
       {{ postgres_container_image_to_use }}
       -c
       'psql -h {{ postgres_connection_hostname }} --file=/{{ postgres_identifier }}-init-managed-db-user-and-role.sql'

@@ -27,7 +27,7 @@ docker run \
     --env-file={{ postgres_base_path }}/env-postgres-psql \
     --mount type=bind,src=$directory_path,dst=/out \
     --network={{ postgres_container_network }} \
-    --entrypoint=/bin/sh \
+    --entrypoint={{ postgres_container_shell_path }} \
     {{ postgres_container_image_to_use }} \
     -c \
     'set -o pipefail && pg_dumpall -h {{ postgres_identifier }} | zstd --stdout > /out/latest-dump.sql.zst'

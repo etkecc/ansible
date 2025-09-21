@@ -35,11 +35,11 @@
 * Livekit Jwt Service: 0.3.0
 * Livekit Server: v1.9.1
 * Ma1Sd: 2.5.0
-* Matrix Reminder Bot: v0.3.0
+* Matrix Reminder Bot: v0.4.0
 * Maubot: v0.5.2
 * Meta Instagram: v0.5.3
 * Meta Messenger: v0.5.3
-* Miniflux: 2.2.12
+* Miniflux: 2.2.13
 * Ntfy: v2.14.0
 * Peertube: v7.2.3
 * Postgres Container Image V10: 10.23

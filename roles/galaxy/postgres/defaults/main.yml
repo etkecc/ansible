@@ -242,6 +242,16 @@ postgres_container_postgres_bind_port: ""
 
 postgres_container_shm_size: "256m"
 
+# The shell to use in the container.
+# See `postgres_container_image_suffix`.
+#
+# On Debian-based container images, /bin/sh tends to point to `dash` , which is subpar
+# (no `set -o pipefail`, so most of our scripts would fail).
+# We'd prefer /bin/bash in such container images.
+#
+# On Alpine, /bin/sh is /bin/busybox, which is OK.
+postgres_container_shell_path: "{{ '/bin/sh' if postgres_container_image_suffix == '-alpine' else '/bin/bash' }}"
+
 postgres_systemd_required_services_list: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
 
 # A list of databases (and their credentials) that this role will create and manage on the server.
