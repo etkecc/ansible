@@ -11,7 +11,7 @@
 * Discord: v0.7.5
 * Draupnir: v2.6.1
 * Element: v1.12.0
-* Element Call: v0.15.0
+* Element Call: v0.16.0
 * Etherpad: 2.5.0
 * Exim Relay: 4.98.1-r0-2
 * Firezone: 0.7.36
@@ -65,7 +65,7 @@
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.38.1
 * Sygnal: v0.15.1
-* Synapse: v1.138.0
+* Synapse: v1.138.2
 * Synapse Admin: v0.11.1-etke47
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.0.3
