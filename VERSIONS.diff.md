@@ -8,8 +8,6 @@
 
 #### Version Changes
 
-* [Element](https://github.com/element-hq/element-web): [v1.11.112](https://github.com/element-hq/element-web/releases/tag/v1.11.112) ⇾ [v1.12.0](https://github.com/element-hq/element-web/releases/tag/v1.12.0)
-* [Element Call](https://github.com/element-hq/element-call): [v0.15.0](https://github.com/element-hq/element-call/releases/tag/v0.15.0) ⇾ [v0.16.0](https://github.com/element-hq/element-call/releases/tag/v0.16.0)
-* Matrix Reminder Bot: v0.3.0 ⇾ v0.4.0
-* [Miniflux](https://github.com/miniflux/v2): [2.2.12](https://github.com/miniflux/v2/releases/tag/2.2.12) ⇾ [2.2.13](https://github.com/miniflux/v2/releases/tag/2.2.13)
-* [Synapse](https://github.com/element-hq/synapse): [v1.138.0](https://github.com/element-hq/synapse/releases/tag/v1.138.0) ⇾ [v1.138.2](https://github.com/element-hq/synapse/releases/tag/v1.138.2)
+* [Prometheus Postgres Exporter](https://github.com/prometheus-community/postgres_exporter): [v0.17.1](https://github.com/prometheus-community/postgres_exporter/releases/tag/v0.17.1) ⇾ [v0.18.0](https://github.com/prometheus-community/postgres_exporter/releases/tag/v0.18.0)
+* Steam Bridge: 1.0.5 _new_
+* [Traefik](https://github.com/traefik/traefik): [v3.5.2](https://github.com/traefik/traefik/releases/tag/v3.5.2) ⇾ [v3.5.3](https://github.com/traefik/traefik/releases/tag/v3.5.3)

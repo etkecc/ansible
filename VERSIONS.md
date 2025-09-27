@@ -54,7 +54,7 @@
 * Postmoogle: v0.9.26
 * Prometheus: v3.5.0
 * Prometheus Node Exporter: v1.9.1
-* Prometheus Postgres Exporter: v0.17.1
+* Prometheus Postgres Exporter: v0.18.0
 * Radicale: 3.5.6.0
 * Registration: v0.7.2
 * Schildichat: 1.11.109-sc.0.test.0
@@ -64,6 +64,7 @@
 * Spam Checker Mjolnir Antispam Git: v1.11.0
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.38.1
+* Steam Bridge: 1.0.5
 * Sygnal: v0.15.1
 * Synapse: v1.138.2
 * Synapse Admin: v0.11.1-etke47
@@ -74,7 +75,7 @@
 * Synapse Rust Synapse Compress State Docker Image: v0.0.3
 * Synapse S3 Storage Provider: 1.5.0
 * Telegram: v0.15.3
-* Traefik: v3.5.2
+* Traefik: v3.5.3
 * Traefik Certs Dumper: v2.10.0
 * Twitter: v0.5.0
 * Uptime Kuma: 1.23.16
