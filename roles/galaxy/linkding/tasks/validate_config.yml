@@ -12,6 +12,15 @@
   when: "lookup('ansible.builtin.varnames', ('^' + item.old + '$'), wantlist=True) | length > 0"
   with_items:
     - { "old": "linkding_database_engine", "new": "linkding_database_type" }
+    - { "old": "linkding_environment_variable_database_engine", "new": "linkding_database_type" }
+    - { "old": "linkding_environment_variable_database_username", "new": "linkding_database_username" }
+    - { "old": "linkding_environment_variable_database_password", "new": "linkding_database_password" }
+    - { "old": "linkding_environment_variable_database_hostname", "new": "linkding_database_hostname" }
+    - { "old": "linkding_environment_variable_database_port", "new": "linkding_database_port" }
+    - { "old": "linkding_environment_variable_database_name", "new": "linkding_database_name" }
+    - { "old": "linkding_environment_variable_superuser_username", "new": "linkding_superuser_username" }
+    - { "old": "linkding_environment_variable_superuser_password", "new": "linkding_superuser_password" }
+    - { "old": "linkding_http_header_content_permission_policy", "new": "linkding_http_header_permissions_policy" }
 
 - name: Fail if required linkding settings not defined
   ansible.builtin.fail:
@@ -25,7 +34,20 @@
     - linkding_hostname
     - linkding_path_prefix
     - linkding_container_network
-    - linkding_database_hostname
+    - linkding_database_password
+
+- name: Fail if linkding database type invalid
+  ansible.builtin.fail:
+    msg: >-
+      linkding_database_type must be 'postgres' or 'sqlite'
+  when: "linkding_database_type not in ['postgres', 'sqlite']"
+
+- name: Fail if required linkding + Postgres integration settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`) when `linkding_database_type` is `postgres`
+  when: "linkding_database_type == 'postgres' and lookup('vars', item, default='') | string | length == 0"
+  with_items:
     - linkding_database_password
 
 - name: Run if Traefik is enabled

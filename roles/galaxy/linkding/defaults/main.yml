@@ -20,7 +20,7 @@ linkding_base_path: "/{{ linkding_identifier }}"
 linkding_data_path: "{{ linkding_base_path }}/data"
 
 # renovate: datasource=docker depName=sissbruecker/linkding versioning=semver
-linkding_version: 1.42.0
+linkding_version: 1.43.0
 
 # User ID and Group ID for running linkding service in the container
 linkding_uid: ""
@@ -97,7 +97,7 @@ linkding_container_labels_traefik_additional_response_headers_auto: |
     | combine ({'X-XSS-Protection': linkding_http_header_xss_protection} if linkding_http_header_xss_protection else {})
     | combine ({'X-Content-Type-Options': linkding_http_header_content_type_options} if linkding_http_header_content_type_options else {})
     | combine ({'Content-Security-Policy': linkding_http_header_content_security_policy} if linkding_http_header_content_security_policy else {})
-    | combine ({'Permission-Policy': linkding_http_header_content_permission_policy} if linkding_http_header_content_permission_policy else {})
+    | combine ({'Permissions-Policy': linkding_http_header_permissions_policy} if linkding_http_header_permissions_policy else {})
     | combine ({'Strict-Transport-Security': linkding_http_header_strict_transport_security} if linkding_http_header_strict_transport_security and linkding_container_labels_traefik_tls else {})
   }}
 linkding_container_labels_traefik_additional_response_headers_custom: {}
@@ -129,9 +129,9 @@ linkding_http_header_content_type_options: nosniff
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
 linkding_http_header_content_security_policy: frame-ancestors 'self'
 
-# Specifies the value of the `Permission-Policy` header.
-# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permission-Policy
-linkding_http_header_content_permission_policy: "{{ 'interest-cohort=()' if linkding_floc_optout_enabled else '' }}"
+# Specifies the value of the `Permissions-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy
+linkding_http_header_permissions_policy: "{{ 'interest-cohort=()' if linkding_floc_optout_enabled else '' }}"
 
 # Specifies the value of the `Strict-Transport-Security` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
@@ -145,7 +145,7 @@ linkding_http_header_strict_transport_security: "max-age=31536000; includeSubDom
 # - https://amifloced.org/
 #
 # Of course, a better solution is to just stop using browsers (like Chrome), which participate in such tracking practices.
-# See: `linkding_content_permission_policy`
+# See: `linkding_http_header_permissions_policy`
 linkding_floc_optout_enabled: true
 
 # Controls if HSTS preloading is enabled
@@ -167,48 +167,29 @@ linkding_systemd_required_services_list_auto: []
 linkding_systemd_required_services_list_custom: []
 
 # List of systemd services that the linkding systemd service wants
-linkding_systemd_wanted_services_list: []
+linkding_systemd_wanted_services_list: "{{ linkding_systemd_wanted_services_list_default + linkding_systemd_wanted_services_list_auto + linkding_systemd_wanted_services_list_custom }}"
+linkding_systemd_wanted_services_list_default: []
+linkding_systemd_wanted_services_list_auto: []
+linkding_systemd_wanted_services_list_custom: []
 
 # The username and password for the linkding superuser
 linkding_superuser_username:
 linkding_superuser_password:
 
-# Database configuration, defaults to sqlite
+# Database configuration
+# Valid values: postgres, sqlite
 linkding_database_type: sqlite
+
 linkding_database_hostname: "localhost"
+linkding_database_port: 5432
 linkding_database_username: linkding
 linkding_database_password:
-linkding_database_port:
 linkding_database_name: linkding
 
 # Controls the LD_CONTEXT_PATH environment variable
 # If the linkding_path_prefix is `/`, then this will be set to an empty string.
 # Otherwise, it will be set to the value of linkding_path_prefix without the first slash plus a leading slash.
 linkding_environment_variable_context_path: "{{ '' if linkding_path_prefix == '/' else linkding_path_prefix_no_slash[1:] + '/' }}"
-
-# Controls the LD_DB_ENGINE environment variable
-linkding_environment_variable_database_engine: "{{ linkding_database_type }}"
-
-# Controls the LD_DB_USER environment variable
-linkding_environment_variable_database_username: "{{ linkding_database_username }}"
-
-# Controls the LD_DB_PASSWORD environment variable
-linkding_environment_variable_database_password: "{{ linkding_database_password }}"
-
-# Controls the LD_DB_HOST environment variable
-linkding_environment_variable_database_hostname: "{{ linkding_database_hostname }}"
-
-# Controls the LD_DB_PORT environment variable
-linkding_environment_variable_database_port: "{{ linkding_database_port }}"
-
-# Controls the LD_DB_DATABASE environment variable
-linkding_environment_variable_database_name: "{{ linkding_database_name }}"
-
-# Controls the LD_SUPERUSER_NAME environment variable
-linkding_environment_variable_superuser_username: "{{ linkding_superuser_username }}"
-
-# Controls the LD_SUPERUSER_PASSWORD environment variable
-linkding_environment_variable_superuser_password: "{{ linkding_superuser_password }}"
 
 # Additional environment variables.
 linkding_environment_variables_additional_variables: ""

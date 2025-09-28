@@ -7,24 +7,27 @@
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-fail2ban.git
   version: main
   name: fail2ban
+- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-firezone.git
+  version: v0.7.36-6
+  name: firezone
+- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-funkwhale.git
+  version: v1.4.0-12
+  name: funkwhale
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-gotosocial.git
   version: v0.19.2-1
   name: gotosocial
-- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-gotosocial.git
-  version: v0.19.2-1
-  name: gotosocial
-- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-gotosocial.git
-  version: v0.19.2-1
-  name: gotosocial
+- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-languagetool.git
+  version: v6.6-3
+  name: languagetool
+- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-linkding.git
+  version: v1.43.0-0
+  name: linkding
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-miniflux.git
   version: v2.2.13-0
   name: miniflux
-- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-miniflux.git
-  version: v2.2.13-0
-  name: miniflux
-- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-radicale.git
-  version: v3.5.6.0-0
-  name: radicale
+- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-peertube.git
+  version: v7.2.3-5
+  name: peertube
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-radicale.git
   version: v3.5.6.0-0
   name: radicale
@@ -34,6 +37,12 @@
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-swap.git
   version: main
   name: swap
+- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-ufw.git
+  version: main
+  name: ufw
+- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-uptime_kuma.git
+  version: v1.23.16-8
+  name: uptime_kuma
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-vaultwarden.git
   version: v1.34.3-3
   name: vaultwarden

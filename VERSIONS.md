@@ -30,7 +30,7 @@
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
 * Languagetool: 6.6-dockerupdate-2
-* Linkding: 1.42.0
+* Linkding: 1.43.0
 * Linkedin: latest
 * Livekit Jwt Service: 0.3.0
 * Livekit Server: v1.9.1
