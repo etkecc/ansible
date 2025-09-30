@@ -171,7 +171,7 @@ vaultwarden_http_header_strict_transport_security: "max-age=31536000; includeSub
 # - https://amifloced.org/
 #
 # Of course, a better solution is to just stop using browsers (like Chrome), which participate in such tracking practices.
-# See: `vaultwarden_content_permission_policy`
+# See: `vaultwarden_http_header_permissions_policy`
 vaultwarden_floc_optout_enabled: true
 
 # Controls if HSTS preloading is enabled
@@ -201,15 +201,15 @@ vaultwarden_systemd_wanted_services_list_custom: []
 # Valid values: mysql, postgres, sqlite
 vaultwarden_database_type: postgres
 
-vaultwarden_database_hostname: ''
-vaultwarden_database_port: 5432
-vaultwarden_database_username: vaultwarden
-vaultwarden_database_password: ''
+vaultwarden_database_postgres_hostname: ''
+vaultwarden_database_postgres_port: 5432
+vaultwarden_database_postgres_username: vaultwarden
+vaultwarden_database_postgres_password: ''
 # Use this to set the sslmode parameter of the SSL connection
 # By default, we expect a local container (without SSL), so attempting SSL connections is not necessary.
 # It's even potentially buggy too.
 # See: https://github.com/dani-garcia/vaultwarden/issues/2386
-vaultwarden_database_sslmode: disable
+vaultwarden_database_postgres_sslmode: disable
 
 vaultwarden_database_mysql_hostname: ''
 vaultwarden_database_mysql_port: 3306
@@ -224,7 +224,7 @@ vaultwarden_database_name: vaultwarden
 # and the other database-related Wiki articles
 vaultwarden_config_database_url: |-
   {{
-    ('postgresql://' + vaultwarden_database_username + ':' + vaultwarden_database_password + '@' + vaultwarden_database_hostname + ':' + vaultwarden_database_port | string + '/' + vaultwarden_database_name + '?sslmode=' + vaultwarden_database_sslmode)
+    ('postgresql://' + vaultwarden_database_postgres_username + ':' + vaultwarden_database_postgres_password + '@' + vaultwarden_database_postgres_hostname + ':' + vaultwarden_database_postgres_port | string + '/' + vaultwarden_database_name + '?sslmode=' + vaultwarden_database_postgres_sslmode)
   }}
 
 vaultwarden_config_database_mysql_url: |-

@@ -30,10 +30,10 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 {% if etherpad_database_type == 'postgres' %}
   "dbType": "postgres",
   "dbSettings": {
-    "host":     {{ etherpad_database_hostname|to_json }},
-    "port":     {{ etherpad_database_port|to_json }},
-    "user":     {{ etherpad_database_username|to_json }},
-    "password": {{ etherpad_database_password|to_json }},
+    "host":     {{ etherpad_database_postgres_hostname|to_json }},
+    "port":     {{ etherpad_database_postgres_port|to_json }},
+    "user":     {{ etherpad_database_postgres_username|to_json }},
+    "password": {{ etherpad_database_postgres_password|to_json }},
     "database": {{ etherpad_database_name|to_json }}
   },
 {% endif %}

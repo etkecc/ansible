@@ -31,7 +31,7 @@ See the project's [documentation](https://docs.etherpad.org/) to learn what Ethe
 
 To run an Etherpad instance it is necessary to prepare a database supported by [ueberdb2](https://www.npmjs.com/package/ueberdb2). The role supports [MariaDB](https://mariadb.org), [Postgres](https://www.postgresql.org/), [Redis](https://redis.io/), [SQLite](https://www.sqlite.org/), as well as `memory` (an in-memory ephemeral database). By default it is configured to use Postgres.
 
-If you are looking for an Ansible role for MariaDB, Postgres, and Redis, you can check out [ansible-role-postgres](https://github.com/mother-of-all-self-hosting/ansible-role-postgres), [ansible-role-mariadb](https://github.com/mother-of-all-self-hosting/ansible-role-mariadb), and [ansible-role-redis](https://github.com/mother-of-all-self-hosting/ansible-role-redis), all of which are maintained by the [Mother-of-All-Self-Hosting (MASH)](https://github.com/mother-of-all-self-hosting) team. The roles for [KeyDB](https://keydb.dev/) ([ansible-role-keydb](https://github.com/mother-of-all-self-hosting/ansible-role-keydb)) and [Valkey](https://valkey.io/) ([ansible-role-valkey](https://github.com/mother-of-all-self-hosting/ansible-role-valkey)) are available as well.
+If you are looking for Ansible roles for MariaDB, Postgres, and Redis, you can check out [ansible-role-postgres](https://github.com/mother-of-all-self-hosting/ansible-role-postgres), [ansible-role-mariadb](https://github.com/mother-of-all-self-hosting/ansible-role-mariadb), and [ansible-role-redis](https://github.com/mother-of-all-self-hosting/ansible-role-redis), all of which are maintained by the [Mother-of-All-Self-Hosting (MASH)](https://github.com/mother-of-all-self-hosting) team. The roles for [KeyDB](https://keydb.dev/) ([ansible-role-keydb](https://github.com/mother-of-all-self-hosting/ansible-role-keydb)) and [Valkey](https://valkey.io/) ([ansible-role-valkey](https://github.com/mother-of-all-self-hosting/ansible-role-valkey)) are available as well.
 
 ## Adjusting the playbook configuration
 
@@ -95,8 +95,8 @@ Make sure to replace `YOUR_DATABASE_USERNAME_HERE` and `YOUR_DATABASE_PASSWORD_H
 To use Postgres, add the following configuration to your `vars.yml` file:
 
 ```yaml
-etherpad_database_username: YOUR_DATABASE_USERNAME_HERE
-etherpad_database_password: YOUR_DATABASE_PASSWORD_HERE
+etherpad_database_postgres_username: YOUR_DATABASE_USERNAME_HERE
+etherpad_database_postgres_password: YOUR_DATABASE_PASSWORD_HERE
 ```
 
 #### Redis

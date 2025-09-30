@@ -30,6 +30,11 @@
     - { "old": "vaultwarden_systemd_wanted_systemd_services_list_custom", "new": "vaultwarden_systemd_wanted_services_list_custom" }
     - { "old": "vaultwarden_container_additional_environment_variables", "new": "vaultwarden_environment_variables_additional_variables" }
     - { "old": "vaultwarden_http_header_content_permission_policy", "new": "vaultwarden_http_header_permissions_policy" }
+    - { "old": "vaultwarden_database_hostname", "new": "vaultwarden_database_postgres_hostname" }
+    - { "old": "vaultwarden_database_port", "new": "vaultwarden_database_postgres_port" }
+    - { "old": "vaultwarden_database_username", "new": "vaultwarden_database_postgres_username" }
+    - { "old": "vaultwarden_database_password", "new": "vaultwarden_database_postgres_password" }
+    - { "old": "vaultwarden_database_sslmode", "new": "vaultwarden_database_postgres_sslmode" }
 
 - name: Fail if required Vaultwarden settings not defined
   ansible.builtin.fail:
@@ -55,8 +60,8 @@
       You need to define a required configuration setting (`{{ item }}`) when `vaultwarden_database_type` is `postgres`
   when: "vaultwarden_database_type == 'postgres' and lookup('vars', item, default='') | string | length == 0"
   with_items:
-    - vaultwarden_database_hostname
-    - vaultwarden_database_password
+    - vaultwarden_database_postgres_hostname
+    - vaultwarden_database_postgres_password
 
 - name: Fail if required Vaultwarden + MySQL integration settings not defined
   ansible.builtin.fail:

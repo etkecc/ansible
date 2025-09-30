@@ -16,10 +16,15 @@
     - { "old": "etherpad_container_image_name_prefix", "new": "etherpad_container_image_registry_prefix" }
     - { "old": "etherpad_container_src_path", "new": "etherpad_container_image_self_build_src_files_path" }
     - { "old": "etherpad_database_engine", "new": "etherpad_database_type" }
+    - { "old": "etherpad_database_hostname", "new": "etherpad_database_postgres_hostname" }
+    - { "old": "etherpad_database_port", "new": "etherpad_database_postgres_port" }
+    - { "old": "etherpad_database_username", "new": "etherpad_database_postgres_username" }
+    - { "old": "etherpad_database_password", "new": "etherpad_database_postgres_password" }
     - { "old": "etherpad_title", "new": "etherpad_configuration_title" }
     - { "old": "etherpad_abiword", "new": "etherpad_configuration_abiword" }
     - { "old": "etherpad_soffice", "new": "etherpad_configuration_soffice" }
     - { "old": "etherpad_default_pad_text", "new": "etherpad_configuration_defaultpadtext" }
+    - { "old": "etherpad_http_header_content_permission_policy", "new": "etherpad_http_header_permissions_policy" }
 
 - name: Fail if required Etherpad settings not defined
   ansible.builtin.fail:
@@ -52,8 +57,8 @@
       You need to define a required configuration setting (`{{ item }}`) when `etherpad_database_type` is `postgres`
   when: "etherpad_database_type == 'postgres' and lookup('vars', item, default='') | string | length == 0"
   with_items:
-    - etherpad_database_hostname
-    - etherpad_database_password
+    - etherpad_database_postgres_hostname
+    - etherpad_database_postgres_password
 
 - name: Fail if required Etherpad + Redis integration settings not defined
   ansible.builtin.fail:
