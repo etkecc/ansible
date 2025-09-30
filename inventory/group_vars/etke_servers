@@ -317,10 +317,10 @@ vaultwarden_container_labels_traefik_tls_certResolver: "{{ traefik_certResolver_
 vaultwarden_container_labels_traefik_compression_middleware_enabled: "{{ matrix_playbook_reverse_proxy_traefik_middleware_compression_enabled }}"
 vaultwarden_container_labels_traefik_compression_middleware_name: "{{ matrix_playbook_reverse_proxy_traefik_middleware_compression_name if matrix_playbook_reverse_proxy_traefik_middleware_compression_enabled else '' }}"
 
-vaultwarden_database_hostname: "{{ postgres_identifier if postgres_enabled else '' }}"
-vaultwarden_database_port: "{{ '5432' if postgres_enabled else '' }}"
-vaultwarden_database_username: "vaultwarden"
-vaultwarden_database_password: "{{ '%s' | format(mash_playbook_generic_secret_key) | password_hash('sha512', 'db.vaultwarden', rounds=655555) | to_uuid }}"
+vaultwarden_database_postgres_hostname: "{{ postgres_identifier if postgres_enabled else '' }}"
+vaultwarden_database_postgres_port: "{{ '5432' if postgres_enabled else '' }}"
+vaultwarden_database_postgres_username: "vaultwarden"
+vaultwarden_database_postgres_password: "{{ '%s' | format(mash_playbook_generic_secret_key) | password_hash('sha512', 'db.vaultwarden', rounds=655555) | to_uuid }}"
 
 # role-specific:exim_relay
 vaultwarden_config_smtp_from: "{{ exim_relay_sender_address if exim_relay_enabled else '' }}"
@@ -597,8 +597,8 @@ postgres_managed_databases_additional: |
     +
     ([{
       'name': vaultwarden_database_name,
-      'username': vaultwarden_database_username,
-      'password': vaultwarden_database_password,
+      'username': vaultwarden_database_postgres_username,
+      'password': vaultwarden_database_postgres_password,
     }] if vaultwarden_enabled else [])
     +
     ([{
