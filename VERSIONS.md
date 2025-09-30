@@ -26,7 +26,7 @@
 * Honoroit: v0.9.29
 * Hookshot: 7.1.0
 * Hydrogen: v0.5.1
-* Jitsi: stable-10532
+* Jitsi: stable-10532-1
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
 * Languagetool: 6.6-dockerupdate-2
@@ -66,7 +66,7 @@
 * Static Files: 2.38.1
 * Steam Bridge: 1.0.5
 * Sygnal: v0.15.1
-* Synapse: v1.138.2
+* Synapse: v1.139.0
 * Synapse Admin: v0.11.1-etke47
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.0.3
