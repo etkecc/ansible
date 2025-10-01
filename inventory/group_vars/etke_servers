@@ -288,7 +288,7 @@ vaultwarden_base_path: "{{ mash_playbook_base_path }}/{{ mash_playbook_service_b
 
 vaultwarden_systemd_required_services_list_auto: |
   {{
-    ([postgres_identifier ~ '.service'] if postgres_enabled and vaultwarden_database_hostname == postgres_identifier else [])
+    ([postgres_identifier ~ '.service'] if postgres_enabled and vaultwarden_database_postgres_hostname == postgres_identifier else [])
   }}
 
 vaultwarden_container_image_registry_prefix_upstream: "{{ matrix_container_global_registry_prefix_override if matrix_container_global_registry_prefix_override else vaultwarden_container_image_registry_prefix_upstream_default }}"
@@ -299,7 +299,7 @@ vaultwarden_container_additional_networks_auto: |
   {{
     ([mash_playbook_reverse_proxyable_services_additional_network] if mash_playbook_reverse_proxyable_services_additional_network else [])
     +
-    ([postgres_container_network] if postgres_enabled and vaultwarden_database_hostname == postgres_identifier and vaultwarden_container_network != postgres_container_network else [])
+    ([postgres_container_network] if postgres_enabled and vaultwarden_database_postgres_hostname == postgres_identifier and vaultwarden_container_network != postgres_container_network else [])
     +
     ([exim_relay_container_network | default('matrix-exim-relay')] if (exim_relay_enabled | default(false) and vaultwarden_config_smtp_host == exim_relay_identifier | default('matrix-exim-relay') and exim_relay_container_network != vaultwarden_container_network) else [])
   }}
