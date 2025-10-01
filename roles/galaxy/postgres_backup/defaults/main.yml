@@ -68,10 +68,17 @@ postgres_backup_postgres_role_include_name: galaxy/postgres
 
 postgres_backup_architecture: amd64
 
+# List of systemd services that the Postgres-backup systemd service depends on
 postgres_backup_systemd_required_services_list: "{{ postgres_backup_systemd_required_services_list_default + postgres_backup_systemd_required_services_list_auto + postgres_backup_systemd_required_services_list_custom }}"
 postgres_backup_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
 postgres_backup_systemd_required_services_list_auto: []
 postgres_backup_systemd_required_services_list_custom: []
+
+# List of systemd services that the Postgres-backup systemd service wants
+postgres_backup_systemd_wanted_services_list: "{{ postgres_backup_systemd_wanted_services_list_default + postgres_backup_systemd_wanted_services_list_auto + postgres_backup_systemd_wanted_services_list_custom }}"
+postgres_backup_systemd_wanted_services_list_default: []
+postgres_backup_systemd_wanted_services_list_auto: []
+postgres_backup_systemd_wanted_services_list_custom: []
 
 postgres_backup_container_network: "{{ postgres_backup_identifier }}"
 
@@ -98,7 +105,8 @@ postgres_backup_container_image_v14: "{{ postgres_backup_container_image_registr
 postgres_backup_container_image_v15: "{{ postgres_backup_container_image_registry_prefix }}prodrigestivill/postgres-backup-local:15-{{ postgres_backup_container_image_distro }}-2cf00a5"
 postgres_backup_container_image_v16: "{{ postgres_backup_container_image_registry_prefix }}prodrigestivill/postgres-backup-local:16-{{ postgres_backup_container_image_distro }}-1a66318"
 postgres_backup_container_image_v17: "{{ postgres_backup_container_image_registry_prefix }}prodrigestivill/postgres-backup-local:17-{{ postgres_backup_container_image_distro }}-234f538"
-postgres_backup_container_image_latest: "{{ postgres_backup_container_image_v17 }}"
+postgres_backup_container_image_v18: "{{ postgres_backup_container_image_registry_prefix }}prodrigestivill/postgres-backup-local:18-{{ postgres_backup_container_image_distro }}-d257e5d"
+postgres_backup_container_image_latest: "{{ postgres_backup_container_image_v18 }}"
 
 # This variable is assigned at runtime if `postgres_backup_postgres_data_path` is not empty. Overriding its value in that case has no effect.
 postgres_backup_container_image_to_use: '{{ postgres_backup_container_image_latest }}'

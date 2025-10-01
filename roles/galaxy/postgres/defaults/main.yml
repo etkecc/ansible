@@ -12,6 +12,11 @@ postgres_identifier: 'postgres'
 
 postgres_base_path: "/{{ postgres_identifier }}"
 postgres_data_path: "{{ postgres_base_path }}/data"
+# The path where the data directory is bind-mounted to inside the container.
+# Previously, we used `/var/lib/postgresql/data` for this, but Postgres v18+ made `/var/lib/postgresql` a VOLUME,
+# so we can't bind-mount a directory beneath it. It's better to use something completely different (like `/data`) instead.
+# Related to: `postgres_server_environment_variable_pgdata`
+postgres_data_in_container_path: "/data"
 postgres_bin_path: "{{ postgres_base_path }}/bin"
 
 postgres_uid: ''
@@ -169,7 +174,10 @@ postgres_container_image_v16_version: "16.10"
 postgres_container_image_v17: "{{ postgres_container_image_registry_prefix }}{{ postgres_container_image_name }}:{{ postgres_container_image_v17_version }}{{ postgres_container_image_suffix }}"
 postgres_container_image_v17_version: "17.6"
 
-postgres_container_image_latest: "{{ postgres_container_image_v17 }}"
+postgres_container_image_v18: "{{ postgres_container_image_registry_prefix }}{{ postgres_container_image_name }}:{{ postgres_container_image_v18_version }}{{ postgres_container_image_suffix }}"
+postgres_container_image_v18_version: "18.0"
+
+postgres_container_image_latest: "{{ postgres_container_image_v18 }}"
 
 # This variable is assigned at runtime. Overriding its value has no effect.
 postgres_container_image_to_use: '{{ postgres_container_image_latest }}'
@@ -330,6 +338,31 @@ postgres_import_databases_ignore_regex: "^CREATE DATABASE \\\"?({{ postgres_impo
 # On ARM, we wait some more. ARM32 devices are especially known for being slow.
 # ARM64 likely don't need such a long delay, but it doesn't hurt too much having it.
 postgres_managed_databases_postgres_start_wait_timeout_seconds: "{{ 45 if postgres_architecture in ['arm32', 'arm64'] else 15 }}"
+
+# Defines the `PGDATA` environment variable for the Postgres server.
+#
+# We explicitly set it to avoid surprises caused by Postgres >= v18 which changed the default value for this
+# (from `/var/lib/postgresql/data` to `/var/lib/postgresql/MAJOR/docker`).
+# Ref: https://github.com/docker-library/postgres/pull/1259
+#
+# We intentionally set this to `/data` (see `postgres_data_in_container_path`), not `/var/lib/postgresql/data` (like the old value),
+# because `/var/lib/postgresql` is defined as a VOLUME already in the official container image,
+# which makes it impossible to bind-mount directories beneath it.
+# Ref: https://github.com/docker-library/postgres/pull/1259#issuecomment-2215489177
+#
+# We could have also adopted the new data layout (used by Postgres v18+), but this necessitates:
+# - a data migration (for the files stored in `postgres_data_path`),
+# - reworking of our Postgres version detection logic (`tasks/detect_existing_postgres_version.yml`)
+# - etc.
+#
+# The new data layout promises to make it possible to do faster (`pg_upgrade --link`) upgrades between major Postgres versions,
+# instead of having to do a dump and restore.
+# However, this is an empty promise, because for `pg_upgrade` to work, one also needs to have both old & new Postgres binaries available,
+# which is not the case for the official container image.
+# As it is now, adopting the new data layout would only lead to pain, without any gain.
+#
+# Because of all this, we keep the old data layout. In the future, this may change.
+postgres_server_environment_variable_pgdata: "{{ postgres_data_in_container_path }}"
 
 postgres_pgloader_container_image_self_build: "{{ postgres_architecture != 'amd64' }}"
 postgres_pgloader_container_image_self_build_repo: "https://github.com/illagrenan/pgloader-docker.git"

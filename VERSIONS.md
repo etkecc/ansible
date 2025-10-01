@@ -50,6 +50,7 @@
 * Postgres Container Image V15: 15.14
 * Postgres Container Image V16: 16.10
 * Postgres Container Image V17: 17.6
+* Postgres Container Image V18: 18.0
 * Postgres Container Image V9: 9.6.24
 * Postmoogle: v0.9.26
 * Prometheus: v3.5.0

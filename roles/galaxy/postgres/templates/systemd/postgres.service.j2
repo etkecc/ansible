@@ -41,7 +41,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       -p {{ postgres_container_postgres_bind_port }}:5432 \
       {% endif %}
       --env-file={{ postgres_base_path }}/env-postgres-server \
-      --mount type=bind,src={{ postgres_data_path }},dst=/var/lib/postgresql/data \
+      --mount type=bind,src={{ postgres_data_path }},dst={{ postgres_data_in_container_path }} \
       {% if postgres_container_mount_etc_passwd_enabled %}
       --mount type=bind,src=/etc/passwd,dst=/etc/passwd,ro \
       {% endif %}

@@ -81,3 +81,8 @@
   ansible.builtin.set_fact:
     postgres_detected_version_corresponding_docker_image: "{{ postgres_container_image_v17 }}"
   when: "postgres_detected_version == '17' or postgres_detected_version.startswith('17.')"
+
+- name: Determine corresponding container image to detected version (use 18.x, if detected)
+  ansible.builtin.set_fact:
+    postgres_detected_version_corresponding_docker_image: "{{ postgres_container_image_v18 }}"
+  when: "postgres_detected_version == '18' or postgres_detected_version.startswith('18.')"

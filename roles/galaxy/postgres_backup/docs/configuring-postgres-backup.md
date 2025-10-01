@@ -21,7 +21,7 @@ To enable Postgres backup with this role, add the following configuration to you
 ```yaml
 ########################################################################
 #                                                                      #
-# postgres-backup                                                      #
+# postgres_backup                                                      #
 #                                                                      #
 ########################################################################
 
@@ -29,7 +29,7 @@ postgres_backup_enabled: true
 
 ########################################################################
 #                                                                      #
-# /postgres-backup                                                     #
+# /postgres_backup                                                     #
 #                                                                      #
 ########################################################################
 ```

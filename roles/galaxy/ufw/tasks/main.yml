@@ -30,54 +30,6 @@
       comment: SSH
       delete: "{{ not system_security_ufw_ssh_allowed | bool }}"
 
-  - name: Allow email receiving (plain)
-    community.general.ufw:
-      rule: allow
-      port: "{{ matrix_postmoogle_smtp_host_bind_port }}"
-      proto: tcp
-      comment: postmoogle
-    when: matrix_postmoogle_enabled | bool
-
-  - name: Allow email receiving (TLS)
-    community.general.ufw:
-      rule: allow
-      port: "{{ matrix_postmoogle_submission_host_bind_port }}"
-      proto: tcp
-      comment: postmoogle
-    when: matrix_postmoogle_enabled | bool
-
-  - name: Allow heisenbridge identd
-    community.general.ufw:
-      rule: allow
-      port: "{{ matrix_heisenbridge_identd_port }}"
-      proto: tcp
-      comment: heisenbridge/identd
-    when: matrix_heisenbridge_enabled | bool
-
-  - name: Allow firezone
-    community.general.ufw:
-      rule: allow
-      port: "{{ firezone_wireguard_container_port }}"
-      proto: udp
-      comment: firezone
-    when: firezone_enabled | bool
-
-  - name: Allow peertube RTMP (TCP)
-    community.general.ufw:
-      rule: allow
-      port: "{{ peertube_container_rtmp_host_bind_port }}"
-      proto: tcp
-      comment: peertube RTMP
-    when: peertube_enabled | bool
-
-  - name: Allow peertube RTMP (UDP)
-    community.general.ufw:
-      rule: allow
-      port: "{{ peertube_container_rtmp_host_bind_port }}"
-      proto: udp
-      comment: peertube RTMP
-    when: peertube_enabled | bool
-
   - name: Start ufw
     community.general.ufw:
       logging: 'on'

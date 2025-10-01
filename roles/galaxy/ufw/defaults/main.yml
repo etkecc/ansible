@@ -8,10 +8,6 @@ system_security_ssh_port: 22
 # You can add your own rules to allow SSH access from specific IPs or networks, keeping this var set to false
 system_security_ufw_ssh_allowed: true
 
-# integration with mdad
-matrix_coturn_turn_udp_min_port: 49152
-matrix_coturn_turn_udp_max_port: 49573
-
 # Default (base) UFW rules (for matrix) - you definitely do NOT want to change this
 system_security_ufw_rules_base:
   - name: HTTP
@@ -26,54 +22,6 @@ system_security_ufw_rules_base:
     rule: allow
     port: '443'
     proto: udp
-  - name: Matrix Federation
-    rule: allow
-    port: '8448'
-    proto: tcp
-  - name: Matrix Federation over UDP
-    rule: allow
-    port: '8448'
-    proto: udp
-  - name: TURN TCP
-    rule: allow
-    port: '3478'
-    proto: tcp
-  - name: TURN TCP (another port)
-    rule: allow
-    port: '5349'
-    proto: tcp
-  - name: TURN UDP
-    rule: allow
-    port: '5349'
-    proto: udp
-  - name: TURN UDP (port range)
-    rule: allow
-    port: "{{ matrix_coturn_turn_udp_min_port }}:{{ matrix_coturn_turn_udp_max_port }}"
-    proto: udp
-  - name: Jitsi harvester fallback
-    rule: allow
-    port: '4443'
-    proto: tcp
-  - name: Jitsi Video RTP
-    rule: allow
-    port: '10000'
-    proto: udp
-  - name: LiveKit ICE
-    rule: allow
-    port: '7881'
-    proto: tcp
-  - name: LiveKit ICE Mux
-    rule: allow
-    port: '7882'
-    proto: udp
-  - name: LiveKit TURN
-    rule: allow
-    port: '3479'
-    proto: udp
-  - name: LiveKit TURN
-    rule: allow
-    port: '5350'
-    proto: tcp
 
 # UFW rules to create in addition to the base (system_security_ufw_rules_base) and playbook- or group-defined rules
 # You want to use this var to define your own rules
@@ -84,20 +32,3 @@ system_security_ufw_rules_auto: []
 
 # this var is the final (cumulative) list of UFW rules to apply. Use system_security_ufw_rules_custom to add your own rules.
 system_security_ufw_rules: "{{ system_security_ufw_rules_base + system_security_ufw_rules_auto + system_security_ufw_rules_custom }}"
-
-# postmoogle integration
-matrix_postmoogle_enabled: false
-matrix_postmoogle_smtp_host_bind_port: '25'
-matrix_postmoogle_submission_host_bind_port: '587'
-
-# heisenbridge integration
-matrix_heisenbridge_enabled: false
-matrix_heisenbridge_identd_port: '113'
-
-# firezone integration
-firezone_enabled: false
-firezone_wireguard_container_port: '51820'
-
-# peertube integration
-peertube_enabled: false
-peertube_container_rtmp_host_bind_port: '1935'
