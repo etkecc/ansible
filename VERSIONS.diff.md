@@ -15,4 +15,5 @@
 * [Prometheus Postgres Exporter](https://github.com/prometheus-community/postgres_exporter): [v0.17.1](https://github.com/prometheus-community/postgres_exporter/releases/tag/v0.17.1) ⇾ [v0.18.1](https://github.com/prometheus-community/postgres_exporter/releases/tag/v0.18.1)
 * Steam Bridge: 1.0.5 _new_
 * [Synapse](https://github.com/element-hq/synapse): [v1.138.2](https://github.com/element-hq/synapse/releases/tag/v1.138.2) ⇾ [v1.139.0](https://github.com/element-hq/synapse/releases/tag/v1.139.0)
+* [Synapse Admin](https://github.com/etkecc/synapse-admin): [v0.11.1-etke47](https://github.com/etkecc/synapse-admin/releases/tag/v0.11.1-etke47) ⇾ [v0.11.1-etke48](https://github.com/etkecc/synapse-admin/releases/tag/v0.11.1-etke48)
 * [Traefik](https://github.com/traefik/traefik): [v3.5.2](https://github.com/traefik/traefik/releases/tag/v3.5.2) ⇾ [v3.5.3](https://github.com/traefik/traefik/releases/tag/v3.5.3)
