@@ -10,6 +10,7 @@
 * Coturn: 4.6.2-r11
 * Discord: v0.7.5
 * Draupnir: v2.6.1
+* Dynamic Dns: 4.0.0
 * Element: v1.12.0
 * Element Call: v0.16.0
 * Etherpad: 2.5.0

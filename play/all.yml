@@ -26,6 +26,7 @@
         - install-timesync
         - install-all
     - custom/matrix-base
+    - custom/matrix-dynamic-dns
     - galaxy/exim_relay
     - galaxy/container_socket_proxy
     - galaxy/traefik

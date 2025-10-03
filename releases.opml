@@ -35,6 +35,7 @@
     <outline text="draupnir" title="draupnir" type="rss" htmlUrl="https://github.com/the-draupnir-project/Draupnir" xmlUrl="https://github.com/the-draupnir-project/Draupnir/releases.atom" />
     <outline text="dynamic-dns" title="dynamic-dns" type="rss" htmlUrl="https://github.com/linuxserver/docker-ddclient" xmlUrl="https://github.com/linuxserver/docker-ddclient/releases.atom" />
     <outline text="element" title="element" type="rss" htmlUrl="https://github.com/element-hq/element-web" xmlUrl="https://github.com/element-hq/element-web/releases.atom" />
+    <outline text="element-admin" title="element-admin" type="rss" htmlUrl="https://github.com/element-hq/element-admin" xmlUrl="https://github.com/element-hq/element-admin/releases.atom" />
     <outline text="element-call" title="element-call" type="rss" htmlUrl="https://github.com/element-hq/element-call" xmlUrl="https://github.com/element-hq/element-call/releases.atom" />
     <outline text="etherpad" title="etherpad" type="rss" htmlUrl="https://github.com/ether/etherpad-lite" xmlUrl="https://github.com/ether/etherpad-lite/releases.atom" />
     <outline text="exim_relay" title="exim_relay" type="rss" htmlUrl="https://github.com/devture/exim-relay" xmlUrl="https://github.com/devture/exim-relay/releases.atom" />
