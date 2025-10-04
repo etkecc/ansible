@@ -24,6 +24,39 @@
         path: "{{ devture_systemd_docker_base_systemd_path }}/{{ valkey_identifier }}.service"
         state: absent
 
+    - name: Ensure Valkey config file does not exist
+      ansible.builtin.file:
+        path: "{{ valkey_config_path }}/{{ item }}"
+        state: absent
+      with_items:
+        - valkey.conf
+
+    - name: Ensure Valkey image source files path does not exist
+      ansible.builtin.file:
+        path: "{{ valkey_container_image_self_build_src_files_path }}"
+        state: absent
+
+    - name: Ensure Valkey local config path does not exist if empty
+      ansible.builtin.command:
+        cmd: "rmdir {{ valkey_config_path }}"
+      register: valkey_config_path_deletion_result
+      changed_when: valkey_config_path_deletion_result.rc == 0
+      failed_when: false
+
+    - name: Ensure Valkey local data path does not exist if empty
+      ansible.builtin.command:
+        cmd: "rmdir {{ valkey_data_path }}"
+      register: valkey_data_path_deletion_result
+      changed_when: valkey_data_path_deletion_result.rc == 0
+      failed_when: false
+
+    - name: Ensure Valkey base path does not exist if empty
+      ansible.builtin.command:
+        cmd: "rmdir {{ valkey_base_path }}"
+      register: valkey_base_path_deletion_result
+      changed_when: valkey_base_path_deletion_result.rc == 0
+      failed_when: false
+
     - name: Ensure Valkey container network does not exist via community.docker.docker_network
       when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
       community.docker.docker_network:
@@ -53,6 +86,6 @@
         devture_playbook_runtime_messages_list | default([])
         +
         [
-          "Note: You are not using a local Valkey instance, but some old data remains from before in `{{ valkey_data_path }}`. Feel free to delete it."
+          "Note: You are not using a local Valkey instance, but some old data remains from before in `" + valkey_data_path + "`. Feel free to delete it."
         ]
       }}

@@ -76,6 +76,15 @@
     group: "{{ grafana_gid }}"
   with_items: "{{ grafana_provisioning_dashboard_template_files }}"
 
+- name: Ensure Grafana alerting templates installed
+  ansible.builtin.template:
+    src: "{{ item.path }}"
+    dest: "{{ grafana_config_path }}/provisioning/alerting/{{ item.name }}"
+    mode: "0440"
+    owner: "{{ grafana_uid }}"
+    group: "{{ grafana_gid }}"
+  with_items: "{{ grafana_provisioning_alerting_template_files }}"
+
 - name: Ensure Grafana container image is pulled via community.docker.docker_image
   when: devture_systemd_docker_base_container_image_pull_method == 'ansible-module'
   community.docker.docker_image:

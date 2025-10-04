@@ -23,7 +23,7 @@
 * Googlechat: v0.5.2
 * Gotosocial: 0.19.2
 * Grafana: 11.6.5
-* Heisenbridge: 1.15.3
+* Heisenbridge: 1.15.4
 * Honoroit: v0.9.29
 * Hookshot: 7.1.0
 * Hydrogen: v0.5.1
@@ -81,7 +81,7 @@
 * Traefik Certs Dumper: v2.10.0
 * Twitter: v0.5.0
 * Uptime Kuma: 1.23.16
-* Valkey: 8.1.3
+* Valkey: 8.1.4
 * Vaultwarden: 1.34.3
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1

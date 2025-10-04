@@ -1,5 +1,7 @@
+# SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
 # SPDX-FileCopyrightText: 2023 - 2024 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2025 spatterlight
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -14,6 +16,7 @@
     - { "old": "grafana_container_additional_networks_additional", "new": "grafana_container_additional_networks_custom" }
     - { "old": "grafana_provisioning_datasources", "new": "grafana_provisioning_datasources_datasources" }
     - { "old": "grafana_provisioning_dashboard_providers", "new": "grafana_provisioning_dashboards_providers" }
+    - { "old": "grafana_http_header_content_permission_policy", "new": "grafana_http_header_permissions_policy" }
 
 - name: Fail if required Grafana settings not defined
   ansible.builtin.fail:
@@ -27,6 +30,16 @@
     - grafana_hostname
     - grafana_path_prefix
     - grafana_container_network
+
+- name: Fail if SMTP settings are missing (and SMTP is enabled by setting host)
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`) to correctly set up email via SMTP.
+  when: "grafana_smtp_enabled | bool and lookup('vars', item, default='') | string | length == 0"
+  with_items:
+    - grafana_smtp_host
+    - grafana_smtp_port
+    - grafana_smtp_from_address
 
 - name: Run if Traefik is enabled
   when: grafana_container_labels_traefik_enabled | bool

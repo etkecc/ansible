@@ -92,7 +92,7 @@ grafana_container_labels_traefik_additional_response_headers: "{{ grafana_contai
 grafana_container_labels_traefik_additional_response_headers_auto: |
   {{
     {}
-    | combine ({'Permission-Policy': grafana_http_header_content_permission_policy} if grafana_http_header_content_permission_policy else {})
+    | combine ({'Permissions-Policy': grafana_http_header_permissions_policy} if grafana_http_header_permissions_policy else {})
     | combine ({'Strict-Transport-Security': grafana_http_header_strict_transport_security} if grafana_http_header_strict_transport_security and grafana_container_labels_traefik_tls else {})
   }}
 grafana_container_labels_traefik_additional_response_headers_custom: {}
@@ -110,8 +110,8 @@ grafana_container_labels_additional_labels: ''
 grafana_container_extra_arguments: []
 
 # Specify the value of the `Permission-Policy` header.
-# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permission-Policy
-grafana_http_header_content_permission_policy: "{{ 'interest-cohort=()' if grafana_floc_optout_enabled else '' }}"
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy
+grafana_http_header_permissions_policy: "{{ 'interest-cohort=()' if grafana_floc_optout_enabled else '' }}"
 
 # Specify the value of the `Strict-Transport-Security` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
@@ -125,7 +125,7 @@ grafana_http_header_strict_transport_security: "max-age=31536000; includeSubDoma
 # - https://amifloced.org/
 #
 # Of course, a better solution is to just stop using browsers (like Chrome), which participate in such tracking practices.
-# See: `grafana_content_permission_policy`
+# See: `grafana_http_header_permissions_policy`
 grafana_floc_optout_enabled: true
 
 # Control if HSTS preloading is enabled.
@@ -219,9 +219,17 @@ grafana_smtp_from_address: ""
 #
 # Example:
 # grafana_provisioning_dashboard_template_files:
-#   - name: /path/to/my-dashboard.json
+#   - path: /path/to/my-dashboard.json.j2
 #     name: my-dashboard.json
 grafana_provisioning_dashboard_template_files: []
+
+# A list of template files on the Ansible controller server to install into the alerting directory.
+#
+# Example:
+# grafana_provisioning_alerting_template_files:
+#   - path: /path/to/my-alert.yml.j2
+#     name: my-alert.yml
+grafana_provisioning_alerting_template_files: []
 
 # A list of provisioning dashboard providers.
 # See `../templates/provisioning/dashboards.yaml.j2`
