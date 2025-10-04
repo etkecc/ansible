@@ -11,15 +11,15 @@
     ignore_errors: true
   - name: Transform public destinations
     set_fact:
-      destinations: "{{ raw.stdout_lines[2:(raw.stdout_lines | length) - 1] | map('trim') | list }}"
-  - name: "Export public destinations (total: {{ destinations | length }})"
+      mrs_discovery_destinations: "{{ raw.stdout_lines[2:(raw.stdout_lines | length) - 1] | map('trim') | list }}"
+  - name: "Export public destinations (total: {{ mrs_discovery_destinations | length }})"
     ansible.builtin.uri:
       url: "{{ mrs_discovery_url }}"
       user: "{{ mrs_discovery_login }}"
       password: "{{ mrs_discovery_password }}"
       force_basic_auth: true
       body_format: json
-      body: "{{ destinations }}"
+      body: "{{ mrs_discovery_destinations }}"
       method: POST
       status_code:
         - 202

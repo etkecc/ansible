@@ -7,3 +7,4 @@ mrs_discovery_command_bin: "{{ matrix_base_data_path }}/postgres/bin/cli-non-int
 mrs_discovery_command_args: "-d synapse -c 'select destination from destinations;'"
 mrs_discovery_login: discovery
 mrs_discovery_password: changeme
+mrs_discovery_destinations: []
