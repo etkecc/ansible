@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: Ensure Funkwhale API is started
+- name: Ensure Funkwhale API service is started
   ansible.builtin.service:
     name: "{{ funkwhale_api_identifier }}"
     state: started

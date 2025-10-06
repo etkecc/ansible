@@ -40,7 +40,7 @@
       initial_password: "{{ password }}"
       initial_type: "{{ initial_role }}"
 
-- name: Ensure Funkwhale API is started
+- name: Ensure Funkwhale API service is started
   ansible.builtin.service:
     name: "{{ funkwhale_api_identifier }}"
     state: started

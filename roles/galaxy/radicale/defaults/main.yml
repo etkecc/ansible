@@ -18,7 +18,7 @@ radicale_data_collections_path: "{{ radicale_data_path }}/{{ radicale_data_colle
 radicale_data_collections_subdir: collections
 
 # renovate: datasource=docker depName=tomsquest/docker-radicale
-radicale_version: 3.5.6.0
+radicale_version: 3.5.7.0
 
 radicale_uid: ''
 radicale_gid: ''
@@ -90,7 +90,7 @@ radicale_container_labels_traefik_additional_response_headers_auto: |
     | combine ({'X-XSS-Protection': radicale_http_header_xss_protection} if radicale_http_header_xss_protection else {})
     | combine ({'X-Content-Type-Options': radicale_http_header_content_type_options} if radicale_http_header_content_type_options else {})
     | combine ({'Content-Security-Policy': radicale_http_header_content_security_policy} if radicale_http_header_content_security_policy else {})
-    | combine ({'Permission-Policy': radicale_http_header_content_permission_policy} if radicale_http_header_content_permission_policy else {})
+    | combine ({'Permissions-Policy': radicale_http_header_permissions_policy} if radicale_http_header_permissions_policy else {})
     | combine ({'Strict-Transport-Security': radicale_http_header_strict_transport_security} if radicale_http_header_strict_transport_security and radicale_container_labels_traefik_tls else {})
   }}
 radicale_container_labels_traefik_additional_response_headers_custom: {}
@@ -134,9 +134,9 @@ radicale_http_header_content_type_options: nosniff
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
 radicale_http_header_content_security_policy: frame-ancestors 'self'
 
-# Specifies the value of the `Permission-Policy` header.
-# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permission-Policy
-radicale_http_header_content_permission_policy: "{{ 'interest-cohort=()' if radicale_floc_optout_enabled else '' }}"
+# Specifies the value of the `Permissions-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy
+radicale_http_header_permissions_policy: "{{ 'interest-cohort=()' if radicale_floc_optout_enabled else '' }}"
 
 # Specifies the value of the `Strict-Transport-Security` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
@@ -150,7 +150,7 @@ radicale_http_header_strict_transport_security: "max-age=31536000; includeSubDom
 # - https://amifloced.org/
 #
 # Of course, a better solution is to just stop using browsers (like Chrome), which participate in such tracking practices.
-# See: `radicale_content_permission_policy`
+# See: `radicale_http_header_permissions_policy`
 radicale_floc_optout_enabled: true
 
 # Controls if HSTS preloading is enabled

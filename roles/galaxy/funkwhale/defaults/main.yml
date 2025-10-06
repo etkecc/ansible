@@ -168,7 +168,7 @@ funkwhale_api_container_labels_traefik_additional_response_headers_auto: |
     | combine ({'X-XSS-Protection': funkwhale_api_http_header_xss_protection} if funkwhale_api_http_header_xss_protection else {})
     | combine ({'X-Content-Type-Options': funkwhale_api_http_header_content_type_options} if funkwhale_api_http_header_content_type_options else {})
     | combine ({'Content-Security-Policy': funkwhale_api_http_header_content_security_policy} if funkwhale_api_http_header_content_security_policy else {})
-    | combine ({'Permission-Policy': funkwhale_api_http_header_content_permission_policy} if funkwhale_api_http_header_content_permission_policy else {})
+    | combine ({'Permissions-Policy': funkwhale_api_http_header_permissions_policy} if funkwhale_api_http_header_permissions_policy else {})
     | combine ({'Strict-Transport-Security': funkwhale_api_http_header_strict_transport_security} if funkwhale_api_http_header_strict_transport_security and funkwhale_api_container_labels_traefik_tls else {})
   }}
 funkwhale_api_container_labels_traefik_additional_response_headers_custom: {}
@@ -210,9 +210,9 @@ funkwhale_api_http_header_content_type_options: nosniff
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
 funkwhale_api_http_header_content_security_policy: frame-ancestors 'self'
 
-# Specifies the value of the `Permission-Policy` header.
-# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permission-Policy
-funkwhale_api_http_header_content_permission_policy: "{{ 'interest-cohort=()' if funkwhale_api_floc_optout_enabled else '' }}"
+# Specifies the value of the `Permissions-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy
+funkwhale_api_http_header_permissions_policy: "{{ 'interest-cohort=()' if funkwhale_api_floc_optout_enabled else '' }}"
 
 # Specifies the value of the `Strict-Transport-Security` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
@@ -226,7 +226,7 @@ funkwhale_api_http_header_strict_transport_security: "max-age=31536000; includeS
 # - https://amifloced.org/
 #
 # Of course, a better solution is to just stop using browsers (like Chrome), which participate in such tracking practices.
-# See: `funkwhale_content_permission_policy`
+# See: `funkwhale_api_http_header_permissions_policy`
 funkwhale_api_floc_optout_enabled: true
 
 # Controls if HSTS preloading is enabled
@@ -327,7 +327,7 @@ funkwhale_frontend_container_labels_traefik_additional_response_headers_auto: |
     | combine ({'X-XSS-Protection': funkwhale_frontend_http_header_xss_protection} if funkwhale_frontend_http_header_xss_protection else {})
     | combine ({'X-Content-Type-Options': funkwhale_frontend_http_header_content_type_options} if funkwhale_frontend_http_header_content_type_options else {})
     | combine ({'Content-Security-Policy': funkwhale_frontend_http_header_content_security_policy} if funkwhale_frontend_http_header_content_security_policy else {})
-    | combine ({'Permission-Policy': funkwhale_frontend_http_header_content_permission_policy} if funkwhale_frontend_http_header_content_permission_policy else {})
+    | combine ({'Permissions-Policy': funkwhale_frontend_http_header_permissions_policy} if funkwhale_frontend_http_header_permissions_policy else {})
     | combine ({'Strict-Transport-Security': funkwhale_frontend_http_header_strict_transport_security} if funkwhale_frontend_http_header_strict_transport_security and funkwhale_frontend_container_labels_traefik_tls else {})
   }}
 funkwhale_frontend_container_labels_traefik_additional_response_headers_custom: {}
@@ -369,9 +369,9 @@ funkwhale_frontend_http_header_content_type_options: nosniff
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
 funkwhale_frontend_http_header_content_security_policy: frame-ancestors 'self'
 
-# Specifies the value of the `Permission-Policy` header.
-# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permission-Policy
-funkwhale_frontend_http_header_content_permission_policy: "{{ 'interest-cohort=()' if funkwhale_frontend_floc_optout_enabled else '' }}"
+# Specifies the value of the `Permissions-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy
+funkwhale_frontend_http_header_permissions_policy: "{{ 'interest-cohort=()' if funkwhale_frontend_floc_optout_enabled else '' }}"
 
 # Specifies the value of the `Strict-Transport-Security` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
@@ -385,7 +385,7 @@ funkwhale_frontend_http_header_strict_transport_security: "max-age=31536000; inc
 # - https://amifloced.org/
 #
 # Of course, a better solution is to just stop using browsers (like Chrome), which participate in such tracking practices.
-# See: `funkwhale_content_permission_policy`
+# See: `funkwhale_frontend_http_header_permissions_policy`
 funkwhale_frontend_floc_optout_enabled: true
 
 # Controls if HSTS preloading is enabled

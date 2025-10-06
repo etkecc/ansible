@@ -27,7 +27,7 @@ See the project's [documentation](https://docs.gotosocial.org/) to learn what Go
 
 ## Prerequisites
 
-To run a GoToSocial instance it is necessary to prepare a database. You can use a [SQLite](https://www.sqlite.org/) or [Postgres](https://www.postgresql.org/). By default it is configured to use SQLite.
+To run a GoToSocial instance it is necessary to prepare a database. You can use a [Postgres](https://www.postgresql.org/) database server or [SQLite](https://www.sqlite.org/). By default it is configured to use SQLite.
 
 If you are looking for an Ansible role for Postgres, you can check out [this role (ansible-role-postgres)](https://github.com/mother-of-all-self-hosting/ansible-role-postgres) maintained by the [Mother-of-All-Self-Hosting (MASH)](https://github.com/mother-of-all-self-hosting) team.
 

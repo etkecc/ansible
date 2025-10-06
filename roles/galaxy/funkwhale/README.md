@@ -21,3 +21,9 @@ If you wish to boost the performance of your pod, you can try tweaking these var
 
 - `funkwhale_frontend_web_workers`: increase to allow more parallel connections of web workers
 - `funkwhale_celery_worker_concurrency`: increase the number of worker processes for background tasks
+
+## Development
+
+You can optionally install [pre-commit](https://pre-commit.com/) so that simple mistakes are checked and noticed before changes are pushed to a remote branch. See [`.pre-commit-config.yaml`](./.pre-commit-config.yaml) for which hooks are to be executed.
+
+See [this section](https://pre-commit.com/#usage) on the official documentation for usage.

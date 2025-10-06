@@ -17,6 +17,7 @@
     - { "old": "gotosocial_database_host", "new": "gotosocial_database_hostname" }
     - { "old": "gotosocial_env_path", "new": "<Removed>" }
     - { "old": "gotosocial_environment_variables_extension", "new": "gotosocial_environment_variables_additional_variables" }
+    - { "old": "gotosocial_http_header_content_permission_policy", "new": "gotosocial_http_header_permissions_policy" }
 
 - name: Fail if required GoToSocial settings not defined
   ansible.builtin.fail:
