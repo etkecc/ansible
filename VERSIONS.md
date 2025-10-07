@@ -11,7 +11,7 @@
 * Discord: v0.7.5
 * Draupnir: v2.6.1
 * Dynamic Dns: 4.0.0
-* Element: v1.12.0
+* Element: v1.12.1
 * Element Call: v0.16.0
 * Etherpad: 2.5.0
 * Exim Relay: 4.98.1-r0-2
