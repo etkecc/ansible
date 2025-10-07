@@ -60,7 +60,6 @@ languagetool_gid: "{{ mash_playbook_gid }}"
 
 languagetool_container_image_registry_prefix_upstream: "{{ matrix_container_global_registry_prefix_override if matrix_container_global_registry_prefix_override else languagetool_container_image_registry_prefix_upstream_default }}"
 
-languagetool_container_network: "{{ matrix_addons_container_network }}"
 languagetool_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
 languagetool_container_labels_traefik_docker_network: "{{ mash_playbook_reverse_proxyable_services_additional_network }}"
 languagetool_container_labels_traefik_entrypoints: "{{ traefik_entrypoint_primary }}"
@@ -91,8 +90,6 @@ linkding_systemd_required_services_list_auto: |
   }}
 
 linkding_container_image_registry_prefix_upstream: "{{ matrix_container_global_registry_prefix_override if matrix_container_global_registry_prefix_override else linkding_container_image_registry_prefix_upstream_default }}"
-
-linkding_container_network: "{{ matrix_addons_container_network }}"
 
 linkding_container_additional_networks_auto: |
   {{
@@ -127,8 +124,6 @@ miniflux_uid: "{{ matrix_user_uid }}"
 miniflux_gid: "{{ matrix_user_gid }}"
 
 miniflux_container_image_registry_prefix_upstream: "{{ matrix_container_global_registry_prefix_override if matrix_container_global_registry_prefix_override else miniflux_container_image_registry_prefix_upstream_default }}"
-
-miniflux_container_network: "{{ matrix_addons_container_network }}"
 
 miniflux_container_additional_networks_auto: |
   {{
@@ -178,8 +173,6 @@ radicale_gid: "{{ matrix_user_gid }}"
 radicale_container_image: "{{ radicale_container_image_registry_prefix }}etkecc/radicale:{{ radicale_container_image_tag }}"
 radicale_container_image_registry_prefix_upstream_default: ghcr.io/
 
-radicale_container_network: "{{ matrix_addons_container_network }}"
-
 radicale_container_additional_networks_auto: |
   {{
     ([matrix_playbook_reverse_proxyable_services_additional_network] if (matrix_playbook_reverse_proxyable_services_additional_network and radicale_container_labels_traefik_enabled) else [])
@@ -206,8 +199,6 @@ uptime_kuma_uid: "{{ matrix_user_uid }}"
 uptime_kuma_gid: "{{ matrix_user_gid }}"
 
 uptime_kuma_container_image_registry_prefix_upstream: "{{ matrix_container_global_registry_prefix_override if matrix_container_global_registry_prefix_override else uptime_kuma_container_image_registry_prefix_upstream_default }}"
-
-uptime_kuma_container_network: "{{ matrix_addons_container_network }}"
 
 uptime_kuma_container_additional_networks_auto: |
   {{
@@ -244,8 +235,6 @@ gotosocial_systemd_wanted_services_list_auto: |
   }}
 
 gotosocial_container_image_registry_prefix_upstream: "{{ matrix_container_global_registry_prefix_override if matrix_container_global_registry_prefix_override else gotosocial_container_image_registry_prefix_upstream_default }}"
-
-gotosocial_container_network: "{{ matrix_addons_container_network }}"
 
 gotosocial_container_additional_networks_auto: |
   {{
@@ -292,8 +281,6 @@ vaultwarden_systemd_required_services_list_auto: |
   }}
 
 vaultwarden_container_image_registry_prefix_upstream: "{{ matrix_container_global_registry_prefix_override if matrix_container_global_registry_prefix_override else vaultwarden_container_image_registry_prefix_upstream_default }}"
-
-vaultwarden_container_network: "{{ matrix_addons_container_network }}"
 
 vaultwarden_container_additional_networks_auto: |
   {{
@@ -357,8 +344,6 @@ firezone_systemd_required_services_list_auto: |
 
 firezone_container_image_registry_prefix_upstream: "{{ matrix_container_global_registry_prefix_override if matrix_container_global_registry_prefix_override else firezone_container_image_registry_prefix_upstream_default }}"
 
-firezone_container_network: "{{ matrix_addons_container_network }}"
-
 firezone_container_additional_networks_auto: |
   {{
     ([mash_playbook_reverse_proxyable_services_additional_network] if mash_playbook_reverse_proxyable_services_additional_network else [])
@@ -383,7 +368,6 @@ funkwhale_base_path: "{{ mash_playbook_base_path }}/{{ mash_playbook_service_bas
 
 funkwhale_uid: "{{ mash_playbook_uid }}"
 funkwhale_gid: "{{ mash_playbook_gid }}"
-funkwhale_container_network: "{{ matrix_addons_container_network }}"
 
 funkwhale_database_hostname: "{{ postgres_identifier if postgres_enabled else '' }}"
 funkwhale_database_port: "{{ '5432' if postgres_enabled else '' }}"
@@ -457,7 +441,6 @@ peertube_base_path: "{{ mash_playbook_base_path }}/{{ mash_playbook_service_base
 
 peertube_uid: "{{ mash_playbook_uid }}"
 peertube_gid: "{{ mash_playbook_gid }}"
-peertube_container_network: "{{ matrix_addons_container_network }}"
 peertube_container_rtmp_host_bind_port: 1935
 
 # role-specific:exim_relay
