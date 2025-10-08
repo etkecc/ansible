@@ -15,6 +15,7 @@
     - { "old": "prometheus_basic_auth_enabled", "new": "prometheus_container_labels_metrics_middleware_basic_auth_enabled" }
     - { "old": "prometheus_basic_auth_username", "new": "<superseded by prometheus_container_labels_metrics_middleware_basic_auth_users>" }
     - { "old": "prometheus_basic_auth_password", "new": "<superseded by prometheus_container_labels_metrics_middleware_basic_auth_users>" }
+    - { "old": "prometheus_http_header_content_permission_policy", "new": "prometheus_http_header_permissions_policy" }
 
 - name: Fail if required Prometheus settings not defined
   ansible.builtin.fail:

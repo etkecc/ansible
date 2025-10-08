@@ -19,7 +19,7 @@ prometheus_config_path: "{{ prometheus_base_path }}/config"
 prometheus_data_path: "{{ prometheus_base_path }}/data"
 
 # renovate: datasource=docker depName=prom/prometheus versioning=semver
-prometheus_version: v3.5.0
+prometheus_version: v3.6.0
 
 prometheus_uid: ''
 prometheus_gid: ''
@@ -71,7 +71,7 @@ prometheus_container_labels_traefik_tls: "{{ prometheus_container_labels_traefik
 prometheus_container_labels_traefik_tls_certResolver: default  # noqa var-naming
 
 # Controls which additional headers to attach to all HTTP requests.
-# To add your own custom request headers, use `prometheus_container_labels_traefik_additional_response_headers_custom`
+# To add your own custom request headers, use `prometheus_container_labels_traefik_additional_request_headers_custom`
 prometheus_container_labels_traefik_additional_request_headers: "{{ prometheus_container_labels_traefik_additional_request_headers_auto | combine(prometheus_container_labels_traefik_additional_request_headers_custom) }}"
 prometheus_container_labels_traefik_additional_request_headers_auto: {}
 prometheus_container_labels_traefik_additional_request_headers_custom: {}
@@ -85,7 +85,7 @@ prometheus_container_labels_traefik_additional_response_headers_auto: |
     | combine ({'X-XSS-Protection': prometheus_http_header_xss_protection} if prometheus_http_header_xss_protection else {})
     | combine ({'X-Content-Type-Options': prometheus_http_header_content_type_options} if prometheus_http_header_content_type_options else {})
     | combine ({'Content-Security-Policy': prometheus_http_header_content_security_policy} if prometheus_http_header_content_security_policy else {})
-    | combine ({'Permission-Policy': prometheus_http_header_content_permission_policy} if prometheus_http_header_content_permission_policy else {})
+    | combine ({'Permissions-Policy': prometheus_http_header_permissions_policy} if prometheus_http_header_permissions_policy else {})
     | combine ({'Strict-Transport-Security': prometheus_http_header_strict_transport_security} if prometheus_http_header_strict_transport_security and prometheus_container_labels_traefik_tls else {})
   }}
 prometheus_container_labels_traefik_additional_response_headers_custom: {}
@@ -118,9 +118,9 @@ prometheus_http_header_content_type_options: nosniff
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
 prometheus_http_header_content_security_policy: frame-ancestors 'self'
 
-# Specifies the value of the `Permission-Policy` header.
-# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permission-Policy
-prometheus_http_header_content_permission_policy: "{{ 'interest-cohort=()' if prometheus_floc_optout_enabled else '' }}"
+# Specifies the value of the `Permissions-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy
+prometheus_http_header_permissions_policy: "{{ 'interest-cohort=()' if prometheus_floc_optout_enabled else '' }}"
 
 # Specifies the value of the `Strict-Transport-Security` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
@@ -134,7 +134,7 @@ prometheus_http_header_strict_transport_security: "max-age=31536000; includeSubD
 # - https://amifloced.org/
 #
 # Of course, a better solution is to just stop using browsers (like Chrome), which participate in such tracking practices.
-# See: `prometheus_content_permission_policy`
+# See: `prometheus_http_header_permissions_policy`
 prometheus_floc_optout_enabled: true
 
 # Controls if HSTS preloading is enabled
@@ -156,7 +156,10 @@ prometheus_systemd_required_services_list_auto: []
 prometheus_systemd_required_services_list_custom: []
 
 # List of systemd services that the Prometheus systemd service wants
-prometheus_systemd_wanted_services_list: []
+prometheus_systemd_wanted_services_list: "{{ prometheus_systemd_wanted_services_list_default + prometheus_systemd_wanted_services_list_auto + prometheus_systemd_wanted_services_list_custom }}"
+prometheus_systemd_wanted_services_list_default: []
+prometheus_systemd_wanted_services_list_auto: []
+prometheus_systemd_wanted_services_list_custom: []
 
 # A list of default arguments to pass to the prometheus process
 prometheus_process_default_arguments:
