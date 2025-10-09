@@ -117,8 +117,7 @@ gotosocial_container_labels_traefik_tls: "{{ gotosocial_container_labels_traefik
 gotosocial_container_labels_traefik_tls_certResolver: default  # noqa var-naming
 
 # Controls if labels are added to expose the Prometheus metrics publicly.
-# Related to: `gotosocial_config_plugin_attr_prometheus_*`
-gotosocial_container_labels_metrics_enabled: true
+gotosocial_container_labels_metrics_enabled: "{{ gotosocial_metrics_enabled }}"
 gotosocial_container_labels_metrics_hostname: "{{ gotosocial_hostname }}"
 # The path prefix must either be `/` or not end with a slash (e.g. `/metrics`).
 gotosocial_container_labels_metrics_path_prefix: /metrics
