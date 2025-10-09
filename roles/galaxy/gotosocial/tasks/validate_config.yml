@@ -18,34 +18,32 @@
     - { "old": "gotosocial_env_path", "new": "<Removed>" }
     - { "old": "gotosocial_environment_variables_extension", "new": "gotosocial_environment_variables_additional_variables" }
     - { "old": "gotosocial_http_header_content_permission_policy", "new": "gotosocial_http_header_permissions_policy" }
+    - { "old": "gotosocial_metrics_auth_enabled", "new": "gotosocial_container_labels_metrics_middleware_basic_auth_enabled" }
+    - { "old": "gotosocial_metrics_auth_username", "new": "<superseded by gotosocial_container_labels_metrics_middleware_basic_auth_users>" }
+    - { "old": "gotosocial_metrics_auth_password", "new": "<superseded by gotosocial_container_labels_metrics_middleware_basic_auth_users>" }
 
 - name: Fail if required GoToSocial settings not defined
   ansible.builtin.fail:
     msg: >-
       You need to define a required configuration setting (`{{ item }}`).
-  when: "lookup('vars', item, default='') | string | length == 0"
+  when: "item.when | bool and lookup('vars', item.name, default='') | string | length == 0"
   with_items:
-    - gotosocial_identifier
-    - gotosocial_uid
-    - gotosocial_gid
-    - gotosocial_hostname
-    - gotosocial_path_prefix
-    - gotosocial_container_network
+    - { "name": "gotosocial_identifier", when: true}
+    - { "name": "gotosocial_uid", when: true}
+    - { "name": "gotosocial_gid", when: true}
+    - { "name": "gotosocial_hostname", when: true}
+    - { "name": "gotosocial_path_prefix", when: true}
+    - { "name": "gotosocial_container_network", when: true}
+    - { "name": "gotosocial_database_hostname", when: "{{ gotosocial_database_type == 'postgres' }}"}
+    - { "name": "gotosocial_database_password", when: "{{ gotosocial_database_type == 'postgres' }}"}
+    - { "name": "gotosocial_container_labels_traefik_hostname", when: "{{ gotosocial_container_labels_traefik_enabled }}"}
+    - { "name": "gotosocial_container_labels_metrics_hostname", when: "{{ gotosocial_container_labels_metrics_enabled }}"}
 
 - name: Fail if GoToSocial database type invalid
   ansible.builtin.fail:
     msg: >-
       gotosocial_database_type must be 'postgres' or 'sqlite'
   when: "gotosocial_database_type not in ['postgres', 'sqlite']"
-
-- name: Fail if required GoToSocial + Postgres integration settings not defined
-  ansible.builtin.fail:
-    msg: >-
-      You need to define a required configuration setting (`{{ item }}`) when `gotosocial_database_type` is `postgres`
-  when: "gotosocial_database_type == 'postgres' and lookup('vars', item, default='') | string | length == 0"
-  with_items:
-    - gotosocial_database_hostname
-    - gotosocial_database_password
 
 - name: Fail if SMTP settings are missing (and SMTP is enabled by setting host)
   ansible.builtin.fail:

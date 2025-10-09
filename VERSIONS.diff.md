@@ -10,6 +10,7 @@
 
 * [Dynamic Dns](https://github.com/linuxserver/docker-ddclient): [4.0.0](https://github.com/linuxserver/docker-ddclient/releases/tag/4.0.0) _new_
 * [Element](https://github.com/element-hq/element-web): [v1.12.0](https://github.com/element-hq/element-web/releases/tag/v1.12.0) ⇾ [v1.12.1](https://github.com/element-hq/element-web/releases/tag/v1.12.1)
+* [Gotosocial](https://github.com/superseriousbusiness/gotosocial): [0.19.2](https://github.com/superseriousbusiness/gotosocial/releases/tag/v0.19.2) ⇾ [0.20.0](https://github.com/superseriousbusiness/gotosocial/releases/tag/v0.20.0)
 * [Heisenbridge](https://github.com/hifi/heisenbridge): [1.15.3](https://github.com/hifi/heisenbridge/releases/tag/1.15.3) ⇾ [1.15.4](https://github.com/hifi/heisenbridge/releases/tag/1.15.4)
 * [Linkding](https://github.com/sissbruecker/linkding): [1.43.0](https://github.com/sissbruecker/linkding/releases/tag/v1.43.0) ⇾ [1.44.0](https://github.com/sissbruecker/linkding/releases/tag/v1.44.0)
 * [Postmoogle](https://github.com/etkecc/postmoogle): [v0.9.26](https://github.com/etkecc/postmoogle/releases/tag/v0.9.26) ⇾ [v0.9.27](https://github.com/etkecc/postmoogle/releases/tag/v0.9.27)

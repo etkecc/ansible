@@ -21,7 +21,7 @@
 * Gmessages: v0.7.0
 * Go Neb: latest
 * Googlechat: v0.5.2
-* Gotosocial: 0.19.2
+* Gotosocial: 0.20.0
 * Grafana: 11.6.5
 * Heisenbridge: 1.15.4
 * Honoroit: v0.9.29

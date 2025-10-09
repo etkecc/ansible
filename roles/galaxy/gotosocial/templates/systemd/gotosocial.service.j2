@@ -34,6 +34,9 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% if gotosocial_container_http_host_bind_port %}
       -p {{ gotosocial_container_http_host_bind_port }}:{{ gotosocial_container_http_port }} \
       {% endif %}
+      {% if gotosocial_container_metrics_host_bind_port %}
+      -p {{ gotosocial_container_metrics_host_bind_port }}:{{ gotosocial_container_metrics_port }} \
+      {% endif %}
       --env-file={{ gotosocial_base_path }}/env \
       --label-file={{ gotosocial_base_path }}/labels \
       --mount type=bind,src={{ gotosocial_data_path }},dst=/gotosocial/storage \

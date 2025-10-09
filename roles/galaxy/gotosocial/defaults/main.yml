@@ -19,7 +19,7 @@ gotosocial_database_path: "{{ gotosocial_data_path }}/database"
 gotosocial_customized_container_src_path: "{{ gotosocial_base_path }}/customized-container-src"
 
 # renovate: datasource=docker depName=superseriousbusiness/gotosocial versioning=semver
-gotosocial_version: 0.19.2
+gotosocial_version: 0.20.0
 
 gotosocial_uid: ''
 gotosocial_gid: ''
@@ -66,13 +66,21 @@ gotosocial_container_image_customizations_enabled: |
 #  RUN echo 'This is a custom step for building the customized container image for GoToSocial.'
 gotosocial_container_image_customizations_dockerfile_body_custom: ''
 
-# The port number in the container
+# The port number of the GoToSocial server in the container
 gotosocial_container_http_port: 8080
 
 # Controls whether the gotosocial container exposes its HTTP port (as defined by `gotosocial_container_http_port`).
 #
 # Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:8731"), or empty string to not expose.
 gotosocial_container_http_host_bind_port: ""
+
+# The port number of the metrics server in the container
+gotosocial_container_metrics_port: 9464
+
+# Controls whether the metrics container exposes its HTTP port (as defined by `gotosocial_container_metrics_port`).
+#
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:9464"), or empty string to not expose.
+gotosocial_container_metrics_host_bind_port: ""
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 gotosocial_container_network: '{{ gotosocial_identifier }}'
@@ -107,6 +115,22 @@ gotosocial_container_labels_traefik_priority: 0
 gotosocial_container_labels_traefik_entrypoints: web-secure
 gotosocial_container_labels_traefik_tls: "{{ gotosocial_container_labels_traefik_entrypoints != 'web' }}"
 gotosocial_container_labels_traefik_tls_certResolver: default  # noqa var-naming
+
+# Controls if labels are added to expose the Prometheus metrics publicly.
+# Related to: `gotosocial_config_plugin_attr_prometheus_*`
+gotosocial_container_labels_metrics_enabled: true
+gotosocial_container_labels_metrics_hostname: "{{ gotosocial_hostname }}"
+# The path prefix must either be `/` or not end with a slash (e.g. `/metrics`).
+gotosocial_container_labels_metrics_path_prefix: /metrics
+gotosocial_container_labels_metrics_rule: "Host(`{{ gotosocial_container_labels_metrics_hostname }}`){% if gotosocial_container_labels_metrics_path_prefix != '/' %} && PathPrefix(`{{ gotosocial_container_labels_metrics_path_prefix }}`){% endif %}"
+gotosocial_container_labels_metrics_priority: 0
+gotosocial_container_labels_metrics_entrypoints: "{{ gotosocial_container_labels_traefik_entrypoints }}"
+gotosocial_container_labels_metrics_middlewares: []
+gotosocial_container_labels_metrics_tls: "{{ gotosocial_container_labels_metrics_entrypoints != 'web' }}"
+gotosocial_container_labels_metrics_tls_certResolver: "{{ gotosocial_container_labels_traefik_tls_certResolver }}"  # noqa var-naming
+gotosocial_container_labels_metrics_middleware_basic_auth_enabled: false
+# See: https://doc.traefik.io/traefik/middlewares/http/basicauth/#users
+gotosocial_container_labels_metrics_middleware_basic_auth_users: ''
 
 # Controls which additional headers to attach to all HTTP requests.
 # To add your own custom request headers, use `gotosocial_container_labels_traefik_additional_request_headers_custom`
@@ -252,12 +276,6 @@ gotosocial_instance_languages: []
 # https://docs.gotosocial.org/en/latest/advanced/metrics/
 gotosocial_metrics_enabled: false
 
-# Bool. Enable HTTP Basic authentication for Prometheus metrics endpoint.
-# You also have to set gotosocial_metrics_auth_username gotosocial_metrics_auth_password
-gotosocial_metrics_auth_enabled: false
-gotosocial_metrics_auth_username: ""
-gotosocial_metrics_auth_password: ""
-
 # Set the size of the /tmp directory, used for storing media uploads
 gotosocial_container_tmp_size: '2000m'
 
@@ -306,6 +324,18 @@ gotosocial_log_client_ip: true
 # Allow custom CSS: https://docs.gotosocial.org/en/latest/user_guide/custom_css/
 # Make sure you understand the security implications when overwriting this setting: https://docs.gotosocial.org/en/latest/configuration/accounts/
 gotosocial_accounts_allow_custom_css: false
+
+# Controls the OTEL_METRICS_PRODUCERS environment variable.
+# Only relevant if `gotosocial_metrics_enabled` is true.
+gotosocial_environment_variable_otel_metrics_producers: prometheus
+
+# Controls the OTEL_METRICS_EXPORTER environment variable.
+# Only relevant if `gotosocial_metrics_enabled` is true.
+gotosocial_environment_variable_otel_metrics_exporter: prometheus
+
+# Controls the OTEL_EXPORTER_PROMETHEUS_PORT environment variable.
+# Only relevant if `gotosocial_metrics_enabled` is true.
+gotosocial_environment_variable_otel_exporter_prometheus_port: "{{ gotosocial_container_metrics_port }}"
 
 # Additional environment variables to pass to the GoToSocial container.
 # You can use this to further influence the default configuration.
