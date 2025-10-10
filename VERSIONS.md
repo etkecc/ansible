@@ -9,7 +9,7 @@
 * Container Socket Proxy: v0.4.1
 * Coturn: 4.6.2-r11
 * Discord: v0.7.5
-* Draupnir: v2.6.1
+* Draupnir: v2.7.0
 * Dynamic Dns: 4.0.0
 * Element: v1.12.1
 * Element Call: v0.16.0
@@ -25,7 +25,7 @@
 * Grafana: 11.6.5
 * Heisenbridge: 1.15.4
 * Honoroit: v0.9.29
-* Hookshot: 7.1.0
+* Hookshot: 7.2.0
 * Hydrogen: v0.5.1
 * Jitsi: stable-10532-1
 * Jitsi Ldap: 3
