@@ -31,7 +31,7 @@
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
 * Languagetool: 6.6-dockerupdate-2
-* Linkding: 1.44.0
+* Linkding: 1.44.1
 * Linkedin: latest
 * Livekit Jwt Service: 0.3.0
 * Livekit Server: v1.9.1
@@ -75,7 +75,7 @@
 * Synapse Http Antispam Git: v0.5.0
 * Synapse Reverse Proxy Companion: 1.29.2-alpine
 * Synapse Rust Synapse Compress State Docker Image: v0.0.3
-* Synapse S3 Storage Provider: 1.5.0
+* Synapse S3 Storage Provider: 1.6.0
 * Telegram: v0.15.3
 * Traefik: v3.5.3
 * Traefik Certs Dumper: v2.10.0

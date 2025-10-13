@@ -20,7 +20,7 @@ linkding_base_path: "/{{ linkding_identifier }}"
 linkding_data_path: "{{ linkding_base_path }}/data"
 
 # renovate: datasource=docker depName=sissbruecker/linkding versioning=semver
-linkding_version: 1.44.0
+linkding_version: 1.44.1
 
 # User ID and Group ID for running linkding service in the container
 linkding_uid: ""
