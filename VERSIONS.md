@@ -67,14 +67,14 @@
 * Static Files: 2.38.1
 * Steam Bridge: 1.0.5
 * Sygnal: v0.15.1
-* Synapse: v1.139.2
+* Synapse: v1.140.0
 * Synapse Admin: v0.11.1-etke48
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.0.3
 * Synapse Http Antispam Git: v0.5.0
 * Synapse Reverse Proxy Companion: 1.29.2-alpine
 * Synapse Rust Synapse Compress State Docker Image: v0.0.3
-* Synapse S3 Storage Provider: 1.5.0
+* Synapse S3 Storage Provider: 1.6.0
 * Telegram: v0.15.3
 * Traefik: v3.5.3
 * Traefik Certs Dumper: v2.10.0
