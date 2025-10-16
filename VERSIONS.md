@@ -1,6 +1,6 @@
 * Appservice Discord: v4.0.0
 * Baibot: v1.8.1
-* Bluesky: v0.1.2
+* Bluesky: v0.2510.0
 * Borg: 1.4.1
 * Borgmatic: 1.9.14
 * Buscarron: v1.4.3
@@ -17,7 +17,7 @@
 * Firezone: 0.7.36
 * Fluffychat: v2.1.1
 * Funkwhale: 1.4.0
-* Gmessages: v0.7.0
+* Gmessages: v0.2510.0
 * Go Neb: latest
 * Googlechat: v0.5.2
 * Gotosocial: 0.20.0
@@ -37,8 +37,8 @@
 * Ma1Sd: 2.5.0
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.5.2
-* Meta Instagram: v0.5.3
-* Meta Messenger: v0.5.3
+* Meta Instagram: v0.2510.0
+* Meta Messenger: v0.2510.0
 * Miniflux: 2.2.13
 * Ntfy: v2.14.0
 * Peertube: v7.2.3
@@ -53,14 +53,14 @@
 * Postgres Container Image V18: 18.0
 * Postgres Container Image V9: 9.6.24
 * Postmoogle: v0.9.27
-* Prometheus: v3.6.0
+* Prometheus: v3.7.0
 * Prometheus Node Exporter: v1.9.1
 * Prometheus Postgres Exporter: v0.18.1
 * Radicale: 3.5.7.0
 * Registration: v0.7.2
 * Schildichat: 1.11.109-sc.0.test.0
-* Signal: v0.8.7
-* Slack: v0.2.3
+* Signal: v0.2510.0
+* Slack: v0.2510.0
 * Sliding Sync: v0.99.19
 * Spam Checker Mjolnir Antispam Git: v1.11.0
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
@@ -78,10 +78,10 @@
 * Telegram: v0.15.3
 * Traefik: v3.5.3
 * Traefik Certs Dumper: v2.10.0
-* Twitter: v0.5.0
+* Twitter: v0.2510.0
 * Uptime Kuma: 1.23.16
 * Valkey: 8.1.4
 * Vaultwarden: 1.34.3
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
-* Whatsapp: v0.12.5
+* Whatsapp: v0.2510.0
