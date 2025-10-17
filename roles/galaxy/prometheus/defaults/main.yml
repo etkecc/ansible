@@ -19,7 +19,7 @@ prometheus_config_path: "{{ prometheus_base_path }}/config"
 prometheus_data_path: "{{ prometheus_base_path }}/data"
 
 # renovate: datasource=docker depName=prom/prometheus versioning=semver
-prometheus_version: v3.7.0
+prometheus_version: v3.7.1
 
 prometheus_uid: ''
 prometheus_gid: ''
