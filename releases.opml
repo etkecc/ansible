@@ -44,7 +44,6 @@
     <outline text="funkwhale" title="funkwhale" type="rss" htmlUrl="https://dev.funkwhale.audio/funkwhale/funkwhale" xmlUrl="https://dev.funkwhale.audio/funkwhale/funkwhale/-/tags?format=atom" />
     <outline text="go-neb" title="go-neb" type="rss" htmlUrl="https://github.com/matrix-org/go-neb" xmlUrl="https://github.com/matrix-org/go-neb/releases.atom" />
     <outline text="go-skype-bridge" title="go-skype-bridge" type="rss" htmlUrl="https://github.com/kelaresg/go-skype-bridge" xmlUrl="https://github.com/kelaresg/go-skype-bridge/releases.atom" />
-    <outline text="gotosocial" title="gotosocial" type="rss" htmlUrl="https://github.com/superseriousbusiness/gotosocial" xmlUrl="https://github.com/superseriousbusiness/gotosocial/releases.atom" />
     <outline text="grafana" title="grafana" type="rss" htmlUrl="https://github.com/grafana/grafana" xmlUrl="https://github.com/grafana/grafana/releases.atom" />
     <outline text="heisenbridge" title="heisenbridge" type="rss" htmlUrl="https://github.com/hifi/heisenbridge" xmlUrl="https://github.com/hifi/heisenbridge/releases.atom" />
     <outline text="honoroit" title="honoroit" type="rss" htmlUrl="https://github.com/etkecc/honoroit" xmlUrl="https://github.com/etkecc/honoroit/releases.atom" />

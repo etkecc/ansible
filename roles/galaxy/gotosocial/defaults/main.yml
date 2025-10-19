@@ -8,7 +8,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-# Project source code URL: https://github.com/superseriousbusiness/gotosocial
+# Project source code URL: https://codeberg.org/superseriousbusiness/gotosocial
 
 gotosocial_enabled: true
 
@@ -19,7 +19,7 @@ gotosocial_database_path: "{{ gotosocial_data_path }}/database"
 gotosocial_customized_container_src_path: "{{ gotosocial_base_path }}/customized-container-src"
 
 # renovate: datasource=docker depName=superseriousbusiness/gotosocial versioning=semver
-gotosocial_version: 0.20.0
+gotosocial_version: 0.20.1
 
 gotosocial_uid: ''
 gotosocial_gid: ''
