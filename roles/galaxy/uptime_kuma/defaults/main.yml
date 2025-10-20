@@ -13,7 +13,7 @@ uptime_kuma_base_path: "/{{ uptime_kuma_identifier }}"
 uptime_kuma_data_path: "{{ uptime_kuma_base_path }}/data"
 
 # renovate: datasource=docker depName=louislam/uptime-kuma versioning=semver
-uptime_kuma_version: 1.23.16
+uptime_kuma_version: 1.23.17
 
 uptime_kuma_uid: ''
 uptime_kuma_gid: ''
@@ -80,7 +80,7 @@ uptime_kuma_container_labels_traefik_additional_response_headers_auto: |
     | combine ({'X-XSS-Protection': uptime_kuma_http_header_xss_protection} if uptime_kuma_http_header_xss_protection else {})
     | combine ({'X-Content-Type-Options': uptime_kuma_http_header_content_type_options} if uptime_kuma_http_header_content_type_options else {})
     | combine ({'Content-Security-Policy': uptime_kuma_http_header_content_security_policy} if uptime_kuma_http_header_content_security_policy else {})
-    | combine ({'Permission-Policy': uptime_kuma_http_header_content_permission_policy} if uptime_kuma_http_header_content_permission_policy else {})
+    | combine ({'Permissions-Policy': uptime_kuma_http_header_permissions_policy} if uptime_kuma_http_header_permissions_policy else {})
     | combine ({'Strict-Transport-Security': uptime_kuma_http_header_strict_transport_security} if uptime_kuma_http_header_strict_transport_security and uptime_kuma_container_labels_traefik_tls else {})
   }}
 uptime_kuma_container_labels_traefik_additional_response_headers_custom: {}
@@ -124,9 +124,9 @@ uptime_kuma_http_header_content_type_options: nosniff
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
 uptime_kuma_http_header_content_security_policy: frame-ancestors 'self'
 
-# Specifies the value of the `Permission-Policy` header.
-# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permission-Policy
-uptime_kuma_http_header_content_permission_policy: "{{ 'interest-cohort=()' if uptime_kuma_floc_optout_enabled else '' }}"
+# Specifies the value of the `Permissions-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy
+uptime_kuma_http_header_permissions_policy: "{{ 'interest-cohort=()' if uptime_kuma_floc_optout_enabled else '' }}"
 
 # Specifies the value of the `Strict-Transport-Security` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
@@ -140,7 +140,7 @@ uptime_kuma_http_header_strict_transport_security: "max-age=31536000; includeSub
 # - https://amifloced.org/
 #
 # Of course, a better solution is to just stop using browsers (like Chrome), which participate in such tracking practices.
-# See: `uptime_kuma_content_permission_policy`
+# See: `uptime_kuma_http_header_permissions_policy`
 uptime_kuma_floc_optout_enabled: true
 
 # Controls if HSTS preloading is enabled

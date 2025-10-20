@@ -80,7 +80,7 @@
 * Traefik: v3.5.3
 * Traefik Certs Dumper: v2.10.0
 * Twitter: v0.2510.0
-* Uptime Kuma: 1.23.16
+* Uptime Kuma: 1.23.17
 * Valkey: 8.1.4
 * Vaultwarden: 1.34.3
 * Wechat: 0.2.4
