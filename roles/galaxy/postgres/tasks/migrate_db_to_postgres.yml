@@ -134,8 +134,9 @@
         name: "{{ ansible_role_name }}"
         tasks_from: detect_existing_postgres_version
 
-    - ansible.builtin.set_fact:
-        postgres_container_image_to_use: "{{ postgres_container_image_latest if postgres_detected_version_corresponding_docker_image == '' else postgres_detected_version_corresponding_docker_image }}"
+    - when: postgres_detected_existing | bool
+      ansible.builtin.set_fact:
+        postgres_container_image_to_use: "{{ postgres_detected_version_corresponding_container_image }}"
 
     - name: Execute additional Postgres SQL migration statements
       ansible.builtin.command:
@@ -166,7 +167,6 @@
         +
         [
           "NOTE: Your " + postgres_db_migration_request.engine_old + " database file has been imported into Postgres. The original database file has been moved from `" + postgres_db_migration_request.src + "` to `" + postgres_db_migration_request.src + ".backup`. When you've confirmed that the import went well and everything works, you should be able to safely delete this file."
-
         ]
       }}
 

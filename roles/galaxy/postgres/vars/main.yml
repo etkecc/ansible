@@ -1,0 +1,27 @@
+# SPDX-FileCopyrightText: 2025 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+---
+# Contains all known versions of Postgres that we deal with.
+# Example: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+postgres_known_versions: "{{ postgres_container_image_by_major_version.keys() | map('int') }}"
+
+# The maximum version in `postgres_known_versions`.
+# Example: 17
+postgres_known_version_max: "{{ postgres_known_versions | max }}"
+
+# Contains all versions that are allowed to be installed and upgraded to.
+# This is based on the known versions (`postgres_known_versions`) and the user's choice in `postgres_allowed_versions`.
+# If `postgres_allowed_versions` is an empty list, all versions are allowed.
+# This may potentially be empty if there's no overlap between `postgres_allowed_versions` and `postgres_known_versions`.
+# Example: [16, 17]
+postgres_eligible_versions: "{{ postgres_known_versions if postgres_allowed_versions | length == 0 else postgres_known_versions | intersect(postgres_allowed_versions) }}"
+
+# The maximum version in `postgres_eligible_versions`.
+# May be `null` if `postgres_eligible_versions` is an empty list.
+# Example: 17
+postgres_eligible_version_max: "{{ postgres_eligible_versions | max if postgres_eligible_versions | length > 0 else none }}"
+
+# Contains all versions that the current installation can be upgraded to.
+# Example: [16, 17]
+postgres_available_upgrade_versions: "{{ [] if postgres_detected_version_number == 0 else postgres_eligible_versions | select('>', postgres_detected_version_number) | list }}"

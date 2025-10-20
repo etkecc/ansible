@@ -9,7 +9,7 @@
       --cap-drop=ALL
       --network={{ postgres_container_network_for_vacuuming }}
       --env-file={{ postgres_base_path }}/env-postgres-psql
-      {{ postgres_detected_version_corresponding_docker_image }}
+      {{ postgres_detected_version_corresponding_container_image }}
       psql -v ON_ERROR_STOP=1 -h {{ postgres_identifier }} {{ postgres_database_to_vacuum }} -c '{{ postgres_vacuum_query }}'
 
 - name: Note about Postgres vacuum alternative

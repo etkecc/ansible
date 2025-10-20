@@ -73,7 +73,7 @@
       --env-file={{ postgres_base_path }}/env-postgres-psql
       --mount type=bind,src={{ server_path_postgres_dump }},dst=/{{ server_path_postgres_dump | basename }},ro
       --entrypoint={{ postgres_container_shell_path }}
-      {{ postgres_container_image_latest }}
+      {{ postgres_detected_version_corresponding_container_image }}
       -c "set -o pipefail && cat /{{ server_path_postgres_dump | basename }} |
       {{ 'gunzip |' if server_path_postgres_dump.endswith('.gz') else '' }}
       {{ 'unzstd |' if server_path_postgres_dump.endswith('.zst') else '' }}

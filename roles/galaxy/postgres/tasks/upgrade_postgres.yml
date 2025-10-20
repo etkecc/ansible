@@ -46,11 +46,11 @@
 
 - name: Abort, if already at latest Postgres version
   ansible.builtin.fail:
-    msg: "You are already running the latest Postgres version supported ({{ postgres_container_image_latest }}). Nothing to do"
-  when: "postgres_detected_version_corresponding_docker_image == postgres_container_image_latest and not postgres_force_upgrade"
+    msg: "You are already running the latest Postgres version supported ({{ postgres_container_image_latest }}). You can force an 'upgrade' anyway by passing `-e postgres_force_upgrade=true` to the playbook."
+  when: "postgres_detected_version_number == postgres_eligible_version_max and not postgres_force_upgrade"
 
 - ansible.builtin.debug:
-    msg: "Upgrading database from {{ postgres_detected_version_corresponding_docker_image }} to {{ postgres_container_image_latest }}"
+    msg: "Upgrading the Postgres database from version {{ postgres_detected_version_number }} to the maximum eligible version ({{ postgres_eligible_version_max }})"
 
 - name: Ensure services are stopped
   ansible.builtin.service:
@@ -88,7 +88,7 @@
       --env-file={{ postgres_base_path }}/env-postgres-psql
       --entrypoint={{ postgres_container_shell_path }}
       --mount type=bind,src={{ postgres_dump_dir }},dst=/out
-      {{ postgres_detected_version_corresponding_docker_image }}
+      {{ postgres_detected_version_corresponding_container_image }}
       -c "pg_dumpall -h {{ postgres_identifier }}
       {{ '| gzip -c ' if postgres_dump_name.endswith('.gz') else '' }}
       {{ '| zstd --stdout ' if postgres_dump_name.endswith('.zst') else '' }}
@@ -110,7 +110,7 @@
   changed_when: postgres_upgrade_postgres_move_command_result.rc == 0
 
 - ansible.builtin.debug:
-    msg: "NOTE: Your Postgres data directory has been moved from `{{ postgres_data_path }}` to `{{ postgres_auto_upgrade_backup_data_path }}`. In the event of failure, you can move it back and run the playbook with --tags=setup-postgres to restore operation."
+    msg: "NOTE: Your Postgres data directory has been moved from `{{ postgres_data_path }}` to `{{ postgres_auto_upgrade_backup_data_path }}`. In the event of failure, you can stop services, move it back and run the playbook with --tags=setup-postgres to restore operation on the old Postgres version ({{ postgres_detected_version_number }})."
 
 - name: Install Postgres
   ansible.builtin.import_tasks: tasks/install.yml

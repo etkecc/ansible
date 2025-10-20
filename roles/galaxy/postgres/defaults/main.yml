@@ -177,7 +177,32 @@ postgres_container_image_v17_version: "17.6"
 postgres_container_image_v18: "{{ postgres_container_image_registry_prefix }}{{ postgres_container_image_name }}:{{ postgres_container_image_v18_version }}{{ postgres_container_image_suffix }}"
 postgres_container_image_v18_version: "18.0"
 
-postgres_container_image_latest: "{{ postgres_container_image_v18 }}"
+postgres_container_image_by_major_version:
+  "9": "{{ postgres_container_image_v9 }}"
+  "10": "{{ postgres_container_image_v10 }}"
+  "11": "{{ postgres_container_image_v11 }}"
+  "12": "{{ postgres_container_image_v12 }}"
+  "13": "{{ postgres_container_image_v13 }}"
+  "14": "{{ postgres_container_image_v14 }}"
+  "15": "{{ postgres_container_image_v15 }}"
+  "16": "{{ postgres_container_image_v16 }}"
+  "17": "{{ postgres_container_image_v17 }}"
+  "18": "{{ postgres_container_image_v18 }}"
+
+# A list of versions that are allowed to be installed and upgraded to.
+# If this is an empty list (`[]`), all versions are allowed.
+#
+# The `postgres_allowed_versions_auto` variable is meant to be populated by the Ansible playbook automatically.
+# You can specify your own additional restrictions in the `postgres_allowed_versions_custom` variable.
+# The actual allowed versions will be the intersection of the two.
+#
+# Example:
+# postgres_allowed_versions: [16, 17]
+postgres_allowed_versions: "{{ postgres_allowed_versions_custom if postgres_allowed_versions_auto | length == 0 else (postgres_allowed_versions_auto | intersect(postgres_allowed_versions_custom) if postgres_allowed_versions_custom | length > 0 else postgres_allowed_versions_auto) }}"
+postgres_allowed_versions_auto: []
+postgres_allowed_versions_custom: []
+
+postgres_container_image_latest: "{{ none if postgres_eligible_version_max is none else postgres_container_image_by_major_version[postgres_eligible_version_max | string] }}"
 
 # This variable is assigned at runtime. Overriding its value has no effect.
 postgres_container_image_to_use: '{{ postgres_container_image_latest }}'
