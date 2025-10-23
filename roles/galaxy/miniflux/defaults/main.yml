@@ -11,7 +11,7 @@ miniflux_identifier: miniflux
 miniflux_base_path: "/{{ miniflux_identifier }}"
 
 # renovate: datasource=docker depName=docker.io/miniflux/miniflux versioning=semver
-miniflux_version: 2.2.13
+miniflux_version: 2.2.14
 
 miniflux_uid: ''
 miniflux_gid: ''
