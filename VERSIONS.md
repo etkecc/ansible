@@ -3,7 +3,7 @@
 * Baibot: v1.8.1
 * Bluesky: v0.2510.0
 * Borg: 1.4.1
-* Borgmatic: 2.0.9
+* Borgmatic: 2.0.10
 * Buscarron: v1.4.3
 * Chatgpt: 3.1.4
 * Cinny: v4.10.1
@@ -12,7 +12,7 @@
 * Discord: v0.7.5
 * Draupnir: v2.7.1
 * Element: v1.12.2
-* Element Call: v0.16.0
+* Element Call: v0.16.1
 * Etherpad: 2.5.0
 * Exim Relay: 4.98.1-r0-2
 * Firezone: 0.7.36
