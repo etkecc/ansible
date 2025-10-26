@@ -55,7 +55,19 @@ class CallbackModule(CallbackBase):
     def v2_runner_on_failed(self, result, ignore_errors=False):
         ts = self._ts()
         self._last_task_banner = result.task._uuid
-        self._display.display("%s x | %s => %s" % (ts, result.task.get_name().strip(), self._dump_results(result._result, indent=2).replace("\\\\r\\\\n", "\n")), color=C.COLOR_ERROR)
+        msg = "%s x | %s" % (ts, result.task.get_name().strip())
+        results = result._result
+        if 'results' in result._result:
+            only_failed = []
+            for r in result._result['results']:
+                if r['failed'] is True:
+                    only_failed.append(r)
+            if len(only_failed) > 0:
+                results['results'] = only_failed
+        msg += " => %s" % (self._dump_results(results, indent=2).replace("\\\\r\\\\n", "\n"))
+        self._clean_results(result._result, result.task.action)
+        self._last_task_banner = result.task._uuid
+        self._display.display(msg, color=C.COLOR_ERROR)
 
     def v2_runner_on_ok(self, result):
         ts = self._ts()
@@ -108,14 +120,8 @@ class CallbackModule(CallbackBase):
         self._display.display(msg, color=color)
 
     def v2_runner_item_on_failed(self, result, ignore_errors=False):
-        if 'exception' in result._result:
-            msg = "An exception occurred during task execution. The full traceback is:\n" + result._result['exception']
-            if result.task.action in C.MODULE_NO_JSON and 'module_stderr' not in result._result:
-                self._display.display(self._command_generic_msg(result._host.get_name(), result._result, '✖'), color=C.COLOR_ERROR)
-            else:
-                self._display.display(msg, color=C.COLOR_ERROR)
-
-        msg = "%s => %s" % (self.__item_line("x", result), self._dump_results(result._result, indent=2).replace("\\\\r\\\\n", "\n"))
+        msg = self.__item_line('x', result)
+        msg += " => %s" % (self._dump_results(result._result, indent=2))
         self._clean_results(result._result, result.task.action)
         if self._last_task_banner != result.task._uuid:
             self.v2_runner_on_failed(result)
