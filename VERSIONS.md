@@ -66,7 +66,7 @@
 * Spam Checker Mjolnir Antispam Git: v1.11.0
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.39.0
-* Steam Bridge: 1.0.6
+* Steam Bridge: 1.0.7
 * Sygnal: v0.15.1
 * Synapse: v1.140.0
 * Synapse Admin: v0.11.1-etke49
