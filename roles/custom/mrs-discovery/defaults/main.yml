@@ -4,7 +4,7 @@
 mrs_discovery_enabled: false
 mrs_discovery_url: https://example.com/discover
 mrs_discovery_command_bin: "{{ matrix_base_data_path }}/postgres/bin/cli-non-interactive"
-mrs_discovery_command_args: "-d synapse -c 'select destination from destinations;'"
+mrs_discovery_command_args: "-d synapse -c 'select distinct server_name from server_signature_keys;'"
 mrs_discovery_login: discovery
 mrs_discovery_password: changeme
 mrs_discovery_destinations: []
