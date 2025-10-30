@@ -16,7 +16,7 @@
 * Etherpad: 2.5.0
 * Exim Relay: 4.98.1-r0-2
 * Firezone: 0.7.36
-* Fluffychat: v2.1.1
+* Fluffychat: v2.2.0
 * Funkwhale: 1.4.0
 * Gmessages: v0.2510.0
 * Go Neb: latest
