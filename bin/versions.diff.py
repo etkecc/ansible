@@ -178,11 +178,9 @@ if __name__ == "__main__":
 
     with open(os.path.join(os.getcwd(), 'VERSIONS.diff.md'), 'w') as f:
         f.write("## Weekly Recap\n\n")
-        f.write("> The following changes were introduced this week and mentioned in #updates:etke.cc. ")
-        f.write("This summary ensures no one missed them.\n\n")
+        f.write("> These updates were originally shared in #updates:etke.cc and are collected here in a weekly digest for convenience.\n\n")
         f.write("---\n\n")
         f.write("### Component Updates\n\n")
-        f.write("#### Version Changes\n\n")
         for component, old_version, new_version in added_or_changed_lines:
             if old_version == new_version or new_version is None:
                 continue
