@@ -13,11 +13,11 @@
 * Draupnir: v2.7.1
 * Element: v1.12.2
 * Element Call: v0.16.1
-* Etherpad: 2.5.0
+* Etherpad: 2.5.2
 * Exim Relay: 4.98.1-r0-2
 * Firezone: 0.7.36
 * Fluffychat: v2.2.0
-* Funkwhale: 1.4.0
+* Funkwhale: 1.4.1
 * Gmessages: v0.2510.0
 * Go Neb: latest
 * Googlechat: v0.5.2
@@ -54,7 +54,7 @@
 * Postgres Container Image V18: 18.0
 * Postgres Container Image V9: 9.6.24
 * Postmoogle: v0.9.27
-* Prometheus: v3.7.2
+* Prometheus: v3.7.3
 * Prometheus Node Exporter: v1.9.1
 * Prometheus Postgres Exporter: v0.18.1
 * Radicale: 3.5.7.0

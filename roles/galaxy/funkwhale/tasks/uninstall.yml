@@ -30,6 +30,7 @@
       {{ devture_systemd_docker_base_host_command_docker }} network rm
       {{ funkwhale_container_network }}
   register: network_deletion_result
+  failed_when: network_deletion_result.rc > 0 and 'not found' not in network_deletion_result.stderr
   changed_when: funkwhale_container_network in network_deletion_result.stdout
 
 - name: Ensure Funkwhale path does not exist

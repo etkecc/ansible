@@ -23,7 +23,7 @@ funkwhale_music_path: "{{ funkwhale_data_path }}/music" # Defines where music fi
 funkwhale_frontend_static_path: "{{ funkwhale_frontend_base_path }}/appstatic"
 
 # renovate: datasource=docker depName=funkwhale/api
-funkwhale_version: 1.4.0
+funkwhale_version: 1.4.1
 
 funkwhale_uid: ''
 funkwhale_gid: ''
