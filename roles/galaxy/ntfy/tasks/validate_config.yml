@@ -14,6 +14,7 @@
   with_items:
     - { "old": "ntfy_config_dir_path", "new": "ntfy_config_path" }
     - { "old": "ntfy_attachment_cache_dir_path", "new": "ntfy_attachment_cache_path" }
+    - { "old": "ntfy_http_header_content_permission_policy", "new": "ntfy_http_header_permissions_policy" }
 
 - name: Fail if required ntfy settings not defined
   ansible.builtin.fail:

@@ -34,7 +34,7 @@
 * Linkding: 1.44.1
 * Linkedin: latest
 * Livekit Jwt Service: 0.3.0
-* Livekit Server: v1.9.2
+* Livekit Server: v1.9.3
 * Ma1Sd: 2.5.0
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.5.2
@@ -55,7 +55,7 @@
 * Postgres Container Image V9: 9.6.24
 * Postmoogle: v0.9.27
 * Prometheus: v3.7.3
-* Prometheus Node Exporter: v1.9.1
+* Prometheus Node Exporter: v1.10.2
 * Prometheus Postgres Exporter: v0.18.1
 * Radicale: 3.5.7.0
 * Registration: v0.7.2

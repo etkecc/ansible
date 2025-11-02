@@ -15,7 +15,7 @@ prometheus_node_exporter_identifier: prometheus-node-exporter
 prometheus_node_exporter_base_path: "/{{ prometheus_node_exporter_identifier }}"
 
 # renovate: datasource=docker depName=prom/node-exporter versioning=semver
-prometheus_node_exporter_version: v1.9.1
+prometheus_node_exporter_version: v1.10.2
 
 prometheus_node_exporter_uid: ''
 prometheus_node_exporter_gid: ''
@@ -107,14 +107,17 @@ prometheus_node_exporter_container_extra_arguments: []
 # - (on AppArmor-based distros) disabling AppArmor protection (`--security-opt apparmor=unconfined`)
 prometheus_node_exporter_process_extra_arguments: []
 
-# List of systemd services that prometheus-node-exporter.service depends on
+# List of systemd services that Prometheus Node Exporter systemd service depends on
 prometheus_node_exporter_systemd_required_services_list: "{{ prometheus_node_exporter_systemd_required_services_list_default + prometheus_node_exporter_systemd_required_services_list_auto + prometheus_node_exporter_systemd_required_services_list_custom }}"
 prometheus_node_exporter_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
 prometheus_node_exporter_systemd_required_services_list_auto: []
 prometheus_node_exporter_systemd_required_services_list_custom: []
 
-# List of systemd services that prometheus-node-exporter.service wants
-prometheus_node_exporter_systemd_wanted_services_list: []
+# List of systemd services that Prometheus Node Exporter systemd service wants
+prometheus_node_exporter_systemd_wanted_services_list: "{{ prometheus_node_exporter_systemd_wanted_services_list_default + prometheus_node_exporter_systemd_wanted_services_list_auto + prometheus_node_exporter_systemd_wanted_services_list_custom }}"
+prometheus_node_exporter_systemd_wanted_services_list_default: []
+prometheus_node_exporter_systemd_wanted_services_list_auto: []
+prometheus_node_exporter_systemd_wanted_services_list_custom: []
 
 # prometheus_node_exporter_dashboard_urls contains a list of URLs with Grafana dashboard definitions for the node exporter.
 # This role doesn't make use of this variable, but you can hook this into other roles.
