@@ -3,7 +3,7 @@
 * Baibot: v1.8.1
 * Bluesky: v0.2510.0
 * Borg: 1.4.2
-* Borgmatic: 2.0.10
+* Borgmatic: 2.0.11
 * Buscarron: v1.4.3
 * Chatgpt: 3.1.4
 * Cinny: v4.10.1
