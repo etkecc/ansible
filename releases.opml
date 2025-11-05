@@ -72,12 +72,8 @@
     <outline text="mautrix-whatsapp" title="mautrix-whatsapp" type="rss" htmlUrl="https://github.com/mautrix/whatsapp" xmlUrl="https://github.com/mautrix/whatsapp/releases.atom" />
     <outline text="miniflux" title="miniflux" type="rss" htmlUrl="https://github.com/miniflux/v2" xmlUrl="https://github.com/miniflux/v2/releases.atom" />
     <outline text="mjolnir" title="mjolnir" type="rss" htmlUrl="https://github.com/matrix-org/mjolnir" xmlUrl="https://github.com/matrix-org/mjolnir/releases.atom" />
-    <outline text="mx-puppet-discord" title="mx-puppet-discord" type="rss" htmlUrl="https://gitlab.com/mx-puppet/discord/mx-puppet-discord" xmlUrl="https://gitlab.com/mx-puppet/discord/mx-puppet-discord/-/tags?format=atom" />
     <outline text="mx-puppet-groupme" title="mx-puppet-groupme" type="rss" htmlUrl="https://gitlab.com/xangelix-pub/matrix/mx-puppet-groupme" xmlUrl="https://gitlab.com/xangelix-pub/matrix/mx-puppet-groupme/-/tags?format=atom" />
-    <outline text="mx-puppet-instagram" title="mx-puppet-instagram" type="rss" htmlUrl="https://github.com/Sorunome/mx-puppet-instagram" xmlUrl="https://github.com/Sorunome/mx-puppet-instagram/releases.atom" />
-    <outline text="mx-puppet-slack" title="mx-puppet-slack" type="rss" htmlUrl="https://gitlab.com/mx-puppet/slack/mx-puppet-slack" xmlUrl="https://gitlab.com/mx-puppet/slack/mx-puppet-slack/-/tags?format=atom" />
     <outline text="mx-puppet-steam" title="mx-puppet-steam" type="rss" htmlUrl="https://github.com/icewind1991/mx-puppet-steam" xmlUrl="https://github.com/icewind1991/mx-puppet-steam/releases.atom" />
-    <outline text="mx-puppet-twitter" title="mx-puppet-twitter" type="rss" htmlUrl="https://github.com/Sorunome/mx-puppet-twitter" xmlUrl="https://github.com/Sorunome/mx-puppet-twitter/releases.atom" />
     <outline text="ntfy" title="ntfy" type="rss" htmlUrl="https://github.com/binwiederhier/ntfy" xmlUrl="https://github.com/binwiederhier/ntfy/releases.atom" />
     <outline text="pantalaimon" title="pantalaimon" type="rss" htmlUrl="https://github.com/matrix-org/pantalaimon" xmlUrl="https://github.com/matrix-org/pantalaimon/releases.atom" />
     <outline text="peertube" title="peertube" type="rss" htmlUrl="https://github.com/Chocobozzz/PeerTube" xmlUrl="https://github.com/Chocobozzz/PeerTube/releases.atom" />

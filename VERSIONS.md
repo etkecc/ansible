@@ -6,12 +6,12 @@
 * Borgmatic: 2.0.11
 * Buscarron: v1.4.3
 * Chatgpt: 3.1.4
-* Cinny: v4.10.1
+* Cinny: v4.10.2
 * Container Socket Proxy: v0.4.1
 * Coturn: 4.6.2-r11
 * Discord: v0.7.5
 * Draupnir: v2.7.1
-* Element: v1.12.2
+* Element: v1.12.3
 * Element Call: v0.16.1
 * Etherpad: 2.5.2
 * Exim Relay: 4.98.1-r0-2
