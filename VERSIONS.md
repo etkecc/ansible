@@ -5,7 +5,6 @@
 * Borg: 1.4.2
 * Borgmatic: 2.0.11
 * Buscarron: v1.4.3
-* Chatgpt: 3.1.4
 * Cinny: v4.10.2
 * Container Socket Proxy: v0.4.1
 * Coturn: 4.6.2-r11

@@ -22,7 +22,6 @@
     <outline text="buscarron" title="buscarron" type="rss" htmlUrl="https://github.com/etkecc/buscarron" xmlUrl="https://github.com/etkecc/buscarron/releases.atom" />
     <outline text="cactus-comments" title="cactus-comments" type="rss" htmlUrl="https://gitlab.com/cactus-comments/cactus-appservice" xmlUrl="https://gitlab.com/cactus-comments/cactus-appservice/-/tags?format=atom" />
     <outline text="cactus-comments-client" title="cactus-comments-client" type="rss" htmlUrl="https://gitlab.com/cactus-comments/cactus-client" xmlUrl="https://gitlab.com/cactus-comments/cactus-client/-/tags?format=atom" />
-    <outline text="chatgpt" title="chatgpt" type="rss" htmlUrl="https://github.com/matrixgpt/matrix-chatgpt-bot" xmlUrl="https://github.com/matrixgpt/matrix-chatgpt-bot/releases.atom" />
     <outline text="cinny" title="cinny" type="rss" htmlUrl="https://github.com/ajbura/cinny" xmlUrl="https://github.com/ajbura/cinny/releases.atom" />
     <outline text="conduit" title="conduit" type="rss" htmlUrl="https://gitlab.com/famedly/conduit" xmlUrl="https://gitlab.com/famedly/conduit/-/tags?format=atom" />
     <outline text="conduwuit" title="conduwuit" type="rss" htmlUrl="https://github.com/girlbossceo/conduwuit" xmlUrl="https://github.com/girlbossceo/conduwuit/releases.atom" />
