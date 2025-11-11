@@ -76,7 +76,7 @@
 * Synapse Rust Synapse Compress State Docker Image: v0.0.3
 * Synapse S3 Storage Provider: 1.6.0
 * Telegram: v0.15.3
-* Traefik: v3.5.4
+* Traefik: v3.6.0
 * Traefik Certs Dumper: v2.10.0
 * Twitter: v0.2510.0
 * Uptime Kuma: 1.23.17

@@ -12,7 +12,6 @@
     <outline text="appservice-draupnir-for-all" title="appservice-draupnir-for-all" type="rss" htmlUrl="https://github.com/the-draupnir-project/Draupnir" xmlUrl="https://github.com/the-draupnir-project/Draupnir/releases.atom" />
     <outline text="appservice-irc" title="appservice-irc" type="rss" htmlUrl="https://github.com/matrix-org/matrix-appservice-irc" xmlUrl="https://github.com/matrix-org/matrix-appservice-irc/releases.atom" />
     <outline text="appservice-slack" title="appservice-slack" type="rss" htmlUrl="https://github.com/matrix-org/matrix-appservice-slack" xmlUrl="https://github.com/matrix-org/matrix-appservice-slack/releases.atom" />
-    <outline text="appservice-webhooks" title="appservice-webhooks" type="rss" htmlUrl="https://github.com/redoonetworks/matrix-appservice-webhooks" xmlUrl="https://github.com/redoonetworks/matrix-appservice-webhooks/releases.atom" />
     <outline text="authentication-service" title="authentication-service" type="rss" htmlUrl="https://github.com/element-hq/matrix-authentication-service" xmlUrl="https://github.com/element-hq/matrix-authentication-service/releases.atom" />
     <outline text="backup_borg" title="backup_borg" type="rss" htmlUrl="https://github.com/etkecc/borgmatic" xmlUrl="https://github.com/etkecc/borgmatic/releases.atom" />
     <outline text="baibot" title="baibot" type="rss" htmlUrl="https://github.com/etkecc/baibot" xmlUrl="https://github.com/etkecc/baibot/releases.atom" />
@@ -57,11 +56,9 @@
     <outline text="maubot" title="maubot" type="rss" htmlUrl="https://mau.dev/maubot/maubot" xmlUrl="https://mau.dev/maubot/maubot/-/tags?format=atom" />
     <outline text="mautrix-bluesky" title="mautrix-bluesky" type="rss" htmlUrl="https://github.com/mautrix/bluesky" xmlUrl="https://github.com/mautrix/bluesky/releases.atom" />
     <outline text="mautrix-discord" title="mautrix-discord" type="rss" htmlUrl="https://github.com/mautrix/discord" xmlUrl="https://github.com/mautrix/discord/releases.atom" />
-    <outline text="mautrix-facebook" title="mautrix-facebook" type="rss" htmlUrl="https://github.com/mautrix/facebook" xmlUrl="https://github.com/mautrix/facebook/releases.atom" />
     <outline text="mautrix-gmessages" title="mautrix-gmessages" type="rss" htmlUrl="https://github.com/mautrix/gmessages" xmlUrl="https://github.com/mautrix/gmessages/releases.atom" />
     <outline text="mautrix-go" title="mautrix-go" type="rss" htmlUrl="https://github.com/mautrix/go/releases" xmlUrl="https://github.com/mautrix/go/releases.atom" />
     <outline text="mautrix-googlechat" title="mautrix-googlechat" type="rss" htmlUrl="https://github.com/mautrix/googlechat" xmlUrl="https://github.com/mautrix/googlechat/releases.atom" />
-    <outline text="mautrix-instagram" title="mautrix-instagram" type="rss" htmlUrl="https://github.com/mautrix/instagram" xmlUrl="https://github.com/mautrix/instagram/releases.atom" />
     <outline text="mautrix-meta-instagram" title="mautrix-meta-instagram" type="rss" htmlUrl="https://github.com/mautrix/meta" xmlUrl="https://github.com/mautrix/meta/releases.atom" />
     <outline text="mautrix-meta-messenger" title="mautrix-meta-messenger" type="rss" htmlUrl="https://github.com/mautrix/meta" xmlUrl="https://github.com/mautrix/meta/releases.atom" />
     <outline text="mautrix-signal" title="mautrix-signal" type="rss" htmlUrl="https://github.com/mautrix/signal" xmlUrl="https://github.com/mautrix/signal/releases.atom" />
