@@ -33,7 +33,7 @@
 * Linkding: 1.44.1
 * Linkedin: latest
 * Livekit Jwt Service: 0.3.0
-* Livekit Server: v1.9.3
+* Livekit Server: v1.9.4
 * Ma1Sd: 2.5.0
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.5.2
@@ -45,12 +45,12 @@
 * Postgres Container Image V10: 10.23
 * Postgres Container Image V11: 11.22
 * Postgres Container Image V12: 12.22
-* Postgres Container Image V13: 13.22
-* Postgres Container Image V14: 14.19
-* Postgres Container Image V15: 15.14
-* Postgres Container Image V16: 16.10
-* Postgres Container Image V17: 17.6
-* Postgres Container Image V18: 18.0
+* Postgres Container Image V13: 13.23
+* Postgres Container Image V14: 14.20
+* Postgres Container Image V15: 15.15
+* Postgres Container Image V16: 16.11
+* Postgres Container Image V17: 17.7
+* Postgres Container Image V18: 18.1
 * Postgres Container Image V9: 9.6.24
 * Postmoogle: v0.9.27
 * Prometheus: v3.7.3
@@ -76,7 +76,7 @@
 * Synapse Rust Synapse Compress State Docker Image: v0.0.3
 * Synapse S3 Storage Provider: 1.6.0
 * Telegram: v0.15.3
-* Traefik: v3.6.0
+* Traefik: v3.6.1
 * Traefik Certs Dumper: v2.10.0
 * Twitter: v0.2510.0
 * Uptime Kuma: 1.23.17
