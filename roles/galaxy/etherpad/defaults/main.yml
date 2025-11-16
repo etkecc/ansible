@@ -79,6 +79,10 @@ etherpad_container_labels_traefik_entrypoints: web-secure
 etherpad_container_labels_traefik_tls: "{{ etherpad_container_labels_traefik_entrypoints != 'web' }}"
 etherpad_container_labels_traefik_tls_certResolver: default  # noqa var-naming
 
+etherpad_container_labels_middleware_basic_auth_enabled: false
+# See: https://doc.traefik.io/traefik/middlewares/http/basicauth/#users
+etherpad_container_labels_middleware_basic_auth_users: ""
+
 # Controls which additional headers to attach to all HTTP requests.
 # To add your own custom request headers, use `etherpad_container_labels_traefik_additional_request_headers_custom`
 etherpad_container_labels_traefik_additional_request_headers: "{{ etherpad_container_labels_traefik_additional_request_headers_auto | combine(etherpad_container_labels_traefik_additional_request_headers_custom) }}"

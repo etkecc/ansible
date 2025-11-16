@@ -17,7 +17,7 @@
 * Firezone: 0.7.36
 * Fluffychat: v2.2.0
 * Funkwhale: 1.4.1
-* Gmessages: v0.2510.0
+* Gmessages: v0.2511.0
 * Go Neb: latest
 * Googlechat: v0.5.2
 * Gotosocial: 0.20.1
@@ -37,8 +37,8 @@
 * Ma1Sd: 2.5.0
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.5.2
-* Meta Instagram: v0.2510.0
-* Meta Messenger: v0.2510.0
+* Meta Instagram: v0.2511.0
+* Meta Messenger: v0.2511.0
 * Miniflux: 2.2.14
 * Ntfy: v2.14.0
 * Peertube: v7.2.3
@@ -56,11 +56,11 @@
 * Prometheus: v3.7.3
 * Prometheus Node Exporter: v1.10.2
 * Prometheus Postgres Exporter: v0.18.1
-* Radicale: 3.5.7.0
+* Radicale: 3.5.8.1
 * Registration: v0.7.2
 * Schildichat: 1.11.109-sc.0.test.0
-* Signal: v0.2510.0
-* Slack: v0.2510.0
+* Signal: v0.2511.0
+* Slack: v0.2511.0
 * Sliding Sync: v0.99.19
 * Spam Checker Mjolnir Antispam Git: v1.11.0
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
@@ -78,11 +78,11 @@
 * Telegram: v0.15.3
 * Traefik: v3.6.1
 * Traefik Certs Dumper: v2.10.0
-* Twitter: v0.2510.0
+* Twitter: v0.2511.0
 * Uptime Kuma: 1.23.17
 * Valkey: 9.0.0
 * Vaultwarden: 1.34.3
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
-* Whatsapp: v0.2510.0
+* Whatsapp: v0.2511.0
 * Zulip Bridge: v0.4.1
