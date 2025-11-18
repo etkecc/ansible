@@ -160,11 +160,11 @@ To enable it, add the following configuration to your `vars.yml` file (adapt to 
 
 ```yaml
 ntfy_smtp_sender_enabled: true
-ntfy_smtp_sender_addr_host: ''  # Hostname
+ntfy_smtp_sender_addr_host: ""  # Hostname
 ntfy_smtp_sender_addr_port: 587
-ntfy_smtp_sender_username: ''  # Username of the SMTP user
-ntfy_smtp_sender_password: ''  # Password of the SMTP user
-ntfy_smtp_sender_from: ''  # Email address of the sender
+ntfy_smtp_sender_username: ""  # Username of the SMTP user
+ntfy_smtp_sender_password: ""  # Password of the SMTP user
+ntfy_smtp_sender_from: ""  # Email address of the sender
 ```
 
 >[!NOTE]

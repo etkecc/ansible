@@ -19,13 +19,13 @@ gotosocial_database_path: "{{ gotosocial_data_path }}/database"
 gotosocial_customized_container_src_path: "{{ gotosocial_base_path }}/customized-container-src"
 
 # renovate: datasource=docker depName=superseriousbusiness/gotosocial versioning=semver
-gotosocial_version: 0.20.1
+gotosocial_version: 0.20.2
 
-gotosocial_uid: ''
-gotosocial_gid: ''
+gotosocial_uid: ""
+gotosocial_gid: ""
 
 # The hostname at which GoToSocial is served.
-gotosocial_hostname: ''
+gotosocial_hostname: ""
 
 gotosocial_path_prefix: /
 
@@ -64,7 +64,7 @@ gotosocial_container_image_customizations_enabled: |
 # Example:
 # gotosocial_container_image_customizations_dockerfile_body_custom: |
 #  RUN echo 'This is a custom step for building the customized container image for GoToSocial.'
-gotosocial_container_image_customizations_dockerfile_body_custom: ''
+gotosocial_container_image_customizations_dockerfile_body_custom: ""
 
 # The port number of the GoToSocial server in the container
 gotosocial_container_http_port: 8080
@@ -129,7 +129,7 @@ gotosocial_container_labels_metrics_tls: "{{ gotosocial_container_labels_metrics
 gotosocial_container_labels_metrics_tls_certResolver: "{{ gotosocial_container_labels_traefik_tls_certResolver }}"  # noqa var-naming
 gotosocial_container_labels_metrics_middleware_basic_auth_enabled: false
 # See: https://doc.traefik.io/traefik/middlewares/http/basicauth/#users
-gotosocial_container_labels_metrics_middleware_basic_auth_users: ''
+gotosocial_container_labels_metrics_middleware_basic_auth_users: ""
 
 # Controls which additional headers to attach to all HTTP requests.
 # To add your own custom request headers, use `gotosocial_container_labels_traefik_additional_request_headers_custom`
@@ -158,7 +158,7 @@ gotosocial_container_labels_traefik_additional_response_headers_custom: {}
 # gotosocial_container_labels_additional_labels: |
 #   my.label=1
 #   another.label="here"
-gotosocial_container_labels_additional_labels: ''
+gotosocial_container_labels_additional_labels: ""
 
 # A list of extra arguments to pass to the container (`docker run` command)
 gotosocial_container_extra_arguments: []
@@ -282,11 +282,11 @@ gotosocial_container_tmp_size: '2000m'
 # Valid values: postgres, sqlite
 gotosocial_database_type: sqlite
 
-gotosocial_database_hostname: ''
+gotosocial_database_hostname: ""
 gotosocial_database_port: 5432
 gotosocial_database_name: gotosocial
 gotosocial_database_username: gotosocial
-gotosocial_database_password: ''
+gotosocial_database_password: ""
 # Use this to set the sslmode parameter of the SSL connection
 # By default, we expect a local container (without SSL), so attempting SSL connections is not necessary.
 gotosocial_database_sslmode: disable
@@ -300,11 +300,11 @@ gotosocial_accounts_reason_required: true
 # Configure the E-Mail address that GTS will use to inform you about reports, enable password resets and other activities
 # Not required but useful
 # Check out https://docs.gotosocial.org/en/latest/configuration/smtp/ for a configuration reference
-gotosocial_smtp_host: ''
+gotosocial_smtp_host: ""
 gotosocial_smtp_port: 587
-gotosocial_smtp_username: ''
-gotosocial_smtp_password: ''
-gotosocial_smtp_from: ''
+gotosocial_smtp_username: ""
+gotosocial_smtp_password: ""
+gotosocial_smtp_from: ""
 gotosocial_smtp_disclose_recipients: false
 
 # Will set GTS_TRUSTED_PROXIES
@@ -345,4 +345,4 @@ gotosocial_environment_variable_otel_exporter_prometheus_port: "{{ gotosocial_co
 #   GTS_STORAGE_S3_ENDPOINT=minio:9000
 #   GTS_STORAGE_S3_BUCKET=something
 #   GTS_STORAGE_S3_SECRET_KEY=verysecret
-gotosocial_environment_variables_additional_variables: ''
+gotosocial_environment_variables_additional_variables: ""

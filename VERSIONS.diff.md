@@ -7,9 +7,12 @@
 ### Component Updates
 
 * [Gmessages](https://github.com/mautrix/gmessages): [v0.2510.0](https://github.com/mautrix/gmessages/releases/tag/v0.2510.0) ⇾ [v0.2511.0](https://github.com/mautrix/gmessages/releases/tag/v0.2511.0)
+* [Gotosocial](https://codeberg.org/superseriousbusiness/gotosocial): [0.20.1](https://codeberg.org/superseriousbusiness/gotosocial/releases/tag/v0.20.1) ⇾ [0.20.2](https://codeberg.org/superseriousbusiness/gotosocial/releases/tag/v0.20.2)
 * [Livekit Server](https://github.com/livekit/livekit): [v1.9.3](https://github.com/livekit/livekit/releases/tag/v1.9.3) ⇾ [v1.9.4](https://github.com/livekit/livekit/releases/tag/v1.9.4)
+* [Maubot](https://mau.dev/maubot/maubot): [v0.5.2](https://mau.dev/maubot/maubot/-/tags/v0.5.2) ⇾ [v0.6.0](https://mau.dev/maubot/maubot/-/tags/v0.6.0)
 * [Meta Instagram](https://github.com/mautrix/meta): [v0.2510.0](https://github.com/mautrix/meta/releases/tag/v0.2510.0) ⇾ [v0.2511.0](https://github.com/mautrix/meta/releases/tag/v0.2511.0)
 * [Meta Messenger](https://github.com/mautrix/meta): [v0.2510.0](https://github.com/mautrix/meta/releases/tag/v0.2510.0) ⇾ [v0.2511.0](https://github.com/mautrix/meta/releases/tag/v0.2511.0)
+* [Ntfy](https://github.com/binwiederhier/ntfy): [v2.14.0](https://github.com/binwiederhier/ntfy/releases/tag/v2.14.0) ⇾ [v2.15.0](https://github.com/binwiederhier/ntfy/releases/tag/v2.15.0)
 * Postgres Container Image V13: 13.22 ⇾ 13.23
 * Postgres Container Image V14: 14.19 ⇾ 14.20
 * Postgres Container Image V15: 15.14 ⇾ 15.15

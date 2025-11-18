@@ -20,7 +20,7 @@
 * Gmessages: v0.2511.0
 * Go Neb: latest
 * Googlechat: v0.5.2
-* Gotosocial: 0.20.1
+* Gotosocial: 0.20.2
 * Grafana: 11.6.5
 * Heisenbridge: 1.15.4
 * Honoroit: v0.9.29
@@ -36,11 +36,11 @@
 * Livekit Server: v1.9.4
 * Ma1Sd: 2.5.0
 * Matrix Reminder Bot: v0.4.0
-* Maubot: v0.5.2
+* Maubot: v0.6.0
 * Meta Instagram: v0.2511.0
 * Meta Messenger: v0.2511.0
 * Miniflux: 2.2.14
-* Ntfy: v2.14.0
+* Ntfy: v2.15.0
 * Peertube: v7.2.3
 * Postgres Container Image V10: 10.23
 * Postgres Container Image V11: 11.22

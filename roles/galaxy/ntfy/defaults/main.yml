@@ -20,7 +20,7 @@ ntfy_cache_path: "{{ ntfy_base_path }}/cache"
 ntfy_attachment_cache_path: "{{ ntfy_cache_path }}/attachments"
 
 # renovate: datasource=docker depName=docker.io/binwiederhier/ntfy
-ntfy_version: v2.14.0
+ntfy_version: v2.15.0
 
 ntfy_uid: ''
 ntfy_gid: ''
