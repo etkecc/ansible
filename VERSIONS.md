@@ -10,7 +10,7 @@
 * Coturn: 4.6.2-r11
 * Discord: v0.7.5
 * Draupnir: v2.7.1
-* Element: v1.12.3
+* Element: v1.12.4
 * Element Call: v0.16.1
 * Etherpad: 2.5.2
 * Exim Relay: 4.98.1-r0-2
@@ -67,7 +67,7 @@
 * Static Files: 2.39.0
 * Steam Bridge: 1.0.8
 * Sygnal: v0.15.1
-* Synapse: v1.141.0
+* Synapse: v1.142.1
 * Synapse Admin: v0.11.1-etke49
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.0.3
@@ -76,7 +76,7 @@
 * Synapse Rust Synapse Compress State Docker Image: v0.0.3
 * Synapse S3 Storage Provider: 1.6.0
 * Telegram: v0.15.3
-* Traefik: v3.6.1
+* Traefik: v3.6.2
 * Traefik Certs Dumper: v2.10.0
 * Twitter: v0.2511.0
 * Uptime Kuma: 1.23.17
