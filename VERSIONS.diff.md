@@ -6,6 +6,7 @@
 
 ### Component Updates
 
+* [Baibot](https://github.com/etkecc/baibot): [v1.8.1](https://github.com/etkecc/baibot/releases/tag/v1.8.1) ⇾ [v1.8.2](https://github.com/etkecc/baibot/releases/tag/v1.8.2)
 * [Element](https://github.com/element-hq/element-web): [v1.12.3](https://github.com/element-hq/element-web/releases/tag/v1.12.3) ⇾ [v1.12.4](https://github.com/element-hq/element-web/releases/tag/v1.12.4)
 * [Gmessages](https://github.com/mautrix/gmessages): [v0.2510.0](https://github.com/mautrix/gmessages/releases/tag/v0.2510.0) ⇾ [v0.2511.0](https://github.com/mautrix/gmessages/releases/tag/v0.2511.0)
 * [Gotosocial](https://codeberg.org/superseriousbusiness/gotosocial): [0.20.1](https://codeberg.org/superseriousbusiness/gotosocial/releases/tag/v0.20.1) ⇾ [0.20.2](https://codeberg.org/superseriousbusiness/gotosocial/releases/tag/v0.20.2)
@@ -20,7 +21,7 @@
 * Postgres Container Image V16: 16.10 ⇾ 16.11
 * Postgres Container Image V17: 17.6 ⇾ 17.7
 * Postgres Container Image V18: 18.0 ⇾ 18.1
-* [Radicale](https://github.com/tomsquest/docker-radicale): [3.5.7.0](https://github.com/tomsquest/docker-radicale/releases/tag/3.5.7.0) ⇾ [3.5.8.1](https://github.com/tomsquest/docker-radicale/releases/tag/3.5.8.1)
+* [Radicale](https://github.com/tomsquest/docker-radicale): [3.5.7.0](https://github.com/tomsquest/docker-radicale/releases/tag/3.5.7.0) ⇾ [3.5.8.2](https://github.com/tomsquest/docker-radicale/releases/tag/3.5.8.2)
 * [Signal](https://github.com/mautrix/signal): [v0.2510.0](https://github.com/mautrix/signal/releases/tag/v0.2510.0) ⇾ [v0.2511.0](https://github.com/mautrix/signal/releases/tag/v0.2511.0)
 * [Slack](https://github.com/mautrix/slack): [v0.2510.0](https://github.com/mautrix/slack/releases/tag/v0.2510.0) ⇾ [v0.2511.0](https://github.com/mautrix/slack/releases/tag/v0.2511.0)
 * [Synapse](https://github.com/element-hq/synapse): [v1.141.0](https://github.com/element-hq/synapse/releases/tag/v1.141.0) ⇾ [v1.142.1](https://github.com/element-hq/synapse/releases/tag/v1.142.1)

@@ -1,6 +1,6 @@
 * Alpine: edge
 * Appservice Discord: v4.0.0
-* Baibot: v1.8.1
+* Baibot: v1.8.2
 * Bluesky: v0.2510.0
 * Borg: 1.4.2
 * Borgmatic: 2.0.11
@@ -56,7 +56,7 @@
 * Prometheus: v3.7.3
 * Prometheus Node Exporter: v1.10.2
 * Prometheus Postgres Exporter: v0.18.1
-* Radicale: 3.5.8.1
+* Radicale: 3.5.8.2
 * Registration: v0.7.2
 * Schildichat: 1.11.109-sc.0.test.0
 * Signal: v0.2511.0
@@ -85,4 +85,3 @@
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
 * Whatsapp: v0.2511.0
-* Zulip Bridge: v0.4.1

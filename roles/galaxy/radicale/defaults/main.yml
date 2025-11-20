@@ -18,7 +18,7 @@ radicale_data_collections_path: "{{ radicale_data_path }}/{{ radicale_data_colle
 radicale_data_collections_subdir: collections
 
 # renovate: datasource=docker depName=tomsquest/docker-radicale
-radicale_version: 3.5.8.1
+radicale_version: 3.5.8.2
 
 radicale_uid: ''
 radicale_gid: ''
