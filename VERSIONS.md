@@ -9,7 +9,7 @@
 * Container Socket Proxy: v0.4.1
 * Coturn: 4.6.2-r11
 * Discord: v0.7.5
-* Draupnir: v2.7.1
+* Draupnir: v2.8.0
 * Element: v1.12.4
 * Element Call: v0.16.1
 * Etherpad: 2.5.2
@@ -85,3 +85,4 @@
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
 * Whatsapp: v0.2511.0
+* Zulip Bridge: v0.4.1
