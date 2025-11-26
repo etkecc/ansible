@@ -15,7 +15,11 @@
       "enabled": false
     },
     {
-      "matchFileNames": [".pre-commit-config.yaml"],
+      "matchFileNames": [
+        ".pre-commit-config.yaml",
+        ".github/workflows/autotag.yml",
+        ".github/workflows/pre-commit.yml"
+      ],
       "enabled": true,
       "automerge": true,
       "automergeType": "branch",

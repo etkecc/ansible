@@ -34,7 +34,7 @@ postgres_default_encoding: UTF8
 
 # pgtune.leopard.in.ua implementation in ansible, based on https://github.com/le0pard/pgtune/blob/master/src/features/configuration/configurationSlice.js
 # The following block calculates optimal defaults, based on server's CPU and RAM, all calculations are in kb
-postgres_memtotal_kb: "{{ ansible_memtotal_mb*1024|int }}"
+postgres_memtotal_kb: "{{ ansible_facts['memtotal_mb']*1024|int }}"
 postgres_data_storage: ssd # possible values: ssd, hdd
 postgres_max_connections: 200
 postgres_shared_buffers: "{{ postgres_memtotal_kb|int/4 }}"
@@ -47,10 +47,10 @@ postgres_max_wal_size: 4194304 # 4gb
 postgres_default_statistics_target: 100
 postgres_random_page_cost: "{{ 1.1 if postgres_data_storage == 'ssd' else 4 }}"
 postgres_effective_io_concurrency: "{{ 200 if postgres_data_storage == 'ssd' else 2 }}"
-postgres_max_worker_processes: "{{ ansible_processor_nproc }}"
-postgres_max_parallel_workers: "{{ ansible_processor_nproc }}"
-postgres_max_parallel_workers_per_gather: "{{ (4 if ansible_processor_nproc/2 > 4 else ansible_processor_nproc|int/2) | round(0, 'ceil') | int }}"
-postgres_max_parallel_maintenance_workers: "{{ (4 if ansible_processor_nproc/2 > 4 else ansible_processor_nproc|int/2) | round(0, 'ceil') | int }}"
+postgres_max_worker_processes: "{{ ansible_facts['processor_nproc'] }}"
+postgres_max_parallel_workers: "{{ ansible_facts['processor_nproc'] }}"
+postgres_max_parallel_workers_per_gather: "{{ (4 if ansible_facts['processor_nproc']/2 > 4 else ansible_facts['processor_nproc']|int/2) | round(0, 'ceil') | int }}"
+postgres_max_parallel_maintenance_workers: "{{ (4 if ansible_facts['processor_nproc']/2 > 4 else ansible_facts['processor_nproc']|int/2) | round(0, 'ceil') | int }}"
 postgres_work_mem_raw: "{{ ((postgres_memtotal_kb|int - postgres_shared_buffers|int)/(postgres_max_connections|int*3))/postgres_max_parallel_workers_per_gather|int }}"
 postgres_work_mem: "{{ 64 if postgres_work_mem_raw|int <= 64 else postgres_work_mem_raw|int }}"
 postgres_huge_pages: "{{ 'off' if postgres_memtotal_kb|int/1024/1024 < 32 else 'try' }}"

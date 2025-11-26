@@ -2,5 +2,5 @@
 
 - name: Ensure Docker SDK for Python is installed on Debian
   ansible.builtin.package:
-    name: "python{{ '3' if ansible_python.version.major == 3 else '' }}-docker"
+    name: "python{{ '3' if ansible_facts['python']['version']['major'] == 3 else '' }}-docker"
     state: present
