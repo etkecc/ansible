@@ -6,7 +6,7 @@
 
 ### Component Updates
 
-* [Draupnir](https://github.com/the-draupnir-project/Draupnir): [v2.7.1](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.7.1) ⇾ [v2.8.0](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.8.0)
-* [Jitsi](https://github.com/jitsi/docker-jitsi-meet): [stable-10590](https://github.com/jitsi/docker-jitsi-meet/releases/tag/stable-10590) ⇾ [stable-10655](https://github.com/jitsi/docker-jitsi-meet/releases/tag/stable-10655)
-* [Synapse](https://github.com/element-hq/synapse): [v1.142.1](https://github.com/element-hq/synapse/releases/tag/v1.142.1) ⇾ [v1.143.0](https://github.com/element-hq/synapse/releases/tag/v1.143.0)
-* Zulip Bridge: v0.4.1 _new_
+* [Baibot](https://github.com/etkecc/baibot): [v1.8.2](https://github.com/etkecc/baibot/releases/tag/v1.8.2) ⇾ [v1.9.0](https://github.com/etkecc/baibot/releases/tag/v1.9.0)
+* Borgmatic: 2.0.11 ⇾ 2.0.12
+* [Livekit Server](https://github.com/livekit/livekit): [v1.9.4](https://github.com/livekit/livekit/releases/tag/v1.9.4) ⇾ [v1.9.6](https://github.com/livekit/livekit/releases/tag/v1.9.6)
+* Static Files: 2.39.0 ⇾ 2.40.0

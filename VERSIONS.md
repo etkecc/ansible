@@ -1,9 +1,9 @@
 * Alpine: edge
 * Appservice Discord: v4.0.0
-* Baibot: v1.8.2
+* Baibot: v1.9.0
 * Bluesky: v0.2510.0
 * Borg: 1.4.2
-* Borgmatic: 2.0.11
+* Borgmatic: 2.0.12
 * Buscarron: v1.4.3
 * Cinny: v4.10.2
 * Container Socket Proxy: v0.4.1
@@ -33,7 +33,7 @@
 * Linkding: 1.44.1
 * Linkedin: latest
 * Livekit Jwt Service: 0.3.0
-* Livekit Server: v1.9.4
+* Livekit Server: v1.9.6
 * Ma1Sd: 2.5.0
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.6.0
@@ -64,7 +64,7 @@
 * Sliding Sync: v0.99.19
 * Spam Checker Mjolnir Antispam Git: v1.11.0
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
-* Static Files: 2.39.0
+* Static Files: 2.40.0
 * Steam Bridge: 1.0.8
 * Sygnal: v0.15.1
 * Synapse: v1.143.0
