@@ -10,8 +10,8 @@
 * Coturn: 4.6.2-r11
 * Discord: v0.7.5
 * Draupnir: v2.8.0
-* Element: v1.12.4
-* Element Call: v0.16.1
+* Element: v1.12.5
+* Element Call: v0.16.3
 * Etherpad: 2.5.2
 * Exim Relay: 4.98.1-r0-2
 * Firezone: 0.7.36
@@ -53,7 +53,7 @@
 * Postgres Container Image V18: 18.1
 * Postgres Container Image V9: 9.6.24
 * Postmoogle: v0.9.27
-* Prometheus: v3.7.3
+* Prometheus: v3.8.0
 * Prometheus Node Exporter: v1.10.2
 * Prometheus Postgres Exporter: v0.18.1
 * Radicale: 3.5.8.2
