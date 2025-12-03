@@ -10,7 +10,7 @@
 * Coturn: 4.6.2-r11
 * Discord: v0.7.5
 * Draupnir: v2.8.0
-* Element: v1.12.5
+* Element: v1.12.6
 * Element Call: v0.16.3
 * Etherpad: 2.5.2
 * Exim Relay: 4.98.1-r0-2
