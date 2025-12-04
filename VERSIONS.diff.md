@@ -13,3 +13,4 @@
 * [Livekit Server](https://github.com/livekit/livekit): [v1.9.4](https://github.com/livekit/livekit/releases/tag/v1.9.4) ⇾ [v1.9.6](https://github.com/livekit/livekit/releases/tag/v1.9.6)
 * [Prometheus](https://github.com/prometheus/prometheus): [v3.7.3](https://github.com/prometheus/prometheus/releases/tag/v3.7.3) ⇾ [v3.8.0](https://github.com/prometheus/prometheus/releases/tag/v3.8.0)
 * Static Files: 2.39.0 ⇾ 2.40.0
+* [Synapse Admin](https://github.com/etkecc/synapse-admin): [v0.11.1-etke49](https://github.com/etkecc/synapse-admin/releases/tag/v0.11.1-etke49) ⇾ [v0.11.1-etke50](https://github.com/etkecc/synapse-admin/releases/tag/v0.11.1-etke50)

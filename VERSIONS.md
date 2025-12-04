@@ -68,7 +68,7 @@
 * Steam Bridge: 1.0.8
 * Sygnal: v0.15.1
 * Synapse: v1.143.0
-* Synapse Admin: v0.11.1-etke49
+* Synapse Admin: v0.11.1-etke50
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.0.3
 * Synapse Http Antispam Git: v0.5.0
