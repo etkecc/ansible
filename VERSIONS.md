@@ -1,6 +1,6 @@
 * Alpine: edge
 * Appservice Discord: v4.0.0
-* Baibot: v1.9.0
+* Baibot: v1.10.0
 * Bluesky: v0.2510.0
 * Borg: 1.4.2
 * Borgmatic: 2.0.12
@@ -32,8 +32,8 @@
 * Languagetool: 6.6-dockerupdate-2
 * Linkding: 1.44.1
 * Linkedin: latest
-* Livekit Jwt Service: 0.3.0
-* Livekit Server: v1.9.6
+* Livekit Jwt Service: 0.4.0
+* Livekit Server: v1.9.7
 * Ma1Sd: 2.5.0
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.6.0
@@ -76,7 +76,7 @@
 * Synapse Rust Synapse Compress State Docker Image: v0.0.3
 * Synapse S3 Storage Provider: 1.6.0
 * Telegram: v0.15.3
-* Traefik: v3.6.2
+* Traefik: v3.6.4
 * Traefik Certs Dumper: v2.10.0
 * Twitter: v0.2511.0
 * Uptime Kuma: 1.23.17
