@@ -23,8 +23,8 @@ Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
 ExecStart={{ devture_systemd_docker_base_host_command_docker }} run \
       --rm \
       --log-driver=none \
-      --mount type=bind,src={{ traefik_certs_dumper_bin_dir_path }},dst=/certs-dumper-bin,ro \
-      --mount type=bind,src={{ traefik_certs_dumper_dumped_certificates_dir_path }},dst={{ traefik_certs_dumper_dumped_certificates_dir_path }},ro \
+      --mount type=bind,src={{ traefik_certs_dumper_bin_path }},dst=/certs-dumper-bin,ro \
+      --mount type=bind,src={{ traefik_certs_dumper_dumped_certificates_path }},dst={{ traefik_certs_dumper_dumped_certificates_path }},ro \
       --entrypoint=/bin/sh \
       {% for arg in traefik_certs_dumper_container_process_extra_arguments %}
       {{ arg }} \

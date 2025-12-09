@@ -12,11 +12,11 @@
     group: "{{ traefik_certs_dumper_gid }}"
   with_items:
     - "{{ traefik_certs_dumper_base_path }}"
-    - "{{ traefik_certs_dumper_bin_dir_path }}"
+    - "{{ traefik_certs_dumper_bin_path }}"
 
 - name: Ensure Traefik certs dumper dumped certificates path exists
   ansible.builtin.file:
-    path: "{{ traefik_certs_dumper_dumped_certificates_dir_path }}"
+    path: "{{ traefik_certs_dumper_dumped_certificates_path }}"
     state: directory
     mode: "{{ traefik_certs_dumper_dumped_certificates_dir_mode }}"
     owner: "{{ traefik_certs_dumper_dumped_certificates_dir_owner }}"
@@ -30,7 +30,7 @@
 - name: Ensure Traefik certs dumper scripts installed
   ansible.builtin.template:
     src: "{{ role_path }}/templates/bin/{{ item }}"
-    dest: "{{ traefik_certs_dumper_bin_dir_path }}/{{ item }}"
+    dest: "{{ traefik_certs_dumper_bin_path }}/{{ item }}"
     owner: "{{ traefik_certs_dumper_uid }}"
     group: "{{ traefik_certs_dumper_gid }}"
     mode: "0750"

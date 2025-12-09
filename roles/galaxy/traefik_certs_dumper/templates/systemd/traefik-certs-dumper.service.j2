@@ -27,9 +27,9 @@ ExecStart={{ devture_systemd_docker_base_host_command_docker }} run \
       --rm \
       --name={{ traefik_certs_dumper_identifier }} \
       --log-driver=none \
-      --mount type=bind,src={{ traefik_certs_dumper_bin_dir_path }},dst=/certs-dumper-bin,ro \
-      --mount type=bind,src={{ traefik_certs_dumper_ssl_dir_path }},dst=/in,ro \
-      --mount type=bind,src={{ traefik_certs_dumper_dumped_certificates_dir_path }},dst=/out \
+      --mount type=bind,src={{ traefik_certs_dumper_bin_path }},dst=/certs-dumper-bin,ro \
+      --mount type=bind,src={{ traefik_certs_dumper_ssl_path }},dst=/in,ro \
+      --mount type=bind,src={{ traefik_certs_dumper_dumped_certificates_path }},dst=/out \
       --tmpfs=/intermediate:rw,noexec,nosuid,size=100m \
       --tmpfs=/staging:rw,noexec,nosuid,size=100m \
       --entrypoint=/bin/sh \

@@ -9,12 +9,12 @@ traefik_certs_dumper_enabled: true
 
 traefik_certs_dumper_identifier: traefik-certs-dumper
 traefik_certs_dumper_base_path: "/{{ traefik_certs_dumper_identifier }}"
-traefik_certs_dumper_bin_dir_path: "{{ traefik_certs_dumper_base_path }}/bin"
+traefik_certs_dumper_bin_path: "{{ traefik_certs_dumper_base_path }}/bin"
 
-# traefik_certs_dumper_dumped_certificates_dir_path will contain the dumped certificates.
+# traefik_certs_dumper_dumped_certificates_path will contain the dumped certificates.
 # It's handled separately from the other paths, because we may wish to have more lax privileges for it,
 # so that the certificates could be consumed by various tools, which run as various users.
-traefik_certs_dumper_dumped_certificates_dir_path: "{{ traefik_certs_dumper_base_path }}/dumped-certificates"
+traefik_certs_dumper_dumped_certificates_path: "{{ traefik_certs_dumper_base_path }}/dumped-certificates"
 traefik_certs_dumper_dumped_certificates_dir_owner: "{{ traefik_certs_dumper_uid }}"
 traefik_certs_dumper_dumped_certificates_dir_group: "{{ traefik_certs_dumper_gid }}"
 traefik_certs_dumper_dumped_certificates_dir_mode: "0750"
@@ -59,10 +59,10 @@ traefik_certs_dumper_container_stop_grace_time_seconds: 1
 # We would expect a JSON file with certificates there.
 # The name of the file that we expect is defined in `traefik_certs_dumper_ssl_acme_file_name`.
 # Initially (before Traefik has initialized), the file may not exist.
-traefik_certs_dumper_ssl_dir_path: ''
+traefik_certs_dumper_ssl_path: ''
 
 # Contains the name of the ACME certificates file that we'll dump certificates from.
-# This file is expected to be underneath the directory defined in `traefik_certs_dumper_ssl_dir_path`.
+# This file is expected to be underneath the directory defined in `traefik_certs_dumper_ssl_path`.
 traefik_certs_dumper_ssl_acme_file_name: acme.json
 
 traefik_certs_dumper_waiter_systemd_required_services_list: |-

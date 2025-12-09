@@ -15,6 +15,6 @@
 
 domain=$1
 
-/certs-dumper-bin/wait-for-file.sh {{ traefik_certs_dumper_dumped_certificates_dir_path }}/$domain/certificate.crt {{ traefik_certs_dumper_waiter_max_iterations }} \
+/certs-dumper-bin/wait-for-file.sh {{ traefik_certs_dumper_dumped_certificates_path }}/$domain/certificate.crt {{ traefik_certs_dumper_waiter_max_iterations }} \
 && \
-/certs-dumper-bin/wait-for-file.sh {{ traefik_certs_dumper_dumped_certificates_dir_path }}/$domain/privatekey.key {{ traefik_certs_dumper_waiter_max_iterations }}
+/certs-dumper-bin/wait-for-file.sh {{ traefik_certs_dumper_dumped_certificates_path }}/$domain/privatekey.key {{ traefik_certs_dumper_waiter_max_iterations }}
