@@ -39,7 +39,7 @@
 * Maubot: v0.6.0
 * Meta Instagram: v0.2511.0
 * Meta Messenger: v0.2511.0
-* Miniflux: 2.2.14
+* Miniflux: 2.2.15
 * Ntfy: v2.15.0
 * Peertube: v7.2.3
 * Postgres Container Image V10: 10.23
@@ -56,7 +56,7 @@
 * Prometheus: v3.8.0
 * Prometheus Node Exporter: v1.10.2
 * Prometheus Postgres Exporter: v0.18.1
-* Radicale: 3.5.8.2
+* Radicale: 3.5.9.0
 * Registration: v0.7.2
 * Schildichat: 1.11.109-sc.0.test.0
 * Signal: v0.2511.0
@@ -67,12 +67,12 @@
 * Static Files: 2.40.1
 * Steam Bridge: 1.0.8
 * Sygnal: v0.15.1
-* Synapse: v1.143.0
+* Synapse: v1.144.0
 * Synapse Admin: v0.11.1-etke50
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.0.3
 * Synapse Http Antispam Git: v0.5.0
-* Synapse Reverse Proxy Companion: 1.29.3-alpine
+* Synapse Reverse Proxy Companion: 1.29.4-alpine
 * Synapse Rust Synapse Compress State Docker Image: v0.0.3
 * Synapse S3 Storage Provider: 1.6.0
 * Telegram: v0.15.3
@@ -80,7 +80,7 @@
 * Traefik Certs Dumper: v2.10.0
 * Twitter: v0.2511.0
 * Uptime Kuma: 1.23.17
-* Valkey: 9.0.0
+* Valkey: 9.0.1
 * Vaultwarden: 1.34.3
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1

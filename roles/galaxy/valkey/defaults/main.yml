@@ -14,7 +14,7 @@ valkey_config_path: "{{ valkey_base_path }}/config"
 valkey_data_path: "{{ valkey_base_path }}/data"
 
 # renovate: datasource=docker depName=valkey/valkey versioning=semver
-valkey_version: 9.0.0
+valkey_version: 9.0.1
 
 valkey_uid: ''
 valkey_gid: ''

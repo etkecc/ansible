@@ -23,13 +23,13 @@
   version: v1.44.1-1
   name: linkding
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-miniflux.git
-  version: v2.2.14-1
+  version: v2.2.15-0
   name: miniflux
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-peertube.git
   version: v7.2.3-5
   name: peertube
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-radicale.git
-  version: v3.5.8.2-0
+  version: v3.5.9.0-0
   name: radicale
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-ssh.git
   version: main
