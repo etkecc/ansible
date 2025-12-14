@@ -15,7 +15,7 @@
 * Etherpad: 2.5.2
 * Exim Relay: 4.98.1-r0-2
 * Firezone: 0.7.36
-* Fluffychat: v2.2.0
+* Fluffychat: v2.3.0
 * Funkwhale: 1.4.1
 * Gmessages: v0.2511.0
 * Go Neb: latest
@@ -30,10 +30,10 @@
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
 * Languagetool: 6.6-dockerupdate-2
-* Linkding: 1.44.1
+* Linkding: 1.44.2
 * Linkedin: latest
 * Livekit Jwt Service: 0.4.0
-* Livekit Server: v1.9.7
+* Livekit Server: v1.9.8
 * Ma1Sd: 2.5.0
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.6.0

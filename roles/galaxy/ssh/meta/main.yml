@@ -1,7 +1,7 @@
 galaxy_info:
   author: etke.cc
   company: etke.cc
-  role_name: swap
+  role_name: ssh
   namespace: etkecc
   description: system ssh security role
   platforms:
@@ -11,11 +11,11 @@ galaxy_info:
     - name: Ubuntu
       versions:
         - all
-    - name: Archlinux
+    - name: ArchLinux
       versions:
         - all
     - name: EL
       versions:
-        - 7
+        - all
   license: GPL-3.0-or-later
-  min_ansible_version: '2.1'
+  min_ansible_version: "2.12"

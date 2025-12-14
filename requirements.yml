@@ -20,7 +20,7 @@
   version: v6.6-3
   name: languagetool
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-linkding.git
-  version: v1.44.1-1
+  version: v1.44.2-0
   name: linkding
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-miniflux.git
   version: v2.2.15-0

@@ -20,7 +20,7 @@ linkding_base_path: "/{{ linkding_identifier }}"
 linkding_data_path: "{{ linkding_base_path }}/data"
 
 # renovate: datasource=docker depName=sissbruecker/linkding versioning=semver
-linkding_version: 1.44.1
+linkding_version: 1.44.2
 
 # User ID and Group ID for running linkding service in the container
 linkding_uid: ""
@@ -52,7 +52,7 @@ linkding_container_image_self_build_src_files_path: "{{ linkding_base_path }}/do
 # Controls whether the container exposes its HTTP port (tcp/9090 in the container).
 #
 # Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:8731"), or empty string to not expose.
-linkding_container_http_host_bind_port: ''
+linkding_container_http_host_bind_port: ""
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 linkding_container_network: "{{ linkding_identifier }}"

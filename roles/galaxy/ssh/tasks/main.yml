@@ -1,19 +1,5 @@
 ---
-- block:
-  - name: Add authorized keys
-    ansible.posix.authorized_key:
-      user: "{{ ansible_user }}"
-      state: present
-      key: "{{ item }}"
-    with_items: "{{ system_security_ssh_authorizedkeys }}"
-
-  - name: Revoke authorized keys
-    ansible.posix.authorized_key:
-      user: "{{ ansible_user }}"
-      state: absent
-      key: "{{ item }}"
-    with_items: "{{ system_security_ssh_unauthorizedkeys }}"
-
+- name: Manage authorized keys
   tags:
     - setup-all
     - setup-ssh
@@ -21,53 +7,67 @@
     - install-ssh
     - rotate-ssh-keys
   when: system_security_ssh_enabled | bool
+  block:
+    - name: Add authorized keys
+      ansible.posix.authorized_key:
+        user: "{{ ansible_user }}"
+        state: present
+        key: "{{ item }}"
+      loop: "{{ system_security_ssh_authorizedkeys }}"
 
-- block:
-  - name: Enforce sshd config
-    ansible.builtin.template:
-      src: etc/ssh/sshd_config.j2
-      dest: /etc/ssh/sshd_config
-      mode: 0644
-      owner: root
-      group: root
+    - name: Revoke authorized keys
+      ansible.posix.authorized_key:
+        user: "{{ ansible_user }}"
+        state: absent
+        key: "{{ item }}"
+      loop: "{{ system_security_ssh_unauthorizedkeys }}"
+
+- name: Enforce sshd config
   tags:
     - setup-all
     - setup-ssh
     - install-all
     - install-ssh
   when: system_security_ssh_enabled | bool
+  ansible.builtin.template:
+    src: etc/ssh/sshd_config.j2
+    dest: /etc/ssh/sshd_config
+    mode: "0644"
+    owner: root
+    group: root
 
 - name: Reload ssh daemon
-  block:
-  - ansible.builtin.set_fact:
-      eligible_service: ""
-
-  - name: Find eligible SSH daemon service
-    ansible.builtin.service:
-      name: "{{ item }}"
-      state: started
-    loop: "{{ system_security_ssh_services }}"
-    register: status
-    failed_when: no
-
-  - name: Set eligible service if available
-    set_fact:
-      eligible_service: "{{ item.name }}"
-    loop: "{{ status.results }}"
-    when: item.state is defined and not eligible_service
-
-  - name: Fail if no eligible SSH service is found
-    fail:
-      msg: "No eligible SSH service was found."
-    when: eligible_service == ""
-
-  - name: Reload SSH daemon
-    ansible.builtin.service:
-      name: "{{ eligible_service }}"
-      state: reloaded
   tags:
     - setup-all
     - setup-ssh
     - install-all
     - install-ssh
   when: system_security_ssh_enabled | bool
+  block:
+    - name: Initialize eligible service fact
+      ansible.builtin.set_fact:
+        eligible_service: ""
+
+    - name: Find eligible SSH daemon service
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: started
+      loop: "{{ system_security_ssh_services }}"
+      register: status
+      failed_when: false
+
+    - name: Set eligible service if available
+      ansible.builtin.set_fact:
+        eligible_service: "{{ item.name }}"
+      loop: "{{ status.results }}"
+      when: item.state is defined and eligible_service == ""
+
+    - name: Fail if no eligible SSH service is found
+      ansible.builtin.fail:
+        msg: "No eligible SSH service was found."
+      when: eligible_service == ""
+
+    - name: Reload SSH daemon
+      ansible.builtin.service:
+        name: "{{ eligible_service }}"
+        state: reloaded

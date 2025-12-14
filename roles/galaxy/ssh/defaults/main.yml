@@ -8,11 +8,86 @@ system_security_ssh_services: ["sshd", "ssh"]
 # ssh port
 system_security_ssh_port: 22
 
+# AcceptEnv settings
+system_security_ssh_accept_env: 'LANG LC_*'
+
+# AllowStreamLocalForwarding: true - allow, false - block
+system_security_ssh_allow_streamlocal_forwarding: false
+
+# AuthorizedKeysFile setting
+system_security_ssh_authorized_keys_file: '.ssh/authorized_keys /var/ssh/%u'
+
+# ChallengeResponseAuthentication: true - allow, false - block
+system_security_ssh_challenge_response_authentication: false
+
+# ClientAliveInterval setting (in seconds)
+system_security_ssh_client_alive_interval: 120
+
+# LoginGraceTime setting (in seconds)
+system_security_ssh_login_grace_time: 0
+
+# Compression: true - allow, false - block
+system_security_ssh_compression: false
+
+# GatewayPorts: true - allow, false - block
+system_security_ssh_gateway_ports: false
+
+# IgnoreRhosts: true - allow, false - block
+system_security_ssh_ignore_rhosts: true
+
+# MaxAuthTries setting
+system_security_ssh_max_auth_tries: 3
+
+# MACs settings
+system_security_ssh_macs: '-umac-64-etm@openssh.com,hmac-sha1-etm@openssh.com,umac-64@openssh.com,umac-128@openssh.com,hmac-sha2-256,hmac-sha2-512,hmac-sha1'
+
+# KexAlgorithms settings
+system_security_ssh_kex_algorithms: '-ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group14-sha256'
+
+# HostKeyAlgorithms settings
+system_security_ssh_host_key_algorithms: '-ecdsa-sha2-nistp256'
+
 # ssh password auth: true - allow, false - block
+# (old variable name kept for backward compatibility)
 system_security_ssh_passwordauth: false
+# backward compatibility variable
+system_security_ssh_password_authentication: "{{ system_security_ssh_passwordauth }}"
+
+# PermitEmptyPasswords: true - allow, false - block
+system_security_ssh_permit_empty_passwords: false
 
 # ssh root login: true - allow, false - block
+# (old variable name kept for backward compatibility)
 system_security_ssh_rootlogin: true
+# backward compatibility variable
+system_security_ssh_permit_root_login: "{{ system_security_ssh_rootlogin }}"
+
+# PermitTunnel: true - allow, false - block
+system_security_ssh_permit_tunnel: false
+
+# PrintLastLog: true - allow, false - block
+system_security_ssh_print_last_log: true
+
+# PrintMotd: true - allow, false - block
+system_security_ssh_print_motd: false
+
+# PubkeyAuthentication: true - allow, false - block
+system_security_ssh_pubkey_authentication: true
+
+# Subsystem sftp path
+system_security_ssh_subsystem_sftp_path: '/usr/lib/openssh/sftp-server'
+
+# UseDNS: true - allow, false - block
+system_security_ssh_use_dns: false
+
+# UsePAM: true - allow, false - block
+system_security_ssh_use_pam: true
+
+# X11Forwarding: true - allow, false - block
+system_security_ssh_x11_forwarding: false
+
+# Allow TCP forwarding: true - allow, false - block
+system_security_ssh_allow_tcp_forwarding: false
 
 # (intended for group vars) list of public ssh keys, allowed to connect to the server
 system_security_ssh_authorizedkeys_auto: []

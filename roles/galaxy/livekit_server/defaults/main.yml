@@ -15,7 +15,7 @@ livekit_server_base_path: "/{{ livekit_server_identifier }}"
 livekit_server_config_path: "{{ livekit_server_base_path }}/config"
 
 # renovate: datasource=docker depName=docker.io/livekit/livekit-server
-livekit_server_version: v1.9.7
+livekit_server_version: v1.9.8
 
 livekit_server_uid: ''
 livekit_server_gid: ''
@@ -83,7 +83,7 @@ livekit_server_container_labels_public_metrics_traefik_entrypoints: "{{ livekit_
 livekit_server_container_labels_public_metrics_traefik_tls: "{{ livekit_server_container_labels_traefik_tls }}"
 livekit_server_container_labels_public_metrics_traefik_tls_certResolver: "{{ livekit_server_container_labels_traefik_tls_certResolver }}"  # noqa var-naming
 livekit_server_container_labels_public_metrics_middleware_basic_auth_enabled: false
-# See: https://doc.traefik.io/traefik/middlewares/http/basicauth/#users
+# See: https://doc.traefik.io/traefik/reference/routing-configuration/http/middlewares/basicauth/
 livekit_server_container_labels_public_metrics_middleware_basic_auth_users: ''
 
 # livekit_server_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
