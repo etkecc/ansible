@@ -1,6 +1,6 @@
 * Alpine: edge
 * Appservice Discord: v4.0.0
-* Baibot: v1.10.0
+* Baibot: v1.11.0
 * Bluesky: v0.2510.0
 * Borg: 1.4.2
 * Borgmatic: 2.0.12
@@ -78,6 +78,7 @@
 * Telegram: v0.15.3
 * Traefik: v3.6.4
 * Traefik Certs Dumper: v2.10.0
+* Traefik Config Tcp Servertransports Default Proxyprotocol: 1
 * Twitter: v0.2511.0
 * Uptime Kuma: 1.23.17
 * Valkey: 9.0.1

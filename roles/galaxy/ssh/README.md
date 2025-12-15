@@ -327,3 +327,7 @@ system_security_ssh_extension: |
 * Backward-compatible variables are preserved to avoid breaking existing inventories.
 * Security-sensitive features (forwarding, tunnels, X11) are **disabled by default**.
 * Always validate changes using `sshd -t` after applying custom extensions.
+* Useful references:
+  * sshd_config manual: https://man.openbsd.org/sshd_config
+  * Mozilla OpenSSH guidelines: https://infosec.mozilla.org/guidelines/openssh
+  * openSUSE SSH guide: https://doc.opensuse.org/documentation/leap/security/html/book-security/cha-ssh.html#ex-sshd-conf
