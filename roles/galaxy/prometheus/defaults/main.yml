@@ -19,7 +19,7 @@ prometheus_config_path: "{{ prometheus_base_path }}/config"
 prometheus_data_path: "{{ prometheus_base_path }}/data"
 
 # renovate: datasource=docker depName=prom/prometheus versioning=semver
-prometheus_version: v3.8.0
+prometheus_version: v3.8.1
 
 prometheus_uid: ''
 prometheus_gid: ''
@@ -175,7 +175,7 @@ prometheus_process_extra_arguments: []
 prometheus_process_arguments: "{{ prometheus_process_default_arguments + prometheus_process_extra_arguments }}"
 
 prometheus_container_labels_metrics_middleware_basic_auth_enabled: false
-# See: https://doc.traefik.io/traefik/middlewares/http/basicauth/#users
+# See: https://doc.traefik.io/traefik/reference/routing-configuration/http/middlewares/basicauth/
 prometheus_container_labels_metrics_middleware_basic_auth_users: ''
 
 # Controls whether Prometheus will scrape its own process running in the container.

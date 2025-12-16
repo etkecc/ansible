@@ -6,11 +6,11 @@
 * Borgmatic: 2.0.12
 * Buscarron: v1.4.3
 * Cinny: v4.10.2
-* Container Socket Proxy: v0.4.1
+* Container Socket Proxy: v0.4.2
 * Coturn: 4.6.2-r11
 * Discord: v0.7.5
 * Draupnir: v2.8.0
-* Element: v1.12.6
+* Element: v1.12.7
 * Element Call: v0.16.3
 * Etherpad: 2.5.2
 * Exim Relay: 4.98.1-r0-2
@@ -37,8 +37,8 @@
 * Ma1Sd: 2.5.0
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.6.0
-* Meta Instagram: v0.2511.0
-* Meta Messenger: v0.2511.0
+* Meta Instagram: v0.2512.0
+* Meta Messenger: v0.2512.0
 * Miniflux: 2.2.15
 * Ntfy: v2.15.0
 * Peertube: v7.2.3
@@ -53,13 +53,13 @@
 * Postgres Container Image V18: 18.1
 * Postgres Container Image V9: 9.6.24
 * Postmoogle: v0.9.27
-* Prometheus: v3.8.0
+* Prometheus: v3.8.1
 * Prometheus Node Exporter: v1.10.2
 * Prometheus Postgres Exporter: v0.18.1
 * Radicale: 3.5.9.0
 * Registration: v0.7.2
 * Schildichat: 1.11.109-sc.0.test.0
-* Signal: v0.2511.0
+* Signal: v0.2512.0
 * Slack: v0.2511.0
 * Sliding Sync: v0.99.19
 * Spam Checker Mjolnir Antispam Git: v1.11.0
