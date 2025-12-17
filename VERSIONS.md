@@ -76,7 +76,7 @@
 * Synapse Rust Synapse Compress State Docker Image: v0.0.3
 * Synapse S3 Storage Provider: 1.6.0
 * Telegram: v0.15.3
-* Traefik: v3.6.4
+* Traefik: v3.6.5
 * Traefik Certs Dumper: v2.10.0
 * Traefik Config Tcp Servertransports Default Proxyprotocol: 1
 * Twitter: v0.2511.0
@@ -85,5 +85,5 @@
 * Vaultwarden: 1.34.3
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
-* Whatsapp: v0.2511.0
+* Whatsapp: v0.2512.0
 * Zulip Bridge: v0.4.1

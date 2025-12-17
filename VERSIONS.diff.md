@@ -16,4 +16,6 @@
 * [Meta Messenger](https://github.com/mautrix/meta): [v0.2511.0](https://github.com/mautrix/meta/releases/tag/v0.2511.0) ⇾ [v0.2512.0](https://github.com/mautrix/meta/releases/tag/v0.2512.0)
 * [Prometheus](https://github.com/prometheus/prometheus): [v3.8.0](https://github.com/prometheus/prometheus/releases/tag/v3.8.0) ⇾ [v3.8.1](https://github.com/prometheus/prometheus/releases/tag/v3.8.1)
 * [Signal](https://github.com/mautrix/signal): [v0.2511.0](https://github.com/mautrix/signal/releases/tag/v0.2511.0) ⇾ [v0.2512.0](https://github.com/mautrix/signal/releases/tag/v0.2512.0)
+* [Traefik](https://github.com/traefik/traefik): [v3.6.4](https://github.com/traefik/traefik/releases/tag/v3.6.4) ⇾ [v3.6.5](https://github.com/traefik/traefik/releases/tag/v3.6.5)
 * Traefik Config Tcp Servertransports Default Proxyprotocol: 1 _new_
+* [Whatsapp](https://github.com/mautrix/whatsapp): [v0.2511.0](https://github.com/mautrix/whatsapp/releases/tag/v0.2511.0) ⇾ [v0.2512.0](https://github.com/mautrix/whatsapp/releases/tag/v0.2512.0)
