@@ -52,7 +52,7 @@
 * Postgres Container Image V17: 17.7
 * Postgres Container Image V18: 18.1
 * Postgres Container Image V9: 9.6.24
-* Postmoogle: v0.9.27
+* Postmoogle: v0.9.28
 * Prometheus: v3.8.1
 * Prometheus Node Exporter: v1.10.2
 * Prometheus Postgres Exporter: v0.18.1
