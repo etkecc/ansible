@@ -33,7 +33,7 @@ backup_borg_docker_src_files_path: "{{ backup_borg_base_path }}/docker-src"
 backup_borg_version: "{{ (backup_borg_postgres_version ~ '-' ~ backup_borg_borg_version ~ '-' ~ backup_borg_borgmatic_version) if backup_borg_postgres_version else 'latest' }}"
 backup_borg_postgres_version: ""
 backup_borg_borg_version: 1.4.2
-backup_borg_borgmatic_version: 2.0.12
+backup_borg_borgmatic_version: 2.0.13
 backup_borg_alpine_version: edge
 backup_borg_docker_image: "{{ backup_borg_docker_image_registry_prefix }}etkecc/borgmatic:{{ backup_borg_version }}"
 backup_borg_docker_image_registry_prefix: "{{ 'localhost/' if backup_borg_container_image_self_build else backup_borg_docker_image_registry_prefix_upstream }}"
@@ -44,8 +44,10 @@ backup_borg_docker_image_force_pull: "{{ backup_borg_docker_image.endswith(':lat
 # container tmp directory size
 backup_borg_container_tmp_size: 4096m
 
-# A list of extra arguments to pass to the container
-backup_borg_container_extra_arguments: []
+# A list of extra arguments to pass to the container (`docker create` command)
+backup_borg_container_extra_arguments: "{{ backup_borg_container_extra_arguments_auto + backup_borg_container_extra_arguments_custom }}"
+backup_borg_container_extra_arguments_auto: []
+backup_borg_container_extra_arguments_custom: []
 
 # List of systemd services that the BorgBackup systemd service depends on
 backup_borg_systemd_required_services_list: "{{ backup_borg_systemd_required_services_list_default + backup_borg_systemd_required_services_list_auto + backup_borg_systemd_required_services_list_custom }}"
@@ -91,14 +93,14 @@ backup_borg_postgresql_databases_auto: []
 # e.g. because their setup is not controlled by ansible
 backup_borg_postgresql_databases_custom: []
 
-backup_borg_postgresql_databases_hostname: ''
+backup_borg_postgresql_databases_hostname: ""
 backup_borg_postgresql_databases_username: "{{ backup_borg_identifier }}"
 backup_borg_postgresql_databases_password: ""
 backup_borg_postgresql_databases_port: 5432
 backup_borg_postgresql_version_detection_enabled: "{{ backup_borg_postgresql_version_detection_postgres_role_name != '' }}"
 # backup_borg_postgresql_version_detection_postgres_role_name lets you control the role name, leading to the com.devture.ansible.role.postgres.
 # This role is invoked to determine the Postgres version, unless you have set `backup_borg_version` manually.
-backup_borg_postgresql_version_detection_postgres_role_name: ''
+backup_borg_postgresql_version_detection_postgres_role_name: ""
 
 # MySQL db backup
 backup_borg_mysql_enabled: true
@@ -116,14 +118,14 @@ backup_borg_mysql_databases_auto: []
 # e.g. because their setup is not controlled by ansible
 backup_borg_mysql_databases_custom: []
 
-backup_borg_mysql_databases_hostname: ''
+backup_borg_mysql_databases_hostname: ""
 backup_borg_mysql_databases_username: "{{ backup_borg_identifier }}"
 backup_borg_mysql_databases_password: ""
 backup_borg_mysql_databases_port: 3306
 
 # Setting a healthchecks ping URL will make borgmatic ping your Healthchecks project when a backup begins, ends, or errors
 # See: https://torsion.org/borgmatic/docs/how-to/monitor-your-backups/#healthchecks-hook
-backup_borg_healthchecks_ping_url: ''
+backup_borg_healthchecks_ping_url: ""
 # possible states to ping
 backup_borg_healthchecks_states:
   - start

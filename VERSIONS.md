@@ -1,9 +1,9 @@
 * Alpine: edge
 * Appservice Discord: v4.0.0
-* Baibot: v1.11.0
+* Baibot: v1.12.0
 * Bluesky: v0.2510.0
 * Borg: 1.4.2
-* Borgmatic: 2.0.12
+* Borgmatic: 2.0.13
 * Buscarron: v1.4.3
 * Cinny: v4.10.2
 * Container Socket Proxy: v0.4.2
@@ -56,7 +56,7 @@
 * Prometheus: v3.8.1
 * Prometheus Node Exporter: v1.10.2
 * Prometheus Postgres Exporter: v0.18.1
-* Radicale: 3.5.9.0
+* Radicale: 3.5.10.0
 * Registration: v0.7.2
 * Schildichat: 1.11.109-sc.0.test.0
 * Signal: v0.2512.0
