@@ -2,7 +2,7 @@
 * Appservice Discord: v4.0.0
 * Baibot: v1.12.0
 * Bluesky: v0.2510.0
-* Borg: 1.4.2
+* Borg: 1.4.3
 * Borgmatic: 2.0.13
 * Buscarron: v1.4.3
 * Cinny: v4.10.2
