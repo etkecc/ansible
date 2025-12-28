@@ -12,7 +12,7 @@
 * Draupnir: v2.9.0
 * Element: v1.12.7
 * Element Call: v0.16.3
-* Etherpad: 2.5.2
+* Etherpad: 2.6.0
 * Exim Relay: 4.98.1-r0-2
 * Firezone: 0.7.36
 * Fluffychat: v2.3.0
