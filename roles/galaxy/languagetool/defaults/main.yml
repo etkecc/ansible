@@ -16,15 +16,15 @@ languagetool_base_path: "/{{ languagetool_identifier }}"
 languagetool_data_path: "{{ languagetool_base_path }}/data"
 
 # renovate: datasource=docker depName=erikvl87/languagetool
-languagetool_version: 6.6-dockerupdate-2
+languagetool_version: 6.7-dockerupdate-1
 
-languagetool_uid: ''
-languagetool_gid: ''
+languagetool_uid: ""
+languagetool_gid: ""
 
 # The hostname at which LanguageTool is served.
-languagetool_hostname: ''
+languagetool_hostname: ""
 
-# The path at which LanguageTool is exposed.
+# The path at which LanguageTool is served.
 # This value must either be `/` or not end with a slash (e.g. `/languagetool`).
 languagetool_path_prefix: /
 
@@ -38,7 +38,7 @@ languagetool_container_image_force_pull: "{{ languagetool_container_image.endswi
 # Controls whether the container exposes its HTTP port (tcp/8010 in the container).
 #
 # Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
-languagetool_container_http_host_bind_port: ''
+languagetool_container_http_host_bind_port: ""
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 languagetool_container_network: "{{ languagetool_identifier }}"
@@ -82,22 +82,27 @@ languagetool_container_labels_traefik_additional_response_headers_auto: |
     | combine ({'X-XSS-Protection': languagetool_http_header_xss_protection} if languagetool_http_header_xss_protection else {})
     | combine ({'X-Content-Type-Options': languagetool_http_header_content_type_options} if languagetool_http_header_content_type_options else {})
     | combine ({'Content-Security-Policy': languagetool_http_header_content_security_policy} if languagetool_http_header_content_security_policy else {})
-    | combine ({'Permission-Policy': languagetool_http_header_content_permission_policy} if languagetool_http_header_content_permission_policy else {})
+    | combine ({'Permissions-Policy': languagetool_http_header_permissions_policy} if languagetool_http_header_permissions_policy else {})
     | combine ({'Strict-Transport-Security': languagetool_http_header_strict_transport_security} if languagetool_http_header_strict_transport_security and languagetool_container_labels_traefik_tls else {})
   }}
 languagetool_container_labels_traefik_additional_response_headers_custom: {}
 
 # languagetool_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
 # See `../templates/labels.j2` for details.
+# To add your own custom labels, use `languagetool_container_labels_additional_labels_custom`
 #
 # Example:
-# languagetool_container_labels_additional_labels: |
+# languagetool_container_labels_additional_labels_custom: |
 #   my.label=1
 #   another.label="here"
-languagetool_container_labels_additional_labels: ''
+languagetool_container_labels_additional_labels: "{{ languagetool_container_labels_additional_labels_auto | combine(languagetool_container_labels_additional_labels_custom) }}"
+languagetool_container_labels_additional_labels_auto: {}
+languagetool_container_labels_additional_labels_custom: {}
 
-# A list of extra arguments to pass to the container
-languagetool_container_extra_arguments: []
+# A list of extra arguments to pass to the container (`docker create` command)
+languagetool_container_extra_arguments: "{{ languagetool_container_extra_arguments_auto + languagetool_container_extra_arguments_custom }}"
+languagetool_container_extra_arguments_auto: []
+languagetool_container_extra_arguments_custom: []
 
 # Specifies how often the container health-check will run.
 #
@@ -126,9 +131,9 @@ languagetool_http_header_content_type_options: nosniff
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
 languagetool_http_header_content_security_policy: frame-ancestors 'self'
 
-# Specifies the value of the `Permission-Policy` header.
-# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permission-Policy
-languagetool_http_header_content_permission_policy: "{{ 'interest-cohort=()' if languagetool_floc_optout_enabled else '' }}"
+# Specifies the value of the `Permissions-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy
+languagetool_http_header_permissions_policy: "{{ 'interest-cohort=()' if languagetool_floc_optout_enabled else '' }}"
 
 # Specifies the value of the `Strict-Transport-Security` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
@@ -142,7 +147,7 @@ languagetool_http_header_strict_transport_security: "max-age=31536000; includeSu
 # - https://amifloced.org/
 #
 # Of course, a better solution is to just stop using browsers (like Chrome), which participate in such tracking practices.
-# See: `languagetool_content_permission_policy`
+# See: `languagetool_http_header_permissions_policy`
 languagetool_floc_optout_enabled: true
 
 # Controls if HSTS preloading is enabled
@@ -164,7 +169,10 @@ languagetool_systemd_required_services_list_auto: []
 languagetool_systemd_required_services_list_custom: []
 
 # List of systemd services that the LanguageTool systemd service wants
-languagetool_systemd_wanted_services_list: []
+languagetool_systemd_wanted_services_list: "{{ languagetool_systemd_wanted_services_list_default + languagetool_systemd_wanted_services_list_auto + languagetool_systemd_wanted_services_list_custom }}"
+languagetool_systemd_wanted_services_list_default: []
+languagetool_systemd_wanted_services_list_auto: []
+languagetool_systemd_wanted_services_list_custom: []
 
 # n-grams
 # WARNING: n-grams require A LOT of storage (zip is > 8gb, unpacked - even more!)

@@ -17,7 +17,7 @@
   version: v0.20.2-0
   name: gotosocial
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-languagetool.git
-  version: v6.6-3
+  version: v6.7-0
   name: languagetool
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-linkding.git
   version: v1.44.2-0
@@ -44,5 +44,5 @@
   version: v1.23.17-1
   name: uptime_kuma
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-vaultwarden.git
-  version: v1.34.3-6
+  version: v1.35.0-0
   name: vaultwarden

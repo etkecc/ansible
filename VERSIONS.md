@@ -29,7 +29,7 @@
 * Jitsi: stable-10655
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
-* Languagetool: 6.6-dockerupdate-2
+* Languagetool: 6.7-dockerupdate-1
 * Linkding: 1.44.2
 * Linkedin: latest
 * Livekit Jwt Service: 0.4.0
@@ -82,7 +82,7 @@
 * Twitter: v0.2511.0
 * Uptime Kuma: 1.23.17
 * Valkey: 9.0.1
-* Vaultwarden: 1.34.3
+* Vaultwarden: 1.35.0
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
 * Whatsapp: v0.2512.0

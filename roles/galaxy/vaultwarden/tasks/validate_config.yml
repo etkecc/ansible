@@ -42,9 +42,11 @@
       You need to define a required configuration setting (`{{ item.name }}`) for using this role.
   when: "item.when | bool and lookup('vars', item.name, default='') | string | length == 0"
   with_items:
-    - { "name": "vaultwarden_hostname", when: true }
     - { "name": "vaultwarden_uid", when: true }
     - { "name": "vaultwarden_gid", when: true }
+    - { "name": "vaultwarden_hostname", when: true }
+    - { "name": "vaultwarden_path_prefix", when: true }
+    - { "name": "vaultwarden_container_network", when: true }
     - "name": "vaultwarden_container_labels_traefik_compression_middleware_name"
       when: "{{ vaultwarden_container_labels_traefik_compression_middleware_enabled }}"
 
