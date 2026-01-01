@@ -15,17 +15,17 @@ livekit_server_base_path: "/{{ livekit_server_identifier }}"
 livekit_server_config_path: "{{ livekit_server_base_path }}/config"
 
 # renovate: datasource=docker depName=docker.io/livekit/livekit-server
-livekit_server_version: v1.9.9
+livekit_server_version: v1.9.10
 
-livekit_server_uid: ''
-livekit_server_gid: ''
+livekit_server_uid: ""
+livekit_server_gid: ""
 
 livekit_server_scheme: https
 
 # The hostname at which LiveKit Server is served.
 livekit_server_hostname: ""
 
-# The path at which LiveKit Server is exposed.
+# The path at which LiveKit Server is served.
 livekit_server_path_prefix: /
 
 livekit_server_container_image: "{{ livekit_server_container_image_registry_prefix }}livekit/livekit-server:{{ livekit_server_version }}"
@@ -84,19 +84,24 @@ livekit_server_container_labels_public_metrics_traefik_tls: "{{ livekit_server_c
 livekit_server_container_labels_public_metrics_traefik_tls_certResolver: "{{ livekit_server_container_labels_traefik_tls_certResolver }}"  # noqa var-naming
 livekit_server_container_labels_public_metrics_middleware_basic_auth_enabled: false
 # See: https://doc.traefik.io/traefik/reference/routing-configuration/http/middlewares/basicauth/
-livekit_server_container_labels_public_metrics_middleware_basic_auth_users: ''
+livekit_server_container_labels_public_metrics_middleware_basic_auth_users: ""
 
 # livekit_server_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
 # See `../templates/labels.j2` for details.
+# To add your own custom labels, use `livekit_server_container_labels_additional_labels_custom`
 #
 # Example:
-# livekit_server_container_labels_additional_labels: |
+# livekit_server_container_labels_additional_labels_custom: |
 #   my.label=1
 #   another.label="here"
-livekit_server_container_labels_additional_labels: ''
+livekit_server_container_labels_additional_labels: "{{ livekit_server_container_labels_additional_labels_auto | combine(livekit_server_container_labels_additional_labels_custom) }}"
+livekit_server_container_labels_additional_labels_auto: {}
+livekit_server_container_labels_additional_labels_custom: {}
 
-# A list of extra arguments to pass to the container
-livekit_server_container_extra_arguments: []
+# A list of extra arguments to pass to the container (`docker create` command)
+livekit_server_container_extra_arguments: "{{ livekit_server_container_extra_arguments_auto + livekit_server_container_extra_arguments_custom }}"
+livekit_server_container_extra_arguments_auto: []
+livekit_server_container_extra_arguments_custom: []
 
 # Specifies the maximum size of the socket receive buffer (`net.core.rmem_max`) kernel parameter on the host (which will cascade into the container) to at least this value.
 # If the host uses a larger value, this will be ignored.
@@ -222,14 +227,14 @@ livekit_server_config_rtc_tcp_port: 7881
 # or alternatively `livekit_server_config_rtc_udp_port` can be defined as a single port that handles all traffic.
 # Example: 50100
 # See: https://docs.livekit.io/home/self-hosting/ports-firewall/
-livekit_server_config_rtc_port_range_start: ''
+livekit_server_config_rtc_port_range_start: ""
 
 # Controls the `rtc.port_range_end` configuration property.
 # This must be defined together with `livekit_server_config_rtc_port_range_start`,
 # or alternatively `livekit_server_config_rtc_udp_port` can be defined as a single port that handles all traffic.
 # Example: 50200
 # See: https://docs.livekit.io/home/self-hosting/ports-firewall/
-livekit_server_config_rtc_port_range_end: ''
+livekit_server_config_rtc_port_range_end: ""
 
 # Controls the `rtc.udp_port` configuration property.
 # As an alternative to this, one may define both `livekit_server_config_rtc_port_range_start` and `livekit_server_config_rtc_port_range_end`.
@@ -247,7 +252,7 @@ livekit_server_config_rtc_use_external_ip: true
 # This is the IP address sent to the client in case you cannot rely on external IP auto-detection.
 # Related to `livekit_server_config_rtc_use_external_ip`
 # See: https://github.com/livekit/livekit/issues/3747
-livekit_server_config_rtc_node_ip: ''
+livekit_server_config_rtc_node_ip: ""
 
 ########################################################################################
 #                                                                                      #
@@ -272,12 +277,12 @@ livekit_server_config_turn_domain: "{{ livekit_server_hostname }}"
 # Controls the `turn.cert_file` configuration property.
 # Path to the TLS certificate file in the container.
 # Files on the host can be mounted into the container using `livekit_server_container_additional_volumes`.
-livekit_server_config_turn_cert_file: ''
+livekit_server_config_turn_cert_file: ""
 
 # Controls the `turn.key_file` configuration property.
 # Path to the TLS key file in the container.
 # Files on the host can be mounted into the container using `livekit_server_container_additional_volumes`.
-livekit_server_config_turn_key_file: ''
+livekit_server_config_turn_key_file: ""
 
 # Controls the `turn.external_tls` configuration property.
 livekit_server_config_turn_external_tls: false
@@ -310,11 +315,11 @@ livekit_server_config_prometheus_port: 8081
 
 # Controls the `prometheus.username` configuration property.
 # As an alternative, can configure authentication via `livekit_server_container_labels_public_metrics_middleware_basic_auth_users` as well.
-livekit_server_config_prometheus_username: ''
+livekit_server_config_prometheus_username: ""
 
 # Controls the `prometheus.password` configuration property.
 # As an alternative, can configure authentication via `livekit_server_container_labels_public_metrics_middleware_basic_auth_users` as well.
-livekit_server_config_prometheus_password: ''
+livekit_server_config_prometheus_password: ""
 
 ########################################################################################
 #                                                                                      #
@@ -345,5 +350,5 @@ livekit_server_config_logging_sample: false
 
 # Controls whether LiveKitServer's metrics should be proxied (exposed) publicly via Traefik.
 livekit_server_metrics_proxying_enabled: false
-livekit_server_metrics_proxying_hostname: ''
+livekit_server_metrics_proxying_hostname: ""
 livekit_server_metrics_proxying_path: /metrics/livekit-server
