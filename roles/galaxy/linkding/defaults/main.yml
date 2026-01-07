@@ -20,7 +20,7 @@ linkding_base_path: "/{{ linkding_identifier }}"
 linkding_data_path: "{{ linkding_base_path }}/data"
 
 # renovate: datasource=docker depName=sissbruecker/linkding versioning=semver
-linkding_version: 1.44.2
+linkding_version: 1.45.0
 
 # User ID and Group ID for running linkding service in the container
 linkding_uid: ""
@@ -32,7 +32,7 @@ linkding_hostname: ""
 # The scheme used for serving linkding (http or https)
 linkding_scheme: https
 
-# The path at which linkding is exposed.
+# The path at which linkding is served.
 # This value must either be `/` or not end with a slash (e.g. `/linkding`).
 linkding_path_prefix: /
 
@@ -103,15 +103,20 @@ linkding_container_labels_traefik_additional_response_headers_auto: |
 linkding_container_labels_traefik_additional_response_headers_custom: {}
 # linkding_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
 # See `../templates/labels.j2` for details.
+# To add your own custom labels, use `linkding_container_labels_additional_labels_custom`
 #
 # Example:
-# linkding_container_labels_additional_labels: |
+# linkding_container_labels_additional_labels_custom: |
 #   my.label=1
 #   another.label="here"
-linkding_container_labels_additional_labels: ""
+linkding_container_labels_additional_labels: "{{ linkding_container_labels_additional_labels_auto | combine(linkding_container_labels_additional_labels_custom) }}"
+linkding_container_labels_additional_labels_auto: {}
+linkding_container_labels_additional_labels_custom: {}
 
-# A list of extra arguments to pass to the container
-linkding_container_extra_arguments: []
+# A list of extra arguments to pass to the container (`docker create` command)
+linkding_container_extra_arguments: "{{ linkding_container_extra_arguments_auto + linkding_container_extra_arguments_custom }}"
+linkding_container_extra_arguments_auto: []
+linkding_container_extra_arguments_custom: []
 
 # Specifies the value of the `X-XSS-Protection` header
 # Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
@@ -172,10 +177,6 @@ linkding_systemd_wanted_services_list_default: []
 linkding_systemd_wanted_services_list_auto: []
 linkding_systemd_wanted_services_list_custom: []
 
-# The username and password for the linkding superuser
-linkding_superuser_username:
-linkding_superuser_password:
-
 # Database configuration
 # Valid values: postgres, sqlite
 linkding_database_type: sqlite
@@ -185,6 +186,13 @@ linkding_database_port: 5432
 linkding_database_username: linkding
 linkding_database_password:
 linkding_database_name: linkding
+
+# The username and password for the linkding superuser
+linkding_superuser_username:
+linkding_superuser_password:
+
+# Specify the timezone
+linkding_environment_variables_tz: UTC
 
 # Controls the LD_CONTEXT_PATH environment variable
 # If the linkding_path_prefix is `/`, then this will be set to an empty string.

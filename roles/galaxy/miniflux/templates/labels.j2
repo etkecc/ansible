@@ -59,4 +59,6 @@ traefik.http.routers.{{ miniflux_identifier }}.tls.certResolver={{ miniflux_cont
 traefik.http.services.{{ miniflux_identifier }}.loadbalancer.server.port={{ miniflux_container_http_port }}
 {% endif %}
 
-{{ miniflux_container_labels_additional_labels }}
+{% for arg in miniflux_container_labels_additional_labels %}
+{{ arg }}
+{% endfor %}

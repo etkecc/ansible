@@ -37,4 +37,6 @@ traefik.http.routers.{{ prometheus_identifier }}.entrypoints={{ prometheus_conta
 
 traefik.http.services.{{ prometheus_identifier }}.loadbalancer.server.port={{ prometheus_container_http_port }}
 
-{{ prometheus_container_labels_additional_labels }}
+{% for arg in prometheus_container_labels_additional_labels %}
+{{ arg }}
+{% endfor %}

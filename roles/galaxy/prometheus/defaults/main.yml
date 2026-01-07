@@ -19,13 +19,13 @@ prometheus_config_path: "{{ prometheus_base_path }}/config"
 prometheus_data_path: "{{ prometheus_base_path }}/data"
 
 # renovate: datasource=docker depName=prom/prometheus versioning=semver
-prometheus_version: v3.8.1
+prometheus_version: v3.9.0
 
-prometheus_uid: ''
-prometheus_gid: ''
+prometheus_uid: ""
+prometheus_gid: ""
 
 # The hostname at which prometheus is served.
-prometheus_hostname: ''
+prometheus_hostname: ""
 
 # The path at which prometheus is served.
 # This value must either be `/` or not end with a slash (e.g. `/prometheus`).
@@ -41,7 +41,7 @@ prometheus_container_image_force_pull: "{{ prometheus_container_image.endswith('
 # Controls whether the container exposes its HTTP port (tcp/9090 in the container).
 #
 # Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:9090"), or empty string to not expose.
-prometheus_container_http_host_bind_port: ''
+prometheus_container_http_host_bind_port: ""
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 prometheus_container_network: "{{ prometheus_identifier }}"
@@ -92,15 +92,20 @@ prometheus_container_labels_traefik_additional_response_headers_custom: {}
 
 # prometheus_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
 # See `../templates/labels.j2` for details.
+# To add your own custom labels, use `prometheus_container_labels_additional_labels_custom`
 #
 # Example:
-# prometheus_container_labels_additional_labels: |
-#   my.label=1
-#   another.label="here"
-prometheus_container_labels_additional_labels: ''
+# prometheus_container_labels_additional_labels_custom: |
+#   - my.label=1
+#   - another.label="here"
+prometheus_container_labels_additional_labels: "{{ prometheus_container_labels_additional_labels_auto + prometheus_container_labels_additional_labels_custom }}"
+prometheus_container_labels_additional_labels_auto: []
+prometheus_container_labels_additional_labels_custom: []
 
-# A list of extra arguments to pass to the container
-prometheus_container_extra_arguments: []
+# A list of extra arguments to pass to the container (`docker create` command)
+prometheus_container_extra_arguments: "{{ prometheus_container_extra_arguments_auto + prometheus_container_extra_arguments_custom }}"
+prometheus_container_extra_arguments_auto: []
+prometheus_container_extra_arguments_custom: []
 
 # Specifies the value of the `X-XSS-Protection` header
 # Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
@@ -176,7 +181,7 @@ prometheus_process_arguments: "{{ prometheus_process_default_arguments + prometh
 
 prometheus_container_labels_metrics_middleware_basic_auth_enabled: false
 # See: https://doc.traefik.io/traefik/reference/routing-configuration/http/middlewares/basicauth/
-prometheus_container_labels_metrics_middleware_basic_auth_users: ''
+prometheus_container_labels_metrics_middleware_basic_auth_users: ""
 
 # Controls whether Prometheus will scrape its own process running in the container.
 # See: prometheus_config_scrape_configs_default
@@ -205,7 +210,7 @@ prometheus_self_node_scraper_job_name: node
 prometheus_self_node_scraper_scrape_interval: 60s
 prometheus_self_node_scraper_scrape_timeout: 60s
 prometheus_self_node_scraper_static_configs: "{{ [{'targets': [prometheus_self_node_scraper_static_configs_target]}] }}"
-prometheus_self_node_scraper_static_configs_target: ''
+prometheus_self_node_scraper_static_configs_target: ""
 # The final scrape configs for the self node scraper
 prometheus_self_node_scraper_scrape_configs: |
   {{

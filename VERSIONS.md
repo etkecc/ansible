@@ -30,7 +30,7 @@
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
 * Languagetool: 6.7-dockerupdate-1
-* Linkding: 1.44.2
+* Linkding: 1.45.0
 * Linkedin: latest
 * Livekit Jwt Service: 0.4.0
 * Livekit Server: v1.9.10
@@ -39,7 +39,7 @@
 * Maubot: v0.6.0
 * Meta Instagram: v0.2512.0
 * Meta Messenger: v0.2512.0
-* Miniflux: 2.2.15
+* Miniflux: 2.2.16
 * Ntfy: v2.15.0
 * Peertube: v7.2.3
 * Postgres Container Image V10: 10.23
@@ -53,7 +53,7 @@
 * Postgres Container Image V18: 18.1
 * Postgres Container Image V9: 9.6.24
 * Postmoogle: v0.9.28
-* Prometheus: v3.8.1
+* Prometheus: v3.9.0
 * Prometheus Node Exporter: v1.10.2
 * Prometheus Postgres Exporter: v0.18.1
 * Radicale: 3.5.10.0

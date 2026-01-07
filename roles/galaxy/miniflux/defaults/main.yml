@@ -11,13 +11,13 @@ miniflux_identifier: miniflux
 miniflux_base_path: "/{{ miniflux_identifier }}"
 
 # renovate: datasource=docker depName=docker.io/miniflux/miniflux versioning=semver
-miniflux_version: 2.2.15
+miniflux_version: 2.2.16
 
-miniflux_uid: ''
-miniflux_gid: ''
+miniflux_uid: ""
+miniflux_gid: ""
 
 # The hostname at which Miniflux is served.
-miniflux_hostname: ''
+miniflux_hostname: ""
 
 miniflux_scheme: https
 
@@ -93,15 +93,20 @@ miniflux_container_labels_traefik_additional_response_headers_custom: {}
 
 # miniflux_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
 # See `../templates/labels.j2` for details.
+# To add your own custom labels, use `miniflux_container_labels_additional_labels_custom`
 #
 # Example:
-# miniflux_container_labels_additional_labels: |
-#   my.label=1
-#   another.label="here"
-miniflux_container_labels_additional_labels: ''
+# miniflux_container_labels_additional_labels_custom: |
+#   - my.label=1
+#   - another.label="here"
+miniflux_container_labels_additional_labels: "{{ miniflux_container_labels_additional_labels_auto + miniflux_container_labels_additional_labels_custom }}"
+miniflux_container_labels_additional_labels_auto: []
+miniflux_container_labels_additional_labels_custom: []
 
-# A list of extra arguments to pass to the container
-miniflux_container_extra_arguments: []
+# A list of extra arguments to pass to the container (`docker create` command)
+miniflux_container_extra_arguments: "{{ miniflux_container_extra_arguments_auto + miniflux_container_extra_arguments_custom }}"
+miniflux_container_extra_arguments_auto: []
+miniflux_container_extra_arguments_custom: []
 
 # Specifies the value of the `X-XSS-Protection` header
 # Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
@@ -163,16 +168,19 @@ miniflux_systemd_wanted_services_list_auto: []
 miniflux_systemd_wanted_services_list_custom: []
 
 # Optional admin credentials to be created on startup.
-miniflux_admin_login: ''
-miniflux_admin_password: ''
+miniflux_admin_login: ""
+miniflux_admin_password: ""
 
 miniflux_database_username: miniflux
-miniflux_database_password: ''
-miniflux_database_hostname: ''
+miniflux_database_password: ""
+miniflux_database_hostname: ""
 miniflux_database_port: 5432
 miniflux_database_name: miniflux
 
 miniflux_database_connection_string: "postgres://{{ miniflux_database_username }}:{{ miniflux_database_password }}@{{ miniflux_database_hostname }}:{{ miniflux_database_port }}/{{ miniflux_database_name }}?sslmode=disable"
+
+# Specify the timezone
+miniflux_environment_variables_tz: UTC
 
 # Controls the DATABASE_URL environment variable
 miniflux_environment_variable_database_url: "{{ miniflux_database_connection_string }}"
@@ -187,4 +195,4 @@ miniflux_environment_variable_admin_username: "{{ miniflux_admin_login }}"
 miniflux_environment_variable_admin_password: "{{ miniflux_admin_password }}"
 
 # Additional environment variables.
-miniflux_environment_variables_additional_variables: ''
+miniflux_environment_variables_additional_variables: ""
