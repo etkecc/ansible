@@ -42,4 +42,6 @@ traefik.http.routers.{{ funkwhale_frontend_identifier }}.tls.certResolver={{ fun
 {% endif %}
 traefik.http.services.{{ funkwhale_frontend_identifier }}.loadbalancer.server.port={{ funkwhale_frontend_container_http_port }}
 
-{{ funkwhale_frontend_container_labels_additional_labels }}
+{% for arg in funkwhale_frontend_container_labels_additional_labels %}
+{{ arg }}
+{% endfor %}

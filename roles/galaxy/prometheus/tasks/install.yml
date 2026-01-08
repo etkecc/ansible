@@ -16,14 +16,6 @@
     - "{{ prometheus_config_path }}"
     - "{{ prometheus_data_path }}"
 
-- name: Ensure prometheus.yml installed
-  ansible.builtin.copy:
-    content: "{{ prometheus_configuration | to_nice_yaml(indent=2, width=999999) }}"
-    dest: "{{ prometheus_config_path }}/prometheus.yml"
-    mode: "0644"
-    owner: "{{ prometheus_uid }}"
-    group: "{{ prometheus_gid }}"
-
 - name: Ensure Prometheus support files installed
   ansible.builtin.template:
     src: "{{ role_path }}/templates/{{ item }}.j2"
@@ -33,6 +25,14 @@
     group: "{{ prometheus_gid }}"
   with_items:
     - labels
+
+- name: Ensure prometheus.yml installed
+  ansible.builtin.copy:
+    content: "{{ prometheus_configuration | to_nice_yaml(indent=2, width=999999) }}"
+    dest: "{{ prometheus_config_path }}/prometheus.yml"
+    mode: "0644"
+    owner: "{{ prometheus_uid }}"
+    group: "{{ prometheus_gid }}"
 
 - name: Ensure Prometheus container image is pulled via community.docker.docker_image
   when: devture_systemd_docker_base_container_image_pull_method == 'ansible-module'

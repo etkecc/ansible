@@ -53,7 +53,7 @@
 * Postgres Container Image V18: 18.1
 * Postgres Container Image V9: 9.6.24
 * Postmoogle: v0.9.28
-* Prometheus: v3.9.0
+* Prometheus: v3.9.1
 * Prometheus Node Exporter: v1.10.2
 * Prometheus Postgres Exporter: v0.18.1
 * Radicale: 3.5.10.0
@@ -65,7 +65,7 @@
 * Spam Checker Mjolnir Antispam Git: v1.11.0
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.40.1
-* Steam Bridge: 1.0.8
+* Steam Bridge: 1.1.0
 * Sygnal: v0.15.1
 * Synapse: v1.144.0
 * Synapse Admin: v0.11.1-etke51

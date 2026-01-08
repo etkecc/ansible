@@ -25,10 +25,11 @@ funkwhale_frontend_static_path: "{{ funkwhale_frontend_base_path }}/appstatic"
 # renovate: datasource=docker depName=funkwhale/api
 funkwhale_version: 1.4.1
 
-funkwhale_uid: ''
-funkwhale_gid: ''
+funkwhale_uid: ""
+funkwhale_gid: ""
 
-funkwhale_hostname: ''
+# The hostname at which Funkwhale is served.
+funkwhale_hostname: ""
 
 funkwhale_container_image_registry_prefix: "{{ funkwhale_container_image_registry_prefix_upstream }}"
 funkwhale_container_image_registry_prefix_upstream: "{{ funkwhale_container_image_registry_prefix_upstream_default }}"
@@ -42,23 +43,23 @@ funkwhale_container_network: '{{ funkwhale_identifier }}'
 funkwhale_watch_imports_enabled: false
 funkwhale_watch_imports_library_id: ""  # add first 8 characters of library ID here
 
-funkwhale_aws_access_key_id: ''
-funkwhale_aws_secret_access_key: ''
-funkwhale_aws_storage_bucket_name: ''
-funkwhale_aws_s3_region_name: ''
-funkwhale_aws_s3_endpoint_url: ''
+funkwhale_aws_access_key_id: ""
+funkwhale_aws_secret_access_key: ""
+funkwhale_aws_storage_bucket_name: ""
+funkwhale_aws_s3_region_name: ""
+funkwhale_aws_s3_endpoint_url: ""
 funkwhale_aws_location: 'funkwhale'
 
-funkwhale_database_hostname: ''
+funkwhale_database_hostname: ""
 funkwhale_database_port: 5432
 funkwhale_database_name: funkwhale
-funkwhale_database_username: ''
-funkwhale_database_password: ''
+funkwhale_database_username: ""
+funkwhale_database_password: ""
 # Use this to set the sslmode parameter of the SSL connection
 # By default, we expect a local container (without SSL), so attempting SSL connections is not necessary.
 funkwhale_database_sslmode: disable
 
-funkwhale_redis_hostname: ''
+funkwhale_redis_hostname: ""
 funkwhale_redis_port: 6379
 funkwhale_redis_database: 0
 funkwhale_redis_url: "redis://{{ funkwhale_redis_hostname }}:{{ funkwhale_redis_port }}/{{ funkwhale_redis_database }}"
@@ -66,10 +67,10 @@ funkwhale_redis_url: "redis://{{ funkwhale_redis_hostname }}:{{ funkwhale_redis_
 # Can be one of `consolemail://`, `dummymail://`, `smtp://`, `smtp+ssl://` and `smtp+tls://`
 # the default outputs e-mail in the console (journalctl -fu mash-funkwhale-api)
 funkwhale_email_protocol: "consolemail://"
-funkwhale_email_host: ''
-funkwhale_email_port: ''
-funkwhale_email_username: ''
-funkwhale_email_password: ''
+funkwhale_email_host: ""
+funkwhale_email_port: ""
+funkwhale_email_username: ""
+funkwhale_email_password: ""
 funkwhale_email_from: "noreply@{{ funkwhale_hostname }}"
 
 funkwhale_account_email_verification_enforce: false
@@ -96,10 +97,13 @@ funkwhale_users_additional: []
 # Use funkwhale_users_auto and funkwhale_users_additional to define users that should be created automatically.
 funkwhale_users: "{{ funkwhale_users_auto + funkwhale_users_additional }}"
 
-funkwhale_django_secret_key: ''
+funkwhale_django_secret_key: ""
 
 # Must be one of debug, info, warning, error, critical
 funkwhale_loglevel: error
+
+# Specify the timezone
+funkwhale_environment_variables_tz: UTC
 
 ########################################################################
 #                                                                      #
@@ -140,7 +144,7 @@ funkwhale_api_container_additional_networks_auto: []
 funkwhale_api_container_additional_networks_custom: []
 
 # funkwhale_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
-# See `roles/custom/funkwhale_funkwhale/templates/labels.j2` for details.
+# See `../templates/labels_api.j2` for details.
 #
 # To inject your own other container labels, see `funkwhale_container_labels_additional_labels`.
 funkwhale_api_container_labels_traefik_enabled: false
@@ -174,13 +178,16 @@ funkwhale_api_container_labels_traefik_additional_response_headers_auto: |
 funkwhale_api_container_labels_traefik_additional_response_headers_custom: {}
 
 # funkwhale_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
-# See `roles/custom/collabora_online/templates/labels.j2` for details.
+# To add your own custom labels, use `funkwhale_api_container_labels_additional_labels_custom`
+# See `../templates/labels_api.j2` for details.
 #
 # Example:
-# funkwhale_container_labels_additional_labels: |
-#   my.label=1
-#   another.label="here"
-funkwhale_api_container_labels_additional_labels: ''
+# funkwhale_api_container_labels_additional_labels_custom:
+#   - my.label=1
+#   - another.label="here"
+funkwhale_api_container_labels_additional_labels: "{{ funkwhale_api_container_labels_additional_labels_auto + funkwhale_api_container_labels_additional_labels_custom }}"
+funkwhale_api_container_labels_additional_labels_auto: []
+funkwhale_api_container_labels_additional_labels_custom: []
 
 # A list of extra arguments to pass to the Funkwhale API container (run) statement
 # To mount a library to the funkwhale/music directory use: ["--mount type=bind,src=LIBRARY_PATH,dst=/srv/funkwhale/data/music,ro"]
@@ -248,7 +255,7 @@ funkwhale_api_systemd_required_services_list_auto: []
 funkwhale_api_systemd_required_services_list_custom: []
 
 # Additional environment variables.
-funkwhale_api_variables_additional_variables: ''
+funkwhale_api_variables_additional_variables: ""
 
 funkwhale_api_identifier: "{{ funkwhale_identifier }}-api"
 
@@ -302,7 +309,7 @@ funkwhale_frontend_container_additional_networks_auto: []
 funkwhale_frontend_container_additional_networks_custom: []
 
 # funkwhale_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
-# See `roles/custom/funkwhale_funkwhale/templates/labels.j2` for details.
+# See `../templates/labels_frontend.j2` for details.
 #
 # To inject your own other container labels, see `funkwhale_container_labels_additional_labels`.
 funkwhale_frontend_container_labels_traefik_enabled: false
@@ -333,13 +340,16 @@ funkwhale_frontend_container_labels_traefik_additional_response_headers_auto: |
 funkwhale_frontend_container_labels_traefik_additional_response_headers_custom: {}
 
 # funkwhale_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
-# See `roles/custom/collabora_online/templates/labels.j2` for details.
+# To add your own custom labels, use `funkwhale_frontend_container_labels_additional_labels_custom`
+# See `../templates/labels_frontend.j2` for details.
 #
 # Example:
-# funkwhale_container_labels_additional_labels: |
-#   my.label=1
-#   another.label="here"
-funkwhale_frontend_container_labels_additional_labels: ''
+# funkwhale_frontend_container_labels_additional_labels_custom:
+#   - my.label=1
+#   - another.label="here"
+funkwhale_frontend_container_labels_additional_labels: "{{ funkwhale_frontend_container_labels_additional_labels_auto + funkwhale_frontend_container_labels_additional_labels_custom }}"
+funkwhale_frontend_container_labels_additional_labels_auto: []
+funkwhale_frontend_container_labels_additional_labels_custom: []
 
 # A list of extra arguments to pass to the Funkwhale frontend container (run) statement
 # To mount a library to the funkwhale/music directory use: ["--mount type=bind,src=LIBRARY_PATH,dst=/srv/funkwhale/data/music,ro"]
@@ -407,7 +417,7 @@ funkwhale_frontend_systemd_required_services_list_auto: []
 funkwhale_frontend_systemd_required_services_list_custom: []
 
 # Additional environment variables.
-funkwhale_frontend_variables_additional_variables: ''
+funkwhale_frontend_variables_additional_variables: ""
 
 funkwhale_frontend_identifier: "{{ funkwhale_identifier }}-frontend"
 
@@ -458,7 +468,7 @@ funkwhale_celery_beat_systemd_required_services_list_auto: []
 funkwhale_celery_beat_systemd_required_services_list_custom: []
 
 # Additional environment variables.
-funkwhale_celery_beat_variables_additional_variables: ''
+funkwhale_celery_beat_variables_additional_variables: ""
 
 funkwhale_celery_beat_concurrency: 0
 
@@ -503,7 +513,7 @@ funkwhale_celery_worker_systemd_required_services_list_auto: []
 funkwhale_celery_worker_systemd_required_services_list_custom: []
 
 # Additional environment variables.
-funkwhale_celery_worker_variables_additional_variables: ''
+funkwhale_celery_worker_variables_additional_variables: ""
 
 # Number of worker processes to execute. Defaults to 0, in which case it uses your number of CPUs
 # Celery workers handle background tasks (such file imports or federation

@@ -7,34 +7,21 @@
 
 ---
 # Project source code URL: https://github.com/firezone/firezone
+
 firezone_enabled: true
+
 firezone_identifier: firezone
-
-firezone_hostname: ''
-firezone_generic_secret: ""
-firezone_default_admin_email: ""
-firezone_default_admin_password: ""
-
-firezone_uid: ''
-firezone_gid: ''
-
 firezone_base_path: "/{{ firezone_identifier }}"
-firezone_config_path: "{{ firezone_base_path }}/config"
 firezone_data_path: "{{ firezone_base_path }}/data"
-firezone_env_path: "{{ firezone_config_path }}/env"
-
-firezone_systemd_required_services_list: "{{ firezone_systemd_required_services_list_default + firezone_systemd_required_services_list_auto + firezone_systemd_required_services_list_custom }}"
-firezone_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
-firezone_systemd_required_services_list_auto: []
-firezone_systemd_required_services_list_custom: []
-
-firezone_systemd_wanted_services_list: "{{ firezone_systemd_wanted_services_list_default + firezone_systemd_wanted_services_list_auto + firezone_systemd_wanted_services_list_custom }}"
-firezone_systemd_wanted_services_list_default: []
-firezone_systemd_wanted_services_list_auto: []
-firezone_systemd_wanted_services_list_custom: []
 
 # renovate: datasource=docker depName=firezone/firezone
 firezone_version: 0.7.36
+
+firezone_uid: ""
+firezone_gid: ""
+
+# The hostname at which Firezone is served.
+firezone_hostname: ""
 
 firezone_container_image: "{{ firezone_container_image_registry_prefix }}firezone/firezone:{{ firezone_container_image_tag }}"
 firezone_container_image_registry_prefix: "{{ firezone_container_image_registry_prefix_upstream }}"
@@ -55,7 +42,7 @@ firezone_container_additional_networks_auto: []
 firezone_container_additional_networks_custom: []
 
 # firezone_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
-# See `roles/custom/firezone_firezone/templates/labels.j2` for details.
+# See `../templates/labels.j2` for details.
 #
 # To inject your own other container labels, see `firezone_container_labels_additional_labels`.
 firezone_container_labels_traefik_enabled: false
@@ -63,24 +50,45 @@ firezone_container_labels_traefik_docker_network: ""
 firezone_container_labels_traefik_entrypoints: web-secure
 firezone_container_labels_traefik_tls_certResolver: default  # noqa var-naming
 
-firezone_database_hostname: ''
+# firezone_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
+# See `../templates/labels.j2` for details.
+# To add your own custom labels, use `firezone_container_labels_additional_labels_custom`
+#
+# Example:
+# firezone_container_labels_additional_labels_custom:
+#   - my.label=1
+#   - another.label="here"
+firezone_container_labels_additional_labels: "{{ firezone_container_labels_additional_labels_auto + firezone_container_labels_additional_labels_custom }}"
+firezone_container_labels_additional_labels_auto: []
+firezone_container_labels_additional_labels_custom: []
+
+# A list of extra arguments to pass to the container (`docker create` command)
+firezone_container_extra_arguments: "{{ firezone_container_extra_arguments_auto + firezone_container_extra_arguments_custom }}"
+firezone_container_extra_arguments_auto: []
+firezone_container_extra_arguments_custom: []
+
+firezone_systemd_required_services_list: "{{ firezone_systemd_required_services_list_default + firezone_systemd_required_services_list_auto + firezone_systemd_required_services_list_custom }}"
+firezone_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+firezone_systemd_required_services_list_auto: []
+firezone_systemd_required_services_list_custom: []
+
+firezone_systemd_wanted_services_list: "{{ firezone_systemd_wanted_services_list_default + firezone_systemd_wanted_services_list_auto + firezone_systemd_wanted_services_list_custom }}"
+firezone_systemd_wanted_services_list_default: []
+firezone_systemd_wanted_services_list_auto: []
+firezone_systemd_wanted_services_list_custom: []
+
+firezone_database_hostname: ""
 firezone_database_port: 5432
 firezone_database_name: firezone
 firezone_database_username: firezone
-firezone_database_password: ''
+firezone_database_password: ""
 # Use this to set the sslmode parameter of the SSL connection
 # By default, we expect a local container (without SSL), so attempting SSL connections is not necessary.
 firezone_database_sslmode: disable
 
-# firezone_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
-# See `roles/custom/collabora_online/templates/labels.j2` for details.
-#
-# Example:
-# firezone_container_labels_additional_labels: |
-#   my.label=1
-#   another.label="here"
-firezone_container_labels_additional_labels: ''
-
+firezone_generic_secret: ""
+firezone_default_admin_email: ""
+firezone_default_admin_password: ""
 
 firezone_telemetry_enabled: false
 firezone_wireguard_container_port: 51820
@@ -93,11 +101,14 @@ firezone_live_view_signing_salt: "{{ ('%s' | format(firezone_generic_secret) | p
 firezone_cookie_signing_salt: "{{ ('%s' | format(firezone_generic_secret) | password_hash('sha512', 'fz.ck.sg.salt', rounds=655555))[-64:] | b64encode }}"
 firezone_cookie_encryption_salt: "{{ ('%s' | format(firezone_generic_secret) | password_hash('sha512', 'fz.ck.ec.salt', rounds=655555))[-64:] | b64encode }}"
 
-# firezone_environment_variables_additional_variables contains a multiline string with additional valeus to add to the container environment file.
+# Specify the timezone
+firezone_environment_variables_tz: UTC
+
+# firezone_environment_variables_additional_variables contains a multiline string with additional values to add to the container environment file.
 # See `https://www.firezone.dev/docs/reference/env-vars` for details.
 #
 # Example:
 # firezone_environment_variables_additional_variables: |
 #   MAX_DEVICES_PER_USER=5
 #   CONNECTIVITY_CHECKS_ENABLED=false
-firezone_environment_variables_additional_variables: ''
+firezone_environment_variables_additional_variables: ""

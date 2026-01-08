@@ -52,9 +52,9 @@
   ansible.builtin.template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
+    mode: "0640"
     owner: "{{ funkwhale_uid }}"
     group: "{{ funkwhale_gid }}"
-    mode: "0640"
   with_items:
     - { src: "{{ role_path }}/templates/env_frontend.j2", dest: "{{ funkwhale_frontend_base_path }}/env" }
     - { src: "{{ role_path }}/templates/env_api.j2", dest: "{{ funkwhale_api_base_path }}/env" }
