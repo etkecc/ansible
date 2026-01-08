@@ -1,5 +1,5 @@
-# SPDX-FileCopyrightText: 2023 - 2024 Slavi Pantaleev
-# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+# SPDX-FileCopyrightText: 2023, 2024 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -46,13 +46,16 @@
     owner: "{{ etherpad_user_uid }}"
     group: "{{ etherpad_user_gid }}"
 
-- name: Ensure Etherpad labels installed
+- name: Ensure Etherpad support files installed
   ansible.builtin.template:
-    src: "{{ role_path }}/templates/labels.j2"
-    dest: "{{ etherpad_base_path }}/labels"
+    src: "{{ role_path }}/templates/{{ item }}.j2"
+    dest: "{{ etherpad_base_path }}/{{ item }}"
     mode: "0640"
     owner: "{{ etherpad_user_uid }}"
     group: "{{ etherpad_user_gid }}"
+  with_items:
+    - env
+    - labels
 
 - name: Run if self-building of Etherpad container image is not enabled
   when: "not etherpad_container_image_self_build | bool"

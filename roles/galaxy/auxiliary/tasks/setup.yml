@@ -1,5 +1,10 @@
----
+# SPDX-FileCopyrightText: 2023 Niels Bouma
+# SPDX-FileCopyrightText: 2023 Nikita Chernyi
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
 
+---
 - name: Ensure AUX directories are created
   ansible.builtin.file:
     dest: "{{ item.dest }}"
@@ -30,9 +35,9 @@
 
 - name: Ensure AUX commands are run
   ansible.builtin.command: "{{ item.command }}"
-  become: "{{ item.become|default(aux_command_default_become)|bool }}"
-  become_user: "{{ item.become_user|default(aux_command_default_become_user) }}"
-  ignore_errors: "{{ item.ignore_errors|default(aux_command_default_ignore_errors)|bool }}"
+  become: "{{ item.become | default(aux_command_default_become) | bool }}"
+  become_user: "{{ item.become_user | default(aux_command_default_become_user) }}"
+  ignore_errors: "{{ item.ignore_errors | default(aux_command_default_ignore_errors) | bool }}"
   with_items: "{{ aux_command_definitions }}"
   loop_control:
     label: "{{ item.command }}"

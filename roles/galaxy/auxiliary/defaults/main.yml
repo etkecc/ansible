@@ -1,3 +1,8 @@
+# SPDX-FileCopyrightText: 2023 - 2024 Nikita Chernyi
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 ---
 
 # aux is a role that manages auxiliary files and directories on your server.
@@ -13,7 +18,7 @@
 # that you can use to mount an additional volume.
 
 # The default directory permission mode when creating directories using `aux_directory_definitions`
-aux_directory_default_mode: '0750'
+aux_directory_default_mode: "0750"
 
 # The default directory owner when creating directories using `aux_directory_definitions`
 aux_directory_default_owner: root
@@ -43,7 +48,7 @@ aux_directory_definitions_auto: []
 aux_directory_definitions: "{{ aux_directory_definitions_auto + aux_directory_definitions_custom }}"
 
 # The default file permission mode when creating files using `aux_file_definitions`
-aux_file_default_mode: '0640'
+aux_file_default_mode: "0640"
 
 # The default file owner when creating files using `aux_file_definitions`
 aux_file_default_owner: root

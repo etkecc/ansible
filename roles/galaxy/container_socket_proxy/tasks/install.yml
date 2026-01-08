@@ -16,9 +16,9 @@
   ansible.builtin.template:
     src: "{{ role_path }}/templates/{{ item }}.j2"
     dest: "{{ container_socket_proxy_base_path }}/{{ item }}"
+    mode: "0640"
     owner: "{{ container_socket_proxy_uid }}"
     group: "{{ container_socket_proxy_gid }}"
-    mode: "0640"
   with_items:
     - env
     - labels

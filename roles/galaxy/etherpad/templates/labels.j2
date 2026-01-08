@@ -60,4 +60,6 @@ traefik.http.routers.{{ etherpad_identifier }}.tls.certResolver={{ etherpad_cont
 traefik.http.services.{{ etherpad_identifier }}.loadbalancer.server.port={{ etherpad_container_http_port }}
 {% endif %}
 
-{{ etherpad_container_labels_additional_labels }}
+{% for arg in etherpad_container_labels_additional_labels %}
+{{ arg }}
+{% endfor %}

@@ -1,0 +1,10 @@
+---
+profile: production # min, basic, moderate, safety, shared, production
+
+# TODO: remove items except "yaml[line-length]"
+skip_list:
+  - ignore-errors
+  - no-changed-when
+  - yaml[line-length]
+
+offline: true

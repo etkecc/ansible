@@ -55,4 +55,6 @@ traefik.http.routers.{{ grafana_identifier }}.tls.certResolver={{ grafana_contai
 traefik.http.services.{{ grafana_identifier }}.loadbalancer.server.port={{ grafana_container_http_port }}
 {% endif %}
 
-{{ grafana_container_labels_additional_labels }}
+{% for arg in grafana_container_labels_additional_labels %}
+{{ arg }}
+{% endfor %}

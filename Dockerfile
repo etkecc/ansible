@@ -3,7 +3,6 @@ ARG ANSIBLE
 ARG ANSIBLE_CORE
 FROM ghcr.io/etkecc/ansible/base:${ALPINE}-${ANSIBLE_CORE}-${ANSIBLE}
 
-ENV ANSIBLE_LOG_PATH=" "
 WORKDIR /playbook
 ENTRYPOINT ["/bin/sh"]
 COPY . /playbook

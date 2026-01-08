@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2023 - 2024 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2023, 2024 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2024 Nikita Chernyi
-# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -108,12 +108,12 @@ etherpad_container_labels_traefik_additional_response_headers_custom: {}
 # To add your own custom labels, use `etherpad_container_labels_additional_labels_custom`
 #
 # Example:
-# etherpad_container_labels_additional_labels_custom: |
-#   my.label=1
-#   another.label="here"
-etherpad_container_labels_additional_labels: "{{ etherpad_container_labels_additional_labels_auto | combine(etherpad_container_labels_additional_labels_custom) }}"
-etherpad_container_labels_additional_labels_auto: {}
-etherpad_container_labels_additional_labels_custom: {}
+# etherpad_container_labels_additional_labels_custom:
+#   - my.label=1
+#   - another.label="here"
+etherpad_container_labels_additional_labels: "{{ etherpad_container_labels_additional_labels_auto + etherpad_container_labels_additional_labels_custom }}"
+etherpad_container_labels_additional_labels_auto: []
+etherpad_container_labels_additional_labels_custom: []
 
 # Specifies how often the container health-check will run.
 #
@@ -275,3 +275,9 @@ etherpad_configuration_extension: "{{ etherpad_configuration_extension_json | fr
 # Holds the final Etherpad configuration (a combination of the default and its extension).
 # You most likely don't need to touch this variable. Instead, see `etherpad_configuration_json`.
 etherpad_configuration: "{{ etherpad_configuration_default | combine(etherpad_configuration_extension, recursive=True) }}"
+
+# Specify the timezone
+etherpad_environment_variables_tz: UTC
+
+# Additional environment variables.
+etherpad_environment_variables_additional_variables: ""

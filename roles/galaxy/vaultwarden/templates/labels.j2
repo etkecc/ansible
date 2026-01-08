@@ -60,4 +60,6 @@ traefik.http.routers.{{ vaultwarden_identifier }}.tls.certResolver={{ vaultwarde
 traefik.http.services.{{ vaultwarden_identifier }}.loadbalancer.server.port={{ vaultwarden_config_rocket_port }}
 {% endif %}
 
-{{ vaultwarden_container_labels_additional_labels }}
+{% for arg in vaultwarden_container_labels_additional_labels %}
+{{ arg }}
+{% endfor %}

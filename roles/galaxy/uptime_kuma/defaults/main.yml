@@ -15,11 +15,11 @@ uptime_kuma_data_path: "{{ uptime_kuma_base_path }}/data"
 # renovate: datasource=docker depName=louislam/uptime-kuma versioning=semver
 uptime_kuma_version: 1.23.17
 
-uptime_kuma_uid: ''
-uptime_kuma_gid: ''
+uptime_kuma_uid: ""
+uptime_kuma_gid: ""
 
 # The hostname at which Uptime Kuma is served.
-uptime_kuma_hostname: ''
+uptime_kuma_hostname: ""
 
 # The path at which Uptime Kuma is served.
 # This value must either be `/` or not end with a slash (e.g. `/kuma`).
@@ -87,12 +87,15 @@ uptime_kuma_container_labels_traefik_additional_response_headers_custom: {}
 
 # uptime_kuma_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
 # See `../templates/labels.j2` for details.
+# To add your own custom labels, use `uptime_kuma_container_labels_additional_labels_custom`
 #
 # Example:
-# uptime_kuma_container_labels_additional_labels: |
-#   my.label=1
-#   another.label="here"
-uptime_kuma_container_labels_additional_labels: ''
+# uptime_kuma_container_labels_additional_labels_custom:
+#   - my.label=1
+#   - another.label="here"
+uptime_kuma_container_labels_additional_labels: "{{ uptime_kuma_container_labels_additional_labels_auto + uptime_kuma_container_labels_additional_labels_custom }}"
+uptime_kuma_container_labels_additional_labels_auto: []
+uptime_kuma_container_labels_additional_labels_custom: []
 
 # Specifies how often the container health-check will run.
 #
@@ -105,8 +108,10 @@ uptime_kuma_container_labels_additional_labels: ''
 # For non-Traefik setups, we use the default healthcheck interval (60s) to decrease overhead.
 uptime_kuma_container_health_interval: "{{ '5s' if uptime_kuma_container_labels_traefik_enabled else '60s' }}"
 
-# A list of extra arguments to pass to the container
-uptime_kuma_container_extra_arguments: []
+# A list of extra arguments to pass to the container (`docker create` command)
+uptime_kuma_container_extra_arguments: "{{ uptime_kuma_container_extra_arguments_auto + uptime_kuma_container_extra_arguments_custom }}"
+uptime_kuma_container_extra_arguments_auto: []
+uptime_kuma_container_extra_arguments_custom: []
 
 # Specifies the value of the `X-XSS-Protection` header
 # Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
@@ -167,6 +172,9 @@ uptime_kuma_systemd_wanted_services_list_default: []
 uptime_kuma_systemd_wanted_services_list_auto: []
 uptime_kuma_systemd_wanted_services_list_custom: []
 
+# Specify the timezone
+uptime_kuma_environment_variables_tz: UTC
+
 uptime_kuma_container_dns_servers: "{{ uptime_kuma_container_dns_servers_default + uptime_kuma_container_dns_servers_custom }}"
 
 uptime_kuma_container_dns_servers_default:
@@ -185,4 +193,4 @@ uptime_kuma_container_dns_servers_default:
 uptime_kuma_container_dns_servers_custom: []
 
 # Additional environment variables.
-uptime_kuma_environment_variables_additional_variables: ''
+uptime_kuma_environment_variables_additional_variables: ""

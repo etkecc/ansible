@@ -20,13 +20,13 @@ grafana_data_path: "{{ grafana_base_path }}/data"
 # renovate: datasource=docker depName=grafana/grafana-oss versioning=semver
 grafana_version: 11.6.5
 
-grafana_uid: ''
-grafana_gid: ''
+grafana_uid: ""
+grafana_gid: ""
 
 # The hostname at which Grafana is served.
-grafana_hostname: ''
+grafana_hostname: ""
 
-# The path at which Grafana is exposed.
+# The path at which Grafana is served.
 # This value must either be `/` or not end with a slash (e.g. `/grafana`).
 grafana_path_prefix: /
 
@@ -40,7 +40,7 @@ grafana_container_image_force_pull: "{{ grafana_container_image.endswith(':lates
 # Control whether the Grafana container exposes its HTTP port (tcp/3000 in the container).
 #
 # Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:3000"), or empty string to not expose.
-grafana_container_http_host_bind_port: ''
+grafana_container_http_host_bind_port: ""
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 # You can specify 'host' network for container to use it.
@@ -99,15 +99,20 @@ grafana_container_labels_traefik_additional_response_headers_custom: {}
 
 # grafana_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
 # See `../templates/labels.j2` for details.
+# To add your own custom labels, use `grafana_container_labels_additional_labels_custom`
 #
 # Example:
-# grafana_container_labels_additional_labels: |
-#   my.label=1
-#   another.label="here"
-grafana_container_labels_additional_labels: ''
+# grafana_container_labels_additional_labels_custom:
+#   - my.label=1
+#   - another.label="here"
+grafana_container_labels_additional_labels: "{{ grafana_container_labels_additional_labels_auto + grafana_container_labels_additional_labels_custom }}"
+grafana_container_labels_additional_labels_auto: []
+grafana_container_labels_additional_labels_custom: []
 
-# A list of extra arguments to pass to the container
-grafana_container_extra_arguments: []
+# A list of extra arguments to pass to the container (`docker create` command)
+grafana_container_extra_arguments: "{{ grafana_container_extra_arguments_auto + grafana_container_extra_arguments_custom }}"
+grafana_container_extra_arguments_auto: []
+grafana_container_extra_arguments_custom: []
 
 # Specify the value of the `Permission-Policy` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy
@@ -152,6 +157,9 @@ grafana_systemd_wanted_services_list_default: []
 grafana_systemd_wanted_services_list_auto: []
 grafana_systemd_wanted_services_list_custom: []
 
+# Specify the timezone
+grafana_environment_variables_tz: UTC
+
 # grafana_dashboard_download_urls holds a list of URLs of dashboards to download
 grafana_dashboard_download_urls: []
 
@@ -193,12 +201,12 @@ grafana_content_security_policy_template: "script-src 'self' 'unsafe-eval' 'unsa
 
 # grafana_default_home_dashboard_path influences the `default_home_dashboard_path` grafana.ini setting,
 # which is an in-container path for the default dashboard.
-grafana_default_home_dashboard_path: ''
+grafana_default_home_dashboard_path: ""
 
 # grafana_feature_toggles_enable controls the enabled feature toggles.
 # To enable experimental features use comma-separation: `grafana_feature_toggles_enable: feature1,feature2`
 # Leave it empty to not enable any experimental features.
-grafana_feature_toggles_enable: ''
+grafana_feature_toggles_enable: ""
 
 # Configure SMTP settings for sending email notifications.
 #
@@ -235,7 +243,7 @@ grafana_provisioning_alerting_template_files: []
 # See `../templates/provisioning/dashboards.yaml.j2`
 grafana_provisioning_dashboards_providers:
   - name: Dashboards
-    folder: ''  # The folder where to place the dashboards
+    folder: ""  # The folder where to place the dashboards
     type: file
     allowUiUpdates: true
     options:
@@ -280,4 +288,4 @@ grafana_provisioning_notification_template_groups_deleteTemplates: []  # noqa va
 grafana_provisioning_plugins_apps: []  # noqa var-naming
 
 # Additional environment variables.
-grafana_environment_variables_additional_variables: ''
+grafana_environment_variables_additional_variables: ""

@@ -1,4 +1,5 @@
-# SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2023-2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -13,8 +14,8 @@ container_socket_proxy_base_path: "/{{ container_socket_proxy_identifier }}"
 # renovate: datasource=docker depName=ghcr.io/tecnativa/docker-socket-proxy versioning=semver
 container_socket_proxy_version: v0.4.2
 
-container_socket_proxy_uid: ''
-container_socket_proxy_gid: ''
+container_socket_proxy_uid: ""
+container_socket_proxy_gid: ""
 
 container_socket_proxy_container_image: "{{ container_socket_proxy_container_image_registry_prefix }}tecnativa/docker-socket-proxy:{{ container_socket_proxy_container_image_tag }}"
 container_socket_proxy_container_image_tag: "{{ container_socket_proxy_version }}"
@@ -32,17 +33,22 @@ container_socket_proxy_container_additional_networks: "{{ container_socket_proxy
 container_socket_proxy_container_additional_networks_auto: []
 container_socket_proxy_container_additional_networks_custom: []
 
-# container_socket_proxy_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
+# container_socket_proxy_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
 # See `../templates/labels.j2` for details.
+# To add your own custom labels, use `container_socket_proxy_container_labels_additional_labels_custom`
 #
 # Example:
-# container_socket_proxy_labels_additional_labels: |
-#   my.label=1
-#   another.label="here"
-container_socket_proxy_labels_additional_labels: ''
+# container_socket_proxy_container_labels_additional_labels_custom:
+#   - my.label=1
+#   - another.label="here"
+container_socket_proxy_container_labels_additional_labels: "{{ container_socket_proxy_container_labels_additional_labels_auto + container_socket_proxy_container_labels_additional_labels_custom }}"
+container_socket_proxy_container_labels_additional_labels_auto: []
+container_socket_proxy_container_labels_additional_labels_custom: []
 
-# A list of extra arguments to pass to the container
-container_socket_proxy_container_extra_arguments: []
+# A list of extra arguments to pass to the container (`docker create` command)
+container_socket_proxy_container_extra_arguments: "{{ container_socket_proxy_container_extra_arguments_auto + container_socket_proxy_container_extra_arguments_custom }}"
+container_socket_proxy_container_extra_arguments_auto: []
+container_socket_proxy_container_extra_arguments_custom: []
 
 # List of systemd services that the Container Socket Proxy systemd service depends on
 container_socket_proxy_systemd_required_services_list: "{{ container_socket_proxy_systemd_required_services_list_default + container_socket_proxy_systemd_required_services_list_auto + container_socket_proxy_systemd_required_services_list_custom }}"
@@ -134,10 +140,13 @@ container_socket_proxy_api_version_enabled: true
 # Controls the volumes APIs by toggling the `VOLUMES` environment variable.
 container_socket_proxy_api_volumes_enabled: false
 
-# container_socket_proxy_environment_variables holds a string with environment variable to pass to the container.
+# Specify the timezone
+container_socket_proxy_environment_variables_tz: UTC
+
+# container_socket_proxy_environment_variables_additional_variables contains a multiline string with additional environment variables to pass to the container.
 #
 # Example:
-# container_socket_proxy_environment_variables: |
+# container_socket_proxy_environment_variables_additional_variables: |
 #   NETWORKS=1
 #   SESSION=1
-container_socket_proxy_environment_variables: ''
+container_socket_proxy_environment_variables_additional_variables: ""

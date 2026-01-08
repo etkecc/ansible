@@ -1,6 +1,7 @@
 {#
 SPDX-FileCopyrightText: 2023 Slavi Pantaleev
 SPDX-FileCopyrightText: 2024 Nikita Chernyi
+SPDX-FileCopyrightText: 2026 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
@@ -32,6 +33,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% if etherpad_container_http_host_bind_port %}
       -p {{ etherpad_container_http_host_bind_port }}:{{ etherpad_container_http_port }} \
       {% endif %}
+      --env-file={{ etherpad_base_path }}/env \
       --label-file={{ etherpad_base_path }}/labels \
       --health-interval={{ etherpad_container_health_interval }} \
       --mount type=bind,src={{ etherpad_config_path }},dst=/config,ro \

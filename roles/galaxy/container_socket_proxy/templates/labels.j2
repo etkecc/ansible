@@ -1,7 +1,10 @@
 {#
-SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
+SPDX-FileCopyrightText: 2023-2025 Slavi Pantaleev
+SPDX-FileCopyrightText: 2026 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
 
-{{ container_socket_proxy_labels_additional_labels }}
+{% for arg in container_socket_proxy_container_labels_additional_labels %}
+{{ arg }}
+{% endfor %}

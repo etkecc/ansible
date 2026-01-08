@@ -55,4 +55,6 @@ traefik.http.routers.{{ uptime_kuma_identifier }}.tls.certResolver={{ uptime_kum
 traefik.http.services.{{ uptime_kuma_identifier }}.loadbalancer.server.port={{ uptime_kuma_container_http_port }}
 {% endif %}
 
-{{ uptime_kuma_container_labels_additional_labels }}
+{% for arg in uptime_kuma_container_labels_additional_labels %}
+{{ arg }}
+{% endfor %}
