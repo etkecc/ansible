@@ -1,4 +1,5 @@
-# SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2023-2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -22,8 +23,8 @@ traefik_certs_dumper_dumped_certificates_dir_mode: "0750"
 # renovate: datasource=docker depName=ghcr.io/ldez/traefik-certs-dumper versioning=semver
 traefik_certs_dumper_version: v2.10.0
 
-traefik_certs_dumper_uid: ''
-traefik_certs_dumper_gid: ''
+traefik_certs_dumper_uid: ""
+traefik_certs_dumper_gid: ""
 
 traefik_certs_dumper_container_image: "{{ traefik_certs_dumper_container_image_registry_prefix }}ldez/traefik-certs-dumper:{{ traefik_certs_dumper_container_image_tag }}"
 traefik_certs_dumper_container_image_tag: "{{ traefik_certs_dumper_version }}"
@@ -31,13 +32,7 @@ traefik_certs_dumper_container_image_registry_prefix: "{{ traefik_certs_dumper_c
 traefik_certs_dumper_container_image_registry_prefix_upstream: "{{ traefik_certs_dumper_container_image_registry_prefix_upstream_default }}"
 traefik_certs_dumper_container_image_registry_prefix_upstream_default: ghcr.io/
 
-# A list of extra arguments to pass to the container
-traefik_certs_dumper_container_extra_arguments: "{{ traefik_certs_dumper_container_extra_arguments_default + traefik_certs_dumper_container_extra_arguments_auto + traefik_certs_dumper_container_extra_arguments_custom }}"
-traefik_certs_dumper_container_extra_arguments_default: []
-traefik_certs_dumper_container_extra_arguments_auto: []
-traefik_certs_dumper_container_extra_arguments_custom: []
-
-# A list of extra arguments to pass to the container process
+# A list of extra arguments to pass to the container (`docker run` command)
 traefik_certs_dumper_container_process_extra_arguments: "{{ traefik_certs_dumper_container_process_extra_arguments_default + traefik_certs_dumper_container_process_extra_arguments_auto + traefik_certs_dumper_container_process_extra_arguments_custom }}"
 traefik_certs_dumper_container_process_extra_arguments_default: []
 traefik_certs_dumper_container_process_extra_arguments_auto: []
@@ -59,7 +54,7 @@ traefik_certs_dumper_container_stop_grace_time_seconds: 1
 # We would expect a JSON file with certificates there.
 # The name of the file that we expect is defined in `traefik_certs_dumper_ssl_acme_file_name`.
 # Initially (before Traefik has initialized), the file may not exist.
-traefik_certs_dumper_ssl_path: ''
+traefik_certs_dumper_ssl_path: ""
 
 # Contains the name of the ACME certificates file that we'll dump certificates from.
 # This file is expected to be underneath the directory defined in `traefik_certs_dumper_ssl_path`.
@@ -75,3 +70,9 @@ traefik_certs_dumper_waiter_systemd_required_services_list: |-
 # The maximum iterations to wait for a file to appear before giving up in `traefik-certs-dumper-wait-for-domain@.service`.
 # There's a 1 second sleep between iterations.
 traefik_certs_dumper_waiter_max_iterations: 180
+
+# Specify the timezone
+traefik_certs_dumper_environment_variables_tz: UTC
+
+# Additional environment variables.
+traefik_certs_dumper_environment_variables_additional_variables: ""

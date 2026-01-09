@@ -1,4 +1,5 @@
 # SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -21,6 +22,16 @@
     mode: "{{ traefik_certs_dumper_dumped_certificates_dir_mode }}"
     owner: "{{ traefik_certs_dumper_dumped_certificates_dir_owner }}"
     group: "{{ traefik_certs_dumper_dumped_certificates_dir_group }}"
+
+- name: Ensure Traefik certs dumper support file installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/{{ item }}.j2"
+    dest: "{{ traefik_certs_dumper_base_path }}/{{ item }}"
+    mode: "0640"
+    owner: "{{ traefik_certs_dumper_uid }}"
+    group: "{{ traefik_certs_dumper_gid }}"
+  with_items:
+    - env
 
 - name: Ensure Traefik certs dumper container image is pulled
   community.docker.docker_image:

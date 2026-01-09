@@ -1,5 +1,6 @@
 {#
-SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
+SPDX-FileCopyrightText: 2023-2025 Slavi Pantaleev
+SPDX-FileCopyrightText: 2026 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
@@ -27,6 +28,7 @@ ExecStart={{ devture_systemd_docker_base_host_command_docker }} run \
       --rm \
       --name={{ traefik_certs_dumper_identifier }} \
       --log-driver=none \
+      --env-file={{ traefik_certs_dumper_base_path }}/env \
       --mount type=bind,src={{ traefik_certs_dumper_bin_path }},dst=/certs-dumper-bin,ro \
       --mount type=bind,src={{ traefik_certs_dumper_ssl_path }},dst=/in,ro \
       --mount type=bind,src={{ traefik_certs_dumper_dumped_certificates_path }},dst=/out \
