@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: 2023 Nikita Chernyi
 # SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -12,13 +13,16 @@
     owner: "{{ prometheus_node_exporter_uid }}"
     group: "{{ prometheus_node_exporter_gid }}"
 
-- name: Ensure Prometheus node exporter labels file installed
+- name: Ensure Prometheus node exporter support files installed
   ansible.builtin.template:
-    src: "{{ role_path }}/templates/labels.j2"
-    dest: "{{ prometheus_node_exporter_base_path }}/labels"
+    src: "{{ role_path }}/templates/{{ item }}.j2"
+    dest: "{{ prometheus_node_exporter_base_path }}/{{ item }}"
+    mode: "0640"
     owner: "{{ prometheus_node_exporter_uid }}"
     group: "{{ prometheus_node_exporter_gid }}"
-    mode: "0640"
+  with_items:
+    - env
+    - labels
 
 - name: Ensure Prometheus node exporter container image is pulled via community.docker.docker_image
   when: devture_systemd_docker_base_container_image_pull_method == 'ansible-module'

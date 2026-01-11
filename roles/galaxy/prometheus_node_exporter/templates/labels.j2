@@ -37,4 +37,6 @@ traefik.http.routers.{{ prometheus_node_exporter_identifier }}.tls.certResolver=
 traefik.http.services.{{ prometheus_node_exporter_identifier }}.loadbalancer.server.port={{ prometheus_node_exporter_container_http_port }}
 {% endif %}
 
-{{ prometheus_node_exporter_container_labels_additional_labels }}
+{% for arg in prometheus_node_exporter_container_labels_additional_labels %}
+{{ arg }}
+{% endfor %}

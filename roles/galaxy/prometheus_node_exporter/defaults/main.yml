@@ -1,8 +1,8 @@
-# SPDX-FileCopyrightText: 2023 - 2025 Nikita Chernyi
-# SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2023-2025 Nikita Chernyi
+# SPDX-FileCopyrightText: 2023-2025 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2024 Sergio Durigan Junior
 # SPDX-FileCopyrightText: 2025 MASH project contributors
-# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -17,13 +17,13 @@ prometheus_node_exporter_base_path: "/{{ prometheus_node_exporter_identifier }}"
 # renovate: datasource=docker depName=prom/node-exporter versioning=semver
 prometheus_node_exporter_version: v1.10.2
 
-prometheus_node_exporter_uid: ''
-prometheus_node_exporter_gid: ''
+prometheus_node_exporter_uid: ""
+prometheus_node_exporter_gid: ""
 
 # The hostname at which Prometheus node exporter is served. You don't need to configure it if you're not exposing this.
-prometheus_node_exporter_hostname: ''
+prometheus_node_exporter_hostname: ""
 
-# The path at which Prometheus node exporter is exposed. You don't need to configure it if you're not exposing this.
+# The path at which Prometheus node exporter is served. You don't need to configure it if you're not exposing this.
 # This value must either be `/` or not end with a slash.
 prometheus_node_exporter_path_prefix: "/metrics/node-exporter"
 
@@ -37,7 +37,7 @@ prometheus_node_exporter_container_image_force_pull: "{{ prometheus_node_exporte
 # Controls whether the Prometheus node exporter container exposes its HTTP port (tcp/9100 in the container).
 #
 # Takes an "<ip>:<port>" value (e.g. "127.0.0.1:9100"), just a port number or empty string to not expose.
-prometheus_node_exporter_container_http_host_bind_port: ''
+prometheus_node_exporter_container_http_host_bind_port: ""
 
 # The base container network
 #
@@ -79,20 +79,25 @@ prometheus_node_exporter_container_labels_traefik_entrypoints: web-secure
 prometheus_node_exporter_container_labels_traefik_tls: "{{ prometheus_node_exporter_container_labels_traefik_entrypoints != 'web' }}"
 prometheus_node_exporter_container_labels_traefik_tls_certResolver: default  # noqa var-naming
 prometheus_node_exporter_container_labels_metrics_middleware_basic_auth_enabled: false
-# See: https://doc.traefik.io/traefik/middlewares/http/basicauth/#users
-prometheus_node_exporter_container_labels_metrics_middleware_basic_auth_users: ''
+# See: https://doc.traefik.io/traefik/reference/routing-configuration/http/middlewares/basicauth/
+prometheus_node_exporter_container_labels_metrics_middleware_basic_auth_users: ""
 
 # prometheus_node_exporter_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
 # See `../templates/labels.j2` for details.
+# To add your own custom labels, use `prometheus_node_exporter_container_labels_additional_labels_custom`
 #
 # Example:
-# prometheus_node_exporter_container_labels_additional_labels: |
-#   my.label=1
-#   another.label="here"
-prometheus_node_exporter_container_labels_additional_labels: ''
+# prometheus_node_exporter_container_labels_additional_labels_custom:
+#   - my.label=1
+#   - another.label="here"
+prometheus_node_exporter_container_labels_additional_labels: "{{ prometheus_node_exporter_container_labels_additional_labels_auto + prometheus_node_exporter_container_labels_additional_labels_custom }}"
+prometheus_node_exporter_container_labels_additional_labels_auto: []
+prometheus_node_exporter_container_labels_additional_labels_custom: []
 
-# A list of extra arguments to pass to the container
-prometheus_node_exporter_container_extra_arguments: []
+# A list of extra arguments to pass to the container (`docker create` command)
+prometheus_node_exporter_container_extra_arguments: "{{ prometheus_node_exporter_container_extra_arguments_auto + prometheus_node_exporter_container_extra_arguments_custom }}"
+prometheus_node_exporter_container_extra_arguments_auto: []
+prometheus_node_exporter_container_extra_arguments_custom: []
 
 # A list of extra arguments to pass to the node_exporter process
 #
@@ -123,3 +128,9 @@ prometheus_node_exporter_systemd_wanted_services_list_custom: []
 # This role doesn't make use of this variable, but you can hook this into other roles.
 prometheus_node_exporter_dashboard_urls:
   - https://raw.githubusercontent.com/rfmoz/grafana-dashboards/7998032d1c36ef6452c3a93ab326195a04ac7ebd/prometheus/node-exporter-full.json
+
+# Specify the timezone
+prometheus_node_exporter_environment_variables_tz: UTC
+
+# Additional environment variables.
+prometheus_node_exporter_environment_variables_additional_variables: ""

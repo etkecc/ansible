@@ -82,7 +82,7 @@
 * Twitter: v0.2511.0
 * Uptime Kuma: 1.23.17
 * Valkey: 9.0.1
-* Vaultwarden: 1.35.1
+* Vaultwarden: 1.35.2
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
 * Whatsapp: v0.2512.0

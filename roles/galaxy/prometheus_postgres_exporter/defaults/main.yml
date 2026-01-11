@@ -21,13 +21,13 @@ prometheus_postgres_exporter_base_path: "/{{ prometheus_postgres_exporter_identi
 # renovate: datasource=docker depName=quay.io/prometheuscommunity/postgres-exporter versioning=semver
 prometheus_postgres_exporter_version: v0.18.1
 
-prometheus_postgres_exporter_uid: ''
-prometheus_postgres_exporter_gid: ''
+prometheus_postgres_exporter_uid: ""
+prometheus_postgres_exporter_gid: ""
 
 # The hostname at which Prometheus Postgres Exporter exporter is served.
-prometheus_postgres_exporter_hostname: ''
+prometheus_postgres_exporter_hostname: ""
 
-# The path at which Prometheus Postgres Exporter exporter is exposed.
+# The path at which Prometheus Postgres Exporter exporter is served.
 # This value must either be `/` or not end with a slash.
 prometheus_postgres_exporter_path_prefix: "/metrics/postgres-exporter"
 
@@ -41,7 +41,7 @@ prometheus_postgres_exporter_container_image_force_pull: "{{ prometheus_postgres
 # Controls whether the container exposes its HTTP port (tcp/9187 in the container).
 #
 # Takes an "<ip>:<port>" value (e.g. "127.0.0.1:9187"), just a port number or an empty string to not expose.
-prometheus_postgres_exporter_container_http_host_bind_port: ''
+prometheus_postgres_exporter_container_http_host_bind_port: ""
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 prometheus_postgres_exporter_container_network: "{{ prometheus_postgres_exporter_identifier }}"
@@ -69,20 +69,25 @@ prometheus_postgres_exporter_container_labels_traefik_entrypoints: web-secure
 prometheus_postgres_exporter_container_labels_traefik_tls: "{{ prometheus_postgres_exporter_container_labels_traefik_entrypoints != 'web' }}"
 prometheus_postgres_exporter_container_labels_traefik_tls_certResolver: default  # noqa var-naming
 prometheus_postgres_exporter_container_labels_metrics_middleware_basic_auth_enabled: false
-# See: https://doc.traefik.io/traefik/middlewares/http/basicauth/#users
-prometheus_postgres_exporter_container_labels_metrics_middleware_basic_auth_users: ''
+# See: https://doc.traefik.io/traefik/reference/routing-configuration/http/middlewares/basicauth/
+prometheus_postgres_exporter_container_labels_metrics_middleware_basic_auth_users: ""
 
 # prometheus_postgres_exporter_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
 # See `../templates/labels.j2` for details.
+# To add your own custom labels, use `prometheus_postgres_exporter_container_labels_additional_labels_custom`
 #
 # Example:
-# prometheus_postgres_exporter_container_labels_additional_labels: |
-#   my.label=1
-#   another.label="here"
-prometheus_postgres_exporter_container_labels_additional_labels: ''
+# prometheus_postgres_exporter_container_labels_additional_labels_custom:
+#   - my.label=1
+#   - another.label="here"
+prometheus_postgres_exporter_container_labels_additional_labels: "{{ prometheus_postgres_exporter_container_labels_additional_labels_auto + prometheus_postgres_exporter_container_labels_additional_labels_custom }}"
+prometheus_postgres_exporter_container_labels_additional_labels_auto: []
+prometheus_postgres_exporter_container_labels_additional_labels_custom: []
 
-# A list of extra arguments to pass to the container
-prometheus_postgres_exporter_container_extra_arguments: []
+# A list of extra arguments to pass to the container (`docker create` command)
+prometheus_postgres_exporter_container_extra_arguments: "{{ prometheus_postgres_exporter_container_extra_arguments_auto + prometheus_postgres_exporter_container_extra_arguments_custom }}"
+prometheus_postgres_exporter_container_extra_arguments_auto: []
+prometheus_postgres_exporter_container_extra_arguments_custom: []
 
 # List of systemd services that Prometheus Postgres Exporter systemd service depends on
 prometheus_postgres_exporter_systemd_required_services_list: "{{ prometheus_postgres_exporter_systemd_required_services_list_default + prometheus_postgres_exporter_systemd_required_services_list_auto + prometheus_postgres_exporter_systemd_required_services_list_custom }}"
@@ -99,7 +104,7 @@ prometheus_postgres_exporter_systemd_wanted_services_list_custom: []
 # details for connecting to the database
 prometheus_postgres_exporter_database_username: 'prometheus_postgres_exporter'
 prometheus_postgres_exporter_database_password: 'some-password'
-prometheus_postgres_exporter_database_hostname: ''
+prometheus_postgres_exporter_database_hostname: ""
 prometheus_postgres_exporter_database_port: 5432
 prometheus_postgres_exporter_database_name: 'prometheus_postgres_exporter'
 prometheus_postgres_exporter_database_ssl: false
@@ -118,9 +123,12 @@ prometheus_postgres_exporter_env_variable_data_source_name: "postgresql://{{ pro
 prometheus_postgres_exporter_dashboard_urls:
   - "https://grafana.com/api/dashboards/9628/revisions/7/download"
 
+# Specify the timezone
+prometheus_postgres_exporter_environment_variables_tz: UTC
+
 # Additional environment variables to pass to the container
 #
 # Example:
 # prometheus_postgres_exporter_environment_variables_additional_variables: |
 #   KEY=VALUE
-prometheus_postgres_exporter_environment_variables_additional_variables: ''
+prometheus_postgres_exporter_environment_variables_additional_variables: ""

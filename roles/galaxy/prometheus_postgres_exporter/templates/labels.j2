@@ -36,4 +36,6 @@ traefik.http.routers.{{ prometheus_postgres_exporter_identifier }}.tls.certResol
 traefik.http.services.{{ prometheus_postgres_exporter_identifier }}.loadbalancer.server.port={{ prometheus_postgres_exporter_port }}
 {% endif %}
 
-{{ prometheus_postgres_exporter_container_labels_additional_labels }}
+{% for arg in prometheus_postgres_exporter_container_labels_additional_labels %}
+{{ arg }}
+{% endfor %}

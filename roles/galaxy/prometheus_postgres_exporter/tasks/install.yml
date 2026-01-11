@@ -15,9 +15,9 @@
   ansible.builtin.template:
     src: "{{ role_path }}/templates/{{ item }}.j2"
     dest: "{{ prometheus_postgres_exporter_base_path }}/{{ item }}"
+    mode: "0640"
     owner: "{{ prometheus_postgres_exporter_uid }}"
     group: "{{ prometheus_postgres_exporter_gid }}"
-    mode: "0640"
   with_items:
     - env
     - labels
