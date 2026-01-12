@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2022 MDAD project contributors
 # SPDX-FileCopyrightText: 2024 wjbeckett
-# SPDX-FileCopyrightText: 2024 - 2025 Slavi Pantaleev
-# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+# SPDX-FileCopyrightText: 2024, 2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -91,12 +91,12 @@ livekit_server_container_labels_public_metrics_middleware_basic_auth_users: ""
 # To add your own custom labels, use `livekit_server_container_labels_additional_labels_custom`
 #
 # Example:
-# livekit_server_container_labels_additional_labels_custom: |
-#   my.label=1
-#   another.label="here"
-livekit_server_container_labels_additional_labels: "{{ livekit_server_container_labels_additional_labels_auto | combine(livekit_server_container_labels_additional_labels_custom) }}"
-livekit_server_container_labels_additional_labels_auto: {}
-livekit_server_container_labels_additional_labels_custom: {}
+# livekit_server_container_labels_additional_labels_custom:
+#   - my.label=1
+#   - another.label="here"
+livekit_server_container_labels_additional_labels: "{{ livekit_server_container_labels_additional_labels_auto + livekit_server_container_labels_additional_labels_custom }}"
+livekit_server_container_labels_additional_labels_auto: []
+livekit_server_container_labels_additional_labels_custom: []
 
 # A list of extra arguments to pass to the container (`docker create` command)
 livekit_server_container_extra_arguments: "{{ livekit_server_container_extra_arguments_auto + livekit_server_container_extra_arguments_custom }}"
@@ -192,6 +192,12 @@ livekit_server_config_port: 7880
 
 # Controls the `bind_addresses` configuration property.
 livekit_server_config_bind_addresses: ["::"]
+
+# Specify the timezone
+livekit_server_environment_variables_tz: UTC
+
+# Additional environment variables.
+livekit_server_environment_variables_additional_variables: ""
 
 ########################################################################################
 #                                                                                      #
@@ -303,7 +309,7 @@ livekit_server_config_turn_udp_port: 3478
 
 ########################################################################################
 #                                                                                      #
-# Prometheus                                                                            #
+# Prometheus                                                                           #
 #                                                                                      #
 ########################################################################################
 
@@ -323,7 +329,7 @@ livekit_server_config_prometheus_password: ""
 
 ########################################################################################
 #                                                                                      #
-# /Prometheus                                                                           #
+# /Prometheus                                                                          #
 #                                                                                      #
 ########################################################################################
 
@@ -331,6 +337,67 @@ livekit_server_config_prometheus_password: ""
 livekit_server_config_keys: "{{ livekit_server_config_keys_auto | combine(livekit_server_config_keys_custom, recursive=True) }}"
 livekit_server_config_keys_auto: {}
 livekit_server_config_keys_custom: {}
+
+########################################################################################
+#                                                                                      #
+# Limits                                                                               #
+#                                                                                      #
+########################################################################################
+
+# Ref:
+# - https://github.com/livekit/livekit/blob/46651c1978c8ae29d9b2d544b8b089c0960c9314/config-sample.yaml#L311-L330
+# - https://github.com/livekit/livekit/blob/46651c1978c8ae29d9b2d544b8b089c0960c9314/pkg/config/config.go#L395-L401
+# - for `num_tracks` and `bytes_per_sec`, the config-sample-yaml comments seem to be misleading. Defaults seem to be `0` in LiveKit code.
+
+# Controls the `limit.num_tracks` configuration property.
+# Set to -1 or 0 to disable the limit.
+livekit_server_config_limit_num_tracks: 0
+
+# Controls the `limit.bytes_per_sec` configuration property.
+# Set to 0 to disable the limit.
+livekit_server_config_limit_bytes_per_sec: 0
+
+# Controls the `limit.subscription_limit_video` configuration property.
+# How many video tracks a single participant can subscribe to at the same time.
+# 0 means no limit.
+livekit_server_config_limit_subscription_limit_video: 0
+
+# Controls the `limit.subscription_limit_audio` configuration property.
+# How many audio tracks a single participant can subscribe to at the same time.
+# 0 means no limit.
+livekit_server_config_limit_subscription_limit_audio: 0
+
+# Controls the `limit.max_metadata_size` configuration property.
+# Limit size of room and participant's metadata. 0 means no limit.
+livekit_server_config_limit_max_metadata_size: 64000
+
+# Controls the `limit.max_attributes_size` configuration property.
+# Limit total size of all attributes on a participant. 0 means no limit.
+livekit_server_config_limit_max_attributes_size: 64000
+
+# Controls the `limit.max_room_name_length` configuration property.
+# Limit length of room names. 0 means no limit.
+livekit_server_config_limit_max_room_name_length: 256
+
+# Controls the `limit.max_participant_identity_length` configuration property.
+# Limit length of participant identity. 0 means no limit.
+livekit_server_config_limit_max_participant_identity_length: 256
+
+# Controls the `limit.max_participant_name_length` configuration property.
+# Limit length of participant names. 0 means no limit.
+livekit_server_config_limit_max_participant_name_length: 256
+
+########################################################################################
+#                                                                                      #
+# /Limits                                                                              #
+#                                                                                      #
+########################################################################################
+
+########################################################################################
+#                                                                                      #
+# Logging                                                                              #
+#                                                                                      #
+########################################################################################
 
 # Controls the `logging.level` configuration property.
 # Valid values: debug, info, warn, error
@@ -347,6 +414,12 @@ livekit_server_config_logging_json: false
 # For production setups, enables sampling algorithm.
 # See: https://github.com/uber-go/zap/blob/master/FAQ.md#why-sample-application-logs
 livekit_server_config_logging_sample: false
+
+########################################################################################
+#                                                                                      #
+# /Logging                                                                             #
+#                                                                                      #
+########################################################################################
 
 # Controls whether LiveKitServer's metrics should be proxied (exposed) publicly via Traefik.
 livekit_server_metrics_proxying_enabled: false

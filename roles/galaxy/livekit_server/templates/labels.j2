@@ -92,4 +92,6 @@ traefik.http.routers.{{ livekit_server_identifier }}-metrics.tls.certResolver={{
 
 {% endif %}
 
-{{ livekit_server_container_labels_additional_labels }}
+{% for arg in livekit_server_container_labels_additional_labels %}
+{{ arg }}
+{% endfor %}

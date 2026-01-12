@@ -1,4 +1,12 @@
-#jinja2: lstrip_blocks: True
+{#
+SPDX-FileCopyrightText: 2022 MDAD project contributors
+SPDX-FileCopyrightText: 2024 Slavi Pantaleev
+SPDX-FileCopyrightText: 2024 wjbeckett
+SPDX-FileCopyrightText: 2026 Suguru Hirahara
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+#}
+
 [Unit]
 Description=LiveKit Server
 {% for service in livekit_server_systemd_required_services_list %}
@@ -47,11 +55,12 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% if livekit_server_container_metrics_listen_interface is not in [none, 'none'] and livekit_server_config_prometheus_enabled %}
       -p {{ livekit_server_container_metrics_listen_interface }}{{ ':' if livekit_server_container_metrics_listen_interface else '' }}{{ livekit_server_config_prometheus_port }}:{{ livekit_server_config_prometheus_port }} \
       {% endif %}
+      --env-file={{ livekit_server_base_path }}/env \
+      --label-file={{ livekit_server_base_path }}/labels \
       --mount type=bind,src={{ livekit_server_config_path }}/config.yaml,dst=/livekit-config.yaml,ro \
       {% for volume in livekit_server_container_additional_volumes %}
       --mount type={{ volume.type | default('bind' if '/' in volume.src else 'volume') }},src={{ volume.src }},dst={{ volume.dst }}{{ (',' + volume.options) if volume.options else '' }} \
       {% endfor %}
-      --label-file={{ livekit_server_base_path }}/labels \
       {{ livekit_server_container_image_self_build_name if livekit_server_container_image_self_build else livekit_server_container_image }} \
       --config /livekit-config.yaml
 

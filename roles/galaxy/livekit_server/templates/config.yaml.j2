@@ -48,6 +48,17 @@ prometheus:
 
 keys: {{ livekit_server_config_keys | to_json }}
 
+limit:
+  num_tracks: {{ livekit_server_config_limit_num_tracks | to_json }}
+  bytes_per_sec: {{ livekit_server_config_limit_bytes_per_sec | to_json }}
+  subscription_limit_video: {{ livekit_server_config_limit_subscription_limit_video | to_json }}
+  subscription_limit_audio: {{ livekit_server_config_limit_subscription_limit_audio | to_json }}
+  max_metadata_size: {{ livekit_server_config_limit_max_metadata_size | to_json }}
+  max_attributes_size: {{ livekit_server_config_limit_max_attributes_size | to_json }}
+  max_room_name_length: {{ livekit_server_config_limit_max_room_name_length | to_json }}
+  max_participant_identity_length: {{ livekit_server_config_limit_max_participant_identity_length | to_json }}
+  max_participant_name_length: {{ livekit_server_config_limit_max_participant_name_length | to_json }}
+
 logging:
   level: {{ livekit_server_config_logging_level | to_json }}
   pion_level: {{ livekit_server_config_logging_pion_level | to_json }}
