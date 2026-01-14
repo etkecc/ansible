@@ -1,6 +1,7 @@
-# SPDX-FileCopyrightText: 2023 - 2024 Slavi Pantaleev
-# SPDX-FileCopyrightText: 2023 - 2024 Nikita Chernyi
-# SPDX-FileCopyrightText: 2024 - 2025 adam-kress
+# SPDX-FileCopyrightText: 2023, 2024 Nikita Chernyi
+# SPDX-FileCopyrightText: 2023, 2024 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2024, 2025 adam-kress
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -13,13 +14,13 @@ jitsi_identifier: jitsi
 jitsi_base_path: "/{{ jitsi_identifier }}"
 
 # renovate: datasource=docker depName=jitsi/web
-jitsi_version: stable-10655
+jitsi_version: stable-10710
 
-jitsi_uid: ''
-jitsi_gid: ''
+jitsi_uid: ""
+jitsi_gid: ""
 
 # The hostname at which Jitsi is served.
-jitsi_hostname: ''
+jitsi_hostname: ""
 
 # The path at which Jitsi is served.
 # This value must either be `/` or not end with a slash (e.g. `/jitsi`).
@@ -38,9 +39,9 @@ jitsi_container_labels_traefik_path_prefix: "{{ jitsi_path_prefix }}"
 jitsi_container_labels_traefik_entrypoints: web-secure
 
 # Username corresponding to jitsi_uid. If undefined, it will be auto-detected.
-jitsi_user_username: ''
+jitsi_user_username: ""
 
-jitsi_architecture: ''
+jitsi_architecture: ""
 
 jitsi_enable_auth: false
 jitsi_enable_guests: false
@@ -89,26 +90,29 @@ jitsi_xmpp_bosh_url_base: http://{{ jitsi_xmpp_server }}:5280
 jitsi_xmpp_guest_domain: guest.meet.jitsi
 jitsi_xmpp_muc_domain: muc.meet.jitsi
 jitsi_xmpp_internal_muc_domain: internal-muc.meet.jitsi
-jitsi_xmpp_modules: ''
+jitsi_xmpp_modules: ""
 
 jitsi_recorder_domain: recorder.meet.jitsi
 
 jitsi_enable_lobby: false
 
 jitsi_letsencrypt_domain: "{{ jitsi_hostname }}"
-jitsi_letsencrypt_email: ''
+jitsi_letsencrypt_email: ""
 
-jitsi_turn_credentials: ''
-jitsi_turn_host: ''
-jitsi_turns_host: ''
-jitsi_turn_port: ''
-jitsi_turns_port: ''
+jitsi_turn_credentials: ""
+jitsi_turn_host: ""
+jitsi_turns_host: ""
+jitsi_turn_port: ""
+jitsi_turns_port: ""
 jitsi_turn_transport: tcp
 
 # Controls whether Etherpad will be available within Jitsi
 jitsi_etherpad_enabled: false
 # Specifies the Etherpad base URL (e.g. https://etherpad.DOMAIN or https://hostname/etherpad)
-jitsi_etherpad_base: ''
+jitsi_etherpad_base: ""
+
+# Specify the timezone
+jitsi_environment_variables_tz: UTC
 
 ########################################################################
 #                                                                      #
@@ -131,7 +135,7 @@ jitsi_web_container_image_force_pull: "{{ jitsi_web_container_image.endswith(':l
 # Controls whether the jitsi-web container exposes its HTTP port (tcp/80 in the container).
 #
 # Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:13080"), or empty string to not expose.
-jitsi_web_container_http_host_bind_port: ''
+jitsi_web_container_http_host_bind_port: ""
 
 # A list of additional container networks that the Web container would be connected to.
 # The role does not create these networks, so make sure they already exist.
@@ -143,7 +147,7 @@ jitsi_web_container_additional_networks_custom: []
 # jitsi_web_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the Web container.
 # See `../templates/web/labels.j2` for details.
 #
-# To inject your own other container labels, see `jitsi_web_container_labels_additional_labels`.
+# To inject your own other container labels, see `jitsi_web_container_labels_additional_labels_custom`.
 jitsi_web_container_labels_traefik_enabled: "{{ jitsi_container_labels_traefik_enabled }}"
 jitsi_web_container_labels_traefik_docker_network: "{{ jitsi_container_labels_traefik_docker_network }}"
 jitsi_web_container_labels_traefik_hostname: "{{ jitsi_container_labels_traefik_hostname }}"
@@ -176,15 +180,20 @@ jitsi_web_container_labels_traefik_additional_response_headers_custom: {}
 
 # jitsi_web_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
 # See `../templates/web/labels.j2` for details.
+# To add your own custom labels, use `jitsi_web_container_labels_additional_labels_custom`
 #
 # Example:
-# jitsi_web_container_labels_additional_labels: |
-#   my.label=1
-#   another.label="here"
-jitsi_web_container_labels_additional_labels: ''
+# jitsi_web_container_labels_additional_labels_custom:
+#   - my.label=1
+#   - another.label="here"
+jitsi_web_container_labels_additional_labels: "{{ jitsi_web_container_labels_additional_labels_auto + jitsi_web_container_labels_additional_labels_custom }}"
+jitsi_web_container_labels_additional_labels_auto: []
+jitsi_web_container_labels_additional_labels_custom: []
 
-# A list of extra arguments to pass to the container
-jitsi_web_container_extra_arguments: []
+# A list of extra arguments to pass to the container (`docker create` command)
+jitsi_web_container_extra_arguments: "{{ jitsi_web_container_extra_arguments_auto + jitsi_web_container_extra_arguments_custom }}"
+jitsi_web_container_extra_arguments_auto: []
+jitsi_web_container_extra_arguments_custom: []
 
 # Specifies the value of the `X-XSS-Protection` header
 # Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
@@ -256,7 +265,7 @@ jitsi_web_systemd_required_services_list_custom: []
 #   interfaceConfig.LANG_DETECTION = false;
 #   interfaceConfig.SHOW_JITSI_WATERMARK = false;
 #   interfaceConfig.DISABLE_VIDEO_BACKGROUND = true;
-jitsi_web_custom_interface_config_extension: ''
+jitsi_web_custom_interface_config_extension: ""
 
 # Controls after which participant audio will be muted. If not specified, defaults to Jitsi's default value (likely 10)
 jitsi_web_config_start_audio_muted_after_nth_participant: ~
@@ -288,7 +297,7 @@ jitsi_web_config_resolution_height_min: ~
 # jitsi_web_custom_config_extension: |
 #   if (!config.hasOwnProperty('testing')) config.testing = {};
 #   config.testing.p2pTestMode = true
-jitsi_web_custom_config_extension: ''
+jitsi_web_custom_config_extension: ""
 
 # Additional environment variables to pass to the Jitsi Web container.
 # You can use this to further influence the default configuration generated by the Jitsi Web container on every startup.
@@ -300,7 +309,7 @@ jitsi_web_custom_config_extension: ''
 #   ENABLE_FILE_RECORDING_SERVICE=1
 #   DROPBOX_APPKEY=something
 #   DROPBOX_REDIRECT_URI=something
-jitsi_web_environment_variables_additional_variables: ''
+jitsi_web_environment_variables_additional_variables: ""
 
 # well known is currently only needed for auth type "matrix"
 jitsi_web_well_known_enabled: "{{ jitsi_web_well_known_element_jitsi_enabled }}"
@@ -340,12 +349,12 @@ jitsi_prosody_container_image_force_pull: "{{ jitsi_prosody_container_image.ends
 #
 # Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:5280"), or empty string to not expose.
 # This is a necessary port to bind for those disabling the integrated nginx proxy.
-jitsi_prosody_container_http_host_bind_port: ''
+jitsi_prosody_container_http_host_bind_port: ""
 
 # Controls whether the jitsi-prosody container exposes its port for a JVB (tcp/5222 in the container).
 #
 # Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:5222"), or empty string to not expose.
-jitsi_prosody_container_jvb_host_bind_port: ''
+jitsi_prosody_container_jvb_host_bind_port: ""
 
 # A list of additional container networks that the Prosody container would be connected to.
 # The role does not create these networks, so make sure they already exist.
@@ -357,7 +366,7 @@ jitsi_prosody_container_additional_networks_custom: []
 # jitsi_prosody_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the Prosody container.
 # See `../templates/prosody/labels.j2` for details.
 #
-# To inject your own other container labels, see `jitsi_prosody_container_labels_additional_labels`.
+# To inject your own other container labels, see `jitsi_prosody_container_labels_additional_labels_custom`.
 jitsi_prosody_container_labels_traefik_enabled: "{{ jitsi_container_labels_traefik_enabled }}"
 jitsi_prosody_container_labels_traefik_docker_network: "{{ jitsi_container_labels_traefik_docker_network }}"
 jitsi_prosody_container_labels_traefik_hostname: "{{ jitsi_container_labels_traefik_hostname }}"
@@ -382,15 +391,20 @@ jitsi_prosody_container_labels_traefik_additional_response_headers_custom: {}
 
 # jitsi_prosody_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
 # See `../templates/prosody/labels.j2` for details.
+# To add your own custom labels, use `jitsi_prosody_container_labels_additional_labels_custom`
 #
 # Example:
-# jitsi_prosody_container_labels_additional_labels: |
-#   my.label=1
-#   another.label="here"
-jitsi_prosody_container_labels_additional_labels: ''
+# jitsi_prosody_container_labels_additional_labels_custom:
+#   - my.label=1
+#   - another.label="here"
+jitsi_prosody_container_labels_additional_labels: "{{ jitsi_prosody_container_labels_additional_labels_auto + jitsi_prosody_container_labels_additional_labels_custom }}"
+jitsi_prosody_container_labels_additional_labels_auto: []
+jitsi_prosody_container_labels_additional_labels_custom: []
 
-# A list of extra arguments to pass to the container
-jitsi_prosody_container_extra_arguments: []
+# A list of extra arguments to pass to the container (`docker create` command)
+jitsi_prosody_container_extra_arguments: "{{ jitsi_prosody_container_extra_arguments_auto + jitsi_prosody_container_extra_arguments_custom }}"
+jitsi_prosody_container_extra_arguments_auto: []
+jitsi_prosody_container_extra_arguments_custom: []
 
 # List of systemd services that jitsi-prosody.service depends on
 jitsi_prosody_systemd_required_services_list: "{{ jitsi_prosody_systemd_required_services_list_default + jitsi_prosody_systemd_required_services_list_auto + jitsi_prosody_systemd_required_services_list_custom }}"
@@ -425,12 +439,12 @@ jitsi_prosody_auth_matrix_files:
   - path: "mod_matrix_power_sync.lua"
     when: "{{ jitsi_prosody_auth_matrix_uvs_sync_power_levels }}"
 
-jitsi_prosody_auth_matrix_uvs_auth_token: ''
+jitsi_prosody_auth_matrix_uvs_auth_token: ""
 
 # Default max participants to the empty string
 #
 # The setting requires an integer to be set for usage and allows a user to specify the max number of participants on a conference.
-jitsi_prosody_max_participants: ''
+jitsi_prosody_max_participants: ""
 
 ########################################################################
 #                                                                      #
@@ -447,9 +461,9 @@ jitsi_prosody_max_participants: ''
 jitsi_jibri_brewery_muc: jibribrewery
 jitsi_jibri_pending_timeout: 90
 jitsi_jibri_xmpp_user: jibri
-jitsi_jibri_xmpp_password: ''
+jitsi_jibri_xmpp_password: ""
 jitsi_jibri_recorder_user: recorder
-jitsi_jibri_recorder_password: ''
+jitsi_jibri_recorder_password: ""
 
 ########################################################################
 #                                                                      #
@@ -479,8 +493,10 @@ jitsi_jicofo_container_additional_networks: "{{ jitsi_jicofo_container_additiona
 jitsi_jicofo_container_additional_networks_auto: []
 jitsi_jicofo_container_additional_networks_custom: []
 
-# A list of extra arguments to pass to the container
-jitsi_jicofo_container_extra_arguments: []
+# A list of extra arguments to pass to the container (`docker create` command)
+jitsi_jicofo_container_extra_arguments: "{{ jitsi_jicofo_container_extra_arguments_auto + jitsi_jicofo_container_extra_arguments_custom }}"
+jitsi_jicofo_container_extra_arguments_auto: []
+jitsi_jicofo_container_extra_arguments_custom: []
 
 # List of systemd services that jitsi-jicofo.service depends on
 jitsi_jicofo_systemd_required_services_list: "{{ jitsi_jicofo_systemd_required_services_list_default + jitsi_jicofo_systemd_required_services_list_auto + jitsi_jicofo_systemd_required_services_list_custom }}"
@@ -495,12 +511,12 @@ jitsi_jicofo_systemd_required_services_list_default: |
 jitsi_jicofo_systemd_required_services_list_auto: []
 jitsi_jicofo_systemd_required_services_list_custom: []
 
-jitsi_jicofo_component_secret: ''
+jitsi_jicofo_component_secret: ""
 jitsi_jicofo_auth_user: focus
-jitsi_jicofo_auth_password: ''
+jitsi_jicofo_auth_password: ""
 
 # To enable Sentry integration for Jicofo, specify a valid DSN connection string
-jitsi_jicofo_sentry_dsn: ''
+jitsi_jicofo_sentry_dsn: ""
 
 ########################################################################
 #                                                                      #
@@ -536,7 +552,7 @@ jitsi_jvb_container_rtp_tcp_host_bind_port: "{{ jitsi_jvb_rtp_tcp_port }}"
 # Controls whether the jitsi-jvb container exposes its Colibri WebSocket port (tcp/9090 in the container).
 #
 # Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:12090"), or empty string to not expose.
-jitsi_jvb_container_colibri_ws_host_bind_port: ''
+jitsi_jvb_container_colibri_ws_host_bind_port: ""
 
 # The RTP UDP port number in the container
 jitsi_jvb_rtp_udp_port: 10000
@@ -554,7 +570,7 @@ jitsi_jvb_container_additional_networks_custom: []
 # jitsi_jvb_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the JVB container.
 # See `../templates/jvb/labels.j2` for details.
 #
-# To inject your own other container labels, see `jitsi_jvb_container_labels_additional_labels`.
+# To inject your own other container labels, see `jitsi_jvb_container_labels_additional_labels_custom`.
 jitsi_jvb_container_labels_traefik_enabled: "{{ jitsi_container_labels_traefik_enabled }}"
 jitsi_jvb_container_labels_traefik_docker_network: "{{ jitsi_container_labels_traefik_docker_network }}"
 jitsi_jvb_container_labels_traefik_hostname: "{{ jitsi_container_labels_traefik_hostname }}"
@@ -579,15 +595,20 @@ jitsi_jvb_container_labels_traefik_additional_response_headers_custom: {}
 
 # jitsi_jvb_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
 # See `../templates/jvb/labels.j2` for details.
+# To add your own custom labels, use `jitsi_jvb_container_labels_additional_labels_custom`
 #
 # Example:
-# jitsi_jvb_container_labels_additional_labels: |
-#   my.label=1
-#   another.label="here"
-jitsi_jvb_container_labels_additional_labels: ''
+# jitsi_jvb_container_labels_additional_labels_custom:
+#   - my.label=1
+#   - another.label="here"
+jitsi_jvb_container_labels_additional_labels: "{{ jitsi_jvb_container_labels_additional_labels_auto + jitsi_jvb_container_labels_additional_labels_custom }}"
+jitsi_jvb_container_labels_additional_labels_auto: []
+jitsi_jvb_container_labels_additional_labels_custom: []
 
-# A list of extra arguments to pass to the container
-jitsi_jvb_container_extra_arguments: []
+# A list of extra arguments to pass to the container (`docker create` command)
+jitsi_jvb_container_extra_arguments: "{{ jitsi_jvb_container_extra_arguments_auto + jitsi_jvb_container_extra_arguments_custom }}"
+jitsi_jvb_container_extra_arguments_auto: []
+jitsi_jvb_container_extra_arguments_custom: []
 
 # List of systemd services that jitsi-jvb.service depends on
 jitsi_jvb_systemd_required_services_list: "{{ jitsi_jvb_systemd_required_services_list_default + jitsi_jvb_systemd_required_services_list_auto + jitsi_jvb_systemd_required_services_list_custom }}"
@@ -596,10 +617,10 @@ jitsi_jvb_systemd_required_services_list_auto: []
 jitsi_jvb_systemd_required_services_list_custom: []
 
 jitsi_jvb_auth_user: jvb
-jitsi_jvb_auth_password: ''
+jitsi_jvb_auth_password: ""
 
 # To enable Sentry integration for JVB, specify a valid DSN connection string
-jitsi_jvb_sentry_dsn: ''
+jitsi_jvb_sentry_dsn: ""
 
 # STUN servers used by JVB on the server-side, so it can discover its own external IP address.
 # Pointing this to a STUN server running on the same Docker network may lead to incorrect IP address discovery.
@@ -621,7 +642,7 @@ jitsi_jvb_server_id: 'jvb-1'
 # jitsi_jvb_custom_config_extension: |
 #   org.jitsi.videobridge.xmpp.user.shard.DISABLE_CERTIFICATE_VERIFICATION=false
 #   org.jitsi.videobridge.ENABLE_STATISTICS=false
-jitsi_jvb_custom_config_extension: ''
+jitsi_jvb_custom_config_extension: ""
 
 # Additional environment variables to pass to the Jitsi Videobridge (JVB) container.
 # You can use this to further influence the default configuration generated by the Jitsi Videobridge (JVB) container on every startup.
@@ -632,7 +653,7 @@ jitsi_jvb_custom_config_extension: ''
 # jitsi_jvb_environment_variables_additional_variables: |
 #   SOME_VARIABLE=1
 #   ANOTHER_VARIABLE=something
-jitsi_jvb_environment_variables_additional_variables: ''
+jitsi_jvb_environment_variables_additional_variables: ""
 
 ########################################################################
 #                                                                      #
@@ -647,9 +668,9 @@ jitsi_jvb_environment_variables_additional_variables: ''
 ########################################################################
 
 # Allows abailty to set XMPP AUTH user if using JIGASI
-jitsi_jigasi_xmpp_user: ''
+jitsi_jigasi_xmpp_user: ""
 # Allows abailty to set XMPP AUTH password if using JIGASI
-jitsi_jigasi_xmpp_password: ''
+jitsi_jigasi_xmpp_password: ""
 
 ########################################################################
 #                                                                      #

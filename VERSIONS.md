@@ -26,7 +26,7 @@
 * Honoroit: v0.9.29
 * Hookshot: 7.2.0
 * Hydrogen: v0.5.1
-* Jitsi: stable-10655
+* Jitsi: stable-10710
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
 * Languagetool: 6.7-dockerupdate-1
@@ -56,7 +56,7 @@
 * Prometheus: v3.9.1
 * Prometheus Node Exporter: v1.10.2
 * Prometheus Postgres Exporter: v0.18.1
-* Radicale: 3.5.10.0
+* Radicale: 3.6.0.0
 * Registration: v0.7.2
 * Schildichat: 1.11.109-sc.0.test.0
 * Signal: v0.2512.0

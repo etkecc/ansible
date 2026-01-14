@@ -18,13 +18,13 @@ radicale_data_collections_path: "{{ radicale_data_path }}/{{ radicale_data_colle
 radicale_data_collections_subdir: collections
 
 # renovate: datasource=docker depName=tomsquest/docker-radicale
-radicale_version: 3.5.10.0
+radicale_version: 3.6.0.0
 
-radicale_uid: ''
-radicale_gid: ''
+radicale_uid: ""
+radicale_gid: ""
 
 # The hostname at which Radicale is served.
-radicale_hostname: ''
+radicale_hostname: ""
 
 # The path at which Radicale is served.
 # This value must either be `/` or not end with a slash (e.g. `/radicale`).
@@ -59,7 +59,7 @@ radicale_container_additional_networks_custom: []
 # radicale_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
 # See `../templates/labels.j2` for details.
 #
-# To inject your own other container labels, see `radicale_container_labels_additional_labels`.
+# To inject your own other container labels, see `radicale_container_labels_additional_labels_custom`.
 radicale_container_labels_traefik_enabled: true
 radicale_container_labels_traefik_docker_network: "{{ radicale_container_network }}"
 radicale_container_labels_traefik_hostname: "{{ radicale_hostname }}"
@@ -97,12 +97,15 @@ radicale_container_labels_traefik_additional_response_headers_custom: {}
 
 # radicale_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
 # See `../templates/labels.j2` for details.
+# To add your own custom labels, use `radicale_container_labels_additional_labels_custom`
 #
 # Example:
-# radicale_container_labels_additional_labels: |
-#   my.label=1
-#   another.label="here"
-radicale_container_labels_additional_labels: ''
+# radicale_container_labels_additional_labels_custom:
+#   - my.label=1
+#   - another.label="here"
+radicale_container_labels_additional_labels: "{{ radicale_container_labels_additional_labels_auto + radicale_container_labels_additional_labels_custom }}"
+radicale_container_labels_additional_labels_auto: []
+radicale_container_labels_additional_labels_custom: []
 
 # Specifies how often the container health-check will run.
 #
@@ -115,8 +118,10 @@ radicale_container_labels_additional_labels: ''
 # For non-Traefik setups, we use the default healthcheck interval (30s) to decrease overhead.
 radicale_container_health_interval: "{{ '5s' if radicale_container_labels_traefik_enabled else '30s' }}"
 
-# A list of extra arguments to pass to the container
-radicale_container_extra_arguments: []
+# A list of extra arguments to pass to the container (`docker create` command)
+radicale_container_extra_arguments: "{{ radicale_container_extra_arguments_auto + radicale_container_extra_arguments_custom }}"
+radicale_container_extra_arguments_auto: []
+radicale_container_extra_arguments_custom: []
 
 # Specifies the value of the `X-XSS-Protection` header
 # Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
@@ -177,16 +182,10 @@ radicale_systemd_wanted_services_list_default: []
 radicale_systemd_wanted_services_list_auto: []
 radicale_systemd_wanted_services_list_custom: []
 
-# Controls the TAKE_FILE_OWNERSHIP environment variable
-radicale_environment_variable_take_file_ownership: false
-
-# Additional environment variables.
-radicale_environment_variables_additional_variables: ''
-
 # default is htpasswd
 radicale_auth_type: htpasswd
 # if you use https://github.com/etkecc/radicale-auth-matrix
-radicale_auth_matrix_server: ''
+radicale_auth_matrix_server: ""
 
 # A list of `htpasswd -nb user password` entries
 # Also see `radicale_credentials` for a more convenient way to create credentials.
@@ -206,3 +205,12 @@ radicale_credentials: []
 # Temporary file path on the host that runs Ansible.
 # Used for converting the `radicale_credentials` entries to `radicale_htpasswds` entries.
 radicale_credentials_basicauth_file_tmp: "/tmp/ansible_htpasswd"
+
+# Specify the timezone
+radicale_environment_variables_tz: UTC
+
+# Controls the TAKE_FILE_OWNERSHIP environment variable
+radicale_environment_variable_take_file_ownership: false
+
+# Additional environment variables.
+radicale_environment_variables_additional_variables: ""
