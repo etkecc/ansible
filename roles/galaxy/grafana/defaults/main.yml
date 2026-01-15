@@ -37,9 +37,12 @@ grafana_container_image_registry_prefix_upstream: "{{ grafana_container_image_re
 grafana_container_image_registry_prefix_upstream_default: docker.io/
 grafana_container_image_force_pull: "{{ grafana_container_image.endswith(':latest') }}"
 
+# The size of the container's /tmp filesystem.
+grafana_container_tmp_size: 128m
+
 # Control whether the Grafana container exposes its HTTP port (tcp/3000 in the container).
 #
-# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:3000"), or empty string to not expose.
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
 grafana_container_http_host_bind_port: ""
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
@@ -62,7 +65,7 @@ grafana_container_additional_networks_custom: []
 # grafana_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
 # See `../templates/labels.j2` for details.
 #
-# To inject your own other container labels, see `grafana_container_labels_additional_labels`.
+# To inject your own other container labels, see `grafana_container_labels_additional_labels_custom`.
 grafana_container_labels_traefik_enabled: true
 grafana_container_labels_traefik_docker_network: "{{ grafana_container_network }}"
 grafana_container_labels_traefik_hostname: "{{ grafana_hostname }}"

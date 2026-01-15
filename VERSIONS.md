@@ -33,7 +33,7 @@
 * Linkding: 1.45.0
 * Linkedin: latest
 * Livekit Jwt Service: 0.4.0
-* Livekit Server: v1.9.10
+* Livekit Server: v1.9.11
 * Ma1Sd: 2.5.0
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.6.0
@@ -76,7 +76,7 @@
 * Synapse Rust Synapse Compress State Docker Image: v0.0.3
 * Synapse S3 Storage Provider: 1.6.0
 * Telegram: v0.15.3
-* Traefik: v3.6.6
+* Traefik: v3.6.7
 * Traefik Certs Dumper: v2.10.0
 * Traefik Config Tcp Servertransports Default Proxyprotocol: 1
 * Twitter: v0.2511.0

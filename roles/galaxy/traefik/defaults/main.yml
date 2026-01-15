@@ -2,6 +2,7 @@
 # SPDX-FileCopyrightText: 2023 MASH project contributors
 # SPDX-FileCopyrightText: 2023 Niels Bouma
 # SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -17,7 +18,7 @@ traefik_ssl_dir_path: "{{ traefik_base_path }}/ssl"
 traefik_plugins_dir_path: "{{ traefik_base_path }}/plugins-storage"
 
 # renovate: datasource=docker depName=library/traefik versioning=semver
-traefik_version: v3.6.6
+traefik_version: v3.6.7
 
 traefik_uid: ""
 traefik_gid: ""
@@ -200,19 +201,19 @@ traefik_config_entrypoint_web_transport_respondingTimeouts_idleTimeout: 180s
 # See https://doc.traefik.io/traefik/routing/entrypoints/#encodedcharacters
 traefik_config_entrypoint_web_http_encodedCharacters_enabled: false
 # Controls `http.encodedCharacters.allowEncodedSlash` for the `web` entrypoint.
-traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedSlash: false
+traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedSlash: true
 # Controls `http.encodedCharacters.allowEncodedHash` for the `web` entrypoint.
-traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedHash: false
+traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedHash: true
 # Controls `http.encodedCharacters.allowEncodedBackSlash` for the `web` entrypoint.
-traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedBackSlash: false
+traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedBackSlash: true
 # Controls `http.encodedCharacters.allowEncodedNullCharacter` for the `web` entrypoint.
-traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedNullCharacter: false
+traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedNullCharacter: true
 # Controls `http.encodedCharacters.allowEncodedSemicolon` for the `web` entrypoint.
-traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedSemicolon: false
+traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedSemicolon: true
 # Controls `http.encodedCharacters.allowEncodedPercent` for the `web` entrypoint.
-traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedPercent: false
+traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedPercent: true
 # Controls `http.encodedCharacters.allowEncodedQuestionMark` for the `web` entrypoint.
-traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedQuestionMark: false
+traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedQuestionMark: true
 
 # Controls whether the web entrypoint should be redirected to web-secure
 # If web-secure is enabled, we enable this redirection by default.
@@ -253,19 +254,19 @@ traefik_config_entrypoint_web_secure_transport_respondingTimeouts_idleTimeout: "
 # See https://doc.traefik.io/traefik/routing/entrypoints/#encodedcharacters
 traefik_config_entrypoint_web_secure_http_encodedCharacters_enabled: false
 # Controls `http.encodedCharacters.allowEncodedSlash` for the `web-secure` entrypoint.
-traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedSlash: false
+traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedSlash: true
 # Controls `http.encodedCharacters.allowEncodedHash` for the `web-secure` entrypoint.
-traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedHash: false
+traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedHash: true
 # Controls `http.encodedCharacters.allowEncodedBackSlash` for the `web-secure` entrypoint.
-traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedBackSlash: false
+traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedBackSlash: true
 # Controls `http.encodedCharacters.allowEncodedNullCharacter` for the `web-secure` entrypoint.
-traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedNullCharacter: false
+traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedNullCharacter: true
 # Controls `http.encodedCharacters.allowEncodedSemicolon` for the `web-secure` entrypoint.
-traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedSemicolon: false
+traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedSemicolon: true
 # Controls `http.encodedCharacters.allowEncodedPercent` for the `web-secure` entrypoint.
-traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedPercent: false
+traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedPercent: true
 # Controls `http.encodedCharacters.allowEncodedQuestionMark` for the `web-secure` entrypoint.
-traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedQuestionMark: false
+traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedQuestionMark: true
 
 traefik_config_entrypoint_web_secure_http3_enabled: true
 traefik_config_entrypoint_web_secure_http3_config_advertisedPort: "{{ traefik_config_entrypoint_web_secure_port }}"
@@ -543,6 +544,9 @@ traefik_provider_configuration_extension: "{{ traefik_provider_configuration_ext
 # Holds the final Traefik provider configuration (a combination of the default and its extension).
 # You most likely don't need to touch this variable. Instead, see `traefik_provider_configuration_yaml`.
 traefik_provider_configuration: "{{ traefik_provider_configuration_yaml | from_yaml | combine(traefik_provider_configuration_extension, recursive=True) }}"
+
+# Specify the timezone
+traefik_environment_variables_tz: UTC
 
 # traefik_environment_variables contains a multiline string with environment variables to pass to Traefik.
 #

@@ -15,11 +15,12 @@ livekit_server_base_path: "/{{ livekit_server_identifier }}"
 livekit_server_config_path: "{{ livekit_server_base_path }}/config"
 
 # renovate: datasource=docker depName=docker.io/livekit/livekit-server
-livekit_server_version: v1.9.10
+livekit_server_version: v1.9.11
 
 livekit_server_uid: ""
 livekit_server_gid: ""
 
+# The scheme used for serving LiveKit Server.
 livekit_server_scheme: https
 
 # The hostname at which LiveKit Server is served.
@@ -62,7 +63,7 @@ livekit_server_container_additional_volumes_custom: []
 # livekit_server_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
 # See `../templates/labels.j2` for details.
 #
-# To inject your own other container labels, see `livekit_server_container_labels_additional_labels`.
+# To inject your own other container labels, see `livekit_server_container_labels_additional_labels_custom`.
 livekit_server_container_labels_traefik_enabled: true
 livekit_server_container_labels_traefik_docker_network: "{{ livekit_server_container_network }}"
 livekit_server_container_labels_traefik_hostname: "{{ livekit_server_hostname }}"
