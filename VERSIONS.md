@@ -17,7 +17,7 @@
 * Firezone: 0.7.36
 * Fluffychat: v2.3.0
 * Funkwhale: 1.4.1
-* Gmessages: v0.2511.0
+* Gmessages: v0.2601.0
 * Go Neb: latest
 * Googlechat: v0.5.2
 * Gotosocial: 0.20.2
@@ -32,7 +32,7 @@
 * Languagetool: 6.7-dockerupdate-1
 * Linkding: 1.45.0
 * Linkedin: latest
-* Livekit Jwt Service: 0.4.0
+* Livekit Jwt Service: 0.4.1
 * Livekit Server: v1.9.11
 * Ma1Sd: 2.5.0
 * Matrix Reminder Bot: v0.4.0
@@ -59,7 +59,7 @@
 * Radicale: 3.6.0.0
 * Registration: v0.7.2
 * Schildichat: 1.11.109-sc.0.test.0
-* Signal: v0.2512.0
+* Signal: v0.2601.0
 * Slack: v0.2511.0
 * Sliding Sync: v0.99.19
 * Spam Checker Mjolnir Antispam Git: v1.11.0
@@ -85,5 +85,5 @@
 * Vaultwarden: 1.35.2
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
-* Whatsapp: v0.2512.0
+* Whatsapp: v0.2601.0
 * Zulip Bridge: v0.4.1
