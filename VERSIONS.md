@@ -24,7 +24,7 @@
 * Grafana: 11.6.5
 * Heisenbridge: 1.15.4
 * Honoroit: v0.9.29
-* Hookshot: 7.2.0
+* Hookshot: 7.3.0
 * Hydrogen: v0.5.1
 * Jitsi: stable-10710
 * Jitsi Ldap: 3
@@ -40,7 +40,7 @@
 * Meta Instagram: v0.2512.0
 * Meta Messenger: v0.2512.0
 * Miniflux: 2.2.16
-* Ntfy: v2.15.0
+* Ntfy: v2.16.0
 * Peertube: v7.2.3
 * Postgres Container Image V10: 10.23
 * Postgres Container Image V11: 11.22

@@ -1,8 +1,8 @@
-# SPDX-FileCopyrightText: 2023 - 2024 Nikita Chernyi
-# SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2023, 2024 Nikita Chernyi
+# SPDX-FileCopyrightText: 2023-2025 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2024 Sergio Durigan Junior
 # SPDX-FileCopyrightText: 2025 MASH project contributors
-# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -20,17 +20,18 @@ ntfy_cache_path: "{{ ntfy_base_path }}/cache"
 ntfy_attachment_cache_path: "{{ ntfy_cache_path }}/attachments"
 
 # renovate: datasource=docker depName=docker.io/binwiederhier/ntfy
-ntfy_version: v2.15.0
+ntfy_version: v2.16.0
 
-ntfy_uid: ''
-ntfy_gid: ''
+ntfy_uid: ""
+ntfy_gid: ""
 
-# The hostname at which ntfy is served.
-ntfy_hostname: ''
-
+# The scheme used for serving ntfy.
 ntfy_scheme: https
 
-# The path at which ntfy is exposed.
+# The hostname at which ntfy is served.
+ntfy_hostname: ""
+
+# The path at which ntfy is served.
 # This value must either be `/` or not end with a slash (e.g. `/ntfy`).
 ntfy_path_prefix: /
 
@@ -44,13 +45,13 @@ ntfy_container_image_registry_prefix_upstream: "{{ ntfy_container_image_registry
 ntfy_container_image_registry_prefix_upstream_default: docker.io/
 ntfy_container_image_force_pull: "{{ ntfy_container_image.endswith(':latest') }}"
 
-# Controls whether the container exposes its HTTP port (tcp/80 in the container).
-#
-# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
-ntfy_container_http_host_bind_port: ''
-
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 ntfy_container_network: "{{ ntfy_identifier }}"
+
+# Specify how the container publishes its HTTP port (as defined by `ntfy_container_http_port`).
+#
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
+ntfy_container_http_host_bind_port: ""
 
 # The port number in the container
 ntfy_container_http_port: 8080
@@ -62,10 +63,19 @@ ntfy_container_additional_networks: "{{ ntfy_container_additional_networks_auto 
 ntfy_container_additional_networks_auto: []
 ntfy_container_additional_networks_custom: []
 
+# A list of additional "volumes" to mount in the container.
+# This list gets populated dynamically at runtime. You can provide a different default value,
+# if you wish to mount your own files into the container.
+# Contains definition objects like this: `{"type": "bind", "src": "/outside", "dst": "/inside", "options": "readonly"}.
+# See the `--mount` documentation for the `docker run` command.
+ntfy_container_additional_volumes: "{{ ntfy_container_additional_volumes_auto + ntfy_container_additional_volumes_custom }}"
+ntfy_container_additional_volumes_auto: []
+ntfy_container_additional_volumes_custom: []
+
 # ntfy_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
 # See `../templates/labels.j2` for details.
 #
-# To inject your own other container labels, see `ntfy_container_labels_additional_labels`.
+# To inject your own other container labels, see `ntfy_container_labels_additional_labels_custom`.
 ntfy_container_labels_traefik_enabled: true
 ntfy_container_labels_traefik_docker_network: "{{ ntfy_container_network }}"
 ntfy_container_labels_traefik_hostname: "{{ ntfy_hostname }}"
@@ -99,12 +109,15 @@ ntfy_container_labels_traefik_additional_response_headers_custom: {}
 
 # ntfy_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
 # See `../templates/labels.j2` for details.
+# To add your own custom labels, use `ntfy_container_labels_additional_labels_custom`
 #
 # Example:
-# ntfy_container_labels_additional_labels: |
-#   my.label=1
-#   another.label="here"
-ntfy_container_labels_additional_labels: ''
+# ntfy_container_labels_additional_labels_custom:
+#   - my.label=1
+#   - another.label="here"
+ntfy_container_labels_additional_labels: "{{ ntfy_container_labels_additional_labels_auto + ntfy_container_labels_additional_labels_custom }}"
+ntfy_container_labels_additional_labels_auto: []
+ntfy_container_labels_additional_labels_custom: []
 
 # Specifies how often the container health-check will run.
 #
@@ -117,8 +130,10 @@ ntfy_container_labels_additional_labels: ''
 # For non-Traefik setups, we use the default healthcheck interval (60s) to decrease overhead.
 ntfy_container_health_interval: "{{ '5s' if ntfy_container_labels_traefik_enabled else '60s' }}"
 
-# A list of extra arguments to pass to the container (`docker run` command)
-ntfy_container_extra_arguments: []
+# A list of extra arguments to pass to the container (`docker create` command)
+ntfy_container_extra_arguments: "{{ ntfy_container_extra_arguments_auto + ntfy_container_extra_arguments_custom }}"
+ntfy_container_extra_arguments_auto: []
+ntfy_container_extra_arguments_custom: []
 
 # Specifies the value of the `X-XSS-Protection` header
 # Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
@@ -194,11 +209,11 @@ ntfy_visitor_attachment_daily_bandwidth_limit: "500M"
 
 # Controls how email notifications are configured.
 ntfy_smtp_sender_enabled: false
-ntfy_smtp_sender_addr_host: ''  # Hostname
+ntfy_smtp_sender_addr_host: ""  # Hostname
 ntfy_smtp_sender_addr_port: 587
-ntfy_smtp_sender_username: ''  # Username of the SMTP user
-ntfy_smtp_sender_password: ''  # Password of the SMTP user
-ntfy_smtp_sender_from: ''  # Email address of the sender
+ntfy_smtp_sender_username: ""  # Username of the SMTP user
+ntfy_smtp_sender_password: ""  # Password of the SMTP user
+ntfy_smtp_sender_from: ""  # Email address of the sender
 
 # Rate limits
 #
@@ -280,7 +295,7 @@ ntfy_metrics_default_enabled: false
 # Control whether the /metrics endpoint is exposed via a specified IP address and/or port.
 # ntfy_metrics_listen_http_host can be omitted.
 ntfy_metrics_listen_http_host: 0.0.0.0
-ntfy_metrics_listen_http_port: ''
+ntfy_metrics_listen_http_port: ""
 
 # Controls whether the self-check feature should validate SSL certificates.
 ntfy_self_check_validate_certificates: true
@@ -320,3 +335,9 @@ ntfy_configuration: "{{ ntfy_configuration_yaml | from_yaml | combine(ntfy_confi
 #     admin: true
 # When credentials are provided, ntfy will enforce authentication.
 ntfy_credentials: []
+
+# Specify the timezone
+ntfy_environment_variables_tz: UTC
+
+# Additional environment variables.
+ntfy_environment_variables_additional_variables: ""

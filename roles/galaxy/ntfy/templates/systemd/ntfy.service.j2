@@ -1,4 +1,10 @@
-#jinja2: lstrip_blocks: True
+{#
+SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+#}
+
 [Unit]
 Description=ntfy ({{ ntfy_identifier }})
 {% for service in ntfy_systemd_required_services_list %}
@@ -24,19 +30,22 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_sy
       --cap-drop=ALL \
       --cap-add=NET_BIND_SERVICE \
       --read-only \
-      --env NTFY_VISITOR_REQUEST_LIMIT_EXEMPT_HOSTS={{ ntfy_visitor_request_limit_exempt_hosts }} \
-      {% for arg in ntfy_container_extra_arguments %}
-      {{ arg }} \
-      {% endfor %}
       --network={{ ntfy_container_network }} \
       {% if ntfy_container_http_host_bind_port %}
       -p {{ ntfy_container_http_host_bind_port }}:{{ ntfy_container_http_port }} \
       {% endif %}
+      --env-file={{ ntfy_base_path }}/env \
       --label-file={{ ntfy_base_path }}/labels \
       --health-interval={{ ntfy_container_health_interval }} \
       --mount type=bind,src={{ ntfy_config_path }},dst=/etc/ntfy,ro \
       --mount type=bind,src={{ ntfy_data_path }},dst=/data \
       --mount type=bind,src={{ ntfy_cache_path }},dst=/cache \
+      {% for volume in ntfy_container_additional_volumes %}
+      --mount type={{ volume.type | default('bind' if '/' in volume.src else 'volume') }},src={{ volume.src }},dst={{ volume.dst }}{{ (',' + volume.options) if volume.options else '' }} \
+      {% endfor %}
+      {% for arg in ntfy_container_extra_arguments %}
+      {{ arg }} \
+      {% endfor %}
       {{ ntfy_container_image }} \
       serve'
 

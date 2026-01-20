@@ -55,4 +55,6 @@ traefik.http.routers.{{ ntfy_identifier }}.tls.certResolver={{ ntfy_container_la
 traefik.http.services.{{ ntfy_identifier }}.loadbalancer.server.port={{ ntfy_container_http_port }}
 {% endif %}
 
-{{ ntfy_container_labels_additional_labels }}
+{% for arg in ntfy_container_labels_additional_labels %}
+{{ arg }}
+{% endfor %}

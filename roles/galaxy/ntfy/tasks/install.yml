@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2023 - 2024 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2023, 2024 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2025 MASH project contributors
-# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -19,19 +19,22 @@
     - "{{ ntfy_cache_path }}"
     - "{{ ntfy_attachment_cache_path }}"
 
+- name: Ensure ntfy support files installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/{{ item }}.j2"
+    dest: "{{ ntfy_base_path }}/{{ item }}"
+    mode: "0640"
+    owner: "{{ ntfy_uid }}"
+    group: "{{ ntfy_gid }}"
+  with_items:
+    - env
+    - labels
+
 - name: Ensure ntfy configuration file installed
   ansible.builtin.copy:
     content: "{{ ntfy_configuration | to_nice_yaml(indent=2, width=999999) }}"
     dest: "{{ ntfy_config_path }}/server.yml"
     mode: "0644"
-    owner: "{{ ntfy_uid }}"
-    group: "{{ ntfy_gid }}"
-
-- name: Ensure ntfy labels installed
-  ansible.builtin.template:
-    src: "{{ role_path }}/templates/labels.j2"
-    dest: "{{ ntfy_base_path }}/labels"
-    mode: "0640"
     owner: "{{ ntfy_uid }}"
     group: "{{ ntfy_gid }}"
 
