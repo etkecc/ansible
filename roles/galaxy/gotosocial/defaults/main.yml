@@ -19,7 +19,7 @@ gotosocial_database_path: "{{ gotosocial_data_path }}/database"
 gotosocial_customized_container_src_path: "{{ gotosocial_base_path }}/customized-container-src"
 
 # renovate: datasource=docker depName=superseriousbusiness/gotosocial versioning=semver
-gotosocial_version: 0.20.2
+gotosocial_version: 0.20.3
 
 gotosocial_uid: ""
 gotosocial_gid: ""
@@ -27,6 +27,8 @@ gotosocial_gid: ""
 # The hostname at which GoToSocial is served.
 gotosocial_hostname: ""
 
+# The path at which GoToSocial is served.
+# This value must either be `/` or not end with a slash (e.g. `/gotosocial`).
 gotosocial_path_prefix: /
 
 gotosocial_container_image: "{{ gotosocial_container_image_registry_prefix }}superseriousbusiness/gotosocial:{{ gotosocial_container_image_tag }}"
@@ -66,24 +68,24 @@ gotosocial_container_image_customizations_enabled: |
 #  RUN echo 'This is a custom step for building the customized container image for GoToSocial.'
 gotosocial_container_image_customizations_dockerfile_body_custom: ""
 
+# The base container network. It will be auto-created by this role if it doesn't exist already.
+gotosocial_container_network: "{{ gotosocial_identifier }}"
+
+# Specify how the container publishes its HTTP port (as defined by `gotosocial_container_http_port`).
+#
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
+gotosocial_container_http_host_bind_port: ""
+
 # The port number of the GoToSocial server in the container
 gotosocial_container_http_port: 8080
 
-# Controls whether the gotosocial container exposes its HTTP port (as defined by `gotosocial_container_http_port`).
+# Specify how the metrics container publishes its HTTP port (as defined by `gotosocial_container_metrics_port`).
 #
-# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:8731"), or empty string to not expose.
-gotosocial_container_http_host_bind_port: ""
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
+gotosocial_container_metrics_host_bind_port: ""
 
 # The port number of the metrics server in the container
 gotosocial_container_metrics_port: 9464
-
-# Controls whether the metrics container exposes its HTTP port (as defined by `gotosocial_container_metrics_port`).
-#
-# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:9464"), or empty string to not expose.
-gotosocial_container_metrics_host_bind_port: ""
-
-# The base container network. It will be auto-created by this role if it doesn't exist already.
-gotosocial_container_network: '{{ gotosocial_identifier }}'
 
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
@@ -104,7 +106,7 @@ gotosocial_container_additional_volumes_custom: []
 # gotosocial_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
 # See `../templates/labels.j2` for details.
 #
-# To inject your own other container labels, see `gotosocial_container_labels_additional_labels`.
+# To inject your own other container labels, see `gotosocial_container_labels_additional_labels_custom`.
 gotosocial_container_labels_traefik_enabled: true
 gotosocial_container_labels_traefik_docker_network: "{{ gotosocial_container_network }}"
 gotosocial_container_labels_traefik_hostname: "{{ gotosocial_hostname }}"
@@ -162,6 +164,9 @@ gotosocial_container_labels_traefik_additional_response_headers_custom: {}
 gotosocial_container_labels_additional_labels: "{{ gotosocial_container_labels_additional_labels_auto + gotosocial_container_labels_additional_labels_custom }}"
 gotosocial_container_labels_additional_labels_auto: []
 gotosocial_container_labels_additional_labels_custom: []
+
+# Specify the size of the container's tmpfs volume, used for storing media uploads
+gotosocial_container_tmpfs_tmp_size: 2000m
 
 # A list of extra arguments to pass to the container (`docker create` command)
 gotosocial_container_extra_arguments: "{{ gotosocial_container_extra_arguments_auto + gotosocial_container_extra_arguments_custom }}"
@@ -279,9 +284,6 @@ gotosocial_instance_languages: []
 
 # https://docs.gotosocial.org/en/latest/advanced/metrics/
 gotosocial_metrics_enabled: false
-
-# Set the size of the /tmp directory, used for storing media uploads
-gotosocial_container_tmp_size: '2000m'
 
 # Specify database to use
 # Valid values: postgres, sqlite

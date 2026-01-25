@@ -14,19 +14,10 @@
     group: "{{ gotosocial_gid }}"
   with_items:
     - { path: "{{ gotosocial_base_path }}", when: true }
+    - { path: "{{ gotosocial_data_path }}", when: true }
     - { path: "{{ gotosocial_database_path }}", when: true }
     - { path: "{{ gotosocial_customized_container_src_path }}", when: "{{ gotosocial_container_image_customizations_enabled }}" }
   when: item.when | bool
-
-- name: Ensure GoToSocial data path exists
-  ansible.builtin.file:
-    path: "{{ item }}"
-    state: directory
-    mode: "0755"
-    owner: "{{ gotosocial_uid }}"
-    group: "{{ gotosocial_gid }}"
-  with_items:
-    - "{{ gotosocial_data_path }}"
 
 - name: Ensure GoToSocial support files installed
   ansible.builtin.template:

@@ -1,6 +1,6 @@
 * Alpine: edge
 * Appservice Discord: v4.0.0
-* Baibot: v1.12.0
+* Baibot: v1.13.0
 * Bluesky: v0.2510.0
 * Borg: 1.4.3
 * Borgmatic: 2.0.13
@@ -20,11 +20,11 @@
 * Gmessages: v0.2601.0
 * Go Neb: latest
 * Googlechat: v0.5.2
-* Gotosocial: 0.20.2
+* Gotosocial: 0.20.3
 * Grafana: 11.6.5
 * Heisenbridge: 1.15.4
 * Honoroit: v0.9.29
-* Hookshot: 7.3.0
+* Hookshot: 7.3.1
 * Hydrogen: v0.5.1
 * Jitsi: stable-10710
 * Jitsi Ldap: 3
