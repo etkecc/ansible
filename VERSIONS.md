@@ -7,12 +7,12 @@
 * Buscarron: v1.4.3
 * Cinny: v4.10.2
 * Container Socket Proxy: v0.4.2
-* Coturn: 4.6.2-r11
+* Coturn: 4.8.0
 * Discord: v0.7.5
 * Draupnir: v2.9.0
-* Element: v1.12.8
+* Element: v1.12.9
 * Element Call: v0.16.3
-* Etherpad: 2.6.0
+* Etherpad: 2.6.1
 * Exim Relay: 4.98.1-r0-2
 * Firezone: 0.7.36
 * Fluffychat: v2.4.0
@@ -67,7 +67,7 @@
 * Static Files: 2.40.1
 * Steam Bridge: 1.1.0
 * Sygnal: v0.15.1
-* Synapse: v1.145.0
+* Synapse: v1.146.0
 * Synapse Admin: v0.11.1-etke52
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.0.3
