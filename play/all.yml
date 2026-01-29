@@ -78,7 +78,6 @@
     - galaxy/jitsi
     - custom/matrix-ma1sd
     - galaxy/etherpad
-    - custom/matrix-sliding-sync
     - custom/matrix-sygnal
     - galaxy/ntfy
     # END MATRIX
