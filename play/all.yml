@@ -33,7 +33,6 @@
     - galaxy/postgres
     - galaxy/valkey
     - custom/matrix-appservice-double-puppet
-    - custom/matrix-bridge-appservice-discord
     - custom/matrix-bridge-beeper-linkedin
     - custom/matrix-bridge-wechat
     - custom/matrix-bridge-mautrix-twitter
@@ -51,7 +50,6 @@
     - custom/matrix-bridge-steam
     - custom/matrix-bridge-heisenbridge
     - custom/matrix-bridge-hookshot
-    - custom/matrix-bridge-zulip
     - custom/matrix-bot-matrix-reminder-bot
     - custom/matrix-bot-maubot
     - custom/matrix-bot-buscarron
@@ -107,7 +105,6 @@
     - custom/matrix-coturn
     # - custom/matrix-media-repo # unused
     - galaxy/auxiliary
-    - custom/matrix-element-call
     - galaxy/livekit_server
     - custom/matrix-livekit-jwt-service
     - galaxy/postgres_backup

@@ -33,6 +33,7 @@ matrix_bot_draupnir_config_web_synapseHTTPAntispam_enabled: false
 matrix_prometheus_nginxlog_exporter_container_metrics_port: '4040'
 matrix_media_repo_identifier: matrix-media-repo
 matrix_media_repo_metrics_port: 9000
+matrix_rtc_enabled: false
 
 ########################################################################
 #                                                                      #
