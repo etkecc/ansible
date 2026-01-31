@@ -1,5 +1,4 @@
 * Alpine: edge
-* Appservice Discord: v4.0.0
 * Baibot: v1.13.0
 * Bluesky: v0.2510.0
 * Borg: 1.4.3
@@ -11,7 +10,6 @@
 * Discord: v0.7.5
 * Draupnir: v2.9.0
 * Element: v1.12.9
-* Element Call: v0.16.3
 * Etherpad: 2.6.1
 * Exim Relay: 4.98.1-r0-2
 * Firezone: 0.7.36
@@ -24,7 +22,7 @@
 * Grafana: 11.6.5
 * Heisenbridge: 1.15.4
 * Honoroit: v0.9.29
-* Hookshot: 7.3.1
+* Hookshot: 7.3.2
 * Hydrogen: v0.5.1
 * Jitsi: stable-10710
 * Jitsi Ldap: 3
@@ -61,7 +59,6 @@
 * Schildichat: 1.11.109-sc.0.test.0
 * Signal: v0.2601.0
 * Slack: v0.2511.0
-* Sliding Sync: v0.99.19
 * Spam Checker Mjolnir Antispam Git: v1.11.0
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.40.1
@@ -86,4 +83,3 @@
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
 * Whatsapp: v0.2601.0
-* Zulip Bridge: v0.4.1

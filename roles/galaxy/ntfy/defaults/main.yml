@@ -39,6 +39,8 @@ ntfy_path_prefix: /
 # It should not end with a slash.
 ntfy_base_url: "{{ ntfy_scheme }}://{{ ntfy_hostname }}{{ '' if ntfy_path_prefix == '/' else ntfy_path_prefix }}"
 
+ntfy_upstream_base_url: "{{ ntfy_scheme }}://{{ ntfy_hostname }}{{ '' if ntfy_path_prefix == '/' else ntfy_path_prefix }}"
+
 ntfy_container_image: "{{ ntfy_container_image_registry_prefix }}binwiederhier/ntfy:{{ ntfy_version }}"
 ntfy_container_image_registry_prefix: "{{ ntfy_container_image_registry_prefix_upstream }}"
 ntfy_container_image_registry_prefix_upstream: "{{ ntfy_container_image_registry_prefix_upstream_default }}"
