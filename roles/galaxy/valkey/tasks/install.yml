@@ -1,5 +1,5 @@
-# SPDX-FileCopyrightText: 2024 - 2025 Slavi Pantaleev
-# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+# SPDX-FileCopyrightText: 2024, 2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -16,7 +16,17 @@
     - "{{ valkey_config_path }}"
     - "{{ valkey_data_path }}"
 
-- name: Ensure Valkey environment variables file created
+- name: Ensure Valkey support files installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/{{ item }}.j2"
+    dest: "{{ valkey_base_path }}/{{ item }}"
+    mode: "0640"
+    owner: "{{ valkey_uid }}"
+    group: "{{ valkey_gid }}"
+  with_items:
+    - env
+
+- name: Ensure Valkey config file installed
   ansible.builtin.template:
     src: "{{ role_path }}/templates/{{ item }}.j2"
     dest: "{{ valkey_config_path }}/{{ item }}"
@@ -24,7 +34,7 @@
     owner: "{{ valkey_uid }}"
     group: "{{ valkey_gid }}"
   with_items:
-    - "valkey.conf"
+    - valkey.conf
 
 - name: Run if self-building of Valkey container image is not enabled
   when: "not valkey_container_image_self_build | bool"

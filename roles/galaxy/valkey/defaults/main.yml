@@ -1,5 +1,5 @@
-# SPDX-FileCopyrightText: 2024 - 2025 Slavi Pantaleev
-# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+# SPDX-FileCopyrightText: 2024, 2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -14,10 +14,10 @@ valkey_config_path: "{{ valkey_base_path }}/config"
 valkey_data_path: "{{ valkey_base_path }}/data"
 
 # renovate: datasource=docker depName=valkey/valkey versioning=semver
-valkey_version: 9.0.1
+valkey_version: 9.0.2
 
-valkey_uid: ''
-valkey_gid: ''
+valkey_uid: ""
+valkey_gid: ""
 
 valkey_container_image: "{{ valkey_container_image_registry_prefix }}valkey/valkey:{{ valkey_container_image_tag }}"
 valkey_container_image_tag: "{{ valkey_version }}-alpine"
@@ -33,17 +33,16 @@ valkey_container_image_self_build_repo_version: "mainline"
 valkey_container_image_self_build_src_files_path: "{{ valkey_base_path }}/docker-src"
 valkey_container_image_self_build_repo_dockerfile_dir: "{{ valkey_container_image_self_build_src_files_path }}/{{ valkey_version.split('.')[0] }}.{{ valkey_version.split('.')[1] }}/alpine" # where Dockerfile and docker-entrypoint.sh exist
 
-# Controls whether the container exposes a port (tcp/6379 in the container)
-# that can be used to access Valkey from outside the container
-#
-# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:6379"), or empty string to not expose.
-valkey_container_valkey_bind_port: ""
-
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 valkey_container_network: "{{ valkey_identifier }}"
 
+# Specify how the container publishes its TCP port (as defined by `valkey_container_tcp_port`).
+#
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
+valkey_container_tcp_host_bind_port: ""
+
 # The port number in the container
-valkey_container_http_port: 6379
+valkey_container_tcp_port: 6379
 
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
@@ -57,8 +56,13 @@ valkey_container_additional_networks_custom: []
 # we default to at least 30 seconds.
 valkey_container_stop_grace_time_seconds: "{{ [devture_systemd_docker_base_container_stop_grace_time_seconds, 30] | max }}"
 
-# A list of extra arguments to pass to the container
-valkey_container_extra_arguments: []
+# Specify the size of the container's tmpfs volume
+valkey_container_tmpfs_tmp_size: 128m
+
+# A list of extra arguments to pass to the container (`docker create` command)
+valkey_container_extra_arguments: "{{ valkey_container_extra_arguments_auto + valkey_container_extra_arguments_custom }}"
+valkey_container_extra_arguments_auto: []
+valkey_container_extra_arguments_custom: []
 
 # List of systemd services that the Valkey systemd service depends on
 valkey_systemd_required_services_list: "{{ (valkey_systemd_required_services_list_default + valkey_systemd_required_services_list_auto + valkey_systemd_required_services_list_custom) | unique }}"
@@ -75,3 +79,9 @@ valkey_systemd_wanted_services_list_custom: []
 valkey_connection_password: ""
 
 valkey_arch: x86_64
+
+# Specify the timezone
+valkey_environment_variables_tz: UTC
+
+# Additional environment variables.
+valkey_environment_variables_additional_variables: ""

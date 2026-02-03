@@ -1,6 +1,6 @@
 {#
-SPDX-FileCopyrightText: 2024 - 2025 Slavi Pantaleev
-SPDX-FileCopyrightText: 2025 Suguru Hirahara
+SPDX-FileCopyrightText: 2024, 2025 Slavi Pantaleev
+SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
@@ -28,13 +28,14 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --user={{ valkey_uid }}:{{ valkey_gid }} \
       --cap-drop=ALL \
       --read-only \
-      --tmpfs=/tmp:rw,noexec,nosuid,size=100m \
       --network={{ valkey_container_network }} \
-      {% if valkey_container_valkey_bind_port %}
-      -p {{ valkey_container_valkey_bind_port }}:{{ valkey_container_http_port }} \
+      {% if valkey_container_tcp_host_bind_port %}
+      -p {{ valkey_container_tcp_host_bind_port }}:{{ valkey_container_tcp_port }} \
       {% endif %}
+      --env-file={{ valkey_base_path }}/env \
       --mount type=bind,src={{ valkey_config_path }}/valkey.conf,dst=/usr/local/etc/valkey/valkey.conf,ro \
       --mount type=bind,src={{ valkey_data_path }},dst=/data \
+      --tmpfs=/tmp:rw,noexec,nosuid,size={{ valkey_container_tmpfs_tmp_size }} \
       {% for arg in valkey_container_extra_arguments %}
       {{ arg }} \
       {% endfor %}
