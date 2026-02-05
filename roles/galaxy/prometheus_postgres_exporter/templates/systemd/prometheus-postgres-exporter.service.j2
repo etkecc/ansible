@@ -30,7 +30,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --read-only \
       --network={{ prometheus_postgres_exporter_container_network }} \
       {% if prometheus_postgres_exporter_container_http_host_bind_port %}
-      -p {{ prometheus_postgres_exporter_container_http_host_bind_port }}:{{ prometheus_postgres_exporter_port }} \
+      -p {{ prometheus_postgres_exporter_container_http_host_bind_port }}:{{ prometheus_postgres_exporter_container_http_port }} \
       {% endif %}
       --env-file={{ prometheus_postgres_exporter_base_path }}/env \
       --label-file={{ prometheus_postgres_exporter_base_path }}/labels \

@@ -1,5 +1,5 @@
 * Alpine: edge
-* Baibot: v1.13.0
+* Baibot: v1.14.0
 * Bluesky: v0.2510.0
 * Borg: 1.4.3
 * Borgmatic: 2.1.1
@@ -24,7 +24,7 @@
 * Honoroit: v0.9.29
 * Hookshot: 7.3.2
 * Hydrogen: v0.5.1
-* Jitsi: stable-10710
+* Jitsi: stable-10741
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
 * Languagetool: 6.7-dockerupdate-1
@@ -53,7 +53,7 @@
 * Postmoogle: v0.9.28
 * Prometheus: v3.9.1
 * Prometheus Node Exporter: v1.10.2
-* Prometheus Postgres Exporter: v0.18.1
+* Prometheus Postgres Exporter: v0.19.0
 * Radicale: 3.6.0.0
 * Registration: v0.7.2
 * Schildichat: 1.11.109-sc.0.test.0
@@ -69,7 +69,7 @@
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.0.3
 * Synapse Http Antispam Git: v0.5.0
-* Synapse Reverse Proxy Companion: 1.29.4-alpine
+* Synapse Reverse Proxy Companion: 1.29.5-alpine
 * Synapse Rust Synapse Compress State Docker Image: v0.0.3
 * Synapse S3 Storage Provider: 1.6.0
 * Telegram: v0.15.3
