@@ -18,6 +18,41 @@ excluded_paths = [
 ]
 project_source_url_str = '# Project source code URL:'
 
+HOST_FEED_RULES = {
+    # host: rule
+    # rule options:
+    #   "github"
+    #   "gitlab"
+    #   "cgit"
+    #   "gitea"
+    #   "forgejo"
+    'github.com': 'github',
+    'gitlab.com': 'gitlab',
+    'mau.dev': 'gitlab',
+    'framagit.org': 'gitlab',
+    'dev.funkwhale.audio': 'gitlab',
+    'codeberg.org': 'forgejo',
+    'git.zx2c4.com': 'cgit',
+    'git.osgeo.org': 'gitea',
+    'forgejo.ellis.link': 'forgejo',
+    'app.radicle.xyz': 'radicle',
+}
+
+HOST_FEED_TEMPLATES = {
+    # host: url template override
+    # template variables:
+    #   {repo} - repository url without trailing slash or .git
+    'forgejo.ellis.link': '{repo}/atom/',
+}
+
+RULE_TEMPLATES = {
+    'github': '{repo}/releases.atom',
+    'gitlab': '{repo}/-/tags?format=atom',
+    'cgit': '{repo}/atom/',
+    'gitea': '{repo}.atom',
+    'forgejo': '{repo}/releases.atom',
+}
+
 def get_roles_files_from_dir(root_dir):
     file_paths = []
     for dir_name, sub_dur_list, file_list in os.walk(root_dir):
@@ -69,6 +104,38 @@ def validate_url(text):
     except:
         return False
 
+def get_hostname(text):
+    try:
+        result = urlparse(text)
+        if not result.hostname:
+            return ''
+        return result.hostname.lower()
+    except:
+        return ''
+
+def get_feed_rule_for_host(host):
+    if not host:
+        return ''
+    if host in HOST_FEED_RULES:
+        return HOST_FEED_RULES[host]
+    if host.endswith('.github.com'):
+        return 'github'
+    return ''
+
+def normalize_repo_url(url):
+    repo_url = url
+    if repo_url.endswith('.git'):
+        repo_url = repo_url[:-4]
+    return repo_url.rstrip('/')
+
+def build_feed_url(repo_url, rule, host):
+    if rule == 'radicle':
+        return ''
+    repo_base = normalize_repo_url(repo_url)
+    template = HOST_FEED_TEMPLATES.get(host) or RULE_TEMPLATES.get(rule, '')
+    if not template:
+        return ''
+    return template.format(repo=repo_base)
 
 def format_feeds_from_git_repos(git_repos):
     feeds = {
@@ -117,21 +184,13 @@ def format_feeds_from_git_repos(git_repos):
     }
     for role, git_repos in git_repos.items():
         for idx, git_repo in enumerate(git_repos):
-            if 'github' in git_repo:
-                atomFilePath = git_repo.replace('.git', '') + '/releases.atom'
-            elif ('gitlab' in git_repo or 'mau.dev' in git_repo):
-                atomFilePath = git_repo.replace('.git', '') + '/-/tags?format=atom'
-            elif 'git.zx2c4.com' in git_repo: # cgit
-                atomFilePath = git_repo + '/atom/'
-            elif 'framagit.org' in git_repo: # gitlab
-                atomFilePath = git_repo.replace('.git', '') + '/-/tags?format=atom'
-            elif 'git.osgeo.org' in git_repo: # gitea
-                atomFilePath = git_repo.replace('.git', '') + '.atom'
-            elif 'forgejo.ellis.link' in git_repo: # forgejo
-                atomFilePath = git_repo.rstrip('/') + '/atom/'
-            elif 'dev.funkwhale.audio' in git_repo: # gitlab
-                atomFilePath = git_repo.replace('.git', '') + '/-/tags?format=atom'
-            else:
+            host = get_hostname(git_repo)
+            rule = get_feed_rule_for_host(host)
+            if rule == 'radicle':
+                print('No Atom feed available for Radicle repo, skipping: %s' % git_repo)
+                continue
+            atomFilePath = build_feed_url(git_repo, rule, host)
+            if not atomFilePath:
                 print('Unrecognized git repository: %s' % git_repo)
                 continue
 
