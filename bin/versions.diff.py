@@ -50,7 +50,8 @@ def get_git_repos_from_files(file_paths):
             role_name = file.split('/')[3]
         role_name = role_name.removeprefix('matrix-bot-').removeprefix('matrix-bridge-').removeprefix('matrix-client-').removeprefix('matrix-').removeprefix('mautrix-')
         role_name = role_name.replace('-', '_').replace('_', ' ').title()
-        file_lines = open(file, 'r').readlines()
+        with open(file, 'r') as handle:
+            file_lines = handle.readlines()
         found_project_repo = False
         for line in file_lines:
             project_repo_val = ''
@@ -136,7 +137,8 @@ def get_version_diff(repo_path, old_branch, new_branch, file_path):
 
     old_content = old_version.data_stream.read().decode().splitlines()
     if new_commit == repo.head.commit:
-        new_content = open(file_path, 'r').read().splitlines()
+        with open(file_path, 'r') as handle:
+            new_content = handle.read().splitlines()
     else:
         new_content = new_version.data_stream.read().decode().splitlines()
 

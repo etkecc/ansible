@@ -69,7 +69,8 @@ def get_git_repos_from_files(file_paths, break_on_missing_repos=False):
     missing_repos = []
 
     for file in file_paths:
-        file_lines = open(file, 'r').readlines()
+        with open(file, 'r') as handle:
+            file_lines = handle.readlines()
         found_project_repo = False
         for line in file_lines:
             project_repo_val = ''
@@ -224,7 +225,7 @@ def dump_opml_file_from_feeds(feeds):
 
     body = ET.SubElement(opml, 'body')
     for role, feed_dict in feeds.items():
-        outline = ET.SubElement(body, 'outline', feed_dict)
+        ET.SubElement(body, 'outline', feed_dict)
 
     ET.indent(opml)
     tree._setroot(opml)

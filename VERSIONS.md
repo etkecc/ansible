@@ -32,7 +32,6 @@
 * Linkedin: latest
 * Livekit Jwt Service: 0.4.1
 * Livekit Server: v1.9.11
-* Ma1Sd: 2.5.0
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.6.0
 * Meta Instagram: v0.2512.0
