@@ -1,0 +1,124 @@
+# SPDX-FileCopyrightText: 2022 MDAD project contributors
+# SPDX-FileCopyrightText: 2022 Marko Weltzer
+# SPDX-FileCopyrightText: 2022 Nikita Chernyi
+# SPDX-FileCopyrightText: 2022 Sebastian Gumprich
+# SPDX-FileCopyrightText: 2022-2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2024 David Mehren
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Ensure Cinny paths exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0750"
+    owner: "{{ cinny_uid }}"
+    group: "{{ cinny_gid }}"
+  with_items:
+    - "{{ cinny_base_path }}"
+    - "{{ cinny_config_path }}"
+
+- name: Ensure Cinny support files installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/{{ item }}.j2"
+    dest: "{{ cinny_base_path }}/{{ item }}"
+    mode: "0640"
+    owner: "{{ cinny_uid }}"
+    group: "{{ cinny_gid }}"
+  with_items:
+    - env
+    - labels
+
+- name: Ensure Cinny nginx.conf installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/{{ item }}.j2"
+    dest: "{{ cinny_config_path }}/{{ item }}"
+    mode: "0640"
+    owner: "{{ cinny_uid }}"
+    group: "{{ cinny_gid }}"
+  with_items:
+    - nginx.conf
+
+- name: Ensure Cinny configuration installed
+  ansible.builtin.copy:
+    content: "{{ cinny_configuration | to_nice_json }}"
+    dest: "{{ cinny_config_path }}/config.json"
+    mode: "0640"
+    owner: "{{ cinny_uid }}"
+    group: "{{ cinny_gid }}"
+
+- name: Run if self-building of Cinny container image is not enabled
+  when: "not cinny_container_image_self_build | bool"
+  block:
+    - name: Ensure Cinny container image is pulled via community.docker.docker_image
+      when: devture_systemd_docker_base_container_image_pull_method == 'ansible-module'
+      community.docker.docker_image:
+        name: "{{ cinny_container_image }}"
+        source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+        force_source: "{{ cinny_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+        force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else cinny_container_image_force_pull }}"
+      register: result
+      retries: "{{ devture_playbook_help_container_retries_count }}"
+      delay: "{{ devture_playbook_help_container_retries_delay }}"
+      until: result is not failed
+
+    - name: Ensure Cinny container image is pulled via ansible.builtin.command
+      when: devture_systemd_docker_base_container_image_pull_method == 'command'
+      ansible.builtin.command:
+        cmd: "{{ devture_systemd_docker_base_host_command_docker }} pull {{ cinny_container_image }}"
+      register: result
+      retries: "{{ devture_playbook_help_container_retries_count }}"
+      delay: "{{ devture_playbook_help_container_retries_delay }}"
+      until: result is not failed
+      changed_when: "'Downloaded newer image' in result.stdout"
+
+- name: Run if self-building of Cinny container image is enabled
+  when: "cinny_container_image_self_build | bool"
+  block:
+    - name: Ensure Cinny repository is present on self-build
+      ansible.builtin.git:
+        repo: "{{ cinny_container_image_self_build_repo }}"
+        version: "{{ cinny_container_image_self_build_repo_version }}"
+        dest: "{{ cinny_container_image_self_build_src_files_path }}"
+        force: "yes"
+      register: cinny_git_pull_results
+
+    - name: Ensure Cinny container image is built
+      community.docker.docker_image:
+        name: "{{ cinny_container_image_self_build_name }}"
+        source: build
+        force_source: "{{ cinny_git_pull_results.changed if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+        force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else cinny_git_pull_results.changed }}"
+        build:
+          dockerfile: Dockerfile
+          path: "{{ cinny_container_image_self_build_src_files_path }}"
+          pull: true
+          args:
+
+- name: Ensure Cinny container network is created via community.docker.docker_network
+  when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+  community.docker.docker_network:
+    enable_ipv6: "{{ devture_systemd_docker_base_ipv6_enabled }}"
+    name: "{{ cinny_container_network }}"
+    driver: bridge
+    driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
+
+- name: Ensure Cinny container network is created via ansible.builtin.command
+  when: devture_systemd_docker_base_container_network_creation_method == 'command'
+  ansible.builtin.command:
+    cmd: >-
+      {{ devture_systemd_docker_base_host_command_docker }} network create
+      {% if devture_systemd_docker_base_ipv6_enabled %}--ipv6{% endif %}
+      {{ devture_systemd_docker_base_container_networks_driver_options_string }}
+      {{ cinny_container_network }}
+  register: network_creation_result
+  changed_when: network_creation_result.rc == 0
+  failed_when: network_creation_result.rc != 0 and 'already exists' not in network_creation_result.stderr
+
+- name: Ensure Cinny systemd service is present
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/systemd/cinny.service.j2"
+    dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ cinny_identifier }}.service"
+    mode: "0644"

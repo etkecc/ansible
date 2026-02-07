@@ -1,0 +1,35 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Perform Cinny installation tasks
+  when: cinny_enabled | bool
+  tags:
+    - setup-all
+    - setup-cinny
+    - install-all
+    - install-cinny
+  block:
+    - name: Validate Cinny configuration
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Install Cinny
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+
+- name: Perform Cinny self-check tasks
+  when: cinny_enabled | bool
+  tags:
+    - self-check-cinny
+  block:
+    - name: Run self-check for Cinny
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/self_check.yml"
+
+- name: Perform Cinny uninstallation tasks
+  when: not cinny_enabled | bool
+  tags:
+    - setup-all
+    - setup-cinny
+  block:
+    - name: Uninstall Cinny
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
