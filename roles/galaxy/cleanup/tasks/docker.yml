@@ -1,4 +1,12 @@
 ---
-- name: Ensure unused docker resources are removed
-  ansible.builtin.command: docker system prune -a -f --volumes
+- name: Ensure unused docker containers are removed
+  ansible.builtin.command: docker container prune -f
+  when: system_cleanup_docker | bool and 'start' in ansible_run_tags
+
+- name: Ensure unused docker images are removed
+  ansible.builtin.command: docker image prune -a -f
+  when: system_cleanup_docker | bool and 'start' in ansible_run_tags
+
+- name: Ensure unused docker volumes are removed
+  ansible.builtin.command: docker volume prune -f
   when: system_cleanup_docker | bool and 'start' in ansible_run_tags

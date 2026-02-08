@@ -1,5 +1,5 @@
 ---
-# run `docker system prune -a -f --volumes` to remove unused images and containers
+# run docker prune commands to remove unused containers, images, and volumes (networks are preserved)
 system_cleanup_docker: false
 
 # run `journalctl --vacuum-time=7d` to remove old logs

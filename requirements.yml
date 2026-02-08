@@ -2,7 +2,7 @@
 
 - include: upstream/requirements.yml
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-cleanup.git
-  version: main
+  version: v1.0.0-0
   name: cleanup
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-fail2ban.git
   version: main
