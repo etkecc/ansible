@@ -33,8 +33,6 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% if postgres_container_read_only_enabled %}
       --read-only \
       {% endif %}
-      --tmpfs=/tmp:rw,noexec,nosuid,size=100m \
-      --tmpfs=/run/postgresql:rw,noexec,nosuid,size=100m \
       --shm-size={{ postgres_container_shm_size }} \
       --network={{ postgres_container_network }} \
       {% if postgres_container_postgres_bind_port %}
@@ -45,11 +43,13 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% if postgres_container_mount_etc_passwd_enabled %}
       --mount type=bind,src=/etc/passwd,dst=/etc/passwd,ro \
       {% endif %}
+      --tmpfs=/tmp:rw,noexec,nosuid,size={{ postgres_container_tmpfs_tmp_size }} \
+      --tmpfs=/run/postgresql:rw,noexec,nosuid,size={{ postgres_container_tmpfs_run_size }} \
       {% for arg in postgres_container_extra_arguments %}
       {{ arg }} \
       {% endfor %}
       {{ postgres_container_image_to_use }} \
-      postgres {{ postgres_process_extra_arguments|join(' ') }}
+      postgres {{ postgres_process_extra_arguments | join(' ') }}
 
 {% for network in postgres_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ postgres_identifier }}

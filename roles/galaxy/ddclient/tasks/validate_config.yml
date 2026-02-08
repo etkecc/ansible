@@ -1,0 +1,31 @@
+# SPDX-FileCopyrightText: 2020 Scott Crossen
+# SPDX-FileCopyrightText: 2020-2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Fail if required ddclient settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`) for using this role.
+  when: "lookup('vars', item, default='') | string | length == 0"
+  with_items:
+    - ddclient_uid
+    - ddclient_gid
+    - ddclient_container_network
+
+- name: Fail if no ddclient configurations specified
+  ansible.builtin.fail:
+    msg: >-
+      You need to define at least one configuration in `ddclient_domain_configurations` for using ddclient.
+  when: "ddclient_domain_configurations | length == 0"
+
+- name: Fail if required ddclient settings not defined in configuration blocks
+  ansible.builtin.fail:
+    msg: >-
+      One of the configurations in ddclient_domain_configurations is missing a required key (domain, protocol).
+  when: "'domain' not in configuration or 'protocol' not in configuration"
+  with_items: "{{ ddclient_domain_configurations }}"
+  loop_control:
+    loop_var: configuration

@@ -25,7 +25,7 @@
   ansible.builtin.command:
     cmd: "{{ postgres_vacuum_run_command }}"
   async: "{{ postgres_vacuum_wait_time }}"
-  poll: 10
+  poll: "{{ postgres_vacuum_poll_interval }}"
   register: postgres_vacuum_result
   failed_when: not postgres_vacuum_result.finished or postgres_vacuum_result.rc != 0
   changed_when: postgres_vacuum_result.finished and postgres_vacuum_result.rc == 0

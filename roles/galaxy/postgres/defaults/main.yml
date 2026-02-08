@@ -1,3 +1,8 @@
+# SPDX-FileCopyrightText: 2023, 2024 Nikita Chernyi
+# SPDX-FileCopyrightText: 2023-2025 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 ---
 # Project source code URL: https://github.com/postgres/postgres
 
@@ -19,8 +24,8 @@ postgres_data_path: "{{ postgres_base_path }}/data"
 postgres_data_in_container_path: "/data"
 postgres_bin_path: "{{ postgres_base_path }}/bin"
 
-postgres_uid: ''
-postgres_gid: ''
+postgres_uid: ""
+postgres_gid: ""
 
 postgres_connection_hostname: "{{ postgres_identifier }}"
 postgres_connection_port: 5432
@@ -54,6 +59,9 @@ postgres_max_parallel_maintenance_workers: "{{ (4 if ansible_facts['processor_np
 postgres_work_mem_raw: "{{ ((postgres_memtotal_kb|int - postgres_shared_buffers|int)/(postgres_max_connections|int*3))/postgres_max_parallel_workers_per_gather|int }}"
 postgres_work_mem: "{{ 64 if postgres_work_mem_raw|int <= 64 else postgres_work_mem_raw|int }}"
 postgres_huge_pages: "{{ 'off' if postgres_memtotal_kb|int/1024/1024 < 32 else 'try' }}"
+
+# Poll interval (seconds) while waiting for vacuum async job completion
+postgres_vacuum_poll_interval: 2
 
 # postgres_initdb_args controls POSTGRES_INITDB_ARGS
 postgres_initdb_args: "{{ postgres_initdb_args_list | join(' ') }}"
@@ -234,8 +242,16 @@ postgres_container_cap_drop_all_enabled: true
 # which likely already exists in the host's /etc/passwd file.
 postgres_container_mount_etc_passwd_enabled: "{{ postgres_uid != 0 }}"
 
-# A list of extra arguments to pass to the container
-postgres_container_extra_arguments: []
+# Specify the size of the container's tmpfs volume (/tmp)
+postgres_container_tmpfs_tmp_size: 128m
+
+# Specify the size of the container's tmpfs volume (/run/postgresql)
+postgres_container_tmpfs_run_size: 128m
+
+# A list of extra arguments to pass to the container (`docker create` command)
+postgres_container_extra_arguments: "{{ postgres_container_extra_arguments_auto + postgres_container_extra_arguments_custom }}"
+postgres_container_extra_arguments_auto: []
+postgres_container_extra_arguments_custom: []
 
 postgres_postgres_process_extra_arguments_default: [
   "-c 'max_connections={{ postgres_max_connections|int }}'",
@@ -270,7 +286,7 @@ postgres_process_extra_arguments: "{{ postgres_postgres_process_extra_arguments_
 #
 # psql postgresql://username:password@localhost:<port>/database_name
 #
-# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:5432"), or empty string to not expose.
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
 postgres_container_postgres_bind_port: ""
 
 postgres_container_shm_size: "256m"

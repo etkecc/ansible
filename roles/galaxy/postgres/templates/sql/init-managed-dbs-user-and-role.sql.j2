@@ -1,0 +1,35 @@
+{% for managed_db in postgres_managed_databases %}
+-- `CREATE USER` does not support `IF NOT EXISTS`, so we use this workaround to prevent an error and raise a notice instead.
+-- Seen here: https://stackoverflow.com/a/49858797
+DO $$
+BEGIN
+  CREATE USER "{{ managed_db.username }}";
+  EXCEPTION WHEN DUPLICATE_OBJECT THEN
+  RAISE NOTICE 'not creating user "{{ managed_db.username }}", since it already exists';
+END
+$$;
+
+-- This is useful for initial user creation (since we don't assign a password above) and for handling subsequent password changes
+-- TODO - we should escape quotes in the password.
+ALTER ROLE "{{ managed_db.username }}" PASSWORD '{{ managed_db.password }}';
+
+-- `CREATE DATABASE` cannot run inside a transaction block and does not support `IF NOT EXISTS`.
+-- Use a meta-command to conditionally execute it only when missing, avoiding an ERROR that would fail the task after execution.
+SELECT format(
+  'CREATE DATABASE "%s" WITH LC_CTYPE %L LC_COLLATE %L OWNER "%s";',
+  '{{ managed_db.name }}',
+  '{{ postgres_default_lc_type }}',
+  '{{ postgres_default_lc_collate }}',
+  '{{ managed_db.username }}'
+)
+WHERE NOT EXISTS (
+  SELECT 1 FROM pg_database WHERE datname = '{{ managed_db.name }}'
+)
+\gexec
+
+-- This is useful for changing the database owner subsequently
+ALTER DATABASE "{{ managed_db.name }}" OWNER TO "{{ managed_db.username }}";
+
+{{ managed_db.additional_sql_queries | default([]) | join("\n") }}
+
+{% endfor %}

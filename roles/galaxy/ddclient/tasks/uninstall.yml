@@ -1,0 +1,45 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Check existence of ddclient systemd service
+  ansible.builtin.stat:
+    path: "{{ devture_systemd_docker_base_systemd_path }}/{{ ddclient_identifier }}.service"
+  register: ddclient_service_stat
+
+- name: Uninstall ddclient systemd services and files
+  when: ddclient_service_stat.stat.exists | bool
+  block:
+    - name: Ensure ddclient systemd service is stopped
+      ansible.builtin.service:
+        name: "{{ ddclient_identifier }}"
+        state: stopped
+        enabled: false
+        daemon_reload: true
+
+    - name: Ensure ddclient systemd service does not exist
+      ansible.builtin.file:
+        path: "{{ devture_systemd_docker_base_systemd_path }}/{{ ddclient_identifier }}.service"
+        state: absent
+
+    - name: Ensure ddclient container network does not exist via community.docker.docker_network
+      when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+      community.docker.docker_network:
+        name: "{{ ddclient_container_network }}"
+        state: absent
+
+    - name: Ensure ddclient container network does not exist via ansible.builtin.command
+      when: devture_systemd_docker_base_container_network_creation_method == 'command'
+      ansible.builtin.command:
+        cmd: >-
+          {{ devture_systemd_docker_base_host_command_docker }} network rm
+          {{ ddclient_container_network }}
+      register: network_deletion_result
+      changed_when: ddclient_container_network in network_deletion_result.stdout
+
+    - name: Ensure ddclient path does not exist
+      ansible.builtin.file:
+        path: "{{ ddclient_base_path }}"
+        state: absent

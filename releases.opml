@@ -28,10 +28,10 @@
     <outline text="continuwuity" title="continuwuity" type="rss" htmlUrl="https://forgejo.ellis.link/continuwuation/continuwuity/" xmlUrl="https://forgejo.ellis.link/continuwuation/continuwuity/atom/" />
     <outline text="corporal" title="corporal" type="rss" htmlUrl="https://github.com/devture/matrix-corporal" xmlUrl="https://github.com/devture/matrix-corporal/releases.atom" />
     <outline text="coturn" title="coturn" type="rss" htmlUrl="https://github.com/coturn/coturn" xmlUrl="https://github.com/coturn/coturn/releases.atom" />
+    <outline text="ddclient" title="ddclient" type="rss" htmlUrl="https://github.com/linuxserver/docker-ddclient" xmlUrl="https://github.com/linuxserver/docker-ddclient/releases.atom" />
     <outline text="dendrite" title="dendrite" type="rss" htmlUrl="https://github.com/matrix-org/dendrite" xmlUrl="https://github.com/matrix-org/dendrite/releases.atom" />
     <outline text="dimension" title="dimension" type="rss" htmlUrl="https://github.com/turt2live/matrix-dimension" xmlUrl="https://github.com/turt2live/matrix-dimension/releases.atom" />
     <outline text="draupnir" title="draupnir" type="rss" htmlUrl="https://github.com/the-draupnir-project/Draupnir" xmlUrl="https://github.com/the-draupnir-project/Draupnir/releases.atom" />
-    <outline text="dynamic-dns" title="dynamic-dns" type="rss" htmlUrl="https://github.com/linuxserver/docker-ddclient" xmlUrl="https://github.com/linuxserver/docker-ddclient/releases.atom" />
     <outline text="element" title="element" type="rss" htmlUrl="https://github.com/element-hq/element-web" xmlUrl="https://github.com/element-hq/element-web/releases.atom" />
     <outline text="element-admin" title="element-admin" type="rss" htmlUrl="https://github.com/element-hq/element-admin" xmlUrl="https://github.com/element-hq/element-admin/releases.atom" />
     <outline text="element-call" title="element-call" type="rss" htmlUrl="https://github.com/element-hq/element-call" xmlUrl="https://github.com/element-hq/element-call/releases.atom" />
