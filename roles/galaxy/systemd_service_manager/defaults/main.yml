@@ -27,8 +27,10 @@ devture_systemd_service_manager_services_list: "{{ devture_systemd_service_manag
 # Supported values:
 # - `clean-stop-start` - services are stopped cleanly (higher priority level stopped earlier) and then started (lower priority level started earlier)
 # - `one-by-one` - services are restarted one by one (lower priority level earlier)
+# - `priority-batched` - services are started/restarted in priority batches and queued without blocking inside each batch
 #
 # The `one-by-one` mode may decrease downtime, but is potentially less reliable and "clean".
+# The `priority-batched` mode queues all services within a priority level concurrently (non-blocking), then proceeds to the next priority level.
 devture_systemd_service_manager_service_restart_mode: clean-stop-start
 
 # devture_systemd_service_manager_services_autostart_enabled controls whether systemd services should auto-start when the system reboots

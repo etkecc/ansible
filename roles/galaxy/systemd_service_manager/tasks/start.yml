@@ -31,6 +31,25 @@
       with_items: "{{ devture_systemd_service_manager_services_list | sort (attribute='priority,name') }}"
       when: not ansible_check_mode
 
+- when: devture_systemd_service_manager_service_restart_mode == 'priority-batched'
+  block:
+    - name: Collect unique priorities for batched starts
+      ansible.builtin.set_fact:
+        devture_systemd_service_manager_priorities: >-
+          {{
+            (devture_systemd_service_manager_services_list | map(attribute='priority') | list)
+            | unique | sort
+          }}
+
+    - name: Start systemd services in priority batches
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/util/start_priority_batch.yml"
+      vars:
+        devture_systemd_service_manager_services_list_to_start: "{{ devture_systemd_service_manager_services_list }}"
+        devture_systemd_service_manager_target_state: started
+      loop: "{{ devture_systemd_service_manager_priorities }}"
+      loop_control:
+        loop_var: priority
+
 - when: devture_systemd_service_manager_up_verification_enabled | bool and not ansible_check_mode
   name: Verify that systemd services started successfully
   block:

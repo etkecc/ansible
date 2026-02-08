@@ -5,7 +5,7 @@ This is an [Ansible](https://www.ansible.com/) role which manages systemd servic
 
 ## Features
 
-- **starting** (restarting) services, in order, according to their `priority`. Services can all be stopped cleanly and then started anew, or they can be restarted one-by-one (see `devture_systemd_service_manager_service_restart_mode`)
+- **starting** (restarting) services, in order, according to their `priority`. Services can all be stopped cleanly and then started anew, restarted one-by-one, or started in priority batches without blocking (see `devture_systemd_service_manager_service_restart_mode`)
 
 - making services **auto-start** (see `devture_systemd_service_manager_services_autostart_enabled`)
 
@@ -15,7 +15,7 @@ This is an [Ansible](https://www.ansible.com/) role which manages systemd servic
 
 - starting/stopping all defined services, or a group of services (`--tags=restart-group`, `--tags=stop-group`)
 
-- restarting services by cleanly stopping them and restarting them, or one by one
+- restarting services by cleanly stopping them and restarting them, one by one, or by priority batches
 
 
 ## Usage
@@ -51,3 +51,8 @@ Example playbook invocations tags (e.g. `ansible-playbook -i inventory/hosts set
 
 - `stop-group` - stops services belonging to the specified group (e.g. `--extra-vars="group=core"`)
 
+Restart mode options for `devture_systemd_service_manager_service_restart_mode`:
+
+- `clean-stop-start` (default) - stops all services in reverse priority order, then starts them in priority order
+- `one-by-one` - restarts each service in priority order
+- `priority-batched` - starts/restarts services in priority batches and queues them without blocking inside each batch

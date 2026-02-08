@@ -4,4 +4,4 @@
   ansible.builtin.fail:
     msg: >-
       Invalid value: `{{ devture_systemd_service_manager_service_restart_mode }}`
-  when: "devture_systemd_service_manager_service_restart_mode not in ['clean-stop-start', 'one-by-one']"
+  when: "devture_systemd_service_manager_service_restart_mode not in ['clean-stop-start', 'one-by-one', 'priority-batched']"

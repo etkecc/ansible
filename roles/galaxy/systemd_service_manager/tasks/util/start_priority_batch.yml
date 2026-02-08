@@ -1,0 +1,21 @@
+---
+- name: Collect services for priority {{ priority }}
+  ansible.builtin.set_fact:
+    devture_systemd_service_manager_priority_services: >-
+      {{
+        devture_systemd_service_manager_services_list_to_start
+        | selectattr('priority', 'equalto', priority)
+        | sort(attribute='name')
+        | list
+      }}
+
+- name: Start systemd services for priority {{ priority }} without blocking
+  ansible.builtin.systemd:
+    name: "{{ item.name }}"
+    state: "{{ devture_systemd_service_manager_target_state }}"
+    enabled: "{{ devture_systemd_service_manager_services_autostart_enabled }}"
+    no_block: true
+  loop: "{{ devture_systemd_service_manager_priority_services }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: not ansible_check_mode

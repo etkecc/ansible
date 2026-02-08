@@ -53,7 +53,6 @@
     <outline text="linkding" title="linkding" type="rss" htmlUrl="https://github.com/sissbruecker/linkding" xmlUrl="https://github.com/sissbruecker/linkding/releases.atom" />
     <outline text="livekit-jwt-service" title="livekit-jwt-service" type="rss" htmlUrl="https://github.com/element-hq/lk-jwt-service" xmlUrl="https://github.com/element-hq/lk-jwt-service/releases.atom" />
     <outline text="livekit_server" title="livekit_server" type="rss" htmlUrl="https://github.com/livekit/livekit" xmlUrl="https://github.com/livekit/livekit/releases.atom" />
-    <outline text="ma1sd" title="ma1sd" type="rss" htmlUrl="https://github.com/ma1uta/ma1sd" xmlUrl="https://github.com/ma1uta/ma1sd/releases.atom" />
     <outline text="maubot" title="maubot" type="rss" htmlUrl="https://mau.dev/maubot/maubot" xmlUrl="https://mau.dev/maubot/maubot/-/tags?format=atom" />
     <outline text="mautrix-bluesky" title="mautrix-bluesky" type="rss" htmlUrl="https://github.com/mautrix/bluesky" xmlUrl="https://github.com/mautrix/bluesky/releases.atom" />
     <outline text="mautrix-discord" title="mautrix-discord" type="rss" htmlUrl="https://github.com/mautrix/discord" xmlUrl="https://github.com/mautrix/discord/releases.atom" />
