@@ -83,11 +83,40 @@
   ansible.builtin.set_fact:
     postgres_container_network_for_vacuuming: "{{ postgres_container_network_check_result.stdout }}"
 
-- name: Run Postgres vacuum against specified databases
-  ansible.builtin.include_tasks: "{{ role_path }}/tasks/util/vacuum_database.yml"
-  with_items: "{{ postgres_vacuum_databases_list }}"
-  loop_control:
-    loop_var: postgres_database_to_vacuum
+- name: Generate Postgres database vacuum command
+  ansible.builtin.set_fact:
+    postgres_vacuum_run_command: >-
+      {{ devture_systemd_docker_base_host_command_docker }} run
+      --rm
+      --name={{ postgres_identifier }}-vacuum
+      --user={{ postgres_container_uid }}:{{ postgres_container_gid }}
+      --cap-drop=ALL
+      --network={{ postgres_container_network_for_vacuuming }}
+      --env-file={{ postgres_base_path }}/env-postgres-psql
+      {{ postgres_detected_version_corresponding_container_image }}
+      /bin/sh -c 'for db in {{ postgres_vacuum_databases_list | join(" ") }}; do echo "VACUUM start: $db"; if ! psql -v ON_ERROR_STOP=1 -h {{ postgres_identifier }} "$db" -c "{{ postgres_vacuum_query }}"; then echo "VACUUM failed: $db"; exit 1; fi; echo "VACUUM done: $db"; done; echo "VACUUM completed for all databases"'
+
+- name: Note about Postgres vacuum alternative
+  ansible.builtin.debug:
+    msg: >-
+      Running vacuum against the databases `{{ postgres_vacuum_databases_list | join(", ") }}` with the following Postgres command:
+      `{{ postgres_vacuum_run_command }}`.
+      If this crashes, you can stop all processes which may use the database (`systemctl stop example.service another.service`),
+      start Postgres only (`systemctl start {{ postgres_identifier }}`)
+      and manually run the above command directly on the server.
+
+- name: Run Postgres vacuum command
+  ansible.builtin.command:
+    cmd: "{{ postgres_vacuum_run_command }}"
+  async: "{{ postgres_vacuum_wait_time }}"
+  poll: "{{ postgres_vacuum_poll_interval }}"
+  register: postgres_vacuum_result
+  failed_when: not postgres_vacuum_result.finished or postgres_vacuum_result.rc != 0
+  changed_when: postgres_vacuum_result.finished and postgres_vacuum_result.rc == 0
+
+# Intentionally show the results
+- ansible.builtin.debug:
+    var: "postgres_vacuum_result"
 
 - name: Ensure Postgres is stopped (if it previously was)
   when: postgres_ensure_started_result.changed | bool

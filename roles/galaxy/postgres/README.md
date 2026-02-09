@@ -27,7 +27,7 @@ Check [`defaults/main.yml`](defaults/main.yml) for the full list of supported op
 
 - **import data from SQLite, NeDB, etc**: this is an internal task (not exposed as a playbook tag), but the role supports using [pgloader](https://pgloader.io/) to load data into Postgres
 
-- **vacuum support**: you can vacuum the database using the `--tags=run-postgres-vacuum` tag
+- **vacuum support**: you can vacuum all configured databases in one run using the `--tags=run-postgres-vacuum` tag
 
 - **helpful scripts**:
   - get a `psql` interactive terminal via the `/base_path/bin/cli` and `/base_path/bin/cli-non-interactive` scripts
