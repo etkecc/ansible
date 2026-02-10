@@ -1,5 +1,5 @@
 * Alpine: edge
-* Baibot: v1.14.0
+* Baibot: v1.14.1
 * Bluesky: v0.2510.0
 * Borg: 1.4.3
 * Borgmatic: 2.1.1
@@ -9,7 +9,7 @@
 * Coturn: 4.8.0
 * Discord: v0.7.5
 * Draupnir: v2.9.0
-* Element: v1.12.9
+* Element: v1.12.10
 * Etherpad: 2.6.1
 * Exim Relay: 4.98.1-r0-2
 * Firezone: 0.7.36
@@ -37,7 +37,7 @@
 * Meta Instagram: v0.2512.0
 * Meta Messenger: v0.2512.0
 * Miniflux: 2.2.16
-* Ntfy: v2.16.0
+* Ntfy: v2.17.0
 * Peertube: v7.2.3
 * Postgres Container Image V10: 10.23
 * Postgres Container Image V11: 11.22
@@ -63,7 +63,7 @@
 * Static Files: 2.40.1
 * Steam Bridge: 1.1.0
 * Sygnal: v0.15.1
-* Synapse: v1.146.0
+* Synapse: v1.147.0
 * Synapse Admin: v0.11.1-etke53
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.0.3

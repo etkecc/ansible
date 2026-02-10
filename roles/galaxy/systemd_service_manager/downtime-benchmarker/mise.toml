@@ -1,0 +1,5 @@
+[tools]
+prek = "0.3.2"
+
+[settings]
+yes = true

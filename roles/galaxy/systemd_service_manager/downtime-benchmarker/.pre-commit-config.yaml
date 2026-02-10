@@ -1,0 +1,26 @@
+repos:
+  - repo: builtin
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: ['--maxkb=1024']
+
+  - repo: local
+    hooks:
+      - id: cargo-fmt-check
+        name: Cargo Format Check
+        entry: cargo fmt --all -- --check
+        language: system
+        files: '\.rs$'
+        pass_filenames: false
+
+      - id: cargo-clippy
+        name: Cargo Clippy
+        entry: cargo clippy -- -D warnings
+        language: system
+        files: '\.rs$'
+        pass_filenames: false
+        priority: 100

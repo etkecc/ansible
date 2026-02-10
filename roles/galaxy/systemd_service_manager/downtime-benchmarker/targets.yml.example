@@ -1,0 +1,23 @@
+targets:
+  - name: Example Website
+    type: http
+    args:
+      url: "https://example.com/"
+
+  - name: Other Health Endpoint
+    type: http
+    args:
+      url: "https://other.example.com/health"
+
+  - name: Kubernetes API
+    type: tcp
+    args:
+      host: "192.168.1.10"
+      port: 6443
+
+  # IPv6 example
+  - name: Kubernetes API (IPv6)
+    type: tcp
+    args:
+      host: "2001:db8::1"
+      port: 6443

@@ -28,10 +28,31 @@ devture_systemd_service_manager_services_list: "{{ devture_systemd_service_manag
 # - `clean-stop-start` - services are stopped cleanly (higher priority level stopped earlier) and then started (lower priority level started earlier)
 # - `one-by-one` - services are restarted one by one (lower priority level earlier)
 # - `priority-batched` - services are started/restarted in priority batches and queued without blocking inside each batch
+# - `all-at-once` - issues a single `systemctl restart svc1 svc2 ... svcN` command, letting systemd handle all restarts in one transaction
 #
 # The `one-by-one` mode may decrease downtime, but is potentially less reliable and "clean".
 # The `priority-batched` mode queues all services within a priority level concurrently (non-blocking), then proceeds to the next priority level.
-devture_systemd_service_manager_service_restart_mode: clean-stop-start
+#
+# For a detailed comparison of these modes with real-world downtime benchmarks,
+# see docs/restart-mode-comparison.md
+#
+# The `all-at-once` mode uses `ansible.builtin.command` to invoke `systemctl restart` (or `start`) with all service names
+# as arguments in a single call. This is necessary because Ansible's `service`/`systemd` modules only accept a single
+# service name (`name: type=str`), making it impossible to pass multiple services to them.
+#
+# systemd handles ordering via its own dependency graph (`After=`/`Before=` directives), not the CLI argument order,
+# so the order of service names on the command line does not matter. The call is blocking — `systemctl` waits for all
+# restarts to complete before returning.
+#
+# Error behavior differs from loop-based modes: if one service fails to restart, systemd still attempts all others
+# (unlike `one-by-one` or `clean-stop-start`, where Ansible stops the loop at first failure).
+# The verification step then catches individual failures.
+#
+# This mode is particularly useful when a VPN service (e.g., WireGuard) is among the managed services.
+# With `clean-stop-start`, the VPN is stopped during the stop phase, causing connectivity loss that prevents
+# the start phase from reaching the server. The `all-at-once` mode avoids this by letting systemd handle
+# the restart transaction internally on the server side.
+devture_systemd_service_manager_service_restart_mode: all-at-once
 
 # devture_systemd_service_manager_services_autostart_enabled controls whether systemd services should auto-start when the system reboots
 devture_systemd_service_manager_services_autostart_enabled: true

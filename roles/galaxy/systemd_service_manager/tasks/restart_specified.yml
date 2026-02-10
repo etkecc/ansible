@@ -67,6 +67,32 @@
       loop_control:
         loop_var: priority
 
+- when: devture_systemd_service_manager_service_restart_mode == 'all-at-once'
+  block:
+    - name: Build systemctl restart command for all services
+      ansible.builtin.set_fact:
+        devture_systemd_service_manager_all_at_once_restart_command: >-
+          systemctl restart
+          {{ devture_systemd_service_manager_services_list_to_work_with | sort(attribute='priority,name') | map(attribute='name') | join(' ') }}
+
+    - name: Show systemctl restart command
+      ansible.builtin.debug:
+        var: devture_systemd_service_manager_all_at_once_restart_command
+
+    - name: Restart all systemd services at once
+      ansible.builtin.command:
+        cmd: "{{ devture_systemd_service_manager_all_at_once_restart_command }}"
+      when: not ansible_check_mode
+
+    - name: Ensure systemd services are auto-started
+      ansible.builtin.command:
+        cmd: >-
+          systemctl enable
+          {{ devture_systemd_service_manager_services_list_to_work_with | map(attribute='name') | join(' ') }}
+      register: devture_systemd_service_manager_all_at_once_enable_result
+      changed_when: "devture_systemd_service_manager_all_at_once_enable_result.stdout | default('') != ''"
+      when: "not ansible_check_mode and devture_systemd_service_manager_services_autostart_enabled | bool"
+
 - when: devture_systemd_service_manager_up_verification_enabled | bool and devture_systemd_service_manager_services_list_to_work_with | length > 0
   name: Verify that systemd services started successfully
   block:
