@@ -510,8 +510,7 @@ matrix_synapse_auto_compressor_container_network: "{{ matrix_synapse_container_n
 #                                                                      #
 ########################################################################
 
-# Restarting services in batches leads to less downtime
-devture_systemd_service_manager_service_restart_mode: priority-batched
+devture_systemd_service_manager_service_restart_mode: all-at-once
 
 # We don't verify that services managed to start to decrease playbook runtime.
 # Prometheus will notify us about service failure.
