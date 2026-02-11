@@ -10,3 +10,4 @@
 * [Element](https://github.com/element-hq/element-web): [v1.12.9](https://github.com/element-hq/element-web/releases/tag/v1.12.9) ⇾ [v1.12.10](https://github.com/element-hq/element-web/releases/tag/v1.12.10)
 * [Ntfy](https://github.com/binwiederhier/ntfy): [v2.16.0](https://github.com/binwiederhier/ntfy/releases/tag/v2.16.0) ⇾ [v2.17.0](https://github.com/binwiederhier/ntfy/releases/tag/v2.17.0)
 * [Synapse](https://github.com/element-hq/synapse): [v1.146.0](https://github.com/element-hq/synapse/releases/tag/v1.146.0) ⇾ [v1.147.0](https://github.com/element-hq/synapse/releases/tag/v1.147.0)
+* [Vaultwarden](https://github.com/dani-garcia/vaultwarden): [1.35.2](https://github.com/dani-garcia/vaultwarden/releases/tag/1.35.2) ⇾ [1.35.3](https://github.com/dani-garcia/vaultwarden/releases/tag/1.35.3)

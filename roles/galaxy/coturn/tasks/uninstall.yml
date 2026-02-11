@@ -1,0 +1,56 @@
+# SPDX-FileCopyrightText: 2021-2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2022 Marko Weltzer
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Check existence of coturn systemd service
+  ansible.builtin.stat:
+    path: "{{ devture_systemd_docker_base_systemd_path }}/{{ coturn_identifier }}.service"
+  register: coturn_service_stat
+
+- name: Check existence of coturn reload systemd service
+  ansible.builtin.stat:
+    path: "{{ devture_systemd_docker_base_systemd_path }}/{{ coturn_identifier }}-reload.service"
+  register: coturn_reload_service_stat
+
+- name: Uninstall coturn systemd services and files
+  when: coturn_service_stat.stat.exists | bool
+  block:
+    - name: Ensure coturn systemd service is stopped
+      ansible.builtin.service:
+        name: "{{ coturn_identifier }}"
+        state: stopped
+        enabled: false
+        daemon_reload: true
+
+    - name: Ensure coturn systemd service does not exist
+      ansible.builtin.file:
+        path: "{{ devture_systemd_docker_base_systemd_path }}/{{ coturn_identifier }}.service"
+        state: absent
+
+    - name: Uninstall coturn reload systemd services and files
+      when: coturn_reload_service_stat.stat.exists | bool
+      block:
+        - name: Ensure coturn reload systemd service is stopped
+          ansible.builtin.service:
+            name: "{{ coturn_identifier }}-reload"
+            state: stopped
+            enabled: false
+            daemon_reload: true
+
+        - name: Ensure coturn reload systemd service does not exist
+          ansible.builtin.file:
+            path: "{{ devture_systemd_docker_base_systemd_path }}/{{ coturn_identifier }}-reload.service"
+            state: absent
+
+        - name: Ensure coturn reload timer does not exist
+          ansible.builtin.file:
+            path: "{{ devture_systemd_docker_base_systemd_path }}/{{ coturn_identifier }}-reload.timer"
+            state: absent
+
+    - name: Ensure coturn path does not exist
+      ansible.builtin.file:
+        path: "{{ coturn_base_path }}"
+        state: absent

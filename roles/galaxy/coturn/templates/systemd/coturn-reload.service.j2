@@ -1,0 +1,12 @@
+{#
+SPDX-FileCopyrightText: 2021 - 2022 Slavi Pantaleev
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+#}
+
+[Unit]
+Description=Reloads coturn so that new SSL certificates can kick in
+
+[Service]
+Type=oneshot
+ExecStart={{ devture_systemd_docker_base_host_command_systemctl }} reload {{ coturn_identifier }}.service

@@ -1,0 +1,179 @@
+# SPDX-FileCopyrightText: 2018-2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2019 Dan Arnfield
+# SPDX-FileCopyrightText: 2019, 2020 MDAD project contributors
+# SPDX-FileCopyrightText: 2020 Béla Becker
+# SPDX-FileCopyrightText: 2020 Chris van Dijk
+# SPDX-FileCopyrightText: 2020 Horvath Gergely
+# SPDX-FileCopyrightText: 2022 Marko Weltzer
+# SPDX-FileCopyrightText: 2022 Nikita Chernyi
+# SPDX-FileCopyrightText: 2022 Sebastian Gumprich
+# SPDX-FileCopyrightText: 2024 David Mehren
+# SPDX-FileCopyrightText: 2024-2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Run if the external IP address auto-detection feature is enabled
+  when: coturn_turn_external_ip_address_auto_detection_enabled | bool
+  block:
+    - name: Fail if enabled, but echoip service URL unset
+      when: coturn_turn_external_ip_address_auto_detection_echoip_service_url == ''
+      ansible.builtin.fail:
+        msg: "To use the external IP address auto-detection feature, you need to set coturn_turn_external_ip_address_auto_detection_echoip_service_url"
+
+    # Note:
+    # `ansible.builtin.uri` does not provide a way to configure whether IPv4 or IPv6 is used.
+    # Luckily, the default instance we use does not define AAAA records for now, so it's always IPv4.
+    - name: Fetch IP address information from echoip service
+      ansible.builtin.uri:
+        url: "{{ coturn_turn_external_ip_address_auto_detection_echoip_service_url }}"
+        headers:
+          Content-Type: application/json
+        follow_redirects: none
+        validate_certs: "{{ coturn_turn_external_ip_address_auto_detection_echoip_validate_certs }}"
+      register: result_coturn_turn_external_ip_address_auto_detection_echoip_response
+      ignore_errors: true
+      check_mode: false
+      retries: "{{ coturn_turn_external_ip_address_auto_detection_echoip_service_retries_count }}"
+      delay: "{{ coturn_turn_external_ip_address_auto_detection_echoip_service_retries_delay }}"
+      until: not result_coturn_turn_external_ip_address_auto_detection_echoip_response.failed
+
+    - name: Fail if echoip service failed
+      when: "(result_coturn_turn_external_ip_address_auto_detection_echoip_response.failed or 'json' not in result_coturn_turn_external_ip_address_auto_detection_echoip_response)"
+      ansible.builtin.fail:
+        msg: "Failed contacting echoip service API at `{{ coturn_turn_external_ip_address_auto_detection_echoip_service_url }}` (controlled by `coturn_turn_external_ip_address_auto_detection_echoip_service_url`). Full error: {{ result_coturn_turn_external_ip_address_auto_detection_echoip_response }}"
+
+    - name: Set fact for coturn TURN external IP address
+      ansible.builtin.set_fact:
+        coturn_turn_external_ip_address: "{{ result_coturn_turn_external_ip_address_auto_detection_echoip_response.json.ip }}"
+
+- name: Ensure coturn paths exist
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: "0750"
+    owner: "{{ coturn_uid }}"
+    group: "{{ coturn_gid }}"
+  with_items:
+    - { path: "{{ coturn_base_path }}", when: true }
+    - { path: "{{ coturn_container_image_self_build_src_files_path }}", when: "{{ coturn_container_image_self_build }}" }
+  when: "item.when | bool"
+
+- name: Ensure coturn support file installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/{{ item }}.j2"
+    dest: "{{ coturn_base_path }}/{{ item }}"
+    mode: "0640"
+    owner: "{{ coturn_uid }}"
+    group: "{{ coturn_gid }}"
+  with_items:
+    - env
+
+- name: Ensure coturn turnserver.conf installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/turnserver.conf.j2"
+    dest: "{{ coturn_config_path }}"
+    mode: "0644"
+    owner: "{{ coturn_uid }}"
+    group: "{{ coturn_gid }}"
+
+- name: Run if self-building of coturn container image is not enabled
+  when: "not coturn_container_image_self_build | bool"
+  block:
+    - name: Ensure coturn container image is pulled via community.docker.docker_image
+      when: devture_systemd_docker_base_container_image_pull_method == 'ansible-module'
+      community.docker.docker_image:
+        name: "{{ coturn_container_image }}"
+        source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+        force_source: "{{ coturn_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+        force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else coturn_container_image_force_pull }}"
+      register: result
+      retries: "{{ devture_playbook_help_container_retries_count }}"
+      delay: "{{ devture_playbook_help_container_retries_delay }}"
+      until: result is not failed
+
+    - name: Ensure coturn container image is pulled via ansible.builtin.command
+      when: devture_systemd_docker_base_container_image_pull_method == 'command'
+      ansible.builtin.command:
+        cmd: "{{ devture_systemd_docker_base_host_command_docker }} pull {{ coturn_container_image }}"
+      register: result
+      retries: "{{ devture_playbook_help_container_retries_count }}"
+      delay: "{{ devture_playbook_help_container_retries_delay }}"
+      until: result is not failed
+      changed_when: "'Downloaded newer image' in result.stdout"
+
+- name: Run if self-building of coturn container image is enabled
+  when: "coturn_container_image_self_build | bool"
+  block:
+    - name: Ensure coturn repository is present on self-build
+      ansible.builtin.git:
+        repo: "{{ coturn_container_image_self_build_repo }}"
+        dest: "{{ coturn_container_image_self_build_src_files_path }}"
+        version: "{{ coturn_container_image_self_build_repo_version }}"
+        force: "yes"
+      become: true
+      become_user: "{{ coturn_uid }}"
+      register: coturn_git_pull_results
+
+    - name: Ensure coturn container image is built
+      community.docker.docker_image:
+        name: "{{ coturn_container_image_self_build_name }}"
+        source: build
+        force_source: "{{ coturn_git_pull_results.changed if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+        force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else coturn_git_pull_results.changed }}"
+        build:
+          dockerfile: "{{ coturn_container_image_self_build_repo_dockerfile_path }}"
+          path: "{{ coturn_container_image_self_build_src_files_path }}"
+          pull: true
+          args:
+
+- name: Ensure coturn network is created in Docker
+  when: coturn_container_network not in ['', 'host']
+  block:
+    - name: Ensure coturn container network is created via community.docker.docker_network
+      when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+      community.docker.docker_network:
+        enable_ipv6: "{{ devture_systemd_docker_base_ipv6_enabled }}"
+        name: "{{ coturn_container_network }}"
+        driver: bridge
+        driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
+
+    - name: Ensure coturn container network is created via ansible.builtin.command
+      when: devture_systemd_docker_base_container_network_creation_method == 'command'
+      ansible.builtin.command:
+        cmd: >-
+          {{ devture_systemd_docker_base_host_command_docker }} network create
+          {% if devture_systemd_docker_base_ipv6_enabled %}--ipv6{% endif %}
+          {{ devture_systemd_docker_base_container_networks_driver_options_string }}
+          {{ coturn_container_network }}
+      register: network_creation_result
+      changed_when: network_creation_result.rc == 0
+
+- name: Ensure coturn systemd service is present
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/systemd/coturn.service.j2"
+    dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ coturn_identifier }}.service"
+    mode: "0644"
+
+# This may be unnecessary when more long-lived certificates are used.
+# We optimize for the common use-case though (short-lived Let's Encrypt certificates).
+# Reloading doesn't hurt anyway, so there's no need to make this more flexible.
+- name: Ensure reloading systemd units installed, if necessary
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/systemd/coturn-reload.{{ item }}.j2"
+    dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ coturn_identifier }}-reload.{{ item }}"
+    mode: "0644"
+  when: "coturn_tls_enabled | bool"
+  with_items:
+    - service
+    - timer
+
+# A similar task exists in `uninstall.yml`
+- name: Ensure reloading systemd units uninstalled, if unnecessary
+  ansible.builtin.file:
+    path: "{{ devture_systemd_docker_base_systemd_path }}/{{ coturn_identifier }}-reload.{{ item }}"
+    state: absent
+  when: "not coturn_tls_enabled | bool"
+  with_items:
+    - service
+    - timer

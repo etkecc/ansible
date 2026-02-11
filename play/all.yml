@@ -101,7 +101,7 @@
     # END MATRIX
 
     # MATRIX
-    - custom/matrix-coturn
+    - galaxy/coturn
     # - custom/matrix-media-repo # unused
     - galaxy/auxiliary
     - galaxy/livekit_server

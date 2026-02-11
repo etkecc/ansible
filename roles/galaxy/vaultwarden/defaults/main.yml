@@ -22,7 +22,7 @@ vaultwarden_data_path: "{{ vaultwarden_base_path }}/data"
 vaultwarden_ephemeral_path: "{{ vaultwarden_base_path }}/ephemeral"
 
 # renovate: datasource=docker depName=ghcr.io/dani-garcia/vaultwarden versioning=semver
-vaultwarden_version: 1.35.2
+vaultwarden_version: 1.35.3
 
 vaultwarden_uid: ""
 vaultwarden_gid: ""
@@ -30,7 +30,7 @@ vaultwarden_gid: ""
 # The hostname at which Vaultwarden is served.
 vaultwarden_hostname: ""
 
-# vaultwarden_path_prefix controls the URL prefix where Vaultwarden will be exposed to.
+# The path at which Vaultwarden is served.
 #
 # By default (`/` prefix), it's accessible at `https://VAULTWARDEN_DOMAIN/`,
 # but you can use another prefix for additional security.
@@ -53,7 +53,7 @@ vaultwarden_container_image_self_build_repo_version: "{{ vaultwarden_version if 
 vaultwarden_container_image_self_build_src_files_path: "{{ vaultwarden_base_path }}/docker-src"
 vaultwarden_container_image_self_build_environment_buildplatform: linux/amd64
 
-# Controls whether the container exposes its HTTP port (tcp/8080 in the container).
+# Specify how the container publishes its HTTP port (as defined by `vaultwarden_container_network`).
 #
 # Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
 vaultwarden_container_http_bind_port: ""
@@ -62,12 +62,8 @@ vaultwarden_container_http_bind_port: ""
 vaultwarden_container_network: "{{ vaultwarden_identifier }}"
 
 # A list of additional container networks that the container would be connected to.
-# The playbook does not create these networks, so make sure they already exist.
-#
-# Use this to expose this container to another reverse proxy, which runs in a different container network,
-# without exposing all other container services to that other reverse-proxy.
-#
-# For background, see: https://github.com/spantaleev/matrix-docker-ansible-deploy/issues/1498
+# The role does not create these networks, so make sure they already exist.
+# Use this to expose this container to another reverse proxy, which runs in a different container network.
 vaultwarden_container_additional_networks: "{{ vaultwarden_container_additional_networks_auto + vaultwarden_container_additional_networks_custom }}"
 # vaultwarden_container_additional_networks_auto is reserved for usage by the playbook.
 # Your custom networks should go into vaultwarden_container_additional_networks_custom.
@@ -77,7 +73,7 @@ vaultwarden_container_additional_networks_custom: []
 # vaultwarden_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
 # See `../templates/labels.j2` for details.
 #
-# To inject your own other container labels, see `vaultwarden_container_labels_additional_labels`.
+# To inject your own other container labels, see `vaultwarden_container_labels_additional_labels_custom`.
 vaultwarden_container_labels_traefik_enabled: true
 vaultwarden_container_labels_traefik_docker_network: "{{ vaultwarden_container_network }}"
 vaultwarden_container_labels_traefik_hostname: "{{ vaultwarden_hostname }}"
@@ -125,6 +121,9 @@ vaultwarden_container_labels_traefik_additional_response_headers_custom: {}
 vaultwarden_container_labels_additional_labels: "{{ vaultwarden_container_labels_additional_labels_auto + vaultwarden_container_labels_additional_labels_custom }}"
 vaultwarden_container_labels_additional_labels_auto: []
 vaultwarden_container_labels_additional_labels_custom: []
+
+# Specify the size of the container's tmpfs volume
+vaultwarden_container_tmpfs_tmp_size: 128m
 
 # A list of extra arguments to pass to the container (`docker create` command)
 vaultwarden_container_extra_arguments: "{{ vaultwarden_container_extra_arguments_auto + vaultwarden_container_extra_arguments_custom }}"

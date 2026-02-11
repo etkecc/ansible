@@ -1,0 +1,30 @@
+# SPDX-FileCopyrightText: 2019 - 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2019 Dan Arnfield
+# SPDX-FileCopyrightText: 2022 Marko Weltzer
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Perform coturn installation tasks
+  when: coturn_enabled | bool
+  tags:
+    - setup-all
+    - setup-coturn
+    - install-all
+    - install-coturn
+  block:
+    - name: Validate coturn configuration
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Install coturn
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+
+- name: Perform coturn uninstallation tasks
+  when: not coturn_enabled | bool
+  tags:
+    - setup-all
+    - setup-coturn
+  block:
+    - name: Uninstall coturn
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
