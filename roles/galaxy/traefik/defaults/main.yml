@@ -18,7 +18,7 @@ traefik_ssl_dir_path: "{{ traefik_base_path }}/ssl"
 traefik_plugins_dir_path: "{{ traefik_base_path }}/plugins-storage"
 
 # renovate: datasource=docker depName=library/traefik versioning=semver
-traefik_version: v3.6.7
+traefik_version: v3.6.8
 
 traefik_uid: ""
 traefik_gid: ""
@@ -30,24 +30,24 @@ traefik_container_image_registry_prefix_upstream: "{{ traefik_container_image_re
 traefik_container_image_registry_prefix_upstream_default: docker.io/
 traefik_container_image_force_pull: "{{ traefik_container_image.endswith(':latest') }}"
 
-# Specifies how the container publishes its web port
+# Specify how the container publishes its web port
 #
-# Takes an "<ip>:<port>" value (e.g. "127.0.0.1:80"), just a port number or an empty string to not expose.
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:80"), just a port number or an empty string to not expose.
 traefik_container_web_host_bind_port: "{{ traefik_config_entrypoint_web_port if traefik_config_entrypoint_web_enabled else '' }}"
 
-# Specifies how the container publishes its TCP web-secure port
+# Specify how the container publishes its TCP web-secure port
 #
-# Takes an "<ip>:<port>" value (e.g. "127.0.0.1:443"), just a port number or an empty string to not expose.
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:443"), just a port number or an empty string to not expose.
 traefik_container_web_secure_host_bind_port: "{{ traefik_config_entrypoint_web_secure_port if traefik_config_entrypoint_web_secure_enabled else '' }}"
 
-# Specifies how the container publishes its UDP web-secure port
+# Specify how the container publishes its UDP web-secure port
 #
-# Takes an "<ip>:<port>" value (e.g. "127.0.0.1:443"), just a port number or an empty string to not expose.
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:443"), just a port number or an empty string to not expose.
 traefik_container_web_secure_host_bind_port_udp: "{{ traefik_config_entrypoint_web_secure_http3_config_advertisedPort if traefik_config_entrypoint_web_secure_enabled and traefik_config_entrypoint_web_secure_http3_enabled else '' }}"
 
-# Specifies how the container publishes its metrics port
+# Specify how the container publishes its metrics port
 #
-# Takes an "<ip>:<port>" value (e.g. "127.0.0.1:8082"), just a port number or an empty string to not expose.
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:8082"), just a port number or an empty string to not expose.
 traefik_container_metrics_host_bind_port: "{{ traefik_config_entrypoint_metrics_port if traefik_config_entrypoint_metrics_enabled else '' }}"
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
@@ -287,6 +287,42 @@ traefik_config_entrypoint_metrics_forwardedHeaders_trustedIPs: []
 # Controls `forwardedHeaders.insecure` for this entrypoint.
 # Also see: `traefik_config_entrypoint_metrics_forwardedHeaders_trustedIPs`
 traefik_config_entrypoint_metrics_forwardedHeaders_insecure: false
+
+# Controls whether the health entrypoint is enabled.
+# When enabled, Traefik's built-in `ping` feature (https://doc.traefik.io/traefik/reference/install-configuration/observability/healthcheck/)
+# is activated on a dedicated internal entrypoint (not exposed to the host).
+# Traefik will respond to /ping requests on this entrypoint with a 200 OK when it's ready.
+# This is used by the systemd ExecStartPost health check (see traefik_systemd_healthcheck_enabled)
+# to verify Traefik is ready before dependent services start.
+traefik_config_entrypoint_health_enabled: true
+traefik_config_entrypoint_health_name: health
+traefik_config_entrypoint_health_port_in_container: 7777
+traefik_config_entrypoint_health_address: ":{{ traefik_config_entrypoint_health_port_in_container }}"
+
+# Controls the post-start health check in the systemd service.
+# When enabled, ExecStartPost polls Traefik's /ping endpoint, keeping the service
+# in "activating (start-post)" state until Traefik is ready.
+# Services with After=traefik.service will properly wait.
+traefik_systemd_healthcheck_enabled: "{{ traefik_config_entrypoint_health_enabled }}"
+traefik_systemd_healthcheck_max_retries: 30
+traefik_systemd_healthcheck_interval_seconds: 1
+
+# The command used for the health check in ExecStartPost.
+# Uses `docker exec` + `wget` (available in Alpine-based Traefik images) to poll /ping.
+traefik_systemd_healthcheck_command: >-
+  {{ devture_systemd_docker_base_host_command_sh }} -c
+  'for i in $(seq 1 {{ traefik_systemd_healthcheck_max_retries }}); do
+  echo "[Attempt $i/{{ traefik_systemd_healthcheck_max_retries }}] Traefik systemd health check: checking readiness via /ping..";
+  {{ devture_systemd_docker_base_host_command_docker }} exec {{ traefik_identifier }}
+  wget -q --spider http://127.0.0.1:{{ traefik_config_entrypoint_health_port_in_container }}/ping && echo "[Attempt $i/{{ traefik_systemd_healthcheck_max_retries }}] Traefik systemd health check: passed" && exit 0;
+  echo "[Attempt $i/{{ traefik_systemd_healthcheck_max_retries }}] Traefik systemd health check: not ready yet, retrying in {{ traefik_systemd_healthcheck_interval_seconds }}s..";
+  sleep {{ traefik_systemd_healthcheck_interval_seconds }};
+  done; echo "[Attempt $i/{{ traefik_systemd_healthcheck_max_retries }}] Traefik systemd health check: failed after {{ traefik_systemd_healthcheck_max_retries }} attempts"; exit 1'
+
+# Controls the `providers.providersThrottleDuration` configuration option (in seconds).
+# This is the duration Traefik waits after a configuration change before applying it, to batch rapid changes.
+# See: https://doc.traefik.io/traefik/v3.3/providers/overview/#providersprovidersthrottleduration
+traefik_config_providers_providersThrottleDuration_seconds: 2
 
 # Controls the `providers.docker.network` configuration option.
 traefik_config_providers_docker_network: "{{ traefik_container_network }}"

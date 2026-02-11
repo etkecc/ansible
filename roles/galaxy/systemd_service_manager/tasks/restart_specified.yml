@@ -113,12 +113,15 @@
     - name: Fail if service isn't detected to be running
       ansible.builtin.fail:
         msg: >-
-          {{ item }} was not detected to be running.
+          {{ item }} was not detected to be running
+          (actual state: {{ ansible_facts.services[item].state | default('unknown/not-found-in-service-facts') }}).
           It's possible that there's a configuration problem or another service on your server interferes with it (uses the same ports, etc.).
           Try running `systemctl status {{ item }}` and `journalctl -fu {{ item }}` on the server to investigate.
           If you're on a slow or overloaded server, it may be that services take a longer time to start and that this error is a false-positive.
           You can consider raising the value of the `devture_systemd_service_manager_up_verification_delay_seconds` variable.
-          See `{{ role_path }}/defaults/main.yml` for more details about that.
+          The current restart mode is `{{ devture_systemd_service_manager_service_restart_mode }}`
+          and the wait time before checking was {{ devture_systemd_service_manager_up_verification_delay_seconds }} seconds.
+          See `{{ role_path }}/defaults/main.yml` for more details.
       with_items: "{{ devture_systemd_service_manager_services_list_to_work_with | sort (attribute='priority,name') | map(attribute='name') }}"
       when:
         - "item.endswith('.service') and (ansible_facts.services[item] | default(none) is none or ansible_facts.services[item].state != 'running')"
