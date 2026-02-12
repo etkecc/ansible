@@ -67,7 +67,7 @@
       loop_control:
         loop_var: priority
 
-- when: devture_systemd_service_manager_service_restart_mode == 'all-at-once'
+- when: "devture_systemd_service_manager_service_restart_mode == 'all-at-once' and devture_systemd_service_manager_services_list_to_work_with | length > 0"
   block:
     - name: Build systemctl restart command for all services
       ansible.builtin.set_fact:
