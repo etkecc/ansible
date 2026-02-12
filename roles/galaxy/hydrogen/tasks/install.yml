@@ -1,0 +1,134 @@
+# SPDX-FileCopyrightText: 2022 MDAD project contributors
+# SPDX-FileCopyrightText: 2022 Marko Weltzer
+# SPDX-FileCopyrightText: 2022 Nikita Chernyi
+# SPDX-FileCopyrightText: 2022 Sebastian Gumprich
+# SPDX-FileCopyrightText: 2022-2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2024 David Mehren
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Ensure Hydrogen paths exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0750"
+    owner: "{{ hydrogen_uid }}"
+    group: "{{ hydrogen_gid }}"
+  with_items:
+    - "{{ hydrogen_base_path }}"
+    - "{{ hydrogen_config_path }}"
+
+- name: Ensure Hydrogen support files installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/{{ item }}.j2"
+    dest: "{{ hydrogen_base_path }}/{{ item }}"
+    mode: "0640"
+    owner: "{{ hydrogen_uid }}"
+    group: "{{ hydrogen_gid }}"
+  with_items:
+    - env
+    - labels
+
+- name: Ensure Hydrogen nginx.conf installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/{{ item }}.j2"
+    dest: "{{ hydrogen_config_path }}/{{ item }}"
+    mode: "0640"
+    owner: "{{ hydrogen_uid }}"
+    group: "{{ hydrogen_gid }}"
+  with_items:
+    - nginx.conf
+
+- name: Ensure Hydrogen configuration installed
+  ansible.builtin.copy:
+    content: "{{ hydrogen_configuration | to_nice_json }}"
+    dest: "{{ hydrogen_config_path }}/config.json"
+    mode: "0640"
+    owner: "{{ hydrogen_uid }}"
+    group: "{{ hydrogen_gid }}"
+
+- name: Run if self-building of Hydrogen container image is not enabled
+  when: "not hydrogen_container_image_self_build | bool"
+  block:
+    - name: Ensure Hydrogen container image is pulled via community.docker.docker_image
+      when: devture_systemd_docker_base_container_image_pull_method == 'ansible-module'
+      community.docker.docker_image:
+        name: "{{ hydrogen_container_image }}"
+        source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+        force_source: "{{ hydrogen_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+        force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else hydrogen_container_image_force_pull }}"
+      register: result
+      retries: "{{ devture_playbook_help_container_retries_count }}"
+      delay: "{{ devture_playbook_help_container_retries_delay }}"
+      until: result is not failed
+
+    - name: Ensure Hydrogen container image is pulled via ansible.builtin.command
+      when: devture_systemd_docker_base_container_image_pull_method == 'command'
+      ansible.builtin.command:
+        cmd: "{{ devture_systemd_docker_base_host_command_docker }} pull {{ hydrogen_container_image }}"
+      register: result
+      retries: "{{ devture_playbook_help_container_retries_count }}"
+      delay: "{{ devture_playbook_help_container_retries_delay }}"
+      until: result is not failed
+      changed_when: "'Downloaded newer image' in result.stdout"
+
+- name: Run if self-building of Hydrogen container image is enabled
+  when: "hydrogen_container_image_self_build | bool"
+  block:
+    - name: Ensure Hydrogen repository is present on self-build
+      ansible.builtin.git:
+        repo: "{{ hydrogen_container_image_self_build_repo }}"
+        version: "{{ hydrogen_container_image_self_build_repo_version }}"
+        dest: "{{ hydrogen_container_image_self_build_src_files_path }}"
+        force: "yes"
+      register: hydrogen_git_pull_results
+
+    - name: Check if Hydrogen container image exists to avoid recreating the same one
+      ansible.builtin.command: "{{ devture_systemd_docker_base_host_command_docker }} images --quiet --filter 'reference={{ hydrogen_container_image }}'"
+      register: hydrogen_container_image_check_result
+      changed_when: false
+
+    # Invoking the `docker build` command here, instead of calling the `docker_image` Ansible module,
+    # because the latter does not support BuildKit.
+    # See: https://github.com/ansible-collections/community.general/issues/514
+    - name: Ensure Hydrogen container image is built
+      ansible.builtin.shell:
+        chdir: "{{ hydrogen_container_image_self_build_src_files_path }}"
+        cmd: |
+          {{ devture_systemd_docker_base_host_command_docker }} build \
+          -t "{{ hydrogen_container_image_self_build_name }}" \
+          -f Dockerfile \
+          .
+      environment:
+        DOCKER_BUILDKIT: "1"
+      register: result
+      changed_when: "'Successfully built' in result.stdout or ('writing image' in result.stderr and 'CACHED' not in result.stderr)"
+      when: "hydrogen_git_pull_results.changed | bool or hydrogen_container_image_check_result.stdout == ''"
+
+- name: Ensure Hydrogen container network is created via community.docker.docker_network
+  when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+  community.docker.docker_network:
+    enable_ipv6: "{{ devture_systemd_docker_base_ipv6_enabled }}"
+    name: "{{ hydrogen_container_network }}"
+    driver: bridge
+    driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
+
+- name: Ensure Hydrogen container network is created via ansible.builtin.command
+  when: devture_systemd_docker_base_container_network_creation_method == 'command'
+  ansible.builtin.command:
+    cmd: >-
+      {{ devture_systemd_docker_base_host_command_docker }} network create
+      {% if devture_systemd_docker_base_ipv6_enabled %}--ipv6{% endif %}
+      {{ devture_systemd_docker_base_container_networks_driver_options_string }}
+      {{ hydrogen_container_network }}
+  register: network_creation_result
+  changed_when: network_creation_result.rc == 0
+  failed_when: network_creation_result.rc != 0 and 'already exists' not in network_creation_result.stderr
+
+- name: Ensure Hydrogen systemd service is present
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/systemd/hydrogen.service.j2"
+    dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ hydrogen_identifier }}.service"
+    mode: "0644"

@@ -1,0 +1,35 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Perform Hydrogen installation tasks
+  when: hydrogen_enabled | bool
+  tags:
+    - setup-all
+    - setup-hydrogen
+    - install-all
+    - install-hydrogen
+  block:
+    - name: Validate Hydrogen configuration
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Install Hydrogen
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+
+- name: Perform Hydrogen self-check tasks
+  when: hydrogen_enabled | bool
+  tags:
+    - self-check-hydrogen
+  block:
+    - name: Run self-check for Hydrogen
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/self_check.yml"
+
+- name: Perform Hydrogen uninstallation tasks
+  when: not hydrogen_enabled | bool
+  tags:
+    - setup-all
+    - setup-hydrogen
+  block:
+    - name: Uninstall Hydrogen
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

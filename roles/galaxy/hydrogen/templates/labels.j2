@@ -1,0 +1,61 @@
+{#
+SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+SPDX-FileCopyrightText: 2025 Suguru Hirahara
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+#}
+
+{% if hydrogen_container_labels_traefik_enabled %}
+traefik.enable=true
+
+{% if hydrogen_container_labels_traefik_docker_network %}
+traefik.docker.network={{ hydrogen_container_labels_traefik_docker_network }}
+{% endif %}
+
+{% set middlewares = [] %}
+
+{% if hydrogen_container_labels_traefik_path_prefix != '/' %}
+traefik.http.middlewares.{{ hydrogen_identifier }}-slashless-redirect.redirectregex.regex=^({{ hydrogen_container_labels_traefik_path_prefix | quote }})$
+traefik.http.middlewares.{{ hydrogen_identifier }}-slashless-redirect.redirectregex.replacement=${1}/
+{% set middlewares = middlewares + [hydrogen_identifier + '-slashless-redirect'] %}
+{% endif %}
+
+{% if hydrogen_container_labels_traefik_path_prefix != '/' %}
+traefik.http.middlewares.{{ hydrogen_identifier }}-strip-prefix.stripprefix.prefixes={{ hydrogen_container_labels_traefik_path_prefix }}
+{% set middlewares = middlewares + [hydrogen_identifier + '-strip-prefix'] %}
+{% endif %}
+
+{% if hydrogen_container_labels_traefik_additional_request_headers.keys() | length > 0 %}
+{% for name, value in hydrogen_container_labels_traefik_additional_request_headers.items() %}
+traefik.http.middlewares.{{ hydrogen_identifier }}-add-request-headers.headers.customrequestheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [hydrogen_identifier + '-add-request-headers'] %}
+{% endif %}
+
+{% if hydrogen_container_labels_traefik_additional_response_headers.keys() | length > 0 %}
+{% for name, value in hydrogen_container_labels_traefik_additional_response_headers.items() %}
+traefik.http.middlewares.{{ hydrogen_identifier }}-add-response-headers.headers.customresponseheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [hydrogen_identifier + '-add-response-headers'] %}
+{% endif %}
+
+traefik.http.routers.{{ hydrogen_identifier }}.rule={{ hydrogen_container_labels_traefik_rule }}
+{% if hydrogen_container_labels_traefik_priority | int > 0 %}
+traefik.http.routers.{{ hydrogen_identifier }}.priority={{ hydrogen_container_labels_traefik_priority }}
+{% endif %}
+traefik.http.routers.{{ hydrogen_identifier }}.service={{ hydrogen_identifier }}
+{% if middlewares | length > 0 %}
+traefik.http.routers.{{ hydrogen_identifier }}.middlewares={{ middlewares | join(',') }}
+{% endif %}
+traefik.http.routers.{{ hydrogen_identifier }}.entrypoints={{ hydrogen_container_labels_traefik_entrypoints }}
+traefik.http.routers.{{ hydrogen_identifier }}.tls={{ hydrogen_container_labels_traefik_tls | to_json }}
+{% if hydrogen_container_labels_traefik_tls %}
+traefik.http.routers.{{ hydrogen_identifier }}.tls.certResolver={{ hydrogen_container_labels_traefik_tls_certResolver }}
+{% endif %}
+
+traefik.http.services.{{ hydrogen_identifier }}.loadbalancer.server.port={{ hydrogen_container_http_port }}
+{% endif %}
+
+{% for arg in hydrogen_container_labels_additional_labels %}
+{{ arg }}
+{% endfor %}

@@ -63,7 +63,7 @@
 * Static Files: 2.40.1
 * Steam Bridge: 1.1.0
 * Sygnal: v0.15.1
-* Synapse: v1.147.0
+* Synapse: v1.147.1
 * Synapse Admin: v0.11.1-etke53
 * Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.0.3
