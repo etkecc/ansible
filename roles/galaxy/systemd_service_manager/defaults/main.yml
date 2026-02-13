@@ -54,6 +54,16 @@ devture_systemd_service_manager_services_list: "{{ devture_systemd_service_manag
 # the restart transaction internally on the server side.
 devture_systemd_service_manager_service_restart_mode: all-at-once
 
+# devture_systemd_service_manager_conditional_restart_enabled controls whether
+# services can opt out of restarting when their configuration hasn't changed.
+#
+# When enabled (true), services with `restart_necessary: false` in their service list entry
+# will only be started (no-op if already running, starts if stopped) instead of restarted.
+# Services with `restart_necessary: true` or without the field are restarted normally.
+#
+# When disabled (false), all services are unconditionally restarted (original behavior).
+devture_systemd_service_manager_conditional_restart_enabled: true
+
 # devture_systemd_service_manager_services_autostart_enabled controls whether systemd services should auto-start when the system reboots
 devture_systemd_service_manager_services_autostart_enabled: true
 

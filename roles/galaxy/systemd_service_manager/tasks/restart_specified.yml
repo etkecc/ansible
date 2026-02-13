@@ -5,47 +5,109 @@
   ansible.builtin.service:
     daemon_reload: true
 
+- name: Classify services into restart vs. start-only
+  when: devture_systemd_service_manager_services_list_to_work_with | length > 0
+  ansible.builtin.set_fact:
+    devture_systemd_service_manager_services_needing_restart: >-
+      {{
+        devture_systemd_service_manager_services_list_to_work_with
+        if not devture_systemd_service_manager_conditional_restart_enabled
+        else
+        (devture_systemd_service_manager_services_list_to_work_with
+         | selectattr('restart_necessary', 'defined')
+         | selectattr('restart_necessary', 'equalto', true) | list)
+        +
+        (devture_systemd_service_manager_services_list_to_work_with
+         | rejectattr('restart_necessary', 'defined') | list)
+      }}
+    devture_systemd_service_manager_services_start_only: >-
+      {{
+        []
+        if not devture_systemd_service_manager_conditional_restart_enabled
+        else
+        (devture_systemd_service_manager_services_list_to_work_with
+         | selectattr('restart_necessary', 'defined')
+         | selectattr('restart_necessary', 'equalto', false) | list)
+      }}
+
+- name: Show services needing restart vs. start-only
+  when: devture_systemd_service_manager_services_list_to_work_with | length > 0
+  ansible.builtin.debug:
+    msg: >-
+      Restarting ({{ devture_systemd_service_manager_services_needing_restart | length }}):
+      {{ devture_systemd_service_manager_services_needing_restart | map(attribute='name') | list }}.
+      Start-only ({{ devture_systemd_service_manager_services_start_only | length }}):
+      {{ devture_systemd_service_manager_services_start_only | map(attribute='name') | list }}.
+
+- name: Check which start-only services are already running
+  when: devture_systemd_service_manager_services_start_only | length > 0 and not ansible_check_mode
+  ansible.builtin.command:
+    cmd: "systemctl is-active {{ item.name }}"
+  register: devture_systemd_service_manager_start_only_status
+  loop: "{{ devture_systemd_service_manager_services_start_only }}"
+  loop_control:
+    label: "{{ item.name }}"
+  changed_when: false
+  failed_when: false
+
+- name: Determine which start-only services actually need starting
+  when: devture_systemd_service_manager_services_start_only | length > 0 and not ansible_check_mode
+  ansible.builtin.set_fact:
+    devture_systemd_service_manager_services_actually_needing_start: >-
+      {{
+        devture_systemd_service_manager_start_only_status.results
+        | selectattr('stdout', 'defined')
+        | selectattr('stdout', 'ne', 'active')
+        | map(attribute='item')
+        | list
+      }}
+
+- name: Determine if service verification will be needed
+  when: devture_systemd_service_manager_services_list_to_work_with | length > 0
+  ansible.builtin.set_fact:
+    devture_systemd_service_manager_verification_needed: >-
+      {{
+        devture_systemd_service_manager_services_needing_restart | length > 0
+        or devture_systemd_service_manager_services_actually_needing_start | default([]) | length > 0
+      }}
+
 - when: devture_systemd_service_manager_service_restart_mode == 'clean-stop-start'
   block:
-    # When it's just one service, do a restart instead of clean stop and then start.
-    # A restart is less disruptive, because services that have this one as a dependency
-    # will also stop and start again. If we stop this service cleanly and then start it,
-    # services that have this one as a dependency will stop and remain stopped.
     - when: devture_systemd_service_manager_services_list_to_work_with | length == 1
       block:
-        - name: Ensure single systemd service is restarted
+        - name: Ensure single systemd service is restarted or started
           ansible.builtin.service:
             name: "{{ item.name }}"
-            state: restarted
+            state: "{{ 'restarted' if item.name in (devture_systemd_service_manager_services_needing_restart | map(attribute='name') | list) else 'started' }}"
             enabled: "{{ devture_systemd_service_manager_services_autostart_enabled }}"
-          with_items: "{{ devture_systemd_service_manager_services_list_to_work_with | sort (attribute='priority,name', reverse=true) }}"
+          with_items: "{{ devture_systemd_service_manager_services_list_to_work_with }}"
           when: not ansible_check_mode
 
     - when: devture_systemd_service_manager_services_list_to_work_with | length > 1
       block:
-        - name: Ensure systemd services are stopped
+        - name: Ensure systemd services needing restart are stopped
           ansible.builtin.service:
             name: "{{ item.name }}"
             state: stopped
-          with_items: "{{ devture_systemd_service_manager_services_list_to_work_with | sort (attribute='priority,name', reverse=true) }}"
+          with_items: "{{ devture_systemd_service_manager_services_needing_restart | sort(attribute='priority,name', reverse=true) }}"
           when: not ansible_check_mode
 
-        - name: Ensure systemd services are started
+        - name: Ensure all systemd services are started
           ansible.builtin.service:
             name: "{{ item.name }}"
             state: started
             enabled: "{{ devture_systemd_service_manager_services_autostart_enabled }}"
-          with_items: "{{ devture_systemd_service_manager_services_list_to_work_with | sort (attribute='priority,name') }}"
+          with_items: "{{ devture_systemd_service_manager_services_list_to_work_with | sort(attribute='priority,name') }}"
           when: not ansible_check_mode
 
 - when: devture_systemd_service_manager_service_restart_mode == 'one-by-one'
   block:
-    - name: Ensure systemd services are restarted one by one
+    - name: Ensure systemd services are restarted or started one by one
       ansible.builtin.service:
         name: "{{ item.name }}"
-        state: restarted
+        state: "{{ 'restarted' if item.name in (devture_systemd_service_manager_services_needing_restart | map(attribute='name') | list) else 'started' }}"
         enabled: "{{ devture_systemd_service_manager_services_autostart_enabled }}"
-      with_items: "{{ devture_systemd_service_manager_services_list_to_work_with | sort (attribute='priority,name') }}"
+      with_items: "{{ devture_systemd_service_manager_services_list_to_work_with | sort(attribute='priority,name') }}"
       when: not ansible_check_mode
 
 - when: devture_systemd_service_manager_service_restart_mode == 'priority-batched'
@@ -58,31 +120,49 @@
             | unique | sort
           }}
 
-    - name: Restart systemd services in priority batches
+    - name: Restart/start systemd services in priority batches
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/util/start_priority_batch.yml"
       vars:
         devture_systemd_service_manager_services_list_to_start: "{{ devture_systemd_service_manager_services_list_to_work_with }}"
-        devture_systemd_service_manager_target_state: restarted
+        devture_systemd_service_manager_services_needing_restart_names: "{{ devture_systemd_service_manager_services_needing_restart | map(attribute='name') | list }}"
       loop: "{{ devture_systemd_service_manager_priorities }}"
       loop_control:
         loop_var: priority
 
 - when: "devture_systemd_service_manager_service_restart_mode == 'all-at-once' and devture_systemd_service_manager_services_list_to_work_with | length > 0"
   block:
-    - name: Build systemctl restart command for all services
-      ansible.builtin.set_fact:
-        devture_systemd_service_manager_all_at_once_restart_command: >-
-          systemctl restart
-          {{ devture_systemd_service_manager_services_list_to_work_with | sort(attribute='priority,name') | map(attribute='name') | join(' ') }}
+    - when: devture_systemd_service_manager_services_needing_restart | length > 0
+      block:
+        - name: Build systemctl restart command for services needing restart
+          ansible.builtin.set_fact:
+            devture_systemd_service_manager_all_at_once_restart_command: >-
+              systemctl restart
+              {{ devture_systemd_service_manager_services_needing_restart | sort(attribute='priority,name') | map(attribute='name') | join(' ') }}
 
-    - name: Show systemctl restart command
-      ansible.builtin.debug:
-        var: devture_systemd_service_manager_all_at_once_restart_command
+        - name: Show systemctl restart command
+          ansible.builtin.debug:
+            var: devture_systemd_service_manager_all_at_once_restart_command
 
-    - name: Restart all systemd services at once
-      ansible.builtin.command:
-        cmd: "{{ devture_systemd_service_manager_all_at_once_restart_command }}"
-      when: not ansible_check_mode
+        - name: Restart systemd services needing restart at once
+          ansible.builtin.command:
+            cmd: "{{ devture_systemd_service_manager_all_at_once_restart_command }}"
+          when: not ansible_check_mode
+
+    - when: not ansible_check_mode and devture_systemd_service_manager_services_actually_needing_start | default([]) | length > 0
+      block:
+        - name: Build systemctl start command for services not yet running
+          ansible.builtin.set_fact:
+            devture_systemd_service_manager_all_at_once_start_command: >-
+              systemctl start
+              {{ devture_systemd_service_manager_services_actually_needing_start | sort(attribute='priority,name') | map(attribute='name') | join(' ') }}
+
+        - name: Show systemctl start command
+          ansible.builtin.debug:
+            var: devture_systemd_service_manager_all_at_once_start_command
+
+        - name: Start services that are not yet running
+          ansible.builtin.command:
+            cmd: "{{ devture_systemd_service_manager_all_at_once_start_command }}"
 
     - name: Ensure systemd services are auto-started
       ansible.builtin.command:
@@ -93,7 +173,7 @@
       changed_when: "devture_systemd_service_manager_all_at_once_enable_result.stdout | default('') != ''"
       when: "not ansible_check_mode and devture_systemd_service_manager_services_autostart_enabled | bool"
 
-- when: devture_systemd_service_manager_up_verification_enabled | bool and devture_systemd_service_manager_services_list_to_work_with | length > 0
+- when: devture_systemd_service_manager_up_verification_enabled | bool and devture_systemd_service_manager_verification_needed | default(false) | bool
   name: Verify that systemd services started successfully
   block:
     # If we check service state immediately, we may succeed,

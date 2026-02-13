@@ -171,19 +171,19 @@ postgres_container_image_v13: "{{ postgres_container_image_registry_prefix }}{{ 
 postgres_container_image_v13_version: "13.23"
 
 postgres_container_image_v14: "{{ postgres_container_image_registry_prefix }}{{ postgres_container_image_name }}:{{ postgres_container_image_v14_version }}{{ postgres_container_image_suffix }}"
-postgres_container_image_v14_version: "14.20"
+postgres_container_image_v14_version: "14.21"
 
 postgres_container_image_v15: "{{ postgres_container_image_registry_prefix }}{{ postgres_container_image_name }}:{{ postgres_container_image_v15_version }}{{ postgres_container_image_suffix }}"
-postgres_container_image_v15_version: "15.15"
+postgres_container_image_v15_version: "15.16"
 
 postgres_container_image_v16: "{{ postgres_container_image_registry_prefix }}{{ postgres_container_image_name }}:{{ postgres_container_image_v16_version }}{{ postgres_container_image_suffix }}"
-postgres_container_image_v16_version: "16.11"
+postgres_container_image_v16_version: "16.12"
 
 postgres_container_image_v17: "{{ postgres_container_image_registry_prefix }}{{ postgres_container_image_name }}:{{ postgres_container_image_v17_version }}{{ postgres_container_image_suffix }}"
-postgres_container_image_v17_version: "17.7"
+postgres_container_image_v17_version: "17.8"
 
 postgres_container_image_v18: "{{ postgres_container_image_registry_prefix }}{{ postgres_container_image_name }}:{{ postgres_container_image_v18_version }}{{ postgres_container_image_suffix }}"
-postgres_container_image_v18_version: "18.1"
+postgres_container_image_v18_version: "18.2"
 
 postgres_container_image_by_major_version:
   "9": "{{ postgres_container_image_v9 }}"

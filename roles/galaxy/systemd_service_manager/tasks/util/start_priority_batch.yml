@@ -9,10 +9,16 @@
         | list
       }}
 
-- name: Start systemd services for priority {{ priority }} without blocking
+- name: Start/restart systemd services for priority {{ priority }} without blocking
   ansible.builtin.systemd:
     name: "{{ item.name }}"
-    state: "{{ devture_systemd_service_manager_target_state }}"
+    state: >-
+      {{
+        devture_systemd_service_manager_target_state
+        if devture_systemd_service_manager_target_state is defined
+        else
+        ('restarted' if item.name in devture_systemd_service_manager_services_needing_restart_names else 'started')
+      }}
     enabled: "{{ devture_systemd_service_manager_services_autostart_enabled }}"
     no_block: true
   loop: "{{ devture_systemd_service_manager_priority_services }}"

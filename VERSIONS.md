@@ -13,7 +13,7 @@
 * Etherpad: 2.6.1
 * Exim Relay: 4.98.1-r0-2
 * Firezone: 0.7.36
-* Fluffychat: v2.4.0
+* Fluffychat: v2.4.1
 * Funkwhale: 1.4.1
 * Gmessages: v0.2601.0
 * Go Neb: latest
@@ -43,11 +43,11 @@
 * Postgres Container Image V11: 11.22
 * Postgres Container Image V12: 12.22
 * Postgres Container Image V13: 13.23
-* Postgres Container Image V14: 14.20
-* Postgres Container Image V15: 15.15
-* Postgres Container Image V16: 16.11
-* Postgres Container Image V17: 17.7
-* Postgres Container Image V18: 18.1
+* Postgres Container Image V14: 14.21
+* Postgres Container Image V15: 15.16
+* Postgres Container Image V16: 16.12
+* Postgres Container Image V17: 17.8
+* Postgres Container Image V18: 18.2
 * Postgres Container Image V9: 9.6.24
 * Postmoogle: v0.9.28
 * Prometheus: v3.9.1
