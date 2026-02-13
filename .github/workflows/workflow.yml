@@ -41,7 +41,7 @@ jobs:
             type=raw,value=${{ env.alpine }}-${{ env.ansible_core }}-${{ env.ansible }},enable=${{ github.ref_name == 'fresh' }}
       - name: Build and push
         if: ${{ steps.check.outputs.exists == 'no' }}
-        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
         with:
           platforms: linux/amd64,linux/arm64
           file: Dockerfile.base
@@ -101,7 +101,7 @@ jobs:
           tags: |
             type=raw,value=fresh,enable=${{ github.ref_name == 'fresh' }}
       - name: Build and push
-        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
         with:
           platforms: linux/amd64,linux/arm64
           push: true
@@ -170,7 +170,7 @@ jobs:
           tags: |
             type=raw,value=latest,enable=${{ github.ref_name == 'fresh' }}
       - name: Build and push
-        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
         with:
           platforms: linux/amd64,linux/arm64
           push: true
