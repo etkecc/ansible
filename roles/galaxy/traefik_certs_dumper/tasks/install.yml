@@ -32,11 +32,13 @@
     group: "{{ traefik_certs_dumper_gid }}"
   with_items:
     - env
+  register: traefik_certs_dumper_support_files_result
 
 - name: Ensure Traefik certs dumper container image is pulled
   community.docker.docker_image:
     name: "{{ traefik_certs_dumper_container_image }}"
     source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+  register: traefik_certs_dumper_container_image_pull_result
 
 - name: Ensure Traefik certs dumper scripts installed
   ansible.builtin.template:
@@ -50,6 +52,7 @@
     - wait-for-domain.sh
     - copy-certificates.sh
     - entrypoint.sh
+  register: traefik_certs_dumper_scripts_result
 
 - name: Ensure Traefik certs dumper systemd services are present
   ansible.builtin.template:
@@ -61,3 +64,14 @@
       dest: "{{ traefik_certs_dumper_identifier }}.service"
     - src: traefik-certs-dumper-wait-for-domain@.service.j2
       dest: "{{ traefik_certs_dumper_identifier }}-wait-for-domain@.service"
+  register: traefik_certs_dumper_systemd_service_result
+
+- name: Determine whether Traefik certs dumper needs a restart
+  ansible.builtin.set_fact:
+    traefik_certs_dumper_restart_necessary: >-
+      {{
+        traefik_certs_dumper_support_files_result.changed | default(false)
+        or traefik_certs_dumper_scripts_result.changed | default(false)
+        or traefik_certs_dumper_systemd_service_result.changed | default(false)
+        or traefik_certs_dumper_container_image_pull_result.changed | default(false)
+      }}

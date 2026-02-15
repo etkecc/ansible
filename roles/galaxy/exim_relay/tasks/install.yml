@@ -31,6 +31,7 @@
     src: "{{ role_path }}/templates/env.j2"
     dest: "{{ exim_relay_base_path }}/env"
     mode: 0640
+  register: exim_relay_config_result
 
 - name: Ensure exim-relay DKIM private key file created
   ansible.builtin.copy:
@@ -40,6 +41,7 @@
     owner: "{{ exim_relay_container_user_uid }}"
     group: "{{ exim_relay_container_user_gid }}"
   when: exim_relay_dkim_privkey_contents != "" and not exim_relay_relay_use|bool
+  register: exim_relay_dkim_result
 
 - when: exim_relay_container_image_self_build | bool
   block:
@@ -71,10 +73,10 @@
     force_source: "{{ exim_relay_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
     force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else exim_relay_container_image_force_pull }}"
   when: "not exim_relay_container_image_self_build | bool"
-  register: result
+  register: exim_relay_container_image_pull_result
   retries: "{{ devture_playbook_help_container_retries_count }}"
   delay: "{{ devture_playbook_help_container_retries_delay }}"
-  until: result is not failed
+  until: exim_relay_container_image_pull_result is not failed
 
 - name: Ensure exim-relay container network is created
   community.general.docker_network:
@@ -88,3 +90,14 @@
     src: "{{ role_path }}/templates/systemd/exim-relay.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ exim_relay_identifier }}.service"
     mode: 0644
+  register: exim_relay_systemd_service_result
+
+- name: Determine whether exim-relay needs a restart
+  ansible.builtin.set_fact:
+    exim_relay_restart_necessary: >-
+      {{
+        exim_relay_config_result.changed | default(false)
+        or exim_relay_dkim_result.changed | default(false)
+        or exim_relay_systemd_service_result.changed | default(false)
+        or exim_relay_container_image_pull_result.changed | default(false)
+      }}

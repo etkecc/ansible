@@ -36,7 +36,7 @@
 * Maubot: v0.6.0
 * Meta Instagram: v0.2512.0
 * Meta Messenger: v0.2512.0
-* Miniflux: 2.2.16
+* Miniflux: 2.2.17
 * Ntfy: v2.17.0
 * Peertube: v7.2.3
 * Postgres Container Image V10: 10.23

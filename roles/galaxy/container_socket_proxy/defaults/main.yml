@@ -45,6 +45,12 @@ container_socket_proxy_container_labels_additional_labels: "{{ container_socket_
 container_socket_proxy_container_labels_additional_labels_auto: []
 container_socket_proxy_container_labels_additional_labels_custom: []
 
+# Specify the size of the container's tmpfs volume (haproxy)
+container_socket_proxy_container_tmpfs_haproxy_size: 128m
+
+# Specify the size of the container's tmpfs volume (run)
+container_socket_proxy_container_tmpfs_run_size: 128m
+
 # A list of extra arguments to pass to the container (`docker create` command)
 container_socket_proxy_container_extra_arguments: "{{ container_socket_proxy_container_extra_arguments_auto + container_socket_proxy_container_extra_arguments_custom }}"
 container_socket_proxy_container_extra_arguments_auto: []
@@ -150,3 +156,14 @@ container_socket_proxy_environment_variables_tz: UTC
 #   NETWORKS=1
 #   SESSION=1
 container_socket_proxy_environment_variables_additional_variables: ""
+
+# container_socket_proxy_restart_necessary controls whether the
+# container-socket-proxy systemd service will be restarted (when true)
+# or merely started (when false) by the systemd service manager role
+# (when conditional restart is enabled).
+#
+# This value is automatically computed during installation based on whether
+# any configuration files, the systemd service file, or the container image changed.
+# The default of `false` means "no restart needed" — appropriate when the role's
+# installation tasks haven't run (e.g., due to --tags skipping them).
+container_socket_proxy_restart_necessary: false

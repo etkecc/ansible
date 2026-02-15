@@ -88,3 +88,13 @@ exim_relay_relay_auth_password: ""
 # To allow relaying from everywhere, use a value of `["*"]`.
 # As long as exim is not exposed outside of the container network (which it isn't by default), allowing relaying from everywhere is also safe.
 exim_relay_relay_from_hosts: ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "fc00::/7"]
+
+# exim_relay_restart_necessary controls whether the exim-relay systemd
+# service will be restarted (when true) or merely started (when false) by the
+# systemd service manager role (when conditional restart is enabled).
+#
+# This value is automatically computed during installation based on whether
+# any configuration files, the systemd service file, or the container image changed.
+# The default of `false` means "no restart needed" — appropriate when the role's
+# installation tasks haven't run (e.g., due to --tags skipping them).
+exim_relay_restart_necessary: false

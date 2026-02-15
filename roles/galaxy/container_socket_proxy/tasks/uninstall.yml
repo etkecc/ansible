@@ -29,6 +29,7 @@
       community.docker.docker_network:
         name: "{{ container_socket_proxy_container_network }}"
         state: absent
+      register: container_socket_proxy_network_deletion_result
 
     - name: Ensure container-socket-proxy container network does not exist via ansible.builtin.command
       when: devture_systemd_docker_base_container_network_creation_method == 'command'
@@ -36,8 +37,8 @@
         cmd: >-
           {{ devture_systemd_docker_base_host_command_docker }} network rm
           {{ container_socket_proxy_container_network }}
-      register: network_deletion_result
-      changed_when: container_socket_proxy_container_network in network_deletion_result.stdout
+      register: container_socket_proxy_network_deletion_result
+      changed_when: container_socket_proxy_container_network in container_socket_proxy_network_deletion_result.stdout
 
     - name: Ensure container-socket-proxy path does not exist
       ansible.builtin.file:

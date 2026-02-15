@@ -433,3 +433,13 @@ postgres_pgloader_container_image_registry_prefix_upstream: "{{ postgres_pgloade
 postgres_pgloader_container_image_registry_prefix_upstream_default: "docker.io/"
 postgres_pgloader_container_image_tag: "3.6.2"
 postgres_pgloader_container_image_force_pull: "{{ postgres_pgloader_docker_image.endswith(':latest') }}"
+
+# postgres_restart_necessary controls whether the Postgres systemd service
+# will be restarted (when true) or merely started (when false) by the
+# systemd service manager role (when conditional restart is enabled).
+#
+# This value is automatically computed during installation based on whether
+# any configuration files, the systemd service file, or the container image changed.
+# The default of `false` means "no restart needed" — appropriate when the role's
+# installation tasks haven't run (e.g., due to --tags skipping them).
+postgres_restart_necessary: false

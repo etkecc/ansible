@@ -60,10 +60,10 @@
     source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
     force_source: "{{ postgres_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
     force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else postgres_container_image_force_pull }}"
-  register: result
+  register: postgres_container_image_pull_result
   retries: "{{ devture_playbook_help_container_retries_count }}"
   delay: "{{ devture_playbook_help_container_retries_delay }}"
-  until: result is not failed
+  until: postgres_container_image_pull_result is not failed
 
 - name: Ensure Postgres paths exist
   ansible.builtin.file:
@@ -87,6 +87,7 @@
   with_items:
     - "env-postgres-psql"
     - "env-postgres-server"
+  register: postgres_config_result
 
 - name: Ensure Postgres scripts created
   ansible.builtin.template:
@@ -97,6 +98,7 @@
     - cli
     - cli-non-interactive
     - dump-all
+  register: postgres_scripts_result
 
 - name: Ensure Postgres container network is created
   community.docker.docker_network:
@@ -111,6 +113,16 @@
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ postgres_identifier }}.service"
     mode: "0644"
   register: postgres_systemd_service_result
+
+- name: Determine whether Postgres needs a restart
+  ansible.builtin.set_fact:
+    postgres_restart_necessary: >-
+      {{
+        postgres_config_result.changed | default(false)
+        or postgres_scripts_result.changed | default(false)
+        or postgres_systemd_service_result.changed | default(false)
+        or postgres_container_image_pull_result.changed | default(false)
+      }}
 
 - name: Ensure managed Postgres databases prepared
   ansible.builtin.include_tasks:

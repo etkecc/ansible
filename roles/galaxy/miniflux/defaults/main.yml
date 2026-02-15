@@ -11,15 +11,16 @@ miniflux_identifier: miniflux
 miniflux_base_path: "/{{ miniflux_identifier }}"
 
 # renovate: datasource=docker depName=docker.io/miniflux/miniflux versioning=semver
-miniflux_version: 2.2.16
+miniflux_version: 2.2.17
 
 miniflux_uid: ""
 miniflux_gid: ""
 
+# The scheme used for serving Miniflux.
+miniflux_scheme: https
+
 # The hostname at which Miniflux is served.
 miniflux_hostname: ""
-
-miniflux_scheme: https
 
 # The path at which Miniflux is served.
 # This value must either be `/` or not end with a slash (e.g. `/miniflux`).
@@ -41,6 +42,11 @@ miniflux_container_image_self_build_src_files_path: "{{ miniflux_base_path }}/do
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 miniflux_container_network: "{{ miniflux_identifier }}"
 
+# Specify how the container publishes its HTTP port (as defined by `miniflux_container_http_port`).
+#
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
+miniflux_container_http_host_bind_port: ""
+
 # The port number in the container
 miniflux_container_http_port: 8080
 
@@ -54,7 +60,7 @@ miniflux_container_additional_networks_custom: []
 # miniflux_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
 # See `../templates/labels.j2` for details.
 #
-# To inject your own other container labels, see `miniflux_container_labels_additional_labels`.
+# To inject your own other container labels, see `miniflux_container_labels_additional_labels_custom`.
 miniflux_container_labels_traefik_enabled: true
 miniflux_container_labels_traefik_docker_network: "{{ miniflux_container_network }}"
 miniflux_container_labels_traefik_hostname: "{{ miniflux_hostname }}"
@@ -96,7 +102,7 @@ miniflux_container_labels_traefik_additional_response_headers_custom: {}
 # To add your own custom labels, use `miniflux_container_labels_additional_labels_custom`
 #
 # Example:
-# miniflux_container_labels_additional_labels_custom: |
+# miniflux_container_labels_additional_labels_custom:
 #   - my.label=1
 #   - another.label="here"
 miniflux_container_labels_additional_labels: "{{ miniflux_container_labels_additional_labels_auto + miniflux_container_labels_additional_labels_custom }}"

@@ -32,8 +32,8 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --env-file={{ container_socket_proxy_base_path }}/env \
       --label-file={{ container_socket_proxy_base_path }}/labels \
       --mount type=bind,src={{ container_socket_proxy_container_socket_path }},dst=/var/run/docker.sock,ro \
-      --tmpfs=/var/lib/haproxy:rw,noexec,nosuid,size=100m \
-      --tmpfs=/run:rw,noexec,nosuid,size=100m \
+      --tmpfs=/var/lib/haproxy:rw,noexec,nosuid,size={{ container_socket_proxy_container_tmpfs_haproxy_size }} \
+      --tmpfs=/run:rw,noexec,nosuid,size={{ container_socket_proxy_container_tmpfs_run_size }} \
       {% if container_socket_proxy_container_extra_arguments | length > 0 %}
       {{ container_socket_proxy_container_extra_arguments | join(" ") }} \
       {% endif %}

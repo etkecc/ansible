@@ -29,6 +29,7 @@
   with_items:
     - env
     - labels
+  register: livekit_server_support_files_result
 
 - name: Ensure LiveKit Server configuration installed
   ansible.builtin.copy:
@@ -37,6 +38,7 @@
     mode: "0640"
     owner: "{{ livekit_server_uid }}"
     group: "{{ livekit_server_gid }}"
+  register: livekit_server_config_result
 
 - name: Run if self-building of LiveKit Server container image is not enabled
   when: "not livekit_server_container_image_self_build | bool"
@@ -48,20 +50,20 @@
         source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
         force_source: "{{ livekit_server_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
         force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else livekit_server_container_image_force_pull }}"
-      register: result
+      register: livekit_server_container_image_pull_result
       retries: "{{ devture_playbook_help_container_retries_count }}"
       delay: "{{ devture_playbook_help_container_retries_delay }}"
-      until: result is not failed
+      until: livekit_server_container_image_pull_result is not failed
 
     - name: Ensure LiveKit Server container image is pulled via ansible.builtin.command
       when: devture_systemd_docker_base_container_image_pull_method == 'command'
       ansible.builtin.command:
         cmd: "{{ devture_systemd_docker_base_host_command_docker }} pull {{ livekit_server_container_image }}"
-      register: result
+      register: livekit_server_container_image_pull_result
       retries: "{{ devture_playbook_help_container_retries_count }}"
       delay: "{{ devture_playbook_help_container_retries_delay }}"
-      until: result is not failed
-      changed_when: "'Downloaded newer image' in result.stdout"
+      until: livekit_server_container_image_pull_result is not failed
+      changed_when: "'Downloaded newer image' in livekit_server_container_image_pull_result.stdout"
 
 - name: Run if self-building of LiveKit Server container image is enabled
   when: "livekit_server_container_image_self_build | bool"
@@ -113,3 +115,14 @@
     src: "{{ role_path }}/templates/systemd/livekit-server.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ livekit_server_identifier }}.service"
     mode: "0644"
+  register: livekit_server_systemd_service_result
+
+- name: Determine whether LiveKit Server needs a restart
+  ansible.builtin.set_fact:
+    livekit_server_restart_necessary: >-
+      {{
+        livekit_server_support_files_result.changed | default(false)
+        or livekit_server_config_result.changed | default(false)
+        or livekit_server_systemd_service_result.changed | default(false)
+        or livekit_server_container_image_pull_result.changed | default(false)
+      }}

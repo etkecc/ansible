@@ -29,6 +29,9 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --user={{ miniflux_uid }}:{{ miniflux_gid }} \
       --cap-drop=ALL \
       --network={{ miniflux_container_network }} \
+      {% if miniflux_container_http_host_bind_port %}
+      -p {{ miniflux_container_http_host_bind_port }}:{{ miniflux_container_http_port }} \
+      {% endif %}
       --env-file={{ miniflux_base_path }}/env \
       --label-file={{ miniflux_base_path }}/labels \
       {% for arg in miniflux_container_extra_arguments %}

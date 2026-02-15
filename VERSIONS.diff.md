@@ -9,6 +9,7 @@
 * [Baibot](https://github.com/etkecc/baibot): [v1.14.0](https://github.com/etkecc/baibot/releases/tag/v1.14.0) ⇾ [v1.14.1](https://github.com/etkecc/baibot/releases/tag/v1.14.1)
 * [Element](https://github.com/element-hq/element-web): [v1.12.9](https://github.com/element-hq/element-web/releases/tag/v1.12.9) ⇾ [v1.12.10](https://github.com/element-hq/element-web/releases/tag/v1.12.10)
 * [Fluffychat](https://github.com/krille-chan/fluffychat): [v2.4.0](https://github.com/krille-chan/fluffychat/releases/tag/v2.4.0) ⇾ [v2.4.1](https://github.com/krille-chan/fluffychat/releases/tag/v2.4.1)
+* [Miniflux](https://github.com/miniflux/v2): [2.2.16](https://github.com/miniflux/v2/releases/tag/2.2.16) ⇾ [2.2.17](https://github.com/miniflux/v2/releases/tag/2.2.17)
 * [Ntfy](https://github.com/binwiederhier/ntfy): [v2.16.0](https://github.com/binwiederhier/ntfy/releases/tag/v2.16.0) ⇾ [v2.17.0](https://github.com/binwiederhier/ntfy/releases/tag/v2.17.0)
 * Postgres Container Image V14: 14.20 ⇾ 14.21
 * Postgres Container Image V15: 15.15 ⇾ 15.16

@@ -6,7 +6,6 @@
     daemon_reload: true
 
 - name: Classify services into restart vs. start-only
-  when: devture_systemd_service_manager_services_list_to_work_with | length > 0
   ansible.builtin.set_fact:
     devture_systemd_service_manager_services_needing_restart: >-
       {{

@@ -32,8 +32,8 @@ ExecStart={{ devture_systemd_docker_base_host_command_docker }} run \
       --mount type=bind,src={{ traefik_certs_dumper_bin_path }},dst=/certs-dumper-bin,ro \
       --mount type=bind,src={{ traefik_certs_dumper_ssl_path }},dst=/in,ro \
       --mount type=bind,src={{ traefik_certs_dumper_dumped_certificates_path }},dst=/out \
-      --tmpfs=/intermediate:rw,noexec,nosuid,size=100m \
-      --tmpfs=/staging:rw,noexec,nosuid,size=100m \
+      --tmpfs=/intermediate:rw,noexec,nosuid,size={{ traefik_certs_dumper_container_tmpfs_intermediate_size }} \
+      --tmpfs=/staging:rw,noexec,nosuid,size={{ traefik_certs_dumper_container_tmpfs_staging_size }} \
       --entrypoint=/bin/sh \
       {% for arg in traefik_certs_dumper_container_process_extra_arguments %}
       {{ arg }} \

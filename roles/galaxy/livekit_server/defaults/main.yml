@@ -44,6 +44,25 @@ livekit_server_container_image_self_build_src_files_path: "{{ livekit_server_bas
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 livekit_server_container_network: "{{ livekit_server_identifier }}"
 
+# Specify how the container publishes its RTC port and which interface to do it on.
+#
+# Takes an interface "<ip address>" (e.g. "127.0.0.1"), or empty string to listen on all interfaces.
+# Takes a null/none value (`~`) or 'none' (as a string) to prevent listening.
+livekit_server_container_rtc_listen_interface: "{{ '' if livekit_server_container_network != 'host' else 'none' }}"
+
+# Specify how the container publishes its TURN port and which interface to do it on.
+#
+# Takes an interface "<ip address>" (e.g. "127.0.0.1"), or empty string to listen on all interfaces.
+# Takes a null/none value (`~`) or 'none' (as a string) to prevent listening.
+livekit_server_container_turn_listen_interface: "{{ '' if livekit_server_container_network != 'host' else 'none' }}"
+
+# Specify how the container publishes its metrics and which interface to do it on.
+#
+# Takes an interface "<ip address>" (e.g. "127.0.0.1"), or empty string to listen on all interfaces.
+# Takes a null/none value (`~`) or 'none' (as a string) to prevent listening.
+# See `livekit_server_config_prometheus_port`.
+livekit_server_container_metrics_listen_interface: ~
+
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
 # Use this to expose this container to another reverse proxy, which runs in a different container network.
@@ -129,7 +148,7 @@ livekit_server_host_sysctl_minimum_net_core_rmem_max: 7500000
 # If this is blank, no sysctl changes will be made.
 livekit_server_host_sysctl_minimum_net_core_wmem_max: 7500000
 
-# List of systemd services that LiveKit Server service depends on
+# List of systemd services that the LiveKit Server service depends on
 livekit_server_systemd_required_services_list: "{{ livekit_server_systemd_required_services_list_default + livekit_server_systemd_required_services_list_auto + livekit_server_systemd_required_services_list_custom }}"
 livekit_server_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
 livekit_server_systemd_required_services_list_auto: []
@@ -167,25 +186,6 @@ livekit_server_configuration_extension_yaml: |
   #   level: debug
 
 livekit_server_configuration_extension: "{{ livekit_server_configuration_extension_yaml | from_yaml if livekit_server_configuration_extension_yaml | from_yaml is mapping else {} }}"
-
-# Controls whether the LiveKit Server container exposes its RTC ports and which interface to do it on.
-#
-# Takes an interface "<ip address>" (e.g. "127.0.0.1"), or empty string to listen on all interfaces.
-# Takes a null/none value (`~`) or 'none' (as a string) to prevent listening.
-livekit_server_container_rtc_listen_interface: "{{ '' if livekit_server_container_network != 'host' else 'none' }}"
-
-# Controls whether the LiveKit Server container exposes its TURN ports and which interface to do it on.
-#
-# Takes an interface "<ip address>" (e.g. "127.0.0.1"), or empty string to listen on all interfaces.
-# Takes a null/none value (`~`) or 'none' (as a string) to prevent listening.
-livekit_server_container_turn_listen_interface: "{{ '' if livekit_server_container_network != 'host' else 'none' }}"
-
-# Controls whether the LiveKit Server container exposes its metrics and which interface to do it on.
-#
-# Takes an interface "<ip address>" (e.g. "127.0.0.1"), or empty string to listen on all interfaces.
-# Takes a null/none value (`~`) or 'none' (as a string) to prevent listening.
-# See `livekit_server_config_prometheus_port`.
-livekit_server_container_metrics_listen_interface: ~
 
 # Controls the `port` configuration property.
 # See: https://docs.livekit.io/home/self-hosting/ports-firewall/
@@ -426,3 +426,13 @@ livekit_server_config_logging_sample: false
 livekit_server_metrics_proxying_enabled: false
 livekit_server_metrics_proxying_hostname: ""
 livekit_server_metrics_proxying_path: /metrics/livekit-server
+
+# livekit_server_restart_necessary controls whether the LiveKit Server systemd
+# service will be restarted (when true) or merely started (when false) by the
+# systemd service manager role (when conditional restart is enabled).
+#
+# This value is automatically computed during installation based on whether
+# any configuration files, the systemd service file, or the container image changed.
+# The default of `false` means "no restart needed" — appropriate when the role's
+# installation tasks haven't run (e.g., due to --tags skipping them).
+livekit_server_restart_necessary: false
