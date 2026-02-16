@@ -21,7 +21,7 @@ cinny_base_path: "/{{ cinny_identifier }}"
 cinny_config_path: "{{ cinny_base_path }}/config"
 
 # renovate: datasource=docker depName=ajbura/cinny
-cinny_version: v4.10.2
+cinny_version: v4.10.3
 
 cinny_uid: ""
 cinny_gid: ""
@@ -54,6 +54,9 @@ cinny_container_image_self_build_src_files_path: "{{ cinny_base_path }}/docker-s
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 cinny_container_network: "{{ cinny_identifier }}"
+
+# Control if the container network is deleted on uninstalling.
+cinny_container_network_deletion_enabled: true
 
 # Specify how the container publishes its HTTP port (as defined by `cinny_container_http_port`).
 #

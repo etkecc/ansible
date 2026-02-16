@@ -77,7 +77,7 @@ There are some additional things you may wish to configure about the service.
 
 Take a look at:
 
-- [`defaults/main.yml`](../defaults/main.yml)` for some variables that you can customize via your `vars.yml` file
+- [`defaults/main.yml`](../defaults/main.yml) for some variables that you can customize via your `vars.yml` file
 - [`templates/config.json.j2`](../templates/config.json.j2) for the component's default configuration. You can override settings (even those that don't have dedicated playbook variables) using the `cinny_configuration_extension_json` variable
 
 ## Installing
