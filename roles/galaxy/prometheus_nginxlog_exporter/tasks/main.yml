@@ -1,0 +1,27 @@
+# SPDX-FileCopyrightText: 2023 Nikita Chernyi
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Perform prometheus-nginxlog-exporter installation tasks
+  when: prometheus_nginxlog_exporter_enabled | bool
+  tags:
+    - setup-all
+    - setup-prometheus-nginxlog-exporter
+    - install-all
+    - install-prometheus-nginxlog-exporter
+  block:
+    - name: Validate prometheus-nginxlog-exporter configuration
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Install prometheus-nginxlog-exporter
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+
+- name: Perform prometheus-nginxlog-exporter uninstallation tasks
+  when: not prometheus_nginxlog_exporter_enabled | bool
+  tags:
+    - setup-all
+    - setup-prometheus-nginxlog-exporter
+  block:
+    - name: Uninstall prometheus-nginxlog-exporter
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

@@ -74,6 +74,7 @@
     <outline text="postgres_backup" title="postgres_backup" type="rss" htmlUrl="https://github.com/prodrigestivill/docker-postgres-backup-local" xmlUrl="https://github.com/prodrigestivill/docker-postgres-backup-local/releases.atom" />
     <outline text="postmoogle" title="postmoogle" type="rss" htmlUrl="https://github.com/etkecc/postmoogle" xmlUrl="https://github.com/etkecc/postmoogle/releases.atom" />
     <outline text="prometheus" title="prometheus" type="rss" htmlUrl="https://github.com/prometheus/prometheus" xmlUrl="https://github.com/prometheus/prometheus/releases.atom" />
+    <outline text="prometheus_nginxlog_exporter" title="prometheus_nginxlog_exporter" type="rss" htmlUrl="https://github.com/martin-helmich/prometheus-nginxlog-exporter" xmlUrl="https://github.com/martin-helmich/prometheus-nginxlog-exporter/releases.atom" />
     <outline text="prometheus_node_exporter" title="prometheus_node_exporter" type="rss" htmlUrl="https://github.com/prometheus/node_exporter" xmlUrl="https://github.com/prometheus/node_exporter/releases.atom" />
     <outline text="prometheus_postgres_exporter" title="prometheus_postgres_exporter" type="rss" htmlUrl="https://github.com/prometheus-community/postgres_exporter" xmlUrl="https://github.com/prometheus-community/postgres_exporter/releases.atom" />
     <outline text="radicale" title="radicale" type="rss" htmlUrl="https://github.com/tomsquest/docker-radicale" xmlUrl="https://github.com/tomsquest/docker-radicale/releases.atom" />

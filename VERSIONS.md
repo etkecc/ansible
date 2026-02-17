@@ -51,6 +51,7 @@
 * Postgres Container Image V9: 9.6.24
 * Postmoogle: v0.9.28
 * Prometheus: v3.9.1
+* Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.10.2
 * Prometheus Postgres Exporter: v0.19.0
 * Radicale: 3.6.0.0
@@ -65,7 +66,6 @@
 * Sygnal: v0.15.1
 * Synapse: v1.147.1
 * Synapse Admin: v0.11.1-etke53
-* Synapse Auto Accept Invite: 1.1.3
 * Synapse Auto Compressor: v0.0.3
 * Synapse Http Antispam Git: v0.5.0
 * Synapse Reverse Proxy Companion: 1.29.5-alpine

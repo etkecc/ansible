@@ -1,0 +1,42 @@
+# SPDX-FileCopyrightText: 2022 MDAD project contributors
+# SPDX-FileCopyrightText: 2023 Nikita Chernyi
+# SPDX-FileCopyrightText: 2023, 2024 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Fail if required prometheus-nginxlog-exporter settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`).
+  when: "lookup('vars', item, default='') | string | length == 0"
+  with_items:
+    - prometheus_nginxlog_exporter_uid
+    - prometheus_nginxlog_exporter_gid
+    - prometheus_nginxlog_exporter_container_network
+    - prometheus_nginxlog_exporter_architecture
+
+- name: Fail if prometheus-nginxlog-exporter container image not available for architecture
+  ansible.builtin.fail:
+    msg: >
+      'prometheus-nginxlog-exporter' container image is not available for your arch architecture '{{ prometheus_nginxlog_exporter_architecture }}'.
+
+      We currently do not support building an image using this role.
+
+      You can use a custom-build image by setting
+          'prometheus_nginxlog_exporter_container_image_arch_check_enabled: false'
+          'prometheus_nginxlog_exporter_container_image: path/to/docker/image:tag'
+  when: prometheus_nginxlog_exporter_container_image_arch_check_enabled and prometheus_nginxlog_exporter_architecture not in prometheus_nginxlog_exporter_container_image_arch
+
+- name: Run if Traefik is enabled
+  when: prometheus_nginxlog_exporter_container_labels_traefik_enabled | bool
+  block:
+    - name: Fail if Traefik settings required for prometheus-nginxlog-exporter are not defined
+      ansible.builtin.fail:
+        msg: >-
+          You need to define a required configuration setting (`{{ item }}`).
+      when: "lookup('vars', item, default='') | string | length == 0"
+      with_items:
+        - prometheus_nginxlog_exporter_container_labels_traefik_hostname
+        - prometheus_nginxlog_exporter_container_labels_traefik_path_prefix

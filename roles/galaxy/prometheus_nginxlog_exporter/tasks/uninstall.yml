@@ -1,0 +1,50 @@
+# SPDX-FileCopyrightText: 2023 Nikita Chernyi
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Check existence of prometheus-nginxlog-exporter service
+  ansible.builtin.stat:
+    path: "{{ devture_systemd_docker_base_systemd_path }}/{{ prometheus_nginxlog_exporter_identifier }}.service"
+  register: prometheus_nginxlog_exporter_service_stat
+
+- name: Uninstall prometheus-nginxlog-exporter systemd services and files
+  when: prometheus_nginxlog_exporter_service_stat.stat.exists | bool
+  block:
+    - name: Ensure prometheus-nginxlog-exporter systemd service is stopped
+      ansible.builtin.service:
+        name: "{{ prometheus_nginxlog_exporter_identifier }}"
+        state: stopped
+        enabled: false
+        daemon_reload: true
+
+    - name: Ensure prometheus-nginxlog-exporter service does not exist
+      ansible.builtin.file:
+        path: "{{ devture_systemd_docker_base_systemd_path }}/{{ prometheus_nginxlog_exporter_identifier }}.service"
+        state: absent
+
+    - name: Ensure prometheus-nginxlog-exporter container network does not exist
+      when: prometheus_nginxlog_exporter_container_network_deletion_enabled
+      block:
+        - name: Ensure prometheus-nginxlog-exporter container network does not exist via community.docker.docker_network
+          when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+          community.docker.docker_network:
+            name: "{{ prometheus_nginxlog_exporter_container_network }}"
+            state: absent
+          register: prometheus_nginxlog_exporter_network_deletion_result
+
+        - name: Ensure prometheus-nginxlog-exporter container network does not exist via ansible.builtin.command
+          when: devture_systemd_docker_base_container_network_creation_method == 'command'
+          ansible.builtin.command:
+            cmd: >-
+              {{ devture_systemd_docker_base_host_command_docker }} network rm
+              {{ prometheus_nginxlog_exporter_container_network }}
+          register: prometheus_nginxlog_exporter_network_deletion_result
+          changed_when: prometheus_nginxlog_exporter_container_network in prometheus_nginxlog_exporter_network_deletion_result.stdout
+
+    - name: Ensure prometheus-nginxlog-exporter path does not exist
+      ansible.builtin.file:
+        path: "{{ prometheus_nginxlog_exporter_base_path }}"
+        state: absent

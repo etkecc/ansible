@@ -21,6 +21,7 @@
 * Postgres Container Image V16: 16.11 ⇾ 16.12
 * Postgres Container Image V17: 17.7 ⇾ 17.8
 * Postgres Container Image V18: 18.1 ⇾ 18.2
+* [Prometheus Nginxlog Exporter](https://github.com/martin-helmich/prometheus-nginxlog-exporter): [v1.10.0](https://github.com/martin-helmich/prometheus-nginxlog-exporter/releases/tag/v1.10.0) _new_
 * [Signal](https://github.com/mautrix/signal): [v0.2601.0](https://github.com/mautrix/signal/releases/tag/v0.2601.0) ⇾ [v0.2602.0](https://github.com/mautrix/signal/releases/tag/v0.2602.0)
 * [Slack](https://github.com/mautrix/slack): [v0.2511.0](https://github.com/mautrix/slack/releases/tag/v0.2511.0) ⇾ [v0.2602.0](https://github.com/mautrix/slack/releases/tag/v0.2602.0)
 * [Synapse](https://github.com/element-hq/synapse): [v1.146.0](https://github.com/element-hq/synapse/releases/tag/v1.146.0) ⇾ [v1.147.1](https://github.com/element-hq/synapse/releases/tag/v1.147.1)

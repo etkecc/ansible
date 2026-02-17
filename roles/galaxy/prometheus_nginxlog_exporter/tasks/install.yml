@@ -1,0 +1,98 @@
+# SPDX-FileCopyrightText: 2023 Nikita Chernyi
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Ensure prometheus-nginxlog-exporter paths exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0750"
+    owner: "{{ prometheus_nginxlog_exporter_uid }}"
+    group: "{{ prometheus_nginxlog_exporter_gid }}"
+  with_items:
+    - "{{ prometheus_nginxlog_exporter_base_path }}"
+    - "{{ prometheus_nginxlog_exporter_config_path }}"
+
+- name: Ensure prometheus-nginxlog-exporter support files installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/{{ item }}.j2"
+    dest: "{{ prometheus_nginxlog_exporter_base_path }}/{{ item }}"
+    mode: "0640"
+    owner: "{{ prometheus_nginxlog_exporter_uid }}"
+    group: "{{ prometheus_nginxlog_exporter_gid }}"
+  with_items:
+    - env
+    - labels
+  register: prometheus_nginxlog_exporter_support_files_result
+
+- name: Ensure prometheus-nginxlog-exporter configuration file installed
+  ansible.builtin.copy:
+    content: "{{ prometheus_nginxlog_exporter_config | to_nice_yaml(indent=2, width=999999) }}"
+    dest: "{{ prometheus_nginxlog_exporter_config_path }}/prometheus-nginxlog-exporter.yaml"
+    mode: "0644"
+    owner: "{{ prometheus_nginxlog_exporter_uid }}"
+    group: "{{ prometheus_nginxlog_exporter_gid }}"
+  register: prometheus_nginxlog_exporter_config_result
+
+- name: Ensure prometheus-nginxlog-exporter container image is pulled via community.docker.docker_image
+  when: devture_systemd_docker_base_container_image_pull_method == 'ansible-module'
+  community.docker.docker_image:
+    name: "{{ prometheus_nginxlog_exporter_container_image }}"
+    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+    force_source: "{{ prometheus_nginxlog_exporter_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else prometheus_nginxlog_exporter_container_image_force_pull }}"
+  register: prometheus_nginxlog_exporter_container_image_pull_result
+  retries: "{{ devture_playbook_help_container_retries_count }}"
+  delay: "{{ devture_playbook_help_container_retries_delay }}"
+  until: prometheus_nginxlog_exporter_container_image_pull_result is not failed
+
+- name: Ensure prometheus-nginxlog-exporter container image is pulled via ansible.builtin.command
+  when: devture_systemd_docker_base_container_image_pull_method == 'command'
+  ansible.builtin.command:
+    cmd: "{{ devture_systemd_docker_base_host_command_docker }} pull {{ prometheus_nginxlog_exporter_container_image }}"
+  register: prometheus_nginxlog_exporter_container_image_pull_result
+  retries: "{{ devture_playbook_help_container_retries_count }}"
+  delay: "{{ devture_playbook_help_container_retries_delay }}"
+  until: prometheus_nginxlog_exporter_container_image_pull_result is not failed
+  changed_when: "'Downloaded newer image' in prometheus_nginxlog_exporter_container_image_pull_result.stdout"
+
+- name: Ensure prometheus-nginxlog-exporter container network is created via community.docker.docker_network
+  when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+  community.docker.docker_network:
+    enable_ipv6: "{{ devture_systemd_docker_base_ipv6_enabled }}"
+    name: "{{ prometheus_nginxlog_exporter_container_network }}"
+    driver: bridge
+    driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
+  register: prometheus_nginxlog_exporter_network_creation_result
+
+- name: Ensure prometheus-nginxlog-exporter container network is created via ansible.builtin.command
+  when: devture_systemd_docker_base_container_network_creation_method == 'command'
+  ansible.builtin.command:
+    cmd: >-
+      {{ devture_systemd_docker_base_host_command_docker }} network create
+      {% if devture_systemd_docker_base_ipv6_enabled %}--ipv6{% endif %}
+      {{ devture_systemd_docker_base_container_networks_driver_options_string }}
+      {{ prometheus_nginxlog_exporter_container_network }}
+  register: prometheus_nginxlog_exporter_network_creation_result
+  changed_when: prometheus_nginxlog_exporter_network_creation_result.rc == 0
+  failed_when: prometheus_nginxlog_exporter_network_creation_result.rc != 0 and 'already exists' not in prometheus_nginxlog_exporter_network_creation_result.stderr
+
+- name: Ensure prometheus-nginxlog-exporter systemd service is present
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/systemd/prometheus-nginxlog-exporter.service.j2"
+    dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ prometheus_nginxlog_exporter_identifier }}.service"
+    mode: "0644"
+  register: prometheus_nginxlog_exporter_systemd_service_result
+
+- name: Determine whether prometheus-nginxlog-exporter needs a restart
+  ansible.builtin.set_fact:
+    prometheus_nginxlog_exporter_restart_necessary: >-
+      {{
+        prometheus_nginxlog_exporter_config_result.changed | default(false)
+        or prometheus_nginxlog_exporter_support_files_result.changed | default(false)
+        or prometheus_nginxlog_exporter_systemd_service_result.changed | default(false)
+        or prometheus_nginxlog_exporter_container_image_pull_result.changed | default(false)
+      }}
