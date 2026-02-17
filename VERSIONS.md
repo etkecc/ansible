@@ -81,4 +81,4 @@
 * Vaultwarden: 1.35.3
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
-* Whatsapp: v0.2601.0
+* Whatsapp: v0.2602.0

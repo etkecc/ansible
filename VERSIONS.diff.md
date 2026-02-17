@@ -26,3 +26,4 @@
 * [Synapse](https://github.com/element-hq/synapse): [v1.146.0](https://github.com/element-hq/synapse/releases/tag/v1.146.0) ⇾ [v1.147.1](https://github.com/element-hq/synapse/releases/tag/v1.147.1)
 * [Traefik](https://github.com/traefik/traefik): [v3.6.7](https://github.com/traefik/traefik/releases/tag/v3.6.7) ⇾ [v3.6.8](https://github.com/traefik/traefik/releases/tag/v3.6.8)
 * [Vaultwarden](https://github.com/dani-garcia/vaultwarden): [1.35.2](https://github.com/dani-garcia/vaultwarden/releases/tag/1.35.2) ⇾ [1.35.3](https://github.com/dani-garcia/vaultwarden/releases/tag/1.35.3)
+* [Whatsapp](https://github.com/mautrix/whatsapp): [v0.2601.0](https://github.com/mautrix/whatsapp/releases/tag/v0.2601.0) ⇾ [v0.2602.0](https://github.com/mautrix/whatsapp/releases/tag/v0.2602.0)
