@@ -7,7 +7,7 @@
 * Cinny: v4.10.3
 * Container Socket Proxy: v0.4.2
 * Coturn: 4.8.0
-* Discord: v0.7.5
+* Discord: v0.7.6
 * Draupnir: v2.9.0
 * Element: v1.12.10
 * Etherpad: 2.6.1
@@ -15,7 +15,7 @@
 * Firezone: 0.7.36
 * Fluffychat: v2.4.1
 * Funkwhale: 1.4.1
-* Gmessages: v0.2601.0
+* Gmessages: v0.2602.0
 * Go Neb: latest
 * Googlechat: v0.5.2
 * Gotosocial: 0.20.3
@@ -34,8 +34,8 @@
 * Livekit Server: v1.9.11
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.6.0
-* Meta Instagram: v0.2512.0
-* Meta Messenger: v0.2512.0
+* Meta Instagram: v0.2602.0
+* Meta Messenger: v0.2602.0
 * Miniflux: 2.2.17
 * Ntfy: v2.17.0
 * Peertube: v7.2.3
@@ -56,8 +56,8 @@
 * Radicale: 3.6.0.0
 * Registration: v0.7.2
 * Schildichat: 1.11.109-sc.0.test.0
-* Signal: v0.2601.0
-* Slack: v0.2511.0
+* Signal: v0.2602.0
+* Slack: v0.2602.0
 * Spam Checker Mjolnir Antispam Git: v1.11.0
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.40.1

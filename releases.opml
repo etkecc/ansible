@@ -11,7 +11,6 @@
     <outline text="appservice-discord" title="appservice-discord" type="rss" htmlUrl="https://github.com/matrix-org/matrix-appservice-discord" xmlUrl="https://github.com/matrix-org/matrix-appservice-discord/releases.atom" />
     <outline text="appservice-draupnir-for-all" title="appservice-draupnir-for-all" type="rss" htmlUrl="https://github.com/the-draupnir-project/Draupnir" xmlUrl="https://github.com/the-draupnir-project/Draupnir/releases.atom" />
     <outline text="appservice-irc" title="appservice-irc" type="rss" htmlUrl="https://github.com/matrix-org/matrix-appservice-irc" xmlUrl="https://github.com/matrix-org/matrix-appservice-irc/releases.atom" />
-    <outline text="appservice-slack" title="appservice-slack" type="rss" htmlUrl="https://github.com/matrix-org/matrix-appservice-slack" xmlUrl="https://github.com/matrix-org/matrix-appservice-slack/releases.atom" />
     <outline text="authentication-service" title="authentication-service" type="rss" htmlUrl="https://github.com/element-hq/matrix-authentication-service" xmlUrl="https://github.com/element-hq/matrix-authentication-service/releases.atom" />
     <outline text="backup_borg" title="backup_borg" type="rss" htmlUrl="https://github.com/etkecc/borgmatic" xmlUrl="https://github.com/etkecc/borgmatic/releases.atom" />
     <outline text="baibot" title="baibot" type="rss" htmlUrl="https://github.com/etkecc/baibot" xmlUrl="https://github.com/etkecc/baibot/releases.atom" />
