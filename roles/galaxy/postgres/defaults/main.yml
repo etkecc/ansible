@@ -135,7 +135,11 @@ postgres_vacuum_default_databases_list: |
 
 postgres_architecture: amd64
 
+# The base container network. It will be auto-created by this role if it doesn't exist already.
 postgres_container_network: "{{ postgres_identifier }}"
+
+# Control if the container network is deleted on uninstalling.
+postgres_container_network_deletion_enabled: true
 
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
@@ -427,12 +431,12 @@ postgres_pgloader_container_image_self_build_src_path: "{{ postgres_base_path }}
 
 # We use illagrenan/pgloader, instead of the more official dimitri/pgloader image,
 # because the official one only provides a `latest` tag.
-postgres_pgloader_docker_image: "{{ postgres_pgloader_container_image_registry_prefix }}illagrenan/pgloader:{{ postgres_pgloader_container_image_tag }}"
+postgres_pgloader_container_image: "{{ postgres_pgloader_container_image_registry_prefix }}illagrenan/pgloader:{{ postgres_pgloader_container_image_tag }}"
 postgres_pgloader_container_image_registry_prefix: "{{ 'localhost/' if postgres_pgloader_container_image_self_build else postgres_pgloader_container_image_registry_prefix_upstream }}"
 postgres_pgloader_container_image_registry_prefix_upstream: "{{ postgres_pgloader_container_image_registry_prefix_upstream_default }}"
 postgres_pgloader_container_image_registry_prefix_upstream_default: "docker.io/"
 postgres_pgloader_container_image_tag: "3.6.2"
-postgres_pgloader_container_image_force_pull: "{{ postgres_pgloader_docker_image.endswith(':latest') }}"
+postgres_pgloader_container_image_force_pull: "{{ postgres_pgloader_container_image.endswith(':latest') }}"
 
 # postgres_restart_necessary controls whether the Postgres systemd service
 # will be restarted (when true) or merely started (when false) by the

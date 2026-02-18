@@ -1,5 +1,5 @@
 * Alpine: edge
-* Baibot: v1.14.1
+* Baibot: v1.14.3
 * Bluesky: v0.2510.0
 * Borg: 1.4.3
 * Borgmatic: 2.1.1
@@ -69,7 +69,7 @@
 * Synapse Auto Compressor: v0.0.3
 * Synapse Http Antispam Git: v0.5.0
 * Synapse Reverse Proxy Companion: 1.29.5-alpine
-* Synapse Rust Synapse Compress State Docker Image: v0.0.3
+* Synapse Rust Synapse Compress State Container Image: v0.0.3
 * Synapse S3 Storage Provider: 1.6.0
 * Telegram: v0.15.3
 * Traefik: v3.6.8

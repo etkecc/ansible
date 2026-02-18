@@ -70,7 +70,7 @@
       --network={{ postgres_container_network }}
       --mount type=bind,src={{ sqlite_database_path }},dst=/in.db,ro
       --entrypoint={{ postgres_container_shell_path }}
-      {{ postgres_pgloader_docker_image }}
+      {{ postgres_pgloader_container_image }}
       -c
       'pgloader /in.db {{ postgres_db_connection_string }}'
   register: postgres_import_generic_sqlite_db_import_result

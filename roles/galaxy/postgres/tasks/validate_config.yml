@@ -15,6 +15,7 @@
     - { "old": "postgres_vacuum_command", "new": "<superseded by postgres_vacuum_presets and postgres_vacuum_preset, or postgres_vacuum_query>" }
     - { "old": "docker_postgres_container_image_registry_prefix", "new": "postgres_container_image_registry_prefix" }
     - { "old": "postgres_pgloader_container_image_name_prefix", "new": "postgres_pgloader_container_image_registry_prefix" }
+    - { "old": "postgres_pgloader_docker_image", "new": "postgres_pgloader_container_image" }
 
 - name: Fail if required Postgres settings not defined
   ansible.builtin.fail:

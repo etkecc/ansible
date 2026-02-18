@@ -6,7 +6,7 @@
 
 ### Component Updates
 
-* [Baibot](https://github.com/etkecc/baibot): [v1.14.0](https://github.com/etkecc/baibot/releases/tag/v1.14.0) ⇾ [v1.14.1](https://github.com/etkecc/baibot/releases/tag/v1.14.1)
+* [Baibot](https://github.com/etkecc/baibot): [v1.14.0](https://github.com/etkecc/baibot/releases/tag/v1.14.0) ⇾ [v1.14.3](https://github.com/etkecc/baibot/releases/tag/v1.14.3)
 * [Cinny](https://github.com/ajbura/cinny): [v4.10.2](https://github.com/ajbura/cinny/releases/tag/v4.10.2) ⇾ [v4.10.3](https://github.com/ajbura/cinny/releases/tag/v4.10.3)
 * [Discord](https://github.com/mautrix/discord): [v0.7.5](https://github.com/mautrix/discord/releases/tag/v0.7.5) ⇾ [v0.7.6](https://github.com/mautrix/discord/releases/tag/v0.7.6)
 * [Element](https://github.com/element-hq/element-web): [v1.12.9](https://github.com/element-hq/element-web/releases/tag/v1.12.9) ⇾ [v1.12.10](https://github.com/element-hq/element-web/releases/tag/v1.12.10)
@@ -25,6 +25,7 @@
 * [Signal](https://github.com/mautrix/signal): [v0.2601.0](https://github.com/mautrix/signal/releases/tag/v0.2601.0) ⇾ [v0.2602.0](https://github.com/mautrix/signal/releases/tag/v0.2602.0)
 * [Slack](https://github.com/mautrix/slack): [v0.2511.0](https://github.com/mautrix/slack/releases/tag/v0.2511.0) ⇾ [v0.2602.0](https://github.com/mautrix/slack/releases/tag/v0.2602.0)
 * [Synapse](https://github.com/element-hq/synapse): [v1.146.0](https://github.com/element-hq/synapse/releases/tag/v1.146.0) ⇾ [v1.147.1](https://github.com/element-hq/synapse/releases/tag/v1.147.1)
+* Synapse Rust Synapse Compress State Container Image: v0.0.3 _new_
 * [Traefik](https://github.com/traefik/traefik): [v3.6.7](https://github.com/traefik/traefik/releases/tag/v3.6.7) ⇾ [v3.6.8](https://github.com/traefik/traefik/releases/tag/v3.6.8)
 * [Vaultwarden](https://github.com/dani-garcia/vaultwarden): [1.35.2](https://github.com/dani-garcia/vaultwarden/releases/tag/1.35.2) ⇾ [1.35.3](https://github.com/dani-garcia/vaultwarden/releases/tag/1.35.3)
 * [Whatsapp](https://github.com/mautrix/whatsapp): [v0.2601.0](https://github.com/mautrix/whatsapp/releases/tag/v0.2601.0) ⇾ [v0.2602.0](https://github.com/mautrix/whatsapp/releases/tag/v0.2602.0)

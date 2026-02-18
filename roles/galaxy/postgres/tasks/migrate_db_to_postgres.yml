@@ -56,7 +56,7 @@
 
     - name: Ensure pgloader container image is built
       community.docker.docker_image:
-        name: "{{ postgres_pgloader_docker_image }}"
+        name: "{{ postgres_pgloader_container_image }}"
         source: build
         force_source: "{{ postgres_pgloader_git_pull_results.changed if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
         force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else postgres_pgloader_git_pull_results.changed }}"
@@ -67,7 +67,7 @@
 
 - name: Ensure pgloader container image is pulled
   community.docker.docker_image:
-    name: "{{ postgres_pgloader_docker_image }}"
+    name: "{{ postgres_pgloader_container_image }}"
     source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
     force_source: "{{ postgres_pgloader_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
     force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else postgres_pgloader_container_image_force_pull }}"
@@ -122,7 +122,7 @@
       --network={{ postgres_container_network }}
       --mount type=bind,src={{ postgres_db_migration_request.src }},dst=/in.db,ro
       --entrypoint={{ postgres_container_shell_path }}
-      {{ postgres_pgloader_docker_image }}
+      {{ postgres_pgloader_container_image }}
       -c
       'pgloader {{ postgres_db_migration_request.pgloader_options | default([]) | join(' ') }} /in.db {{ postgres_db_migration_request.dst }}'
   register: postgres_migrate_db_to_postgres_import_result
