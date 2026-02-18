@@ -24,7 +24,7 @@
         path: "{{ devture_systemd_docker_base_systemd_path }}/{{ valkey_identifier }}.service"
         state: absent
 
-    - name: Ensure Valkey config file does not exist
+    - name: Ensure Valkey configuration file does not exist
       ansible.builtin.file:
         path: "{{ valkey_config_path }}/{{ item }}"
         state: absent
@@ -57,20 +57,24 @@
       changed_when: valkey_base_path_deletion_result.rc == 0
       failed_when: false
 
-    - name: Ensure Valkey container network does not exist via community.docker.docker_network
-      when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
-      community.docker.docker_network:
-        name: "{{ valkey_container_network }}"
-        state: absent
+    - name: Ensure Valkey container network does not exist
+      when: valkey_container_network_deletion_enabled
+      block:
+        - name: Ensure Valkey container network does not exist via community.docker.docker_network
+          when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+          community.docker.docker_network:
+            name: "{{ valkey_container_network }}"
+            state: absent
+          register: valkey_network_deletion_result
 
-    - name: Ensure Valkey container network does not exist via ansible.builtin.command
-      when: devture_systemd_docker_base_container_network_creation_method == 'command'
-      ansible.builtin.command:
-        cmd: >-
-          {{ devture_systemd_docker_base_host_command_docker }} network rm
-          {{ valkey_container_network }}
-      register: network_deletion_result
-      changed_when: valkey_container_network in network_deletion_result.stdout
+        - name: Ensure Valkey container network does not exist via ansible.builtin.command
+          when: devture_systemd_docker_base_container_network_creation_method == 'command'
+          ansible.builtin.command:
+            cmd: >-
+              {{ devture_systemd_docker_base_host_command_docker }} network rm
+              {{ valkey_container_network }}
+          register: valkey_network_deletion_result
+          changed_when: valkey_container_network in valkey_network_deletion_result.stdout
 
 - name: Check existence of Valkey local data path
   ansible.builtin.stat:

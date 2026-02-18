@@ -25,8 +25,9 @@
     group: "{{ valkey_gid }}"
   with_items:
     - env
+  register: valkey_support_files_result
 
-- name: Ensure Valkey config file installed
+- name: Ensure Valkey configuration file installed
   ansible.builtin.template:
     src: "{{ role_path }}/templates/{{ item }}.j2"
     dest: "{{ valkey_config_path }}/{{ item }}"
@@ -35,6 +36,7 @@
     group: "{{ valkey_gid }}"
   with_items:
     - valkey.conf
+  register: valkey_config_file_result
 
 - name: Run if self-building of Valkey container image is not enabled
   when: "not valkey_container_image_self_build | bool"
@@ -46,20 +48,20 @@
         source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
         force_source: "{{ valkey_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
         force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else valkey_container_image_force_pull }}"
-      register: result
+      register: valkey_container_image_pull_result
       retries: "{{ devture_playbook_help_container_retries_count }}"
       delay: "{{ devture_playbook_help_container_retries_delay }}"
-      until: result is not failed
+      until: valkey_container_image_pull_result is not failed
 
     - name: Ensure Valkey container image is pulled via ansible.builtin.command
       when: devture_systemd_docker_base_container_image_pull_method == 'command'
       ansible.builtin.command:
         cmd: "{{ devture_systemd_docker_base_host_command_docker }} pull {{ valkey_container_image }}"
-      register: result
+      register: valkey_container_image_pull_result
       retries: "{{ devture_playbook_help_container_retries_count }}"
       delay: "{{ devture_playbook_help_container_retries_delay }}"
-      until: result is not failed
-      changed_when: "'Downloaded newer image' in result.stdout"
+      until: valkey_container_image_pull_result is not failed
+      changed_when: "'Downloaded newer image' in valkey_container_image_pull_result.stdout"
 
 - name: Run if self-building of Valkey container image is enabled
   when: valkey_container_image_self_build | bool
@@ -83,6 +85,7 @@
           path: "{{ valkey_container_image_self_build_repo_dockerfile_dir }}"
           pull: true
           args:
+      register: valkey_container_image_build_result
 
 - name: Ensure Valkey container network is created via community.docker.docker_network
   when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
@@ -91,6 +94,7 @@
     name: "{{ valkey_container_network }}"
     driver: bridge
     driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
+  register: valkey_network_creation_result
 
 - name: Ensure Valkey container network is created via ansible.builtin.command
   when: devture_systemd_docker_base_container_network_creation_method == 'command'
@@ -100,12 +104,24 @@
       {% if devture_systemd_docker_base_ipv6_enabled %}--ipv6{% endif %}
       {{ devture_systemd_docker_base_container_networks_driver_options_string }}
       {{ valkey_container_network }}
-  register: network_creation_result
-  changed_when: network_creation_result.rc == 0
-  failed_when: network_creation_result.rc != 0 and 'already exists' not in network_creation_result.stderr
+  register: valkey_network_creation_result
+  changed_when: valkey_network_creation_result.rc == 0
+  failed_when: valkey_network_creation_result.rc != 0 and 'already exists' not in valkey_network_creation_result.stderr
 
 - name: Ensure Valkey systemd service is present
   ansible.builtin.template:
     src: "{{ role_path }}/templates/systemd/valkey.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ valkey_identifier }}.service"
     mode: "0644"
+  register: valkey_systemd_service_result
+
+- name: Determine whether Valkey needs a restart
+  ansible.builtin.set_fact:
+    valkey_restart_necessary: >-
+      {{
+        valkey_support_files_result.changed | default(false)
+        or valkey_config_file_result.changed | default(false)
+        or valkey_systemd_service_result.changed | default(false)
+        or valkey_container_image_pull_result.changed | default(false)
+        or valkey_container_image_build_result.changed | default(false)
+      }}

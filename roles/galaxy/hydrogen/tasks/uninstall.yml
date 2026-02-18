@@ -24,20 +24,24 @@
         path: "{{ devture_systemd_docker_base_systemd_path }}/{{ hydrogen_identifier }}.service"
         state: absent
 
-    - name: Ensure Hydrogen container network does not exist via community.docker.docker_network
-      when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
-      community.docker.docker_network:
-        name: "{{ hydrogen_container_network }}"
-        state: absent
+    - name: Ensure Hydrogen container network does not exist
+      when: hydrogen_container_network_deletion_enabled
+      block:
+        - name: Ensure Hydrogen container network does not exist via community.docker.docker_network
+          when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+          community.docker.docker_network:
+            name: "{{ hydrogen_container_network }}"
+            state: absent
+          register: hydrogen_network_deletion_result
 
-    - name: Ensure Hydrogen container network does not exist via ansible.builtin.command
-      when: devture_systemd_docker_base_container_network_creation_method == 'command'
-      ansible.builtin.command:
-        cmd: >-
-          {{ devture_systemd_docker_base_host_command_docker }} network rm
-          {{ hydrogen_container_network }}
-      register: network_deletion_result
-      changed_when: hydrogen_container_network in network_deletion_result.stdout
+        - name: Ensure Hydrogen container network does not exist via ansible.builtin.command
+          when: devture_systemd_docker_base_container_network_creation_method == 'command'
+          ansible.builtin.command:
+            cmd: >-
+              {{ devture_systemd_docker_base_host_command_docker }} network rm
+              {{ hydrogen_container_network }}
+          register: hydrogen_network_deletion_result
+          changed_when: hydrogen_container_network in hydrogen_network_deletion_result.stdout
 
     - name: Ensure Hydrogen path does not exist
       ansible.builtin.file:

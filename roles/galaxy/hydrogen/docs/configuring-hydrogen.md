@@ -33,7 +33,7 @@ See the project's [documentation](https://github.com/element-hq/hydrogen-web/blo
 
 To enable Hydrogen with this role, add the following configuration to your `vars.yml` file.
 
-**Note**: the path should be something like `inventory/host_vars/mash.example.com/vars.yml` if you use the [MASH Ansible playbook](https://github.com/mother-of-all-self-hosting/mash-playbook).
+**Note**: the path should be something like `inventory/host_vars/matrix.example.com/vars.yml` if you use the [MDAD Ansible playbook](https://github.com/spantaleev/matrix-docker-ansible-deploy).
 
 ```yaml
 ########################################################################
@@ -75,7 +75,7 @@ There are some additional things you may wish to configure about the service.
 
 Take a look at:
 
-- [`defaults/main.yml`](../defaults/main.yml)` for some variables that you can customize via your `vars.yml` file
+- [`defaults/main.yml`](../defaults/main.yml) for some variables that you can customize via your `vars.yml` file
 - [`templates/config.json.j2`](../templates/config.json.j2) for the component's default configuration. You can override settings (even those that don't have dedicated playbook variables) using the `hydrogen_configuration_extension_json` variable
 
 ## Installing
@@ -86,7 +86,7 @@ After configuring the playbook, run the installation command of your playbook as
 ansible-playbook -i inventory/hosts setup.yml --tags=setup-all,start
 ```
 
-If you use the MASH playbook, the shortcut commands with the [`just` program](https://github.com/mother-of-all-self-hosting/mash-playbook/blob/main/docs/just.md) are also available: `just install-all` or `just setup-all`
+If you use the MDAD playbook, the shortcut commands with the [`just` program](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/docs/just.md) are also available: `just install-all` or `just setup-all`
 
 ## Usage
 
@@ -98,4 +98,4 @@ To get started, open the URL with a web browser, and log in to your homeserver w
 
 ### Check the service's logs
 
-You can find the logs in [systemd-journald](https://www.freedesktop.org/software/systemd/man/systemd-journald.service.html) by logging in to the server with SSH and running `journalctl -fu hydrogen` (or how you/your playbook named the service, e.g. `mash-hydrogen`).
+You can find the logs in [systemd-journald](https://www.freedesktop.org/software/systemd/man/systemd-journald.service.html) by logging in to the server with SSH and running `journalctl -fu hydrogen` (or how you/your playbook named the service, e.g. `matrix-client-hydrogen`).
