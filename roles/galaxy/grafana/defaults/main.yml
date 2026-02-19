@@ -37,14 +37,6 @@ grafana_container_image_registry_prefix_upstream: "{{ grafana_container_image_re
 grafana_container_image_registry_prefix_upstream_default: docker.io/
 grafana_container_image_force_pull: "{{ grafana_container_image.endswith(':latest') }}"
 
-# The size of the container's /tmp filesystem.
-grafana_container_tmp_size: 128m
-
-# Control whether the Grafana container exposes its HTTP port (tcp/3000 in the container).
-#
-# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
-grafana_container_http_host_bind_port: ""
-
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 # You can specify 'host' network for container to use it.
 # In this case you will probably be interested to set GF_SERVER_HTTP_ADDR environment variable to not expose Grafana to the world.
@@ -52,6 +44,14 @@ grafana_container_http_host_bind_port: ""
 #   GF_SERVER_HTTP_ADDR=127.0.0.1
 # Setting variable to 'host' will silently ignore grafana_container_http_port and grafana_container_additional_networks variables.
 grafana_container_network: "{{ grafana_identifier }}"
+
+# Control if the container network is deleted on uninstalling.
+grafana_container_network_deletion_enabled: true
+
+# Specify how the container publishes its HTTP port (as defined by `grafana_container_http_port`).
+#
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
+grafana_container_http_host_bind_port: ""
 
 # The port number in the container
 grafana_container_http_port: 3000
@@ -111,6 +111,9 @@ grafana_container_labels_traefik_additional_response_headers_custom: {}
 grafana_container_labels_additional_labels: "{{ grafana_container_labels_additional_labels_auto + grafana_container_labels_additional_labels_custom }}"
 grafana_container_labels_additional_labels_auto: []
 grafana_container_labels_additional_labels_custom: []
+
+# Specify the size of the container's tmpfs volume
+grafana_container_tmpfs_tmp_size: 128m
 
 # A list of extra arguments to pass to the container (`docker create` command)
 grafana_container_extra_arguments: "{{ grafana_container_extra_arguments_auto + grafana_container_extra_arguments_custom }}"
@@ -292,3 +295,13 @@ grafana_provisioning_plugins_apps: []  # noqa var-naming
 
 # Additional environment variables.
 grafana_environment_variables_additional_variables: ""
+
+# grafana_restart_necessary controls whether the Grafana systemd
+# service will be restarted (when true) or merely started (when false) by the
+# systemd service manager role (when conditional restart is enabled).
+#
+# This value is automatically computed during installation based on whether
+# any configuration files, the systemd service file, or the container image changed.
+# The default of `false` means "no restart needed" — appropriate when the role's
+# installation tasks haven't run (e.g., due to --tags skipping them).
+grafana_restart_necessary: false

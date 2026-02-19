@@ -1,5 +1,6 @@
 {#
 SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+SPDX-FileCopyrightText: 2026 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
@@ -32,13 +33,14 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% if prometheus_container_http_host_bind_port %}
       -p {{ prometheus_container_http_host_bind_port }}:{{ prometheus_container_http_port }} \
       {% endif %}
+      --env-file={{ prometheus_base_path }}/env \
       --label-file={{ prometheus_base_path }}/labels \
       --mount type=bind,src={{ prometheus_config_path }},dst=/etc/prometheus \
       --mount type=bind,src={{ prometheus_data_path }},dst=/prometheus \
       {% for arg in prometheus_container_extra_arguments %}
       {{ arg }} \
       {% endfor %}
-      {{ prometheus_container_image }} {{ prometheus_process_arguments|join(' ') }}
+      {{ prometheus_container_image }} {{ prometheus_process_extra_arguments | join(' ') }}
 
 {% for network in prometheus_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ prometheus_identifier }}

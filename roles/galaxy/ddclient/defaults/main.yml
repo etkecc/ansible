@@ -42,6 +42,9 @@ ddclient_container_image_self_build_src_files_path: "{{ ddclient_base_path }}/do
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 ddclient_container_network: "{{ ddclient_identifier }}"
 
+# Control if the container network is deleted on uninstalling.
+ddclient_container_network_deletion_enabled: true
+
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
 # Use this to expose this container to another reverse proxy, which runs in a different container network.
@@ -118,3 +121,13 @@ ddclient_environment_variables_tz: UTC
 
 # Additional environment variables.
 ddclient_environment_variables_additional_variables: ""
+
+# ddclient_restart_necessary controls whether the ddclient systemd
+# service will be restarted (when true) or merely started (when false) by the
+# systemd service manager role (when conditional restart is enabled).
+#
+# This value is automatically computed during installation based on whether
+# any configuration files, the systemd service file, or the container image changed.
+# The default of `false` means "no restart needed" — appropriate when the role's
+# installation tasks haven't run (e.g., due to --tags skipping them).
+ddclient_restart_necessary: false

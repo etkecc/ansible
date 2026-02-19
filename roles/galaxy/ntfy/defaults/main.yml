@@ -50,6 +50,9 @@ ntfy_container_image_force_pull: "{{ ntfy_container_image.endswith(':latest') }}
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 ntfy_container_network: "{{ ntfy_identifier }}"
 
+# Control if the container network is deleted on uninstalling.
+ntfy_container_network_deletion_enabled: true
+
 # Specify how the container publishes its HTTP port (as defined by `ntfy_container_http_port`).
 #
 # Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
@@ -343,3 +346,13 @@ ntfy_environment_variables_tz: UTC
 
 # Additional environment variables.
 ntfy_environment_variables_additional_variables: ""
+
+# ntfy_restart_necessary controls whether the ntfy systemd
+# service will be restarted (when true) or merely started (when false) by the
+# systemd service manager role (when conditional restart is enabled).
+#
+# This value is automatically computed during installation based on whether
+# any configuration files, the systemd service file, or the container image changed.
+# The default of `false` means "no restart needed" — appropriate when the role's
+# installation tasks haven't run (e.g., due to --tags skipping them).
+ntfy_restart_necessary: false

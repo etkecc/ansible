@@ -1,9 +1,9 @@
-# SPDX-FileCopyrightText: 2023 - 2024 Nikita Chernyi
-# SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2023, 2024 Nikita Chernyi
+# SPDX-FileCopyrightText: 2023-2025 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2024 Sergio Durigan Junior
 # SPDX-FileCopyrightText: 2024 Tiz
 # SPDX-FileCopyrightText: 2025 MASH project contributors
-# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -38,13 +38,16 @@ prometheus_container_image_registry_prefix_upstream_default: docker.io/
 prometheus_container_image_tag: "{{ prometheus_version }}"
 prometheus_container_image_force_pull: "{{ prometheus_container_image.endswith(':latest') }}"
 
-# Controls whether the container exposes its HTTP port (tcp/9090 in the container).
-#
-# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:9090"), or empty string to not expose.
-prometheus_container_http_host_bind_port: ""
-
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 prometheus_container_network: "{{ prometheus_identifier }}"
+
+# Control if the container network is deleted on uninstalling.
+prometheus_container_network_deletion_enabled: true
+
+# Specify how the container publishes its HTTP port (as defined by `prometheus_container_http_port`).
+#
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
+prometheus_container_http_host_bind_port: ""
 
 # The port number in the container
 prometheus_container_http_port: 9090
@@ -58,7 +61,7 @@ prometheus_container_additional_networks_custom: []
 # prometheus_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
 # See `../templates/labels.j2` for details.
 #
-# To inject your own other container labels, see `prometheus_container_labels_additional_labels`.
+# To inject your own other container labels, see `prometheus_container_labels_additional_labels_custom`.
 prometheus_container_labels_traefik_enabled: false
 prometheus_container_labels_traefik_docker_network: "{{ prometheus_container_network }}"
 prometheus_container_labels_traefik_hostname: "{{ prometheus_hostname }}"
@@ -69,6 +72,10 @@ prometheus_container_labels_traefik_priority: 0
 prometheus_container_labels_traefik_entrypoints: web-secure
 prometheus_container_labels_traefik_tls: "{{ prometheus_container_labels_traefik_entrypoints != 'web' }}"
 prometheus_container_labels_traefik_tls_certResolver: default  # noqa var-naming
+
+prometheus_container_labels_metrics_middleware_basic_auth_enabled: false
+# See: https://doc.traefik.io/traefik/reference/routing-configuration/http/middlewares/basicauth/
+prometheus_container_labels_metrics_middleware_basic_auth_users: ""
 
 # Controls which additional headers to attach to all HTTP requests.
 # To add your own custom request headers, use `prometheus_container_labels_traefik_additional_request_headers_custom`
@@ -95,7 +102,7 @@ prometheus_container_labels_traefik_additional_response_headers_custom: {}
 # To add your own custom labels, use `prometheus_container_labels_additional_labels_custom`
 #
 # Example:
-# prometheus_container_labels_additional_labels_custom: |
+# prometheus_container_labels_additional_labels_custom:
 #   - my.label=1
 #   - another.label="here"
 prometheus_container_labels_additional_labels: "{{ prometheus_container_labels_additional_labels_auto + prometheus_container_labels_additional_labels_custom }}"
@@ -154,6 +161,17 @@ prometheus_floc_optout_enabled: true
 # See: `prometheus_http_header_strict_transport_security`
 prometheus_hsts_preload_enabled: false
 
+# A list of extra arguments to pass to the Prometheus process
+# Example: ['--SOME_ARGUMENT']
+prometheus_process_extra_arguments: "{{ prometheus_process_extra_arguments_default + prometheus_process_extra_arguments_auto + prometheus_process_extra_arguments_custom }}"
+prometheus_process_extra_arguments_default:
+  - "--config.file=/etc/prometheus/prometheus.yml"
+  - "--storage.tsdb.path=/prometheus"
+  - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+  - "--web.console.templates=/usr/share/prometheus/consoles"
+prometheus_process_extra_arguments_auto: []
+prometheus_process_extra_arguments_custom: []
+
 # List of systemd services that the Prometheus systemd service depends on
 prometheus_systemd_required_services_list: "{{ prometheus_systemd_required_services_list_default + prometheus_systemd_required_services_list_auto + prometheus_systemd_required_services_list_custom }}"
 prometheus_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
@@ -165,23 +183,6 @@ prometheus_systemd_wanted_services_list: "{{ prometheus_systemd_wanted_services_
 prometheus_systemd_wanted_services_list_default: []
 prometheus_systemd_wanted_services_list_auto: []
 prometheus_systemd_wanted_services_list_custom: []
-
-# A list of default arguments to pass to the prometheus process
-prometheus_process_default_arguments:
-  - "--config.file=/etc/prometheus/prometheus.yml"
-  - "--storage.tsdb.path=/prometheus"
-  - "--web.console.libraries=/usr/share/prometheus/console_libraries"
-  - "--web.console.templates=/usr/share/prometheus/consoles"
-
-# A list of extra arguments to pass to the prometheus process
-prometheus_process_extra_arguments: []
-
-# holds the final list of process arguments
-prometheus_process_arguments: "{{ prometheus_process_default_arguments + prometheus_process_extra_arguments }}"
-
-prometheus_container_labels_metrics_middleware_basic_auth_enabled: false
-# See: https://doc.traefik.io/traefik/reference/routing-configuration/http/middlewares/basicauth/
-prometheus_container_labels_metrics_middleware_basic_auth_users: ""
 
 # Controls whether Prometheus will scrape its own process running in the container.
 # See: prometheus_config_scrape_configs_default
@@ -268,3 +269,19 @@ prometheus_config_scrape_configs_default: |
   }}
 prometheus_config_scrape_configs_auto: []
 prometheus_config_scrape_configs_additional: []
+
+# Specify the timezone
+prometheus_environment_variables_tz: UTC
+
+# Additional environment variables.
+prometheus_environment_variables_additional_variables: ""
+
+# prometheus_restart_necessary controls whether the Prometheus systemd
+# service will be restarted (when true) or merely started (when false) by the
+# systemd service manager role (when conditional restart is enabled).
+#
+# This value is automatically computed during installation based on whether
+# any configuration files, the systemd service file, or the container image changed.
+# The default of `false` means "no restart needed" — appropriate when the role's
+# installation tasks haven't run (e.g., due to --tags skipping them).
+prometheus_restart_necessary: false

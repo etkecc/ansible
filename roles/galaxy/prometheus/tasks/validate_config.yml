@@ -12,6 +12,8 @@
       Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
   when: "lookup('ansible.builtin.varnames', ('^' + item.old + '$'), wantlist=True) | length > 0"
   with_items:
+    - { "old": "prometheus_process_default_arguments", "new": "prometheus_process_extra_arguments_default" }
+    - { "old": "prometheus_process_arguments", "new": "prometheus_process_extra_arguments" }
     - { "old": "prometheus_basic_auth_enabled", "new": "prometheus_container_labels_metrics_middleware_basic_auth_enabled" }
     - { "old": "prometheus_basic_auth_username", "new": "<superseded by prometheus_container_labels_metrics_middleware_basic_auth_users>" }
     - { "old": "prometheus_basic_auth_password", "new": "<superseded by prometheus_container_labels_metrics_middleware_basic_auth_users>" }

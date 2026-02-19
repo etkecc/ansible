@@ -16,6 +16,8 @@ This role *implicitly* depends on:
 
 Check [`defaults/main.yml`](defaults/main.yml) for the full list of supported options. Refer to [this page](docs/configuring-ddclient.md) for details about setting up the service with this role.
 
+💡 For an Ansible playbook which integrates this role and makes it easier to use, see the [Mother-of-All-Self-Hosting Ansible playbook](https://app.radicle.xyz/nodes/seed.radicle.garden/rad%3Az2SXkaceJw3YmS89T1xGysnFSjWsw).
+
 ## Development
 
 You can optionally install [pre-commit](https://pre-commit.com/) so that simple mistakes are checked and noticed before changes are pushed to a remote branch. See [`.pre-commit-config.yaml`](./.pre-commit-config.yaml) for which hooks are to be executed.

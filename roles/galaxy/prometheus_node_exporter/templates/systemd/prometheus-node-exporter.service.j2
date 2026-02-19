@@ -42,7 +42,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {{ arg }} \
       {% endfor %}
       {{ prometheus_node_exporter_container_image }} \
-      --path.rootfs=/host {{ prometheus_node_exporter_process_extra_arguments|join(' ') }}
+      --path.rootfs=/host {{ prometheus_node_exporter_process_extra_arguments | join(' ') }}
 
 {% for network in prometheus_node_exporter_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ prometheus_node_exporter_identifier }}

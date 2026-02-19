@@ -36,7 +36,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --label-file={{ grafana_base_path }}/labels \
       --mount type=bind,src={{ grafana_config_path }},dst=/etc/grafana \
       --mount type=bind,src={{ grafana_data_path }},dst=/var/lib/grafana \
-      --tmpfs=/tmp:rw,noexec,nosuid,size={{ grafana_container_tmp_size }} \
+      --tmpfs=/tmp:rw,noexec,nosuid,size={{ grafana_container_tmpfs_tmp_size }} \
       {% for arg in grafana_container_extra_arguments %}
       {{ arg }} \
       {% endfor %}

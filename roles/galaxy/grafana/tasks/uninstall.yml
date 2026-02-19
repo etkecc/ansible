@@ -24,20 +24,24 @@
         path: "{{ devture_systemd_docker_base_systemd_path }}/{{ grafana_identifier }}.service"
         state: absent
 
-    - name: Ensure Grafana container network does not exist via community.docker.docker_network
-      when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
-      community.docker.docker_network:
-        name: "{{ grafana_container_network }}"
-        state: absent
+    - name: Ensure Grafana container network does not exist
+      when: grafana_container_network_deletion_enabled
+      block:
+        - name: Ensure Grafana container network does not exist via community.docker.docker_network
+          when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+          community.docker.docker_network:
+            name: "{{ grafana_container_network }}"
+            state: absent
+          register: grafana_network_deletion_result
 
-    - name: Ensure Grafana container network does not exist via ansible.builtin.command
-      when: devture_systemd_docker_base_container_network_creation_method == 'command'
-      ansible.builtin.command:
-        cmd: >-
-          {{ devture_systemd_docker_base_host_command_docker }} network rm
-          {{ grafana_container_network }}
-      register: network_deletion_result
-      changed_when: grafana_container_network in network_deletion_result.stdout
+        - name: Ensure Grafana container network does not exist via ansible.builtin.command
+          when: devture_systemd_docker_base_container_network_creation_method == 'command'
+          ansible.builtin.command:
+            cmd: >-
+              {{ devture_systemd_docker_base_host_command_docker }} network rm
+              {{ grafana_container_network }}
+          register: grafana_network_deletion_result
+          changed_when: grafana_container_network in grafana_network_deletion_result.stdout
 
     - name: Ensure Grafana path does not exist
       ansible.builtin.file:

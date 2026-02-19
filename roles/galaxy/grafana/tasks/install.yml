@@ -52,6 +52,7 @@
       dst: "{{ grafana_base_path }}/labels"
     - src: env.j2
       dst: "{{ grafana_base_path }}/env"
+  register: grafana_support_files_result
 
 - name: Ensure Grafana dashboard(s) downloaded
   ansible.builtin.get_url:
@@ -75,6 +76,7 @@
     owner: "{{ grafana_uid }}"
     group: "{{ grafana_gid }}"
   with_items: "{{ grafana_provisioning_dashboard_template_files }}"
+  register: grafana_dashboard_tempate_files_result
 
 - name: Ensure Grafana alerting templates installed
   ansible.builtin.template:
@@ -84,6 +86,7 @@
     owner: "{{ grafana_uid }}"
     group: "{{ grafana_gid }}"
   with_items: "{{ grafana_provisioning_alerting_template_files }}"
+  register: grafana_provisioning_alerting_tempate_files_result
 
 - name: Ensure Grafana container image is pulled via community.docker.docker_image
   when: devture_systemd_docker_base_container_image_pull_method == 'ansible-module'
@@ -92,20 +95,20 @@
     source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
     force_source: "{{ grafana_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
     force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else grafana_container_image_force_pull }}"
-  register: result
+  register: grafana_container_image_pull_result
   retries: "{{ devture_playbook_help_container_retries_count }}"
   delay: "{{ devture_playbook_help_container_retries_delay }}"
-  until: result is not failed
+  until: grafana_container_image_pull_result is not failed
 
 - name: Ensure Grafana container image is pulled via ansible.builtin.command
   when: devture_systemd_docker_base_container_image_pull_method == 'command'
   ansible.builtin.command:
     cmd: "{{ devture_systemd_docker_base_host_command_docker }} pull {{ grafana_container_image }}"
-  register: result
+  register: grafana_container_image_pull_result
   retries: "{{ devture_playbook_help_container_retries_count }}"
   delay: "{{ devture_playbook_help_container_retries_delay }}"
-  until: result is not failed
-  changed_when: "'Downloaded newer image' in result.stdout"
+  until: grafana_container_image_pull_result is not failed
+  changed_when: "'Downloaded newer image' in grafana_container_image_pull_result.stdout"
 
 - name: Run if 'host' network is not specified to be used
   when: grafana_container_network != 'host'
@@ -117,6 +120,7 @@
         name: "{{ grafana_container_network }}"
         driver: bridge
         driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
+      register: gradana_network_creation_result
 
     - name: Ensure Grafana container network is created via ansible.builtin.command
       when: devture_systemd_docker_base_container_network_creation_method == 'command'
@@ -126,12 +130,24 @@
           {% if devture_systemd_docker_base_ipv6_enabled %}--ipv6{% endif %}
           {{ devture_systemd_docker_base_container_networks_driver_options_string }}
           {{ grafana_container_network }}
-      register: network_creation_result
-      changed_when: network_creation_result.rc == 0
-      failed_when: network_creation_result.rc != 0 and 'already exists' not in network_creation_result.stderr
+      register: gradana_network_creation_result
+      changed_when: gradana_network_creation_result.rc == 0
+      failed_when: gradana_network_creation_result.rc != 0 and 'already exists' not in gradana_network_creation_result.stderr
 
 - name: Ensure Grafana systemd service is present
   ansible.builtin.template:
     src: "{{ role_path }}/templates/systemd/grafana.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ grafana_identifier }}.service"
     mode: "0644"
+  register: grafana_systemd_service_result
+
+- name: Determine whether Grafana needs a restart
+  ansible.builtin.set_fact:
+    grafana_restart_necessary: >-
+      {{
+        grafana_support_files_result.changed | default(false)
+        or grafana_dashboard_tempate_files_result.changed | default(false)
+        or grafana_provisioning_alerting_tempate_files_result.changed | default(false)
+        or grafana_systemd_service_result.changed | default(false)
+        or grafana_container_image_pull_result.changed | default(false)
+      }}

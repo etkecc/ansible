@@ -13,6 +13,7 @@
       Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
   when: "lookup('ansible.builtin.varnames', ('^' + item.old + '$'), wantlist=True) | length > 0"
   with_items:
+    - { "old": "grafana_container_tmp_size", "new": "grafana_container_tmpfs_tmp_size" }
     - { "old": "grafana_container_additional_networks_additional", "new": "grafana_container_additional_networks_custom" }
     - { "old": "grafana_provisioning_datasources", "new": "grafana_provisioning_datasources_datasources" }
     - { "old": "grafana_provisioning_dashboard_providers", "new": "grafana_provisioning_dashboards_providers" }

@@ -39,20 +39,24 @@
         path: "{{ etherpad_container_image_self_build_src_files_path }}"
         state: absent
 
-    - name: Ensure Etherpad container network does not exist via community.docker.docker_network
-      when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
-      community.docker.docker_network:
-        name: "{{ etherpad_container_network }}"
-        state: absent
+    - name: Ensure Etherpad container network does not exist
+      when: etherpad_container_network_deletion_enabled
+      block:
+        - name: Ensure Etherpad container network does not exist via community.docker.docker_network
+          when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+          community.docker.docker_network:
+            name: "{{ etherpad_container_network }}"
+            state: absent
+          register: etherpad_network_deletion_result
 
-    - name: Ensure Etherpad container network does not exist via ansible.builtin.command
-      when: devture_systemd_docker_base_container_network_creation_method == 'command'
-      ansible.builtin.command:
-        cmd: >-
-          {{ devture_systemd_docker_base_host_command_docker }} network rm
-          {{ etherpad_container_network }}
-      register: network_deletion_result
-      changed_when: etherpad_container_network in network_deletion_result.stdout
+        - name: Ensure Etherpad container network does not exist via ansible.builtin.command
+          when: devture_systemd_docker_base_container_network_creation_method == 'command'
+          ansible.builtin.command:
+            cmd: >-
+              {{ devture_systemd_docker_base_host_command_docker }} network rm
+              {{ etherpad_container_network }}
+          register: etherpad_network_deletion_result
+          changed_when: etherpad_container_network in etherpad_network_deletion_result.stdout
 
     - name: Ensure Etherpad local data path does not exist if empty
       ansible.builtin.command:
