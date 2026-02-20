@@ -31,6 +31,9 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --network={{ postgres_backup_container_network }} \
       --env-file={{ postgres_backup_config_path }}/env \
       --mount type=bind,src={{ postgres_backup_data_path }},dst=/backups \
+      {% for arg in postgres_backup_container_extra_arguments %}
+      {{ arg }} \
+      {% endfor %}
       {{ postgres_backup_container_image_to_use }}
 
 {% for network in postgres_backup_container_additional_networks %}

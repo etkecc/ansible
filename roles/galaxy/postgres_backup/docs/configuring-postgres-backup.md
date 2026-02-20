@@ -36,19 +36,19 @@ postgres_backup_enabled: true
 
 Refer to the table below for additional configuration variables and their default values.
 
-| Name                              | Default value                | Description                                                      |
-| :-------------------------------- | :--------------------------- | :--------------------------------------------------------------- |
-|`postgres_backup_enabled`|`false`|Set to true to use [docker-postgres-backup-local](https://github.com/prodrigestivill/docker-postgres-backup-local) to create automatic database backups|
-|`postgres_backup_schedule`| `'@daily'` |Cron-schedule specifying the interval between Postgres backups.|
-|`postgres_backup_keep_days`|`7`|Number of daily backups to keep|
-|`postgres_backup_keep_weeks`|`4`|Number of weekly backups to keep|
-|`postgres_backup_keep_months`|`12`|Number of monthly backups to keep|
-|`postgres_backup_base_path` | `"{{ matrix_base_data_path }}/postgres-backup"` | Base path for postgres-backup. Also see `postgres_backup_data_path` |
-|`postgres_backup_data_path` | `"{{ postgres_backup_base_path }}/data"` | Storage path for postgres-backup database backups |
+| Name                          | Default value                                   | Description                                                                                                                                             |
+| :---------------------------- | :---------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `postgres_backup_enabled`     | `false`                                         | Set to true to use [docker-postgres-backup-local](https://github.com/prodrigestivill/docker-postgres-backup-local) to create automatic database backups |
+| `postgres_backup_schedule`    | `'@daily'`                                      | Cron-schedule specifying the interval between Postgres backups.                                                                                         |
+| `postgres_backup_keep_days`   | `7`                                             | Number of daily backups to keep                                                                                                                         |
+| `postgres_backup_keep_weeks`  | `4`                                             | Number of weekly backups to keep                                                                                                                        |
+| `postgres_backup_keep_months` | `12`                                            | Number of monthly backups to keep                                                                                                                       |
+| `postgres_backup_base_path`   | `"{{ matrix_base_data_path }}/postgres-backup"` | Base path for postgres-backup. Also see `postgres_backup_data_path`                                                                                     |
+| `postgres_backup_data_path`   | `"{{ postgres_backup_base_path }}/data"`        | Storage path for postgres-backup database backups                                                                                                       |
 
 ### Extending the configuration
 
-There are some additional things you may wish to configure about the component.
+There are some additional things you may wish to configure about the service.
 
 Take a look at:
 

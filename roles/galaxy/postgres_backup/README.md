@@ -1,5 +1,6 @@
 <!--
 SPDX-FileCopyrightText: 2022-2024 Slavi Pantaleev
+SPDX-FileCopyrightText: 2026 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
@@ -19,7 +20,7 @@ This role *implicitly* depends on:
 
 ## Usage
 
-💡 See this [document](docs/configuring-postgres-backup.md) for details about setting up the service with this role.
+💡 Refer to [this page](docs/configuring-postgres-backup.md) for details about setting up the service with this role.
 
 Example playbook:
 

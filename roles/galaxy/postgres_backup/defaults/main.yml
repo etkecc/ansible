@@ -3,6 +3,7 @@
 # SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
 # SPDX-FileCopyrightText: 2024 Nikita Chernyi
 # SPDX-FileCopyrightText: 2024 nevart
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -24,10 +25,10 @@ postgres_backup_data_path: "{{ postgres_backup_base_path }}/data"
 postgres_backup_uid: ~
 postgres_backup_gid: ~
 
-postgres_backup_connection_hostname: ''
+postgres_backup_connection_hostname: ""
 postgres_backup_connection_port: 5432
-postgres_backup_connection_username: ''
-postgres_backup_connection_password: ''
+postgres_backup_connection_username: ""
+postgres_backup_connection_password: ""
 
 postgres_backup_extra_opts: "-Z9 --schema=public --blobs"
 postgres_backup_schedule: "@daily"
@@ -59,7 +60,7 @@ postgres_backup_databases_custom: []
 #
 # You can leave this empty to prevent auto-detection.
 # If so, the default value of `postgres_backup_container_image_to_use` is used.
-postgres_backup_postgres_data_path: ''
+postgres_backup_postgres_data_path: ""
 
 # Specifies where the Postgres role is to be included from, for auto-detection purposes.
 # This should be a path relative to your role directories.
@@ -80,11 +81,20 @@ postgres_backup_systemd_wanted_services_list_default: []
 postgres_backup_systemd_wanted_services_list_auto: []
 postgres_backup_systemd_wanted_services_list_custom: []
 
+# The base container network. It will be auto-created by this role if it doesn't exist already.
 postgres_backup_container_network: "{{ postgres_backup_identifier }}"
+
+# Control if the container network is deleted on uninstalling.
+postgres_backup_container_network_deletion_enabled: true
 
 postgres_backup_container_additional_networks: "{{ postgres_backup_container_additional_networks_auto + postgres_backup_container_additional_networks_custom }}"
 postgres_backup_container_additional_networks_auto: []
 postgres_backup_container_additional_networks_custom: []
+
+# A list of extra arguments to pass to the container (`docker create` command)
+postgres_backup_container_extra_arguments: "{{ postgres_backup_container_extra_arguments_auto + postgres_backup_container_extra_arguments_custom }}"
+postgres_backup_container_extra_arguments_auto: []
+postgres_backup_container_extra_arguments_custom: []
 
 postgres_backup_container_image_registry_prefix: "{{ postgres_backup_container_image_registry_prefix_upstream }}"
 postgres_backup_container_image_registry_prefix_upstream: "{{ postgres_backup_container_image_registry_prefix_upstream_default }}"
@@ -113,6 +123,9 @@ postgres_backup_container_image_to_use: '{{ postgres_backup_container_image_late
 
 postgres_backup_container_image_force_pull: "{{ postgres_backup_container_image_to_use.endswith(':latest') }}"
 
+# Specify the timezone
+postgres_backup_environment_variables_tz: UTC
+
 # Additional environment variables.
 #
 # Example:
@@ -121,4 +134,14 @@ postgres_backup_container_image_force_pull: "{{ postgres_backup_container_image_
 #   WEBHOOK_ERROR_URL=https://example.com/webhook-error
 #
 # Ref: https://github.com/prodrigestivill/docker-postgres-backup-local/blob/8181772cbe50ebaaa1950f585b915035a2c02128/README.md#environment-variables
-postgres_backup_environment_variables_additional_variables: ''
+postgres_backup_environment_variables_additional_variables: ""
+
+# postgres_backup_restart_necessary controls whether the postgres-backup systemd
+# service will be restarted (when true) or merely started (when false) by the
+# systemd service manager role (when conditional restart is enabled).
+#
+# This value is automatically computed during installation based on whether
+# any configuration files, the systemd service file, or the container image changed.
+# The default of `false` means "no restart needed" — appropriate when the role's
+# installation tasks haven't run (e.g., due to --tags skipping them).
+postgres_backup_restart_necessary: false

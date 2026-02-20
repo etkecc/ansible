@@ -28,20 +28,24 @@
         - "{{ devture_systemd_docker_base_systemd_path }}/{{ postgres_backup_identifier }}.service"
         - "{{ postgres_backup_config_path }}"
 
-    - name: Ensure postgres-backup container network does not exist via community.docker.docker_network
-      when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
-      community.docker.docker_network:
-        name: "{{ postgres_backup_container_network }}"
-        state: absent
+    - name: Ensure postgres-backup container network does not exist
+      when: postgres_backup_container_network_deletion_enabled
+      block:
+        - name: Ensure postgres-backup container network does not exist via community.docker.docker_network
+          when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+          community.docker.docker_network:
+            name: "{{ postgres_backup_container_network }}"
+            state: absent
+          register: postgres_backup_network_deletion_result
 
-    - name: Ensure postgres-backup container network does not exist via ansible.builtin.command
-      when: devture_systemd_docker_base_container_network_creation_method == 'command'
-      ansible.builtin.command:
-        cmd: >-
-          {{ devture_systemd_docker_base_host_command_docker }} network rm
-          {{ postgres_backup_container_network }}
-      register: network_deletion_result
-      changed_when: postgres_backup_container_network in network_deletion_result.stdout
+        - name: Ensure postgres-backup container network does not exist via ansible.builtin.command
+          when: devture_systemd_docker_base_container_network_creation_method == 'command'
+          ansible.builtin.command:
+            cmd: >-
+              {{ devture_systemd_docker_base_host_command_docker }} network rm
+              {{ postgres_backup_container_network }}
+          register: postgres_backup_network_deletion_result
+          changed_when: postgres_backup_container_network in postgres_backup_network_deletion_result.stdout
 
 - name: Check existence of postgres-backup backup path
   ansible.builtin.stat:
