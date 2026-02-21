@@ -61,20 +61,24 @@
       changed_when: vaultwarden_base_path_deletion_result.rc == 0
       failed_when: false
 
-    - name: Ensure Vaultwarden container network does not exist via community.docker.docker_network
-      when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
-      community.docker.docker_network:
-        name: "{{ vaultwarden_container_network }}"
-        state: absent
+    - name: Ensure Vaultwarden container network does not exist
+      when: vaultwarden_container_network_deletion_enabled
+      block:
+        - name: Ensure Vaultwarden container network does not exist via community.docker.docker_network
+          when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+          community.docker.docker_network:
+            name: "{{ vaultwarden_container_network }}"
+            state: absent
+          register: vaultwarden_network_deletion_result
 
-    - name: Ensure Vaultwarden container network does not exist via ansible.builtin.command
-      when: devture_systemd_docker_base_container_network_creation_method == 'command'
-      ansible.builtin.command:
-        cmd: >-
-          {{ devture_systemd_docker_base_host_command_docker }} network rm
-          {{ vaultwarden_container_network }}
-      register: network_deletion_result
-      changed_when: vaultwarden_container_network in network_deletion_result.stdout
+        - name: Ensure Vaultwarden container network does not exist via ansible.builtin.command
+          when: devture_systemd_docker_base_container_network_creation_method == 'command'
+          ansible.builtin.command:
+            cmd: >-
+              {{ devture_systemd_docker_base_host_command_docker }} network rm
+              {{ vaultwarden_container_network }}
+          register: vaultwarden_network_deletion_result
+          changed_when: vaultwarden_container_network in vaultwarden_network_deletion_result.stdout
 
 - name: Check existence of Vaultwarden local data path
   ansible.builtin.stat:

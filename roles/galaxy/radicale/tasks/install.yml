@@ -18,6 +18,18 @@
     - "{{ radicale_data_path }}"
     - "{{ radicale_data_collections_path }}"
 
+- name: Ensure Radicale support files installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/{{ item }}.j2"
+    dest: "{{ radicale_base_path }}/{{ item }}"
+    mode: "0640"
+    owner: "{{ radicale_uid }}"
+    group: "{{ radicale_gid }}"
+  with_items:
+    - env
+    - labels
+  register: radicale_support_files_result
+
 - name: Convert Radicale credentials to htpasswd entries
   ansible.builtin.include_tasks: "{{ role_path }}/tasks/includes/convert_credentials_to_htpasswd.yml"
   with_items: "{{ radicale_credentials | unique }}"
@@ -36,17 +48,7 @@
   with_items:
     - { path: config, valid: true }
     - { path: htpasswd, valid: "{{ radicale_auth_type == 'htpasswd' }}" }
-
-- name: Ensure Radicale support files installed
-  ansible.builtin.template:
-    src: "{{ role_path }}/templates/{{ item }}.j2"
-    dest: "{{ radicale_base_path }}/{{ item }}"
-    mode: "0640"
-    owner: "{{ radicale_uid }}"
-    group: "{{ radicale_gid }}"
-  with_items:
-    - env
-    - labels
+  register: radicale_config_files_result
 
 - name: Run if self-building of Radicale container image is not enabled
   when: "not radicale_container_image_self_build | bool"
@@ -58,20 +60,20 @@
         source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
         force_source: "{{ radicale_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
         force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else radicale_container_image_force_pull }}"
-      register: result
+      register: radicale_container_image_pull_result
       retries: "{{ devture_playbook_help_container_retries_count }}"
       delay: "{{ devture_playbook_help_container_retries_delay }}"
-      until: result is not failed
+      until: radicale_container_image_pull_result is not failed
 
     - name: Ensure Radicale container image is pulled via ansible.builtin.command
       when: devture_systemd_docker_base_container_image_pull_method == 'command'
       ansible.builtin.command:
         cmd: "{{ devture_systemd_docker_base_host_command_docker }} pull {{ radicale_container_image }}"
-      register: result
+      register: radicale_container_image_pull_result
       retries: "{{ devture_playbook_help_container_retries_count }}"
       delay: "{{ devture_playbook_help_container_retries_delay }}"
-      until: result is not failed
-      changed_when: "'Downloaded newer image' in result.stdout"
+      until: radicale_container_image_pull_result is not failed
+      changed_when: "'Downloaded newer image' in radicale_container_image_pull_result.stdout"
 
 - name: Run if self-building of Radicale container image is enabled
   when: "radicale_container_image_self_build | bool"
@@ -95,6 +97,7 @@
           path: "{{ radicale_container_image_self_build_src_files_path }}"
           pull: true
           args:
+      register: radicale_container_image_build_result
 
 - name: Ensure Radicale container network is created via community.docker.docker_network
   when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
@@ -103,6 +106,7 @@
     name: "{{ radicale_container_network }}"
     driver: bridge
     driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
+  register: radicale_network_creation_result
 
 - name: Ensure Radicale container network is created via ansible.builtin.command
   when: devture_systemd_docker_base_container_network_creation_method == 'command'
@@ -112,12 +116,24 @@
       {% if devture_systemd_docker_base_ipv6_enabled %}--ipv6{% endif %}
       {{ devture_systemd_docker_base_container_networks_driver_options_string }}
       {{ radicale_container_network }}
-  register: network_creation_result
-  changed_when: network_creation_result.rc == 0
-  failed_when: network_creation_result.rc != 0 and 'already exists' not in network_creation_result.stderr
+  register: radicale_network_creation_result
+  changed_when: radicale_network_creation_result.rc == 0
+  failed_when: radicale_network_creation_result.rc != 0 and 'already exists' not in radicale_network_creation_result.stderr
 
 - name: Ensure Radicale systemd service is present
   ansible.builtin.template:
     src: "{{ role_path }}/templates/systemd/radicale.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ radicale_identifier }}.service"
     mode: "0644"
+  register: radicale_systemd_service_result
+
+- name: Determine whether Radicale needs a restart
+  ansible.builtin.set_fact:
+    radicale_restart_necessary: >-
+      {{
+        radicale_support_files_result.changed | default(false)
+        or radicale_config_files_result.changed | default(false)
+        or radicale_systemd_service_result.changed | default(false)
+        or radicale_container_image_pull_result.changed | default(false)
+        or radicale_container_image_build_result.changed | default(false)
+      }}

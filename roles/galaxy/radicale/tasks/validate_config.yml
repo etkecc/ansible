@@ -10,6 +10,7 @@
       Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
   when: "lookup('ansible.builtin.varnames', ('^' + item.old + '$'), wantlist=True) | length > 0"
   with_items:
+    - { "old": "radicale_server_http_port", "new": "radicale_container_http_port" }
     - { "old": "radicale_http_header_content_permission_policy", "new": "radicale_http_header_permissions_policy" }
 
 - name: Fail if required Radicale settings not defined

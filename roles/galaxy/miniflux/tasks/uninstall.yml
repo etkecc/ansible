@@ -24,20 +24,24 @@
         path: "{{ devture_systemd_docker_base_systemd_path }}/{{ miniflux_identifier }}.service"
         state: absent
 
-    - name: Ensure Miniflux container network does not exist via community.docker.docker_network
-      when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
-      community.docker.docker_network:
-        name: "{{ miniflux_container_network }}"
-        state: absent
+    - name: Ensure Miniflux container network does not exist
+      when: miniflux_container_network_deletion_enabled
+      block:
+        - name: Ensure Miniflux container network does not exist via community.docker.docker_network
+          when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+          community.docker.docker_network:
+            name: "{{ miniflux_container_network }}"
+            state: absent
+          register: miniflux_network_deletion_result
 
-    - name: Ensure Miniflux container network does not exist via ansible.builtin.command
-      when: devture_systemd_docker_base_container_network_creation_method == 'command'
-      ansible.builtin.command:
-        cmd: >-
-          {{ devture_systemd_docker_base_host_command_docker }} network rm
-          {{ miniflux_container_network }}
-      register: network_deletion_result
-      changed_when: miniflux_container_network in network_deletion_result.stdout
+        - name: Ensure Miniflux container network does not exist via ansible.builtin.command
+          when: devture_systemd_docker_base_container_network_creation_method == 'command'
+          ansible.builtin.command:
+            cmd: >-
+              {{ devture_systemd_docker_base_host_command_docker }} network rm
+              {{ miniflux_container_network }}
+          register: miniflux_network_deletion_result
+          changed_when: miniflux_container_network in miniflux_network_deletion_result.stdout
 
     - name: Ensure Miniflux path does not exist
       ansible.builtin.file:

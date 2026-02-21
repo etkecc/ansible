@@ -22,12 +22,13 @@
   ansible.builtin.template:
     src: "{{ role_path }}/templates/{{ item }}.j2"
     dest: "{{ peertube_base_path }}/{{ item }}"
+    mode: "0640"
     owner: "{{ peertube_uid }}"
     group: "{{ peertube_gid }}"
-    mode: "0640"
   with_items:
     - env
     - labels
+  register: peertube_support_files_result
 
 - name: Ensure PeerTube container image is pulled via community.docker.docker_image
   when: devture_systemd_docker_base_container_image_pull_method == 'ansible-module'
@@ -36,20 +37,20 @@
     source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
     force_source: "{{ peertube_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
     force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else peertube_container_image_force_pull }}"
-  register: result
+  register: peertube_container_image_pull_result
   retries: "{{ devture_playbook_help_container_retries_count }}"
   delay: "{{ devture_playbook_help_container_retries_delay }}"
-  until: result is not failed
+  until: peertube_container_image_pull_result is not failed
 
 - name: Ensure PeerTube container image is pulled via ansible.builtin.command
   when: devture_systemd_docker_base_container_image_pull_method == 'command'
   ansible.builtin.command:
     cmd: "{{ devture_systemd_docker_base_host_command_docker }} pull {{ peertube_container_image }}"
-  register: result
+  register: peertube_container_image_pull_result
   retries: "{{ devture_playbook_help_container_retries_count }}"
   delay: "{{ devture_playbook_help_container_retries_delay }}"
-  until: result is not failed
-  changed_when: "'Downloaded newer image' in result.stdout"
+  until: peertube_container_image_pull_result is not failed
+  changed_when: "'Downloaded newer image' in peertube_container_image_pull_result.stdout"
 
 - name: Ensure PeerTube container network is created via community.docker.docker_network
   when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
@@ -58,6 +59,7 @@
     name: "{{ peertube_container_network }}"
     driver: bridge
     driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
+  register: peertube_network_creation_result
 
 - name: Ensure PeerTube container network is created via ansible.builtin.command
   when: devture_systemd_docker_base_container_network_creation_method == 'command'
@@ -67,15 +69,16 @@
       {% if devture_systemd_docker_base_ipv6_enabled %}--ipv6{% endif %}
       {{ devture_systemd_docker_base_container_networks_driver_options_string }}
       {{ peertube_container_network }}
-  register: network_creation_result
-  changed_when: network_creation_result.rc == 0
-  failed_when: network_creation_result.rc != 0 and 'already exists' not in network_creation_result.stderr
+  register: peertube_network_creation_result
+  changed_when: peertube_network_creation_result.rc == 0
+  failed_when: peertube_network_creation_result.rc != 0 and 'already exists' not in peertube_network_creation_result.stderr
 
 - name: Ensure PeerTube systemd service is present
   ansible.builtin.template:
     src: "{{ role_path }}/templates/systemd/peertube.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ peertube_identifier }}.service"
     mode: "0644"
+  register: peertube_systemd_service_result
 
 - name: Check if current PeerTube version is less than v6.3.0
   ansible.builtin.set_fact:
@@ -95,6 +98,15 @@
   ansible.builtin.template:
     src: "{{ role_path }}/templates/INSTALLED_VERSION.j2"
     dest: "{{ peertube_base_path }}/INSTALLED_VERSION"
+    mode: "0640"
     owner: "{{ peertube_uid }}"
     group: "{{ peertube_gid }}"
-    mode: "0640"
+
+- name: Determine whether PeerTube needs a restart
+  ansible.builtin.set_fact:
+    peertube_restart_necessary: >-
+      {{
+        peertube_support_files_result.changed | default(false)
+        or peertube_systemd_service_result.changed | default(false)
+        or peertube_container_image_pull_result.changed | default(false)
+      }}

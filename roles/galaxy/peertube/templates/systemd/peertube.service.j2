@@ -46,7 +46,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% for volume in peertube_container_additional_volumes %}
       --mount type={{ volume.type | default('bind' if '/' in volume.src else 'volume') }},src={{ volume.src }},dst={{ volume.dst }}{{ (',' + volume.options) if volume.options else '' }} \
       {% endfor %}
-      --tmpfs=/tmp:rw,noexec,nosuid,size=512m \
+      --tmpfs=/tmp:rw,noexec,nosuid,size={{ peertube_container_tmpfs_tmp_size }} \
       {% for arg in peertube_container_extra_arguments %}
       {{ arg }} \
       {% endfor %}

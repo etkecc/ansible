@@ -30,6 +30,9 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --cap-add=KILL \
       --read-only \
       --network={{ radicale_container_network }} \
+      {% if radicale_container_http_host_bind_port %}
+      -p {{ radicale_container_http_host_bind_port }}:{{ radicale_container_http_port }} \
+      {% endif %}
       --env-file={{ radicale_base_path }}/env \
       --label-file={{ radicale_base_path }}/labels \
       --health-interval={{ radicale_container_health_interval }} \

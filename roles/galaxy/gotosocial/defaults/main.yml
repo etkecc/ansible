@@ -71,6 +71,9 @@ gotosocial_container_image_customizations_dockerfile_body_custom: ""
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 gotosocial_container_network: "{{ gotosocial_identifier }}"
 
+# Control if the container network is deleted on uninstalling.
+gotosocial_container_network_deletion_enabled: true
+
 # Specify how the container publishes its HTTP port (as defined by `gotosocial_container_http_port`).
 #
 # Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
@@ -356,3 +359,13 @@ gotosocial_environment_variable_otel_exporter_prometheus_port: "{{ gotosocial_co
 #   GTS_STORAGE_S3_BUCKET=something
 #   GTS_STORAGE_S3_SECRET_KEY=verysecret
 gotosocial_environment_variables_additional_variables: ""
+
+# gotosocial_restart_necessary controls whether the GoToSocial systemd
+# service will be restarted (when true) or merely started (when false) by the
+# systemd service manager role (when conditional restart is enabled).
+#
+# This value is automatically computed during installation based on whether
+# any configuration files, the systemd service file, or the container image changed.
+# The default of `false` means "no restart needed" — appropriate when the role's
+# installation tasks haven't run (e.g., due to --tags skipping them).
+gotosocial_restart_necessary: false

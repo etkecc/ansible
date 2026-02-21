@@ -61,6 +61,9 @@ vaultwarden_container_http_bind_port: ""
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 vaultwarden_container_network: "{{ vaultwarden_identifier }}"
 
+# Control if the container network is deleted on uninstalling.
+vaultwarden_container_network_deletion_enabled: true
+
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
 # Use this to expose this container to another reverse proxy, which runs in a different container network.
@@ -378,3 +381,13 @@ vaultwarden_environment_variables_tz: UTC
 #   VAR=1
 #   ANOTHER=value
 vaultwarden_environment_variables_additional_variables: ""
+
+# vaultwarden_restart_necessary controls whether the Vaultwarden systemd
+# service will be restarted (when true) or merely started (when false) by the
+# systemd service manager role (when conditional restart is enabled).
+#
+# This value is automatically computed during installation based on whether
+# any configuration files, the systemd service file, or the container image changed.
+# The default of `false` means "no restart needed" — appropriate when the role's
+# installation tasks haven't run (e.g., due to --tags skipping them).
+vaultwarden_restart_necessary: false

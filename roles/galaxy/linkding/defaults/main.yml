@@ -26,11 +26,11 @@ linkding_version: 1.45.0
 linkding_uid: ""
 linkding_gid: ""
 
-# The hostname at which linkding is served
-linkding_hostname: ""
-
-# The scheme used for serving linkding (http or https)
+# The scheme used for serving linkding.
 linkding_scheme: https
+
+# The hostname at which linkding is served.
+linkding_hostname: ""
 
 # The path at which linkding is served.
 # This value must either be `/` or not end with a slash (e.g. `/linkding`).
@@ -49,13 +49,16 @@ linkding_container_image_self_build_repo: "https://github.com/sissbruecker/linkd
 linkding_container_image_self_build_repo_version: "{{ 'v' + linkding_version if linkding_version != 'latest' else 'master' }}"
 linkding_container_image_self_build_src_files_path: "{{ linkding_base_path }}/docker-src"
 
-# Controls whether the container exposes its HTTP port (tcp/9090 in the container).
-#
-# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:8731"), or empty string to not expose.
-linkding_container_http_host_bind_port: ""
-
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 linkding_container_network: "{{ linkding_identifier }}"
+
+# Control if the container network is deleted on uninstalling.
+linkding_container_network_deletion_enabled: true
+
+# Specify how the container publishes its HTTP port (as defined by `linkding_container_http_port`).
+#
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
+linkding_container_http_host_bind_port: ""
 
 # The port number in the container
 linkding_container_http_port: 9090
@@ -70,7 +73,7 @@ linkding_container_additional_networks_custom: []
 # linkding_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
 # See `../templates/labels.j2` for details.
 #
-# To inject your own other container labels, see `linkding_container_labels_additional_labels`.
+# To inject your own other container labels, see `linkding_container_labels_additional_labels_custom`.
 linkding_container_labels_traefik_enabled: true
 linkding_container_labels_traefik_docker_network: "{{ linkding_container_network }}"
 linkding_container_labels_traefik_hostname: "{{ linkding_hostname }}"
@@ -106,12 +109,15 @@ linkding_container_labels_traefik_additional_response_headers_custom: {}
 # To add your own custom labels, use `linkding_container_labels_additional_labels_custom`
 #
 # Example:
-# linkding_container_labels_additional_labels_custom: |
-#   my.label=1
-#   another.label="here"
-linkding_container_labels_additional_labels: "{{ linkding_container_labels_additional_labels_auto | combine(linkding_container_labels_additional_labels_custom) }}"
-linkding_container_labels_additional_labels_auto: {}
-linkding_container_labels_additional_labels_custom: {}
+# linkding_container_labels_additional_labels_custom:
+#   - my.label=1
+#   - another.label="here"
+linkding_container_labels_additional_labels: "{{ linkding_container_labels_additional_labels_auto + linkding_container_labels_additional_labels_custom }}"
+linkding_container_labels_additional_labels_auto: []
+linkding_container_labels_additional_labels_custom: []
+
+# Specify the size of the container's tmpfs volume
+linkding_container_tmpfs_tmp_size: 512m
 
 # A list of extra arguments to pass to the container (`docker create` command)
 linkding_container_extra_arguments: "{{ linkding_container_extra_arguments_auto + linkding_container_extra_arguments_custom }}"
@@ -201,3 +207,13 @@ linkding_environment_variable_context_path: "{{ '' if linkding_path_prefix == '/
 
 # Additional environment variables.
 linkding_environment_variables_additional_variables: ""
+
+# linkding_restart_necessary controls whether the linkding systemd
+# service will be restarted (when true) or merely started (when false) by the
+# systemd service manager role (when conditional restart is enabled).
+#
+# This value is automatically computed during installation based on whether
+# any configuration files, the systemd service file, or the container image changed.
+# The default of `false` means "no restart needed" — appropriate when the role's
+# installation tasks haven't run (e.g., due to --tags skipping them).
+linkding_restart_necessary: false

@@ -24,20 +24,24 @@
         path: "{{ devture_systemd_docker_base_systemd_path }}/{{ linkding_identifier }}.service"
         state: absent
 
-    - name: Ensure linkding container network does not exist via community.docker.docker_network
-      when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
-      community.docker.docker_network:
-        name: "{{ linkding_container_network }}"
-        state: absent
+    - name: Ensure linkding container network does not exist
+      when: linkding_container_network_deletion_enabled
+      block:
+        - name: Ensure linkding container network does not exist via community.docker.docker_network
+          when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+          community.docker.docker_network:
+            name: "{{ linkding_container_network }}"
+            state: absent
+          register: linkding_network_deletion_result
 
-    - name: Ensure linkding container network does not exist via ansible.builtin.command
-      when: devture_systemd_docker_base_container_network_creation_method == 'command'
-      ansible.builtin.command:
-        cmd: >-
-          {{ devture_systemd_docker_base_host_command_docker }} network rm
-          {{ linkding_container_network }}
-      register: network_deletion_result
-      changed_when: linkding_container_network in network_deletion_result.stdout
+        - name: Ensure linkding container network does not exist via ansible.builtin.command
+          when: devture_systemd_docker_base_container_network_creation_method == 'command'
+          ansible.builtin.command:
+            cmd: >-
+              {{ devture_systemd_docker_base_host_command_docker }} network rm
+              {{ linkding_container_network }}
+          register: linkding_network_deletion_result
+          changed_when: linkding_container_network in linkding_network_deletion_result.stdout
 
     - name: Ensure linkding path does not exist
       ansible.builtin.file:

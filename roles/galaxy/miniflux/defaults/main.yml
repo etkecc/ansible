@@ -42,6 +42,9 @@ miniflux_container_image_self_build_src_files_path: "{{ miniflux_base_path }}/do
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 miniflux_container_network: "{{ miniflux_identifier }}"
 
+# Control if the container network is deleted on uninstalling.
+miniflux_container_network_deletion_enabled: true
+
 # Specify how the container publishes its HTTP port (as defined by `miniflux_container_http_port`).
 #
 # Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
@@ -202,3 +205,13 @@ miniflux_environment_variable_admin_password: "{{ miniflux_admin_password }}"
 
 # Additional environment variables.
 miniflux_environment_variables_additional_variables: ""
+
+# miniflux_restart_necessary controls whether the Miniflux systemd
+# service will be restarted (when true) or merely started (when false) by the
+# systemd service manager role (when conditional restart is enabled).
+#
+# This value is automatically computed during installation based on whether
+# any configuration files, the systemd service file, or the container image changed.
+# The default of `false` means "no restart needed" — appropriate when the role's
+# installation tasks haven't run (e.g., due to --tags skipping them).
+miniflux_restart_necessary: false

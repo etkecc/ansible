@@ -56,4 +56,6 @@ traefik.http.routers.{{ linkding_identifier }}.tls.certResolver={{ linkding_cont
 traefik.http.services.{{ linkding_identifier }}.loadbalancer.server.port={{ linkding_container_http_port }}
 {% endif %}
 
-{{ linkding_container_labels_additional_labels }}
+{% for arg in linkding_container_labels_additional_labels %}
+{{ arg }}
+{% endfor %}

@@ -24,20 +24,53 @@
         path: "{{ devture_systemd_docker_base_systemd_path }}/{{ peertube_identifier }}.service"
         state: absent
 
-    - name: Ensure PeerTube container network does not exist via community.docker.docker_network
-      when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
-      community.docker.docker_network:
-        name: "{{ peertube_container_network }}"
+    - name: Ensure PeerTube support files do not exist
+      ansible.builtin.file:
+        path: "{{ peertube_base_path }}/{{ item }}"
         state: absent
+      with_items:
+        - env
+        - labels
 
-    - name: Ensure PeerTube container network does not exist via ansible.builtin.command
-      when: devture_systemd_docker_base_container_network_creation_method == 'command'
+    - name: Ensure PeerTube local config path does not exist if empty
       ansible.builtin.command:
-        cmd: >-
-          {{ devture_systemd_docker_base_host_command_docker }} network rm
-          {{ peertube_container_network }}
-      register: network_deletion_result
-      changed_when: peertube_container_network in network_deletion_result.stdout
+        cmd: "rmdir {{ peertube_config_path }}"
+      register: peertube_config_path_deletion_result
+      changed_when: peertube_config_path_deletion_result.rc == 0
+      failed_when: false
+
+    - name: Ensure PeerTube local data path does not exist if empty
+      ansible.builtin.command:
+        cmd: "rmdir {{ peertube_data_path }}"
+      register: peertube_data_path_deletion_result
+      changed_when: peertube_data_path_deletion_result.rc == 0
+      failed_when: false
+
+    - name: Ensure PeerTube base path does not exist if empty
+      ansible.builtin.command:
+        cmd: "rmdir {{ peertube_base_path }}"
+      register: peertube_base_path_deletion_result
+      changed_when: peertube_base_path_deletion_result.rc == 0
+      failed_when: false
+
+    - name: Ensure PeerTube container network does not exist
+      when: peertube_container_network_deletion_enabled
+      block:
+        - name: Ensure PeerTube container network does not exist via community.docker.docker_network
+          when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+          community.docker.docker_network:
+            name: "{{ peertube_container_network }}"
+            state: absent
+          register: peertube_network_deletion_result
+
+        - name: Ensure PeerTube container network does not exist via ansible.builtin.command
+          when: devture_systemd_docker_base_container_network_creation_method == 'command'
+          ansible.builtin.command:
+            cmd: >-
+              {{ devture_systemd_docker_base_host_command_docker }} network rm
+              {{ peertube_container_network }}
+          register: peertube_network_deletion_result
+          changed_when: peertube_container_network in peertube_network_deletion_result.stdout
 
 - name: Check existence of PeerTube config path
   ansible.builtin.stat:

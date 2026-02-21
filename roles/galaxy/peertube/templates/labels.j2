@@ -55,4 +55,6 @@ traefik.http.routers.{{ peertube_identifier }}.tls.certResolver={{ peertube_cont
 traefik.http.services.{{ peertube_identifier }}.loadbalancer.server.port={{ peertube_container_http_port }}
 {% endif %}
 
-{{ peertube_container_labels_additional_labels }}
+{% for arg in peertube_container_labels_additional_labels %}
+{{ arg }}
+{% endfor %}

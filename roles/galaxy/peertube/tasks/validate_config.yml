@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
 # SPDX-FileCopyrightText: 2023 Slavi Pantaleev
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -10,6 +11,7 @@
       Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
   when: "lookup('ansible.builtin.varnames', ('^' + item.old + '$'), wantlist=True) | length > 0"
   with_items:
+    - { "old": "peertube_playbook_base_path", "new": "<Removed>" }
     - { "old": "peertube_config_dir_path", "new": "peertube_config_path" }
     - { "old": "peertube_data_dir_path", "new": "peertube_data_path" }
     - { "old": "peertube_config_database_hostname", "new": "peertube_database_hostname" }
@@ -22,6 +24,7 @@
     - { "old": "peertube_config_redis_hostname", "new": "peertube_redis_hostname" }
     - { "old": "peertube_config_redis_db", "new": "peertube_redis_db" }
     - { "old": "peertube_container_additional_environment_variables", "new": "peertube_environment_variables_additional_variables" }
+    - { "old": "peertube_http_header_content_permission_policy", "new": "peertube_http_header_permissions_policy" }
 
 - name: Fail if required PeerTube settings not defined
   ansible.builtin.fail:
@@ -32,14 +35,14 @@
     - peertube_identifier
     - peertube_uid
     - peertube_gid
-    - peertube_container_network
     - peertube_hostname
     - peertube_path_prefix
+    - peertube_container_network
     - peertube_database_hostname
     - peertube_database_password
+    - peertube_redis_hostname
     - peertube_config_secret
     - peertube_config_admin_email
-    - peertube_redis_hostname
     - peertube_config_root_user_initial_password
 
 - name: Fail if required PeerTube Object Storage settings not defined
@@ -54,6 +57,20 @@
     - peertube_config_object_storage_credentials_secret_access_key
     - peertube_config_object_storage_streaming_playlists_bucket_name
     - peertube_config_object_storage_web_videos_bucket_name
+
+- name: Fail if SMTP settings are missing (and SMTP is enabled by setting host)
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`) to correctly set up email via SMTP.
+  when: "peertube_config_smtp_hostname !='' and lookup('vars', item, default='') | string | length == 0"
+  with_items:
+    - peertube_config_smtp_from
+
+- name: Fail if PeerTube logging level is invalid
+  ansible.builtin.fail:
+    msg: >-
+      peertube_config_log_level must be 'debug', 'info', 'warn', or 'error'
+  when: "peertube_config_log_level not in ['debug', 'info', 'warn', 'error']"
 
 - name: Run if Traefik is enabled
   when: peertube_container_labels_traefik_enabled | bool
