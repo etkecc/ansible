@@ -116,6 +116,16 @@ linkding_database_port: "{{ postgres_connection_port if postgres_enabled else ''
 linkding_database_password: "{{ '%s' | format(mash_playbook_generic_secret_key) | password_hash('sha512', 'linkding.db', rounds=655555) | to_uuid }}"
 linkding_database_type: "{{ 'postgres' if postgres_enabled and linkding_database_hostname == postgres_connection_hostname else 'sqlite' }}"
 
+
+########################################################################
+#                                                                      #
+# livekit-server                                                       #
+#                                                                      #
+########################################################################
+
+# Being cautious about this change: https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/1718181ff4f919bd293d76e92da2e4a639ebff35/CHANGELOG.md#livekit-turn-tls-is-now-automatically-fronted-by-playbook-managed-traefik
+livekit_server_config_turn_external_tls: false
+
 ########################################################################
 #                                                                      #
 # miniflux                                                             #
