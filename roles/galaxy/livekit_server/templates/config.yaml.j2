@@ -32,8 +32,10 @@ turn:
   enabled: {{ livekit_server_config_turn_enabled | to_json }}
 {% if livekit_server_config_turn_enabled %}
   domain: {{ livekit_server_config_turn_domain | to_json }}
+  {% if not (livekit_server_config_turn_external_tls | bool) %}
   cert_file: {{ livekit_server_config_turn_cert_file | to_json }}
   key_file: {{ livekit_server_config_turn_key_file | to_json }}
+  {% endif %}
   tls_port: {{ livekit_server_config_turn_tls_port | int | to_json }}
   udp_port: {{ livekit_server_config_turn_udp_port | int | to_json }}
   external_tls: {{ livekit_server_config_turn_external_tls | to_json }}

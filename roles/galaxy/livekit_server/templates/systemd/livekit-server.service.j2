@@ -46,7 +46,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% if livekit_server_container_rtc_listen_interface is not in [none, 'none'] and livekit_server_config_rtc_udp_port %}
       -p {{ livekit_server_container_rtc_listen_interface }}{{ ':' if livekit_server_container_rtc_listen_interface else '' }}{{ livekit_server_config_rtc_udp_port }}:{{ livekit_server_config_rtc_udp_port }}/udp \
       {% endif %}
-      {% if livekit_server_container_turn_listen_interface is not in [none, 'none'] and livekit_server_config_turn_enabled %}
+      {% if livekit_server_container_turn_listen_interface is not in [none, 'none'] and livekit_server_config_turn_enabled and not (livekit_server_config_turn_external_tls | bool) %}
       -p {{ livekit_server_container_turn_listen_interface }}{{ ':' if livekit_server_container_turn_listen_interface else '' }}{{ livekit_server_config_turn_tls_port }}:{{ livekit_server_config_turn_tls_port }} \
       {% endif %}
       {% if livekit_server_container_turn_listen_interface is not in [none, 'none'] and livekit_server_config_turn_enabled %}

@@ -44,6 +44,9 @@ livekit_server_container_image_self_build_src_files_path: "{{ livekit_server_bas
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 livekit_server_container_network: "{{ livekit_server_identifier }}"
 
+# Control if the container network is deleted on uninstalling.
+livekit_server_container_network_deletion_enabled: true
+
 # Specify how the container publishes its RTC port and which interface to do it on.
 #
 # Takes an interface "<ip address>" (e.g. "127.0.0.1"), or empty string to listen on all interfaces.
@@ -93,6 +96,16 @@ livekit_server_container_labels_traefik_priority: 0
 livekit_server_container_labels_traefik_entrypoints: web-secure
 livekit_server_container_labels_traefik_tls: "{{ livekit_server_container_labels_traefik_entrypoints != 'web' }}"
 livekit_server_container_labels_traefik_tls_certResolver: default  # noqa var-naming
+
+# Controls whether labels will be added for exposing TURN/TLS (TCP) behind Traefik.
+# This mode expects TLS to terminate at Traefik and plaintext TCP to be forwarded to LiveKit (`turn.external_tls=true`).
+livekit_server_container_labels_turn_traefik_enabled: "{{ livekit_server_container_labels_traefik_enabled and livekit_server_config_turn_enabled and livekit_server_config_turn_external_tls }}"
+livekit_server_container_labels_turn_traefik_rule: "HostSNI(`{{ livekit_server_config_turn_domain }}`)"
+livekit_server_container_labels_turn_traefik_priority: 0
+# Must point to a TCP Traefik entrypoint (for example one bound to `5350`).
+livekit_server_container_labels_turn_traefik_entrypoints: ""
+livekit_server_container_labels_turn_traefik_tls: true
+livekit_server_container_labels_turn_traefik_tls_certResolver: "{{ livekit_server_container_labels_traefik_tls_certResolver }}"  # noqa var-naming
 
 # Controls whether labels will be added that expose metrics (see `livekit_server_metrics_proxying_enabled`)
 livekit_server_container_labels_public_metrics_enabled: "{{ livekit_server_config_prometheus_enabled and livekit_server_metrics_proxying_enabled }}"

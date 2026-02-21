@@ -28,8 +28,9 @@
     - { "name": "livekit_server_hostname", when: true }
     - { "name": "livekit_server_container_network", when: true }
     - { "name": "livekit_server_config_turn_domain", when: "{{ livekit_server_config_turn_enabled | bool }}" }
-    - { "name": "livekit_server_config_turn_cert_file", when: "{{ livekit_server_config_turn_enabled | bool }}" }
-    - { "name": "livekit_server_config_turn_key_file", when: "{{ livekit_server_config_turn_enabled | bool }}" }
+    - { "name": "livekit_server_config_turn_cert_file", when: "{{ livekit_server_config_turn_enabled | bool and not (livekit_server_config_turn_external_tls | bool) }}" }
+    - { "name": "livekit_server_config_turn_key_file", when: "{{ livekit_server_config_turn_enabled | bool and not (livekit_server_config_turn_external_tls | bool) }}" }
+    - { "name": "livekit_server_container_labels_turn_traefik_entrypoints", when: "{{ livekit_server_container_labels_turn_traefik_enabled | bool }}" }
 
 - name: Fail if LiveKit Server port range configuration is invalid
   ansible.builtin.fail:

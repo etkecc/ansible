@@ -48,6 +48,34 @@ traefik.http.routers.{{ livekit_server_identifier }}.tls={{ livekit_server_conta
 traefik.http.routers.{{ livekit_server_identifier }}.tls.certResolver={{ livekit_server_container_labels_traefik_tls_certResolver }}
 {% endif %}
 
+{% if livekit_server_container_labels_turn_traefik_enabled %}
+########################################################################
+#                                                                      #
+# TURN                                                                 #
+#                                                                      #
+########################################################################
+
+traefik.tcp.services.{{ livekit_server_identifier }}-turn.loadbalancer.server.port={{ livekit_server_config_turn_tls_port }}
+traefik.tcp.routers.{{ livekit_server_identifier }}-turn.rule={{ livekit_server_container_labels_turn_traefik_rule }}
+
+{% if livekit_server_container_labels_turn_traefik_priority | int > 0 %}
+traefik.tcp.routers.{{ livekit_server_identifier }}-turn.priority={{ livekit_server_container_labels_turn_traefik_priority }}
+{% endif %}
+
+traefik.tcp.routers.{{ livekit_server_identifier }}-turn.service={{ livekit_server_identifier }}-turn
+traefik.tcp.routers.{{ livekit_server_identifier }}-turn.entrypoints={{ livekit_server_container_labels_turn_traefik_entrypoints }}
+traefik.tcp.routers.{{ livekit_server_identifier }}-turn.tls={{ livekit_server_container_labels_turn_traefik_tls | to_json }}
+{% if livekit_server_container_labels_turn_traefik_tls %}
+traefik.tcp.routers.{{ livekit_server_identifier }}-turn.tls.certResolver={{ livekit_server_container_labels_turn_traefik_tls_certResolver }}
+{% endif %}
+
+########################################################################
+#                                                                      #
+# /TURN                                                                #
+#                                                                      #
+########################################################################
+{% endif %}
+
 {% if livekit_server_container_labels_public_metrics_enabled %}
 ########################################################################
 #                                                                      #
