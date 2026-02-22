@@ -8,7 +8,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 # {{ ansible_managed }}
 
 [server]
-hosts = 0.0.0.0:{{ radicale_server_http_port }}
+hosts = 0.0.0.0:{{ radicale_container_http_port }}
 max_connections = 1000
 timeout = 60
 
