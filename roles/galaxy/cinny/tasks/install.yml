@@ -41,7 +41,7 @@
     group: "{{ cinny_gid }}"
   with_items:
     - nginx.conf
-  register: cinny_nginx_config_result
+  register: cinny_nginx_config_file_result
 
 - name: Ensure Cinny configuration installed
   ansible.builtin.copy:
@@ -50,7 +50,7 @@
     mode: "0640"
     owner: "{{ cinny_uid }}"
     group: "{{ cinny_gid }}"
-  register: cinny_config_result
+  register: cinny_config_file_result
 
 - name: Run if self-building of Cinny container image is not enabled
   when: "not cinny_container_image_self_build | bool"
@@ -134,8 +134,8 @@
     cinny_restart_necessary: >-
       {{
         cinny_support_files_result.changed | default(false)
-        or cinny_nginx_config_result.changed | default(false)
-        or cinny_config_result.changed | default(false)
+        or cinny_nginx_config_file_result.changed | default(false)
+        or cinny_config_file_result.changed | default(false)
         or cinny_systemd_service_result.changed | default(false)
         or cinny_container_image_pull_result.changed | default(false)
         or cinny_container_image_build_result.changed | default(false)

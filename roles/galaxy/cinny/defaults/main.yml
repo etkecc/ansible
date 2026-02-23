@@ -21,7 +21,7 @@ cinny_base_path: "/{{ cinny_identifier }}"
 cinny_config_path: "{{ cinny_base_path }}/config"
 
 # renovate: datasource=docker depName=ajbura/cinny
-cinny_version: v4.10.3
+cinny_version: v4.10.5
 
 cinny_uid: ""
 cinny_gid: ""
