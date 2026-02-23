@@ -8,7 +8,7 @@
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    mode: "0700"
+    mode: "0750"
     owner: "{{ firezone_uid }}"
     group: "{{ firezone_gid }}"
   with_items:
@@ -18,7 +18,7 @@
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    mode: "0777"
+    mode: "0750"
     owner: "{{ firezone_uid }}"
     group: "{{ firezone_gid }}"
   with_items:
@@ -34,25 +34,27 @@
   with_items:
     - env
     - labels
+  register: firezone_support_files_result
 
 - name: Ensure Firezone container image is pulled is pulled via community.docker.docker_image
   when: devture_systemd_docker_base_container_image_pull_method == 'ansible-module'
   community.docker.docker_image:
     name: "{{ firezone_container_image }}"
     source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
-  register: result
+  register: firezone_container_image_pull_result
   retries: "{{ devture_playbook_help_container_retries_count }}"
   delay: "{{ devture_playbook_help_container_retries_delay }}"
-  until: result is not failed
+  until: firezone_container_image_pull_result is not failed
 
-- name: Ensure Firezone container image is pulled via command
+- name: Ensure Firezone container image is pulled via ansible.builtin.command
   when: devture_systemd_docker_base_container_image_pull_method == 'command'
   ansible.builtin.command:
     cmd: "{{ devture_systemd_docker_base_host_command_docker }} pull {{ firezone_container_image }}"
-  register: result
+  register: firezone_container_image_pull_result
   retries: "{{ devture_playbook_help_container_retries_count }}"
   delay: "{{ devture_playbook_help_container_retries_delay }}"
-  until: result is not failed
+  until: firezone_container_image_pull_result is not failed
+  changed_when: "'Downloaded newer image' in firezone_container_image_pull_result.stdout"
 
 - name: Ensure Firezone container network is created via community.docker.docker_network
   when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
@@ -61,8 +63,9 @@
     name: "{{ firezone_container_network }}"
     driver: bridge
     driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
+  register: firezone_network_creation_result
 
-- name: Ensure Firezone container network exists via ansible.builtin.command
+- name: Ensure Firezone container network is created via ansible.builtin.command
   when: devture_systemd_docker_base_container_network_creation_method == 'command'
   ansible.builtin.command:
     cmd: >-
@@ -70,11 +73,22 @@
       {% if devture_systemd_docker_base_ipv6_enabled %}--ipv6{% endif %}
       {{ devture_systemd_docker_base_container_networks_driver_options_string }}
       {{ firezone_container_network }}
-  register: network_creation_result
-  failed_when: network_creation_result.rc != 0 and 'already exists' not in network_creation_result.stderr
+  register: firezone_network_creation_result
+  changed_when: firezone_network_creation_result.rc == 0
+  failed_when: firezone_network_creation_result.rc != 0 and 'already exists' not in firezone_network_creation_result.stderr
 
 - name: Ensure Firezone systemd service is present
   ansible.builtin.template:
     src: "{{ role_path }}/templates/systemd/firezone.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ firezone_identifier }}.service"
     mode: "0644"
+  register: firezone_systemd_service_result
+
+- name: Determine whether Firezone needs a restart
+  ansible.builtin.set_fact:
+    firezone_restart_necessary: >-
+      {{
+        firezone_support_files_result.changed | default(false)
+        or firezone_systemd_service_result.changed | default(false)
+        or firezone_container_image_pull_result.changed | default(false)
+      }}

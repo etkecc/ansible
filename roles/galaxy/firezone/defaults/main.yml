@@ -30,9 +30,22 @@ firezone_container_image_registry_prefix_upstream_default: docker.io/
 firezone_container_image_tag: "{{ firezone_version }}"
 firezone_container_image_force_pull: "{{ firezone_container_image.endswith(':latest') }}"
 
-firezone_container_network: '{{ firezone_identifier }}'
+# The base container network. It will be auto-created by this role if it doesn't exist already.
+firezone_container_network: "{{ firezone_identifier }}"
 
-firezone_webui_bind_port: 13000
+# Control if the container network is deleted on uninstalling.
+firezone_container_network_deletion_enabled: true
+
+# Specify how the container publishes its Wireguard port (as defined by `firezone_container_wireguard_port`).
+#
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
+firezone_container_wireguard_host_bind_port: "{{ firezone_container_wireguard_port }}"
+
+# The port number for Wireguard in the container
+firezone_container_wireguard_port: 51820
+
+# The port number in the container
+firezone_container_http_port: 13000
 
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
@@ -44,7 +57,7 @@ firezone_container_additional_networks_custom: []
 # firezone_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
 # See `../templates/labels.j2` for details.
 #
-# To inject your own other container labels, see `firezone_container_labels_additional_labels`.
+# To inject your own other container labels, see `firezone_container_labels_additional_labels_custom`.
 firezone_container_labels_traefik_enabled: false
 firezone_container_labels_traefik_docker_network: ""
 firezone_container_labels_traefik_entrypoints: web-secure
@@ -91,8 +104,6 @@ firezone_default_admin_email: ""
 firezone_default_admin_password: ""
 
 firezone_telemetry_enabled: false
-firezone_wireguard_container_port: 51820
-firezone_wireguard_bind_port: "{{ firezone_wireguard_container_port }}"
 
 firezone_guardian_secret_key: "{{ ('%s' | format(firezone_generic_secret) | password_hash('sha512', 'fz.gd.sc.key', rounds=655555))[-64:] | b64encode | truncate(32, True, '') }}"
 firezone_database_encryption_key: ""
@@ -112,3 +123,13 @@ firezone_environment_variables_tz: UTC
 #   MAX_DEVICES_PER_USER=5
 #   CONNECTIVITY_CHECKS_ENABLED=false
 firezone_environment_variables_additional_variables: ""
+
+# firezone_restart_necessary controls whether the Firezone systemd
+# service will be restarted (when true) or merely started (when false) by the
+# systemd service manager role (when conditional restart is enabled).
+#
+# This value is automatically computed during installation based on whether
+# any configuration files, the systemd service file, or the container image changed.
+# The default of `false` means "no restart needed" — appropriate when the role's
+# installation tasks haven't run (e.g., due to --tags skipping them).
+firezone_restart_necessary: false

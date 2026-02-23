@@ -35,7 +35,7 @@ If you are looking for an Ansible role for Postgres, you can check out [this rol
 
 You may need to open the following ports on your server:
 
-- `51820` over **UDP**, controlled by `firezone_wireguard_bind_port` — used for [Wireguard](https://www.wireguard.com/) connections
+- `51820` over **UDP**, controlled by `firezone_container_wireguard_host_bind_port` — used for [Wireguard](https://www.wireguard.com/) connections
 
 Docker automatically opens these ports in the server's firewall, so you likely don't need to do anything. If you use another firewall in front of the server, you may need to adjust it.
 
@@ -95,7 +95,7 @@ firezone_database_encryption_key: YOUR_SECRET_KEY_HERE
 
 ### Extending the configuration
 
-There are some additional things you may wish to configure about the component.
+There are some additional things you may wish to configure about the service.
 
 Take a look at:
 
