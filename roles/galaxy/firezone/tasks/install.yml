@@ -8,7 +8,7 @@
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    mode: "0750"
+    mode: "0700"
     owner: "{{ firezone_uid }}"
     group: "{{ firezone_gid }}"
   with_items:
@@ -19,8 +19,8 @@
     path: "{{ item }}"
     state: directory
     mode: "0750"
-    owner: "{{ firezone_uid }}"
-    group: "{{ firezone_gid }}"
+    # owner: "{{ firezone_uid }}"
+    # group: "{{ firezone_gid }}"
   with_items:
     - "{{ firezone_data_path }}"
 

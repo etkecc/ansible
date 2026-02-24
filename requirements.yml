@@ -8,7 +8,7 @@
   version: main
   name: fail2ban
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-firezone.git
-  version: v0.7.36-8
+  version: v0.7.36-9
   name: firezone
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-funkwhale.git
   version: v1.4.1-2
@@ -44,5 +44,5 @@
   version: v1.23.17-3
   name: uptime_kuma
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-vaultwarden.git
-  version: v1.35.3-1
+  version: v1.35.4-0
   name: vaultwarden
