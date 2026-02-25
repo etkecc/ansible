@@ -23,7 +23,7 @@ coturn_base_path: "/{{ coturn_identifier }}"
 coturn_config_path: "{{ coturn_base_path }}/turnserver.conf"
 
 # renovate: datasource=docker depName=coturn/coturn versioning=loose
-coturn_version: 4.8.0
+coturn_version: 4.9.0
 
 coturn_uid: ""
 coturn_gid: ""

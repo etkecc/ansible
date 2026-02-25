@@ -6,7 +6,7 @@
 * Buscarron: v1.4.3
 * Cinny: v4.10.5
 * Container Socket Proxy: v0.4.2
-* Coturn: 4.8.0
+* Coturn: 4.9.0
 * Discord: v0.7.6
 * Draupnir: v2.9.0
 * Element: v1.12.11
@@ -18,7 +18,7 @@
 * Gmessages: v0.2602.0
 * Go Neb: latest
 * Googlechat: v0.5.2
-* Gotosocial: 0.20.3
+* Gotosocial: 0.21.0
 * Grafana: 11.6.5
 * Heisenbridge: 1.15.4
 * Honoroit: v0.9.29
@@ -59,7 +59,7 @@
 * Schildichat: 1.11.109-sc.0.test.0
 * Signal: v0.2602.0
 * Slack: v0.2602.0
-* Spam Checker Mjolnir Antispam Git: v1.11.0
+* Spam Checker Mjolnir Antispam Git: v1.12.0
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.41.0
 * Steam Bridge: 1.1.0
@@ -77,7 +77,7 @@
 * Traefik Config Tcp Servertransports Default Proxyprotocol: 1
 * Twitter: v0.2511.0
 * Uptime Kuma: 1.23.17
-* Valkey: 9.0.2
+* Valkey: 9.0.3
 * Vaultwarden: 1.35.4
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
