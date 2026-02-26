@@ -10,10 +10,11 @@
 * [Coturn](https://github.com/coturn/coturn): [4.8.0](https://github.com/coturn/coturn/releases/tag/docker%2F4.8.0) ⇾ [4.9.0](https://github.com/coturn/coturn/releases/tag/docker%2F4.9.0)
 * [Element](https://github.com/element-hq/element-web): [v1.12.10](https://github.com/element-hq/element-web/releases/tag/v1.12.10) ⇾ [v1.12.11](https://github.com/element-hq/element-web/releases/tag/v1.12.11)
 * [Gotosocial](https://codeberg.org/superseriousbusiness/gotosocial): [0.20.3](https://codeberg.org/superseriousbusiness/gotosocial/releases/tag/v0.20.3) ⇾ [0.21.0](https://codeberg.org/superseriousbusiness/gotosocial/releases/tag/v0.21.0)
+* [Prometheus](https://github.com/prometheus/prometheus): [v3.9.1](https://github.com/prometheus/prometheus/releases/tag/v3.9.1) ⇾ [v3.10.0](https://github.com/prometheus/prometheus/releases/tag/v3.10.0)
 * [Prometheus Postgres Exporter](https://github.com/prometheus-community/postgres_exporter): [v0.19.0](https://github.com/prometheus-community/postgres_exporter/releases/tag/v0.19.0) ⇾ [v0.19.1](https://github.com/prometheus-community/postgres_exporter/releases/tag/v0.19.1)
 * Spam Checker Mjolnir Antispam Git: v1.11.0 ⇾ v1.12.0
 * Static Files: 2.40.1 ⇾ 2.41.0
-* [Synapse](https://github.com/nginx/nginx): [v1.147.1](https://github.com/nginx/nginx/releases/tag/release-v1.147.1) ⇾ [v1.148.0](https://github.com/nginx/nginx/releases/tag/release-v1.148.0)
+* [Synapse](https://github.com/element-hq/synapse): [v1.147.1](https://github.com/element-hq/synapse/releases/tag/v1.147.1) ⇾ [v1.148.0](https://github.com/element-hq/synapse/releases/tag/v1.148.0)
 * [Traefik](https://github.com/traefik/traefik): [v3.6.8](https://github.com/traefik/traefik/releases/tag/v3.6.8) ⇾ [v3.6.9](https://github.com/traefik/traefik/releases/tag/v3.6.9)
 * [Valkey](https://github.com/valkey-io/valkey): [9.0.2](https://github.com/valkey-io/valkey/releases/tag/9.0.2) ⇾ [9.0.3](https://github.com/valkey-io/valkey/releases/tag/9.0.3)
 * [Vaultwarden](https://github.com/dani-garcia/vaultwarden): [1.35.3](https://github.com/dani-garcia/vaultwarden/releases/tag/1.35.3) ⇾ [1.35.4](https://github.com/dani-garcia/vaultwarden/releases/tag/1.35.4)
