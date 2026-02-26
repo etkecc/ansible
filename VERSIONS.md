@@ -53,7 +53,7 @@
 * Prometheus: v3.9.1
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.10.2
-* Prometheus Postgres Exporter: v0.19.0
+* Prometheus Postgres Exporter: v0.19.1
 * Radicale: 3.6.0.0
 * Registration: v0.7.2
 * Schildichat: 1.11.109-sc.0.test.0
