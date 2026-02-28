@@ -87,7 +87,7 @@
   with_items:
     - "env-postgres-psql"
     - "env-postgres-server"
-  register: postgres_config_result
+  register: postgres_config_file_result
 
 - name: Ensure Postgres scripts created
   ansible.builtin.template:
@@ -118,7 +118,7 @@
   ansible.builtin.set_fact:
     postgres_restart_necessary: >-
       {{
-        postgres_config_result.changed | default(false)
+        postgres_config_file_result.changed | default(false)
         or postgres_scripts_result.changed | default(false)
         or postgres_systemd_service_result.changed | default(false)
         or postgres_container_image_pull_result.changed | default(false)

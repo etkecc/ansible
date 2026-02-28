@@ -43,11 +43,11 @@
 * Postgres Container Image V11: 11.22
 * Postgres Container Image V12: 12.22
 * Postgres Container Image V13: 13.23
-* Postgres Container Image V14: 14.21
-* Postgres Container Image V15: 15.16
-* Postgres Container Image V16: 16.12
-* Postgres Container Image V17: 17.8
-* Postgres Container Image V18: 18.2
+* Postgres Container Image V14: 14.22
+* Postgres Container Image V15: 15.17
+* Postgres Container Image V16: 16.13
+* Postgres Container Image V17: 17.9
+* Postgres Container Image V18: 18.3
 * Postgres Container Image V9: 9.6.24
 * Postmoogle: v0.9.28
 * Prometheus: v3.10.0
@@ -57,7 +57,7 @@
 * Radicale: 3.6.0.0
 * Registration: v0.7.2
 * Schildichat: 1.11.109-sc.0.test.0
-* Signal: v0.2602.0
+* Signal: v26.02.1
 * Slack: v0.2602.0
 * Spam Checker Mjolnir Antispam Git: v1.12.0
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
