@@ -17,21 +17,24 @@
     - service: "{{ funkwhale_watch_imports_identifier }}.service"
       path: "{{ devture_systemd_docker_base_systemd_path }}/{{ funkwhale_watch_imports_identifier }}.service"
 
-- name: Ensure Funkwhale container network does not exist via community.docker.docker_network
-  when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
-  community.docker.docker_network:
-    name: "{{ funkwhale_container_network }}"
-    state: absent
+- name: Ensure Funkwhale container network does not exist
+  when: funkwhale_container_network_deletion_enabled
+  block:
+    - name: Ensure Funkwhale container network does not exist via community.docker.docker_network
+      when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+      community.docker.docker_network:
+        name: "{{ funkwhale_container_network }}"
+        state: absent
 
-- name: Ensure Funkwhale container network does not exist via ansible.builtin.command
-  when: devture_systemd_docker_base_container_network_creation_method == 'command'
-  ansible.builtin.command:
-    cmd: >-
-      {{ devture_systemd_docker_base_host_command_docker }} network rm
-      {{ funkwhale_container_network }}
-  register: network_deletion_result
-  failed_when: network_deletion_result.rc > 0 and 'not found' not in network_deletion_result.stderr
-  changed_when: funkwhale_container_network in network_deletion_result.stdout
+    - name: Ensure Funkwhale container network does not exist via ansible.builtin.command
+      when: devture_systemd_docker_base_container_network_creation_method == 'command'
+      ansible.builtin.command:
+        cmd: >-
+          {{ devture_systemd_docker_base_host_command_docker }} network rm
+          {{ funkwhale_container_network }}
+      register: network_deletion_result
+      failed_when: network_deletion_result.rc > 0 and 'not found' not in network_deletion_result.stderr
+      changed_when: funkwhale_container_network in network_deletion_result.stdout
 
 - name: Ensure Funkwhale path does not exist
   ansible.builtin.file:

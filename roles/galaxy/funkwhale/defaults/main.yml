@@ -36,7 +36,10 @@ funkwhale_container_image_registry_prefix_upstream: "{{ funkwhale_container_imag
 funkwhale_container_image_registry_prefix_upstream_default: docker.io/
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
-funkwhale_container_network: '{{ funkwhale_identifier }}'
+funkwhale_container_network: "{{ funkwhale_identifier }}"
+
+# Control if the container network is deleted on uninstalling.
+funkwhale_container_network_deletion_enabled: true
 
 # Enables automatic in-place import and watching file and metadata changes in the funkwhale_music_path directory.
 # Needs the first 8 characters of the library ID after creating a library in the web UI. If your library ID is "769a2bc3-eb1d-4aff-9f84-2c4d80d5c2d1", provide "769a2bc3".
@@ -105,11 +108,23 @@ funkwhale_loglevel: error
 # Specify the timezone
 funkwhale_environment_variables_tz: UTC
 
+# funkwhale_restart_necessary controls whether the Funkwhale systemd
+# services will be restarted (when true) or merely started (when false) by the
+# systemd service manager role (when conditional restart is enabled).
+#
+# This value is automatically computed during installation based on whether
+# any configuration files, the systemd service file, or the container image changed.
+# The default of `false` means "no restart needed" — appropriate when the role's
+# installation tasks haven't run (e.g., due to --tags skipping them).
+funkwhale_restart_necessary: false
+
 ########################################################################
 #                                                                      #
 # api                                                                  #
 #                                                                      #
 ########################################################################
+
+funkwhale_api_identifier: "{{ funkwhale_identifier }}-api"
 
 funkwhale_api_container_data_path: "/srv/funkwhale/data"
 funkwhale_api_container_media_path: "{{ funkwhale_api_container_data_path }}/media"
@@ -125,13 +140,13 @@ funkwhale_api_container_image_registry_prefix: "{{ funkwhale_container_image_reg
 funkwhale_api_container_image_tag: "{{ funkwhale_api_version }}"
 funkwhale_api_container_image_force_pull: "{{ funkwhale_api_container_image.endswith(':latest') }}"
 
-# Controls whether the Funkwhale container exposes its HTTP port (as defined by `funkwhale_container_http_port`).
-#
-# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:8731"), or empty string to not expose.
-funkwhale_api_container_http_host_bind_port: ""
-
 # The base container network. It will be auto-created by this role if it doesn't exist already.
-funkwhale_api_container_network: '{{ funkwhale_container_network }}'
+funkwhale_api_container_network: "{{ funkwhale_container_network }}"
+
+# Specify how the API container publishes its HTTP port (as defined by `funkwhale_api_container_port`).
+#
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
+funkwhale_api_container_http_host_bind_port: ""
 
 # The port number in the container
 funkwhale_api_container_port: 5000
@@ -146,7 +161,7 @@ funkwhale_api_container_additional_networks_custom: []
 # funkwhale_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
 # See `../templates/labels_api.j2` for details.
 #
-# To inject your own other container labels, see `funkwhale_container_labels_additional_labels`.
+# To inject your own other container labels, see `funkwhale_container_labels_additional_labels_custom`.
 funkwhale_api_container_labels_traefik_enabled: false
 funkwhale_api_container_labels_traefik_docker_network: ""
 funkwhale_api_container_labels_traefik_hostname: "{{ funkwhale_hostname }}"
@@ -188,6 +203,10 @@ funkwhale_api_container_labels_traefik_additional_response_headers_custom: {}
 funkwhale_api_container_labels_additional_labels: "{{ funkwhale_api_container_labels_additional_labels_auto + funkwhale_api_container_labels_additional_labels_custom }}"
 funkwhale_api_container_labels_additional_labels_auto: []
 funkwhale_api_container_labels_additional_labels_custom: []
+
+# Specify the size of the container's tmpfs volume
+# Increase this if you want to upload a lot of audio files via the web GUI and get "Can't upload file, ensure it's not to big"
+funkwhale_api_container_tmpfs_tmp_size: 5000m
 
 # A list of extra arguments to pass to the Funkwhale API container (run) statement
 # To mount a library to the funkwhale/music directory use: ["--mount type=bind,src=LIBRARY_PATH,dst=/srv/funkwhale/data/music,ro"]
@@ -248,7 +267,7 @@ funkwhale_api_floc_optout_enabled: true
 # See: `funkwhale_http_header_strict_transport_security`
 funkwhale_api_hsts_preload_enabled: false
 
-# List of systemd services that funkwhale-api.service depends on
+# List of systemd services that the Funkwhale API systemd service depends on
 funkwhale_api_systemd_required_services_list: "{{ funkwhale_api_systemd_required_services_list_default + funkwhale_api_systemd_required_services_list_auto + funkwhale_api_systemd_required_services_list_custom }}"
 funkwhale_api_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
 funkwhale_api_systemd_required_services_list_auto: []
@@ -256,11 +275,6 @@ funkwhale_api_systemd_required_services_list_custom: []
 
 # Additional environment variables.
 funkwhale_api_variables_additional_variables: ""
-
-funkwhale_api_identifier: "{{ funkwhale_identifier }}-api"
-
-# Increase this if you want to upload a lot of audio files via the web GUI and get "Can't upload file, ensure it's not to big"
-funkwhale_api_tmpfs_size: 5000m
 
 ########################################################################
 #                                                                      #
@@ -273,6 +287,8 @@ funkwhale_api_tmpfs_size: 5000m
 # frontend                                                             #
 #                                                                      #
 ########################################################################
+
+funkwhale_frontend_identifier: "{{ funkwhale_identifier }}-frontend"
 
 funkwhale_frontend_container_media_path: "/srv/funkwhale/data/media"
 funkwhale_frontend_container_music_path: "/srv/funkwhale/data/music"
@@ -290,13 +306,13 @@ funkwhale_frontend_container_image_registry_prefix: "{{ funkwhale_container_imag
 funkwhale_frontend_container_image_tag: "{{ funkwhale_frontend_version }}"
 funkwhale_frontend_container_image_force_pull: "{{ funkwhale_frontend_container_image.endswith(':latest') }}"
 
-# Controls whether the Funkwhale container exposes its HTTP port (as defined by `funkwhale_container_http_port`).
-#
-# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:8731"), or empty string to not expose.
-funkwhale_frontend_container_http_host_bind_port: ""
-
 # The base container network. It will be auto-created by this role if it doesn't exist already.
-funkwhale_frontend_container_network: '{{ funkwhale_container_network }}'
+funkwhale_frontend_container_network: "{{ funkwhale_container_network }}"
+
+# Specify how the frontend container publishes its HTTP port (as defined by `funkwhale_frontend_container_http_port`).
+#
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
+funkwhale_frontend_container_http_host_bind_port: ""
 
 # The port number in the container
 funkwhale_frontend_container_http_port: 80
@@ -311,7 +327,7 @@ funkwhale_frontend_container_additional_networks_custom: []
 # funkwhale_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
 # See `../templates/labels_frontend.j2` for details.
 #
-# To inject your own other container labels, see `funkwhale_container_labels_additional_labels`.
+# To inject your own other container labels, see `funkwhale_container_labels_additional_labels_custom`.
 funkwhale_frontend_container_labels_traefik_enabled: false
 funkwhale_frontend_container_labels_traefik_docker_network: ""
 funkwhale_frontend_container_labels_traefik_entrypoints: web-secure
@@ -410,7 +426,7 @@ funkwhale_frontend_floc_optout_enabled: true
 # See: `funkwhale_http_header_strict_transport_security`
 funkwhale_frontend_hsts_preload_enabled: false
 
-# List of systemd services that funkwhale-frontend.service depends on
+# List of systemd services that the Funkwhale frontend systemd service depends on
 funkwhale_frontend_systemd_required_services_list: "{{ funkwhale_frontend_systemd_required_services_list_default + funkwhale_frontend_systemd_required_services_list_auto + funkwhale_frontend_systemd_required_services_list_custom }}"
 funkwhale_frontend_systemd_required_services_list_default: ['docker.service', '{{ funkwhale_api_identifier }}.service']
 funkwhale_frontend_systemd_required_services_list_auto: []
@@ -418,8 +434,6 @@ funkwhale_frontend_systemd_required_services_list_custom: []
 
 # Additional environment variables.
 funkwhale_frontend_variables_additional_variables: ""
-
-funkwhale_frontend_identifier: "{{ funkwhale_identifier }}-frontend"
 
 # The number of web workers to start in parallel. Higher means you can handle
 # more concurrent requests, but also leads to higher CPU/Memory usage
@@ -444,7 +458,7 @@ funkwhale_celery_beat_identifier: "{{ funkwhale_identifier }}-celery-beat"
 funkwhale_celery_beat_version: "{{ funkwhale_version }}"
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
-funkwhale_celery_beat_container_network: '{{ funkwhale_container_network }}'
+funkwhale_celery_beat_container_network: "{{ funkwhale_container_network }}"
 
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
@@ -489,7 +503,7 @@ funkwhale_celery_worker_identifier: "{{ funkwhale_identifier }}-celery-worker"
 funkwhale_celery_worker_version: "{{ funkwhale_version }}"
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
-funkwhale_celery_worker_container_network: '{{ funkwhale_container_network }}'
+funkwhale_celery_worker_container_network: "{{ funkwhale_container_network }}"
 
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
@@ -536,7 +550,7 @@ funkwhale_celery_worker_concurrency: 0
 
 funkwhale_watch_imports_identifier: "{{ funkwhale_identifier }}-watch-imports"
 
-funkwhale_watch_imports_container_network: '{{ funkwhale_container_network }}'
+funkwhale_watch_imports_container_network: "{{ funkwhale_container_network }}"
 
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.

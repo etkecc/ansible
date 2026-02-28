@@ -11,6 +11,7 @@
   when: "lookup('ansible.builtin.varnames', ('^' + item.old + '$'), wantlist=True) | length > 0"
   with_items:
     - { "old": "funkwhale_api_env_path", "new": "<Removed>" }
+    - { "old": "funkwhale_api_tmpfs_size", "new": "funkwhale_api_container_tmpfs_tmp_size" }
     - { "old": "funkwhale_config_redis_hostname", "new": "funkwhale_redis_hostname" }
     - { "old": "funkwhale_config_redis_port", "new": "funkwhale_redis_port" }
     - { "old": "funkwhale_config_redis_database", "new": "funkwhale_redis_database" }

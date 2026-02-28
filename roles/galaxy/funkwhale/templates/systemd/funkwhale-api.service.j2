@@ -24,17 +24,17 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --log-driver=none \
       --user={{ funkwhale_uid }}:{{ funkwhale_gid }} \
       --cap-drop=ALL \
+      --read-only \
+      --network={{ funkwhale_api_container_network }} \
       {% if funkwhale_api_container_http_host_bind_port %}
       -p {{ funkwhale_api_container_http_host_bind_port }}:{{ funkwhale_api_container_http_port }} \
       {% endif %}
+      --env-file={{ funkwhale_api_base_path }}/env \
       --label-file={{ funkwhale_api_base_path }}/labels \
-      --network={{ funkwhale_api_container_network }} \
-      --mount type=bind,src={{ funkwhale_music_path }},dst={{ funkwhale_api_container_music_path }},readonly \
+      --mount type=bind,src={{ funkwhale_music_path }},dst={{ funkwhale_api_container_music_path }},ro \
       --mount type=bind,src={{ funkwhale_media_path }},dst={{ funkwhale_api_container_media_path }} \
       --mount type=bind,src={{ funkwhale_static_path }},dst={{ funkwhale_api_container_static_path }} \
-      --tmpfs=/tmp:rw,noexec,nosuid,size={{ funkwhale_api_tmpfs_size }} \
-      --read-only \
-      --env-file={{ funkwhale_api_base_path }}/env \
+      --tmpfs=/tmp:rw,noexec,nosuid,size={{ funkwhale_api_container_tmpfs_tmp_size }} \
       {% if funkwhale_api_container_extra_arguments | length > 0 %}
       {{ funkwhale_api_container_extra_arguments | join(' ') }} \
       {% endif %}
