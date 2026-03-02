@@ -26,23 +26,25 @@
   debug:
     msg: "{{ skopeo_targets }}"
 
-# - name: Check image status
-#   ansible.builtin.uri:
-#     url: "https://{{ skopeo_target }}/v2{{ item | regex_search('\/.*') | replace(':', '/manifests/') }}"
-#     method: HEAD
-#     status_code: [200, 404]
-#     headers: # accept header copied from docker v25.0.x
-#       Accept: application/json, application/vnd.docker.distribution.manifest.list.v2+json, application/vnd.docker.distribution.manifest.v1+prettyjws, application/vnd.docker.distribution.manifest.v2+json, application/vnd.oci.image.index.v1+json, application/vnd.oci.image.manifest.v1+json
-#   when: item not in skopeo_ignore_images
-#   failed_when: false
-#   loop: "{{ skopeo_sources }}"
-#   register: skopeo_status
+- name: Check image status
+  ansible.builtin.uri:
+    url: "https://{{ skopeo_target }}/v2{{ item | regex_search('\/.*') | replace(':', '/manifests/') }}"
+    method: HEAD
+    status_code: [200, 404]
+    headers: # accept header copied from docker v25.0.x
+      Accept: application/json, application/vnd.docker.distribution.manifest.list.v2+json, application/vnd.docker.distribution.manifest.v1+prettyjws, application/vnd.docker.distribution.manifest.v2+json, application/vnd.oci.image.index.v1+json, application/vnd.oci.image.manifest.v1+json
+  when: item not in skopeo_ignore_images
+  failed_when: false
+  loop: "{{ skopeo_sources }}"
+  register: skopeo_status
 
 - name: Populate commands list (all)
   ansible.builtin.set_fact:
-    skopeo_commands: "{{ skopeo_commands + ['skopeo --command-timeout 10m sync --all --src docker --dest docker ' + item + ' ' + skopeo_target + (item|regex_search('/.*')|regex_search('.*/'))] }}"
-  when: item not in skopeo_ignore_images #and (item.status | default(-1) != 200 or item.endswith(':latest'))
-  loop: "{{ skopeo_sources }}"
+    skopeo_commands: "{{ skopeo_commands + ['skopeo --command-timeout 10m sync --all --src docker --dest docker ' + item.item + ' ' + skopeo_target + (item.item|regex_search('/.*')|regex_search('.*/'))] }}"
+  when: item.item not in skopeo_ignore_images and (item.status | default(-1) != 200 or item.item.endswith(':latest'))
+  loop_control:
+    label: "{{ item.item }}"
+  loop: "{{ skopeo_status.results }}"
   become: false
   delegate_to: 127.0.0.1
 
