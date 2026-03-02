@@ -70,3 +70,10 @@ devture_systemd_docker_base_container_network_creation_method: "{{ devture_syste
 # - certain services (HTTP servers) may wish to wait for long-polling connections to end and they may not be ending as quickly as we wish
 # A few seconds of grace time should be enough for everyone.
 devture_systemd_docker_base_container_stop_grace_time_seconds: 3
+
+# Specifies how long roles should wait during pre-start cleanup for a previously removed
+# container name to be released by Docker before failing startup explicitly.
+devture_systemd_docker_base_container_cleanup_timeout_seconds: 10
+
+# Specifies delay between retries during pre-start container cleanup loops.
+devture_systemd_docker_base_container_cleanup_retry_delay_seconds: 1

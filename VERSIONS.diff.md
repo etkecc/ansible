@@ -12,4 +12,4 @@
 * Postgres Container Image V17: 17.8 ⇾ 17.9
 * Postgres Container Image V18: 18.2 ⇾ 18.3
 * [Radicale](https://github.com/tomsquest/docker-radicale): [3.6.0.0](https://github.com/tomsquest/docker-radicale/releases/tag/3.6.0.0) ⇾ [3.6.1.0](https://github.com/tomsquest/docker-radicale/releases/tag/3.6.1.0)
-* [Signal](https://github.com/mautrix/signal): [v0.2602.0](https://github.com/mautrix/signal/releases/tag/v0.2602.0) ⇾ [v26.02.1](https://github.com/mautrix/signal/releases/tag/v26.02.1)
+* [Signal](https://github.com/mautrix/signal): [v0.2602.0](https://github.com/mautrix/signal/releases/tag/v0.2602.0) ⇾ [v26.02.2](https://github.com/mautrix/signal/releases/tag/v26.02.2)

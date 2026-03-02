@@ -5,3 +5,27 @@
     msg: >-
       Invalid value: `{{ devture_systemd_service_manager_service_restart_mode }}`
   when: "devture_systemd_service_manager_service_restart_mode not in ['clean-stop-start', 'one-by-one', 'priority-batched', 'all-at-once']"
+
+- name: Fail if devture_systemd_service_manager_all_at_once_retries is invalid
+  ansible.builtin.fail:
+    msg: >-
+      Invalid value for `devture_systemd_service_manager_all_at_once_retries`:
+      `{{ devture_systemd_service_manager_all_at_once_retries }}`.
+      The value must be an integer (or numeric string) greater than or equal to 1.
+  when: >-
+    not (
+      (devture_systemd_service_manager_all_at_once_retries | string | trim) is match('^[0-9]+$')
+      and (devture_systemd_service_manager_all_at_once_retries | int) >= 1
+    )
+
+- name: Fail if devture_systemd_service_manager_all_at_once_retry_delay_seconds is invalid
+  ansible.builtin.fail:
+    msg: >-
+      Invalid value for `devture_systemd_service_manager_all_at_once_retry_delay_seconds`:
+      `{{ devture_systemd_service_manager_all_at_once_retry_delay_seconds }}`.
+      The value must be a non-negative integer (or numeric string).
+  when: >-
+    not (
+      (devture_systemd_service_manager_all_at_once_retry_delay_seconds | string | trim) is match('^[0-9]+$')
+      and (devture_systemd_service_manager_all_at_once_retry_delay_seconds | int) >= 0
+    )

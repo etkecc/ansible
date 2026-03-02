@@ -59,6 +59,34 @@ valkey_container_additional_networks_custom: []
 # we default to at least 30 seconds.
 valkey_container_stop_grace_time_seconds: "{{ [devture_systemd_docker_base_container_stop_grace_time_seconds, 30] | max }}"
 
+# Controls how long the pre-start cleanup should wait for stale container-name release
+# before failing startup explicitly.
+valkey_container_cleanup_timeout_seconds: "{{ devture_systemd_docker_base_container_cleanup_timeout_seconds }}"
+
+# Controls the delay between pre-start cleanup retries.
+valkey_container_cleanup_retry_delay_seconds: "{{ devture_systemd_docker_base_container_cleanup_retry_delay_seconds }}"
+
+# Shell command used in the systemd pre-start phase to deterministically remove a stale
+# container and wait until Docker releases its name.
+valkey_container_cleanup_command: |
+  i=0;
+  while [ "$i" -lt {{ valkey_container_cleanup_timeout_seconds }} ]; do
+  {{ devture_systemd_docker_base_host_command_docker }} stop -t {{ valkey_container_stop_grace_time_seconds }} {{ valkey_identifier }} >/dev/null 2>&1 || true;
+  {{ devture_systemd_docker_base_host_command_docker }} rm -f {{ valkey_identifier }} >/dev/null 2>&1 || true;
+  if {{ devture_systemd_docker_base_host_command_docker }} container inspect {{ valkey_identifier }} >/dev/null 2>&1; then
+  i=$((i + 1));
+  sleep {{ valkey_container_cleanup_retry_delay_seconds }};
+  continue;
+  fi;
+  if {{ devture_systemd_docker_base_host_command_docker }} info >/dev/null 2>&1; then
+  exit 0;
+  fi;
+  echo "Failed to query Docker daemon while cleaning up {{ valkey_identifier }}" >&2;
+  exit 1;
+  done;
+  echo "Failed to remove stale container {{ valkey_identifier }} after {{ valkey_container_cleanup_timeout_seconds }} attempts" >&2;
+  exit 1
+
 # Specify the size of the container's tmpfs volume
 valkey_container_tmpfs_tmp_size: 128m
 

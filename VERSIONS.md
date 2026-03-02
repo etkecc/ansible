@@ -57,7 +57,7 @@
 * Radicale: 3.6.1.0
 * Registration: v0.7.2
 * Schildichat: 1.11.109-sc.0.test.0
-* Signal: v26.02.1
+* Signal: v26.02.2
 * Slack: v0.2602.0
 * Spam Checker Mjolnir Antispam Git: v1.12.0
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05

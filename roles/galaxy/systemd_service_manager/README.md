@@ -58,4 +58,9 @@ Restart mode options for `devture_systemd_service_manager_service_restart_mode`:
 - `one-by-one` - restarts each service in priority order
 - `priority-batched` - starts/restarts services in priority batches and queues them without blocking inside each batch
 
+All-at-once retry controls:
+
+- `devture_systemd_service_manager_all_at_once_retries` (default: `1`) - passed directly to task `retries` for each single all-at-once `systemctl restart ...` or `systemctl start ...` command; must be an integer `>= 1` (numeric strings accepted)
+- `devture_systemd_service_manager_all_at_once_retry_delay_seconds` (default: `10`) - delay between attempts; must be a non-negative integer (numeric strings accepted)
+
 For a detailed comparison of these modes with real-world downtime benchmarks, see [Restart Mode Comparison](docs/restart-mode-comparison.md).

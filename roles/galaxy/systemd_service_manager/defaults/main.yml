@@ -54,6 +54,17 @@ devture_systemd_service_manager_services_list: "{{ devture_systemd_service_manag
 # the restart transaction internally on the server side.
 devture_systemd_service_manager_service_restart_mode: all-at-once
 
+# When `devture_systemd_service_manager_service_restart_mode` is `all-at-once`,
+# this maps directly to Ansible task `retries` for each single all-at-once
+# `systemctl restart ...` or `systemctl start ...` command.
+# Must be an integer >= 1. Numeric strings are accepted.
+# Set to 1 to preserve fail-fast behavior (1 attempt, no retries).
+devture_systemd_service_manager_all_at_once_retries: 1
+
+# Delay between retries for `all-at-once` restart/start attempts.
+# Must be a non-negative integer. Numeric strings are accepted.
+devture_systemd_service_manager_all_at_once_retry_delay_seconds: 10
+
 # devture_systemd_service_manager_conditional_restart_enabled controls whether
 # services can opt out of restarting when their configuration hasn't changed.
 #

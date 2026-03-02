@@ -65,6 +65,10 @@
     - name: Start all systemd services at once
       ansible.builtin.command:
         cmd: "{{ devture_systemd_service_manager_all_at_once_start_command }}"
+      register: devture_systemd_service_manager_all_at_once_start_result
+      retries: "{{ devture_systemd_service_manager_all_at_once_retries | int }}"
+      delay: "{{ devture_systemd_service_manager_all_at_once_retry_delay_seconds | int }}"
+      until: devture_systemd_service_manager_all_at_once_start_result.rc == 0
       when: not ansible_check_mode
 
     - name: Ensure systemd services are auto-started
