@@ -42,6 +42,24 @@
     (livekit_server_config_rtc_port_range_start | string | length == 0 and livekit_server_config_rtc_port_range_end | string | length > 0) or
     (livekit_server_config_rtc_port_range_start | string | length == 0 and livekit_server_config_rtc_port_range_end | string | length == 0 and livekit_server_config_rtc_udp_port | string | length == 0)
 
+- name: Fail if LiveKit TURN relay range configuration is invalid
+  ansible.builtin.fail:
+    msg: >-
+      You need to define both TURN relay range settings (livekit_server_config_turn_relay_range_start and livekit_server_config_turn_relay_range_end).
+  when: >
+    (livekit_server_config_turn_relay_range_start | string | length > 0 and livekit_server_config_turn_relay_range_end | string | length == 0) or
+    (livekit_server_config_turn_relay_range_start | string | length == 0 and livekit_server_config_turn_relay_range_end | string | length > 0) or
+    (livekit_server_config_turn_relay_range_start | string | length == 0 and livekit_server_config_turn_relay_range_end | string | length == 0)
+
+- name: Fail if LiveKit TURN relay range is reversed
+  ansible.builtin.fail:
+    msg: >-
+      livekit_server_config_turn_relay_range_start must be less than or equal to livekit_server_config_turn_relay_range_end.
+  when: >
+    livekit_server_config_turn_relay_range_start | string | length > 0 and
+    livekit_server_config_turn_relay_range_end | string | length > 0 and
+    (livekit_server_config_turn_relay_range_start | int) > (livekit_server_config_turn_relay_range_end | int)
+
 - name: Fail if LiveKit Server logging level is invalid
   ansible.builtin.fail:
     msg: >-

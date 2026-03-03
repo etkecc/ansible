@@ -42,6 +42,10 @@ livekit_server_container_image_self_build_repo_version: "{{ livekit_server_versi
 livekit_server_container_image_self_build_src_files_path: "{{ livekit_server_base_path }}/docker-src"
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
+#
+# Setting this to `host` enables host networking and skips Docker port publishing.
+# This can improve startup and runtime performance when many UDP ports are needed,
+# but it also weakens isolation and requires handling firewall exposure at the host level.
 livekit_server_container_network: "{{ livekit_server_identifier }}"
 
 # Control if the container network is deleted on uninstalling.
@@ -172,6 +176,37 @@ livekit_server_systemd_wanted_services_list: "{{ livekit_server_systemd_wanted_s
 livekit_server_systemd_wanted_services_list_default: []
 livekit_server_systemd_wanted_services_list_auto: []
 livekit_server_systemd_wanted_services_list_custom: []
+
+# Controls how long to wait for the container to stop gracefully before killing it.
+livekit_server_container_stop_grace_time_seconds: "{{ devture_systemd_docker_base_container_stop_grace_time_seconds }}"
+
+# Controls how long the pre-start cleanup should wait for stale container-name release
+# before failing startup explicitly.
+livekit_server_container_cleanup_timeout_seconds: "{{ devture_systemd_docker_base_container_cleanup_timeout_seconds }}"
+
+# Controls the delay between pre-start cleanup retries.
+livekit_server_container_cleanup_retry_delay_seconds: "{{ devture_systemd_docker_base_container_cleanup_retry_delay_seconds }}"
+
+# Shell command used in the systemd pre-start phase to deterministically remove a stale
+# container and wait until Docker releases its name.
+livekit_server_container_cleanup_command: |
+  i=0;
+  while [ "$i" -lt {{ livekit_server_container_cleanup_timeout_seconds }} ]; do
+  {{ devture_systemd_docker_base_host_command_docker }} stop -t {{ livekit_server_container_stop_grace_time_seconds }} {{ livekit_server_identifier }} >/dev/null 2>&1 || true;
+  {{ devture_systemd_docker_base_host_command_docker }} rm -f {{ livekit_server_identifier }} >/dev/null 2>&1 || true;
+  if {{ devture_systemd_docker_base_host_command_docker }} container inspect {{ livekit_server_identifier }} >/dev/null 2>&1; then
+  i=$((i + 1));
+  sleep {{ livekit_server_container_cleanup_retry_delay_seconds }};
+  continue;
+  fi;
+  if {{ devture_systemd_docker_base_host_command_docker }} info >/dev/null 2>&1; then
+  exit 0;
+  fi;
+  echo "Failed to query Docker daemon while cleaning up {{ livekit_server_identifier }}" >&2;
+  exit 1;
+  done;
+  echo "Failed to remove stale container {{ livekit_server_identifier }} after {{ livekit_server_container_cleanup_timeout_seconds }} attempts" >&2;
+  exit 1
 
 # Holds the final LiveKit Server configuration (a combination of the default and its extension).
 # You most likely don't need to touch this variable. Instead, see `livekit_server_configuration_yaml` or `livekit_server_configuration_extension_yaml`.
@@ -314,6 +349,15 @@ livekit_server_config_turn_tls_port: 5349
 # Controls the `turn.udp_port` configuration property.
 # See: https://docs.livekit.io/home/self-hosting/ports-firewall/
 livekit_server_config_turn_udp_port: 3478
+
+# Controls the `turn.relay_range_start` configuration property.
+# LiveKit allocates TURN relay sockets from this UDP range.
+# Keep this range intentionally small to avoid very long Docker port-publishing startup times.
+livekit_server_config_turn_relay_range_start: 30000
+
+# Controls the `turn.relay_range_end` configuration property.
+# Keep this range intentionally small to avoid very long Docker port-publishing startup times.
+livekit_server_config_turn_relay_range_end: 30020
 
 ########################################################################################
 #                                                                                      #

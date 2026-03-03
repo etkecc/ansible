@@ -1,0 +1,35 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Perform Sable installation tasks
+  when: sable_enabled | bool
+  tags:
+    - setup-all
+    - setup-sable
+    - install-all
+    - install-sable
+  block:
+    - name: Validate Sable configuration
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Install Sable
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+
+- name: Perform Sable self-check tasks
+  when: sable_enabled | bool
+  tags:
+    - self-check-sable
+  block:
+    - name: Run self-check for Sable
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/self_check.yml"
+
+- name: Perform Sable uninstallation tasks
+  when: not sable_enabled | bool
+  tags:
+    - setup-all
+    - setup-sable
+  block:
+    - name: Uninstall Sable
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

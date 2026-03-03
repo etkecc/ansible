@@ -24,7 +24,21 @@ To ensure LiveKit Server functions correctly, the following firewall rules and p
 - `7881/tcp`: ICE/TCP
 - `7882/udp`: ICE/UDP Mux
 
-💡 The suggestions above are inspired by the upstream [Ports and Firewall](https://docs.livekit.io/home/self-hosting/ports-firewall/) documentation based on how LiveKit is configured in the playbook. If you've using custom configuration for the LiveKit Server role, you may need to adjust the firewall rules accordingly.
+When embedded TURN is enabled (`livekit_server_config_turn_enabled: true`), open these as well:
+
+- `livekit_server_config_turn_udp_port/udp` (default: `3478/udp`): TURN/UDP
+- `livekit_server_config_turn_tls_port/tcp` (default: `5349/tcp`): TURN/TLS (direct mode)
+- `livekit_server_config_turn_relay_range_start-livekit_server_config_turn_relay_range_end/udp` (default: `30000-30020/udp`): TURN relay ports
+
+💡 The suggestions above are inspired by the upstream [Ports and Firewall](https://docs.livekit.io/home/self-hosting/ports-firewall/) documentation based on how LiveKit is configured in the role. If you're using custom configuration, adjust the firewall rules and port forwarding accordingly.
+
+### Host networking mode
+
+Setting `livekit_server_container_network: host` runs LiveKit with host networking.
+
+- Docker port publishing (`-p`) is skipped in this mode.
+- You need to open firewall ports directly on the host.
+- This can improve performance and startup time when using larger UDP ranges, but reduces container-network isolation.
 
 ## Adjusting the playbook configuration
 
@@ -69,6 +83,26 @@ livekit_server_config_keys_custom:
 ```
 
 **Note**: on the MDAD playbook, the key value is specified with `livekit_server_config_keys_auto` by default, so you do not need to add them. See its [`matrix_servers`](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/group_vars/matrix_servers) for details.
+
+### TURN TLS modes
+
+`livekit_server_config_turn_external_tls` controls where TURN TLS is terminated.
+
+The default in this role is `false`.
+
+- Set it to `true` when a reverse proxy (such as Traefik) terminates TURN TLS and forwards plain TCP to LiveKit.
+- Set it to `false` when LiveKit should terminate TLS itself. In this mode, set `livekit_server_config_turn_cert_file` and `livekit_server_config_turn_key_file` to valid file paths (defaults are empty).
+
+When external TLS mode is enabled, the role expects Traefik TCP labels to be set (`livekit_server_container_labels_turn_traefik_enabled: true` and a non-empty `livekit_server_container_labels_turn_traefik_entrypoints`) and does not configure cert files for TURN.
+
+### Limitations
+
+LiveKit Server's TURN listener behavior depends on where TLS is terminated:
+
+- Direct LiveKit TURN listeners (`livekit_server_config_turn_external_tls: false`) still use IPv4-only sockets for `3479/udp` and `5350/tcp`, so IPv6 connectivity to these endpoints is not possible.
+- With [external TLS mode](#turn-tls-modes) (`livekit_server_config_turn_external_tls: true`), the reverse proxy (for example Traefik) can provide IPv6-facing endpoints and forward TURN/TCP to LiveKit.
+
+LiveKit appears to intentionally only listen on `udp4` and `tcp4` in direct mode, as seen in [TURN UDP listener code](https://github.com/livekit/livekit/blob/154b4d26b769c68a03c096124094b97bf61a996f/pkg/service/turn.go#L128) and [TURN TCP listener code](https://github.com/livekit/livekit/blob/154b4d26b769c68a03c096124094b97bf61a996f/pkg/service/turn.go#L92).
 
 ## Installing
 

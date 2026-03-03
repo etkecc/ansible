@@ -1,0 +1,64 @@
+{#
+SPDX-FileCopyrightText: 2022 MDAD project contributors
+SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+SPDX-FileCopyrightText: 2024 Nikita Chernyi
+SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+#}
+
+[Unit]
+Description=Sable ({{ sable_identifier }})
+{% for service in sable_systemd_required_services_list %}
+Requires={{ service }}
+After={{ service }}
+{% endfor %}
+{% for service in sable_systemd_wanted_services_list %}
+Wants={{ service }}
+{% endfor %}
+DefaultDependencies=no
+
+[Service]
+Type=simple
+Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
+ExecStartPre={{ devture_systemd_docker_base_host_command_sh }} -c '{{ sable_container_cleanup_command | trim | replace("\n", " ") }}'
+
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
+      --rm \
+      --name={{ sable_identifier }} \
+      --log-driver=none \
+      --user={{ sable_uid }}:{{ sable_gid }} \
+      --cap-drop=ALL \
+      --read-only \
+      --network={{ sable_container_network }} \
+      {% if sable_container_http_host_bind_port %}
+      -p {{ sable_container_http_host_bind_port }}:{{ sable_container_http_port }} \
+      {% endif %}
+      --env-file={{ sable_base_path }}/env \
+      --label-file={{ sable_base_path }}/labels \
+      --mount type=bind,src={{ sable_config_path }}/nginx.conf,dst=/etc/nginx/nginx.conf,ro \
+      --mount type=bind,src={{ sable_config_path }}/config.json,dst=/app/config.json,ro \
+      {% for volume in sable_container_additional_volumes %}
+      --mount type={{ volume.type | default('bind' if '/' in volume.src else 'volume') }},src={{ volume.src }},dst={{ volume.dst }}{{ (',' + volume.options) if volume.options else '' }} \
+      {% endfor %}
+      --tmpfs=/tmp:rw,noexec,nosuid,size={{ sable_container_tmpfs_tmp_size }} \
+      {% for arg in sable_container_extra_arguments %}
+      {{ arg }} \
+      {% endfor %}
+      {{ sable_container_image_self_build_name if sable_container_image_self_build else sable_container_image }}
+
+{% for network in sable_container_additional_networks %}
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ sable_identifier }}
+{% endfor %}
+
+ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ sable_identifier }}
+
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ sable_identifier }} 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ sable_identifier }} 2>/dev/null || true'
+
+Restart=always
+RestartSec=30
+SyslogIdentifier={{ sable_identifier }}
+
+[Install]
+WantedBy=multi-user.target

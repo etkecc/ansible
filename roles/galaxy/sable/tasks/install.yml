@@ -1,0 +1,142 @@
+# SPDX-FileCopyrightText: 2022 MDAD project contributors
+# SPDX-FileCopyrightText: 2022 Marko Weltzer
+# SPDX-FileCopyrightText: 2022 Nikita Chernyi
+# SPDX-FileCopyrightText: 2022 Sebastian Gumprich
+# SPDX-FileCopyrightText: 2022-2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2024 David Mehren
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Ensure Sable paths exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0750"
+    owner: "{{ sable_uid }}"
+    group: "{{ sable_gid }}"
+  with_items:
+    - "{{ sable_base_path }}"
+    - "{{ sable_config_path }}"
+
+- name: Ensure Sable support files installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/{{ item }}.j2"
+    dest: "{{ sable_base_path }}/{{ item }}"
+    mode: "0640"
+    owner: "{{ sable_uid }}"
+    group: "{{ sable_gid }}"
+  with_items:
+    - env
+    - labels
+  register: sable_support_files_result
+
+- name: Ensure Sable nginx.conf installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/{{ item }}.j2"
+    dest: "{{ sable_config_path }}/{{ item }}"
+    mode: "0640"
+    owner: "{{ sable_uid }}"
+    group: "{{ sable_gid }}"
+  with_items:
+    - nginx.conf
+  register: sable_nginx_config_file_result
+
+- name: Ensure Sable configuration installed
+  ansible.builtin.copy:
+    content: "{{ sable_configuration | to_nice_json }}"
+    dest: "{{ sable_config_path }}/config.json"
+    mode: "0640"
+    owner: "{{ sable_uid }}"
+    group: "{{ sable_gid }}"
+  register: sable_config_file_result
+
+- name: Run if self-building of Sable container image is not enabled
+  when: "not sable_container_image_self_build | bool"
+  block:
+    - name: Ensure Sable container image is pulled via community.docker.docker_image
+      when: devture_systemd_docker_base_container_image_pull_method == 'ansible-module'
+      community.docker.docker_image:
+        name: "{{ sable_container_image }}"
+        source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+        force_source: "{{ sable_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+        force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else sable_container_image_force_pull }}"
+      register: sable_container_image_pull_result
+      retries: "{{ devture_playbook_help_container_retries_count }}"
+      delay: "{{ devture_playbook_help_container_retries_delay }}"
+      until: sable_container_image_pull_result is not failed
+
+    - name: Ensure Sable container image is pulled via ansible.builtin.command
+      when: devture_systemd_docker_base_container_image_pull_method == 'command'
+      ansible.builtin.command:
+        cmd: "{{ devture_systemd_docker_base_host_command_docker }} pull {{ sable_container_image }}"
+      register: sable_container_image_pull_result
+      retries: "{{ devture_playbook_help_container_retries_count }}"
+      delay: "{{ devture_playbook_help_container_retries_delay }}"
+      until: sable_container_image_pull_result is not failed
+      changed_when: "'Downloaded newer image' in sable_container_image_pull_result.stdout"
+
+- name: Run if self-building of Sable container image is enabled
+  when: "sable_container_image_self_build | bool"
+  block:
+    - name: Ensure Sable repository is present on self-build
+      ansible.builtin.git:
+        repo: "{{ sable_container_image_self_build_repo }}"
+        version: "{{ sable_container_image_self_build_repo_version }}"
+        dest: "{{ sable_container_image_self_build_src_files_path }}"
+        force: "yes"
+      register: sable_git_pull_results
+
+    - name: Ensure Sable container image is built
+      community.docker.docker_image:
+        name: "{{ sable_container_image_self_build_name }}"
+        source: build
+        force_source: "{{ sable_git_pull_results.changed if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+        force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else sable_git_pull_results.changed }}"
+        build:
+          dockerfile: Dockerfile
+          path: "{{ sable_container_image_self_build_src_files_path }}"
+          pull: true
+          args:
+      register: sable_container_image_build_result
+
+- name: Ensure Sable container network is created via community.docker.docker_network
+  when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+  community.docker.docker_network:
+    enable_ipv6: "{{ devture_systemd_docker_base_ipv6_enabled }}"
+    name: "{{ sable_container_network }}"
+    driver: bridge
+    driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
+  register: sable_network_creation_result
+
+- name: Ensure Sable container network is created via ansible.builtin.command
+  when: devture_systemd_docker_base_container_network_creation_method == 'command'
+  ansible.builtin.command:
+    cmd: >-
+      {{ devture_systemd_docker_base_host_command_docker }} network create
+      {% if devture_systemd_docker_base_ipv6_enabled %}--ipv6{% endif %}
+      {{ devture_systemd_docker_base_container_networks_driver_options_string }}
+      {{ sable_container_network }}
+  register: sable_network_creation_result
+  changed_when: sable_network_creation_result.rc == 0
+  failed_when: sable_network_creation_result.rc != 0 and 'already exists' not in sable_network_creation_result.stderr
+
+- name: Ensure Sable systemd service is present
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/systemd/sable.service.j2"
+    dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ sable_identifier }}.service"
+    mode: "0644"
+  register: sable_systemd_service_result
+
+- name: Determine whether Sable needs a restart
+  ansible.builtin.set_fact:
+    sable_restart_necessary: >-
+      {{
+        sable_support_files_result.changed | default(false)
+        or sable_nginx_config_file_result.changed | default(false)
+        or sable_config_file_result.changed | default(false)
+        or sable_systemd_service_result.changed | default(false)
+        or sable_container_image_pull_result.changed | default(false)
+        or sable_container_image_build_result.changed | default(false)
+      }}

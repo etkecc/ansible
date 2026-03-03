@@ -20,8 +20,7 @@ Wants={{ service }}
 [Service]
 Type=simple
 Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
-ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ livekit_server_identifier }} 2>/dev/null || true'
-ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ livekit_server_identifier }} 2>/dev/null || true'
+ExecStartPre={{ devture_systemd_docker_base_host_command_sh }} -c '{{ livekit_server_container_cleanup_command | trim | replace("\n", " ") }}'
 
 {% if livekit_server_host_sysctl_minimum_net_core_rmem_max %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_sh }} -c 'current_rmem=$(sysctl -n net.core.rmem_max); if [ "$current_rmem" -lt {{ livekit_server_host_sysctl_minimum_net_core_rmem_max }} ]; then sysctl -w net.core.rmem_max={{ livekit_server_host_sysctl_minimum_net_core_rmem_max }}; fi'
@@ -37,6 +36,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --user={{ livekit_server_uid }}:{{ livekit_server_gid }} \
       --cap-drop=ALL \
       --network={{ livekit_server_container_network }} \
+      {% if livekit_server_container_network != 'host' %}
       {% if livekit_server_container_rtc_listen_interface is not in [none, 'none'] %}
       -p {{ livekit_server_container_rtc_listen_interface }}{{ ':' if livekit_server_container_rtc_listen_interface else '' }}{{ livekit_server_config_rtc_tcp_port }}:{{ livekit_server_config_rtc_tcp_port }} \
       {% endif %}
@@ -52,14 +52,21 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% if livekit_server_container_turn_listen_interface is not in [none, 'none'] and livekit_server_config_turn_enabled %}
       -p {{ livekit_server_container_turn_listen_interface }}{{ ':' if livekit_server_container_turn_listen_interface else '' }}{{ livekit_server_config_turn_udp_port }}:{{ livekit_server_config_turn_udp_port }}/udp \
       {% endif %}
+      {% if livekit_server_container_turn_listen_interface is not in [none, 'none'] and livekit_server_config_turn_enabled and livekit_server_config_turn_relay_range_start and livekit_server_config_turn_relay_range_end %}
+      -p {{ livekit_server_container_turn_listen_interface }}{{ ':' if livekit_server_container_turn_listen_interface else '' }}{{ livekit_server_config_turn_relay_range_start }}-{{ livekit_server_config_turn_relay_range_end }}:{{ livekit_server_config_turn_relay_range_start }}-{{ livekit_server_config_turn_relay_range_end }}/udp \
+      {% endif %}
       {% if livekit_server_container_metrics_listen_interface is not in [none, 'none'] and livekit_server_config_prometheus_enabled %}
       -p {{ livekit_server_container_metrics_listen_interface }}{{ ':' if livekit_server_container_metrics_listen_interface else '' }}{{ livekit_server_config_prometheus_port }}:{{ livekit_server_config_prometheus_port }} \
+      {% endif %}
       {% endif %}
       --env-file={{ livekit_server_base_path }}/env \
       --label-file={{ livekit_server_base_path }}/labels \
       --mount type=bind,src={{ livekit_server_config_path }}/config.yaml,dst=/livekit-config.yaml,ro \
       {% for volume in livekit_server_container_additional_volumes %}
       --mount type={{ volume.type | default('bind' if '/' in volume.src else 'volume') }},src={{ volume.src }},dst={{ volume.dst }}{{ (',' + volume.options) if volume.options else '' }} \
+      {% endfor %}
+      {% for arg in livekit_server_container_extra_arguments %}
+      {{ arg }} \
       {% endfor %}
       {{ livekit_server_container_image_self_build_name if livekit_server_container_image_self_build else livekit_server_container_image }} \
       --config /livekit-config.yaml

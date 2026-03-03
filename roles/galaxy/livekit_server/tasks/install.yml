@@ -91,26 +91,29 @@
           args:
       register: livekit_server_container_image_build_result
 
-- name: Ensure LiveKit Server container network is created via community.docker.docker_network
-  when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
-  community.docker.docker_network:
-    enable_ipv6: "{{ devture_systemd_docker_base_ipv6_enabled }}"
-    name: "{{ livekit_server_container_network }}"
-    driver: bridge
-    driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
-  register: livekit_server_network_creation_result
+- name: Ensure LiveKit Server container network is created
+  when: livekit_server_container_network not in ['', 'host']
+  block:
+    - name: Ensure LiveKit Server container network is created via community.docker.docker_network
+      when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+      community.docker.docker_network:
+        enable_ipv6: "{{ devture_systemd_docker_base_ipv6_enabled }}"
+        name: "{{ livekit_server_container_network }}"
+        driver: bridge
+        driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
+      register: livekit_server_network_creation_result
 
-- name: Ensure LiveKit Server container network is created via ansible.builtin.command
-  when: devture_systemd_docker_base_container_network_creation_method == 'command'
-  ansible.builtin.command:
-    cmd: >-
-      {{ devture_systemd_docker_base_host_command_docker }} network create
-      {% if devture_systemd_docker_base_ipv6_enabled %}--ipv6{% endif %}
-      {{ devture_systemd_docker_base_container_networks_driver_options_string }}
-      {{ livekit_server_container_network }}
-  register: livekit_server_network_creation_result
-  changed_when: livekit_server_network_creation_result.rc == 0
-  failed_when: livekit_server_network_creation_result.rc != 0 and 'already exists' not in livekit_server_network_creation_result.stderr
+    - name: Ensure LiveKit Server container network is created via ansible.builtin.command
+      when: devture_systemd_docker_base_container_network_creation_method == 'command'
+      ansible.builtin.command:
+        cmd: >-
+          {{ devture_systemd_docker_base_host_command_docker }} network create
+          {% if devture_systemd_docker_base_ipv6_enabled %}--ipv6{% endif %}
+          {{ devture_systemd_docker_base_container_networks_driver_options_string }}
+          {{ livekit_server_container_network }}
+      register: livekit_server_network_creation_result
+      changed_when: livekit_server_network_creation_result.rc == 0
+      failed_when: livekit_server_network_creation_result.rc != 0 and 'already exists' not in livekit_server_network_creation_result.stderr
 
 - name: Ensure LiveKit Server systemd service is installed
   ansible.builtin.template:

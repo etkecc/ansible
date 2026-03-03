@@ -1,0 +1,31 @@
+# SPDX-FileCopyrightText: 2022 MDAD project contributors
+# SPDX-FileCopyrightText: 2022 Marko Weltzer
+# SPDX-FileCopyrightText: 2022-2024 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Set fact for Sable public endpoint
+  ansible.builtin.set_fact:
+    sable_url_endpoint_public: "{{ sable_scheme }}://{{ sable_hostname }}{{ sable_path_prefix }}/config.json"
+
+- name: Check Sable
+  ansible.builtin.uri:
+    url: "{{ sable_url_endpoint_public }}"
+    follow_redirects: none
+    validate_certs: "{{ sable_self_check_validate_certificates }}"
+  register: sable_self_check_result
+  check_mode: false
+  ignore_errors: true
+  delegate_to: 127.0.0.1
+  become: false
+
+- name: Fail if Sable not working
+  ansible.builtin.fail:
+    msg: "Failed checking Sable is up at `{{ sable_hostname }}` (checked endpoint: `{{ sable_url_endpoint_public }}`). Is Sable running? Is port 443 open in your firewall? Full error: {{ sable_self_check_result }}"
+  when: "sable_self_check_result.failed or 'json' not in sable_self_check_result"
+
+- name: Report working Sable
+  ansible.builtin.debug:
+    msg: "Sable at `{{ sable_hostname }}` is working (checked endpoint: `{{ sable_url_endpoint_public }}`)"

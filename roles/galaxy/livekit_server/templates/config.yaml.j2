@@ -38,6 +38,8 @@ turn:
   {% endif %}
   tls_port: {{ livekit_server_config_turn_tls_port | int | to_json }}
   udp_port: {{ livekit_server_config_turn_udp_port | int | to_json }}
+  relay_range_start: {{ livekit_server_config_turn_relay_range_start | int | to_json }}
+  relay_range_end: {{ livekit_server_config_turn_relay_range_end | int | to_json }}
   external_tls: {{ livekit_server_config_turn_external_tls | to_json }}
 {% endif %}
 

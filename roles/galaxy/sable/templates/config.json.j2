@@ -1,0 +1,11 @@
+{
+  "defaultHomeserver": {{ sable_config_defaultHomeserver | to_json }},
+  "homeserverList": {{ sable_config_homeserverList | to_json }},
+  "allowCustomHomeservers": {{ sable_config_allowCustomHomeservers | to_json }},
+  "featuredCommunities": {
+    "spaces": {{ sable_config_featuredCommunities_spaces | to_json }},
+    "rooms": {{ sable_config_featuredCommunities_rooms | to_json }},
+    "servers": {{ sable_config_featuredCommunities_servers | to_json }},
+    "openAsDefault": {{ sable_config_featuredCommunities_openAsDefault | to_json }}
+  }
+}
