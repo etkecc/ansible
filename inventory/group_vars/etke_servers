@@ -118,6 +118,16 @@ linkding_database_type: "{{ 'postgres' if postgres_enabled and linkding_database
 
 ########################################################################
 #                                                                      #
+# livekit-server                                                       #
+#                                                                      #
+########################################################################
+
+# increase livekit turn max ports (100 total)
+livekit_server_config_turn_relay_range_start: 30000
+livekit_server_config_turn_relay_range_end: 30100
+
+########################################################################
+#                                                                      #
 # miniflux                                                             #
 #                                                                      #
 ########################################################################
