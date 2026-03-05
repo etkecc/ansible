@@ -14,24 +14,24 @@
   when: item.when | bool
   with_items:
     - path: "{{ etherpad_base_path }}"
-      owner: "{{ etherpad_user_uid }}"
-      group: "{{ etherpad_user_gid }}"
+      owner: "{{ etherpad_uid }}"
+      group: "{{ etherpad_gid }}"
       when: true
     - path: "{{ etherpad_config_path }}"
-      owner: "{{ etherpad_user_uid }}"
-      group: "{{ etherpad_user_gid }}"
+      owner: "{{ etherpad_uid }}"
+      group: "{{ etherpad_gid }}"
       when: true
     - path: "{{ etherpad_data_path }}"
-      owner: "{{ etherpad_user_uid }}"
-      group: "{{ etherpad_user_gid }}"
+      owner: "{{ etherpad_uid }}"
+      group: "{{ etherpad_gid }}"
       when: true
     - path: "{{ etherpad_plugins_path }}"
-      owner: "{{ etherpad_user_uid }}"
-      group: "{{ etherpad_user_gid }}"
+      owner: "{{ etherpad_uid }}"
+      group: "{{ etherpad_gid }}"
       when: true
     - path: "{{ etherpad_var_path }}"
-      owner: "{{ etherpad_user_uid }}"
-      group: "{{ etherpad_user_gid }}"
+      owner: "{{ etherpad_uid }}"
+      group: "{{ etherpad_gid }}"
       when: true
     - path: "{{ etherpad_container_image_self_build_src_files_path }}"
       owner: root
@@ -43,8 +43,8 @@
     src: "{{ role_path }}/templates/{{ item }}.j2"
     dest: "{{ etherpad_base_path }}/{{ item }}"
     mode: "0640"
-    owner: "{{ etherpad_user_uid }}"
-    group: "{{ etherpad_user_gid }}"
+    owner: "{{ etherpad_uid }}"
+    group: "{{ etherpad_gid }}"
   with_items:
     - env
     - labels
@@ -55,8 +55,8 @@
     content: "{{ etherpad_configuration | to_nice_json }}"
     dest: "{{ etherpad_config_path }}/settings.json"
     mode: "0640"
-    owner: "{{ etherpad_user_uid }}"
-    group: "{{ etherpad_user_gid }}"
+    owner: "{{ etherpad_uid }}"
+    group: "{{ etherpad_gid }}"
   register: etherpad_config_file_result
 
 - name: Run if self-building of Etherpad container image is not enabled

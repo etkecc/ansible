@@ -13,6 +13,8 @@
       Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
   when: "lookup('ansible.builtin.varnames', ('^' + item.old + '$'), wantlist=True) | length > 0"
   with_items:
+    - { "old": "etherpad_user_uid", "new": "etherpad_uid" }
+    - { "old": "etherpad_user_gid", "new": "etherpad_gid" }
     - { "old": "etherpad_container_image_name_prefix", "new": "etherpad_container_image_registry_prefix" }
     - { "old": "etherpad_container_src_path", "new": "etherpad_container_image_self_build_src_files_path" }
     - { "old": "etherpad_database_engine", "new": "etherpad_database_type" }
@@ -32,6 +34,8 @@
       You need to define a required configuration setting (`{{ item }}`).
   when: "lookup('vars', item, default='') | string | length == 0"
   with_items:
+    - etherpad_uid
+    - etherpad_gid
     - etherpad_hostname
     - etherpad_path_prefix
     - etherpad_container_network

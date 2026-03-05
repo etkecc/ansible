@@ -1,22 +1,22 @@
 <!--
-SPDX-FileCopyrightText: 2020 - 2024 MDAD project contributors
-SPDX-FileCopyrightText: 2020 - 2024 Slavi Pantaleev
 SPDX-FileCopyrightText: 2020 Aaron Raimist
 SPDX-FileCopyrightText: 2020 Chris van Dijk
 SPDX-FileCopyrightText: 2020 Dominik Zajac
 SPDX-FileCopyrightText: 2020 Mickaël Cornière
+SPDX-FileCopyrightText: 2020-2024 MDAD project contributors
+SPDX-FileCopyrightText: 2020-2024 Slavi Pantaleev
 SPDX-FileCopyrightText: 2021 Béla Becker
 SPDX-FileCopyrightText: 2021 pushytoxin
-SPDX-FileCopyrightText: 2022 felixx9
 SPDX-FileCopyrightText: 2022 François Darveau
 SPDX-FileCopyrightText: 2022 Jim Myhrberg
 SPDX-FileCopyrightText: 2022 Julian Foad
 SPDX-FileCopyrightText: 2022 Nikita Chernyi
 SPDX-FileCopyrightText: 2022 Warren Bailey
+SPDX-FileCopyrightText: 2022 felixx9
 SPDX-FileCopyrightText: 2023 Antonis Christofides
 SPDX-FileCopyrightText: 2023 Felix Stupp
 SPDX-FileCopyrightText: 2023 Pierre 'McFly' Marty
-SPDX-FileCopyrightText: 2024 - 2025 Suguru Hirahara
+SPDX-FileCopyrightText: 2024-2026 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
@@ -195,11 +195,9 @@ etherpad_configuration_defaultpadtext: |
 
 ### Define plugins to install (optional)
 
-You can also define plugins that should be installed with the variable `etherpad_plugins`. Defining plugins also requires self-building the Etherpad Docker image with the `etherpad_container_image_self_build` variable.
+You can also define plugins that should be installed with the variable `etherpad_plugins`. No plugins are installed by default.
 
-Etherpad plugins can also be managed from the admin page (if enabled). You can view a list of the plugins [on this page](https://static.etherpad.org/index.html).
-
-To specify plugins to install, add the following configuration to your `vars.yml` file (adapt to your needs). No plugins are installed by default.
+To install plugins, add the following configuration to your `vars.yml` file (adapt to your needs). Please note that installing plugins requires rebuilding the Etherpad container image.
 
 ```yaml
 etherpad_container_image_self_build: true
@@ -207,6 +205,10 @@ etherpad_plugins:
   - YOUR_FIRST_PLUGIN_HERE
   - YOUR_SECOND_PLUGIN_HERE
 ```
+
+After building the image and restarting the container, it becomes possible to manage plugins on the admin page.
+
+You can view a list of available plugins [on this page](https://static.etherpad.org/index.html).
 
 ### Extending the configuration
 
