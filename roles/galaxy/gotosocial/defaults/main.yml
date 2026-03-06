@@ -19,7 +19,7 @@ gotosocial_database_path: "{{ gotosocial_data_path }}/database"
 gotosocial_customized_container_src_path: "{{ gotosocial_base_path }}/customized-container-src"
 
 # renovate: datasource=docker depName=superseriousbusiness/gotosocial versioning=semver
-gotosocial_version: 0.21.0
+gotosocial_version: 0.21.1
 
 gotosocial_uid: ""
 gotosocial_gid: ""
@@ -234,6 +234,37 @@ gotosocial_systemd_wanted_services_list: "{{ gotosocial_systemd_wanted_services_
 gotosocial_systemd_wanted_services_list_default: []
 gotosocial_systemd_wanted_services_list_auto: []
 gotosocial_systemd_wanted_services_list_custom: []
+
+# Controls how long to wait for the container to stop gracefully before killing it.
+gotosocial_container_stop_grace_time_seconds: "{{ devture_systemd_docker_base_container_stop_grace_time_seconds }}"
+
+# Controls how long the pre-start cleanup should wait for stale container-name release
+# before failing startup explicitly.
+gotosocial_container_cleanup_timeout_seconds: "{{ devture_systemd_docker_base_container_cleanup_timeout_seconds }}"
+
+# Controls the delay between pre-start cleanup retries.
+gotosocial_container_cleanup_retry_delay_seconds: "{{ devture_systemd_docker_base_container_cleanup_retry_delay_seconds }}"
+
+# Shell command used in the systemd pre-start phase to deterministically remove a stale
+# container and wait until Docker releases its name.
+gotosocial_container_cleanup_command: |
+  i=0;
+  while [ "$i" -lt {{ gotosocial_container_cleanup_timeout_seconds }} ]; do
+  {{ devture_systemd_docker_base_host_command_docker }} stop -t {{ gotosocial_container_stop_grace_time_seconds }} {{ gotosocial_identifier }} >/dev/null 2>&1 || true;
+  {{ devture_systemd_docker_base_host_command_docker }} rm -f {{ gotosocial_identifier }} >/dev/null 2>&1 || true;
+  if {{ devture_systemd_docker_base_host_command_docker }} container inspect {{ gotosocial_identifier }} >/dev/null 2>&1; then
+  i=$((i + 1));
+  sleep {{ gotosocial_container_cleanup_retry_delay_seconds }};
+  continue;
+  fi;
+  if {{ devture_systemd_docker_base_host_command_docker }} info >/dev/null 2>&1; then
+  exit 0;
+  fi;
+  echo "Failed to query Docker daemon while cleaning up {{ gotosocial_identifier }}" >&2;
+  exit 1;
+  done;
+  echo "Failed to remove stale container {{ gotosocial_identifier }} after {{ gotosocial_container_cleanup_timeout_seconds }} attempts" >&2;
+  exit 1
 
 # String. Domain to use when federating profiles. This is useful when you want your server to be at
 # eg., "gts.example.com", but you want the domain on accounts to be "example.com" because it looks better

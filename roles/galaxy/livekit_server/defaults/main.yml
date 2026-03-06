@@ -15,7 +15,7 @@ livekit_server_base_path: "/{{ livekit_server_identifier }}"
 livekit_server_config_path: "{{ livekit_server_base_path }}/config"
 
 # renovate: datasource=docker depName=docker.io/livekit/livekit-server
-livekit_server_version: v1.9.11
+livekit_server_version: v1.9.12
 
 livekit_server_uid: ""
 livekit_server_gid: ""
@@ -73,6 +73,8 @@ livekit_server_container_metrics_listen_interface: ~
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
 # Use this to expose this container to another reverse proxy, which runs in a different container network.
+#
+# Has no effect when `livekit_server_container_network` is set to `host`.
 livekit_server_container_additional_networks: "{{ livekit_server_container_additional_networks_auto + livekit_server_container_additional_networks_custom }}"
 livekit_server_container_additional_networks_auto: []
 livekit_server_container_additional_networks_custom: []
@@ -91,7 +93,7 @@ livekit_server_container_additional_volumes_custom: []
 #
 # To inject your own other container labels, see `livekit_server_container_labels_additional_labels_custom`.
 livekit_server_container_labels_traefik_enabled: true
-livekit_server_container_labels_traefik_docker_network: "{{ livekit_server_container_network }}"
+livekit_server_container_labels_traefik_docker_network: "{{ '' if livekit_server_container_network == 'host' else livekit_server_container_network }}"
 livekit_server_container_labels_traefik_hostname: "{{ livekit_server_hostname }}"
 # The path prefix must either be `/` or not end with a slash (e.g. `/element`).
 livekit_server_container_labels_traefik_path_prefix: "{{ livekit_server_path_prefix }}"

@@ -18,7 +18,7 @@
 * Gmessages: v0.2602.0
 * Go Neb: latest
 * Googlechat: v0.5.2
-* Gotosocial: 0.21.0
+* Gotosocial: 0.21.1
 * Grafana: 11.6.5
 * Heisenbridge: 1.15.4
 * Honoroit: v0.9.29
@@ -31,7 +31,7 @@
 * Linkding: 1.45.0
 * Linkedin: latest
 * Livekit Jwt Service: 0.4.1
-* Livekit Server: v1.9.11
+* Livekit Server: v1.9.12
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.6.0
 * Meta Instagram: v0.2602.0

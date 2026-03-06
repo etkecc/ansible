@@ -71,9 +71,11 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {{ livekit_server_container_image_self_build_name if livekit_server_container_image_self_build else livekit_server_container_image }} \
       --config /livekit-config.yaml
 
+{% if livekit_server_container_network != 'host' %}
 {% for network in livekit_server_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ livekit_server_identifier }}
 {% endfor %}
+{% endif %}
 
 ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ livekit_server_identifier }}
 

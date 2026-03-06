@@ -102,7 +102,7 @@ LiveKit Server's TURN listener behavior depends on where TLS is terminated:
 - Direct LiveKit TURN listeners (`livekit_server_config_turn_external_tls: false`) still use IPv4-only sockets for `3479/udp` and `5350/tcp`, so IPv6 connectivity to these endpoints is not possible.
 - With [external TLS mode](#turn-tls-modes) (`livekit_server_config_turn_external_tls: true`), the reverse proxy (for example Traefik) can provide IPv6-facing endpoints and forward TURN/TCP to LiveKit.
 
-LiveKit appears to intentionally only listen on `udp4` and `tcp4` in direct mode, as seen in [TURN UDP listener code](https://github.com/livekit/livekit/blob/154b4d26b769c68a03c096124094b97bf61a996f/pkg/service/turn.go#L128) and [TURN TCP listener code](https://github.com/livekit/livekit/blob/154b4d26b769c68a03c096124094b97bf61a996f/pkg/service/turn.go#L92).
+LiveKit appears to intentionally only listen on `udp4` and `tcp4` in direct mode, as seen [on this line](https://github.com/livekit/livekit/blob/154b4d26b769c68a03c096124094b97bf61a996f/pkg/service/turn.go#L128) and [this line](https://github.com/livekit/livekit/blob/154b4d26b769c68a03c096124094b97bf61a996f/pkg/service/turn.go#L92) on its source code.
 
 ## Installing
 
