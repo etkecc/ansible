@@ -66,6 +66,37 @@ backup_borg_systemd_wanted_services_list_default: []
 backup_borg_systemd_wanted_services_list_auto: []
 backup_borg_systemd_wanted_services_list_custom: []
 
+# Controls how long to wait for the container to stop gracefully before killing it.
+backup_borg_container_stop_grace_time_seconds: "{{ devture_systemd_docker_base_container_stop_grace_time_seconds }}"
+
+# Controls how long the pre-start cleanup should wait for stale container-name release
+# before failing startup explicitly.
+backup_borg_container_cleanup_timeout_seconds: "{{ devture_systemd_docker_base_container_cleanup_timeout_seconds }}"
+
+# Controls the delay between pre-start cleanup retries.
+backup_borg_container_cleanup_retry_delay_seconds: "{{ devture_systemd_docker_base_container_cleanup_retry_delay_seconds }}"
+
+# Shell command used in the systemd pre-start phase to deterministically remove a stale
+# container and wait until Docker releases its name.
+backup_borg_container_cleanup_command: |
+  i=0;
+  while [ "$i" -lt {{ backup_borg_container_cleanup_timeout_seconds }} ]; do
+  {{ devture_systemd_docker_base_host_command_docker }} stop -t {{ backup_borg_container_stop_grace_time_seconds }} {{ backup_borg_identifier }} >/dev/null 2>&1 || true;
+  {{ devture_systemd_docker_base_host_command_docker }} rm -f {{ backup_borg_identifier }} >/dev/null 2>&1 || true;
+  if {{ devture_systemd_docker_base_host_command_docker }} container inspect {{ backup_borg_identifier }} >/dev/null 2>&1; then
+  i=$((i + 1));
+  sleep {{ backup_borg_container_cleanup_retry_delay_seconds }};
+  continue;
+  fi;
+  if {{ devture_systemd_docker_base_host_command_docker }} info >/dev/null 2>&1; then
+  exit 0;
+  fi;
+  echo "Failed to query Docker daemon while cleaning up {{ backup_borg_identifier }}" >&2;
+  exit 1;
+  done;
+  echo "Failed to remove stale container {{ backup_borg_identifier }} after {{ backup_borg_container_cleanup_timeout_seconds }} attempts" >&2;
+  exit 1
+
 # systemd calendar configuration for the backup job
 # the actual job may run with a delay (see backup_borg_schedule_randomized_delay_sec)
 backup_borg_schedule: "*-*-* 04:00:00"
@@ -81,7 +112,12 @@ backup_borg_location_source_directories_custom: []
 
 backup_borg_location_remote_path: ""
 
-# Postgres db backup
+########################################################################
+#                                                                      #
+# Postgres db backup                                                   #
+#                                                                      #
+########################################################################
+
 backup_borg_postgresql_enabled: true
 backup_borg_supported_postgres_versions: ['12', '13', '14', '15', '16', '17', '18']
 
@@ -107,7 +143,47 @@ backup_borg_postgresql_version_detection_enabled: "{{ backup_borg_postgresql_ver
 # This role is invoked to determine the Postgres version, unless you have set `backup_borg_version` manually.
 backup_borg_postgresql_version_detection_postgres_role_name: ""
 
-# MySQL db backup
+########################################################################
+#                                                                      #
+# /Postgres db backup                                                  #
+#                                                                      #
+########################################################################
+
+########################################################################
+#                                                                      #
+# MariaDB database backup                                              #
+#                                                                      #
+########################################################################
+
+backup_borg_mariadb_enabled: true
+
+# backup_borg_databases contains a list of database names to back up
+# DO NOT set this variable directly, instead use `backup_borg_mariadb_databases_auto or backup_borg_mariadb_databases_custom`
+backup_borg_mariadb_databases: "{{ backup_borg_mariadb_databases_auto + backup_borg_mariadb_databases_custom }}"
+
+# The variable backup_borg_mariadb_databases_auto can be used by playbooks to automatically set the databases to back up
+backup_borg_mariadb_databases_auto: []
+
+# Specify the databases to back up
+backup_borg_mariadb_databases_custom: []
+
+backup_borg_mariadb_databases_hostname: ""
+backup_borg_mariadb_databases_username: "{{ backup_borg_identifier }}"
+backup_borg_mariadb_databases_password: ""
+backup_borg_mariadb_databases_port: 3306
+
+########################################################################
+#                                                                      #
+# /MariaDB database backup                                             #
+#                                                                      #
+########################################################################
+
+########################################################################
+#                                                                      #
+# MySQL db backup                                                      #
+#                                                                      #
+########################################################################
+
 backup_borg_mysql_enabled: true
 
 # backup_borg_databases contains a list of database names to back up
@@ -128,14 +204,33 @@ backup_borg_mysql_databases_username: "{{ backup_borg_identifier }}"
 backup_borg_mysql_databases_password: ""
 backup_borg_mysql_databases_port: 3306
 
+########################################################################
+#                                                                      #
+# /MySQL db backup                                                     #
+#                                                                      #
+########################################################################
+
+########################################################################
+#                                                                      #
+# healthchecks                                                         #
+#                                                                      #
+########################################################################
+
 # Setting a healthchecks ping URL will make borgmatic ping your Healthchecks project when a backup begins, ends, or errors
 # See: https://torsion.org/borgmatic/docs/how-to/monitor-your-backups/#healthchecks-hook
 backup_borg_healthchecks_ping_url: ""
+
 # possible states to ping
 backup_borg_healthchecks_states:
   - start
   - finish
   - fail
+
+########################################################################
+#                                                                      #
+# /healthchecks                                                        #
+#                                                                      #
+########################################################################
 
 # target repositories
 backup_borg_location_repositories: []
@@ -192,3 +287,13 @@ backup_borg_configuration_extension: "{{ backup_borg_configuration_extension_yam
 # Holds the final borgmatic configuration (a combination of the default and its extension).
 # You most likely don't need to touch this variable. Instead, see `backup_borg_configuration_yaml`.
 backup_borg_configuration: "{{ backup_borg_configuration_yaml | from_yaml | combine(backup_borg_configuration_extension, recursive=True) }}"
+
+# backup_borg_restart_necessary controls whether the BorgBackup systemd
+# service will be restarted (when true) or merely started (when false) by the
+# systemd service manager role (when conditional restart is enabled).
+#
+# This value is automatically computed during installation based on whether
+# any configuration files, the systemd service file, or the container image changed.
+# The default of `false` means "no restart needed" — appropriate when the role's
+# installation tasks haven't run (e.g., due to --tags skipping them).
+backup_borg_restart_necessary: false

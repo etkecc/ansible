@@ -7,3 +7,13 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 {% if valkey_connection_password %}
 requirepass {{ valkey_connection_password }}
 {% endif %}
+unixsocket /run/valkey/valkey.sock
+unixsocketperm 777
+
+{% if valkey_save_rules | length == 0 %}
+save ""
+{% else %}
+{% for rule in valkey_save_rules %}
+save {{ rule }}
+{% endfor %}
+{% endif %}

@@ -15,6 +15,16 @@
     - "{{ valkey_base_path }}"
     - "{{ valkey_config_path }}"
     - "{{ valkey_data_path }}"
+    - "{{ valkey_run_path }}"
+
+- name: Ensure VM Overcommit Memory is set to 1
+  ansible.posix.sysctl:
+    name: vm.overcommit_memory
+    value: "1"
+    state: present
+    reload: true
+  become: true
+  when: valkey_vm_overcommit_memory_enabled
 
 - name: Ensure Valkey support files installed
   ansible.builtin.template:

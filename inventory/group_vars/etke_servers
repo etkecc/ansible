@@ -17,6 +17,10 @@ devture_systemd_docker_base_container_network_creation_method: ansible-module
 
 # valkey customization
 valkey_enabled: "{{ matrix_synapse_workers_enabled | default(False) | bool or funkwhale_enabled | default(False) | bool or peertube_enabled | default(False) | bool or (matrix_hookshot_enabled | default(False) | bool and matrix_hookshot_encryption_enabled | default(False) | bool) }}"
+# https://valkey.io/docs/topics/faq/#background-saving-fails-with-a-fork-error-on-linux
+valkey_vm_overcommit_memory_enabled: true
+# disable disk persistence
+valkey_save_rules: []
 
 peertube_redis_db: 13
 funkwhale_redis_database: 14

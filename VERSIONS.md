@@ -1,5 +1,5 @@
 * Alpine: edge
-* Baibot: v1.14.3
+* Baibot: v1.15.0
 * Bluesky: v0.2510.0
 * Borg: 1.4.3
 * Borgmatic: 2.1.1
@@ -72,7 +72,7 @@
 * Synapse Rust Synapse Compress State Container Image: v0.0.3
 * Synapse S3 Storage Provider: 1.6.0
 * Telegram: v0.15.3
-* Traefik: v3.6.9
+* Traefik: v3.6.10
 * Traefik Certs Dumper: v2.10.0
 * Traefik Config Tcp Servertransports Default Proxyprotocol: 1
 * Twitter: v0.2511.0
