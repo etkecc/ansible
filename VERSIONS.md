@@ -65,7 +65,7 @@
 * Steam Bridge: 1.1.0
 * Sygnal: v0.15.1
 * Synapse: v1.148.0
-* Synapse Admin: v0.11.1-etke53
+* Synapse Admin: v0.11.4-etke54
 * Synapse Auto Compressor: v0.0.3
 * Synapse Http Antispam Git: v0.5.0
 * Synapse Reverse Proxy Companion: 1.29.5-alpine
