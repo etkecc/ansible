@@ -1,9 +1,9 @@
 <!--
-SPDX-FileCopyrightText: 2022 - 2025 Nikita Chernyi
-SPDX-FileCopyrightText: 2022 - 2024 Slavi Pantaleev
 SPDX-FileCopyrightText: 2022 MDAD project contributors
-SPDX-FileCopyrightText: 2022 - 2023 Julian-Samuel Gebühr
-SPDX-FileCopyrightText: 2024 - 2025 Suguru Hirahara
+SPDX-FileCopyrightText: 2022, 2023 Julian-Samuel Gebühr
+SPDX-FileCopyrightText: 2022-2024 Slavi Pantaleev
+SPDX-FileCopyrightText: 2022-2025 Nikita Chernyi
+SPDX-FileCopyrightText: 2024-2026 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
@@ -139,6 +139,26 @@ backup_borg_schedule: "*-*-* 04:00:00"
 
 You might also want to exclude certain directories or file patterns from the backup using the `backup_borg_location_exclude_patterns` variable.
 
+### Configuring ntfy integration (optional)
+
+You can also have the service send push notifications to your self-hosted [ntfy](https://ntfy.sh/) instance. To enable it, it is necessary to specify the topic to send them, the server's hostname, and login credentials (username and password, or access token) by adding the following configuration to your `vars.yml` file (adapt to your needs):
+
+```yaml
+backup_borg_ntfy_topic: YOUR_NTFY_TOPIC_HERE
+backup_borg_ntfy_server: YOUR_NTFY_INSTANCE_HOSTNAME_HERE
+
+# Specify username and password
+backup_borg_ntfy_access_username: ""
+backup_borg_ntfy_access_password: ""
+
+# Otherwise, specify the access token
+backup_borg_ntfy_access_token: ""
+```
+
+Refer to [this page](https://torsion.org/borgmatic/reference/configuration/monitoring/ntfy/) on the official documentation for details.
+
+If you are looking for an Ansible role for ntfy, you can check out [ansible-role-ntfy](https://github.com/mother-of-all-self-hosting/ansible-role-ntfy) maintained by the [Mother-of-All-Self-Hosting (MASH)](https://github.com/mother-of-all-self-hosting) team.
+
 ### Extending the configuration
 
 There are some additional things you may wish to configure about the service.
@@ -168,6 +188,64 @@ Sometimes it can be helpful to run the backup as you'd like, avoiding to wait un
 If you want to run it immediately, log in to the server with SSH and run `systemctl start backup-borg` (or how you/your playbook named the service, e.g. `matrix-backup-borg`).
 
 This will not return until the backup is done, so it can possibly take a long time. Consider using [tmux](https://en.wikipedia.org/wiki/Tmux) if your SSH connection is unstable.
+
+### Example playbook
+
+```yaml
+- hosts: servers
+  roles:
+    - role: galaxy/com.devture.ansible.role.systemd_docker_base
+
+    # This role is not required. We just use it in our example.
+    - role: galaxy/postgres
+
+    - role: galaxy/ansible.role.backup_borg
+
+    - role: another_role
+```
+
+Example playbook configuration (`group_vars/servers` or other):
+
+>[!NOTE]
+> The configuration below wires the BorgBackup role with [this MASH/Postgres role](https://github.com/mother-of-all-self-hosting/ansible-role-postgres). Note that this is just an example. You can use this role without it Postgres integration or with another Postgres instance.
+
+```yaml
+backup_borg_enabled: false
+
+backup_borg_identifier: my-borgbackup
+
+backup_borg_base_path: "{{ my_base_path }}/backup_borg"
+
+backup_borg_username: "{{ my_username }}"
+backup_borg_uid: "{{ my_uid }}"
+backup_borg_gid: "{{ my_gid }}"
+
+# We assume Postgres is installed via the `com.devture.ansible.role.postgres` role.
+# Remove this and any `postgres_*` reference below, if that's not the case.
+backup_borg_postgresql_version_detection_postgres_role_name: galaxy/com.devture.ansible.role.postgres
+
+# If you will use this without `com.devture.ansible.role.postgres`, you'll need to set the major Postgres version manually instead.
+# backup_borg_postgres_version: 15
+
+backup_borg_container_network: "{{ postgres_container_network if postgres_enabled else backup_borg_identifier }}"
+
+backup_borg_container_image_self_build: "{{ architecture not in ['amd64', 'arm32', 'arm64'] }}"
+
+backup_borg_postgresql_enabled: "{{ postgres_enabled }}"
+backup_borg_postgresql_databases_hostname: "{{ postgres_connection_hostname if postgres_enabled else '' }}"
+backup_borg_postgresql_databases_username: "{{ postgres_connection_username if postgres_enabled else '' }}"
+backup_borg_postgresql_databases_password: "{{ postgres_connection_password if postgres_enabled else '' }}"
+backup_borg_postgresql_databases_port: "{{ postgres_connection_port if postgres_enabled else 5432 }}"
+backup_borg_postgresql_databases: "{{ postgres_managed_databases | map(attribute='name') if postgres_enabled else [] }}"
+
+backup_borg_location_source_directories:
+  - "{{ my_data_path }}"
+
+backup_borg_systemd_required_services_list_auto: |
+  {{
+    ([postgres_identifier ~ '.service'] if postgres_enabled else [])
+  }}
+```
 
 ## Troubleshooting
 

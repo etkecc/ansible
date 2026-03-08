@@ -2,7 +2,7 @@
 * Baibot: v1.15.0
 * Bluesky: v0.2510.0
 * Borg: 1.4.3
-* Borgmatic: 2.1.1
+* Borgmatic: 2.1.3
 * Buscarron: v1.4.3
 * Cinny: v4.10.5
 * Container Socket Proxy: v0.4.2

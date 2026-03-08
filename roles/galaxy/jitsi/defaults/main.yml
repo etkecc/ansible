@@ -120,6 +120,8 @@ jitsi_environment_variables_tz: UTC
 #                                                                      #
 ########################################################################
 
+jitsi_web_identifier: "{{ jitsi_identifier }}-web"
+
 jitsi_web_base_path: "{{ jitsi_base_path }}/web"
 jitsi_web_config_path: "{{ jitsi_web_base_path }}/config"
 jitsi_web_transcripts_path: "{{ jitsi_web_base_path }}/transcripts"
@@ -252,6 +254,37 @@ jitsi_web_systemd_required_services_list_default: "{{ [devture_systemd_docker_ba
 jitsi_web_systemd_required_services_list_auto: []
 jitsi_web_systemd_required_services_list_custom: []
 
+# Controls how long to wait for the container to stop gracefully before killing it.
+jitsi_web_container_stop_grace_time_seconds: "{{ devture_systemd_docker_base_container_stop_grace_time_seconds }}"
+
+# Controls how long the pre-start cleanup should wait for stale container-name release
+# before failing startup explicitly.
+jitsi_web_container_cleanup_timeout_seconds: "{{ devture_systemd_docker_base_container_cleanup_timeout_seconds }}"
+
+# Controls the delay between pre-start cleanup retries.
+jitsi_web_container_cleanup_retry_delay_seconds: "{{ devture_systemd_docker_base_container_cleanup_retry_delay_seconds }}"
+
+# Shell command used in the systemd pre-start phase to deterministically remove a stale
+# container and wait until Docker releases its name.
+jitsi_web_container_cleanup_command: |
+  i=0;
+  while [ "$i" -lt {{ jitsi_web_container_cleanup_timeout_seconds }} ]; do
+  {{ devture_systemd_docker_base_host_command_docker }} stop -t {{ jitsi_web_container_stop_grace_time_seconds }} {{ jitsi_web_identifier }} >/dev/null 2>&1 || true;
+  {{ devture_systemd_docker_base_host_command_docker }} rm -f {{ jitsi_web_identifier }} >/dev/null 2>&1 || true;
+  if {{ devture_systemd_docker_base_host_command_docker }} container inspect {{ jitsi_web_identifier }} >/dev/null 2>&1; then
+  i=$((i + 1));
+  sleep {{ jitsi_web_container_cleanup_retry_delay_seconds }};
+  continue;
+  fi;
+  if {{ devture_systemd_docker_base_host_command_docker }} info >/dev/null 2>&1; then
+  exit 0;
+  fi;
+  echo "Failed to query Docker daemon while cleaning up {{ jitsi_web_identifier }}" >&2;
+  exit 1;
+  done;
+  echo "Failed to remove stale container {{ jitsi_web_identifier }} after {{ jitsi_web_container_cleanup_timeout_seconds }} attempts" >&2;
+  exit 1
+
 # Custom configuration to be appended to `interface_config.js`, passed to Jitsi Web.
 #
 # Note: not to be confused with `jitsi_web_custom_config_extension`.
@@ -311,6 +344,16 @@ jitsi_web_custom_config_extension: ""
 #   DROPBOX_REDIRECT_URI=something
 jitsi_web_environment_variables_additional_variables: ""
 
+# jitsi_web_restart_necessary controls whether the jitsi-web systemd
+# service will be restarted (when true) or merely started (when false) by the
+# systemd service manager role (when conditional restart is enabled).
+#
+# This value is automatically computed during installation based on whether
+# any configuration files, the systemd service file, or the container image changed.
+# The default of `false` means "no restart needed" — appropriate when the role's
+# installation tasks haven't run (e.g., due to --tags skipping them).
+jitsi_web_restart_necessary: false
+
 # well known is currently only needed for auth type "matrix"
 jitsi_web_well_known_enabled: "{{ jitsi_web_well_known_element_jitsi_enabled }}"
 jitsi_web_well_known_element_jitsi_enabled: "{{ jitsi_enable_auth | bool and jitsi_auth_type == 'matrix' }}"
@@ -333,6 +376,8 @@ jitsi_web_stun_servers: ['stun:meet-jit-si-turnrelay.jitsi.net:443']
 # prosody                                                              #
 #                                                                      #
 ########################################################################
+
+jitsi_prosody_identifier: "{{ jitsi_identifier }}-prosody"
 
 jitsi_prosody_base_path: "{{ jitsi_base_path }}/prosody"
 jitsi_prosody_config_path: "{{ jitsi_prosody_base_path }}/config"
@@ -412,6 +457,47 @@ jitsi_prosody_systemd_required_services_list_default: "{{ [devture_systemd_docke
 jitsi_prosody_systemd_required_services_list_auto: []
 jitsi_prosody_systemd_required_services_list_custom: []
 
+# Controls how long to wait for the container to stop gracefully before killing it.
+jitsi_prosody_container_stop_grace_time_seconds: "{{ devture_systemd_docker_base_container_stop_grace_time_seconds }}"
+
+# Controls how long the pre-start cleanup should wait for stale container-name release
+# before failing startup explicitly.
+jitsi_prosody_container_cleanup_timeout_seconds: "{{ devture_systemd_docker_base_container_cleanup_timeout_seconds }}"
+
+# Controls the delay between pre-start cleanup retries.
+jitsi_prosody_container_cleanup_retry_delay_seconds: "{{ devture_systemd_docker_base_container_cleanup_retry_delay_seconds }}"
+
+# Shell command used in the systemd pre-start phase to deterministically remove a stale
+# container and wait until Docker releases its name.
+jitsi_prosody_container_cleanup_command: |
+  i=0;
+  while [ "$i" -lt {{ jitsi_prosody_container_cleanup_timeout_seconds }} ]; do
+  {{ devture_systemd_docker_base_host_command_docker }} stop -t {{ jitsi_prosody_container_stop_grace_time_seconds }} {{ jitsi_prosody_identifier }} >/dev/null 2>&1 || true;
+  {{ devture_systemd_docker_base_host_command_docker }} rm -f {{ jitsi_prosody_identifier }} >/dev/null 2>&1 || true;
+  if {{ devture_systemd_docker_base_host_command_docker }} container inspect {{ jitsi_prosody_identifier }} >/dev/null 2>&1; then
+  i=$((i + 1));
+  sleep {{ jitsi_prosody_container_cleanup_retry_delay_seconds }};
+  continue;
+  fi;
+  if {{ devture_systemd_docker_base_host_command_docker }} info >/dev/null 2>&1; then
+  exit 0;
+  fi;
+  echo "Failed to query Docker daemon while cleaning up {{ jitsi_prosody_identifier }}" >&2;
+  exit 1;
+  done;
+  echo "Failed to remove stale container {{ jitsi_prosody_identifier }} after {{ jitsi_prosody_container_cleanup_timeout_seconds }} attempts" >&2;
+  exit 1
+
+# jitsi_prosody_restart_necessary controls whether the jitsi-prosody systemd
+# service will be restarted (when true) or merely started (when false) by the
+# systemd service manager role (when conditional restart is enabled).
+#
+# This value is automatically computed during installation based on whether
+# any configuration files, the systemd service file, or the container image changed.
+# The default of `false` means "no restart needed" — appropriate when the role's
+# installation tasks haven't run (e.g., due to --tags skipping them).
+jitsi_prosody_restart_necessary: false
+
 # A list of Jitsi (Prosody) accounts to create using the internal authentication mechanism.
 #
 # Accounts added here and subsequently removed will not be automatically removed
@@ -477,6 +563,8 @@ jitsi_jibri_recorder_password: ""
 #                                                                      #
 ########################################################################
 
+jitsi_jicofo_identifier: "{{ jitsi_identifier }}-jicofo"
+
 jitsi_jicofo_base_path: "{{ jitsi_base_path }}/jicofo"
 jitsi_jicofo_config_path: "{{ jitsi_jicofo_base_path }}/config"
 
@@ -511,6 +599,47 @@ jitsi_jicofo_systemd_required_services_list_default: |
 jitsi_jicofo_systemd_required_services_list_auto: []
 jitsi_jicofo_systemd_required_services_list_custom: []
 
+# Controls how long to wait for the container to stop gracefully before killing it.
+jitsi_jicofo_container_stop_grace_time_seconds: "{{ devture_systemd_docker_base_container_stop_grace_time_seconds }}"
+
+# Controls how long the pre-start cleanup should wait for stale container-name release
+# before failing startup explicitly.
+jitsi_jicofo_container_cleanup_timeout_seconds: "{{ devture_systemd_docker_base_container_cleanup_timeout_seconds }}"
+
+# Controls the delay between pre-start cleanup retries.
+jitsi_jicofo_container_cleanup_retry_delay_seconds: "{{ devture_systemd_docker_base_container_cleanup_retry_delay_seconds }}"
+
+# Shell command used in the systemd pre-start phase to deterministically remove a stale
+# container and wait until Docker releases its name.
+jitsi_jicofo_container_cleanup_command: |
+  i=0;
+  while [ "$i" -lt {{ jitsi_jicofo_container_cleanup_timeout_seconds }} ]; do
+  {{ devture_systemd_docker_base_host_command_docker }} stop -t {{ jitsi_jicofo_container_stop_grace_time_seconds }} {{ jitsi_jicofo_identifier }} >/dev/null 2>&1 || true;
+  {{ devture_systemd_docker_base_host_command_docker }} rm -f {{ jitsi_jicofo_identifier }} >/dev/null 2>&1 || true;
+  if {{ devture_systemd_docker_base_host_command_docker }} container inspect {{ jitsi_jicofo_identifier }} >/dev/null 2>&1; then
+  i=$((i + 1));
+  sleep {{ jitsi_jicofo_container_cleanup_retry_delay_seconds }};
+  continue;
+  fi;
+  if {{ devture_systemd_docker_base_host_command_docker }} info >/dev/null 2>&1; then
+  exit 0;
+  fi;
+  echo "Failed to query Docker daemon while cleaning up {{ jitsi_jicofo_identifier }}" >&2;
+  exit 1;
+  done;
+  echo "Failed to remove stale container {{ jitsi_jicofo_identifier }} after {{ jitsi_jicofo_container_cleanup_timeout_seconds }} attempts" >&2;
+  exit 1
+
+# jitsi_jicofo_restart_necessary controls whether the jitsi-jicofo systemd
+# service will be restarted (when true) or merely started (when false) by the
+# systemd service manager role (when conditional restart is enabled).
+#
+# This value is automatically computed during installation based on whether
+# any configuration files, the systemd service file, or the container image changed.
+# The default of `false` means "no restart needed" — appropriate when the role's
+# installation tasks haven't run (e.g., due to --tags skipping them).
+jitsi_jicofo_restart_necessary: false
+
 jitsi_jicofo_component_secret: ""
 jitsi_jicofo_auth_user: focus
 jitsi_jicofo_auth_password: ""
@@ -529,6 +658,8 @@ jitsi_jicofo_sentry_dsn: ""
 # jvb                                                                  #
 #                                                                      #
 ########################################################################
+
+jitsi_jvb_identifier: "{{ jitsi_identifier }}-jvb"
 
 jitsi_jvb_base_path: "{{ jitsi_base_path }}/jvb"
 jitsi_jvb_config_path: "{{ jitsi_jvb_base_path }}/config"
@@ -616,6 +747,37 @@ jitsi_jvb_systemd_required_services_list_default: "{{ [devture_systemd_docker_ba
 jitsi_jvb_systemd_required_services_list_auto: []
 jitsi_jvb_systemd_required_services_list_custom: []
 
+# Controls how long to wait for the container to stop gracefully before killing it.
+jitsi_jvb_container_stop_grace_time_seconds: "{{ devture_systemd_docker_base_container_stop_grace_time_seconds }}"
+
+# Controls how long the pre-start cleanup should wait for stale container-name release
+# before failing startup explicitly.
+jitsi_jvb_container_cleanup_timeout_seconds: "{{ devture_systemd_docker_base_container_cleanup_timeout_seconds }}"
+
+# Controls the delay between pre-start cleanup retries.
+jitsi_jvb_container_cleanup_retry_delay_seconds: "{{ devture_systemd_docker_base_container_cleanup_retry_delay_seconds }}"
+
+# Shell command used in the systemd pre-start phase to deterministically remove a stale
+# container and wait until Docker releases its name.
+jitsi_jvb_container_cleanup_command: |
+  i=0;
+  while [ "$i" -lt {{ jitsi_jvb_container_cleanup_timeout_seconds }} ]; do
+  {{ devture_systemd_docker_base_host_command_docker }} stop -t {{ jitsi_jvb_container_stop_grace_time_seconds }} {{ jitsi_jvb_identifier }} >/dev/null 2>&1 || true;
+  {{ devture_systemd_docker_base_host_command_docker }} rm -f {{ jitsi_jvb_identifier }} >/dev/null 2>&1 || true;
+  if {{ devture_systemd_docker_base_host_command_docker }} container inspect {{ jitsi_jvb_identifier }} >/dev/null 2>&1; then
+  i=$((i + 1));
+  sleep {{ jitsi_jvb_container_cleanup_retry_delay_seconds }};
+  continue;
+  fi;
+  if {{ devture_systemd_docker_base_host_command_docker }} info >/dev/null 2>&1; then
+  exit 0;
+  fi;
+  echo "Failed to query Docker daemon while cleaning up {{ jitsi_jvb_identifier }}" >&2;
+  exit 1;
+  done;
+  echo "Failed to remove stale container {{ jitsi_jvb_identifier }} after {{ jitsi_jvb_container_cleanup_timeout_seconds }} attempts" >&2;
+  exit 1
+
 jitsi_jvb_auth_user: jvb
 jitsi_jvb_auth_password: ""
 
@@ -654,6 +816,16 @@ jitsi_jvb_custom_config_extension: ""
 #   SOME_VARIABLE=1
 #   ANOTHER_VARIABLE=something
 jitsi_jvb_environment_variables_additional_variables: ""
+
+# jitsi_jvb_restart_necessary controls whether the jitsi-jvb systemd
+# service will be restarted (when true) or merely started (when false) by the
+# systemd service manager role (when conditional restart is enabled).
+#
+# This value is automatically computed during installation based on whether
+# any configuration files, the systemd service file, or the container image changed.
+# The default of `false` means "no restart needed" — appropriate when the role's
+# installation tasks haven't run (e.g., due to --tags skipping them).
+jitsi_jvb_restart_necessary: false
 
 ########################################################################
 #                                                                      #
