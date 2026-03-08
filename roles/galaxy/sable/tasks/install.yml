@@ -32,17 +32,6 @@
     - labels
   register: sable_support_files_result
 
-- name: Ensure Sable nginx.conf installed
-  ansible.builtin.template:
-    src: "{{ role_path }}/templates/{{ item }}.j2"
-    dest: "{{ sable_config_path }}/{{ item }}"
-    mode: "0640"
-    owner: "{{ sable_uid }}"
-    group: "{{ sable_gid }}"
-  with_items:
-    - nginx.conf
-  register: sable_nginx_config_file_result
-
 - name: Ensure Sable configuration installed
   ansible.builtin.copy:
     content: "{{ sable_configuration | to_nice_json }}"
@@ -134,7 +123,6 @@
     sable_restart_necessary: >-
       {{
         sable_support_files_result.changed | default(false)
-        or sable_nginx_config_file_result.changed | default(false)
         or sable_config_file_result.changed | default(false)
         or sable_systemd_service_result.changed | default(false)
         or sable_container_image_pull_result.changed | default(false)

@@ -21,7 +21,7 @@ sable_base_path: "/{{ sable_identifier }}"
 sable_config_path: "{{ sable_base_path }}/config"
 
 # renovate: datasource=docker depName=ghcr.io/7w1/sable
-sable_version: 1.3.0
+sable_version: 1.5.1
 
 sable_uid: ""
 sable_gid: ""
@@ -108,8 +108,14 @@ sable_container_labels_traefik_additional_request_headers: "{{ sable_container_l
 sable_container_labels_traefik_additional_request_headers_auto: {}
 sable_container_labels_traefik_additional_request_headers_custom: {}
 
-# Specify the size of the container's tmpfs volume
+# Specify the size of the container's /tmp tmpfs volume
 sable_container_tmpfs_tmp_size: 10m
+
+# Specify the size of the container's /data tmpfs volume (used by Caddy for runtime state)
+sable_container_tmpfs_data_size: 10m
+
+# Specify the size of the container's /config tmpfs volume (used by Caddy for config state)
+sable_container_tmpfs_config_size: 10m
 
 # Controls which additional headers to attach to all HTTP responses.
 # To add your own custom response headers, use `sable_container_labels_traefik_additional_response_headers_custom`

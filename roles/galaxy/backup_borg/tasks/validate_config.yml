@@ -18,9 +18,9 @@
     - { "old": "backup_borg_docker_image_registry_prefix", "new": "backup_borg_container_image_registry_prefix" }
     - { "old": "backup_borg_docker_image_registry_prefix_upstream", "new": "backup_borg_container_image_registry_prefix_upstream" }
     - { "old": "backup_borg_docker_image_registry_prefix_upstream_default", "new": "backup_borg_container_image_registry_prefix_upstream_default" }
-    - { "old": "backup_borg_docker_repo", "new": "backup_borg_container_repo" }
-    - { "old": "backup_borg_docker_repo_version", "new": "backup_borg_container_repo_version" }
-    - { "old": "backup_borg_docker_src_files_path", "new": "backup_borg_container_src_files_path" }
+    - { "old": "backup_borg_container_repo", "new": "backup_borg_container_image_self_build_repo" }
+    - { "old": "backup_borg_container_image_self_build_repo_version", "new": "backup_borg_container_image_self_build_repo_version" }
+    - { "old": "backup_borg_container_src_files_path", "new": "backup_borg_container_image_self_build_src_files_path" }
 
 - name: Fail if required BorgBackup settings not defined
   ansible.builtin.fail:
@@ -35,6 +35,8 @@
     - { "name": "backup_borg_container_network", when: true }
     - { "name": "backup_borg_postgresql_databases_hostname", when: "{{ backup_borg_postgresql_enabled }}" }
     - { "name": "backup_borg_mariadb_databases_hostname", when: "{{ backup_borg_mariadb_enabled }}" }
+    - { "name": "backup_borg_mongodb_databases_hostname", when: "{{ backup_borg_mongodb_enabled }}" }
+    - { "name": "backup_borg_mysql_databases_hostname", when: "{{ backup_borg_mysql_enabled }}" }
 
 - name: Fail if encryption passphrase is undefined unless repository is unencrypted
   ansible.builtin.fail:
