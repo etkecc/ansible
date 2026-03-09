@@ -57,6 +57,9 @@ coturn_turn_external_ip_address: "{{ ansible_host }}"
 # etherpad_container_image: "{{ etherpad_container_image_registry_prefix }}etkecc/etherpad:{{ etherpad_container_image_tag }}"
 # etherpad_container_image_registry_prefix_upstream_default: ghcr.io/
 
+etherpad_uid: "{{ mash_playbook_uid }}"
+etherpad_gid: "{{ mash_playbook_gid }}"
+
 ########################################################################
 #                                                                      #
 # languagetool                                                         #
