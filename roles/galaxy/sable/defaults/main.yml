@@ -21,7 +21,7 @@ sable_base_path: "/{{ sable_identifier }}"
 sable_config_path: "{{ sable_base_path }}/config"
 
 # renovate: datasource=docker depName=ghcr.io/7w1/sable
-sable_version: 1.5.1
+sable_version: 1.6.0
 
 sable_uid: ""
 sable_gid: ""
@@ -39,7 +39,7 @@ sable_hostname: ""
 # technical limitations.
 sable_path_prefix: /
 
-sable_container_image: "{{ sable_container_image_registry_prefix }}7w1/sable:{{ sable_container_image_tag }}"
+sable_container_image: "{{ sable_container_image_registry_prefix }}SableClient/Sable:{{ sable_container_image_tag }}"
 sable_container_image_tag: "{{ sable_version }}"
 sable_container_image_registry_prefix: "{{ sable_container_image_registry_prefix_upstream }}"
 sable_container_image_registry_prefix_upstream: "{{ sable_container_image_registry_prefix_upstream_default }}"
@@ -48,7 +48,7 @@ sable_container_image_force_pull: "{{ sable_container_image.endswith(':latest') 
 
 sable_container_image_self_build: false
 sable_container_image_self_build_name: "7w1/sable:{{ sable_container_image_self_build_repo_version }}"
-sable_container_image_self_build_repo: "https://github.com/7w1/sable.git"
+sable_container_image_self_build_repo: "https://github.com/SableClient/Sable.git"
 sable_container_image_self_build_repo_version: "{{ sable_version if sable_version != 'latest' else 'main' }}"
 sable_container_image_self_build_src_files_path: "{{ sable_base_path }}/docker-src"
 

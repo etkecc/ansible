@@ -7,7 +7,11 @@ docker run \
     --user={{ postgres_container_uid }}:{{ postgres_container_gid }} \
     --cap-drop=ALL \
     --env-file={{ postgres_base_path }}/env-postgres-psql \
+    {% if postgres_cli_use_unix_socket_enabled %}
+    --mount type=bind,src={{ postgres_run_path }},dst={{ postgres_run_path_in_container }} \
+    {% else %}
     --network={{ postgres_container_network }} \
+    {% endif %}
     {{ postgres_container_image_to_use }} \
-    psql -h {{ postgres_connection_hostname }} \
+    psql -h {{ postgres_run_path_in_container if postgres_cli_use_unix_socket_enabled else postgres_connection_hostname }} \
     "$@"

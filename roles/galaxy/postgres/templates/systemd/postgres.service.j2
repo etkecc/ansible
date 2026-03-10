@@ -15,8 +15,7 @@ DefaultDependencies=no
 [Service]
 Type=simple
 Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
-ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ postgres_container_stop_grace_time_seconds }} {{ postgres_identifier }} 2>/dev/null || true'
-ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ postgres_identifier }} 2>/dev/null || true'
+ExecStartPre={{ devture_systemd_docker_base_host_command_sh }} -c '{{ postgres_container_cleanup_command | trim | replace("\n", " ") }}'
 
 # We need /dev/shm to be larger than the default to allow VACUUM to work.
 # See:
@@ -40,11 +39,16 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% endif %}
       --env-file={{ postgres_base_path }}/env-postgres-server \
       --mount type=bind,src={{ postgres_data_path }},dst={{ postgres_data_in_container_path }} \
+      {% if postgres_container_unix_socket_enabled %}
+      --mount type=bind,src={{ postgres_run_path }},dst={{ postgres_run_path_in_container }} \
+      {% endif %}
       {% if postgres_container_mount_etc_passwd_enabled %}
       --mount type=bind,src=/etc/passwd,dst=/etc/passwd,ro \
       {% endif %}
       --tmpfs=/tmp:rw,noexec,nosuid,size={{ postgres_container_tmpfs_tmp_size }} \
-      --tmpfs=/run/postgresql:rw,noexec,nosuid,size={{ postgres_container_tmpfs_run_size }} \
+      {% if not postgres_container_unix_socket_enabled %}
+      --tmpfs={{ postgres_run_path_in_container }}:rw,noexec,nosuid,size={{ postgres_container_tmpfs_run_size }} \
+      {% endif %}
       {% for arg in postgres_container_extra_arguments %}
       {{ arg }} \
       {% endfor %}

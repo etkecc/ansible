@@ -77,6 +77,16 @@
     - "{{ postgres_data_path }}"
     - "{{ postgres_bin_path }}"
 
+- name: Ensure Postgres run path exists
+  ansible.builtin.file:
+    path: "{{ postgres_run_path }}"
+    state: directory
+    mode: "0755"
+    owner: "{{ postgres_uid }}"
+    group: "{{ postgres_gid }}"
+  when: postgres_container_unix_socket_enabled
+# Separate task to allow different permissions for unix socket access.
+
 - name: Ensure Postgres environment variables file created
   ansible.builtin.template:
     src: "{{ role_path }}/templates/{{ item }}.j2"

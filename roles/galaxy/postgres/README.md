@@ -32,6 +32,9 @@ Check [`defaults/main.yml`](defaults/main.yml) for the full list of supported op
 - **helpful scripts**:
   - get a `psql` interactive terminal via the `/base_path/bin/cli` and `/base_path/bin/cli-non-interactive` scripts
   - dump all databases using the `/base_path/bin/dump-all DIRECTORY_PATH` (which will dump to a `latest-dump.sql.gz` file there)
+  - the CLI scripts can prefer unix sockets when `postgres_cli_use_unix_socket_enabled` is true
+
+- **unix socket support**: optionally bind-mounts the Postgres unix socket directory to the host at `postgres_run_path` (see `postgres_container_unix_socket_enabled`)
 
 ## Usage
 
@@ -58,6 +61,9 @@ postgres_container_network: "{{ my_container_container_network }}"
 
 postgres_uid: "{{ my_uid }}"
 postgres_gid: "{{ my_gid }}"
+
+# If enabled, unix socket will be available at `{{ postgres_run_path }}` on the host.
+postgres_container_unix_socket_enabled: true
 
 postgres_vacuum_default_databases_list: ["mydb", "anotherdb"]
 

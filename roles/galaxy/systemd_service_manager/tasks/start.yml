@@ -52,19 +52,22 @@
 
 - when: "devture_systemd_service_manager_service_restart_mode == 'all-at-once' and devture_systemd_service_manager_services_list | length > 0"
   block:
-    - name: Build systemctl start command for all services
+    - name: Build all-at-once start argv for all services
       ansible.builtin.set_fact:
-        devture_systemd_service_manager_all_at_once_start_command: >-
-          systemctl start
-          {{ devture_systemd_service_manager_services_list | sort(attribute='priority,name') | map(attribute='name') | join(' ') }}
+        devture_systemd_service_manager_all_at_once_start_service_names: "{{ devture_systemd_service_manager_services_list | sort(attribute='priority,name') | map(attribute='name') | list }}"
+        devture_systemd_service_manager_all_at_once_start_argv: "{{ devture_systemd_docker_base_host_command_systemctl.split() + ['start'] + (devture_systemd_service_manager_services_list | sort(attribute='priority,name') | map(attribute='name') | list) }}"
 
-    - name: Show systemctl start command
+    - name: Show all-at-once start plan
       ansible.builtin.debug:
-        var: devture_systemd_service_manager_all_at_once_start_command
+        msg:
+          action: start
+          via: "{{ devture_systemd_docker_base_host_command_systemctl }}"
+          services: "{{ devture_systemd_service_manager_all_at_once_start_service_names }}"
+          argv: "{{ devture_systemd_service_manager_all_at_once_start_argv }}"
 
     - name: Start all systemd services at once
       ansible.builtin.command:
-        cmd: "{{ devture_systemd_service_manager_all_at_once_start_command }}"
+        argv: "{{ devture_systemd_service_manager_all_at_once_start_argv }}"
       register: devture_systemd_service_manager_all_at_once_start_result
       retries: "{{ devture_systemd_service_manager_all_at_once_retries | int }}"
       delay: "{{ devture_systemd_service_manager_all_at_once_retry_delay_seconds | int }}"
@@ -73,9 +76,7 @@
 
     - name: Ensure systemd services are auto-started
       ansible.builtin.command:
-        cmd: >-
-          systemctl enable
-          {{ devture_systemd_service_manager_services_list | map(attribute='name') | join(' ') }}
+        argv: "{{ devture_systemd_docker_base_host_command_systemctl.split() + ['enable'] + (devture_systemd_service_manager_services_list | map(attribute='name') | list) }}"
       register: devture_systemd_service_manager_all_at_once_enable_result
       changed_when: "devture_systemd_service_manager_all_at_once_enable_result.stdout | default('') != ''"
       when: "not ansible_check_mode and devture_systemd_service_manager_services_autostart_enabled | bool"

@@ -17,6 +17,8 @@ postgres_identifier: 'postgres'
 
 postgres_base_path: "/{{ postgres_identifier }}"
 postgres_data_path: "{{ postgres_base_path }}/data"
+# The host path where the Postgres unix socket directory is mounted (when enabled).
+postgres_run_path: "{{ postgres_base_path }}/run"
 # The path where the data directory is bind-mounted to inside the container.
 # Previously, we used `/var/lib/postgresql/data` for this, but Postgres v18+ made `/var/lib/postgresql` a VOLUME,
 # so we can't bind-mount a directory beneath it. It's better to use something completely different (like `/data`) instead.
@@ -226,6 +228,35 @@ postgres_container_image_force_pull: "{{ postgres_container_image_to_use.endswit
 # we default to at least 30 seconds.
 postgres_container_stop_grace_time_seconds: "{{ [devture_systemd_docker_base_container_stop_grace_time_seconds, 30] | max }}"
 
+# Controls how long the pre-start cleanup should wait for stale container-name release
+# before failing startup explicitly.
+postgres_container_cleanup_timeout_seconds: "{{ devture_systemd_docker_base_container_cleanup_timeout_seconds }}"
+
+# Controls the delay between pre-start cleanup retries.
+postgres_container_cleanup_retry_delay_seconds: "{{ devture_systemd_docker_base_container_cleanup_retry_delay_seconds }}"
+
+# Shell command used in the systemd pre-start phase to deterministically remove a stale
+# container and wait until Docker releases its name.
+postgres_container_cleanup_command: |
+  i=0;
+  while [ "$i" -lt {{ postgres_container_cleanup_timeout_seconds }} ]; do
+  {{ devture_systemd_docker_base_host_command_docker }} stop -t {{ postgres_container_stop_grace_time_seconds }} {{ postgres_identifier }} >/dev/null 2>&1 || true;
+  {{ devture_systemd_docker_base_host_command_docker }} rm -f {{ postgres_identifier }} >/dev/null 2>&1 || true;
+  rm -f {{ postgres_run_path }}/.s.PGSQL.* >/dev/null 2>&1 || true;
+  if {{ devture_systemd_docker_base_host_command_docker }} container inspect {{ postgres_identifier }} >/dev/null 2>&1; then
+  i=$((i + 1));
+  sleep {{ postgres_container_cleanup_retry_delay_seconds }};
+  continue;
+  fi;
+  if {{ devture_systemd_docker_base_host_command_docker }} info >/dev/null 2>&1; then
+  exit 0;
+  fi;
+  echo "Failed to query Docker daemon while cleaning up {{ postgres_identifier }}" >&2;
+  exit 1;
+  done;
+  echo "Failed to remove stale container {{ postgres_identifier }} after {{ postgres_container_cleanup_timeout_seconds }} attempts" >&2;
+  exit 1
+
 # Controls the user that the container runs as. Set to `0` to run as root.
 postgres_container_uid: "{{ postgres_uid }}"
 
@@ -252,6 +283,18 @@ postgres_container_tmpfs_tmp_size: 128m
 # Specify the size of the container's tmpfs volume (/run/postgresql)
 postgres_container_tmpfs_run_size: 128m
 
+# Controls whether the Postgres unix socket directory is bind-mounted from the host.
+# When enabled, the socket will be available under `postgres_run_path` on the host,
+# while TCP connections keep working as usual.
+postgres_container_unix_socket_enabled: true
+
+# The unix socket directory inside the container.
+postgres_run_path_in_container: "/run/postgresql"
+
+# Controls whether the helper CLI scripts prefer unix socket connections (when available)
+# instead of TCP. This does not affect server behavior.
+postgres_cli_use_unix_socket_enabled: "{{ postgres_container_unix_socket_enabled }}"
+
 # A list of extra arguments to pass to the container (`docker create` command)
 postgres_container_extra_arguments: "{{ postgres_container_extra_arguments_auto + postgres_container_extra_arguments_custom }}"
 postgres_container_extra_arguments_auto: []
@@ -276,6 +319,7 @@ postgres_postgres_process_extra_arguments_default: [
   "-c 'max_parallel_workers_per_gather={{ postgres_max_parallel_workers_per_gather|int }}'",
   "-c 'max_parallel_maintenance_workers={{ postgres_max_parallel_maintenance_workers|int }}'"
 ]
+postgres_postgres_process_extra_arguments_unix_socket: "{{ [\"-c 'unix_socket_directories=\" ~ postgres_run_path_in_container ~ \"'\"] if postgres_container_unix_socket_enabled else [] }}"
 # postgres_postgres_process_extra_arguments_auto is for use by the playbook that wraps this role.
 # For your own custom definitions, see postgres_postgres_process_extra_arguments_custom.
 postgres_postgres_process_extra_arguments_auto: []
@@ -283,7 +327,7 @@ postgres_postgres_process_extra_arguments_custom: []
 
 # A list of extra arguments to pass to the postgres process
 # e.g. "-c 'max_connections=200'"
-postgres_process_extra_arguments: "{{ postgres_postgres_process_extra_arguments_default + postgres_postgres_process_extra_arguments_auto + postgres_postgres_process_extra_arguments_custom }}"
+postgres_process_extra_arguments: "{{ postgres_postgres_process_extra_arguments_default + postgres_postgres_process_extra_arguments_unix_socket + postgres_postgres_process_extra_arguments_auto + postgres_postgres_process_extra_arguments_custom }}"
 
 # Controls whether the Postgres container exposes a port (tcp/5432 in the
 # container) that can be used to access the database from outside the container (e.g. with psql)
