@@ -39,7 +39,7 @@ sable_hostname: ""
 # technical limitations.
 sable_path_prefix: /
 
-sable_container_image: "{{ sable_container_image_registry_prefix }}SableClient/Sable:{{ sable_container_image_tag }}"
+sable_container_image: "{{ sable_container_image_registry_prefix }}sableclient/sable:{{ sable_container_image_tag }}"
 sable_container_image_tag: "{{ sable_version }}"
 sable_container_image_registry_prefix: "{{ sable_container_image_registry_prefix_upstream }}"
 sable_container_image_registry_prefix_upstream: "{{ sable_container_image_registry_prefix_upstream_default }}"

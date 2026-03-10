@@ -9,7 +9,7 @@
 * Coturn: 4.9.0
 * Discord: v0.7.6
 * Draupnir: v2.9.0
-* Element: v1.12.11
+* Element: v1.12.12
 * Etherpad: 2.6.1
 * Exim Relay: 4.98.1-r0-2
 * Firezone: 0.7.36
@@ -64,7 +64,7 @@
 * Static Files: 2.41.0
 * Steam Bridge: 1.1.0
 * Sygnal: v0.15.1
-* Synapse: v1.148.0
+* Synapse: v1.149.0
 * Synapse Admin: v0.11.4-etke54
 * Synapse Auto Compressor: v0.0.3
 * Synapse Http Antispam Git: v0.5.0
