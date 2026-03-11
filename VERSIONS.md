@@ -4,7 +4,7 @@
 * Borg: 1.4.3
 * Borgmatic: 2.1.3
 * Buscarron: v1.4.3
-* Cinny: v4.10.5
+* Cinny: v4.11.1
 * Container Socket Proxy: v0.4.2
 * Coturn: 4.9.0
 * Discord: v0.7.6

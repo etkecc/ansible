@@ -8,6 +8,7 @@
 
 * [Baibot](https://github.com/etkecc/baibot): [v1.14.3](https://github.com/etkecc/baibot/releases/tag/v1.14.3) ⇾ [v1.15.0](https://github.com/etkecc/baibot/releases/tag/v1.15.0)
 * Borgmatic: 2.1.1 ⇾ 2.1.3
+* [Cinny](https://github.com/ajbura/cinny): [v4.10.5](https://github.com/ajbura/cinny/releases/tag/v4.10.5) ⇾ [v4.11.1](https://github.com/ajbura/cinny/releases/tag/v4.11.1)
 * [Element](https://github.com/element-hq/element-web): [v1.12.11](https://github.com/element-hq/element-web/releases/tag/v1.12.11) ⇾ [v1.12.12](https://github.com/element-hq/element-web/releases/tag/v1.12.12)
 * [Gotosocial](https://codeberg.org/superseriousbusiness/gotosocial): [0.21.0](https://codeberg.org/superseriousbusiness/gotosocial/releases/tag/v0.21.0) ⇾ [0.21.1](https://codeberg.org/superseriousbusiness/gotosocial/releases/tag/v0.21.1)
 * [Livekit Server](https://github.com/livekit/livekit): [v1.9.11](https://github.com/livekit/livekit/releases/tag/v1.9.11) ⇾ [v1.9.12](https://github.com/livekit/livekit/releases/tag/v1.9.12)
