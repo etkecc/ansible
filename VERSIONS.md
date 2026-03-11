@@ -64,11 +64,11 @@
 * Static Files: 2.41.0
 * Steam Bridge: 1.1.0
 * Sygnal: v0.15.1
-* Synapse: v1.149.0
+* Synapse: v1.149.1
 * Synapse Admin: v0.11.4-etke54
 * Synapse Auto Compressor: v0.0.3
 * Synapse Http Antispam Git: v0.5.0
-* Synapse Reverse Proxy Companion: 1.29.5-alpine
+* Synapse Reverse Proxy Companion: 1.29.6-alpine
 * Synapse Rust Synapse Compress State Container Image: v0.0.3
 * Synapse S3 Storage Provider: 1.6.0
 * Telegram: v0.15.3
