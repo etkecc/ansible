@@ -18,7 +18,7 @@
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    mode: "0750"
+    mode: "0777" # Necessary for opening "/var/firezone/saml.key"
     # owner: "{{ firezone_uid }}"
     # group: "{{ firezone_gid }}"
   with_items:
