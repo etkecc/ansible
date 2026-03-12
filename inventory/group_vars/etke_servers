@@ -43,7 +43,7 @@ matrix_media_repo_metrics_port: 9000
 #                                                                      #
 ########################################################################
 # use unix sockets for Redis
-matrix_synapse_redis_path_enabled: true
+matrix_synapse_redis_path_enabled: "{{ valkey_enabled }}"
 # use unix sockets for Postgres
 matrix_synapse_database_socket_enabled: "{{ matrix_synapse_database_host == postgres_connection_hostname }}"
 
