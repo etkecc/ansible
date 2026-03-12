@@ -113,10 +113,43 @@ jobs:
             ANSIBLE=${{ env.ansible }}
             ANSIBLE_CORE=${{ env.ansible_core }}
 
-  test:
-    name: Test
+  test-base:
+    name: Test Base
     needs: build-fresh
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    if: ${{ github.ref == 'refs/heads/fresh' }}
+    steps:
+      - name: Trigger maintenance run
+        env:
+          TOKEN: ${{ secrets.TESTING_BASE_TOKEN }}
+          API: ${{ secrets.TESTING_BASE_API }}
+        run: |
+          # wait for any ongoing process to finish
+          while true; do STATUS=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $TOKEN" "$API/lock"); if [ "$STATUS" -eq 200 ]; then echo "Another command is still in progress, retrying in 1 minute..." && sleep 60; elif [ "$STATUS" -eq 204 ]; then echo "No commands are running, the test may proceed"; break; else echo "Failed to check lock (HTTP $STATUS)" && exit 1; fi; done
+          # trigger maintenance run
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"command": "maintenance"}' "$API/commands")
+          if [ "$STATUS" -eq 204 ]; then echo "Maintenance run triggered, it will take about 30 minutes to finish"; else echo "Failed to trigger maintenance run (HTTP $STATUS). If that's expected, you can (locally): docker pull ghcr.io/${{ github.repository }}:fresh && docker tag ghcr.io/${{ github.repository }}:fresh ghcr.io/${{ github.repository }}:latest && docker tag ghcr.io/${{ github.repository }}:fresh registry.etke.cc/${{ github.repository }}:latest && docker push ghcr.io/${{ github.repository }}:latest && docker push registry.etke.cc/${{ github.repository }}:latest" && exit 1; fi
+          # check progress
+          while true; do STATUS=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $TOKEN" "$API/lock"); if [ "$STATUS" -eq 200 ]; then echo "Maintenance is still in progress, checking again in 1 minute..." && sleep 60; elif [ "$STATUS" -eq 204 ]; then echo "Maintenance has been finished"; break; else echo "Failed to check maintenance progress (HTTP $STATUS)" && exit 1; fi; done
+          # check notifications
+          NOTIFICATIONS=$(curl -s -H "Authorization: Bearer $TOKEN" "$API/notifications")
+          echo "Notifications:"
+          echo "$NOTIFICATIONS" | jq
+          # cleanup notifications
+          echo "Cleaning up notifications..."
+          curl -s -X DELETE -H "Authorization: Bearer $TOKEN" "$API/notifications"
+          # check result
+          ERROR=$(echo "$NOTIFICATIONS" | jq -r --arg date "$(date +%Y-%m-%d)" '[.[] | select(.event_id | startswith("admin-run-maintenance-\($date)"))] | last | select(.error != null) | .error')
+          if [ -n "$ERROR" ]; then echo -e "Error found in the last maintenance event: $ERROR" && exit 1; else echo "Maintenance finished successfully"; fi
+          # done
+          echo "Finished"
+
+  test-full:
+    name: Test Full
+    needs: build-fresh
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
     if: ${{ github.ref == 'refs/heads/fresh' }}
     steps:
       - name: Trigger maintenance run
@@ -128,7 +161,7 @@ jobs:
           while true; do STATUS=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $TOKEN" "$API/lock"); if [ "$STATUS" -eq 200 ]; then echo "Another command is still in progress, retrying in 1 minute..." && sleep 60; elif [ "$STATUS" -eq 204 ]; then echo "No commands are running, the test may proceed"; break; else echo "Failed to check lock (HTTP $STATUS)" && exit 1; fi; done
           # trigger maintenance run
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"command": "maintenance"}' "$API/commands")
-          if [ "$STATUS" -eq 204 ]; then echo "Maintenance run triggered, it will take about 30 minutes to finish"; else echo "Failed to trigger maintenance run (HTTP $STATUS). If that's expected, you can (locally): docker pull gchr.io/${{ github.repository }}:fresh && docker tag ghcr.io/${{ github.repository }}:fresh ghcr.io/${{ github.repository }}:latest && docker tag ghcr.io/${{ github.repository }}:fresh registry.etke.cc/${{ github.repository }}:latest && docker push ghcr.io/${{ github.repository }}:latest && docker push registry.etke.cc/${{ github.repository }}:latest" && exit 1; fi
+          if [ "$STATUS" -eq 204 ]; then echo "Maintenance run triggered, it will take about 30 minutes to finish"; else echo "Failed to trigger maintenance run (HTTP $STATUS). If that's expected, you can (locally): docker pull ghcr.io/${{ github.repository }}:fresh && docker tag ghcr.io/${{ github.repository }}:fresh ghcr.io/${{ github.repository }}:latest && docker tag ghcr.io/${{ github.repository }}:fresh registry.etke.cc/${{ github.repository }}:latest && docker push ghcr.io/${{ github.repository }}:latest && docker push registry.etke.cc/${{ github.repository }}:latest" && exit 1; fi
           # check progress
           while true; do STATUS=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $TOKEN" "$API/lock"); if [ "$STATUS" -eq 200 ]; then echo "Maintenance is still in progress, checking again in 1 minute..." && sleep 60; elif [ "$STATUS" -eq 204 ]; then echo "Maintenance has been finished"; break; else echo "Failed to check maintenance progress (HTTP $STATUS)" && exit 1; fi; done
           # check notifications
@@ -147,7 +180,7 @@ jobs:
 
   build-stable:
     name: Build ansible image (stable)
-    needs: test
+    needs: [test-base, test-full]
     runs-on: self-hosted
     if: ${{ github.ref == 'refs/heads/fresh' }}
     steps:
