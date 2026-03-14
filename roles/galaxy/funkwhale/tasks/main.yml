@@ -38,9 +38,9 @@
 - name: Perform tasks to add users manually to Funkwhale
   when: funkwhale_enabled | bool
   tags:
-    - funkwhale-add-user
-    - funkwhale-add-admin
-    - funkwhale-add-superuser
+    - create-user-funkwhale
+    - create-admin-funkwhale
+    - create-superuser-funkwhale
   block:
     - name: Add users to Funkwhale manually
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/add_user_manual.yml"

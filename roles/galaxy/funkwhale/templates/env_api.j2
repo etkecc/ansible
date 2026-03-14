@@ -27,14 +27,14 @@ LOGLEVEL={{ funkwhale_loglevel }}
 # EMAIL_CONFIG=smtp://user:password@youremail.host:25
 # EMAIL_CONFIG=smtp+ssl://user:password@youremail.host:465
 # EMAIL_CONFIG=smtp+tls://user:password@youremail.host:587
- EMAIL_CONFIG={{ funkwhale_email_protocol }}{{ funkwhale_email_username }}:{{ funkwhale_email_password }}@{{ funkwhale_email_host }}:{{ funkwhale_email_port }}
+EMAIL_CONFIG={{ funkwhale_api_environment_variables_email_config }}
 
 # Make e-mail verification mandatory before using the service
 # Doesn't apply to admins.
-ACCOUNT_EMAIL_VERIFICATION_ENFORCE={{ funkwhale_account_email_verification_enforce }}
+ACCOUNT_EMAIL_VERIFICATION_ENFORCE={{ funkwhale_api_environment_variables_account_email_verification_enforce | to_json }}
 
 # The e-mail address to use to send system e-mails.
-DEFAULT_FROM_EMAIL={{ funkwhale_email_from }}
+DEFAULT_FROM_EMAIL={{ funkwhale_api_environment_variables_email_config_from }}
 
 # Depending on the reverse proxy used in front of your Funkwhale instance,
 # the API will use different kind of headers to serve audio files

@@ -31,6 +31,13 @@ funkwhale_gid: ""
 # The hostname at which Funkwhale is served.
 funkwhale_hostname: ""
 
+# The path at which Funkwhale is served.
+# This value must either be `/` or not end with a slash (e.g. `/funkwhale`).
+#
+# Hosting Funkwhale under a subpath does not seem to be possible due to Funkwhale's
+# technical limitations.
+funkwhale_path_prefix: /
+
 funkwhale_container_image_registry_prefix: "{{ funkwhale_container_image_registry_prefix_upstream }}"
 funkwhale_container_image_registry_prefix_upstream: "{{ funkwhale_container_image_registry_prefix_upstream_default }}"
 funkwhale_container_image_registry_prefix_upstream_default: docker.io/
@@ -66,17 +73,6 @@ funkwhale_redis_hostname: ""
 funkwhale_redis_port: 6379
 funkwhale_redis_database: 0
 funkwhale_redis_url: "redis://{{ funkwhale_redis_hostname }}:{{ funkwhale_redis_port }}/{{ funkwhale_redis_database }}"
-
-# Can be one of `consolemail://`, `dummymail://`, `smtp://`, `smtp+ssl://` and `smtp+tls://`
-# the default outputs e-mail in the console (journalctl -fu mash-funkwhale-api)
-funkwhale_email_protocol: "consolemail://"
-funkwhale_email_host: ""
-funkwhale_email_port: ""
-funkwhale_email_username: ""
-funkwhale_email_password: ""
-funkwhale_email_from: "noreply@{{ funkwhale_hostname }}"
-
-funkwhale_account_email_verification_enforce: false
 
 # This var holds the list of users that should be created automatically by playbooks/roles/group vars,
 # To add your own users for specific host, use `funkwhale_users_additional`
@@ -162,11 +158,12 @@ funkwhale_api_container_additional_networks_custom: []
 # See `../templates/labels_api.j2` for details.
 #
 # To inject your own other container labels, see `funkwhale_container_labels_additional_labels_custom`.
-funkwhale_api_container_labels_traefik_enabled: false
-funkwhale_api_container_labels_traefik_docker_network: ""
+funkwhale_api_container_labels_traefik_enabled: true
+funkwhale_api_container_labels_traefik_docker_network: "{{ funkwhale_container_network }}"
 funkwhale_api_container_labels_traefik_hostname: "{{ funkwhale_hostname }}"
+# The path prefix must either be `/` or not end with a slash (e.g. `/api`).
 funkwhale_api_container_labels_traefik_path_prefix: "/api"
-funkwhale_api_container_labels_traefik_rule: "Host(`{{ funkwhale_api_container_labels_traefik_hostname }}`) && PathPrefix (`/api/`)"
+funkwhale_api_container_labels_traefik_rule: "Host(`{{ funkwhale_api_container_labels_traefik_hostname }}`){% if funkwhale_api_container_labels_traefik_path_prefix != '/' %} && PathPrefix(`{{ funkwhale_api_container_labels_traefik_path_prefix }}/`){% endif %}" # Mind the slash after `funkwhale_api_container_labels_traefik_path_prefix`
 funkwhale_api_container_labels_traefik_priority: 0
 funkwhale_api_container_labels_traefik_entrypoints: web-secure
 funkwhale_api_container_labels_traefik_tls: "{{ funkwhale_api_container_labels_traefik_entrypoints != 'web' }}"
@@ -273,6 +270,52 @@ funkwhale_api_systemd_required_services_list_default: "{{ [devture_systemd_docke
 funkwhale_api_systemd_required_services_list_auto: []
 funkwhale_api_systemd_required_services_list_custom: []
 
+# Controls how long to wait for the container to stop gracefully before killing it.
+funkwhale_api_container_stop_grace_time_seconds: "{{ devture_systemd_docker_base_container_stop_grace_time_seconds }}"
+
+# Controls how long the pre-start cleanup should wait for stale container-name release
+# before failing startup explicitly.
+funkwhale_api_container_cleanup_timeout_seconds: "{{ devture_systemd_docker_base_container_cleanup_timeout_seconds }}"
+
+# Controls the delay between pre-start cleanup retries.
+funkwhale_api_container_cleanup_retry_delay_seconds: "{{ devture_systemd_docker_base_container_cleanup_retry_delay_seconds }}"
+
+# Shell command used in the systemd pre-start phase to deterministically remove a stale
+# container and wait until Docker releases its name.
+funkwhale_api_container_cleanup_command: |
+  i=0;
+  while [ "$i" -lt {{ funkwhale_api_container_cleanup_timeout_seconds }} ]; do
+  {{ devture_systemd_docker_base_host_command_docker }} stop -t {{ funkwhale_api_container_stop_grace_time_seconds }} {{ funkwhale_api_identifier }} >/dev/null 2>&1 || true;
+  {{ devture_systemd_docker_base_host_command_docker }} rm -f {{ funkwhale_api_identifier }} >/dev/null 2>&1 || true;
+  if {{ devture_systemd_docker_base_host_command_docker }} container inspect {{ funkwhale_api_identifier }} >/dev/null 2>&1; then
+  i=$((i + 1));
+  sleep {{ funkwhale_api_container_cleanup_retry_delay_seconds }};
+  continue;
+  fi;
+  if {{ devture_systemd_docker_base_host_command_docker }} info >/dev/null 2>&1; then
+  exit 0;
+  fi;
+  echo "Failed to query Docker daemon while cleaning up {{ funkwhale_api_identifier }}" >&2;
+  exit 1;
+  done;
+  echo "Failed to remove stale container {{ funkwhale_api_identifier }} after {{ funkwhale_api_container_cleanup_timeout_seconds }} attempts" >&2;
+  exit 1
+
+# Valid values: consolemail://, dummymail://, smtp://, smtp+ssl://, smtp+tls://
+funkwhale_api_environment_variables_email_config_protocol: "consolemail://"
+
+# Specify SMTP server configuration
+funkwhale_api_environment_variables_email_config_host: ""
+funkwhale_api_environment_variables_email_config_port: ""
+funkwhale_api_environment_variables_email_config_username: ""
+funkwhale_api_environment_variables_email_config_password: ""
+
+funkwhale_api_environment_variables_email_config: "{{ funkwhale_api_environment_variables_email_config_protocol }}{{ funkwhale_api_environment_variables_email_config_username }}:{{ funkwhale_api_environment_variables_email_config_password }}@{{ funkwhale_api_environment_variables_email_config_host }}:{{ funkwhale_api_environment_variables_email_config_port }}"
+
+funkwhale_api_environment_variables_account_email_verification_enforce: false
+
+funkwhale_api_environment_variables_email_config_from: "noreply@{{ funkwhale_hostname }}"
+
 # Additional environment variables.
 funkwhale_api_variables_additional_variables: ""
 
@@ -328,11 +371,11 @@ funkwhale_frontend_container_additional_networks_custom: []
 # See `../templates/labels_frontend.j2` for details.
 #
 # To inject your own other container labels, see `funkwhale_container_labels_additional_labels_custom`.
-funkwhale_frontend_container_labels_traefik_enabled: false
-funkwhale_frontend_container_labels_traefik_docker_network: ""
-funkwhale_frontend_container_labels_traefik_entrypoints: web-secure
+funkwhale_frontend_container_labels_traefik_enabled: true
+funkwhale_frontend_container_labels_traefik_docker_network: "{{ funkwhale_frontend_network }}"
 funkwhale_frontend_container_labels_traefik_priority: 0
-funkwhale_frontend_container_labels_traefik_tls: "{{ funkwhale_api_container_labels_traefik_entrypoints != 'web' }}"
+funkwhale_frontend_container_labels_traefik_entrypoints: web-secure
+funkwhale_frontend_container_labels_traefik_tls: "{{ funkwhale_frontend_container_labels_traefik_entrypoints != 'web' }}"
 funkwhale_frontend_container_labels_traefik_tls_certResolver: default  # noqa var-naming
 
 # Controls which additional headers to attach to all HTTP requests.
@@ -431,6 +474,37 @@ funkwhale_frontend_systemd_required_services_list: "{{ funkwhale_frontend_system
 funkwhale_frontend_systemd_required_services_list_default: ['docker.service', '{{ funkwhale_api_identifier }}.service']
 funkwhale_frontend_systemd_required_services_list_auto: []
 funkwhale_frontend_systemd_required_services_list_custom: []
+
+# Controls how long to wait for the container to stop gracefully before killing it.
+funkwhale_frontend_container_stop_grace_time_seconds: "{{ devture_systemd_docker_base_container_stop_grace_time_seconds }}"
+
+# Controls how long the pre-start cleanup should wait for stale container-name release
+# before failing startup explicitly.
+funkwhale_frontend_container_cleanup_timeout_seconds: "{{ devture_systemd_docker_base_container_cleanup_timeout_seconds }}"
+
+# Controls the delay between pre-start cleanup retries.
+funkwhale_frontend_container_cleanup_retry_delay_seconds: "{{ devture_systemd_docker_base_container_cleanup_retry_delay_seconds }}"
+
+# Shell command used in the systemd pre-start phase to deterministically remove a stale
+# container and wait until Docker releases its name.
+funkwhale_frontend_container_cleanup_command: |
+  i=0;
+  while [ "$i" -lt {{ funkwhale_frontend_container_cleanup_timeout_seconds }} ]; do
+  {{ devture_systemd_docker_base_host_command_docker }} stop -t {{ funkwhale_frontend_container_stop_grace_time_seconds }} {{ funkwhale_frontend_identifier }} >/dev/null 2>&1 || true;
+  {{ devture_systemd_docker_base_host_command_docker }} rm -f {{ funkwhale_frontend_identifier }} >/dev/null 2>&1 || true;
+  if {{ devture_systemd_docker_base_host_command_docker }} container inspect {{ funkwhale_frontend_identifier }} >/dev/null 2>&1; then
+  i=$((i + 1));
+  sleep {{ funkwhale_frontend_container_cleanup_retry_delay_seconds }};
+  continue;
+  fi;
+  if {{ devture_systemd_docker_base_host_command_docker }} info >/dev/null 2>&1; then
+  exit 0;
+  fi;
+  echo "Failed to query Docker daemon while cleaning up {{ funkwhale_frontend_identifier }}" >&2;
+  exit 1;
+  done;
+  echo "Failed to remove stale container {{ funkwhale_frontend_identifier }} after {{ funkwhale_frontend_container_cleanup_timeout_seconds }} attempts" >&2;
+  exit 1
 
 # Additional environment variables.
 funkwhale_frontend_variables_additional_variables: ""
