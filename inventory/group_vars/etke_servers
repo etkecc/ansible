@@ -406,13 +406,13 @@ funkwhale_database_port: "{{ '5432' if postgres_enabled else '' }}"
 funkwhale_database_password: "{{ '%s' | format(mash_playbook_generic_secret_key) | password_hash('sha512', 'db.funkwhale', rounds=655555) | to_uuid }}"
 funkwhale_database_username: "{{ funkwhale_identifier }}"
 
-funkwhale_email_protocol: "{{ 'smtp://' if exim_relay_enabled else 'consolemail://' }}"
-funkwhale_email_host: "{{ exim_relay_identifier | default('matrix-exim-relay') }}"
-funkwhale_email_port: 8025
-funkwhale_email_username: ''
-funkwhale_email_password: ''
-funkwhale_email_from: "{{ exim_relay_sender_address if exim_relay_enabled else '' }}"
-funkwhale_account_email_verification_enforce: "{{ exim_relay_enabled | default(false) }}"
+funkwhale_api_environment_variables_email_config_protocol: "{{ 'smtp://' if exim_relay_enabled else 'consolemail://' }}"
+funkwhale_api_environment_variables_email_config_host: "{{ exim_relay_identifier | default('matrix-exim-relay') }}"
+funkwhale_api_environment_variables_email_config_port: 8025
+funkwhale_api_environment_variables_email_config_username: ''
+funkwhale_api_environment_variables_email_config_password: ''
+funkwhale_api_environment_variables_email_config_from: "{{ exim_relay_sender_address if exim_relay_enabled else '' }}"
+funkwhale_api_environment_variables_account_email_verification_enforce: "{{ exim_relay_enabled | default(false) }}"
 funkwhale_django_secret_key: "{{ '%s' | format(mash_playbook_generic_secret_key) | password_hash('sha512', 'funkwhale', rounds=655555) | to_uuid }}"
 
 funkwhale_redis_hostname: "{{ valkey_identifier if valkey_enabled else '' }}"
@@ -435,7 +435,7 @@ funkwhale_api_container_additional_networks_auto: |
     +
     ([postgres_container_network] if postgres_enabled and funkwhale_database_hostname == postgres_identifier and funkwhale_api_container_network != postgres_container_network else [])
     +
-    ([exim_relay_container_network | default('matrix-exim-relay')] if (exim_relay_enabled | default(false) and funkwhale_email_host == exim_relay_identifier | default('matrix-exim-relay') and exim_relay_container_network != funkwhale_container_network) else [])
+    ([exim_relay_container_network | default('matrix-exim-relay')] if (exim_relay_enabled | default(false) and funkwhale_api_environment_variables_email_config_host == exim_relay_identifier | default('matrix-exim-relay') and exim_relay_container_network != funkwhale_container_network) else [])
     +
     ([valkey_container_network] if valkey_enabled and funkwhale_redis_hostname == valkey_identifier else [])
   }}
@@ -446,7 +446,7 @@ funkwhale_frontend_container_additional_networks_auto: |
     +
     ([postgres_container_network] if postgres_enabled and funkwhale_database_hostname == postgres_identifier and funkwhale_frontend_container_network != postgres_container_network else [])
     +
-    ([exim_relay_container_network | default('matrix-exim-relay')] if (exim_relay_enabled | default(false) and funkwhale_email_host == exim_relay_identifier | default('matrix-exim-relay') and exim_relay_container_network != funkwhale_container_network) else [])
+    ([exim_relay_container_network | default('matrix-exim-relay')] if (exim_relay_enabled | default(false) and funkwhale_api_environment_variables_email_config_host == exim_relay_identifier | default('matrix-exim-relay') and exim_relay_container_network != funkwhale_container_network) else [])
   }}
 
 funkwhale_api_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
