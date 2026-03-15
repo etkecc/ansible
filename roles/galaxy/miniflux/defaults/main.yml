@@ -11,7 +11,7 @@ miniflux_identifier: miniflux
 miniflux_base_path: "/{{ miniflux_identifier }}"
 
 # renovate: datasource=docker depName=docker.io/miniflux/miniflux versioning=semver
-miniflux_version: 2.2.17
+miniflux_version: 2.2.18
 
 miniflux_uid: ""
 miniflux_gid: ""
@@ -175,6 +175,37 @@ miniflux_systemd_wanted_services_list: "{{ miniflux_systemd_wanted_services_list
 miniflux_systemd_wanted_services_list_default: []
 miniflux_systemd_wanted_services_list_auto: []
 miniflux_systemd_wanted_services_list_custom: []
+
+# Controls how long to wait for the container to stop gracefully before killing it.
+miniflux_container_stop_grace_time_seconds: "{{ devture_systemd_docker_base_container_stop_grace_time_seconds }}"
+
+# Controls how long the pre-start cleanup should wait for stale container-name release
+# before failing startup explicitly.
+miniflux_container_cleanup_timeout_seconds: "{{ devture_systemd_docker_base_container_cleanup_timeout_seconds }}"
+
+# Controls the delay between pre-start cleanup retries.
+miniflux_container_cleanup_retry_delay_seconds: "{{ devture_systemd_docker_base_container_cleanup_retry_delay_seconds }}"
+
+# Shell command used in the systemd pre-start phase to deterministically remove a stale
+# container and wait until Docker releases its name.
+miniflux_container_cleanup_command: |
+  i=0;
+  while [ "$i" -lt {{ miniflux_container_cleanup_timeout_seconds }} ]; do
+  {{ devture_systemd_docker_base_host_command_docker }} stop -t {{ miniflux_container_stop_grace_time_seconds }} {{ miniflux_identifier }} >/dev/null 2>&1 || true;
+  {{ devture_systemd_docker_base_host_command_docker }} rm -f {{ miniflux_identifier }} >/dev/null 2>&1 || true;
+  if {{ devture_systemd_docker_base_host_command_docker }} container inspect {{ miniflux_identifier }} >/dev/null 2>&1; then
+  i=$((i + 1));
+  sleep {{ miniflux_container_cleanup_retry_delay_seconds }};
+  continue;
+  fi;
+  if {{ devture_systemd_docker_base_host_command_docker }} info >/dev/null 2>&1; then
+  exit 0;
+  fi;
+  echo "Failed to query Docker daemon while cleaning up {{ miniflux_identifier }}" >&2;
+  exit 1;
+  done;
+  echo "Failed to remove stale container {{ miniflux_identifier }} after {{ miniflux_container_cleanup_timeout_seconds }} attempts" >&2;
+  exit 1
 
 # Optional admin credentials to be created on startup.
 miniflux_admin_login: ""
