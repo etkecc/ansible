@@ -37,7 +37,7 @@
 * Meta Instagram: v0.2602.0
 * Meta Messenger: v0.2602.0
 * Miniflux: 2.2.18
-* Ntfy: v2.18.0
+* Ntfy: v2.19.1
 * Peertube: v7.2.3
 * Postgres Container Image V10: 10.23
 * Postgres Container Image V11: 11.22
@@ -49,7 +49,7 @@
 * Postgres Container Image V17: 17.9
 * Postgres Container Image V18: 18.3
 * Postgres Container Image V9: 9.6.24
-* Postmoogle: v0.9.28
+* Postmoogle: v0.9.29
 * Prometheus: v3.10.0
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.10.2
@@ -58,7 +58,7 @@
 * Registration: v0.7.2
 * Schildichat: 1.11.109-sc.0.test.0
 * Signal: v26.02.2
-* Slack: v0.2602.0
+* Slack: v0.2603.0
 * Spam Checker Mjolnir Antispam Git: v1.12.1
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.41.0
@@ -75,10 +75,10 @@
 * Traefik: v3.6.10
 * Traefik Certs Dumper: v2.10.0
 * Traefik Config Tcp Servertransports Default Proxyprotocol: 1
-* Twitter: v0.2511.0
+* Twitter: v0.2603.0
 * Uptime Kuma: 1.23.17
 * Valkey: 9.0.3
 * Vaultwarden: 1.35.4
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
-* Whatsapp: v0.2602.0
+* Whatsapp: v0.2603.0
