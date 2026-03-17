@@ -39,16 +39,6 @@ matrix_media_repo_metrics_port: 9000
 
 ########################################################################
 #                                                                      #
-# synapse                                                              #
-#                                                                      #
-########################################################################
-# use unix sockets for Redis
-matrix_synapse_redis_path_enabled: "{{ valkey_enabled }}"
-# use unix sockets for Postgres
-matrix_synapse_database_socket_enabled: "{{ matrix_synapse_database_host == postgres_connection_hostname }}"
-
-########################################################################
-#                                                                      #
 # coturn                                                               #
 #                                                                      #
 ########################################################################
@@ -588,10 +578,6 @@ devture_systemd_service_manager_services_list_additional: |
 # com.devture.ansible.role.postgres                                    #
 #                                                                      #
 ########################################################################
-
-# enable unix sockets
-postgres_container_unix_socket_enabled: true
-postgres_cli_use_unix_socket_enabled: true
 
 postgres_managed_databases_additional: |
   {{

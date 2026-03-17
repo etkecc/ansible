@@ -37,7 +37,7 @@
 * Meta Instagram: v0.2602.0
 * Meta Messenger: v0.2602.0
 * Miniflux: 2.2.18
-* Ntfy: v2.19.1
+* Ntfy: v2.19.2
 * Peertube: v7.2.3
 * Postgres Container Image V10: 10.23
 * Postgres Container Image V11: 11.22

@@ -40,9 +40,9 @@ default_home_dashboard_path = {{ grafana_default_home_dashboard_path }}
 enable = true
 {% endif %}
 
-{% if grafana_smtp_enabled %}
+{% if grafana_mailer_smtp_enabled %}
 [smtp]
-enabled = {{ grafana_smtp_enabled }}
+enabled = {{ grafana_mailer_smtp_enabled }}
 host = {{ grafana_smtp_host }}:{{ grafana_smtp_port }}
 user = {{ grafana_smtp_user }}
 password = """{{ grafana_smtp_password }}"""
