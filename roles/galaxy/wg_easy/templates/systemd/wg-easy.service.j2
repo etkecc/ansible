@@ -1,0 +1,90 @@
+{#
+SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+#}
+
+[Unit]
+Description=WireGuard Easy ({{ wg_easy_identifier }})
+{% for service in wg_easy_systemd_required_services_list %}
+Requires={{ service }}
+After={{ service }}
+{% endfor %}
+{% for service in wg_easy_systemd_wanted_services_list %}
+Wants={{ service }}
+{% endfor %}
+DefaultDependencies=no
+
+[Service]
+Type=simple
+Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
+ExecStartPre={{ devture_systemd_docker_base_host_command_sh }} -c '{{ wg_easy_container_cleanup_command | trim | replace("\n", " ") }}'
+
+{% if wg_easy_systemd_modprobe_iptables_enabled %}
+ExecStartPre=-/usr/bin/env modprobe {{ wg_easy_systemd_modprobe_iptables_module_name }}
+{% endif %}
+
+{% if wg_easy_systemd_modprobe_ip6tables_enabled %}
+ExecStartPre=-/usr/bin/env modprobe {{ wg_easy_systemd_modprobe_ip6tables_module_name }}
+{% endif %}
+
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
+      --rm \
+      --name={{ wg_easy_identifier }} \
+      --log-driver=none \
+      --cap-drop=ALL \
+      --cap-add=DAC_OVERRIDE \
+      --cap-add=FOWNER \
+      --cap-add=NET_ADMIN \
+      --cap-add=NET_RAW \
+      --cap-add=SYS_MODULE \
+      --read-only \
+      --network={{ wg_easy_container_network }} \
+      {% if wg_easy_container_wireguard_bind_port %}
+      -p {{ wg_easy_container_wireguard_bind_port }}:{{ wg_easy_environment_variables_additional_variable_init_port }}/udp \
+      {% endif %}
+      {% if wg_easy_container_http_bind_port %}
+      -p {{ wg_easy_container_http_bind_port }}:{{ wg_easy_environment_variables_additional_variable_port }}/tcp \
+      {% endif %}
+      --env-file={{ wg_easy_base_path }}/env \
+      --label-file={{ wg_easy_base_path }}/labels \
+      --health-interval={{ wg_easy_container_health_interval }} \
+      --mount type=bind,src={{ wg_easy_data_path }},dst=/etc/wireguard \
+      {% for volume in wg_easy_container_additional_volumes %}
+      --mount type={{ volume.type | default('bind' if '/' in volume.src else 'volume') }},src={{ volume.src }},dst={{ volume.dst }}{{ (',' + volume.options) if volume.options | default('') else '' }} \
+      {% endfor %}
+      --tmpfs=/run:rw,noexec,nosuid,size={{ wg_easy_container_tmpfs_run_size }} \
+      --sysctl="net.ipv4.conf.all.src_valid_mark=1" \
+      --sysctl="net.ipv4.ip_forward=1" \
+      --sysctl="net.ipv6.conf.all.disable_ipv6=0" \
+      --sysctl="net.ipv6.conf.all.forwarding=1" \
+      --sysctl="net.ipv6.conf.default.forwarding=1" \
+      {% for arg in wg_easy_container_extra_arguments %}
+      {{ arg }} \
+      {% endfor %}
+      {{ wg_easy_container_image }}
+
+ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ wg_easy_identifier }}
+
+{#
+  Additional networks are connected after the container starts (not before) to ensure
+  the primary network (--network) is always assigned as eth0 inside the container.
+  A delay is introduced before connecting to give the container time to fully initialize its network namespace.
+  See the comment near `wg_easy_container_additional_networks` in defaults/main.yml for details.
+#}
+{% if wg_easy_container_additional_networks | length > 0 %}
+ExecStartPost={{ devture_systemd_docker_base_host_command_sh }} -c 'sleep {{ wg_easy_container_additional_networks_connect_delay_seconds }}'
+{% for network in wg_easy_container_additional_networks %}
+ExecStartPost={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ wg_easy_identifier }}
+{% endfor %}
+{% endif %}
+
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ wg_easy_identifier }} 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ wg_easy_identifier }} 2>/dev/null || true'
+
+Restart=always
+RestartSec=30
+SyslogIdentifier={{ wg_easy_identifier }}
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Perform WireGuard Easy installation tasks
+  when: wg_easy_enabled | bool
+  tags:
+    - setup-all
+    - setup-wg-easy
+    - install-all
+    - install-wg-easy
+  block:
+    - name: Validate WireGuard Easy configuration
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Install WireGuard Easy
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+
+- name: Perform WireGuard Easy uninstallation tasks
+  when: not wg_easy_enabled | bool
+  tags:
+    - setup-all
+    - setup-wg-easy
+  block:
+    - name: Uninstall WireGuard Easy
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

@@ -1,0 +1,55 @@
+{#
+SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+#}
+
+{% if wg_easy_container_labels_traefik_enabled %}
+traefik.enable=true
+
+{% if wg_easy_container_labels_traefik_docker_network %}
+traefik.docker.network={{ wg_easy_container_labels_traefik_docker_network }}
+{% endif %}
+
+{% set middlewares = [] %}
+
+{% if wg_easy_container_labels_traefik_path_prefix != '/' %}
+traefik.http.middlewares.{{ wg_easy_identifier }}-slashless-redirect.redirectregex.regex=^(https?)://([^/]+){{ wg_easy_container_labels_traefik_path_prefix | quote }}$
+traefik.http.middlewares.{{ wg_easy_identifier }}-slashless-redirect.redirectregex.replacement=${1}://${2}{{ wg_easy_container_labels_traefik_path_prefix | quote }}/
+{% set middlewares = middlewares + [wg_easy_identifier + '-slashless-redirect'] %}
+{% endif %}
+
+{% if wg_easy_container_labels_traefik_additional_request_headers.keys() | length > 0 %}
+{% for name, value in wg_easy_container_labels_traefik_additional_request_headers.items() %}
+traefik.http.middlewares.{{ wg_easy_identifier }}-add-request-headers.headers.customrequestheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [wg_easy_identifier + '-add-request-headers'] %}
+{% endif %}
+
+{% if wg_easy_container_labels_traefik_additional_response_headers.keys() | length > 0 %}
+{% for name, value in wg_easy_container_labels_traefik_additional_response_headers.items() %}
+traefik.http.middlewares.{{ wg_easy_identifier }}-add-response-headers.headers.customresponseheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [wg_easy_identifier + '-add-response-headers'] %}
+{% endif %}
+
+traefik.http.routers.{{ wg_easy_identifier }}.rule={{ wg_easy_container_labels_traefik_rule }}
+{% if wg_easy_container_labels_traefik_priority | int > 0 %}
+traefik.http.routers.{{ wg_easy_identifier }}.priority={{ wg_easy_container_labels_traefik_priority }}
+{% endif %}
+traefik.http.routers.{{ wg_easy_identifier }}.service={{ wg_easy_identifier }}
+{% if middlewares | length > 0 %}
+traefik.http.routers.{{ wg_easy_identifier }}.middlewares={{ middlewares | join(',') }}
+{% endif %}
+traefik.http.routers.{{ wg_easy_identifier }}.entrypoints={{ wg_easy_container_labels_traefik_entrypoints }}
+traefik.http.routers.{{ wg_easy_identifier }}.tls={{ wg_easy_container_labels_traefik_tls | to_json }}
+{% if wg_easy_container_labels_traefik_tls %}
+traefik.http.routers.{{ wg_easy_identifier }}.tls.certResolver={{ wg_easy_container_labels_traefik_tls_certResolver }}
+{% endif %}
+
+traefik.http.services.{{ wg_easy_identifier }}.loadbalancer.server.port={{ wg_easy_environment_variables_additional_variable_port}}
+{% endif %}
+
+{% for arg in wg_easy_container_labels_additional_labels %}
+{{ arg }}
+{% endfor %}
