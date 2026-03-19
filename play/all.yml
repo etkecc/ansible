@@ -32,6 +32,7 @@
     - galaxy/traefik_certs_dumper
     - galaxy/postgres
     - galaxy/valkey
+    - custom/matrix-authentication-service
     - custom/matrix-appservice-double-puppet
     - custom/matrix-bridge-beeper-linkedin
     - custom/matrix-bridge-wechat

@@ -98,5 +98,6 @@
     <outline text="valkey" title="valkey" type="rss" htmlUrl="https://github.com/valkey-io/valkey" xmlUrl="https://github.com/valkey-io/valkey/releases.atom" />
     <outline text="vaultwarden" title="vaultwarden" type="rss" htmlUrl="https://github.com/dani-garcia/vaultwarden" xmlUrl="https://github.com/dani-garcia/vaultwarden/releases.atom" />
     <outline text="wechat" title="wechat" type="rss" htmlUrl="https://github.com/duo/matrix-wechat" xmlUrl="https://github.com/duo/matrix-wechat/releases.atom" />
+    <outline text="wg_easy" title="wg_easy" type="rss" htmlUrl="https://github.com/wg-easy/wg-easy" xmlUrl="https://github.com/wg-easy/wg-easy/releases.atom" />
   </body>
 </opml>

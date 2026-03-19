@@ -1,4 +1,5 @@
 * Alpine: edge
+* Authentication Service: 1.13.0
 * Baibot: v1.15.0
 * Bluesky: v0.2510.0
 * Borg: 1.4.3
@@ -81,4 +82,5 @@
 * Vaultwarden: 1.35.4
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
+* Wg Easy: 15.2.2
 * Whatsapp: v0.2603.0
