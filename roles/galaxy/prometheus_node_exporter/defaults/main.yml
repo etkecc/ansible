@@ -68,19 +68,20 @@ prometheus_node_exporter_container_additional_networks: "{{ prometheus_node_expo
 prometheus_node_exporter_container_additional_networks_auto: []
 prometheus_node_exporter_container_additional_networks_custom: []
 
-# prometheus_node_exporter_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
+# prometheus_node_exporter_container_labels_metrics_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
 # See `../templates/labels.j2` for details.
 #
 # To inject your own other container labels, see `prometheus_node_exporter_container_labels_additional_labels_custom`.
-prometheus_node_exporter_container_labels_traefik_enabled: false
-prometheus_node_exporter_container_labels_traefik_docker_network: "{{ prometheus_node_exporter_container_network }}"
-prometheus_node_exporter_container_labels_traefik_hostname: "{{ prometheus_node_exporter_hostname }}"
+prometheus_node_exporter_container_labels_metrics_enabled: false
+prometheus_node_exporter_container_labels_metrics_docker_network: "{{ prometheus_node_exporter_container_network }}"
+prometheus_node_exporter_container_labels_metrics_hostname: "{{ prometheus_node_exporter_hostname }}"
 # The path prefix must either be `/` or not end with a slash (e.g. `/metrics`).
-prometheus_node_exporter_container_labels_traefik_path_prefix: "{{ prometheus_node_exporter_path_prefix }}"
-prometheus_node_exporter_container_labels_traefik_rule: "Host(`{{ prometheus_node_exporter_container_labels_traefik_hostname }}`) && PathPrefix(`{{ prometheus_node_exporter_container_labels_traefik_path_prefix | quote }}`)"
-prometheus_node_exporter_container_labels_traefik_entrypoints: web-secure
-prometheus_node_exporter_container_labels_traefik_tls: "{{ prometheus_node_exporter_container_labels_traefik_entrypoints != 'web' }}"
-prometheus_node_exporter_container_labels_traefik_tls_certResolver: default  # noqa var-naming
+prometheus_node_exporter_container_labels_metrics_path_prefix: "{{ prometheus_node_exporter_path_prefix }}"
+prometheus_node_exporter_container_labels_metrics_rule: "Host(`{{ prometheus_node_exporter_container_labels_metrics_hostname }}`){% if prometheus_node_exporter_container_labels_metrics_path_prefix != '/' %} && PathPrefix(`{{ prometheus_node_exporter_container_labels_metrics_path_prefix }}`){% endif %}"
+prometheus_node_exporter_container_labels_metrics_priority: 0
+prometheus_node_exporter_container_labels_metrics_entrypoints: web-secure
+prometheus_node_exporter_container_labels_metrics_tls: "{{ prometheus_node_exporter_container_labels_metrics_entrypoints != 'web' }}"
+prometheus_node_exporter_container_labels_metrics_tls_certResolver: default  # noqa var-naming
 prometheus_node_exporter_container_labels_metrics_middleware_basic_auth_enabled: false
 # See: https://doc.traefik.io/traefik/reference/routing-configuration/http/middlewares/basicauth/
 prometheus_node_exporter_container_labels_metrics_middleware_basic_auth_users: ""
@@ -128,6 +129,37 @@ prometheus_node_exporter_systemd_wanted_services_list: "{{ prometheus_node_expor
 prometheus_node_exporter_systemd_wanted_services_list_default: []
 prometheus_node_exporter_systemd_wanted_services_list_auto: []
 prometheus_node_exporter_systemd_wanted_services_list_custom: []
+
+# Controls how long to wait for the container to stop gracefully before killing it.
+prometheus_node_exporter_container_stop_grace_time_seconds: "{{ devture_systemd_docker_base_container_stop_grace_time_seconds }}"
+
+# Controls how long the pre-start cleanup should wait for stale container-name release
+# before failing startup explicitly.
+prometheus_node_exporter_container_cleanup_timeout_seconds: "{{ devture_systemd_docker_base_container_cleanup_timeout_seconds }}"
+
+# Controls the delay between pre-start cleanup retries.
+prometheus_node_exporter_container_cleanup_retry_delay_seconds: "{{ devture_systemd_docker_base_container_cleanup_retry_delay_seconds }}"
+
+# Shell command used in the systemd pre-start phase to deterministically remove a stale
+# container and wait until Docker releases its name.
+prometheus_node_exporter_container_cleanup_command: |
+  i=0;
+  while [ "$i" -lt {{ prometheus_node_exporter_container_cleanup_timeout_seconds }} ]; do
+  {{ devture_systemd_docker_base_host_command_docker }} stop -t {{ prometheus_node_exporter_container_stop_grace_time_seconds }} {{ prometheus_node_exporter_identifier }} >/dev/null 2>&1 || true;
+  {{ devture_systemd_docker_base_host_command_docker }} rm -f {{ prometheus_node_exporter_identifier }} >/dev/null 2>&1 || true;
+  if {{ devture_systemd_docker_base_host_command_docker }} container inspect {{ prometheus_node_exporter_identifier }} >/dev/null 2>&1; then
+  i=$((i + 1));
+  sleep {{ prometheus_node_exporter_container_cleanup_retry_delay_seconds }};
+  continue;
+  fi;
+  if {{ devture_systemd_docker_base_host_command_docker }} info >/dev/null 2>&1; then
+  exit 0;
+  fi;
+  echo "Failed to query Docker daemon while cleaning up {{ prometheus_node_exporter_identifier }}" >&2;
+  exit 1;
+  done;
+  echo "Failed to remove stale container {{ prometheus_node_exporter_identifier }} after {{ prometheus_node_exporter_container_cleanup_timeout_seconds }} attempts" >&2;
+  exit 1
 
 # prometheus_node_exporter_dashboard_urls contains a list of URLs with Grafana dashboard definitions for the node exporter.
 # This role doesn't make use of this variable, but you can hook this into other roles.

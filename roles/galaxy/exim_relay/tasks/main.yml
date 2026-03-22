@@ -3,22 +3,24 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
-- tags:
+- name: Perform exim-relay installation tasks
+  when: exim_relay_enabled | bool
+  tags:
     - setup-all
     - setup-exim-relay
     - install-all
     - install-exim-relay
   block:
-    - when: exim_relay_enabled | bool
+    - name: Validate exim-relay configuration
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
-
-    - when: exim_relay_enabled | bool
+    - name: Install exim-relay
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
-- tags:
+- name: Perform exim-relay uninstallation tasks
+  when: not exim_relay_enabled | bool
+  tags:
     - setup-all
     - setup-exim-relay
   block:
-    - when: not exim_relay_enabled | bool
+    - name: Uninstall exim-relay
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

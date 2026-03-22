@@ -1,11 +1,11 @@
-# SPDX-FileCopyrightText: 2023 - 2024 Nikita Chernyi
-# SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2023 Dan Arnfield
 # SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
+# SPDX-FileCopyrightText: 2023, 2024 Nikita Chernyi
+# SPDX-FileCopyrightText: 2023-2025 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2024 Sergio Durigan Junior
 # SPDX-FileCopyrightText: 2024 sudo-Tiz
 # SPDX-FileCopyrightText: 2025 MASH project contributors
-# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -61,16 +61,20 @@ prometheus_postgres_exporter_container_additional_networks: "{{ prometheus_postg
 prometheus_postgres_exporter_container_additional_networks_auto: []
 prometheus_postgres_exporter_container_additional_networks_custom: []
 
-# prometheus_postgres_exporter_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
+# prometheus_postgres_exporter_container_labels_metrics_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
 # See `../templates/labels.j2` for details.
 #
 # To inject your own other container labels, see `prometheus_postgres_exporter_container_labels_additional_labels_custom`.
-prometheus_postgres_exporter_container_labels_traefik_enabled: true
-prometheus_postgres_exporter_container_labels_traefik_docker_network: "{{ prometheus_postgres_exporter_container_network }}"
-prometheus_postgres_exporter_container_labels_traefik_rule: "Host(`{{ prometheus_postgres_exporter_hostname }}`) && PathPrefix(`{{ prometheus_postgres_exporter_path_prefix | quote }}`)"
-prometheus_postgres_exporter_container_labels_traefik_entrypoints: web-secure
-prometheus_postgres_exporter_container_labels_traefik_tls: "{{ prometheus_postgres_exporter_container_labels_traefik_entrypoints != 'web' }}"
-prometheus_postgres_exporter_container_labels_traefik_tls_certResolver: default  # noqa var-naming
+prometheus_postgres_exporter_container_labels_metrics_enabled: false
+prometheus_postgres_exporter_container_labels_metrics_docker_network: "{{ prometheus_postgres_exporter_container_network }}"
+prometheus_postgres_exporter_container_labels_metrics_hostname: "{{ prometheus_postgres_exporter_hostname }}"
+# The path prefix must either be `/` or not end with a slash (e.g. `/metrics`).
+prometheus_postgres_exporter_container_labels_metrics_path_prefix: "{{ prometheus_postgres_exporter_path_prefix }}"
+prometheus_postgres_exporter_container_labels_metrics_rule: "Host(`{{ prometheus_postgres_exporter_container_labels_metrics_hostname }}`){% if prometheus_postgres_exporter_container_labels_metrics_path_prefix != '/' %} && PathPrefix(`{{ prometheus_postgres_exporter_container_labels_metrics_path_prefix }}`){% endif %}"
+prometheus_postgres_exporter_container_labels_metrics_priority: 0
+prometheus_postgres_exporter_container_labels_metrics_entrypoints: web-secure
+prometheus_postgres_exporter_container_labels_metrics_tls: "{{ prometheus_postgres_exporter_container_labels_metrics_entrypoints != 'web' }}"
+prometheus_postgres_exporter_container_labels_metrics_tls_certResolver: default  # noqa var-naming
 prometheus_postgres_exporter_container_labels_metrics_middleware_basic_auth_enabled: false
 # See: https://doc.traefik.io/traefik/reference/routing-configuration/http/middlewares/basicauth/
 prometheus_postgres_exporter_container_labels_metrics_middleware_basic_auth_users: ""
@@ -104,13 +108,44 @@ prometheus_postgres_exporter_systemd_wanted_services_list_default: []
 prometheus_postgres_exporter_systemd_wanted_services_list_auto: []
 prometheus_postgres_exporter_systemd_wanted_services_list_custom: []
 
-# details for connecting to the database
-prometheus_postgres_exporter_database_username: 'prometheus_postgres_exporter'
-prometheus_postgres_exporter_database_password: 'some-password'
+# Controls how long to wait for the container to stop gracefully before killing it.
+prometheus_postgres_exporter_container_stop_grace_time_seconds: "{{ devture_systemd_docker_base_container_stop_grace_time_seconds }}"
+
+# Controls how long the pre-start cleanup should wait for stale container-name release
+# before failing startup explicitly.
+prometheus_postgres_exporter_container_cleanup_timeout_seconds: "{{ devture_systemd_docker_base_container_cleanup_timeout_seconds }}"
+
+# Controls the delay between pre-start cleanup retries.
+prometheus_postgres_exporter_container_cleanup_retry_delay_seconds: "{{ devture_systemd_docker_base_container_cleanup_retry_delay_seconds }}"
+
+# Shell command used in the systemd pre-start phase to deterministically remove a stale
+# container and wait until Docker releases its name.
+prometheus_postgres_exporter_container_cleanup_command: |
+  i=0;
+  while [ "$i" -lt {{ prometheus_postgres_exporter_container_cleanup_timeout_seconds }} ]; do
+  {{ devture_systemd_docker_base_host_command_docker }} stop -t {{ prometheus_postgres_exporter_container_stop_grace_time_seconds }} {{ prometheus_postgres_exporter_identifier }} >/dev/null 2>&1 || true;
+  {{ devture_systemd_docker_base_host_command_docker }} rm -f {{ prometheus_postgres_exporter_identifier }} >/dev/null 2>&1 || true;
+  if {{ devture_systemd_docker_base_host_command_docker }} container inspect {{ prometheus_postgres_exporter_identifier }} >/dev/null 2>&1; then
+  i=$((i + 1));
+  sleep {{ prometheus_postgres_exporter_container_cleanup_retry_delay_seconds }};
+  continue;
+  fi;
+  if {{ devture_systemd_docker_base_host_command_docker }} info >/dev/null 2>&1; then
+  exit 0;
+  fi;
+  echo "Failed to query Docker daemon while cleaning up {{ prometheus_postgres_exporter_identifier }}" >&2;
+  exit 1;
+  done;
+  echo "Failed to remove stale container {{ prometheus_postgres_exporter_identifier }} after {{ prometheus_postgres_exporter_container_cleanup_timeout_seconds }} attempts" >&2;
+  exit 1
+
+# Specify database configuration
 prometheus_postgres_exporter_database_hostname: ""
 prometheus_postgres_exporter_database_port: 5432
-prometheus_postgres_exporter_database_name: 'prometheus_postgres_exporter'
-prometheus_postgres_exporter_database_ssl: false
+prometheus_postgres_exporter_database_username: "prometheus_postgres_exporter"
+prometheus_postgres_exporter_database_password: ""
+prometheus_postgres_exporter_database_name: "prometheus_postgres_exporter"
+prometheus_postgres_exporter_database_sslmode: disable
 
 # Controls the PG_EXPORTER_AUTO_DISCOVER_DATABASES environment variable
 prometheus_postgres_exporter_env_variable_pg_exporter_auto_discover_databases: true
@@ -119,7 +154,7 @@ prometheus_postgres_exporter_env_variable_pg_exporter_auto_discover_databases: t
 prometheus_postgres_exporter_env_variable_pg_exporter_web_listen_address: ":{{ prometheus_postgres_exporter_container_http_port }}"
 
 # Controls the DATA_SOURCE_NAME environment variable
-prometheus_postgres_exporter_env_variable_data_source_name: "postgresql://{{ prometheus_postgres_exporter_database_username }}:{{ prometheus_postgres_exporter_database_password }}@{{ prometheus_postgres_exporter_database_hostname }}:{{ prometheus_postgres_exporter_database_port }}/{{ prometheus_postgres_exporter_database_name }}{{ '?sslmode=disable' if not prometheus_postgres_exporter_database_ssl else '' }}"
+prometheus_postgres_exporter_env_variable_data_source_name: "postgresql://{{ prometheus_postgres_exporter_database_username }}:{{ prometheus_postgres_exporter_database_password }}@{{ prometheus_postgres_exporter_database_hostname }}:{{ prometheus_postgres_exporter_database_port }}/{{ prometheus_postgres_exporter_database_name }}?sslmode={{ prometheus_postgres_exporter_database_sslmode }}"
 
 # prometheus_postgres_exporter_dashboard_urls contains a list of URLs with Grafana dashboard definitions.
 # This role doesn't make use of this variable, but you can hook this into other roles.

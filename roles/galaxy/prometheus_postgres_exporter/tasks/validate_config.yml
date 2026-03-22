@@ -29,6 +29,16 @@
     - { "old": "prometheus_postgres_exporter_docker_image_force_pull", "new": "prometheus_postgres_exporter_container_image_force_pull" }
     - "old": "prometheus_postgres_exporter_environment_variables_extension"
       "new": "prometheus_postgres_exporter_environment_variables_additional_variables"
+    - { "old": "prometheus_postgres_exporter_database_ssl", "new": "prometheus_postgres_exporter_database_sslmode" }
+
+- name: (Deprecation) Catch and report renamed variables for Traefik labels
+  ansible.builtin.fail:
+    msg: |-
+      Your configuration contains a variable, which now has a different name.
+      Please rename all `prometheus_postgres_exporter_container_labels_traefik_*` variables to `prometheus_postgres_exporter_container_labels_metrics_*` on your configuration file (vars.yml).
+
+      The following variables in your configuration need to be renamed: {{ lookup('ansible.builtin.varnames', '^prometheus_postgres_exporter_container_labels_traefik_.+', wantlist=True) | join(', ') }}
+  when: "lookup('ansible.builtin.varnames', '^prometheus_postgres_exporter_container_labels_traefik_.+', wantlist=True) | length > 0"
 
 - name: Fail if required Prometheus Postgres exporter settings not defined
   ansible.builtin.fail:
@@ -42,3 +52,4 @@
     - prometheus_postgres_exporter_container_network
     - prometheus_postgres_exporter_path_prefix
     - prometheus_postgres_exporter_database_hostname
+    - prometheus_postgres_exporter_database_password

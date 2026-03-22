@@ -46,6 +46,12 @@
       gotosocial_database_type must be 'postgres' or 'sqlite'
   when: "gotosocial_database_type not in ['postgres', 'sqlite']"
 
+- name: Fail if GoToSocial database SSL mode invalid
+  ansible.builtin.fail:
+    msg: >-
+      gotosocial_database_sslmode must be 'disable', 'enable', or 'require'
+  when: "gotosocial_database_sslmode not in ['disable', 'enable', 'require']"
+
 - name: Fail if SMTP settings are missing (and SMTP is enabled by setting host)
   ansible.builtin.fail:
     msg: >-

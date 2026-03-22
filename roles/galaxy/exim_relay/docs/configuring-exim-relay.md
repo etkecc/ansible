@@ -19,9 +19,10 @@ To use exim-relay, make sure you have configured the firewall properly. You'll p
 
 To enable exim-relay with this role, add the following configuration to your `vars.yml` file.
 
-**Notes**:
-- The path should be something like `inventory/host_vars/mash.example.com/vars.yml` if you use the [Mother-of-All-Self-Hosting (MASH)](https://github.com/mother-of-all-self-hosting/mash-playbook) Ansible playbook.
-- If you use the [matrix-docker-ansible-deploy (MDAD)](https://github.com/spantaleev/matrix-docker-ansible-deploy) Ansible playbook, you do not need to enable exim-relay as it is enabled by default. See its [`matrix_servers`](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/group_vars/matrix_servers) for details.
+>[!NOTE]
+>
+> - The path should be something like `inventory/host_vars/mash.example.com/vars.yml` if you use the [Mother-of-All-Self-Hosting (MASH)](https://github.com/mother-of-all-self-hosting/mash-playbook) Ansible playbook.
+> - If you use the [matrix-docker-ansible-deploy (MDAD)](https://github.com/spantaleev/matrix-docker-ansible-deploy) Ansible playbook, you do not need to enable exim-relay as it is enabled by default. See its [`matrix_servers`](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/group_vars/matrix_servers) for details.
 
 ```yaml
 ########################################################################
@@ -95,28 +96,24 @@ exim_relay_relay_auth_username: "another.sender@example.com"
 exim_relay_relay_auth_password: "PASSWORD_FOR_THE_RELAY_HERE"
 ```
 
-**Note**: only the secure submission protocol (using `STARTTLS`, usually on port `587`) is supported. **SMTPS** (encrypted SMTP, usually on port `465`) **is not supported**.
+By default, STARTTLS on port 587 is used. To use implicit TLS (SMTPS) on port 465 instead, see [the section below](#using-smtps-implicit-tls-on-port-465).
 
-#### Sending emails using Sendgrid
+### Using SMTPS (implicit TLS on port 465)
 
-An easy and free SMTP service to set up is [Sendgrid](https://sendgrid.com/). Its free tier allows for up to 100 emails per day to be sent.
-
-To set it up, add the following configuration to your `vars.yml` file (adapt to your needs):
+Some providers require implicit TLS ([RFC 8314](https://www.rfc-editor.org/rfc/rfc8314)) instead of STARTTLS. Set `exim_relay_relay_protocol` to `smtps` — the port defaults to `465` automatically:
 
 ```yaml
-exim_relay_sender_address: "example@example.org"
+exim_relay_sender_address: "another.sender@example.com"
 exim_relay_relay_use: true
-exim_relay_relay_host_name: "smtp.sendgrid.net"
-exim_relay_relay_host_port: 587
+exim_relay_relay_host_name: "mail.example.com"
+exim_relay_relay_protocol: "smtps"
 exim_relay_relay_auth: true
-
-# This needs to be literally the string "apikey". It is always the same for Sendgrid.
-exim_relay_relay_auth_username: "apikey"
-
-# You can generate the API key password at this URL: https://app.sendgrid.com/settings/api_keys
-# The password looks something like `SG.955oW1mLSfwds7i9Yd6IA5Q.q8GTaB8q9kGDzasegdG6u95fQ-6zkdwrPP8bOeuI`.
-exim_relay_relay_auth_password: "YOUR_API_KEY_PASSWORD_HERE"
+exim_relay_relay_auth_username: "another.sender@example.com"
+exim_relay_relay_auth_password: "PASSWORD_FOR_THE_RELAY_HERE"
 ```
+
+> [!NOTE]
+> Port 465 is set automatically when `exim_relay_relay_protocol: "smtps"` is used. You can still override `exim_relay_relay_host_port` explicitly if your provider uses a non-standard port.
 
 ## Installing
 

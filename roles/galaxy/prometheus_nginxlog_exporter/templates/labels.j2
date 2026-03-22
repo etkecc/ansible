@@ -5,11 +5,11 @@ SPDX-FileCopyrightText: 2023 - 2024 Slavi Pantaleev
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
 
-{% if prometheus_nginxlog_exporter_container_labels_traefik_enabled %}
+{% if prometheus_nginxlog_exporter_container_labels_metrics_enabled %}
 traefik.enable=true
 
-{% if prometheus_nginxlog_exporter_container_labels_traefik_docker_network %}
-traefik.docker.network={{ prometheus_nginxlog_exporter_container_labels_traefik_docker_network }}
+{% if prometheus_nginxlog_exporter_container_labels_metrics_docker_network %}
+traefik.docker.network={{ prometheus_nginxlog_exporter_container_labels_metrics_docker_network }}
 {% endif %}
 
 {% set middlewares = [] %}
@@ -22,16 +22,16 @@ traefik.http.middlewares.{{ prometheus_nginxlog_exporter_identifier }}-basic-aut
 {% set middlewares = middlewares + [prometheus_nginxlog_exporter_identifier + '-replacepath'] %}
 traefik.http.middlewares.{{ prometheus_nginxlog_exporter_identifier }}-replacepath.replacepath.path=/metrics
 
-traefik.http.routers.{{ prometheus_nginxlog_exporter_identifier }}.rule={{ prometheus_nginxlog_exporter_container_labels_traefik_rule }}
+traefik.http.routers.{{ prometheus_nginxlog_exporter_identifier }}.rule={{ prometheus_nginxlog_exporter_container_labels_metrics_rule }}
 
 traefik.http.routers.{{ prometheus_nginxlog_exporter_identifier }}.service={{ prometheus_nginxlog_exporter_identifier }}
 {% if middlewares | length > 0 %}
 traefik.http.routers.{{ prometheus_nginxlog_exporter_identifier }}.middlewares={{ middlewares | join(',') }}
 {% endif %}
-traefik.http.routers.{{ prometheus_nginxlog_exporter_identifier }}.entrypoints={{ prometheus_nginxlog_exporter_container_labels_traefik_entrypoints }}
-traefik.http.routers.{{ prometheus_nginxlog_exporter_identifier }}.tls={{ prometheus_nginxlog_exporter_container_labels_traefik_tls | to_json }}
-{% if prometheus_nginxlog_exporter_container_labels_traefik_tls %}
-traefik.http.routers.{{ prometheus_nginxlog_exporter_identifier }}.tls.certResolver={{ prometheus_nginxlog_exporter_container_labels_traefik_tls_certResolver }}
+traefik.http.routers.{{ prometheus_nginxlog_exporter_identifier }}.entrypoints={{ prometheus_nginxlog_exporter_container_labels_metrics_entrypoints }}
+traefik.http.routers.{{ prometheus_nginxlog_exporter_identifier }}.tls={{ prometheus_nginxlog_exporter_container_labels_metrics_tls | to_json }}
+{% if prometheus_nginxlog_exporter_container_labels_metrics_tls %}
+traefik.http.routers.{{ prometheus_nginxlog_exporter_identifier }}.tls.certResolver={{ prometheus_nginxlog_exporter_container_labels_metrics_tls_certResolver }}
 {% endif %}
 
 traefik.http.services.{{ prometheus_nginxlog_exporter_identifier }}.loadbalancer.server.port={{ prometheus_nginxlog_exporter_container_metrics_port }}

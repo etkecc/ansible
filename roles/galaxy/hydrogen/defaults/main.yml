@@ -201,6 +201,37 @@ hydrogen_systemd_wanted_services_list_default: []
 hydrogen_systemd_wanted_services_list_auto: []
 hydrogen_systemd_wanted_services_list_custom: []
 
+# Controls how long to wait for the container to stop gracefully before killing it.
+hydrogen_container_stop_grace_time_seconds: "{{ devture_systemd_docker_base_container_stop_grace_time_seconds }}"
+
+# Controls how long the pre-start cleanup should wait for stale container-name release
+# before failing startup explicitly.
+hydrogen_container_cleanup_timeout_seconds: "{{ devture_systemd_docker_base_container_cleanup_timeout_seconds }}"
+
+# Controls the delay between pre-start cleanup retries.
+hydrogen_container_cleanup_retry_delay_seconds: "{{ devture_systemd_docker_base_container_cleanup_retry_delay_seconds }}"
+
+# Shell command used in the systemd pre-start phase to deterministically remove a stale
+# container and wait until Docker releases its name.
+hydrogen_container_cleanup_command: |
+  i=0;
+  while [ "$i" -lt {{ hydrogen_container_cleanup_timeout_seconds }} ]; do
+  {{ devture_systemd_docker_base_host_command_docker }} stop -t {{ hydrogen_container_stop_grace_time_seconds }} {{ hydrogen_identifier }} >/dev/null 2>&1 || true;
+  {{ devture_systemd_docker_base_host_command_docker }} rm -f {{ hydrogen_identifier }} >/dev/null 2>&1 || true;
+  if {{ devture_systemd_docker_base_host_command_docker }} container inspect {{ hydrogen_identifier }} >/dev/null 2>&1; then
+  i=$((i + 1));
+  sleep {{ hydrogen_container_cleanup_retry_delay_seconds }};
+  continue;
+  fi;
+  if {{ devture_systemd_docker_base_host_command_docker }} info >/dev/null 2>&1; then
+  exit 0;
+  fi;
+  echo "Failed to query Docker daemon while cleaning up {{ hydrogen_identifier }}" >&2;
+  exit 1;
+  done;
+  echo "Failed to remove stale container {{ hydrogen_identifier }} after {{ hydrogen_container_cleanup_timeout_seconds }} attempts" >&2;
+  exit 1
+
 # Default homeserver URL to use in the `config.json` file.
 # See `hydrogen_config_homeserverList`.
 hydrogen_default_hs_url: ""

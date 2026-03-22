@@ -18,8 +18,7 @@ DefaultDependencies=no
 [Service]
 Type=simple
 Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
-ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ container_socket_proxy_identifier }} 2>/dev/null || true'
-ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ container_socket_proxy_identifier }} 2>/dev/null || true'
+ExecStartPre={{ devture_systemd_docker_base_host_command_sh }} -c '{{ container_socket_proxy_container_cleanup_command | trim | replace("\n", " ") }}'
 
 # We cannot use `--read-only` since 0.1.2, because of:
 # > /usr/local/bin/docker-entrypoint.sh: line 18: can't create /usr/local/etc/haproxy/haproxy.cfg: Read-only file system

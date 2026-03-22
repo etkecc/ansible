@@ -19,7 +19,7 @@ gotosocial_database_path: "{{ gotosocial_data_path }}/database"
 gotosocial_customized_container_src_path: "{{ gotosocial_base_path }}/customized-container-src"
 
 # renovate: datasource=docker depName=superseriousbusiness/gotosocial versioning=semver
-gotosocial_version: 0.21.1
+gotosocial_version: 0.21.2
 
 gotosocial_uid: ""
 gotosocial_gid: ""
@@ -319,20 +319,21 @@ gotosocial_instance_languages: []
 # https://docs.gotosocial.org/en/latest/advanced/metrics/
 gotosocial_metrics_enabled: false
 
-# Specify database to use
+# Specify a database driver to use
 # Valid values: postgres, sqlite
 gotosocial_database_type: sqlite
 
+# Specify database configuration
+gotosocial_database_address_sqlite: "/opt/gotosocial/sqlite.db"
 gotosocial_database_hostname: ""
 gotosocial_database_port: 5432
-gotosocial_database_name: gotosocial
 gotosocial_database_username: gotosocial
 gotosocial_database_password: ""
-# Use this to set the sslmode parameter of the SSL connection
+# Specify SSL mode for Postgres database server
 # By default, we expect a local container (without SSL), so attempting SSL connections is not necessary.
+# Valid values: see https://docs.gotosocial.org/en/stable/configuration/database/
 gotosocial_database_sslmode: disable
-
-gotosocial_database_address_sqlite: "/opt/gotosocial/sqlite.db"
+gotosocial_database_name: gotosocial
 
 # REGISTRATION
 gotosocial_accounts_registration_open: false

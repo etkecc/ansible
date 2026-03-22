@@ -6,6 +6,15 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
+- name: (Deprecation) Catch and report renamed variables for Traefik labels
+  ansible.builtin.fail:
+    msg: |-
+      Your configuration contains a variable, which now has a different name.
+      Please rename all `prometheus_nginxlog_exporter_container_labels_traefik_*` variables to `prometheus_nginxlog_exporter_container_labels_metrics_*` on your configuration file (vars.yml).
+
+      The following variables in your configuration need to be renamed: {{ lookup('ansible.builtin.varnames', '^prometheus_nginxlog_exporter_container_labels_traefik_.+', wantlist=True) | join(', ') }}
+  when: "lookup('ansible.builtin.varnames', '^prometheus_nginxlog_exporter_container_labels_traefik_.+', wantlist=True) | length > 0"
+
 - name: Fail if required prometheus-nginxlog-exporter settings not defined
   ansible.builtin.fail:
     msg: >-
@@ -30,7 +39,7 @@
   when: prometheus_nginxlog_exporter_container_image_arch_check_enabled and prometheus_nginxlog_exporter_architecture not in prometheus_nginxlog_exporter_container_image_arch
 
 - name: Run if Traefik is enabled
-  when: prometheus_nginxlog_exporter_container_labels_traefik_enabled | bool
+  when: prometheus_nginxlog_exporter_container_labels_metrics_enabled | bool
   block:
     - name: Fail if Traefik settings required for prometheus-nginxlog-exporter are not defined
       ansible.builtin.fail:
@@ -38,5 +47,5 @@
           You need to define a required configuration setting (`{{ item }}`).
       when: "lookup('vars', item, default='') | string | length == 0"
       with_items:
-        - prometheus_nginxlog_exporter_container_labels_traefik_hostname
-        - prometheus_nginxlog_exporter_container_labels_traefik_path_prefix
+        - prometheus_nginxlog_exporter_container_labels_metrics_hostname
+        - prometheus_nginxlog_exporter_container_labels_metrics_path_prefix

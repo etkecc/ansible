@@ -26,6 +26,15 @@
       "new": "prometheus_node_exporter_container_image_registry_prefix_upstream_default"
     - { "old": "prometheus_node_exporter_docker_image_force_pull", "new": "prometheus_node_exporter_container_image_force_pull" }
 
+- name: (Deprecation) Catch and report renamed variables for Traefik labels
+  ansible.builtin.fail:
+    msg: |-
+      Your configuration contains a variable, which now has a different name.
+      Please rename all `prometheus_node_exporter_container_labels_traefik_*` variables to `prometheus_node_exporter_container_labels_metrics_*` on your configuration file (vars.yml).
+
+      The following variables in your configuration need to be renamed: {{ lookup('ansible.builtin.varnames', '^prometheus_node_exporter_container_labels_traefik_.+', wantlist=True) | join(', ') }}
+  when: "lookup('ansible.builtin.varnames', '^prometheus_node_exporter_container_labels_traefik_.+', wantlist=True) | length > 0"
+
 - name: Fail if required Prometheus node exporter settings not defined
   ansible.builtin.fail:
     msg: >-
@@ -37,7 +46,7 @@
     - prometheus_node_exporter_container_network
 
 - name: Run if Traefik is enabled
-  when: prometheus_node_exporter_container_labels_traefik_enabled | bool
+  when: prometheus_node_exporter_container_labels_metrics_enabled | bool
   block:
     - name: Fail if Traefik settings required for Prometheus node exporter are not defined
       ansible.builtin.fail:
@@ -45,5 +54,5 @@
           You need to define a required configuration setting (`{{ item }}`).
       when: "lookup('vars', item, default='') | string | length == 0"
       with_items:
-        - prometheus_node_exporter_container_labels_traefik_hostname
-        - prometheus_node_exporter_container_labels_traefik_path_prefix
+        - prometheus_node_exporter_container_labels_metrics_hostname
+        - prometheus_node_exporter_container_labels_metrics_path_prefix

@@ -14,7 +14,7 @@
   version: v1.4.1-5
   name: funkwhale
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-gotosocial.git
-  version: v0.21.1-0
+  version: v0.21.2-1
   name: gotosocial
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-languagetool.git
   version: v6.7-1
@@ -23,13 +23,13 @@
   version: v1.45.0-1
   name: linkding
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-miniflux.git
-  version: v2.2.18-0
+  version: v2.2.18-1
   name: miniflux
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-peertube.git
   version: v7.2.3-6
   name: peertube
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-radicale.git
-  version: v3.6.1.0-0
+  version: v3.6.1.0-1
   name: radicale
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-ssh.git
   version: main

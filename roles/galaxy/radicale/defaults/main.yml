@@ -190,14 +190,50 @@ radicale_systemd_wanted_services_list_default: []
 radicale_systemd_wanted_services_list_auto: []
 radicale_systemd_wanted_services_list_custom: []
 
+# Controls how long to wait for the container to stop gracefully before killing it.
+radicale_container_stop_grace_time_seconds: "{{ devture_systemd_docker_base_container_stop_grace_time_seconds }}"
+
+# Controls how long the pre-start cleanup should wait for stale container-name release
+# before failing startup explicitly.
+radicale_container_cleanup_timeout_seconds: "{{ devture_systemd_docker_base_container_cleanup_timeout_seconds }}"
+
+# Controls the delay between pre-start cleanup retries.
+radicale_container_cleanup_retry_delay_seconds: "{{ devture_systemd_docker_base_container_cleanup_retry_delay_seconds }}"
+
+# Shell command used in the systemd pre-start phase to deterministically remove a stale
+# container and wait until Docker releases its name.
+radicale_container_cleanup_command: |
+  i=0;
+  while [ "$i" -lt {{ radicale_container_cleanup_timeout_seconds }} ]; do
+  {{ devture_systemd_docker_base_host_command_docker }} stop -t {{ radicale_container_stop_grace_time_seconds }} {{ radicale_identifier }} >/dev/null 2>&1 || true;
+  {{ devture_systemd_docker_base_host_command_docker }} rm -f {{ radicale_identifier }} >/dev/null 2>&1 || true;
+  if {{ devture_systemd_docker_base_host_command_docker }} container inspect {{ radicale_identifier }} >/dev/null 2>&1; then
+  i=$((i + 1));
+  sleep {{ radicale_container_cleanup_retry_delay_seconds }};
+  continue;
+  fi;
+  if {{ devture_systemd_docker_base_host_command_docker }} info >/dev/null 2>&1; then
+  exit 0;
+  fi;
+  echo "Failed to query Docker daemon while cleaning up {{ radicale_identifier }}" >&2;
+  exit 1;
+  done;
+  echo "Failed to remove stale container {{ radicale_identifier }} after {{ radicale_container_cleanup_timeout_seconds }} attempts" >&2;
+  exit 1
+
 # default is htpasswd
 radicale_auth_type: htpasswd
 # if you use https://github.com/etkecc/radicale-auth-matrix
 radicale_auth_matrix_server: ""
 
 # A list of `htpasswd -nb user password` entries
-# Also see `radicale_credentials` for a more convenient way to create credentials.
-# Ansible will run `htpasswd` on the entries in `radicale_credentials` and append them to this list.
+# This is the preferred way to configure HTTP Basic authentication, because it
+# avoids the `passlib` dependency and keeps the resulting configuration stable
+# across playbook runs.
+#
+# Also see `radicale_credentials` for a legacy convenience method.
+# Ansible will convert the entries in `radicale_credentials` and append them to
+# this list.
 radicale_htpasswds: []
 
 # A list of credential entries
@@ -208,6 +244,12 @@ radicale_htpasswds: []
 #     password: secret-password
 #   - username: another
 #     password: more-secret-password
+#
+# This convenience method is discouraged. It requires the `passlib` Python
+# library on the Ansible controller, may be affected by passlib/bcrypt
+# compatibility issues (https://foss.heptapod.net/python-libs/passlib/-/issues/196),
+# and generates non-deterministic hashes which can lead to unnecessary changes.
+# Prefer defining `radicale_htpasswds` instead.
 radicale_credentials: []
 
 # Temporary file path on the host that runs Ansible.

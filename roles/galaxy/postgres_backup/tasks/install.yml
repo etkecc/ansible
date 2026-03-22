@@ -49,20 +49,20 @@
     source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
     force_source: "{{ postgres_backup_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
     force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else postgres_backup_container_image_force_pull }}"
-  register: postgres_backup_container_image_pull_result
+  register: postgres_backup_container_image_pull_result_ansible_module
   retries: "{{ devture_playbook_help_container_retries_count }}"
   delay: "{{ devture_playbook_help_container_retries_delay }}"
-  until: postgres_backup_container_image_pull_result is not failed
+  until: postgres_backup_container_image_pull_result_ansible_module is not failed
 
 - name: Ensure postgres-backup container image is pulled via ansible.builtin.command
   when: devture_systemd_docker_base_container_image_pull_method == 'command'
   ansible.builtin.command:
     cmd: "{{ devture_systemd_docker_base_host_command_docker }} pull {{ postgres_backup_container_image_to_use }}"
-  register: postgres_backup_container_image_pull_result
+  register: postgres_backup_container_image_pull_result_command
   retries: "{{ devture_playbook_help_container_retries_count }}"
   delay: "{{ devture_playbook_help_container_retries_delay }}"
-  until: postgres_backup_container_image_pull_result is not failed
-  changed_when: "'Downloaded newer image' in postgres_backup_container_image_pull_result.stdout"
+  until: postgres_backup_container_image_pull_result_command is not failed
+  changed_when: "'Downloaded newer image' in postgres_backup_container_image_pull_result_command.stdout"
 
 - name: Ensure postgres-backup container network is created via community.docker.docker_network
   when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
@@ -98,5 +98,6 @@
       {{
         postgres_backup_support_files_result.changed | default(false)
         or postgres_backup_systemd_service_result.changed | default(false)
-        or postgres_backup_container_image_pull_result.changed | default(false)
+        or postgres_backup_container_image_pull_result_ansible_module.changed | default(false)
+        or postgres_backup_container_image_pull_result_command.changed | default(false)
       }}

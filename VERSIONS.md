@@ -1,6 +1,6 @@
 * Alpine: edge
 * Authentication Service: 1.13.0
-* Baibot: v1.15.0
+* Baibot: v1.16.0
 * Bluesky: v0.2510.0
 * Borg: 1.4.3
 * Borgmatic: 2.1.3
@@ -12,17 +12,17 @@
 * Draupnir: v2.9.0
 * Element: v1.12.12
 * Etherpad: 2.6.1
-* Exim Relay: 4.98.1-r0-2
+* Exim Relay: 4.99.1-r0-0
 * Firezone: 0.7.36
 * Fluffychat: v2.4.1
 * Funkwhale: 1.4.1
 * Gmessages: v0.2602.0
 * Go Neb: latest
 * Googlechat: v0.5.2
-* Gotosocial: 0.21.1
+* Gotosocial: 0.21.2
 * Grafana: 11.6.5
 * Heisenbridge: 1.15.4
-* Honoroit: v0.9.29
+* Honoroit: v0.9.30
 * Hookshot: 7.3.2
 * Hydrogen: v0.5.1
 * Jitsi: stable-10741
@@ -73,7 +73,7 @@
 * Synapse Rust Synapse Compress State Container Image: v0.0.3
 * Synapse S3 Storage Provider: 1.6.0
 * Telegram: v0.15.3
-* Traefik: v3.6.10
+* Traefik: v3.6.11
 * Traefik Certs Dumper: v2.10.0
 * Traefik Config Tcp Servertransports Default Proxyprotocol: 1
 * Twitter: v0.2603.0

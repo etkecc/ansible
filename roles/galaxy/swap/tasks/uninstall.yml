@@ -18,7 +18,7 @@
         opts: sw,nofail
         dump: '0'
         passno: '0'
-        state: present
+        state: absent
 
     - name: Ensure swap file removed
       ansible.builtin.file:

@@ -27,6 +27,9 @@ container_socket_proxy_container_image_registry_prefix_upstream_default: ghcr.io
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 container_socket_proxy_container_network: "{{ container_socket_proxy_identifier }}"
 
+# Control if the container network is deleted on uninstalling.
+container_socket_proxy_container_network_deletion_enabled: true
+
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
 container_socket_proxy_container_additional_networks: "{{ container_socket_proxy_container_additional_networks_auto + container_socket_proxy_container_additional_networks_custom }}"
@@ -67,6 +70,37 @@ container_socket_proxy_systemd_wanted_services_list: "{{ container_socket_proxy_
 container_socket_proxy_systemd_wanted_services_list_default: []
 container_socket_proxy_systemd_wanted_services_list_auto: []
 container_socket_proxy_systemd_wanted_services_list_custom: []
+
+# Controls how long to wait for the container to stop gracefully before killing it.
+container_socket_proxy_container_stop_grace_time_seconds: "{{ devture_systemd_docker_base_container_stop_grace_time_seconds }}"
+
+# Controls how long the pre-start cleanup should wait for stale container-name release
+# before failing startup explicitly.
+container_socket_proxy_container_cleanup_timeout_seconds: "{{ devture_systemd_docker_base_container_cleanup_timeout_seconds }}"
+
+# Controls the delay between pre-start cleanup retries.
+container_socket_proxy_container_cleanup_retry_delay_seconds: "{{ devture_systemd_docker_base_container_cleanup_retry_delay_seconds }}"
+
+# Shell command used in the systemd pre-start phase to deterministically remove a stale
+# container and wait until Docker releases its name.
+container_socket_proxy_container_cleanup_command: |
+  i=0;
+  while [ "$i" -lt {{ container_socket_proxy_container_cleanup_timeout_seconds }} ]; do
+  {{ devture_systemd_docker_base_host_command_docker }} stop -t {{ container_socket_proxy_container_stop_grace_time_seconds }} {{ container_socket_proxy_identifier }} >/dev/null 2>&1 || true;
+  {{ devture_systemd_docker_base_host_command_docker }} rm -f {{ container_socket_proxy_identifier }} >/dev/null 2>&1 || true;
+  if {{ devture_systemd_docker_base_host_command_docker }} container inspect {{ container_socket_proxy_identifier }} >/dev/null 2>&1; then
+  i=$((i + 1));
+  sleep {{ container_socket_proxy_container_cleanup_retry_delay_seconds }};
+  continue;
+  fi;
+  if {{ devture_systemd_docker_base_host_command_docker }} info >/dev/null 2>&1; then
+  exit 0;
+  fi;
+  echo "Failed to query Docker daemon while cleaning up {{ container_socket_proxy_identifier }}" >&2;
+  exit 1;
+  done;
+  echo "Failed to remove stale container {{ container_socket_proxy_identifier }} after {{ container_socket_proxy_container_cleanup_timeout_seconds }} attempts" >&2;
+  exit 1
 
 # Specifies the container socket path on the host
 container_socket_proxy_container_socket_path: /var/run/docker.sock

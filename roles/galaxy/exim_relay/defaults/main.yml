@@ -19,12 +19,12 @@ exim_relay_uid: ''
 exim_relay_gid: ''
 
 # renovate: datasource=docker depName=ghcr.io/devture/exim-relay versioning=semver
-exim_relay_version: 4.98.1-r0-2
+exim_relay_version: 4.99.1-r0-0
 
 exim_relay_container_image_self_build: false
-exim_relay_container_image_self_build_repository_url: "https://github.com/devture/exim-relay"
+exim_relay_container_image_self_build_repo: "https://github.com/devture/exim-relay"
 exim_relay_container_image_self_build_src_files_path: "{{ exim_relay_base_path }}/docker-src"
-exim_relay_container_image_self_build_version: "{{ exim_relay_container_image.split(':')[1] }}"
+exim_relay_container_image_self_build_repo_version: "{{ exim_relay_container_image.split(':')[1] }}"
 
 exim_relay_container_image: "{{ exim_relay_container_image_registry_prefix }}devture/exim-relay:{{ exim_relay_version }}"
 exim_relay_container_image_registry_prefix: "{{ 'localhost/' if exim_relay_container_image_self_build else exim_relay_container_image_registry_prefix_upstream }}"
@@ -53,14 +53,48 @@ exim_relay_container_extra_arguments: []
 # Additional environment variables.
 exim_relay_environment_variables_additional_variables: ''
 
-# List of systemd services that the systemd service depends on
+# List of systemd services that the exim-relay systemd service depends on
 exim_relay_systemd_required_services_list: "{{ exim_relay_systemd_required_services_list_default + exim_relay_systemd_required_services_list_auto + exim_relay_systemd_required_services_list_custom }}"
 exim_relay_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
 exim_relay_systemd_required_services_list_auto: []
 exim_relay_systemd_required_services_list_custom: []
 
-# List of systemd services that the systemd service wants
-exim_relay_systemd_wanted_services_list: []
+# List of systemd services that the exim-relay systemd service wants
+exim_relay_systemd_wanted_services_list: "{{ exim_relay_systemd_wanted_services_list_default + exim_relay_systemd_wanted_services_list_auto + exim_relay_systemd_wanted_services_list_custom }}"
+exim_relay_systemd_wanted_services_list_default: []
+exim_relay_systemd_wanted_services_list_auto: []
+exim_relay_systemd_wanted_services_list_custom: []
+
+# Controls how long to wait for the container to stop gracefully before killing it.
+exim_relay_container_stop_grace_time_seconds: "{{ devture_systemd_docker_base_container_stop_grace_time_seconds }}"
+
+# Controls how long the pre-start cleanup should wait for stale container-name release
+# before failing startup explicitly.
+exim_relay_container_cleanup_timeout_seconds: "{{ devture_systemd_docker_base_container_cleanup_timeout_seconds }}"
+
+# Controls the delay between pre-start cleanup retries.
+exim_relay_container_cleanup_retry_delay_seconds: "{{ devture_systemd_docker_base_container_cleanup_retry_delay_seconds }}"
+
+# Shell command used in the systemd pre-start phase to deterministically remove a stale
+# container and wait until Docker releases its name.
+exim_relay_container_cleanup_command: |
+  i=0;
+  while [ "$i" -lt {{ exim_relay_container_cleanup_timeout_seconds }} ]; do
+  {{ devture_systemd_docker_base_host_command_docker }} stop -t {{ exim_relay_container_stop_grace_time_seconds }} {{ exim_relay_identifier }} >/dev/null 2>&1 || true;
+  {{ devture_systemd_docker_base_host_command_docker }} rm -f {{ exim_relay_identifier }} >/dev/null 2>&1 || true;
+  if {{ devture_systemd_docker_base_host_command_docker }} container inspect {{ exim_relay_identifier }} >/dev/null 2>&1; then
+  i=$((i + 1));
+  sleep {{ exim_relay_container_cleanup_retry_delay_seconds }};
+  continue;
+  fi;
+  if {{ devture_systemd_docker_base_host_command_docker }} info >/dev/null 2>&1; then
+  exit 0;
+  fi;
+  echo "Failed to query Docker daemon while cleaning up {{ exim_relay_identifier }}" >&2;
+  exit 1;
+  done;
+  echo "Failed to remove stale container {{ exim_relay_identifier }} after {{ exim_relay_container_cleanup_timeout_seconds }} attempts" >&2;
+  exit 1
 
 exim_relay_hostname: ""
 
@@ -77,7 +111,11 @@ exim_relay_dkim_privkey_contents: ""
 
 exim_relay_relay_use: false
 exim_relay_relay_host_name: "mail.example.com"
-exim_relay_relay_host_port: 587
+# Supported values: "smtp" (STARTTLS, default) or "smtps" (implicit TLS on port 465, RFC 8314)
+exim_relay_relay_protocol: "smtp"
+# When using "smtps", port 465 is set automatically; 587 is the default for "smtp".
+# You can override this explicitly if your provider uses a non-standard port.
+exim_relay_relay_host_port: "{{ '465' if exim_relay_relay_protocol == 'smtps' else '587' }}"
 exim_relay_relay_auth: false
 exim_relay_relay_auth_username: ""
 exim_relay_relay_auth_password: ""

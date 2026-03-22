@@ -211,13 +211,17 @@ miniflux_container_cleanup_command: |
 miniflux_admin_login: ""
 miniflux_admin_password: ""
 
-miniflux_database_username: miniflux
-miniflux_database_password: ""
+# Specify database configuration
 miniflux_database_hostname: ""
 miniflux_database_port: 5432
+miniflux_database_username: miniflux
+miniflux_database_password: ""
+# Specify SSL mode for Postgres database server
+# By default, we expect a local container (without SSL), so attempting SSL connections is not necessary.
+# Valid values: see https://www.postgresql.org/docs/11/libpq-ssl.html#LIBPQ-SSL-SSLMODE-STATEMENTS
+miniflux_database_sslmode: disable
 miniflux_database_name: miniflux
-
-miniflux_database_connection_string: "postgres://{{ miniflux_database_username }}:{{ miniflux_database_password }}@{{ miniflux_database_hostname }}:{{ miniflux_database_port }}/{{ miniflux_database_name }}?sslmode=disable"
+miniflux_database_connection_string: "postgres://{{ miniflux_database_username }}:{{ miniflux_database_password }}@{{ miniflux_database_hostname }}:{{ miniflux_database_port }}/{{ miniflux_database_name }}?sslmode={{ miniflux_database_sslmode }}"
 
 # Specify the timezone
 miniflux_environment_variables_tz: UTC
