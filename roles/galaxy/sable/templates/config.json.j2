@@ -2,6 +2,17 @@
   "defaultHomeserver": {{ sable_config_defaultHomeserver | to_json }},
   "homeserverList": {{ sable_config_homeserverList | to_json }},
   "allowCustomHomeservers": {{ sable_config_allowCustomHomeservers | to_json }},
+
+  "pushNotificationDetails": {
+    "pushNotifyUrl": {{ sable_config_pushNotifyUrl | to_json }},
+    "vapidPublicKey": {{ sable_config_vapidPublicKey | to_json }},
+    "webPushAppID": {{ sable_config_webPushAppID | to_json }}
+  },
+  
+  "slidingSync": {
+    "enabled": {{ sable_config_slidingSync_enabled | to_json }}
+  },
+
   "featuredCommunities": {
     "spaces": {{ sable_config_featuredCommunities_spaces | to_json }},
     "rooms": {{ sable_config_featuredCommunities_rooms | to_json }},

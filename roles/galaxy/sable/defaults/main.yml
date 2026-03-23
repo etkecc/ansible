@@ -266,6 +266,16 @@ sable_config_featuredCommunities_servers: ["matrix.org"]  # noqa var-naming
 # Controls the `featuredCommunities.openAsDefault` value in the `config.json` file.
 sable_config_featuredCommunities_openAsDefault: false  # noqa var-naming
 
+# Configures the gateway server used for webpush notifications.
+# This should not be changed in most cases.
+sable_config_pushNotifyUrl: "https://sygnal.sable.moe/_matrix/push/v1/notify"
+sable_config_vapidPublicKey: "BCnS4SbHjeOaqVFW4wjt5xDt_pYIL62qMzKePfYF9fl9PQU14RieIaObh7nLR_9dQf4sykZa-CTrcjkgMIE1mcg"
+sable_config_webPushAppID: "moe.sable.app.sygnal"
+
+# Controls whether MSC4186 Simplified Sliding Sync is available in experimental options.
+# Disabled by default for the moment as it is known to have multiple bugs.
+sable_config_slidingSync_enabled: false
+
 # Default Sable configuration template which covers the generic use case.
 # You can customize it by controlling the various variables inside it.
 #
