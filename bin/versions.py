@@ -6,6 +6,8 @@ import yaml
 
 ignored = [
     'matrix_synapse_default_room_version',
+    'matrix_playbook_migration_validated_version',
+    'matrix_playbook_migration_expected_version',
 ]
 prefixes = [
     'matrix_',
