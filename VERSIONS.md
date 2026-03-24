@@ -1,6 +1,6 @@
 * Alpine: edge
 * Authentication Service: 1.13.0
-* Baibot: v1.16.0
+* Baibot: v1.16.1
 * Bluesky: v0.2510.0
 * Borg: 1.4.3
 * Borgmatic: 2.1.3
@@ -10,9 +10,9 @@
 * Coturn: 4.9.0
 * Discord: v0.7.6
 * Draupnir: v2.9.0
-* Element: v1.12.12
+* Element: v1.12.13
 * Etherpad: 2.6.1
-* Exim Relay: 4.99.1-r0-0
+* Exim Relay: 4.99.1-r0-1
 * Firezone: 0.7.36
 * Fluffychat: v2.4.1
 * Funkwhale: 1.4.1
@@ -32,7 +32,7 @@
 * Linkding: 1.45.0
 * Linkedin: latest
 * Livekit Jwt Service: 0.4.1
-* Livekit Server: v1.9.12
+* Livekit Server: v1.10.0
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.6.0
 * Meta Instagram: v0.2602.0
