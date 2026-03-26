@@ -1,6 +1,6 @@
 * Alpine: edge
 * Authentication Service: 1.14.0
-* Baibot: v1.16.1
+* Baibot: v1.17.0
 * Bluesky: v0.2510.0
 * Borg: 1.4.3
 * Borgmatic: 2.1.3
@@ -32,7 +32,7 @@
 * Linkding: 1.45.0
 * Linkedin: latest
 * Livekit Jwt Service: 0.4.1
-* Livekit Server: v1.10.0
+* Livekit Server: v1.9.12
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.6.0
 * Meta Instagram: v0.2602.0
@@ -69,7 +69,7 @@
 * Synapse Admin: v0.11.4-etke54
 * Synapse Auto Compressor: v0.0.3
 * Synapse Http Antispam Git: v0.5.0
-* Synapse Reverse Proxy Companion: 1.29.6-alpine
+* Synapse Reverse Proxy Companion: 1.29.7-alpine
 * Synapse Rust Synapse Compress State Container Image: v0.0.3
 * Synapse S3 Storage Provider: 1.6.0
 * Telegram: v0.15.3

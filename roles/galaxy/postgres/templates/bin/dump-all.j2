@@ -25,9 +25,13 @@ docker run \
     --user={{ postgres_container_uid }}:{{ postgres_container_gid }} \
     --cap-drop=ALL \
     --env-file={{ postgres_base_path }}/env-postgres-psql \
-    --mount type=bind,src=$directory_path,dst=/out \
+    {% if postgres_cli_use_unix_socket_enabled %}
+    --mount type=bind,src={{ postgres_run_path }},dst={{ postgres_run_path_in_container }} \
+    {% else %}
     --network={{ postgres_container_network }} \
+    {% endif %}
+    --mount type=bind,src=$directory_path,dst=/out \
     --entrypoint={{ postgres_container_shell_path }} \
     {{ postgres_container_image_to_use }} \
     -c \
-    'set -o pipefail && pg_dumpall -h {{ postgres_identifier }} | zstd --stdout > /out/latest-dump.sql.zst'
+    'set -o pipefail && pg_dumpall -h {{ postgres_run_path_in_container if postgres_cli_use_unix_socket_enabled else postgres_connection_hostname }} | zstd --stdout > /out/latest-dump.sql.zst'
