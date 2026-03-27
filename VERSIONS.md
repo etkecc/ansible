@@ -12,9 +12,9 @@
 * Draupnir: v2.9.0
 * Element: v1.12.13
 * Etherpad: 2.6.1
-* Exim Relay: 4.99.1-r0-1
+* Exim Relay: 4.99.1-r0-2
 * Firezone: 0.7.36
-* Fluffychat: v2.4.1
+* Fluffychat: v2.5.1
 * Funkwhale: 1.4.1
 * Gmessages: v0.2602.0
 * Go Neb: latest
@@ -38,7 +38,7 @@
 * Meta Instagram: v0.2602.0
 * Meta Messenger: v0.2602.0
 * Miniflux: 2.2.18
-* Ntfy: v2.19.2
+* Ntfy: v2.20.0
 * Peertube: v7.2.3
 * Postgres Container Image V10: 10.23
 * Postgres Container Image V11: 11.22
@@ -73,7 +73,7 @@
 * Synapse Rust Synapse Compress State Container Image: v0.0.3
 * Synapse S3 Storage Provider: 1.6.0
 * Telegram: v0.15.3
-* Traefik: v3.6.11
+* Traefik: v3.6.12
 * Traefik Certs Dumper: v2.10.0
 * Traefik Config Tcp Servertransports Default Proxyprotocol: 1
 * Twitter: v0.2603.0

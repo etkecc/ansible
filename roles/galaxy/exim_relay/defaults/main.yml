@@ -19,7 +19,7 @@ exim_relay_uid: ''
 exim_relay_gid: ''
 
 # renovate: datasource=docker depName=ghcr.io/devture/exim-relay versioning=semver
-exim_relay_version: 4.99.1-r0-1
+exim_relay_version: 4.99.1-r0-2
 
 exim_relay_container_image_self_build: false
 exim_relay_container_image_self_build_repo: "https://github.com/devture/exim-relay"

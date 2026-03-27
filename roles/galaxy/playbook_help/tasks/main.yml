@@ -6,6 +6,10 @@
 - block:
     - name: Update apt cache
       when: devture_playbook_help_apt_cache_prewarming_enabled and ansible_facts['os_family'] == 'Debian'
+      register: devture_playbook_help_apt_cache_prewarming_result
+      changed_when:
+        - devture_playbook_help_apt_cache_prewarming_changed_when
+        - devture_playbook_help_apt_cache_prewarming_result.cache_updated
       ansible.builtin.apt:
         update_cache: true
         cache_valid_time: "{{ devture_playbook_help_apt_cache_prewarming_cache_valid_time }}"

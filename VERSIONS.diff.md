@@ -6,12 +6,7 @@
 
 ### Component Updates
 
-* [Authentication Service](https://github.com/element-hq/matrix-authentication-service): [1.13.0](https://github.com/element-hq/matrix-authentication-service/releases/tag/1.13.0) ⇾ [1.14.0](https://github.com/element-hq/matrix-authentication-service/releases/tag/1.14.0)
-* [Baibot](https://github.com/etkecc/baibot): [v1.15.0](https://github.com/etkecc/baibot/releases/tag/v1.15.0) ⇾ [v1.17.0](https://github.com/etkecc/baibot/releases/tag/v1.17.0)
-* [Element](https://github.com/element-hq/element-web): [v1.12.12](https://github.com/element-hq/element-web/releases/tag/v1.12.12) ⇾ [v1.12.13](https://github.com/element-hq/element-web/releases/tag/v1.12.13)
-* [Exim Relay](https://github.com/devture/exim-relay): [4.98.1-r0-2](https://github.com/devture/exim-relay/releases/tag/4.98.1-r0-2) ⇾ [4.99.1-r0-1](https://github.com/devture/exim-relay/releases/tag/4.99.1-r0-1)
-* [Gotosocial](https://codeberg.org/superseriousbusiness/gotosocial): [0.21.1](https://codeberg.org/superseriousbusiness/gotosocial/releases/tag/v0.21.1) ⇾ [0.21.2](https://codeberg.org/superseriousbusiness/gotosocial/releases/tag/v0.21.2)
-* [Honoroit](https://github.com/etkecc/honoroit): [v0.9.29](https://github.com/etkecc/honoroit/releases/tag/v0.9.29) ⇾ [v0.9.30](https://github.com/etkecc/honoroit/releases/tag/v0.9.30)
-* [Synapse](https://github.com/element-hq/synapse): [v1.149.1](https://github.com/element-hq/synapse/releases/tag/v1.149.1) ⇾ [v1.150.0](https://github.com/element-hq/synapse/releases/tag/v1.150.0)
-* Synapse Reverse Proxy Companion: 1.29.6-alpine ⇾ 1.29.7-alpine
-* [Traefik](https://github.com/traefik/traefik): [v3.6.10](https://github.com/traefik/traefik/releases/tag/v3.6.10) ⇾ [v3.6.11](https://github.com/traefik/traefik/releases/tag/v3.6.11)
+* [Exim Relay](https://github.com/devture/exim-relay): [4.99.1-r0-1](https://github.com/devture/exim-relay/releases/tag/4.99.1-r0-1) ⇾ [4.99.1-r0-2](https://github.com/devture/exim-relay/releases/tag/4.99.1-r0-2)
+* [Fluffychat](https://github.com/krille-chan/fluffychat): [v2.4.1](https://github.com/krille-chan/fluffychat/releases/tag/v2.4.1) ⇾ [v2.5.1](https://github.com/krille-chan/fluffychat/releases/tag/v2.5.1)
+* [Ntfy](https://github.com/binwiederhier/ntfy): [v2.19.2](https://github.com/binwiederhier/ntfy/releases/tag/v2.19.2) ⇾ [v2.20.0](https://github.com/binwiederhier/ntfy/releases/tag/v2.20.0)
+* [Traefik](https://github.com/traefik/traefik): [v3.6.11](https://github.com/traefik/traefik/releases/tag/v3.6.11) ⇾ [v3.6.12](https://github.com/traefik/traefik/releases/tag/v3.6.12)
