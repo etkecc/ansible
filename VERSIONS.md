@@ -38,7 +38,7 @@
 * Meta Instagram: v0.2602.0
 * Meta Messenger: v0.2602.0
 * Miniflux: 2.2.18
-* Ntfy: v2.20.0
+* Ntfy: v2.20.1
 * Peertube: v7.2.3
 * Postgres Container Image V10: 10.23
 * Postgres Container Image V11: 11.22
@@ -62,7 +62,7 @@
 * Slack: v0.2603.0
 * Spam Checker Mjolnir Antispam Git: v1.12.1
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
-* Static Files: 2.41.0
+* Static Files: 2.42.0
 * Steam Bridge: 1.1.0
 * Sygnal: v0.15.1
 * Synapse: v1.150.0
