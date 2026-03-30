@@ -62,6 +62,9 @@ system_security_ssh_rootlogin: true
 # backward compatibility variable
 system_security_ssh_permit_root_login: "{{ system_security_ssh_rootlogin }}"
 
+# PermitRootLogin raw setting, if set, will override the boolean system_security_ssh_permit_root_login variable
+system_security_ssh_permit_root_login_raw: ''
+
 # PermitTunnel: true - allow, false - block
 system_security_ssh_permit_tunnel: false
 

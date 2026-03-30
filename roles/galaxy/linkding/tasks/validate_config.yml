@@ -1,5 +1,9 @@
+# SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
+# SPDX-FileCopyrightText: 2023 MASH project contributors
 # SPDX-FileCopyrightText: 2023 kinduff
-# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2023-2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2024 noah
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -34,7 +38,6 @@
     - linkding_hostname
     - linkding_path_prefix
     - linkding_container_network
-    - linkding_database_password
 
 - name: Fail if linkding database type invalid
   ansible.builtin.fail:
@@ -42,13 +45,34 @@
       linkding_database_type must be 'postgres' or 'sqlite'
   when: "linkding_database_type not in ['postgres', 'sqlite']"
 
-- name: Fail if required linkding + Postgres integration settings not defined
-  ansible.builtin.fail:
-    msg: >-
-      You need to define a required configuration setting (`{{ item }}`) when `linkding_database_type` is `postgres`
-  when: "linkding_database_type == 'postgres' and lookup('vars', item, default='') | string | length == 0"
-  with_items:
-    - linkding_database_password
+- name: Run if linkding + Postgres integration is enabled
+  when: linkding_database_type == 'postgres'
+  block:
+    - name: Fail if required linkding + Postgres integration settings not defined
+      ansible.builtin.fail:
+        msg: >-
+          You need to define a required configuration setting (`{{ item }}`) when `linkding_database_type` is `postgres`
+      when: "lookup('vars', item, default='') | string | length == 0"
+      with_items:
+        - linkding_database_password
+
+    - name: Fail if Postgres socket host path for linkding is missing when Unix socket is enabled
+      ansible.builtin.fail:
+        msg: >-
+          You need to define `linkding_database_socket_path_host` when `linkding_database_type` is `postgres`
+          and `linkding_database_socket_enabled` is `true`.
+      when: >-
+        linkding_database_socket_enabled and
+        linkding_database_socket_path_host | string | length == 0
+
+    - name: Fail if Postgres hostname for linkding is missing when Unix socket is disabled
+      ansible.builtin.fail:
+        msg: >-
+          You need to define `linkding_database_hostname` when `linkding_database_type` is `postgres`
+          and `linkding_database_socket_enabled` is `false`.
+      when: >-
+        not linkding_database_socket_enabled and
+        linkding_database_hostname | string | length == 0
 
 - name: Run if Traefik is enabled
   when: linkding_container_labels_traefik_enabled | bool

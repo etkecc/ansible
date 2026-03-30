@@ -18,7 +18,11 @@ KexAlgorithms {{ system_security_ssh_kex_algorithms }}
 HostKeyAlgorithms {{ system_security_ssh_host_key_algorithms }}
 
 PermitEmptyPasswords {{ 'yes' if system_security_ssh_permit_empty_passwords|bool else 'no' }}
+{% if system_security_ssh_permit_root_login_raw %}
+PermitRootLogin {{ system_security_ssh_permit_root_login_raw }}
+{% else %}
 PermitRootLogin {{ 'yes' if system_security_ssh_permit_root_login|bool else 'no' }}
+{% endif %}
 
 PermitTunnel {{ 'yes' if system_security_ssh_permit_tunnel|bool else 'no' }}
 Port {{ system_security_ssh_port }}

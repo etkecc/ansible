@@ -32,7 +32,7 @@
 * Linkding: 1.45.0
 * Linkedin: latest
 * Livekit Jwt Service: 0.4.1
-* Livekit Server: v1.9.12
+* Livekit Server: v1.10.1
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.6.0
 * Meta Instagram: v0.2602.0

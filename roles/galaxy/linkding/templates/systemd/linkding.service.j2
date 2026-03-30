@@ -1,6 +1,6 @@
 {#
 SPDX-FileCopyrightText: 2023 kinduff
-SPDX-FileCopyrightText: 2025 Suguru Hirahara
+SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
@@ -19,8 +19,7 @@ DefaultDependencies=no
 [Service]
 Type=simple
 Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
-ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ linkding_identifier }} 2>/dev/null || true'
-ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ linkding_identifier }} 2>/dev/null || true'
+ExecStartPre={{ devture_systemd_docker_base_host_command_sh }} -c '{{ linkding_container_cleanup_command | trim | replace("\n", " ") }}'
 
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --rm \
@@ -35,6 +34,9 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --env-file={{ linkding_base_path }}/env \
       --label-file={{ linkding_base_path }}/labels \
       --mount type=bind,src={{ linkding_data_path }},dst=/etc/linkding/data \
+      {% if linkding_database_type == 'postgres' and linkding_database_socket_enabled and linkding_database_socket_path_host != '' %}
+      --mount type=bind,src={{ linkding_database_socket_path_host }},dst={{ linkding_database_socket_path_container }} \
+      {% endif %}
       --tmpfs=/tmp:rw,noexec,nosuid,size={{ linkding_container_tmpfs_tmp_size }} \
       {% for arg in linkding_container_extra_arguments %}
       {{ arg }} \

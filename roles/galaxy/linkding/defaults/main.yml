@@ -1,28 +1,25 @@
-# SPDX-FileCopyrightText: 2023 - 2024 Nikita Chernyi
-# SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2023, 2024 Nikita Chernyi
+# SPDX-FileCopyrightText: 2023-2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2024 Julian-Samuel Gebühr
 # SPDX-FileCopyrightText: 2024 Sergio Durigan Junior
+# SPDX-FileCopyrightText: 2024 noah
 # SPDX-FileCopyrightText: 2025 MASH project contributors
-# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
 # Project source code URL: https://github.com/sissbruecker/linkding
 
-# Enable or disable linkding deployment
 linkding_enabled: true
 
-# Identifier string for linkding resources (e.g. container names, network names)
 linkding_identifier: linkding
-
-# Base path for linkding resources
 linkding_base_path: "/{{ linkding_identifier }}"
 linkding_data_path: "{{ linkding_base_path }}/data"
 
 # renovate: datasource=docker depName=sissbruecker/linkding versioning=semver
 linkding_version: 1.45.0
 
-# User ID and Group ID for running linkding service in the container
 linkding_uid: ""
 linkding_gid: ""
 
@@ -104,6 +101,7 @@ linkding_container_labels_traefik_additional_response_headers_auto: |
     | combine ({'Strict-Transport-Security': linkding_http_header_strict_transport_security} if linkding_http_header_strict_transport_security and linkding_container_labels_traefik_tls else {})
   }}
 linkding_container_labels_traefik_additional_response_headers_custom: {}
+
 # linkding_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
 # See `../templates/labels.j2` for details.
 # To add your own custom labels, use `linkding_container_labels_additional_labels_custom`
@@ -183,15 +181,70 @@ linkding_systemd_wanted_services_list_default: []
 linkding_systemd_wanted_services_list_auto: []
 linkding_systemd_wanted_services_list_custom: []
 
-# Database configuration
+# Controls how long to wait for the container to stop gracefully before killing it.
+linkding_container_stop_grace_time_seconds: "{{ devture_systemd_docker_base_container_stop_grace_time_seconds }}"
+
+# Controls how long the pre-start cleanup should wait for stale container-name release
+# before failing startup explicitly.
+linkding_container_cleanup_timeout_seconds: "{{ devture_systemd_docker_base_container_cleanup_timeout_seconds }}"
+
+# Controls the delay between pre-start cleanup retries.
+linkding_container_cleanup_retry_delay_seconds: "{{ devture_systemd_docker_base_container_cleanup_retry_delay_seconds }}"
+
+# Shell command used in the systemd pre-start phase to deterministically remove a stale
+# container and wait until Docker releases its name.
+linkding_container_cleanup_command: |
+  i=0;
+  while [ "$i" -lt {{ linkding_container_cleanup_timeout_seconds }} ]; do
+  {{ devture_systemd_docker_base_host_command_docker }} stop -t {{ linkding_container_stop_grace_time_seconds }} {{ linkding_identifier }} >/dev/null 2>&1 || true;
+  {{ devture_systemd_docker_base_host_command_docker }} rm -f {{ linkding_identifier }} >/dev/null 2>&1 || true;
+  if {{ devture_systemd_docker_base_host_command_docker }} container inspect {{ linkding_identifier }} >/dev/null 2>&1; then
+  i=$((i + 1));
+  sleep {{ linkding_container_cleanup_retry_delay_seconds }};
+  continue;
+  fi;
+  if {{ devture_systemd_docker_base_host_command_docker }} info >/dev/null 2>&1; then
+  exit 0;
+  fi;
+  echo "Failed to query Docker daemon while cleaning up {{ linkding_identifier }}" >&2;
+  exit 1;
+  done;
+  echo "Failed to remove stale container {{ linkding_identifier }} after {{ linkding_container_cleanup_timeout_seconds }} attempts" >&2;
+  exit 1
+
+########################################################################
+#                                                                      #
+# database                                                             #
+#                                                                      #
+########################################################################
+
+# Specify a database driver to use
 # Valid values: postgres, sqlite
 linkding_database_type: sqlite
 
-linkding_database_hostname: "localhost"
+# Specify database configuration
+linkding_database_hostname: ""
 linkding_database_port: 5432
 linkding_database_username: linkding
-linkding_database_password:
+linkding_database_password: ""
 linkding_database_name: linkding
+
+# Control if the database connection to Postgres is made via a Unix socket
+linkding_database_socket_enabled: true
+
+# Specify the path to the Postgres Unix socket path inside the linkding container
+linkding_database_socket_path_container: /run-postgres
+
+# Specify the path to the Postgres Unix socket path on the host (bind-mount source)
+linkding_database_socket_path_host: ""
+
+linkding_environment_variables_ld_db_host: "{{ linkding_database_socket_path_container if linkding_database_socket_enabled else linkding_database_hostname }}"
+
+########################################################################
+#                                                                      #
+# /database                                                            #
+#                                                                      #
+########################################################################
 
 # The username and password for the linkding superuser
 linkding_superuser_username:

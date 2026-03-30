@@ -98,7 +98,7 @@ linkding_gid: "{{ mash_playbook_gid }}"
 
 linkding_systemd_required_services_list_auto: |
   {{
-    ([postgres_identifier ~ '.service'] if postgres_enabled and linkding_database_hostname == postgres_identifier else [])
+    ([postgres_identifier ~ '.service'] if postgres_enabled and (linkding_database_hostname == postgres_identifier or linkding_database_socket_enabled) else [])
   }}
 
 linkding_container_image_registry_prefix_upstream: "{{ matrix_container_global_registry_prefix_override if matrix_container_global_registry_prefix_override else linkding_container_image_registry_prefix_upstream_default }}"
@@ -107,7 +107,7 @@ linkding_container_additional_networks_auto: |
   {{
     ([mash_playbook_reverse_proxyable_services_additional_network] if mash_playbook_reverse_proxyable_services_additional_network else [])
     +
-    ([postgres_container_network] if postgres_enabled and linkding_database_hostname == postgres_identifier and linkding_container_network != postgres_container_network else [])
+    ([postgres_container_network] if postgres_enabled and (linkding_database_hostname == postgres_identifier or linkding_database_socket_enabled) and linkding_container_network != postgres_container_network else [])
   }}
 
 linkding_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
@@ -115,10 +115,11 @@ linkding_container_labels_traefik_docker_network: "{{ mash_playbook_reverse_prox
 linkding_container_labels_traefik_entrypoints: "{{ traefik_entrypoint_primary }}"
 linkding_container_labels_traefik_tls_certResolver: "{{ traefik_certResolver_primary }}"
 
-linkding_database_hostname: "{{ postgres_connection_hostname if postgres_enabled else '' }}"
+linkding_database_hostname: "{{ postgres_connection_hostname if postgres_enabled and not linkding_database_socket_enabled else '' }}"
 linkding_database_port: "{{ postgres_connection_port if postgres_enabled else '' }}"
 linkding_database_password: "{{ '%s' | format(mash_playbook_generic_secret_key) | password_hash('sha512', 'linkding.db', rounds=655555) | to_uuid }}"
-linkding_database_type: "{{ 'postgres' if postgres_enabled and linkding_database_hostname == postgres_connection_hostname else 'sqlite' }}"
+linkding_database_socket_path_host: "{{ postgres_run_path }}"
+linkding_database_type: "{{ 'postgres' if postgres_enabled and (linkding_database_hostname == postgres_connection_hostname or linkding_database_socket_enabled) else 'sqlite' }}"
 
 ########################################################################
 #                                                                      #
