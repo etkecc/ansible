@@ -25,20 +25,20 @@
 * Honoroit: v0.9.30
 * Hookshot: 7.3.2
 * Hydrogen: v0.5.1
-* Jitsi: stable-10741
+* Jitsi: stable-10888
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
 * Languagetool: 6.7-dockerupdate-1
 * Linkding: 1.45.0
 * Linkedin: latest
-* Livekit Jwt Service: 0.4.1
+* Livekit Jwt Service: 0.4.2
 * Livekit Server: v1.10.1
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.6.0
 * Meta Instagram: v0.2602.0
 * Meta Messenger: v0.2602.0
 * Miniflux: 2.2.18
-* Ntfy: v2.20.1
+* Ntfy: v2.21.0
 * Peertube: v7.2.3
 * Postgres Container Image V10: 10.23
 * Postgres Container Image V11: 11.22

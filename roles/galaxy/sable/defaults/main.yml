@@ -12,7 +12,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-# Project source code URL: https://github.com/7w1/sable
+# Project source code URL: https://github.com/sableclient/sable
 
 sable_enabled: true
 
@@ -20,8 +20,8 @@ sable_identifier: sable
 sable_base_path: "/{{ sable_identifier }}"
 sable_config_path: "{{ sable_base_path }}/config"
 
-# renovate: datasource=docker depName=ghcr.io/7w1/sable
-sable_version: 1.6.0
+# renovate: datasource=docker depName=ghcr.io/sableclient/sable
+sable_version: 1.13.1
 
 sable_uid: ""
 sable_gid: ""
@@ -47,8 +47,8 @@ sable_container_image_registry_prefix_upstream_default: ghcr.io/
 sable_container_image_force_pull: "{{ sable_container_image.endswith(':latest') }}"
 
 sable_container_image_self_build: false
-sable_container_image_self_build_name: "7w1/sable:{{ sable_container_image_self_build_repo_version }}"
-sable_container_image_self_build_repo: "https://github.com/SableClient/Sable.git"
+sable_container_image_self_build_name: "sableclient/sable:{{ sable_container_image_self_build_repo_version }}"
+sable_container_image_self_build_repo: "https://github.com/sableclient/sable.git"
 sable_container_image_self_build_repo_version: "{{ sable_version if sable_version != 'latest' else 'main' }}"
 sable_container_image_self_build_src_files_path: "{{ sable_base_path }}/docker-src"
 
@@ -268,13 +268,13 @@ sable_config_featuredCommunities_openAsDefault: false  # noqa var-naming
 
 # Configures the gateway server used for webpush notifications.
 # This should not be changed in most cases.
-sable_config_pushNotifyUrl: "https://sygnal.sable.moe/_matrix/push/v1/notify"
-sable_config_vapidPublicKey: "BCnS4SbHjeOaqVFW4wjt5xDt_pYIL62qMzKePfYF9fl9PQU14RieIaObh7nLR_9dQf4sykZa-CTrcjkgMIE1mcg"
-sable_config_webPushAppID: "moe.sable.app.sygnal"
+sable_config_pushNotifyUrl: "https://sygnal.sable.moe/_matrix/push/v1/notify"  # noqa var-naming
+sable_config_vapidPublicKey: "BCnS4SbHjeOaqVFW4wjt5xDt_pYIL62qMzKePfYF9fl9PQU14RieIaObh7nLR_9dQf4sykZa-CTrcjkgMIE1mcg"  # noqa var-naming
+sable_config_webPushAppID: "moe.sable.app.sygnal"  # noqa var-naming
 
 # Controls whether MSC4186 Simplified Sliding Sync is available in experimental options.
 # Disabled by default for the moment as it is known to have multiple bugs.
-sable_config_slidingSync_enabled: false
+sable_config_slidingSync_enabled: false  # noqa var-naming
 
 # Default Sable configuration template which covers the generic use case.
 # You can customize it by controlling the various variables inside it.
