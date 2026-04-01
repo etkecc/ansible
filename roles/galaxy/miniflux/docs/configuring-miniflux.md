@@ -1,17 +1,19 @@
 <!--
-SPDX-FileCopyrightText: 2020 - 2024 MDAD project contributors
-SPDX-FileCopyrightText: 2020 - 2024 Slavi Pantaleev
 SPDX-FileCopyrightText: 2020 Aaron Raimist
 SPDX-FileCopyrightText: 2020 Chris van Dijk
 SPDX-FileCopyrightText: 2020 Dominik Zajac
 SPDX-FileCopyrightText: 2020 Mickaël Cornière
+SPDX-FileCopyrightText: 2020-2024 MDAD project contributors
+SPDX-FileCopyrightText: 2020-2024 Slavi Pantaleev
 SPDX-FileCopyrightText: 2022 François Darveau
 SPDX-FileCopyrightText: 2022 Julian Foad
 SPDX-FileCopyrightText: 2022 Warren Bailey
 SPDX-FileCopyrightText: 2023 Antonis Christofides
 SPDX-FileCopyrightText: 2023 Felix Stupp
+SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
 SPDX-FileCopyrightText: 2023 Pierre 'McFly' Marty
-SPDX-FileCopyrightText: 2024 - 2025 Suguru Hirahara
+SPDX-FileCopyrightText: 2024 Thomas Miceli
+SPDX-FileCopyrightText: 2024-2026 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
@@ -62,19 +64,38 @@ miniflux_hostname: "example.com"
 
 After adjusting the hostname, make sure to adjust your DNS records to point the domain to your server.
 
-### Set variables for connecting to a Postgres database server
+### Set variables for Postgres database server
 
-To have the Miniflux instance connect to your Postgres server, add the following configuration to your `vars.yml` file.
+To have Miniflux connect to your Postgres server, add the following configuration to your `vars.yml` file.
 
 ```yaml
 miniflux_database_username: YOUR_POSTGRES_SERVER_USERNAME_HERE
 miniflux_database_password: YOUR_POSTGRES_SERVER_PASSWORD_HERE
-miniflux_database_hostname: YOUR_POSTGRES_SERVER_HOSTNAME_HERE
-miniflux_database_port: 5432
 miniflux_database_name: YOUR_POSTGRES_SERVER_DATABASE_NAME_HERE
 ```
 
 Make sure to replace values for variables with yours.
+
+### Configuring connection to Postgres server
+
+By default the role is configured to establish connection with the Postgres server via the Unix socket. You can mount the Unix socket by adding the following configuration to your `vars.yml` file:
+
+```yaml
+# Specify the path to the Postgres Unix socket path on the host (bind-mount source)
+miniflux_database_socket_path_host: ""
+```
+
+Setting it enables to connect to the Postgres server via Unix socket mounted in the container at `/run-postgres/.s.PGSQL.5432`.
+
+If TCP connection is preferred, connection via the Unix socket can be disabled by adding the following configuration to your `vars.yml` file:
+
+```yaml
+# Disable the connection to Postgres server via a Unix socket
+miniflux_database_socket_enabled: false
+
+miniflux_database_hostname: YOUR_POSTGRES_SERVER_HOSTNAME_HERE
+miniflux_database_port: 5432
+```
 
 ### Add configurations for admin user (optional)
 

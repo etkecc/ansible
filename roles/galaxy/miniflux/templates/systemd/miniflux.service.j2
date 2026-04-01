@@ -1,6 +1,6 @@
 {#
 SPDX-FileCopyrightText: 2023 Slavi Pantaleev
-SPDX-FileCopyrightText: 2025 Suguru Hirahara
+SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
@@ -33,6 +33,9 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% endif %}
       --env-file={{ miniflux_base_path }}/env \
       --label-file={{ miniflux_base_path }}/labels \
+      {% if miniflux_database_socket_enabled and miniflux_database_socket_path_host != '' %}
+      --mount type=bind,src={{ miniflux_database_socket_path_host }},dst={{ miniflux_database_socket_path_container }} \
+      {% endif %}
       {% for arg in miniflux_container_extra_arguments %}
       {{ arg }} \
       {% endfor %}

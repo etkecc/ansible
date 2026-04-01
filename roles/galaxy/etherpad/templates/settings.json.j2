@@ -17,14 +17,28 @@ SPDX-License-Identifier: AGPL-3.0-or-later
   "ip": "::",
   "port": {{ etherpad_container_http_port|to_json }},
   "showSettingsInAdminPage": true,
+{% if etherpad_database_type == 'couchdb' %}
+  "dbType": "couch",
+  "dbSettings": {
+    "host":     {{ etherpad_database_couchdb_hostname | to_json }},
+    "port":     {{ etherpad_database_couchdb_port | to_json }},
+    "user":     {{ etherpad_database_couchdb_username | to_json }},
+    "password": {{ etherpad_database_couchdb_password | to_json }},
+    "database": {{ etherpad_database_name | to_json }}
+  },
+{% endif %}
 {% if etherpad_database_type == 'mysql' %}
   "dbType": "mysql",
   "dbSettings": {
-    "host":     {{ etherpad_database_mysql_hostname | to_json }},
-    "port":     {{ etherpad_database_mysql_port | to_json }},
-    "user":     {{ etherpad_database_mysql_username | to_json }},
-    "password": {{ etherpad_database_mysql_password | to_json }},
-    "database": {{ etherpad_database_name | to_json }}
+{% if etherpad_database_mysql_socket_enabled %}
+    "socketPath": {{ etherpad_configuration_dbsettings_socketpath_mysql | to_json }},
+{% else%}
+    "host":       {{ etherpad_database_mysql_hostname | to_json }},
+    "port":       {{ etherpad_database_mysql_port | to_json }},
+{% endif %}
+    "user":       {{ etherpad_database_mysql_username | to_json }},
+    "password":   {{ etherpad_database_mysql_password | to_json }},
+    "database":   {{ etherpad_database_name | to_json }}
   },
 {% endif %}
 {% if etherpad_database_type == 'postgres' %}

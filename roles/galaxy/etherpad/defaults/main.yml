@@ -232,10 +232,21 @@ etherpad_base_url: "{{ etherpad_scheme }}://{{ etherpad_hostname }}{{ etherpad_p
 # Controls whether putting Etherpad in a frame on another website will be allowed.
 etherpad_framing_enabled: true
 
-# Database-related configuration fields.
-#
-# Also see: https://etherpad.org/doc/latest/#_database and https://www.npmjs.com/package/ueberdb2
+########################################################################
+#                                                                      #
+# database                                                             #
+#                                                                      #
+########################################################################
+
+# Specify a database driver to use
+# See: https://etherpad.org/doc/latest/#_database and https://www.npmjs.com/package/ueberdb2
 etherpad_database_type: "postgres"
+
+# Specify database configuration
+etherpad_database_couchdb_hostname: ""
+etherpad_database_couchdb_port: 5984
+etherpad_database_couchdb_username: ""
+etherpad_database_couchdb_password: ""
 etherpad_database_mysql_hostname: ""
 etherpad_database_mysql_port: 3306
 etherpad_database_mysql_username: etherpad
@@ -251,6 +262,23 @@ etherpad_redis_username: ""
 etherpad_redis_password: ""
 etherpad_redis_database: 0
 etherpad_database_sqlite_path: "/data/db.sqlite"
+
+# Control if the database connection to MySQL is made via a Unix socket
+etherpad_database_mysql_socket_enabled: true
+
+# Specify the path to the MySQL Unix socket path inside the Etherpad container
+etherpad_database_mysql_socket_path_container: /run-mysqld
+
+# Specify the path to the MySQL Unix socket path on the host (bind-mount source)
+etherpad_database_mysql_socket_path_host: ""
+
+etherpad_configuration_dbsettings_socketpath_mysql: "{{ etherpad_database_mysql_socket_path_container + '/mysqld.sock' }}"
+
+########################################################################
+#                                                                      #
+# /database                                                            #
+#                                                                      #
+########################################################################
 
 # If a admin username and password is set, the /admin web page will be available.
 etherpad_admin_username: ""

@@ -39,6 +39,9 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --mount type=bind,src={{ etherpad_data_path }},dst=/data \
       --mount type=bind,src={{ etherpad_plugins_path }},dst=/opt/etherpad-lite/src/plugin_packages \
       --mount type=bind,src={{ etherpad_var_path }},dst=/opt/etherpad-lite/var \
+      {% if etherpad_database_type == 'mysql' and etherpad_database_mysql_socket_enabled and etherpad_database_mysql_socket_path_host != '' %}
+      --mount type=bind,src={{ etherpad_database_mysql_socket_path_host }},dst={{ etherpad_database_mysql_socket_path_container }} \
+      {% endif %}
       {% for arg in etherpad_container_extra_arguments %}
       {{ arg }} \
       {% endfor %}

@@ -1,4 +1,5 @@
-# SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2023-2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -207,9 +208,11 @@ miniflux_container_cleanup_command: |
   echo "Failed to remove stale container {{ miniflux_identifier }} after {{ miniflux_container_cleanup_timeout_seconds }} attempts" >&2;
   exit 1
 
-# Optional admin credentials to be created on startup.
-miniflux_admin_login: ""
-miniflux_admin_password: ""
+########################################################################
+#                                                                      #
+# database                                                             #
+#                                                                      #
+########################################################################
 
 # Specify database configuration
 miniflux_database_hostname: ""
@@ -221,7 +224,33 @@ miniflux_database_password: ""
 # Valid values: see https://www.postgresql.org/docs/11/libpq-ssl.html#LIBPQ-SSL-SSLMODE-STATEMENTS
 miniflux_database_sslmode: disable
 miniflux_database_name: miniflux
-miniflux_database_connection_string: "postgres://{{ miniflux_database_username }}:{{ miniflux_database_password }}@{{ miniflux_database_hostname }}:{{ miniflux_database_port }}/{{ miniflux_database_name }}?sslmode={{ miniflux_database_sslmode }}"
+
+# Control if the database connection to Postgres is made via a Unix socket
+miniflux_database_socket_enabled: true
+
+# Specify the path to the Postgres Unix socket path inside the Miniflux container
+miniflux_database_socket_path_container: /run-postgres
+
+# Specify the path to the Postgres Unix socket path on the host (bind-mount source)
+miniflux_database_socket_path_host: ""
+
+# See: https://pkg.go.dev/github.com/lib/pq#hdr-URL_connection_strings-NewConfig
+miniflux_database_connection_string: |
+  {% if miniflux_database_socket_enabled %}
+  user={{ miniflux_database_username }} password={{ miniflux_database_password }} dbname={{ miniflux_database_name }} sslmode=disable host={{ miniflux_database_socket_path_container }}
+  {% else %}
+  postgres://{{ miniflux_database_username }}:{{ miniflux_database_password }}@{{ miniflux_database_hostname }}:{{ miniflux_database_port }}/{{ miniflux_database_name }}?sslmode={{ miniflux_database_sslmode }}
+  {%- endif -%}
+
+########################################################################
+#                                                                      #
+# /database                                                            #
+#                                                                      #
+########################################################################
+
+# Optional admin credentials to be created on startup.
+miniflux_admin_login: ""
+miniflux_admin_password: ""
 
 # Specify the timezone
 miniflux_environment_variables_tz: UTC

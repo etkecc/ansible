@@ -29,9 +29,16 @@ See the project's [documentation](https://docs.etherpad.org/) to learn what Ethe
 
 ## Prerequisites
 
-To run an Etherpad instance it is necessary to prepare a database supported by [ueberdb2](https://www.npmjs.com/package/ueberdb2). The role supports [MariaDB](https://mariadb.org), [Postgres](https://www.postgresql.org/), [Redis](https://redis.io/), [SQLite](https://www.sqlite.org/), as well as `memory` (an in-memory ephemeral database). By default it is configured to use Postgres.
+To run an Etherpad instance it is necessary to prepare a database supported by [ueberdb2](https://www.npmjs.com/package/ueberdb2). The role supports [CouchDB](https://couchdb.apache.org/), [MariaDB](https://mariadb.org), [Postgres](https://www.postgresql.org/), [Redis](https://redis.io/), [SQLite](https://www.sqlite.org/), as well as `memory` (an in-memory ephemeral database). By default it is configured to use Postgres.
 
-If you are looking for Ansible roles for MariaDB, Postgres, and Redis, you can check out [ansible-role-postgres](https://github.com/mother-of-all-self-hosting/ansible-role-postgres), [ansible-role-mariadb](https://github.com/mother-of-all-self-hosting/ansible-role-mariadb), and [ansible-role-redis](https://github.com/mother-of-all-self-hosting/ansible-role-redis), all of which are maintained by the [Mother-of-All-Self-Hosting (MASH)](https://github.com/mother-of-all-self-hosting) team. The roles for [KeyDB](https://keydb.dev/) ([ansible-role-keydb](https://github.com/mother-of-all-self-hosting/ansible-role-keydb)) and [Valkey](https://valkey.io/) ([ansible-role-valkey](https://github.com/mother-of-all-self-hosting/ansible-role-valkey)) are available as well.
+If you are looking for Ansible roles for them, you can check out these roles maintained by the [Mother-of-All-Self-Hosting (MASH)](https://github.com/mother-of-all-self-hosting) team:
+
+- [ansible-role-couchdb](https://github.com/mother-of-all-self-hosting/ansible-role-couchdb)
+- [ansible-role-mariadb](https://github.com/mother-of-all-self-hosting/ansible-role-mariadb)
+- [ansible-role-postgres](https://github.com/mother-of-all-self-hosting/ansible-role-postgres)
+- [ansible-role-redis](https://github.com/mother-of-all-self-hosting/ansible-role-redis)
+  - [ansible-role-keydb](https://github.com/mother-of-all-self-hosting/ansible-role-keydb)
+  - [ansible-role-valkey](https://github.com/mother-of-all-self-hosting/ansible-role-valkey)
 
 ## Adjusting the playbook configuration
 
@@ -77,6 +84,16 @@ After adjusting the hostname, make sure to adjust your DNS records to point the 
 > If you use the MDAD Ansible playbook, any additional configurations are not required as they are specified by default. See its [`matrix_servers`](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/group_vars/matrix_servers) for details.
 
 Etherpad supports databases available with [ueberdb2](https://www.npmjs.com/package/ueberdb2), including MariaDB and Postgres. By default the role is configured to use Postgres for its database.
+
+#### CouchDB
+
+To set up CouchDB for the Etherpad instance, add the following configuration to your `vars.yml` file:
+
+```yaml
+etherpad_database_type: couchdb
+etherpad_database_couchdb_username: YOUR_DATABASE_USERNAME_HERE
+etherpad_database_couchdb_password: YOUR_DATABASE_PASSWORD_HERE
+```
 
 #### MariaDB
 
@@ -130,7 +147,7 @@ etherpad_database_type: memory
 
 #### Other databases
 
-For other databases like [CouchDB](https://couchdb.apache.org/), add custom configurations to `etherpad_configuration_extension_json`. Refer to [the template settings.json file](https://github.com/ether/etherpad-lite/blob/develop/settings.json.template) for details about necessary settings.
+You can utilize other databases by adding custom configurations to `etherpad_configuration_extension_json`. Refer to [the template settings.json file](https://github.com/ether/etherpad-lite/blob/develop/settings.json.template) for details about necessary settings.
 
 ### Create admin user (optional)
 

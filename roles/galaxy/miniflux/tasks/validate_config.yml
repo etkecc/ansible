@@ -1,4 +1,5 @@
 # SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -24,7 +25,8 @@
     - { "name": "miniflux_hostname", when: true }
     - { "name": "miniflux_path_prefix", when: true }
     - { "name": "miniflux_container_network", when: true }
-    - { "name": "miniflux_database_hostname", when: true }
+    - { "name": "miniflux_database_socket_path_host", when: "{{ miniflux_database_socket_enabled }}" }
+    - { "name": "miniflux_database_hostname", when: "{{ not miniflux_database_socket_enabled }}" }
     - { "name": "miniflux_database_password", when: true }
     - "name": "miniflux_container_labels_traefik_compression_middleware_name"
       when: "{{ miniflux_container_labels_traefik_compression_middleware_enabled }}"
