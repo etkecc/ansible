@@ -6,6 +6,7 @@
 
 ### Component Updates
 
+* [Draupnir](https://github.com/the-draupnir-project/Draupnir): [v2.9.0](https://github.com/the-draupnir-project/Draupnir/releases/tag/v2.9.0) ⇾ [v3.0.0](https://github.com/the-draupnir-project/Draupnir/releases/tag/v3.0.0)
 * [Exim Relay](https://github.com/devture/exim-relay): [4.99.1-r0-1](https://github.com/devture/exim-relay/releases/tag/4.99.1-r0-1) ⇾ [4.99.1-r0-2](https://github.com/devture/exim-relay/releases/tag/4.99.1-r0-2)
 * [Fluffychat](https://github.com/krille-chan/fluffychat): [v2.4.1](https://github.com/krille-chan/fluffychat/releases/tag/v2.4.1) ⇾ [v2.5.1](https://github.com/krille-chan/fluffychat/releases/tag/v2.5.1)
 * [Jitsi](https://github.com/jitsi/docker-jitsi-meet): [stable-10741](https://github.com/jitsi/docker-jitsi-meet/releases/tag/stable-10741) ⇾ [stable-10888](https://github.com/jitsi/docker-jitsi-meet/releases/tag/stable-10888)

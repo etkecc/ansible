@@ -9,7 +9,7 @@
 * Container Socket Proxy: v0.4.2
 * Coturn: 4.9.0
 * Discord: v0.7.6
-* Draupnir: v2.9.0
+* Draupnir: v3.0.0
 * Element: v1.12.13
 * Etherpad: 2.6.1
 * Exim Relay: 4.99.1-r0-2
