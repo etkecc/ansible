@@ -1,1 +1,2 @@
-matrix_playbook_migration_validated_version: v2026.03.23.0
+# Pinning like this is OK, because this host is only used for `--tags=skopeo` (mirroring container images).
+matrix_playbook_migration_validated_version: "{{ matrix_playbook_migration_expected_version }}"
