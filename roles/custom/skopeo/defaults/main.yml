@@ -2,7 +2,6 @@
 skopeo_target: registry.etke.cc
 skopeo_ignore_text: "ghcr.io/etkecc"
 skopeo_ignore_images:
-  - "{{ matrix_synapse_admin_container_image }}"
   - "{{ matrix_client_element_container_image }}"
   - "{{ matrix_synapse_usage_exporter_container_image }}" # it uses localhost
 skopeo_static:
@@ -12,7 +11,6 @@ skopeo_static:
   - "ghcr.io/etkecc/borgmatic:16-{{ backup_borg_borg_version }}-{{ backup_borg_borgmatic_version }}"
   - "ghcr.io/etkecc/borgmatic:17-{{ backup_borg_borg_version }}-{{ backup_borg_borgmatic_version }}"
   - "ghcr.io/etkecc/borgmatic:18-{{ backup_borg_borg_version }}-{{ backup_borg_borgmatic_version }}"
-  - "ghcr.io/etkecc/synapse-admin:{{ matrix_synapse_admin_version }}"
   - ghcr.io/etkecc/buscarron:latest
   - ghcr.io/etkecc/honoroit:latest
   - ghcr.io/etkecc/postmoogle:latest

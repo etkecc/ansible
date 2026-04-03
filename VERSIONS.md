@@ -28,6 +28,7 @@
 * Jitsi: stable-10888
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
+* Ketesa: v1.0.0
 * Languagetool: 6.7-dockerupdate-1
 * Linkding: 1.45.0
 * Linkedin: latest
@@ -66,7 +67,6 @@
 * Steam Bridge: 1.1.0
 * Sygnal: v0.15.1
 * Synapse: v1.150.0
-* Synapse Admin: v0.11.4-etke54
 * Synapse Auto Compressor: v0.0.3
 * Synapse Http Antispam Git: v0.5.0
 * Synapse Reverse Proxy Companion: 1.29.7-alpine
