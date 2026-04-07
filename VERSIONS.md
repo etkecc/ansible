@@ -2,7 +2,7 @@
 * Authentication Service: 1.14.0
 * Baibot: v1.17.0
 * Bluesky: v0.2510.0
-* Borg: 1.4.3
+* Borg: 1.4.4
 * Borgmatic: 2.1.4
 * Buscarron: v1.4.3
 * Cinny: v4.11.1
@@ -10,7 +10,7 @@
 * Coturn: 4.9.0
 * Discord: v0.7.6
 * Draupnir: v3.0.0
-* Element: v1.12.13
+* Element: v1.12.14
 * Etherpad: 2.6.1
 * Exim Relay: 4.99.1-r0-2
 * Firezone: 0.7.36
