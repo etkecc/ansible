@@ -3,7 +3,7 @@
 * Baibot: v1.17.0
 * Bluesky: v0.2510.0
 * Borg: 1.4.3
-* Borgmatic: 2.1.3
+* Borgmatic: 2.1.4
 * Buscarron: v1.4.3
 * Cinny: v4.11.1
 * Container Socket Proxy: v0.4.2
@@ -28,7 +28,7 @@
 * Jitsi: stable-10888
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
-* Ketesa: v1.0.0
+* Ketesa: v1.1.0
 * Languagetool: 6.7-dockerupdate-1
 * Linkding: 1.45.0
 * Linkedin: latest
