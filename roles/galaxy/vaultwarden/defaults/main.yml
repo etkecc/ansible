@@ -1,10 +1,11 @@
 # SPDX-FileCopyrightText: 2023 Antoine-Ali Zarrouk
-# SPDX-FileCopyrightText: 2023 - 2024 Nikita Chernyi
-# SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2023, 2024 Nikita Chernyi
+# SPDX-FileCopyrightText: 2023-2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2024 Julian-Samuel Gebühr
 # SPDX-FileCopyrightText: 2024 Sergio Durigan Junior
 # SPDX-FileCopyrightText: 2025 MASH project contributors
 # SPDX-FileCopyrightText: 2025 spatterlight
-# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -56,7 +57,7 @@ vaultwarden_container_image_self_build_environment_buildplatform: linux/amd64
 # Specify how the container publishes its HTTP port (as defined by `vaultwarden_container_network`).
 #
 # Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
-vaultwarden_container_http_bind_port: ""
+vaultwarden_container_http_host_bind_port: ""
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 vaultwarden_container_network: "{{ vaultwarden_identifier }}"
@@ -205,41 +206,109 @@ vaultwarden_systemd_wanted_services_list_default: []
 vaultwarden_systemd_wanted_services_list_auto: []
 vaultwarden_systemd_wanted_services_list_custom: []
 
+# Controls how long to wait for the container to stop gracefully before killing it.
+vaultwarden_container_stop_grace_time_seconds: "{{ devture_systemd_docker_base_container_stop_grace_time_seconds }}"
+
+# Controls how long the pre-start cleanup should wait for stale container-name release
+# before failing startup explicitly.
+vaultwarden_container_cleanup_timeout_seconds: "{{ devture_systemd_docker_base_container_cleanup_timeout_seconds }}"
+
+# Controls the delay between pre-start cleanup retries.
+vaultwarden_container_cleanup_retry_delay_seconds: "{{ devture_systemd_docker_base_container_cleanup_retry_delay_seconds }}"
+
+# Shell command used in the systemd pre-start phase to deterministically remove a stale
+# container and wait until Docker releases its name.
+vaultwarden_container_cleanup_command: |
+  i=0;
+  while [ "$i" -lt {{ vaultwarden_container_cleanup_timeout_seconds }} ]; do
+  {{ devture_systemd_docker_base_host_command_docker }} stop -t {{ vaultwarden_container_stop_grace_time_seconds }} {{ vaultwarden_identifier }} >/dev/null 2>&1 || true;
+  {{ devture_systemd_docker_base_host_command_docker }} rm -f {{ vaultwarden_identifier }} >/dev/null 2>&1 || true;
+  if {{ devture_systemd_docker_base_host_command_docker }} container inspect {{ vaultwarden_identifier }} >/dev/null 2>&1; then
+  i=$((i + 1));
+  sleep {{ vaultwarden_container_cleanup_retry_delay_seconds }};
+  continue;
+  fi;
+  if {{ devture_systemd_docker_base_host_command_docker }} info >/dev/null 2>&1; then
+  exit 0;
+  fi;
+  echo "Failed to query Docker daemon while cleaning up {{ vaultwarden_identifier }}" >&2;
+  exit 1;
+  done;
+  echo "Failed to remove stale container {{ vaultwarden_identifier }} after {{ vaultwarden_container_cleanup_timeout_seconds }} attempts" >&2;
+  exit 1
+
+########################################################################
+#                                                                      #
+# database                                                             #
+#                                                                      #
+########################################################################
+
+# Specify a database driver to use
 # Valid values: mysql, postgres, sqlite
 vaultwarden_database_type: postgres
 
-vaultwarden_database_postgres_hostname: ""
-vaultwarden_database_postgres_port: 5432
-vaultwarden_database_postgres_username: vaultwarden
-vaultwarden_database_postgres_password: ""
-# Use this to set the sslmode parameter of the SSL connection
-# By default, we expect a local container (without SSL), so attempting SSL connections is not necessary.
-# It's even potentially buggy too.
-# See: https://github.com/dani-garcia/vaultwarden/issues/2386
-vaultwarden_database_postgres_sslmode: disable
-
+# Specify database configuration
 vaultwarden_database_mysql_hostname: ""
 vaultwarden_database_mysql_port: 3306
 vaultwarden_database_mysql_username: vaultwarden
 vaultwarden_database_mysql_password: ""
-
+vaultwarden_database_postgres_hostname: ""
+vaultwarden_database_postgres_port: 5432
+vaultwarden_database_postgres_username: vaultwarden
+vaultwarden_database_postgres_password: ""
+# Specify SSL mode for Postgres database server
+# By default, we expect a local container (without SSL), so attempting SSL connections is not necessary.
+# It's even potentially buggy too.
+# See: https://github.com/dani-garcia/vaultwarden/issues/2386
+# Valid values: see https://www.postgresql.org/docs/11/libpq-ssl.html#LIBPQ-SSL-SSLMODE-STATEMENTS
+vaultwarden_database_postgres_sslmode: disable
 vaultwarden_database_name: vaultwarden
+
+# Control if the connection to MySQL is made via a Unix socket
+vaultwarden_database_mysql_socket_enabled: true
+
+# Specify the path to the MySQL Unix socket path on the host (bind-mount source)
+vaultwarden_database_mysql_socket_path_host: ""
+
+# Specify the path to the MySQL Unix socket path inside the Vaultwarden container
+vaultwarden_database_mysql_socket_path_container: /run-mysqld
+
+# Control if the connection to Postgres is made via a Unix socket
+vaultwarden_database_postgres_socket_enabled: false
+
+# Specify the path to the Postgres Unix socket path on the host (bind-mount source)
+vaultwarden_database_postgres_socket_path_host: ""
+
+# Specify the path to the Postgres Unix socket path inside the Vaultwarden container
+vaultwarden_database_postgres_socket_path_container: /run-postgres
 
 # vaultwarden_config_database_url controls the DATABASE_URL environment variable.
 # See https://github.com/dani-garcia/vaultwarden/wiki/Using-the-PostgreSQL-Backend,
 # https://github.com/dani-garcia/vaultwarden/blob/main/.env.template,
 # and the other database-related Wiki articles
 vaultwarden_config_database_url: |-
-  {{
-    ('postgresql://' + vaultwarden_database_postgres_username + ':' + vaultwarden_database_postgres_password + '@' + vaultwarden_database_postgres_hostname + ':' + vaultwarden_database_postgres_port | string + '/' + vaultwarden_database_name + '?sslmode=' + vaultwarden_database_postgres_sslmode)
-  }}
+  postgres://{{ vaultwarden_database_postgres_username }}:{{ vaultwarden_database_postgres_password }}@
+  {%- if vaultwarden_database_postgres_socket_enabled -%}
+  localhost/{{ vaultwarden_database_name }}?host={{ vaultwarden_database_postgres_socket_path_container }}
+  {%- else -%}
+  {{ vaultwarden_database_postgres_hostname }}:{{ vaultwarden_database_postgres_port }}/{{ vaultwarden_database_name }}?sslmode={{ vaultwarden_database_postgres_sslmode }}
+  {%- endif -%}
 
 vaultwarden_config_database_mysql_url: |-
-  {{
-    ('mysql://' + vaultwarden_database_mysql_username + ':' + vaultwarden_database_mysql_password + '@' + vaultwarden_database_mysql_hostname + ':' + vaultwarden_database_mysql_port | string + '/' + vaultwarden_database_name)
-  }}
+  mysql://{{ vaultwarden_database_mysql_username }}:{{ vaultwarden_database_mysql_password }}@
+  {%- if vaultwarden_database_mysql_socket_enabled -%}
+  localhost/{{ vaultwarden_database_name }}?unix_socket={{ vaultwarden_database_mysql_socket_path_container + '/mysqld.sock' }}
+  {%- else -%}
+  {{ vaultwarden_database_mysql_hostname }}:{{ vaultwarden_database_mysql_port }}/{{ vaultwarden_database_name }}
+  {%- endif -%}
 
 vaultwarden_config_database_sqlite_url: "data/db.sqlite3"
+
+########################################################################
+#                                                                      #
+# /database                                                            #
+#                                                                      #
+########################################################################
 
 # vaultwarden_config_domain controls the DOMAIN environment variable,
 # which tells Vaultwarden its full URL (e.g. `https://vaultwarden.DOMAIN/prefix`)

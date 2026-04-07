@@ -1,4 +1,5 @@
 # SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -30,19 +31,20 @@
 - name: Fail if required Funkwhale settings not defined
   ansible.builtin.fail:
     msg: >-
-      You need to define a required configuration setting (`{{ item }}`).
-  when: "lookup('vars', item, default='') | string | length == 0"
+      You need to define a required configuration setting (`{{ item.name }}`).
+  when: "item.when | bool and lookup('vars', item.name, default='') | string | length == 0"
   with_items:
-    - funkwhale_uid
-    - funkwhale_gid
-    - funkwhale_hostname
-    - funkwhale_path_prefix
-    - funkwhale_container_network
-    - funkwhale_database_hostname
-    - funkwhale_database_username
-    - funkwhale_database_password
-    - funkwhale_django_secret_key
-    - funkwhale_redis_hostname
+    - { "name": "funkwhale_uid", when: true }
+    - { "name": "funkwhale_gid", when: true }
+    - { "name": "funkwhale_hostname", when: true }
+    - { "name": "funkwhale_path_prefix", when: true }
+    - { "name": "funkwhale_container_network", when: true }
+    - { "name": "funkwhale_database_socket_path_host", when: "{{ funkwhale_database_socket_enabled }}" }
+    - { "name": "funkwhale_database_hostname", when: "{{ not funkwhale_database_socket_enabled }}" }
+    - { "name": "funkwhale_database_password", when: true }
+    - { "name": "funkwhale_django_secret_key", when: true }
+    - { "name": "funkwhale_redis_socket_path_host", when: "{{ funkwhale_redis_socket_enabled }}" }
+    - { "name": "funkwhale_redis_hostname", when: "{{ not funkwhale_redis_socket_enabled }}" }
 
 - name: Run if Traefik is enabled for Funkwhale's API
   when: funkwhale_api_container_labels_traefik_enabled | bool

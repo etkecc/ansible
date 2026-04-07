@@ -1,5 +1,6 @@
 {#
 SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
+SPDX-FileCopyrightText: 2026 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
@@ -25,6 +26,6 @@ NGINX_MAX_BODY_SIZE={{ funkwhale_frontend_max_body_size}}
 DJANGO_SECRET_KEY={{ funkwhale_django_secret_key }}
 DJANGO_SETTINGS_MODULE=config.settings.production
 
-DATABASE_URL=postgresql://{{ funkwhale_database_username }}:{{ funkwhale_database_password }}@{{ funkwhale_database_hostname }}:{{ funkwhale_database_port }}/{{ funkwhale_database_name }}
+DATABASE_URL={{ funkwhale_environment_variables_database_url }}
 
 {{ funkwhale_frontend_variables_additional_variables }}

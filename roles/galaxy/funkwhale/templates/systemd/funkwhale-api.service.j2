@@ -1,6 +1,7 @@
 {#
 SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
 SPDX-FileCopyrightText: 2025 Slavi Pantaleev
+SPDX-FileCopyrightText: 2026 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
@@ -33,6 +34,12 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --mount type=bind,src={{ funkwhale_music_path }},dst={{ funkwhale_api_container_music_path }},ro \
       --mount type=bind,src={{ funkwhale_media_path }},dst={{ funkwhale_api_container_media_path }} \
       --mount type=bind,src={{ funkwhale_static_path }},dst={{ funkwhale_api_container_static_path }} \
+      {% if funkwhale_database_socket_enabled and funkwhale_database_socket_path_host != '' %}
+      --mount type=bind,src={{ funkwhale_database_socket_path_host }},dst={{ funkwhale_database_socket_path_container }} \
+      {% endif %}
+      {% if funkwhale_redis_socket_enabled and funkwhale_redis_socket_path_host != '' %}
+      --mount type=bind,src={{ funkwhale_redis_socket_path_host }},dst={{ funkwhale_redis_socket_path_container }} \
+      {% endif %}
       --tmpfs=/tmp:rw,noexec,nosuid,size={{ funkwhale_api_container_tmpfs_tmp_size }} \
       {% if funkwhale_api_container_extra_arguments | length > 0 %}
       {{ funkwhale_api_container_extra_arguments | join(' ') }} \

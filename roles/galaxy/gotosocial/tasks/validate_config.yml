@@ -1,7 +1,10 @@
 # SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
-# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2023 MASH project contributors
+# SPDX-FileCopyrightText: 2023 kinduff
+# SPDX-FileCopyrightText: 2023-2025 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2024 Nikita Chernyi
-# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+# SPDX-FileCopyrightText: 2024 noah
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -26,7 +29,7 @@
 - name: Fail if required GoToSocial settings not defined
   ansible.builtin.fail:
     msg: >-
-      You need to define a required configuration setting (`{{ item }}`).
+      You need to define a required configuration setting (`{{ item.name }}`).
   when: "item.when | bool and lookup('vars', item.name, default='') | string | length == 0"
   with_items:
     - { "name": "gotosocial_identifier", when: true}
@@ -35,8 +38,6 @@
     - { "name": "gotosocial_hostname", when: true}
     - { "name": "gotosocial_path_prefix", when: true}
     - { "name": "gotosocial_container_network", when: true}
-    - { "name": "gotosocial_database_hostname", when: "{{ gotosocial_database_type == 'postgres' }}"}
-    - { "name": "gotosocial_database_password", when: "{{ gotosocial_database_type == 'postgres' }}"}
     - { "name": "gotosocial_container_labels_traefik_hostname", when: "{{ gotosocial_container_labels_traefik_enabled }}"}
     - { "name": "gotosocial_container_labels_metrics_hostname", when: "{{ gotosocial_container_labels_metrics_enabled }}"}
 
@@ -46,11 +47,40 @@
       gotosocial_database_type must be 'postgres' or 'sqlite'
   when: "gotosocial_database_type not in ['postgres', 'sqlite']"
 
-- name: Fail if GoToSocial database SSL mode invalid
-  ansible.builtin.fail:
-    msg: >-
-      gotosocial_database_sslmode must be 'disable', 'enable', or 'require'
-  when: "gotosocial_database_sslmode not in ['disable', 'enable', 'require']"
+- name: Run if GoToSocial + Postgres integration is enabled
+  when: gotosocial_database_type == 'postgres'
+  block:
+    - name: Fail if required GoToSocial + Postgres integration settings not defined
+      ansible.builtin.fail:
+        msg: >-
+          You need to define a required configuration setting (`{{ item }}`) when `gotosocial_database_type` is `postgres`
+      when: "lookup('vars', item, default='') | string | length == 0"
+      with_items:
+        - gotosocial_database_password
+
+    - name: Fail if Postgres socket host path for GoToSocial is missing when Unix socket is enabled
+      ansible.builtin.fail:
+        msg: >-
+          You need to define `gotosocial_database_socket_path_host` when `gotosocial_database_type` is `postgres`
+          and `gotosocial_database_socket_enabled` is `true`.
+      when: >-
+        gotosocial_database_socket_enabled and
+        gotosocial_database_socket_path_host | string | length == 0
+
+    - name: Fail if Postgres hostname for GoToSocial is missing when Unix socket is disabled
+      ansible.builtin.fail:
+        msg: >-
+          You need to define `gotosocial_database_hostname` when `gotosocial_database_type` is `postgres`
+          and `gotosocial_database_socket_enabled` is `false`.
+      when: >-
+        not gotosocial_database_socket_enabled and
+        gotosocial_database_hostname | string | length == 0
+
+    - name: Fail if GoToSocial database SSL mode invalid
+      ansible.builtin.fail:
+        msg: >-
+          gotosocial_database_sslmode must be 'disable', 'enable', or 'require'
+      when: "gotosocial_database_sslmode not in ['disable', 'enable', 'require']"
 
 - name: Fail if SMTP settings are missing (and SMTP is enabled by setting host)
   ansible.builtin.fail:

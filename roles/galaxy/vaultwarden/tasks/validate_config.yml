@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
 # SPDX-FileCopyrightText: 2023 Slavi Pantaleev
-# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -15,6 +15,7 @@
     - { "old": "vaultwarden_data_dir_path", "new": "vaultwarden_data_path" }
     - { "old": "vaultwarden_cache_dir_path", "new": "vaultwarden_cache_path" }
     - { "old": "vaultwarden_ephemeral_dir_path", "new": "vaultwarden_ephemeral_path" }
+    - { "old": "vaultwarden_container_http_bind_port", "new": "vaultwarden_container_http_host_bind_port" }
     - { "old": "vaultwarden_container_labels_traefik_rule_ui", "new": "vaultwarden_container_labels_traefik_rule" }
     - { "old": "vaultwarden_container_labels_traefik_rule_websocket", "new": "<Removed. See https://github.com/dani-garcia/vaultwarden/pull/3404>" }
     - { "old": "vaultwarden_config_websocket_enabled", "new": "<Removed. See https://github.com/dani-garcia/vaultwarden/pull/3404>" }
@@ -56,23 +57,63 @@
       vaultwarden_database_type must be 'mysql', 'postgres', or 'sqlite'
   when: "vaultwarden_database_type not in ['mysql', 'postgres', 'sqlite']"
 
-- name: Fail if required Vaultwarden + Postgres integration settings not defined
-  ansible.builtin.fail:
-    msg: >-
-      You need to define a required configuration setting (`{{ item }}`) when `vaultwarden_database_type` is `postgres`
-  when: "vaultwarden_database_type == 'postgres' and lookup('vars', item, default='') | string | length == 0"
-  with_items:
-    - vaultwarden_database_postgres_hostname
-    - vaultwarden_database_postgres_password
+- name: Run if Vaultwarden + MySQL integration is enabled
+  when: vaultwarden_database_type == 'mysql'
+  block:
+    - name: Fail if required Vaultwarden + MySQL integration settings not defined
+      ansible.builtin.fail:
+        msg: >-
+          You need to define a required configuration setting (`{{ item }}`) when `vaultwarden_database_type` is `mysql`
+      when: "lookup('vars', item, default='') | string | length == 0"
+      with_items:
+        - vaultwarden_database_mysql_password
 
-- name: Fail if required Vaultwarden + MySQL integration settings not defined
-  ansible.builtin.fail:
-    msg: >-
-      You need to define a required configuration setting (`{{ item }}`) when `vaultwarden_database_type` is `mysql`
-  when: "vaultwarden_database_type == 'mysql' and lookup('vars', item, default='') | string | length == 0"
-  with_items:
-    - vaultwarden_database_mysql_hostname
-    - vaultwarden_database_mysql_password
+    - name: Fail if MySQL socket host path for Vaultwarden is missing when Unix socket is enabled
+      ansible.builtin.fail:
+        msg: >-
+          You need to define `vaultwarden_database_mysql_socket_path_host` when `vaultwarden_database_type` is `mysql`
+          and `vaultwarden_database_mysql_socket_enabled` is `true`.
+      when: >-
+        vaultwarden_database_mysql_socket_enabled and
+        vaultwarden_database_mysql_socket_path_host | string | length == 0
+
+    - name: Fail if MySQL hostname for Vaultwarden is missing when Unix socket is disabled
+      ansible.builtin.fail:
+        msg: >-
+          You need to define `vaultwarden_database_mysql_hostname` when `vaultwarden_database_type` is `mysql`
+          and `vaultwarden_database_mysql_socket_enabled` is `false`.
+      when: >-
+        not vaultwarden_database_mysql_socket_enabled and
+        vaultwarden_database_mysql_hostname | string | length == 0
+
+- name: Run if Vaultwarden + Postgres integration is enabled
+  when: vaultwarden_database_type == 'postgres'
+  block:
+    - name: Fail if required Vaultwarden + Postgres integration settings not defined
+      ansible.builtin.fail:
+        msg: >-
+          You need to define a required configuration setting (`{{ item }}`) when `vaultwarden_database_type` is `postgres`
+      when: "lookup('vars', item, default='') | string | length == 0"
+      with_items:
+        - vaultwarden_database_postgres_password
+
+    - name: Fail if Postgres socket host path for Vaultwarden is missing when Unix socket is enabled
+      ansible.builtin.fail:
+        msg: >-
+          You need to define `vaultwarden_database_postgres_socket_path_host` when `vaultwarden_database_type` is `postgres`
+          and `vaultwarden_database_postgres_socket_enabled` is `true`.
+      when: >-
+        vaultwarden_database_postgres_socket_enabled and
+        vaultwarden_database_postgres_socket_path_host | string | length == 0
+
+    - name: Fail if Postgres hostname for Vaultwarden is missing when Unix socket is disabled
+      ansible.builtin.fail:
+        msg: >-
+          You need to define `vaultwarden_database_postgres_hostname` when `vaultwarden_database_type` is `postgres`
+          and `vaultwarden_database_postgres_socket_enabled` is `false`.
+      when: >-
+        not vaultwarden_database_postgres_socket_enabled and
+        vaultwarden_database_postgres_hostname | string | length == 0
 
 - name: Fail if SMTP settings are missing (and SMTP is enabled by setting host)
   ansible.builtin.fail:

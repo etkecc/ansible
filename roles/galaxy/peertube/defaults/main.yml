@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2023-2025 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2024 Nikita Chernyi
-# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -199,6 +199,68 @@ peertube_systemd_wanted_services_list_default: []
 peertube_systemd_wanted_services_list_auto: []
 peertube_systemd_wanted_services_list_custom: []
 
+# Controls how long to wait for the container to stop gracefully before killing it.
+peertube_container_stop_grace_time_seconds: "{{ devture_systemd_docker_base_container_stop_grace_time_seconds }}"
+
+# Controls how long the pre-start cleanup should wait for stale container-name release
+# before failing startup explicitly.
+peertube_container_cleanup_timeout_seconds: "{{ devture_systemd_docker_base_container_cleanup_timeout_seconds }}"
+
+# Controls the delay between pre-start cleanup retries.
+peertube_container_cleanup_retry_delay_seconds: "{{ devture_systemd_docker_base_container_cleanup_retry_delay_seconds }}"
+
+# Shell command used in the systemd pre-start phase to deterministically remove a stale
+# container and wait until Docker releases its name.
+peertube_container_cleanup_command: |
+  i=0;
+  while [ "$i" -lt {{ peertube_container_cleanup_timeout_seconds }} ]; do
+  {{ devture_systemd_docker_base_host_command_docker }} stop -t {{ peertube_container_stop_grace_time_seconds }} {{ peertube_identifier }} >/dev/null 2>&1 || true;
+  {{ devture_systemd_docker_base_host_command_docker }} rm -f {{ peertube_identifier }} >/dev/null 2>&1 || true;
+  if {{ devture_systemd_docker_base_host_command_docker }} container inspect {{ peertube_identifier }} >/dev/null 2>&1; then
+  i=$((i + 1));
+  sleep {{ peertube_container_cleanup_retry_delay_seconds }};
+  continue;
+  fi;
+  if {{ devture_systemd_docker_base_host_command_docker }} info >/dev/null 2>&1; then
+  exit 0;
+  fi;
+  echo "Failed to query Docker daemon while cleaning up {{ peertube_identifier }}" >&2;
+  exit 1;
+  done;
+  echo "Failed to remove stale container {{ peertube_identifier }} after {{ peertube_container_cleanup_timeout_seconds }} attempts" >&2;
+  exit 1
+
+########################################################################
+#                                                                      #
+# database                                                             #
+#                                                                      #
+########################################################################
+
+# Specify database configuration
+peertube_database_hostname: ""
+peertube_database_port: 5432
+peertube_database_username: peertube
+peertube_database_password: ""
+peertube_database_ssl_enabled: false
+peertube_database_name: peertube
+
+# Control if the database connection to Postgres is made via a Unix socket
+peertube_database_socket_enabled: false
+
+# Specify the path to the Postgres Unix socket path inside the PeerTube container
+peertube_database_socket_path_container: /run-postgres
+
+# Specify the path to the Postgres Unix socket path on the host (bind-mount source)
+peertube_database_socket_path_host: ""
+
+peertube_environment_variables_peertube_db_hostname: "{{ peertube_database_socket_path_container if peertube_database_socket_enabled else peertube_database_hostname }}"
+
+########################################################################
+#                                                                      #
+# /database                                                            #
+#                                                                      #
+########################################################################
+
 # Controls which values to register in PEERTUBE_TRUST_PROXY
 # See `peertube_config_trust_proxy`.
 # Your own custom changes should be added to `peertube_trusted_proxies_values_custom`.
@@ -222,13 +284,6 @@ peertube_trusted_proxies_values_custom: []
 
 peertube_start_wait_time: 15
 peertube_migration_wait_time: 1800
-
-peertube_database_hostname: ""
-peertube_database_port: 5432
-peertube_database_name: peertube
-peertube_database_username: peertube
-peertube_database_password: ""
-peertube_database_sslmode: false
 
 peertube_config_smtp_hostname: ""
 peertube_config_smtp_port: 587

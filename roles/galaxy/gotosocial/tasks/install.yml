@@ -38,20 +38,20 @@
     source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
     force_source: "{{ gotosocial_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
     force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else gotosocial_container_image_force_pull }}"
-  register: gotosocial_container_image_pull_result
+  register: gotosocial_container_image_pull_result_ansible_module
   retries: "{{ devture_playbook_help_container_retries_count }}"
   delay: "{{ devture_playbook_help_container_retries_delay }}"
-  until: gotosocial_container_image_pull_result is not failed
+  until: gotosocial_container_image_pull_result_ansible_module is not failed
 
 - name: Ensure GoToSocial container image is pulled via ansible.builtin.command
   when: devture_systemd_docker_base_container_image_pull_method == 'command'
   ansible.builtin.command:
     cmd: "{{ devture_systemd_docker_base_host_command_docker }} pull {{ gotosocial_container_image }}"
-  register: gotosocial_container_image_pull_result
+  register: gotosocial_container_image_pull_result_command
   retries: "{{ devture_playbook_help_container_retries_count }}"
   delay: "{{ devture_playbook_help_container_retries_delay }}"
-  until: gotosocial_container_image_pull_result is not failed
-  changed_when: "'Downloaded newer image' in gotosocial_container_image_pull_result.stdout"
+  until: gotosocial_container_image_pull_result_command is not failed
+  changed_when: "'Downloaded newer image' in gotosocial_container_image_pull_result_command.stdout"
 
 - name: Run if container image customizations are enabled
   when: gotosocial_container_image_customizations_enabled | bool
@@ -110,6 +110,7 @@
       {{
         gotosocial_support_files_result.changed | default(false)
         or gotosocial_systemd_service_result.changed | default(false)
-        or gotosocial_container_image_pull_result.changed | default(false)
+        or gotosocial_container_image_pull_result_ansible_module.changed | default(false)
+        or gotosocial_container_image_pull_result_command.changed | default(false)
         or gotosocial_container_image_build_result.changed | default(false)
       }}

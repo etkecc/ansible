@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
-# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2023-2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -18,6 +19,7 @@
     - { "old": "peertube_config_database_port", "new": "peertube_database_port" }
     - { "old": "peertube_config_database_username", "new": "peertube_database_username" }
     - { "old": "peertube_config_database_password", "new": "peertube_database_password" }
+    - { "old": "peertube_database_sslmode", "new": "peertube_database_ssl_enabled" }
     - { "old": "peertube_config_object_storage_videos_bucket_name", "new": "peertube_config_object_storage_web_videos_bucket_name" }
     - { "old": "peertube_config_object_storage_videos_prefix", "new": "peertube_config_object_storage_web_videos_prefix" }
     - { "old": "peertube_config_object_storage_videos_base_url", "new": "peertube_config_object_storage_web_videos_base_url" }
@@ -29,21 +31,22 @@
 - name: Fail if required PeerTube settings not defined
   ansible.builtin.fail:
     msg: >-
-      You need to define a required configuration setting (`{{ item }}`).
-  when: "lookup('vars', item, default='') | string | length == 0"
+      You need to define a required configuration setting (`{{ item.name }}`).
+  when: "item.when | bool and lookup('vars', item.name, default='') | string | length == 0"
   with_items:
-    - peertube_identifier
-    - peertube_uid
-    - peertube_gid
-    - peertube_hostname
-    - peertube_path_prefix
-    - peertube_container_network
-    - peertube_database_hostname
-    - peertube_database_password
-    - peertube_redis_hostname
-    - peertube_config_secret
-    - peertube_config_admin_email
-    - peertube_config_root_user_initial_password
+    - { "name": "peertube_identifier", when: true }
+    - { "name": "peertube_uid", when: true }
+    - { "name": "peertube_gid", when: true }
+    - { "name": "peertube_hostname", when: true }
+    - { "name": "peertube_path_prefix", when: true }
+    - { "name": "peertube_container_network", when: true }
+    - { "name": "peertube_database_socket_path_host", when: "{{ peertube_database_socket_enabled }}" }
+    - { "name": "peertube_database_hostname", when: "{{ not peertube_database_socket_enabled }}" }
+    - { "name": "peertube_database_password", when: true }
+    - { "name": "peertube_redis_hostname", when: true }
+    - { "name": "peertube_config_secret", when: true }
+    - { "name": "peertube_config_admin_email", when: true }
+    - { "name": "peertube_config_root_user_initial_password", when: true }
 
 - name: Fail if required PeerTube Object Storage settings not defined
   ansible.builtin.fail:

@@ -1,10 +1,10 @@
 <!--
-SPDX-FileCopyrightText: 2020 - 2024 MDAD project contributors
-SPDX-FileCopyrightText: 2020 - 2024 Slavi Pantaleev
 SPDX-FileCopyrightText: 2020 Aaron Raimist
 SPDX-FileCopyrightText: 2020 Chris van Dijk
 SPDX-FileCopyrightText: 2020 Dominik Zajac
 SPDX-FileCopyrightText: 2020 Mickaël Cornière
+SPDX-FileCopyrightText: 2020-2024 MDAD project contributors
+SPDX-FileCopyrightText: 2020-2024 Slavi Pantaleev
 SPDX-FileCopyrightText: 2022 François Darveau
 SPDX-FileCopyrightText: 2022 Julian Foad
 SPDX-FileCopyrightText: 2022 Warren Bailey
@@ -12,7 +12,10 @@ SPDX-FileCopyrightText: 2023 Antonis Christofides
 SPDX-FileCopyrightText: 2023 Felix Stupp
 SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
 SPDX-FileCopyrightText: 2023 Pierre 'McFly' Marty
-SPDX-FileCopyrightText: 2024 - 2025 Suguru Hirahara
+SPDX-FileCopyrightText: 2023-2025 MASH project contributors
+SPDX-FileCopyrightText: 2024 Thomas Miceli
+SPDX-FileCopyrightText: 2024 noah
+SPDX-FileCopyrightText: 2024-2026 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
@@ -83,7 +86,9 @@ gotosocial_account_domain: "example.com"
 
 **Note**: if you enable it, please have a look at [this page on the official documentation](https://docs.gotosocial.org/en/latest/advanced/host-account-domain/) as you will have to configure the instance for it.
 
-### Specify database (optional)
+### Configuring database
+
+#### Specify database (optional)
 
 You can specify a database used by GoToSocial. By default it is configured to use SQLite. It is sufficient for small instances and single-board computers, where a dedicated database would be overkill. The SQLite database is stored in the directory specified with `gotosocial_database_path`.
 
@@ -94,6 +99,20 @@ gotosocial_database_type: postgres
 ```
 
 For other settings, check variables such as `gotosocial_database_*` on [`defaults/main.yml`](../defaults/main.yml).
+
+#### Configuring connection to the database server (optional)
+
+By default the role is configured to establish TCP connection with the Postgres server. If a Unix domain socket is preferred, you can mount it by adding the following configuration to your `vars.yml` file:
+
+```yaml
+# Enable the connection to Postgres server via a Unix socket
+gotosocial_database_socket_enabled: true
+
+# Specify the path to the Postgres Unix socket path on the host (bind-mount source)
+gotosocial_database_socket_path_host: ""
+```
+
+Setting it enables to connect to the Postgres server via Unix socket mounted in the container at `/run-postgres/.s.PGSQL.5432`.
 
 ### Configure the mailer
 

@@ -1,7 +1,9 @@
-# SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
-# SPDX-FileCopyrightText: 2023 MASH project contributors
-# SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
-# SPDX-FileCopyrightText: 2024 Nikita Chernyi
+# SPDX-FileCopyrightText: 2023, 2024 Julian-Samuel Gebühr
+# SPDX-FileCopyrightText: 2023, 2024 Nikita Chernyi
+# SPDX-FileCopyrightText: 2023, 2025 MASH project contributors
+# SPDX-FileCopyrightText: 2023-2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2024 Sergio Durigan Junior
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -48,6 +50,82 @@ funkwhale_container_network: "{{ funkwhale_identifier }}"
 # Control if the container network is deleted on uninstalling.
 funkwhale_container_network_deletion_enabled: true
 
+########################################################################
+#                                                                      #
+# database                                                             #
+#                                                                      #
+########################################################################
+
+# Specify database configuration
+funkwhale_database_hostname: ""
+funkwhale_database_port: 5432
+funkwhale_database_username: ""
+funkwhale_database_password: ""
+# Specify SSL mode for Postgres database server
+# By default, we expect a local container (without SSL), so attempting SSL connections is not necessary.
+# Valid values: see https://www.postgresql.org/docs/11/libpq-ssl.html#LIBPQ-SSL-SSLMODE-STATEMENTS
+funkwhale_database_sslmode: disable
+funkwhale_database_name: funkwhale
+
+# Control if the database connection to Postgres is made via a Unix socket
+funkwhale_database_socket_enabled: false
+
+# Specify the path to the Postgres Unix socket path inside the Funkwhale container
+funkwhale_database_socket_path_container: /run/postgresql # Default value
+
+# Specify the path to the Postgres Unix socket path on the host (bind-mount source)
+funkwhale_database_socket_path_host: ""
+
+# cf. https://django-environ.readthedocs.io/en/latest/index.html
+funkwhale_environment_variables_database_url: |-
+  postgres://{{ funkwhale_database_username }}:{{ funkwhale_database_password }}@
+  {%- if funkwhale_database_socket_enabled -%}
+  /{{ funkwhale_database_name }}
+  {%- else -%}
+  {{ funkwhale_database_hostname }}:{{ funkwhale_database_port }}/{{ funkwhale_database_name }}?sslmode={{ funkwhale_database_sslmode }}
+  {%- endif -%}
+
+########################################################################
+#                                                                      #
+# /database                                                            #
+#                                                                      #
+########################################################################
+
+########################################################################
+#                                                                      #
+# redis                                                                #
+#                                                                      #
+########################################################################
+
+# Specify Redis configuration
+funkwhale_redis_hostname: ""
+funkwhale_redis_port: 6379
+funkwhale_redis_password: ""
+funkwhale_redis_database: "0"
+
+# Control if the connection to Redis is made via a Unix socket
+funkwhale_redis_socket_enabled: false
+
+# Specify the path to the Redis Unix socket path inside the Funkwhale container
+funkwhale_redis_socket_path_container: /run-valkey
+funkwhale_redis_socket_path: /valkey.sock
+
+# Specify the path to the Redis Unix socket path on the host (bind-mount source)
+funkwhale_redis_socket_path_host: ""
+
+funkwhale_redis_url: |-
+  {% if funkwhale_redis_socket_enabled %}
+  unix://{{ funkwhale_redis_socket_path_container }}{{ funkwhale_redis_socket_path }}?db={{ funkwhale_redis_database }}{{ '&password=' + funkwhale_redis_password if funkwhale_redis_password }}
+  {% else %}
+  redis://:{{ funkwhale_redis_password }}@{{ funkwhale_redis_hostname }}:{{ funkwhale_redis_port }}/{{ funkwhale_redis_database }}
+  {%- endif -%}
+
+########################################################################
+#                                                                      #
+# /redis                                                               #
+#                                                                      #
+########################################################################
+
 # Enables automatic in-place import and watching file and metadata changes in the funkwhale_music_path directory.
 # Needs the first 8 characters of the library ID after creating a library in the web UI. If your library ID is "769a2bc3-eb1d-4aff-9f84-2c4d80d5c2d1", provide "769a2bc3".
 funkwhale_watch_imports_enabled: false
@@ -59,20 +137,6 @@ funkwhale_aws_storage_bucket_name: ""
 funkwhale_aws_s3_region_name: ""
 funkwhale_aws_s3_endpoint_url: ""
 funkwhale_aws_location: 'funkwhale'
-
-funkwhale_database_hostname: ""
-funkwhale_database_port: 5432
-funkwhale_database_name: funkwhale
-funkwhale_database_username: ""
-funkwhale_database_password: ""
-# Use this to set the sslmode parameter of the SSL connection
-# By default, we expect a local container (without SSL), so attempting SSL connections is not necessary.
-funkwhale_database_sslmode: disable
-
-funkwhale_redis_hostname: ""
-funkwhale_redis_port: 6379
-funkwhale_redis_database: 0
-funkwhale_redis_url: "redis://{{ funkwhale_redis_hostname }}:{{ funkwhale_redis_port }}/{{ funkwhale_redis_database }}"
 
 # This var holds the list of users that should be created automatically by playbooks/roles/group vars,
 # To add your own users for specific host, use `funkwhale_users_additional`

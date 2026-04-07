@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
 # SPDX-FileCopyrightText: 2023 MASH project contributors
 # SPDX-FileCopyrightText: 2025 Slavi Pantaleev
-# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -37,7 +37,7 @@
     - "{{ funkwhale_frontend_nginx_cache_path }}"
     - "{{ funkwhale_frontend_nginx_etc_path }}"
 
-- name: Ensure Funkwhale Traefik labels are installed
+- name: Ensure Funkwhale support files installed
   ansible.builtin.template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -51,17 +51,17 @@
     - { src: "{{ role_path }}/templates/env_api.j2", dest: "{{ funkwhale_api_base_path }}/env" }
   register: funkwhale_support_files_result
 
-- name: Ensure Funkwhale container image is pulled
+- name: Ensure Funkwhale container images are pulled
   community.docker.docker_image:
     name: "{{ item.image }}"
     source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
   with_items:
     - { image: "{{ funkwhale_frontend_container_image }}" }
     - { image: "{{ funkwhale_api_container_image }}" }
-  register: funkwhale_container_image_pull_result
+  register: funkwhale_container_images_pull_result
   retries: "{{ devture_playbook_help_container_retries_count }}"
   delay: "{{ devture_playbook_help_container_retries_delay }}"
-  until: funkwhale_container_image_pull_result is not failed
+  until: funkwhale_container_images_pull_result is not failed
 
 - name: Ensure Funkwhale container network is created
   community.docker.docker_network:
@@ -95,7 +95,7 @@
       {{
         funkwhale_support_files_result.changed | default(false)
         or funkwhale_systemd_services_result.changed | default(false)
-        or funkwhale_container_image_pull_result.changed | default(false)
+        or funkwhale_container_images_pull_result.changed | default(false)
       }}
 
 - name: Ensure disabled Funkwhale watch imports systemd service is stopped and removed

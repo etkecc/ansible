@@ -1,6 +1,8 @@
 {#
-SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
 SPDX-FileCopyrightText: 2023 Antoine-Ali Zarrouk
+SPDX-FileCopyrightText: 2023-2025 Slavi Pantaleev
+SPDX-FileCopyrightText: 2024 Nikita Chernyi
+SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
@@ -19,8 +21,7 @@ DefaultDependencies=no
 [Service]
 Type=simple
 Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
-ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ vaultwarden_identifier }} 2>/dev/null'
-ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ vaultwarden_identifier }} 2>/dev/null'
+ExecStartPre={{ devture_systemd_docker_base_host_command_sh }} -c '{{ vaultwarden_container_cleanup_command | trim | replace("\n", " ") }}'
 
 {#
   The `--health-interval` health check parameter was changed because by default:
@@ -39,8 +40,8 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% if vaultwarden_container_hostname %}
       --hostname={{ vaultwarden_container_hostname }} \
       {% endif %}
-      {% if vaultwarden_container_http_bind_port %}
-      -p {{ vaultwarden_container_http_bind_port }}:{{ vaultwarden_config_rocket_port }} \
+      {% if vaultwarden_container_http_host_bind_port %}
+      -p {{ vaultwarden_container_http_host_bind_port }}:{{ vaultwarden_config_rocket_port }} \
       {% endif %}
       --health-interval=10s \
       --env-file={{ vaultwarden_base_path }}/env \
@@ -48,6 +49,12 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --mount type=bind,src={{ vaultwarden_data_path }},dst=/data \
       --mount type=bind,src={{ vaultwarden_cache_path }},dst=/cache \
       --mount type=bind,src={{ vaultwarden_ephemeral_path }},dst=/ephemeral \
+      {% if vaultwarden_database_type == 'mysql' and vaultwarden_database_mysql_socket_enabled and vaultwarden_database_mysql_socket_path_host != '' %}
+      --mount type=bind,src={{ vaultwarden_database_mysql_socket_path_host }},dst={{ vaultwarden_database_mysql_socket_path_container }} \
+      {% endif %}
+      {% if vaultwarden_database_type == 'postgres' and vaultwarden_database_postgres_socket_enabled and vaultwarden_database_postgres_socket_path_host != '' %}
+      --mount type=bind,src={{ vaultwarden_database_postgres_socket_path_host }},dst={{ vaultwarden_database_postgres_socket_path_container }} \
+      {% endif %}
       --tmpfs=/tmp:rw,noexec,nosuid,size={{ vaultwarden_container_tmpfs_tmp_size }} \
       {% for arg in vaultwarden_container_extra_arguments %}
       {{ arg }} \

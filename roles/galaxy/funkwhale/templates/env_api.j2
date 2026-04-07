@@ -1,6 +1,7 @@
 {#
 SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
 SPDX-FileCopyrightText: 2024 Nikita Chernyi
+SPDX-FileCopyrightText: 2026 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
@@ -48,7 +49,7 @@ REVERSE_PROXY_TYPE=nginx
 #  DATABASE_URL=postgresql://<user>:<password>@<host>:<port>/<database>
 #  DATABASE_URL=postgresql://funkwhale:passw0rd@localhost:5432/funkwhale_database
 # Use the next one if you followed Debian installation guide
-DATABASE_URL=postgresql://{{ funkwhale_database_username }}:{{ funkwhale_database_password }}@{{ funkwhale_database_hostname }}:{{ funkwhale_database_port }}/{{ funkwhale_database_name }}
+DATABASE_URL={{ funkwhale_environment_variables_database_url }}
 
 CACHE_URL={{ funkwhale_redis_url }}
 CELERY_BROKER_URL={{ funkwhale_redis_url }}
