@@ -1,5 +1,5 @@
 * Alpine: edge
-* Authentication Service: 1.14.0
+* Authentication Service: 1.15.0
 * Baibot: v1.17.0
 * Bluesky: v0.2510.0
 * Borg: 1.4.4
@@ -52,7 +52,7 @@
 * Postgres Container Image V18: 18.3
 * Postgres Container Image V9: 9.6.24
 * Postmoogle: v0.9.29
-* Prometheus: v3.10.0
+* Prometheus: v3.11.1
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.10.2
 * Prometheus Postgres Exporter: v0.19.1
@@ -69,11 +69,11 @@
 * Synapse: v1.150.0
 * Synapse Auto Compressor: v0.0.3
 * Synapse Http Antispam Git: v0.5.0
-* Synapse Reverse Proxy Companion: 1.29.7-alpine
+* Synapse Reverse Proxy Companion: 1.29.8-alpine
 * Synapse Rust Synapse Compress State Container Image: v0.0.3
 * Synapse S3 Storage Provider: 1.6.0
 * Telegram: v0.15.3
-* Traefik: v3.6.12
+* Traefik: v3.6.13
 * Traefik Certs Dumper: v2.10.0
 * Traefik Config Tcp Servertransports Default Proxyprotocol: 1
 * Twitter: v0.2603.0
