@@ -1,5 +1,7 @@
 {#
+SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
 SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
@@ -58,6 +60,52 @@ traefik.http.routers.{{ etherpad_identifier }}.tls.certResolver={{ etherpad_cont
 {% endif %}
 
 traefik.http.services.{{ etherpad_identifier }}.loadbalancer.server.port={{ etherpad_container_http_port }}
+
+{% if etherpad_container_labels_traefik_metrics_enabled %}
+########################################################################
+#                                                                      #
+# Metrics                                                              #
+#                                                                      #
+########################################################################
+
+{% set middlewares = etherpad_container_labels_traefik_metrics_middlewares %}
+
+{% if etherpad_container_labels_traefik_metrics_middleware_basic_auth_enabled %}
+traefik.http.middlewares.{{ etherpad_identifier }}-metrics-basic-auth.basicauth.users={{ etherpad_container_labels_traefik_metrics_middleware_basic_auth_users }}
+{% set middlewares = middlewares + [etherpad_identifier + '-metrics-basic-auth'] %}
+{% endif %}
+
+traefik.http.middlewares.{{ etherpad_identifier }}-metrics-replace-path.replacepath.path=/stats/prometheus
+{% set middlewares = middlewares + [etherpad_identifier + '-metrics-replace-path'] %}
+
+traefik.http.routers.{{ etherpad_identifier }}-metrics.rule={{ etherpad_container_labels_traefik_metrics_rule }}
+
+{% if etherpad_container_labels_traefik_metrics_priority | int > 0 %}
+traefik.http.routers.{{ etherpad_identifier }}-metrics.priority={{ etherpad_container_labels_traefik_metrics_priority }}
+{% endif %}
+
+traefik.http.routers.{{ etherpad_identifier }}-metrics.service={{ etherpad_identifier }}-metrics
+
+{% if middlewares | length > 0 %}
+traefik.http.routers.{{ etherpad_identifier }}-metrics.middlewares={{ middlewares | join(',') }}
+{% endif %}
+
+traefik.http.routers.{{ etherpad_identifier }}-metrics.entrypoints={{ etherpad_container_labels_traefik_metrics_entrypoints }}
+
+traefik.http.routers.{{ etherpad_identifier }}-metrics.tls={{ etherpad_container_labels_traefik_metrics_tls | to_json }}
+{% if etherpad_container_labels_traefik_metrics_tls %}
+traefik.http.routers.{{ etherpad_identifier }}-metrics.tls.certResolver={{ etherpad_container_labels_traefik_metrics_tls_certResolver }}
+{% endif %}
+
+traefik.http.services.{{ etherpad_identifier }}-metrics.loadbalancer.server.port={{ etherpad_container_metrics_port }}
+
+########################################################################
+#                                                                      #
+# /Metrics                                                             #
+#                                                                      #
+########################################################################
+{% endif %}
+
 {% endif %}
 
 {% for arg in etherpad_container_labels_additional_labels %}

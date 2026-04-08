@@ -1,5 +1,8 @@
-# SPDX-FileCopyrightText: 2023, 2024 Slavi Pantaleev
-# SPDX-FileCopyrightText: 2024 Nikita Chernyi
+# SPDX-FileCopyrightText: 2023, 2024 Julian-Samuel Gebühr
+# SPDX-FileCopyrightText: 2023, 2024 Nikita Chernyi
+# SPDX-FileCopyrightText: 2023, 2025 MASH project contributors
+# SPDX-FileCopyrightText: 2023-2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2024 Sergio Durigan Junior
 # SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -56,8 +59,16 @@ etherpad_container_network_deletion_enabled: true
 # Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
 etherpad_container_http_host_bind_port: ""
 
+# Specify how the metrics container publishes its HTTP port (as defined by `etherpad_container_metrics_port`).
+#
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
+etherpad_container_metrics_host_bind_port: ""
+
 # The port number in the container
 etherpad_container_http_port: 9001
+
+# The port number of the metrics server in the container
+etherpad_container_metrics_port: 9001
 
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
@@ -80,10 +91,24 @@ etherpad_container_labels_traefik_priority: 0
 etherpad_container_labels_traefik_entrypoints: web-secure
 etherpad_container_labels_traefik_tls: "{{ etherpad_container_labels_traefik_entrypoints != 'web' }}"
 etherpad_container_labels_traefik_tls_certResolver: default  # noqa var-naming
-
 etherpad_container_labels_middleware_basic_auth_enabled: false
 # See: https://doc.traefik.io/traefik/reference/routing-configuration/http/middlewares/basicauth/
 etherpad_container_labels_middleware_basic_auth_users: ""
+
+# Controls if labels are added to expose the Prometheus metrics publicly.
+etherpad_container_labels_traefik_metrics_enabled: false
+etherpad_container_labels_traefik_metrics_hostname: "{{ etherpad_hostname }}"
+# The path prefix must either be `/` or not end with a slash (e.g. `/metrics`).
+etherpad_container_labels_traefik_metrics_path_prefix: /metrics
+etherpad_container_labels_traefik_metrics_rule: "Host(`{{ etherpad_container_labels_traefik_metrics_hostname }}`){% if etherpad_container_labels_traefik_metrics_path_prefix != '/' %} && PathPrefix(`{{ etherpad_container_labels_traefik_metrics_path_prefix }}`){% endif %}"
+etherpad_container_labels_traefik_metrics_priority: 0
+etherpad_container_labels_traefik_metrics_entrypoints: "{{ etherpad_container_labels_traefik_entrypoints }}"
+etherpad_container_labels_traefik_metrics_middlewares: []
+etherpad_container_labels_traefik_metrics_tls: "{{ etherpad_container_labels_traefik_metrics_entrypoints != 'web' }}"
+etherpad_container_labels_traefik_metrics_tls_certResolver: "{{ etherpad_container_labels_traefik_tls_certResolver }}"  # noqa var-naming
+etherpad_container_labels_traefik_metrics_middleware_basic_auth_enabled: false
+# See: https://doc.traefik.io/traefik/reference/routing-configuration/http/middlewares/basicauth/
+etherpad_container_labels_traefik_metrics_middleware_basic_auth_users: ""
 
 # Controls which additional headers to attach to all HTTP requests.
 # To add your own custom request headers, use `etherpad_container_labels_traefik_additional_request_headers_custom`
