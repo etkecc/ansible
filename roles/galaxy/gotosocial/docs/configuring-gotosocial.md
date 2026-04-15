@@ -162,13 +162,13 @@ After running the command for installation, you can create user account(s).
 Run this command to create an **administrator** user account:
 
 ```sh
-ansible-playbook -i inventory/hosts setup.yml --tags=gotosocial-add-admin -e username=YOUR_USERNAME_HERE -e password=YOUR_PASSWORD_HERE -e email=YOUR_EMAIL_ADDRESS_HERE
+ansible-playbook -i inventory/hosts setup.yml --tags=create-admin-gotosocial -e username=YOUR_USERNAME_HERE -e password=YOUR_PASSWORD_HERE -e email=YOUR_EMAIL_ADDRESS_HERE
 ```
 
 Run this command to create a **regular** (non-administrator) user account:
 
 ```sh
-ansible-playbook -i inventory/hosts setup.yml --tags=gotosocial-add-user -e username=YOUR_USERNAME_HERE -e password=YOUR_PASSWORD_HERE -e email=YOUR_EMAIL_ADDRESS_HERE
+ansible-playbook -i inventory/hosts setup.yml --tags=create-user-gotosocial -e username=YOUR_USERNAME_HERE -e password=YOUR_PASSWORD_HERE -e email=YOUR_EMAIL_ADDRESS_HERE
 ```
 
 Now you should be able to visit the URL at the specified hostname like `https://social.example.com` and check your instance.

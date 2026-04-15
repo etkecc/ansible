@@ -92,6 +92,21 @@ ntfy_container_labels_traefik_entrypoints: web-secure
 ntfy_container_labels_traefik_tls: "{{ ntfy_container_labels_traefik_entrypoints != 'web' }}"
 ntfy_container_labels_traefik_tls_certResolver: default  # noqa var-naming
 
+# Controls if labels are added to expose the Prometheus metrics publicly.
+ntfy_container_labels_traefik_metrics_enabled: "{{ ntfy_metrics_default_enabled }}"
+ntfy_container_labels_traefik_metrics_hostname: "{{ ntfy_hostname }}"
+# The path prefix must either be `/` or not end with a slash (e.g. `/metrics`).
+ntfy_container_labels_traefik_metrics_path_prefix: /metrics
+ntfy_container_labels_traefik_metrics_rule: "Host(`{{ ntfy_container_labels_traefik_metrics_hostname }}`){% if ntfy_container_labels_traefik_metrics_path_prefix != '/' %} && PathPrefix(`{{ ntfy_container_labels_traefik_metrics_path_prefix }}`){% endif %}"
+ntfy_container_labels_traefik_metrics_priority: 0
+ntfy_container_labels_traefik_metrics_entrypoints: "{{ ntfy_container_labels_traefik_entrypoints }}"
+ntfy_container_labels_traefik_metrics_middlewares: []
+ntfy_container_labels_traefik_metrics_tls: "{{ ntfy_container_labels_traefik_metrics_entrypoints != 'web' }}"
+ntfy_container_labels_traefik_metrics_tls_certResolver: "{{ ntfy_container_labels_traefik_tls_certResolver }}"  # noqa var-naming
+ntfy_container_labels_traefik_metrics_middleware_basic_auth_enabled: false
+# See: https://doc.traefik.io/traefik/reference/routing-configuration/http/middlewares/basicauth/
+ntfy_container_labels_traefik_metrics_middleware_basic_auth_users: ""
+
 # Controls which additional headers to attach to all HTTP requests.
 # To add your own custom request headers, use `ntfy_container_labels_traefik_additional_request_headers_custom`
 ntfy_container_labels_traefik_additional_request_headers: "{{ ntfy_container_labels_traefik_additional_request_headers_auto | combine(ntfy_container_labels_traefik_additional_request_headers_custom) }}"

@@ -53,6 +53,52 @@ traefik.http.routers.{{ ntfy_identifier }}.tls.certResolver={{ ntfy_container_la
 {% endif %}
 
 traefik.http.services.{{ ntfy_identifier }}.loadbalancer.server.port={{ ntfy_container_http_port }}
+
+{% if ntfy_container_labels_traefik_metrics_enabled %}
+########################################################################
+#                                                                      #
+# Metrics                                                              #
+#                                                                      #
+########################################################################
+
+{% set middlewares = ntfy_container_labels_traefik_metrics_middlewares %}
+
+{% if ntfy_container_labels_traefik_metrics_middleware_basic_auth_enabled %}
+traefik.http.middlewares.{{ ntfy_identifier }}-metrics-basic-auth.basicauth.users={{ ntfy_container_labels_traefik_metrics_middleware_basic_auth_users }}
+{% set middlewares = middlewares + [ntfy_identifier + '-metrics-basic-auth'] %}
+{% endif %}
+
+traefik.http.middlewares.{{ ntfy_identifier }}-metrics-replace-path.replacepath.path=/metrics
+{% set middlewares = middlewares + [ntfy_identifier + '-metrics-replace-path'] %}
+
+traefik.http.routers.{{ ntfy_identifier }}-metrics.rule={{ ntfy_container_labels_traefik_metrics_rule }}
+
+{% if ntfy_container_labels_traefik_metrics_priority | int > 0 %}
+traefik.http.routers.{{ ntfy_identifier }}-metrics.priority={{ ntfy_container_labels_traefik_metrics_priority }}
+{% endif %}
+
+traefik.http.routers.{{ ntfy_identifier }}-metrics.service={{ ntfy_identifier }}-metrics
+
+{% if middlewares | length > 0 %}
+traefik.http.routers.{{ ntfy_identifier }}-metrics.middlewares={{ middlewares | join(',') }}
+{% endif %}
+
+traefik.http.routers.{{ ntfy_identifier }}-metrics.entrypoints={{ ntfy_container_labels_traefik_metrics_entrypoints }}
+
+traefik.http.routers.{{ ntfy_identifier }}-metrics.tls={{ ntfy_container_labels_traefik_metrics_tls | to_json }}
+{% if ntfy_container_labels_traefik_metrics_tls %}
+traefik.http.routers.{{ ntfy_identifier }}-metrics.tls.certResolver={{ ntfy_container_labels_traefik_metrics_tls_certResolver }}
+{% endif %}
+
+traefik.http.services.{{ ntfy_identifier }}-metrics.loadbalancer.server.port={{ ntfy_container_http_port }}
+
+########################################################################
+#                                                                      #
+# /Metrics                                                             #
+#                                                                      #
+########################################################################
+{% endif %}
+
 {% endif %}
 
 {% for arg in ntfy_container_labels_additional_labels %}

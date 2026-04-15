@@ -231,7 +231,7 @@ ntfy_visitor_request_limit_exempt_hosts_hostnames_custom: |
 
 **Note**: if you install and manage the ntfy server with the MDAD Ansible playbook, this configuration is not necessary as the hostname of the Matrix server is exempted from rate limiting by default with its [`group_vars/matrix_servers`](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/group_vars/matrix_servers) file.
 
-### Expose an endpoint for Prometheus (optional)
+### Integrating with Prometheus (optional)
 
 You can configure the ntfy server so that it can expose a `/metrics` endpoint for Prometheus.
 
@@ -249,6 +249,8 @@ ntfy_metrics_listen_http_port: 9090
 ```
 
 See [this section](https://docs.ntfy.sh/config/#monitoring) on the official documentation for details.
+
+If you are looking for an integration, you can check out the MASH playbook. See [this section of the documentation on the playbook](https://github.com/mother-of-all-self-hosting/mash-playbook/blob/main/docs/services/ntfy.md#integrating-with-prometheus-optional) for more information.
 
 ### Extending the configuration
 

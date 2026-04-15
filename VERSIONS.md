@@ -1,6 +1,6 @@
 * Alpine: edge
 * Authentication Service: 1.15.0
-* Baibot: v1.17.0
+* Baibot: v1.18.0
 * Bluesky: v0.2510.0
 * Borg: 1.4.4
 * Borgmatic: 2.1.4
@@ -69,7 +69,7 @@
 * Synapse: v1.151.0
 * Synapse Auto Compressor: v0.0.3
 * Synapse Http Antispam Git: v0.5.0
-* Synapse Reverse Proxy Companion: 1.29.8-alpine
+* Synapse Reverse Proxy Companion: 1.30.0-alpine
 * Synapse Rust Synapse Compress State Container Image: v0.0.3
 * Synapse S3 Storage Provider: 1.6.0
 * Telegram: v0.15.3
@@ -79,7 +79,7 @@
 * Twitter: v0.2603.0
 * Uptime Kuma: 1.23.17
 * Valkey: 9.0.3
-* Vaultwarden: 1.35.4
+* Vaultwarden: 1.35.7
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
 * Wg Easy: 15.2.2

@@ -84,7 +84,7 @@
   register: gotosocial_data_path_stat
 
 # We just want to notify the user. Deleting data is too destructive.
-- name: Notify if GoToSocial local data remains
+- name: Inject the message about the remaining GoToSocial local data path
   when: gotosocial_data_path_stat.stat.exists | bool
   ansible.builtin.set_fact:
     devture_playbook_runtime_messages_list: |

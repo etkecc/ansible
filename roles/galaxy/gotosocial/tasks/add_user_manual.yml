@@ -5,30 +5,23 @@
 ---
 - name: Fail if playbook called incorrectly
   ansible.builtin.fail:
-    msg: "The `username` variable needs to be provided to this playbook, via --extra-vars"
-  when: "username is not defined or username == '<username>'"
-
-- name: Fail if playbook called incorrectly
-  ansible.builtin.fail:
-    msg: "The `email` variable needs to be provided to this playbook, via --extra-vars"
-  when: "email is not defined or email == '<email>'"
-
-- name: Fail if playbook called incorrectly
-  ansible.builtin.fail:
-    msg: "The `password` variable needs to be provided to this playbook, via --extra-vars"
-  when: "password is not defined or password == '<password>'"
+    msg: "The `username`, `password`, and `email` variables need to be provided via --extra-vars"
+  when: >-
+    username is not defined or username == '<username>' or
+    password is not defined or password == '<password>' or
+    email is not defined or email == '<email>'
 
 - name: Set fact for a normal user
   ansible.builtin.set_fact:
     initial_role: user
   tags:
-    - gotosocial-add-user
+    - create-user-gotosocial
 
 - name: Set fact for an admin user
   ansible.builtin.set_fact:
     initial_role: admin
   tags:
-    - gotosocial-add-admin
+    - create-admin-gotosocial
 
 - name: Set fact for adding a user
   ansible.builtin.set_fact:

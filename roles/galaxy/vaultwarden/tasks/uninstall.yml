@@ -86,7 +86,7 @@
   register: vaultwarden_data_path_stat
 
 # We just want to notify the user. Deleting data is too destructive.
-- name: Notify if Vaultwarden local data remains
+- name: Inject the message about the remaining Vaultwarden local data path
   when: vaultwarden_data_path_stat.stat.exists | bool
   ansible.builtin.set_fact:
     devture_playbook_runtime_messages_list: |

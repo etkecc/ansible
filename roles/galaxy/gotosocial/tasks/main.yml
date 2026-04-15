@@ -38,8 +38,8 @@
 - name: Perform tasks to add users manually to GoToSocial
   when: gotosocial_enabled | bool
   tags:
-    - gotosocial-add-user
-    - gotosocial-add-admin
+    - create-user-gotosocial
+    - create-admin-gotosocial
   block:
     - name: Add users to GoToSocial manually
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/add_user_manual.yml"
