@@ -17,27 +17,31 @@ install-service service *extra_args:
 # Runs the playbook with --tags=setup-all,ensure-users-created,start and optional arguments
 setup-all *extra_args: (run-tags "setup-all,ensure-users-created,start" extra_args)
 
-# Rotates SSH keys (uses play/ssh.yml and tags=rotate-ssh-keys)
-rotate-ssh-keys +extra_args:
-    #!/usr/bin/env sh
-    set -eu pipefail
-    if [ -x "$(command -v etkepass)" ]; then
-        export SSH_ASKPASS=$(which etkepass)
-        export SSH_ASKPASS_REQUIRE=force
-        export SSH_ASKPASS_DEBUG=1
-    fi
-    time ansible-playbook play/ssh.yml -t rotate-ssh-keys {{ extra_args }}
-
 # Runs the playbook with the given list of arguments
 run +extra_args:
     #!/usr/bin/env sh
     set -eu pipefail
-    if [ -x "$(command -v etkepass)" ]; then
-        export SSH_ASKPASS=$(which etkepass)
-        export SSH_ASKPASS_REQUIRE=force
-        export SSH_ASKPASS_DEBUG=1
+    if ! [ -x "$(command -v etkepass)" ]; then
+        time ansible-playbook play/all.yml {{ extra_args }}
+        exit $?
     fi
-    time ansible-playbook play/all.yml {{ extra_args }}
+    export SSH_ASKPASS=$(which etkepass)
+    export SSH_ASKPASS_REQUIRE=force
+    export SSH_ASKPASS_DEBUG=1
+    _tmpdir=$(mktemp -d)
+    trap 'rm -rf "$_tmpdir"' EXIT INT TERM HUP
+    for inv_dir in inventory ../inventory; do
+        [ -d "$inv_dir/host_vars" ] || continue
+        find "$inv_dir/host_vars" -type f -mindepth 2 2>/dev/null | while IFS= read -r src; do
+            grep -q 'ENCv1\[' "$src" || continue
+            dst="$_tmpdir/${src#$inv_dir/}"
+            mkdir -p "$(dirname "$dst")"
+            cp "$src" "$dst"
+            etkepass --decrypt-file "$dst"
+        done
+    done
+    : > "$_tmpdir/hosts"
+    time ansible-playbook play/all.yml -i inventory/hosts -i ../inventory/hosts -i "$_tmpdir" {{ extra_args }}
 
 # Runs the playbook with the given list of comma-separated tags and optional arguments
 run-tags tags *extra_args:
