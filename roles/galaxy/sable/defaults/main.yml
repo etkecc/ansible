@@ -21,7 +21,7 @@ sable_base_path: "/{{ sable_identifier }}"
 sable_config_path: "{{ sable_base_path }}/config"
 
 # renovate: datasource=docker depName=ghcr.io/sableclient/sable
-sable_version: 1.13.1
+sable_version: 1.14.0
 
 sable_uid: ""
 sable_gid: ""

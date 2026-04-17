@@ -6,6 +6,5 @@
 
 ### Component Updates
 
-* [Baibot](https://github.com/etkecc/baibot): [v1.17.0](https://github.com/etkecc/baibot/releases/tag/v1.17.0) ⇾ [v1.18.0](https://github.com/etkecc/baibot/releases/tag/v1.18.0)
-* Synapse Reverse Proxy Companion: 1.29.8-alpine ⇾ 1.30.0-alpine
-* [Vaultwarden](https://github.com/dani-garcia/vaultwarden): [1.35.4](https://github.com/dani-garcia/vaultwarden/releases/tag/1.35.4) ⇾ [1.35.7](https://github.com/dani-garcia/vaultwarden/releases/tag/1.35.7)
+* [Ketesa](https://github.com/etkecc/ketesa): [v1.1.0](https://github.com/etkecc/ketesa/releases/tag/v1.1.0) ⇾ [v1.2.0](https://github.com/etkecc/ketesa/releases/tag/v1.2.0)
+* [Prometheus](https://github.com/prometheus/prometheus): [v3.11.1](https://github.com/prometheus/prometheus/releases/tag/v3.11.1) ⇾ [v3.11.2](https://github.com/prometheus/prometheus/releases/tag/v3.11.2)

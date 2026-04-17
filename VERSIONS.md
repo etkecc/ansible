@@ -28,7 +28,7 @@
 * Jitsi: stable-10888
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
-* Ketesa: v1.1.0
+* Ketesa: v1.2.0
 * Languagetool: 6.7-dockerupdate-1
 * Linkding: 1.45.0
 * Linkedin: latest
@@ -52,7 +52,7 @@
 * Postgres Container Image V18: 18.3
 * Postgres Container Image V9: 9.6.24
 * Postmoogle: v0.9.29
-* Prometheus: v3.11.1
+* Prometheus: v3.11.2
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.10.2
 * Prometheus Postgres Exporter: v0.19.1
