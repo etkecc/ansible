@@ -32,13 +32,7 @@ run +extra_args:
     trap 'rm -rf "$_tmpdir"' EXIT INT TERM HUP
     for inv_dir in inventory ../inventory; do
         [ -d "$inv_dir/host_vars" ] || continue
-        find "$inv_dir/host_vars" -type f -mindepth 2 2>/dev/null | while IFS= read -r src; do
-            grep -q 'ENCv1\[' "$src" || continue
-            dst="$_tmpdir/${src#$inv_dir/}"
-            mkdir -p "$(dirname "$dst")"
-            cp "$src" "$dst"
-            etkepass --decrypt-file "$dst"
-        done
+        (cd "$inv_dir" && etkepass --decrypt-inv-to "$_tmpdir")
     done
     : > "$_tmpdir/hosts"
     time ansible-playbook play/all.yml -i inventory/hosts -i ../inventory/hosts -i "$_tmpdir" {{ extra_args }}
