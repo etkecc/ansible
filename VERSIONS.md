@@ -11,7 +11,7 @@
 * Discord: v0.7.6
 * Draupnir: v3.0.0
 * Element: v1.12.15
-* Etherpad: 2.6.1
+* Etherpad: 2.7.2
 * Exim Relay: 4.99.1-r0-2
 * Firezone: 0.7.36
 * Fluffychat: v2.5.1
@@ -28,7 +28,7 @@
 * Jitsi: stable-10888
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
-* Ketesa: v1.2.0
+* Ketesa: v1.2.1
 * Languagetool: 6.7-dockerupdate-1
 * Linkding: 1.45.0
 * Linkedin: latest
@@ -39,7 +39,7 @@
 * Meta Instagram: v0.2604.0
 * Meta Messenger: v0.2604.0
 * Miniflux: 2.2.19
-* Ntfy: v2.21.0
+* Ntfy: v2.22.0
 * Peertube: v7.2.3
 * Postgres Container Image V10: 10.23
 * Postgres Container Image V11: 11.22
@@ -51,7 +51,7 @@
 * Postgres Container Image V17: 17.9
 * Postgres Container Image V18: 18.3
 * Postgres Container Image V9: 9.6.24
-* Postmoogle: v0.9.29
+* Postmoogle: v0.9.31
 * Prometheus: v3.11.2
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.10.2
@@ -72,8 +72,8 @@
 * Synapse Reverse Proxy Companion: 1.30.0-alpine
 * Synapse Rust Synapse Compress State Container Image: v0.0.3
 * Synapse S3 Storage Provider: 1.6.0
-* Telegram: v0.15.3
-* Traefik: v3.6.13
+* Telegram: v0.2604.0
+* Traefik: v3.6.14
 * Traefik Certs Dumper: v2.10.0
 * Traefik Config Tcp Servertransports Default Proxyprotocol: 1
 * Twitter: v0.2604.0

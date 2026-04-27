@@ -63,6 +63,19 @@ livekit_server_container_rtc_listen_interface: "{{ '' if livekit_server_containe
 # Takes a null/none value (`~`) or 'none' (as a string) to prevent listening.
 livekit_server_container_turn_listen_interface: "{{ '' if livekit_server_container_network != 'host' else 'none' }}"
 
+# Specify how the container publishes its HTTP signaling port and which interface to do it on.
+#
+# Takes an interface "<ip address>" (e.g. "127.0.0.1"), or empty string to listen on all interfaces.
+# Takes a null/none value (`~`) or 'none' (as a string) to prevent listening.
+#
+# Useful when the reverse-proxy fronting LiveKit runs outside the container network
+# (e.g. nginx on a different host reaching this one over LAN). When Traefik (or another
+# reverse-proxy) on the same Docker network is used, this is not necessary and can be
+# left as `~`.
+#
+# See `livekit_server_config_port`.
+livekit_server_container_http_listen_interface: ~
+
 # Specify how the container publishes its metrics and which interface to do it on.
 #
 # Takes an interface "<ip address>" (e.g. "127.0.0.1"), or empty string to listen on all interfaces.

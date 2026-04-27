@@ -65,6 +65,7 @@
     <outline text="mautrix-telegram" title="mautrix-telegram" type="rss" htmlUrl="https://github.com/mautrix/telegram" xmlUrl="https://github.com/mautrix/telegram/releases.atom" />
     <outline text="mautrix-twitter" title="mautrix-twitter" type="rss" htmlUrl="https://github.com/mautrix/twitter" xmlUrl="https://github.com/mautrix/twitter/releases.atom" />
     <outline text="mautrix-whatsapp" title="mautrix-whatsapp" type="rss" htmlUrl="https://github.com/mautrix/whatsapp" xmlUrl="https://github.com/mautrix/whatsapp/releases.atom" />
+    <outline text="meshtastic-relay" title="meshtastic-relay" type="rss" htmlUrl="https://github.com/jeremiah-k/meshtastic-matrix-relay" xmlUrl="https://github.com/jeremiah-k/meshtastic-matrix-relay/releases.atom" />
     <outline text="miniflux" title="miniflux" type="rss" htmlUrl="https://github.com/miniflux/v2" xmlUrl="https://github.com/miniflux/v2/releases.atom" />
     <outline text="mjolnir" title="mjolnir" type="rss" htmlUrl="https://github.com/matrix-org/mjolnir" xmlUrl="https://github.com/matrix-org/mjolnir/releases.atom" />
     <outline text="mx-puppet-groupme" title="mx-puppet-groupme" type="rss" htmlUrl="https://gitlab.com/xangelix-pub/matrix/mx-puppet-groupme" xmlUrl="https://gitlab.com/xangelix-pub/matrix/mx-puppet-groupme/-/tags?format=atom" />
