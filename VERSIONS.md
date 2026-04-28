@@ -52,7 +52,7 @@
 * Postgres Container Image V18: 18.3
 * Postgres Container Image V9: 9.6.24
 * Postmoogle: v0.9.31
-* Prometheus: v3.11.2
+* Prometheus: v3.11.3
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.10.2
 * Prometheus Postgres Exporter: v0.19.1
@@ -79,7 +79,7 @@
 * Twitter: v0.2604.0
 * Uptime Kuma: 1.23.17
 * Valkey: 9.0.3
-* Vaultwarden: 1.35.7
+* Vaultwarden: 1.35.8
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
 * Wg Easy: 15.2.2
