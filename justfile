@@ -34,7 +34,6 @@ run +extra_args:
         [ -d "$inv_dir/host_vars" ] || continue
         (cd "$inv_dir" && etkepass --decrypt-inv-to "$_tmpdir")
     done
-    : > "$_tmpdir/hosts"
     time ansible-playbook play/all.yml -i inventory/hosts -i ../inventory/hosts -i "$_tmpdir" {{ extra_args }}
 
 # Runs the playbook with the given list of comma-separated tags and optional arguments

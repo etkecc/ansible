@@ -6,6 +6,8 @@
 
 ### Component Updates
 
+* [Authentication Service](https://github.com/element-hq/matrix-authentication-service): [1.15.0](https://github.com/element-hq/matrix-authentication-service/releases/tag/1.15.0) ⇾ [1.16.0](https://github.com/element-hq/matrix-authentication-service/releases/tag/1.16.0)
+* [Element](https://github.com/element-hq/element-web): [v1.12.15](https://github.com/element-hq/element-web/releases/tag/v1.12.15) ⇾ [v1.12.16](https://github.com/element-hq/element-web/releases/tag/v1.12.16)
 * [Etherpad](https://github.com/ether/etherpad-lite): [2.6.1](https://github.com/ether/etherpad-lite/releases/tag/2.6.1) ⇾ [2.7.2](https://github.com/ether/etherpad-lite/releases/tag/2.7.2)
 * [Gmessages](https://github.com/mautrix/gmessages): [v0.2602.0](https://github.com/mautrix/gmessages/releases/tag/v0.2602.0) ⇾ [v0.2604.0](https://github.com/mautrix/gmessages/releases/tag/v0.2604.0)
 * [Ketesa](https://github.com/etkecc/ketesa): [v1.1.0](https://github.com/etkecc/ketesa/releases/tag/v1.1.0) ⇾ [v1.2.1](https://github.com/etkecc/ketesa/releases/tag/v1.2.1)
