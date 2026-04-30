@@ -7,7 +7,7 @@
 ### Component Updates
 
 * [Authentication Service](https://github.com/element-hq/matrix-authentication-service): [1.15.0](https://github.com/element-hq/matrix-authentication-service/releases/tag/1.15.0) ⇾ [1.16.0](https://github.com/element-hq/matrix-authentication-service/releases/tag/1.16.0)
-* [Element](https://github.com/element-hq/element-web): [v1.12.15](https://github.com/element-hq/element-web/releases/tag/v1.12.15) ⇾ [v1.12.16](https://github.com/element-hq/element-web/releases/tag/v1.12.16)
+* [Element](https://github.com/element-hq/element-web): [v1.12.15](https://github.com/element-hq/element-web/releases/tag/v1.12.15) ⇾ [v1.12.17](https://github.com/element-hq/element-web/releases/tag/v1.12.17)
 * [Etherpad](https://github.com/ether/etherpad-lite): [2.6.1](https://github.com/ether/etherpad-lite/releases/tag/2.6.1) ⇾ [2.7.2](https://github.com/ether/etherpad-lite/releases/tag/2.7.2)
 * [Gmessages](https://github.com/mautrix/gmessages): [v0.2602.0](https://github.com/mautrix/gmessages/releases/tag/v0.2602.0) ⇾ [v0.2604.0](https://github.com/mautrix/gmessages/releases/tag/v0.2604.0)
 * [Ketesa](https://github.com/etkecc/ketesa): [v1.1.0](https://github.com/etkecc/ketesa/releases/tag/v1.1.0) ⇾ [v1.2.1](https://github.com/etkecc/ketesa/releases/tag/v1.2.1)
@@ -19,8 +19,9 @@
 * [Postmoogle](https://github.com/etkecc/postmoogle): [v0.9.29](https://github.com/etkecc/postmoogle/releases/tag/v0.9.29) ⇾ [v0.9.31](https://github.com/etkecc/postmoogle/releases/tag/v0.9.31)
 * [Prometheus](https://github.com/prometheus/prometheus): [v3.11.1](https://github.com/prometheus/prometheus/releases/tag/v3.11.1) ⇾ [v3.11.3](https://github.com/prometheus/prometheus/releases/tag/v3.11.3)
 * [Slack](https://github.com/mautrix/slack): [v0.2603.0](https://github.com/mautrix/slack/releases/tag/v0.2603.0) ⇾ [v0.2604.0](https://github.com/mautrix/slack/releases/tag/v0.2604.0)
+* [Synapse](https://github.com/element-hq/synapse): [v1.151.0](https://github.com/element-hq/synapse/releases/tag/v1.151.0) ⇾ [v1.152.0](https://github.com/element-hq/synapse/releases/tag/v1.152.0)
 * [Telegram](https://github.com/mautrix/telegram): [v0.15.3](https://github.com/mautrix/telegram/releases/tag/v0.15.3) ⇾ [v0.2604.0](https://github.com/mautrix/telegram/releases/tag/v0.2604.0)
-* [Traefik](https://github.com/traefik/traefik): [v3.6.13](https://github.com/traefik/traefik/releases/tag/v3.6.13) ⇾ [v3.6.14](https://github.com/traefik/traefik/releases/tag/v3.6.14)
+* [Traefik](https://github.com/traefik/traefik): [v3.6.13](https://github.com/traefik/traefik/releases/tag/v3.6.13) ⇾ [v3.6.15](https://github.com/traefik/traefik/releases/tag/v3.6.15)
 * [Twitter](https://github.com/mautrix/twitter): [v0.2603.0](https://github.com/mautrix/twitter/releases/tag/v0.2603.0) ⇾ [v0.2604.0](https://github.com/mautrix/twitter/releases/tag/v0.2604.0)
 * [Vaultwarden](https://github.com/dani-garcia/vaultwarden): [1.35.7](https://github.com/dani-garcia/vaultwarden/releases/tag/1.35.7) ⇾ [1.35.8](https://github.com/dani-garcia/vaultwarden/releases/tag/1.35.8)
 * [Whatsapp](https://github.com/mautrix/whatsapp): [v0.2603.0](https://github.com/mautrix/whatsapp/releases/tag/v0.2603.0) ⇾ [v0.2604.0](https://github.com/mautrix/whatsapp/releases/tag/v0.2604.0)
