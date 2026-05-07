@@ -12,6 +12,7 @@
     - { "old": "exim_relay_container_image_self_build_repository_url", "new": "exim_relay_container_image_self_build_repo" }
     - { "old": "exim_relay_container_image_self_build_version", "new": "exim_relay_container_image_self_build_repo_version" }
     - { "old": "exim_relay_container_image_name_prefix", "new": "exim_relay_container_image_registry_prefix" }
+    - { "old": "exim_relay_container_image_force_pull", "new": "<removed> (the new community.docker.docker_image_pull module handles this natively)" }
 
 - name: Fail if required exim-relay settings not defined
   ansible.builtin.fail:

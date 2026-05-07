@@ -36,7 +36,6 @@ prometheus_postgres_exporter_container_image_tag: "{{ prometheus_postgres_export
 prometheus_postgres_exporter_container_image_registry_prefix: "{{ prometheus_postgres_exporter_container_image_registry_prefix_upstream }}"
 prometheus_postgres_exporter_container_image_registry_prefix_upstream: "{{ prometheus_postgres_exporter_container_image_registry_prefix_upstream_default }}"
 prometheus_postgres_exporter_container_image_registry_prefix_upstream_default: quay.io/
-prometheus_postgres_exporter_container_image_force_pull: "{{ prometheus_postgres_exporter_container_image.endswith(':latest') }}"
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 prometheus_postgres_exporter_container_network: "{{ prometheus_postgres_exporter_identifier }}"
@@ -144,8 +143,11 @@ prometheus_postgres_exporter_database_hostname: ""
 prometheus_postgres_exporter_database_port: 5432
 prometheus_postgres_exporter_database_username: "prometheus_postgres_exporter"
 prometheus_postgres_exporter_database_password: ""
-prometheus_postgres_exporter_database_name: "prometheus_postgres_exporter"
+# Specify SSL mode for Postgres database server
+# By default, we expect a local container (without SSL), so attempting SSL connections is not necessary.
+# Valid values: see https://www.postgresql.org/docs/11/libpq-ssl.html#LIBPQ-SSL-SSLMODE-STATEMENTS
 prometheus_postgres_exporter_database_sslmode: disable
+prometheus_postgres_exporter_database_name: "prometheus_postgres_exporter"
 
 # Controls the PG_EXPORTER_AUTO_DISCOVER_DATABASES environment variable
 prometheus_postgres_exporter_env_variable_pg_exporter_auto_discover_databases: true

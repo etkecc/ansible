@@ -10,7 +10,6 @@ path = [
     ".ansible-lint",
     ".config/ansible-lint.yml",
     ".github/renovate.json",
-    ".github/workflows/pre-commit.yml",
     ".gitignore",
     ".pre-commit-config.yaml",
     ".yamllint.yml",

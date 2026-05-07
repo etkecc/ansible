@@ -152,8 +152,6 @@ postgres_backup_container_image_latest: "{{ postgres_backup_container_image_v18 
 # This variable is assigned at runtime if `postgres_backup_postgres_data_path` is not empty. Overriding its value in that case has no effect.
 postgres_backup_container_image_to_use: '{{ postgres_backup_container_image_latest }}'
 
-postgres_backup_container_image_force_pull: "{{ postgres_backup_container_image_to_use.endswith(':latest') }}"
-
 # Specify the timezone
 postgres_backup_environment_variables_tz: UTC
 

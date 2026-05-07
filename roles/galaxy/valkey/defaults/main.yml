@@ -15,7 +15,7 @@ valkey_data_path: "{{ valkey_base_path }}/data"
 valkey_run_path: "{{ valkey_base_path }}/run"
 
 # renovate: datasource=docker depName=valkey/valkey versioning=semver
-valkey_version: 9.0.3
+valkey_version: 9.0.4
 
 valkey_uid: ""
 valkey_gid: ""
@@ -25,7 +25,6 @@ valkey_container_image_tag: "{{ valkey_version }}-alpine"
 valkey_container_image_registry_prefix: "{{ valkey_container_image_registry_prefix_upstream }}"
 valkey_container_image_registry_prefix_upstream: "{{ valkey_container_image_registry_prefix_upstream_default }}"
 valkey_container_image_registry_prefix_upstream_default: docker.io/
-valkey_container_image_force_pull: "{{ valkey_container_image.endswith(':latest') }}"
 
 valkey_container_image_self_build: false
 valkey_container_image_self_build_name: "valkey-io/valkey-container:{{ valkey_container_image_self_build_repo_version }}"

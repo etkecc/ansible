@@ -35,7 +35,6 @@ grafana_container_image_tag: "{{ grafana_version }}"
 grafana_container_image_registry_prefix: "{{ grafana_container_image_registry_prefix_upstream }}"
 grafana_container_image_registry_prefix_upstream: "{{ grafana_container_image_registry_prefix_upstream_default }}"
 grafana_container_image_registry_prefix_upstream_default: docker.io/
-grafana_container_image_force_pull: "{{ grafana_container_image.endswith(':latest') }}"
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 # You can specify 'host' network for container to use it.

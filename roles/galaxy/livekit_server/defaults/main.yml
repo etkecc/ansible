@@ -33,7 +33,6 @@ livekit_server_container_image: "{{ livekit_server_container_image_registry_pref
 livekit_server_container_image_registry_prefix: "{{ 'localhost/' if livekit_server_container_image_self_build else livekit_server_container_image_registry_prefix_upstream }}"
 livekit_server_container_image_registry_prefix_upstream: "{{ livekit_server_container_image_registry_prefix_upstream_default }}"
 livekit_server_container_image_registry_prefix_upstream_default: docker.io/
-livekit_server_container_image_force_pull: "{{ livekit_server_container_image.endswith(':latest') }}"
 
 livekit_server_container_image_self_build: false
 livekit_server_container_image_self_build_name: "livekit/livekit:{{ livekit_server_container_image_self_build_repo_version }}"

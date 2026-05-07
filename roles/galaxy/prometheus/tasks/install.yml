@@ -38,13 +38,11 @@
     group: "{{ prometheus_gid }}"
   register: prometheus_config_file_result
 
-- name: Ensure Prometheus container image is pulled via community.docker.docker_image
+- name: Ensure Prometheus container image is pulled via community.docker.docker_image_pull
   when: devture_systemd_docker_base_container_image_pull_method == 'ansible-module'
-  community.docker.docker_image:
+  community.docker.docker_image_pull:
     name: "{{ prometheus_container_image }}"
-    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
-    force_source: "{{ prometheus_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
-    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else prometheus_container_image_force_pull }}"
+    pull: always
   register: prometheus_container_image_pull_result_ansible_module
   retries: "{{ devture_playbook_help_container_retries_count }}"
   delay: "{{ devture_playbook_help_container_retries_delay }}"

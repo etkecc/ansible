@@ -36,7 +36,6 @@ prometheus_container_image_registry_prefix: "{{ prometheus_container_image_regis
 prometheus_container_image_registry_prefix_upstream: "{{ prometheus_container_image_registry_prefix_upstream_default }}"
 prometheus_container_image_registry_prefix_upstream_default: docker.io/
 prometheus_container_image_tag: "{{ prometheus_version }}"
-prometheus_container_image_force_pull: "{{ prometheus_container_image.endswith(':latest') }}"
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 prometheus_container_network: "{{ prometheus_identifier }}"

@@ -26,3 +26,4 @@
     - { "old": "postgres_backup_container_image_suffix", "new": "postgres_backup_container_image_distro" }
     - { "old": "postgres_backup_path", "new": "postgres_backup_base_path" }
     - { "old": "postgres_backup_docker_image_to_use", "new": "postgres_backup_container_image_to_use" }
+    - { "old": "postgres_backup_container_image_force_pull", "new": "<removed> (the new community.docker.docker_image_pull module handles this natively)" }

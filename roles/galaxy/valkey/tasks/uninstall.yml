@@ -82,7 +82,7 @@
   register: valkey_data_path_stat
 
 # We just want to notify the user. Deleting data is too destructive.
-- name: Notify if Valkey local data remains
+- name: Inject the message about the remaining Valkey local data path
   when: valkey_data_path_stat.stat.exists | bool
   ansible.builtin.set_fact:
     devture_playbook_runtime_messages_list: |

@@ -20,7 +20,7 @@ etherpad_plugins_path: "{{ etherpad_base_path }}/plugins"
 etherpad_var_path: "{{ etherpad_base_path }}/var"
 
 # renovate: datasource=docker depName=etherpad/etherpad versioning=semver
-etherpad_version: 2.7.2
+etherpad_version: 2.7.3
 
 etherpad_uid: ""
 etherpad_gid: ""
@@ -40,7 +40,6 @@ etherpad_container_image_tag: "{{ etherpad_version }}"
 etherpad_container_image_registry_prefix: "{{ 'localhost/' if etherpad_container_image_self_build else etherpad_container_image_registry_prefix_upstream }}"
 etherpad_container_image_registry_prefix_upstream: "{{ etherpad_container_image_registry_prefix_upstream_default }}"
 etherpad_container_image_registry_prefix_upstream_default: docker.io/
-etherpad_container_image_force_pull: "{{ etherpad_container_image.endswith(':latest') }}"
 
 etherpad_container_image_self_build: false
 etherpad_container_image_self_build_name: "etherpad/etherpad:{{ etherpad_container_image_self_build_repo_version }}"

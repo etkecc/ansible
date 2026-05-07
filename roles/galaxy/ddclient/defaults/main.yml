@@ -31,7 +31,6 @@ ddclient_container_image_tag: "{{ ddclient_version }}"
 ddclient_container_image_registry_prefix: "{{ ddclient_container_image_registry_prefix_upstream }}"
 ddclient_container_image_registry_prefix_upstream: "{{ ddclient_container_image_registry_prefix_upstream_default }}"
 ddclient_container_image_registry_prefix_upstream_default: docker.io/
-ddclient_container_image_force_pull: "{{ ddclient_container_image.endswith(':latest') }}"
 
 ddclient_container_image_self_build: false
 ddclient_container_image_self_build_name: "linuxserver/ddclient:{{ ddclient_container_image_self_build_repo_version }}"

@@ -9,9 +9,9 @@
 * Container Socket Proxy: v0.4.2
 * Coturn: 4.9.0
 * Discord: v0.7.6
-* Draupnir: v3.0.0
+* Draupnir: v3.1.0
 * Element: v1.12.17
-* Etherpad: 2.7.2
+* Etherpad: 2.7.3
 * Exim Relay: 4.99.1-r0-2
 * Firezone: 0.7.36
 * Fluffychat: v2.5.1
@@ -54,7 +54,7 @@
 * Postmoogle: v0.9.31
 * Prometheus: v3.11.3
 * Prometheus Nginxlog Exporter: v1.10.0
-* Prometheus Node Exporter: v1.10.2
+* Prometheus Node Exporter: v1.11.1
 * Prometheus Postgres Exporter: v0.19.1
 * Radicale: 3.6.1.0
 * Registration: v0.7.2
@@ -66,19 +66,19 @@
 * Static Files: 2.42.0
 * Steam Bridge: 1.1.0
 * Sygnal: v0.15.1
-* Synapse: v1.152.0
+* Synapse: v1.152.1
 * Synapse Auto Compressor: v0.0.3
 * Synapse Http Antispam Git: v0.5.0
 * Synapse Reverse Proxy Companion: 1.30.0-alpine
 * Synapse Rust Synapse Compress State Container Image: v0.0.3
 * Synapse S3 Storage Provider: 1.6.0
 * Telegram: v0.2604.0
-* Traefik: v3.6.15
+* Traefik: v3.7.0
 * Traefik Certs Dumper: v2.10.0
 * Traefik Config Tcp Servertransports Default Proxyprotocol: 1
 * Twitter: v0.2604.0
 * Uptime Kuma: 1.23.17
-* Valkey: 9.0.3
+* Valkey: 9.0.4
 * Vaultwarden: 1.35.8
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1

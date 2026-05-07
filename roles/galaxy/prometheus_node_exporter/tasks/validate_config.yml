@@ -25,6 +25,7 @@
     - "old": "prometheus_node_exporter_docker_image_registry_prefix_upstream_default"
       "new": "prometheus_node_exporter_container_image_registry_prefix_upstream_default"
     - { "old": "prometheus_node_exporter_docker_image_force_pull", "new": "prometheus_node_exporter_container_image_force_pull" }
+    - { "old": "prometheus_node_exporter_container_image_force_pull", "new": "<removed> (the new community.docker.docker_image_pull module handles this natively)" }
 
 - name: (Deprecation) Catch and report renamed variables for Traefik labels
   ansible.builtin.fail:

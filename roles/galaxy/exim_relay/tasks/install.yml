@@ -45,13 +45,11 @@
 - name: Run if self-building of exim-relay container image is not enabled
   when: "not exim_relay_container_image_self_build | bool"
   block:
-    - name: Ensure exim-relay container image is pulled via community.docker.docker_image
+    - name: Ensure exim-relay container image is pulled via community.docker.docker_image_pull
       when: devture_systemd_docker_base_container_image_pull_method == 'ansible-module'
-      community.docker.docker_image:
+      community.docker.docker_image_pull:
         name: "{{ exim_relay_container_image }}"
-        source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
-        force_source: "{{ exim_relay_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
-        force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else exim_relay_container_image_force_pull }}"
+        pull: always
       register: exim_relay_container_image_pull_result_ansible_module
       retries: "{{ devture_playbook_help_container_retries_count }}"
       delay: "{{ devture_playbook_help_container_retries_delay }}"
@@ -81,15 +79,12 @@
       register: exim_relay_git_pull_results
 
     - name: Ensure exim-relay container image is built
-      community.docker.docker_image:
+      community.docker.docker_image_build:
         name: "{{ exim_relay_container_image }}"
-        source: build
-        force_source: "{{ exim_relay_git_pull_results.changed if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
-        force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else exim_relay_git_pull_results.changed }}"
-        build:
-          dockerfile: Dockerfile
-          path: "{{ exim_relay_container_image_self_build_src_files_path }}"
-          pull: true
+        dockerfile: Dockerfile
+        path: "{{ exim_relay_container_image_self_build_src_files_path }}"
+        pull: true
+        rebuild: "{{ 'always' if exim_relay_git_pull_results.changed | bool else 'never' }}"
       register: exim_relay_container_image_build_result
 
 - name: Ensure exim-relay container network is created via community.docker.docker_network

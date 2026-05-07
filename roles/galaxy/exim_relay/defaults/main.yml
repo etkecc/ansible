@@ -30,7 +30,6 @@ exim_relay_container_image: "{{ exim_relay_container_image_registry_prefix }}dev
 exim_relay_container_image_registry_prefix: "{{ 'localhost/' if exim_relay_container_image_self_build else exim_relay_container_image_registry_prefix_upstream }}"
 exim_relay_container_image_registry_prefix_upstream: "{{ exim_relay_container_image_registry_prefix_upstream_default }}"
 exim_relay_container_image_registry_prefix_upstream_default: "ghcr.io/"
-exim_relay_container_image_force_pull: "{{ exim_relay_container_image.endswith(':latest') }}"
 
 # The user/group that the container runs with.
 # These match the `exim` user/group within the container image.

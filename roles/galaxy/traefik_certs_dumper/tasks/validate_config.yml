@@ -13,6 +13,7 @@
     - { "old": "traefik_certs_dumper_bin_dir_path", "new": "traefik_certs_dumper_bin_path" }
     - { "old": "traefik_certs_dumper_dumped_certificates_dir_path", "new": "traefik_certs_dumper_dumped_certificates_path" }
     - { "old": "traefik_certs_dumper_ssl_dir_path", "new": "traefik_certs_dumper_ssl_path" }
+    - { "old": "traefik_certs_dumper_container_image_force_pull", "new": "<removed> (the new community.docker.docker_image_pull module handles this natively)" }
 
 - name: Fail if required Traefik certs dumper settings not defined
   ansible.builtin.fail:

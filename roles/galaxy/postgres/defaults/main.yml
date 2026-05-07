@@ -221,8 +221,6 @@ postgres_container_image_latest: "{{ none if postgres_eligible_version_max is no
 # This variable is assigned at runtime. Overriding its value has no effect.
 postgres_container_image_to_use: '{{ postgres_container_image_latest }}'
 
-postgres_container_image_force_pull: "{{ postgres_container_image_to_use.endswith(':latest') }}"
-
 # Controls how long to wait for the container to stop gracefully before killing it.
 # Because `devture_systemd_docker_base_container_stop_grace_time_seconds` may be quite short and databases are more important to stop gracefully,
 # we default to at least 30 seconds.
@@ -480,7 +478,6 @@ postgres_pgloader_container_image_registry_prefix: "{{ 'localhost/' if postgres_
 postgres_pgloader_container_image_registry_prefix_upstream: "{{ postgres_pgloader_container_image_registry_prefix_upstream_default }}"
 postgres_pgloader_container_image_registry_prefix_upstream_default: "docker.io/"
 postgres_pgloader_container_image_tag: "3.6.2"
-postgres_pgloader_container_image_force_pull: "{{ postgres_pgloader_container_image.endswith(':latest') }}"
 
 # postgres_restart_necessary controls whether the Postgres systemd service
 # will be restarted (when true) or merely started (when false) by the

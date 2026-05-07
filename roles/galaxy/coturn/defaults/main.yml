@@ -36,7 +36,6 @@ coturn_container_image_tag: "{{ coturn_version }}-alpine"
 coturn_container_image_registry_prefix: "{{ coturn_container_image_registry_prefix_upstream }}"
 coturn_container_image_registry_prefix_upstream: "{{ coturn_container_image_registry_prefix_upstream_default }}"
 coturn_container_image_registry_prefix_upstream_default: docker.io/
-coturn_container_image_force_pull: "{{ coturn_container_image.endswith(':latest') }}"
 
 coturn_container_image_self_build: false
 coturn_container_image_self_build_name: "coturn/coturn:{{ coturn_container_image_self_build_repo_version }}"

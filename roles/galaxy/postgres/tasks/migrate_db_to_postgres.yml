@@ -55,22 +55,17 @@
           replace: "FROM debian:bullseye-slim"
 
     - name: Ensure pgloader container image is built
-      community.docker.docker_image:
+      community.docker.docker_image_build:
         name: "{{ postgres_pgloader_container_image }}"
-        source: build
-        force_source: "{{ postgres_pgloader_git_pull_results.changed if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
-        force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else postgres_pgloader_git_pull_results.changed }}"
-        build:
-          dockerfile: Dockerfile
-          path: "{{ postgres_pgloader_container_image_self_build_src_path }}"
-          pull: true
+        dockerfile: Dockerfile
+        path: "{{ postgres_pgloader_container_image_self_build_src_path }}"
+        pull: true
+        rebuild: "{{ 'always' if postgres_pgloader_git_pull_results.changed | bool else 'never' }}"
 
 - name: Ensure pgloader container image is pulled
-  community.docker.docker_image:
+  community.docker.docker_image_pull:
     name: "{{ postgres_pgloader_container_image }}"
-    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
-    force_source: "{{ postgres_pgloader_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
-    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else postgres_pgloader_container_image_force_pull }}"
+    pull: always
   when: "not postgres_pgloader_container_image_self_build"
 
 # Defaults

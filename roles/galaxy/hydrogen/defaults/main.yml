@@ -44,7 +44,6 @@ hydrogen_container_image_tag: "{{ hydrogen_version }}"
 hydrogen_container_image_registry_prefix: "{{ hydrogen_container_image_registry_prefix_upstream }}"
 hydrogen_container_image_registry_prefix_upstream: "{{ hydrogen_container_image_registry_prefix_upstream_default }}"
 hydrogen_container_image_registry_prefix_upstream_default: ghcr.io/
-hydrogen_container_image_force_pull: "{{ hydrogen_container_image.endswith(':latest') }}"
 
 hydrogen_container_image_self_build: false
 hydrogen_container_image_self_build_name: "element-hq/hydrogen-web:{{ hydrogen_container_image_self_build_repo_version }}"

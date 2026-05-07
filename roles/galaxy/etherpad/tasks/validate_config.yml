@@ -27,6 +27,7 @@
     - { "old": "etherpad_soffice", "new": "etherpad_configuration_soffice" }
     - { "old": "etherpad_default_pad_text", "new": "etherpad_configuration_defaultpadtext" }
     - { "old": "etherpad_http_header_content_permission_policy", "new": "etherpad_http_header_permissions_policy" }
+    - { "old": "etherpad_container_image_force_pull", "new": "<removed> (the new community.docker.docker_image_pull module handles this natively)" }
 
 - name: Fail if required Etherpad settings not defined
   ansible.builtin.fail:

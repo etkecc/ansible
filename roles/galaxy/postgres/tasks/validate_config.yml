@@ -16,6 +16,8 @@
     - { "old": "docker_postgres_container_image_registry_prefix", "new": "postgres_container_image_registry_prefix" }
     - { "old": "postgres_pgloader_container_image_name_prefix", "new": "postgres_pgloader_container_image_registry_prefix" }
     - { "old": "postgres_pgloader_docker_image", "new": "postgres_pgloader_container_image" }
+    - { "old": "postgres_container_image_force_pull", "new": "<removed> (the new community.docker.docker_image_pull module handles this natively)" }
+    - { "old": "postgres_pgloader_container_image_force_pull", "new": "<removed> (the new community.docker.docker_image_pull module handles this natively)" }
 
 - name: Fail if required Postgres settings not defined
   ansible.builtin.fail:

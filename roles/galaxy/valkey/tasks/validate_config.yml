@@ -13,6 +13,7 @@
   with_items:
     - { "old": "valkey_container_valkey_bind_port", "new": "valkey_container_tcp_host_bind_port" }
     - { "old": "valkey_container_http_port", "new": "valkey_container_tcp_port" }
+    - { "old": "valkey_container_image_force_pull", "new": "<removed> (the new community.docker.docker_image_pull module handles this natively)" }
 
 - name: Fail if required Valkey settings not defined
   ansible.builtin.fail:

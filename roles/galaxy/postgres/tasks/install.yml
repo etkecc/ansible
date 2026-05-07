@@ -54,12 +54,10 @@
         postgres_container_image_to_use: "{{ postgres_detected_version_corresponding_container_image }}"
 
 # Even if we don't run the internal server, we still need this for running the CLI
-- name: Ensure postgres container image is pulled
-  community.docker.docker_image:
+- name: Ensure Postgres container image is pulled
+  community.docker.docker_image_pull:
     name: "{{ postgres_container_image_to_use }}"
-    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
-    force_source: "{{ postgres_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
-    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else postgres_container_image_force_pull }}"
+    pull: always
   register: postgres_container_image_pull_result
   retries: "{{ devture_playbook_help_container_retries_count }}"
   delay: "{{ devture_playbook_help_container_retries_delay }}"

@@ -21,7 +21,7 @@ sable_base_path: "/{{ sable_identifier }}"
 sable_config_path: "{{ sable_base_path }}/config"
 
 # renovate: datasource=docker depName=ghcr.io/sableclient/sable
-sable_version: 1.14.0
+sable_version: 1.15.2
 
 sable_uid: ""
 sable_gid: ""
@@ -44,7 +44,6 @@ sable_container_image_tag: "{{ sable_version }}"
 sable_container_image_registry_prefix: "{{ sable_container_image_registry_prefix_upstream }}"
 sable_container_image_registry_prefix_upstream: "{{ sable_container_image_registry_prefix_upstream_default }}"
 sable_container_image_registry_prefix_upstream_default: ghcr.io/
-sable_container_image_force_pull: "{{ sable_container_image.endswith(':latest') }}"
 
 sable_container_image_self_build: false
 sable_container_image_self_build_name: "sableclient/sable:{{ sable_container_image_self_build_repo_version }}"

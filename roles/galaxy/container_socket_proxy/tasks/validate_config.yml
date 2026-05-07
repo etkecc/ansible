@@ -13,6 +13,7 @@
   with_items:
     - { "old": "container_socket_proxy_environment_variables", "new": "container_socket_proxy_environment_variables_additional_variables" }
     - { "old": "container_socket_proxy_labels_additional_labels", "new": "container_socket_proxy_container_labels_additional_labels" }
+    - { "old": "container_socket_proxy_container_image_force_pull", "new": "<removed> (the new community.docker.docker_image_pull module handles this natively)" }
 
 - name: Fail if required container-socket-proxy settings not defined
   ansible.builtin.fail:

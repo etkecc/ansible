@@ -15,7 +15,7 @@ prometheus_node_exporter_identifier: prometheus-node-exporter
 prometheus_node_exporter_base_path: "/{{ prometheus_node_exporter_identifier }}"
 
 # renovate: datasource=docker depName=prom/node-exporter versioning=semver
-prometheus_node_exporter_version: v1.10.2
+prometheus_node_exporter_version: v1.11.1
 
 prometheus_node_exporter_uid: ""
 prometheus_node_exporter_gid: ""
@@ -32,7 +32,6 @@ prometheus_node_exporter_container_image_tag: "{{ prometheus_node_exporter_versi
 prometheus_node_exporter_container_image_registry_prefix: "{{ prometheus_node_exporter_container_image_registry_prefix_upstream }}"
 prometheus_node_exporter_container_image_registry_prefix_upstream: "{{ prometheus_node_exporter_container_image_registry_prefix_upstream_default }}"
 prometheus_node_exporter_container_image_registry_prefix_upstream_default: "docker.io/"
-prometheus_node_exporter_container_image_force_pull: "{{ prometheus_node_exporter_container_image.endswith(':latest') }}"
 
 # The base container network
 #

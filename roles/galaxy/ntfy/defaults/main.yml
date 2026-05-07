@@ -45,7 +45,6 @@ ntfy_container_image: "{{ ntfy_container_image_registry_prefix }}binwiederhier/n
 ntfy_container_image_registry_prefix: "{{ ntfy_container_image_registry_prefix_upstream }}"
 ntfy_container_image_registry_prefix_upstream: "{{ ntfy_container_image_registry_prefix_upstream_default }}"
 ntfy_container_image_registry_prefix_upstream_default: docker.io/
-ntfy_container_image_force_pull: "{{ ntfy_container_image.endswith(':latest') }}"
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 ntfy_container_network: "{{ ntfy_identifier }}"
