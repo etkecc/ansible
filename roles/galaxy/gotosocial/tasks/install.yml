@@ -31,13 +31,11 @@
     - labels
   register: gotosocial_support_files_result
 
-- name: Ensure GoToSocial container image is pulled via community.docker.docker_image
+- name: Ensure GoToSocial container image is pulled via community.docker.docker_image_pull
   when: devture_systemd_docker_base_container_image_pull_method == 'ansible-module'
-  community.docker.docker_image:
+  community.docker.docker_image_pull:
     name: "{{ gotosocial_container_image }}"
-    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
-    force_source: "{{ gotosocial_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
-    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else gotosocial_container_image_force_pull }}"
+    pull: always
   register: gotosocial_container_image_pull_result_ansible_module
   retries: "{{ devture_playbook_help_container_retries_count }}"
   delay: "{{ devture_playbook_help_container_retries_delay }}"
@@ -66,14 +64,12 @@
       register: gotosocial_container_image_customizations_dockerfile_result
 
     - name: Ensure customized container image for GoToSocial is built
-      community.docker.docker_image:
+      community.docker.docker_image_build:
         name: "{{ gotosocial_container_image_customized }}"
-        source: build
-        force_source: "{{ gotosocial_container_image_customizations_dockerfile_result.changed }}"
-        build:
-          dockerfile: Dockerfile
-          path: "{{ gotosocial_customized_container_src_path }}"
-          pull: true
+        dockerfile: Dockerfile
+        path: "{{ gotosocial_customized_container_src_path }}"
+        pull: true
+        rebuild: "{{ 'always' if gotosocial_container_image_customizations_dockerfile_result.changed | bool else 'never' }}"
       register: gotosocial_container_image_build_result
 
 - name: Ensure GoToSocial container network is created via community.docker.docker_network

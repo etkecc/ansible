@@ -37,7 +37,6 @@ gotosocial_container_image_registry_prefix: "{{ gotosocial_container_image_regis
 gotosocial_container_image_registry_prefix_upstream: "{{ gotosocial_container_image_registry_prefix_upstream_default }}"
 gotosocial_container_image_registry_prefix_upstream_default: docker.io/
 gotosocial_container_image_tag: "{{ gotosocial_version }}"
-gotosocial_container_image_force_pull: "{{ gotosocial_container_image.endswith(':latest') }}"
 
 # gotosocial_container_image_customized is the name of the locally built GoToSocial image
 # which adds various customizations on top of the original (upstream) GoToSocial image.
@@ -317,26 +316,21 @@ gotosocial_environment_variable_gts_db_address_postgres: "{{ gotosocial_database
 # https://docs.gotosocial.org/en/latest/installation_guide/advanced/#can-i-host-my-instance-at-fediexampleorg-but-have-just-exampleorg-in-my-username
 gotosocial_account_domain: "{{ gotosocial_hostname }}"
 
-# This var holds the list of users that should be created automatically by playbooks/roles/group vars,
+# gotosocial_users contains a list of users that should be created automatically
 # To add your own users for specific host, use `gotosocial_users_additional`
-# Example:
-# gotosocial_users_auto:
-# - username: admin
-#   initial_email: admin@example.com
-#   initial_password: password
-#   initial_type: admin
-# - username: user
-#   initial_email: admin@example.com
-#   initial_password: password
-#   initial_type: user
-gotosocial_users_auto: []
-# This var holds the list of users that should be created automatically by specific host (using host's vars.yml) instead of playbook/role/group vars
+#
 # Example:
 # gotosocial_users_additional:
-# - username: rssbot
-#   initial_email: bots@example.com
-#   initial_password: password
-#   initial_type: user
+#   - username: admin
+#     initial_email: admin@example.com
+#     initial_password: password
+#     initial_type: admin
+#   - username: user
+#     initial_email: user@example.com
+#     initial_password: password
+#     initial_type: user
+gotosocial_users: "{{ gotosocial_users_auto + gotosocial_users_additional }}"
+gotosocial_users_auto: []
 gotosocial_users_additional: []
 
 # List of string. BCP47 language tags to indicate preferred languages of users on this instance.

@@ -36,6 +36,7 @@
     - { "old": "vaultwarden_database_username", "new": "vaultwarden_database_postgres_username" }
     - { "old": "vaultwarden_database_password", "new": "vaultwarden_database_postgres_password" }
     - { "old": "vaultwarden_database_sslmode", "new": "vaultwarden_database_postgres_sslmode" }
+    - { "old": "vaultwarden_container_image_force_pull", "new": "<removed> (the new community.docker.docker_image_pull module handles this natively)" }
 
 - name: Fail if required Vaultwarden settings not defined
   ansible.builtin.fail:

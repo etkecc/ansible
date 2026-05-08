@@ -10,6 +10,7 @@
       Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
   when: "lookup('ansible.builtin.varnames', ('^' + item.old + '$'), wantlist=True) | length > 0"
   with_items:
+    - { "old": "wg_easy_container_http_bind_port", "new": "wg_easy_container_http_host_bind_port" }
     - { "old": "wg_easy_systemd_required_systemd_services_list_default", "new": "wg_easy_systemd_required_services_list_default" }
     - { "old": "wg_easy_systemd_required_systemd_services_list_auto", "new": "wg_easy_systemd_required_services_list_auto" }
     - { "old": "wg_easy_systemd_required_systemd_services_list_custom", "new": "wg_easy_systemd_required_services_list_custom" }
@@ -22,6 +23,7 @@
     - "old": "wg_easy_environment_variables_additional_variable_password_hash"
       "new": "<removed; no alternative, but wg_easy_environment_variables_additional_variable_init_password is similar>"
     - { "old": "wg_easy_http_header_content_permission_policy", "new": "wg_easy_http_header_permissions_policy" }
+    - { "old": "wg_easy_container_image_force_pull", "new": "<removed> (the new community.docker.docker_image_pull module handles this natively)" }
 
 - name: Fail if wg_easy_path_prefix is not '/'
   ansible.builtin.fail:

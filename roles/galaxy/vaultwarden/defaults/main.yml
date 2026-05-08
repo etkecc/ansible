@@ -23,7 +23,7 @@ vaultwarden_data_path: "{{ vaultwarden_base_path }}/data"
 vaultwarden_ephemeral_path: "{{ vaultwarden_base_path }}/ephemeral"
 
 # renovate: datasource=docker depName=ghcr.io/dani-garcia/vaultwarden versioning=semver
-vaultwarden_version: 1.35.8
+vaultwarden_version: 1.36.0
 
 vaultwarden_uid: ""
 vaultwarden_gid: ""
@@ -45,7 +45,6 @@ vaultwarden_container_image_tag: "{{ vaultwarden_version }}-alpine"
 vaultwarden_container_image_registry_prefix: "{{ vaultwarden_container_image_registry_prefix_upstream }}"
 vaultwarden_container_image_registry_prefix_upstream: "{{ vaultwarden_container_image_registry_prefix_upstream_default }}"
 vaultwarden_container_image_registry_prefix_upstream_default: ghcr.io/
-vaultwarden_container_image_force_pull: "{{ vaultwarden_container_image.endswith(':latest') }}"
 
 vaultwarden_container_image_self_build: false
 vaultwarden_container_image_self_build_name: "dani-garcia/vaultwarden:{{ vaultwarden_container_image_self_build_repo_version }}"

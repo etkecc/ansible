@@ -76,7 +76,7 @@ miniflux_database_password: YOUR_POSTGRES_SERVER_PASSWORD_HERE
 miniflux_database_name: YOUR_POSTGRES_SERVER_DATABASE_NAME_HERE
 ```
 
-Make sure to replace values for variables with yours.
+Make sure to replace the placeholders with your own values.
 
 #### Configuring connection to the database server (optional)
 

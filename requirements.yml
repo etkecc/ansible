@@ -14,7 +14,7 @@
   version: v1.4.1-6
   name: funkwhale
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-gotosocial.git
-  version: v0.21.2-3
+  version: v0.21.2-4
   name: gotosocial
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-languagetool.git
   version: v6.7-1
@@ -23,7 +23,7 @@
   version: v1.45.0-2
   name: linkding
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-miniflux.git
-  version: v2.2.19-0
+  version: v2.2.19-1
   name: miniflux
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-peertube.git
   version: v7.2.3-7
@@ -44,8 +44,8 @@
   version: v1.23.17-3
   name: uptime_kuma
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-vaultwarden.git
-  version: v1.35.8-0
+  version: v1.36.0-1
   name: vaultwarden
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-wg-easy.git
-  version: v15.2.2-1
+  version: v15.2.2-2
   name: wg_easy

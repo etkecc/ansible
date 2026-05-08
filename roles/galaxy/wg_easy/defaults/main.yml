@@ -36,7 +36,6 @@ wg_easy_container_image_registry_prefix: "{{ wg_easy_container_image_registry_pr
 wg_easy_container_image_registry_prefix_upstream: "{{ wg_easy_container_image_registry_prefix_upstream_default }}"
 wg_easy_container_image_registry_prefix_upstream_default: ghcr.io/
 wg_easy_container_image_tag: "{{ wg_easy_version }}"
-wg_easy_container_image_force_pull: "{{ wg_easy_container_image.endswith(':latest') }}"
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 wg_easy_container_network: "{{ wg_easy_identifier }}"
@@ -52,7 +51,7 @@ wg_easy_container_wireguard_bind_port: "{{ wg_easy_environment_variables_additio
 # Specify how the container publishes its HTTP port (as defined by `wg_easy_environment_variables_additional_variable_port`)
 #
 # Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:8080"), just a port number or an empty string to not expose.
-wg_easy_container_http_bind_port: ""
+wg_easy_container_http_host_bind_port: ""
 
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
@@ -347,7 +346,7 @@ wg_easy_environment_variables_additional_variable_host: 0.0.0.0
 
 # Controls the `PORT` environment variable.
 # The TCP port that the container process listens on for providing its web UI.
-# Also see: `wg_easy_container_http_bind_port`
+# Also see: `wg_easy_container_http_host_bind_port`
 wg_easy_environment_variables_additional_variable_port: 8080
 
 # Controls the `INSECURE` environment variable.

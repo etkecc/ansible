@@ -25,6 +25,7 @@
     - { "old": "gotosocial_metrics_auth_enabled", "new": "gotosocial_container_labels_metrics_middleware_basic_auth_enabled" }
     - { "old": "gotosocial_metrics_auth_username", "new": "<superseded by gotosocial_container_labels_metrics_middleware_basic_auth_users>" }
     - { "old": "gotosocial_metrics_auth_password", "new": "<superseded by gotosocial_container_labels_metrics_middleware_basic_auth_users>" }
+    - { "old": "gotosocial_container_image_force_pull", "new": "<removed> (the new community.docker.docker_image_pull module handles this natively)" }
 
 - name: Fail if required GoToSocial settings not defined
   ansible.builtin.fail:

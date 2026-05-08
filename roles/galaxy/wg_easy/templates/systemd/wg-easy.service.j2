@@ -43,8 +43,8 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% if wg_easy_container_wireguard_bind_port %}
       -p {{ wg_easy_container_wireguard_bind_port }}:{{ wg_easy_environment_variables_additional_variable_init_port }}/udp \
       {% endif %}
-      {% if wg_easy_container_http_bind_port %}
-      -p {{ wg_easy_container_http_bind_port }}:{{ wg_easy_environment_variables_additional_variable_port }}/tcp \
+      {% if wg_easy_container_http_host_bind_port %}
+      -p {{ wg_easy_container_http_host_bind_port }}:{{ wg_easy_environment_variables_additional_variable_port }}/tcp \
       {% endif %}
       --env-file={{ wg_easy_base_path }}/env \
       --label-file={{ wg_easy_base_path }}/labels \

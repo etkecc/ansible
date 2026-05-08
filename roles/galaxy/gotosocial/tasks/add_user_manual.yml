@@ -3,33 +3,32 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: Fail if playbook called incorrectly
+- name: Fail if playbook called incorrectly for GoToSocial
   ansible.builtin.fail:
     msg: "The `username`, `password`, and `email` variables need to be provided via --extra-vars"
   when: >-
-    username is not defined or username == '<username>' or
-    password is not defined or password == '<password>' or
-    email is not defined or email == '<email>'
+    username is not defined or username == 'USERNAME_HERE' or
+    email is not defined or email == 'EMAIL_ADDRESS_HERE' or
+    password is not defined or password == 'PASSWORD_HERE'
 
-- name: Set fact for a normal user
+- name: Set the initial role to 'user' when running 'create-user-gotosocial' for GoToSocial
   ansible.builtin.set_fact:
     initial_role: user
-  tags:
-    - create-user-gotosocial
+  when: "'create-user-gotosocial' in ansible_run_tags"
 
-- name: Set fact for an admin user
+- name: Set the initial role to 'admin' when running 'create-admin-gotosocial' for GoToSocial
   ansible.builtin.set_fact:
     initial_role: admin
-  tags:
-    - create-admin-gotosocial
+  when: "'create-admin-gotosocial' in ansible_run_tags"
 
-- name: Set fact for adding a user
+- name: Set user details for GoToSocial
   ansible.builtin.set_fact:
     user:
       username: "{{ username }}"
       initial_email: "{{ email }}"
       initial_password: "{{ password }}"
       initial_type: "{{ initial_role }}"
+  no_log: true # hide raw password
 
 - name: Ensure GoToSocial service is started
   ansible.builtin.service:

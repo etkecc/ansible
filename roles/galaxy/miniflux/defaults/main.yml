@@ -32,7 +32,6 @@ miniflux_container_image_tag: "{{ miniflux_version }}"
 miniflux_container_image_registry_prefix: "{{ miniflux_container_image_registry_prefix_upstream }}"
 miniflux_container_image_registry_prefix_upstream: "{{ miniflux_container_image_registry_prefix_upstream_default }}"
 miniflux_container_image_registry_prefix_upstream_default: docker.io/
-miniflux_container_image_force_pull: "{{ miniflux_container_image.endswith(':latest') }}"
 
 miniflux_container_image_self_build: false
 miniflux_container_image_self_build_name: "miniflux/v2:{{ miniflux_container_image_self_build_repo_version }}"
@@ -266,6 +265,14 @@ miniflux_environment_variable_admin_username: "{{ miniflux_admin_login }}"
 
 # Controls the ADMIN_PASSWORD environment variable
 miniflux_environment_variable_admin_password: "{{ miniflux_admin_password }}"
+
+# Specify log format
+# Valid values: json, text
+miniflux_environment_variables_log_format: text
+
+# Specify log level
+# Valid values: debug, error, info, warning
+miniflux_environment_variables_log_level: info
 
 # Additional environment variables.
 miniflux_environment_variables_additional_variables: ""

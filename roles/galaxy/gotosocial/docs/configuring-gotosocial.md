@@ -157,23 +157,45 @@ If you use the MASH playbook, the shortcut commands with the [`just` program](ht
 
 ## Usage
 
-After running the command for installation, you can create user account(s).
+After running the command for installation, GoToSocial becomes available at the specified hostname like `https://social.example.com`.
 
-Run this command to create an **administrator** user account:
-
-```sh
-ansible-playbook -i inventory/hosts setup.yml --tags=create-admin-gotosocial -e username=YOUR_USERNAME_HERE -e password=YOUR_PASSWORD_HERE -e email=YOUR_EMAIL_ADDRESS_HERE
-```
-
-Run this command to create a **regular** (non-administrator) user account:
-
-```sh
-ansible-playbook -i inventory/hosts setup.yml --tags=create-user-gotosocial -e username=YOUR_USERNAME_HERE -e password=YOUR_PASSWORD_HERE -e email=YOUR_EMAIL_ADDRESS_HERE
-```
-
-Now you should be able to visit the URL at the specified hostname like `https://social.example.com` and check your instance.
+To get started, create an administrator user first and open the URL with a web browser to log in to the instance. You can create one by running the commands below.
 
 To customize your instance, go to the `/admin` page.
+
+### Creating users
+
+#### Creating a user manually
+
+You can create a user by running the command below:
+
+```sh
+ansible-playbook -i inventory/hosts setup.yml --tags=create-user-gotosocial -e username=USERNAME_HERE -e password=PASSWORD_HERE -e email=EMAIL_ADDRESS_HERE
+```
+
+Run `create-admin-gotosocial` to create an administrator.
+
+#### Creating users automatically
+
+It is also possible to create muitiple users specified with `gotosocial_users_additional` on your `vars.yml` file by running the command below:
+
+```sh
+ansible-playbook -i inventory/hosts setup.yml --tags=ensure-gotosocial-users-created
+```
+
+Those users can be specified like below:
+
+```yaml
+gotosocial_users_additional:
+  - username: admin
+    initial_email: admin@example.com
+    initial_password: password
+    initial_type: admin
+  - username: user
+    initial_email: user@example.com
+    initial_password: password
+    initial_type: user
+```
 
 ### GoToSocial CLI tool
 

@@ -12,3 +12,4 @@
 * [Synapse](https://github.com/element-hq/synapse): [v1.152.0](https://github.com/element-hq/synapse/releases/tag/v1.152.0) ⇾ [v1.152.1](https://github.com/element-hq/synapse/releases/tag/v1.152.1)
 * [Traefik](https://github.com/traefik/traefik): [v3.6.15](https://github.com/traefik/traefik/releases/tag/v3.6.15) ⇾ [v3.7.0](https://github.com/traefik/traefik/releases/tag/v3.7.0)
 * [Valkey](https://github.com/valkey-io/valkey): [9.0.3](https://github.com/valkey-io/valkey/releases/tag/9.0.3) ⇾ [9.0.4](https://github.com/valkey-io/valkey/releases/tag/9.0.4)
+* [Vaultwarden](https://github.com/dani-garcia/vaultwarden): [1.35.8](https://github.com/dani-garcia/vaultwarden/releases/tag/1.35.8) ⇾ [1.36.0](https://github.com/dani-garcia/vaultwarden/releases/tag/1.36.0)
