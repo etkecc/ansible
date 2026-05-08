@@ -93,16 +93,22 @@
         force: "yes"
       register: etherpad_git_pull_results
 
+    # Invoking the `docker build` command here, instead of calling the `docker_image` Ansible module,
+    # because the latter does not support BuildKit.
+    # See: https://github.com/ansible-collections/community.general/issues/514
     - name: Ensure Etherpad container image is built
-      community.docker.docker_image_build:
-        name: "{{ etherpad_container_image_self_build_name }}"
-        dockerfile: Dockerfile
-        path: "{{ etherpad_container_image_self_build_src_files_path }}"
-        pull: true
-        rebuild: "{{ 'always' if etherpad_git_pull_results.changed | bool else 'never' }}"
-        args:
-          ETHERPAD_PLUGINS: "{{ etherpad_plugins | join(' ') }}"
+      ansible.builtin.shell:
+        chdir: "{{ etherpad_container_image_self_build_src_files_path }}"
+        cmd: |
+          {{ devture_systemd_docker_base_host_command_docker }} build \
+          --build-arg ETHERPAD_PLUGINS="{{ etherpad_plugins | join(' ') }}" \
+          -t "{{ etherpad_container_image_self_build_name }}" \
+          -f Dockerfile \
+          .
+      environment:
+        DOCKER_BUILDKIT: "1"
       register: etherpad_container_image_build_result
+      changed_when: "'Successfully built' in etherpad_container_image_build_result.stdout or ('writing image' in etherpad_container_image_build_result.stderr and 'CACHED' not in etherpad_container_image_build_result.stderr)"
 
 - name: Ensure Etherpad container network is created via community.docker.docker_network
   when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
