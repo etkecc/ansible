@@ -1,6 +1,6 @@
 * Alpine: edge
 * Authentication Service: 1.16.0
-* Baibot: v1.18.0
+* Baibot: v1.19.1
 * Bluesky: v0.2510.0
 * Borg: 1.4.4
 * Borgmatic: 2.1.4
