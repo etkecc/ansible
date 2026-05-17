@@ -86,27 +86,14 @@
         force: "yes"
       register: hydrogen_git_pull_results
 
-    - name: Check if Hydrogen container image exists to avoid recreating the same one
-      ansible.builtin.command: "{{ devture_systemd_docker_base_host_command_docker }} images --quiet --filter 'reference={{ hydrogen_container_image }}'"
-      register: hydrogen_container_image_check_result
-      changed_when: false
-
-    # Invoking the `docker build` command here, instead of calling the `docker_image` Ansible module,
-    # because the latter does not support BuildKit.
-    # See: https://github.com/ansible-collections/community.general/issues/514
     - name: Ensure Hydrogen container image is built
-      ansible.builtin.shell:
-        chdir: "{{ hydrogen_container_image_self_build_src_files_path }}"
-        cmd: |
-          {{ devture_systemd_docker_base_host_command_docker }} build \
-          -t "{{ hydrogen_container_image_self_build_name }}" \
-          -f Dockerfile \
-          .
-      environment:
-        DOCKER_BUILDKIT: "1"
+      community.docker.docker_image_build:
+        name: "{{ hydrogen_container_image_self_build_name }}"
+        dockerfile: Dockerfile
+        path: "{{ hydrogen_container_image_self_build_src_files_path }}"
+        pull: true
+        rebuild: "{{ 'always' if hydrogen_git_pull_results.changed | bool else 'never' }}"
       register: hydrogen_container_image_build_result
-      changed_when: "'Successfully built' in hydrogen_container_image_build_result.stdout or ('writing image' in hydrogen_container_image_build_result.stderr and 'CACHED' not in hydrogen_container_image_build_result.stderr)"
-      when: "hydrogen_git_pull_results.changed | bool or hydrogen_container_image_check_result.stdout == ''"
 
 - name: Ensure Hydrogen container network is created via community.docker.docker_network
   when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'

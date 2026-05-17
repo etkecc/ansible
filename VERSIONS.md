@@ -16,7 +16,7 @@
 * Firezone: 0.7.36
 * Fluffychat: v2.5.1
 * Funkwhale: 1.4.1
-* Gmessages: v0.2604.0
+* Gmessages: v0.2605.0
 * Go Neb: latest
 * Googlechat: v0.5.2
 * Gotosocial: 0.21.2
@@ -36,20 +36,20 @@
 * Livekit Server: v1.11.0
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.6.0
-* Meta Instagram: v0.2604.0
-* Meta Messenger: v0.2604.0
-* Miniflux: 2.2.19
+* Meta Instagram: v0.2605.0
+* Meta Messenger: v0.2605.0
+* Miniflux: 2.3.0
 * Ntfy: v2.22.0
 * Peertube: v7.2.3
 * Postgres Container Image V10: 10.23
 * Postgres Container Image V11: 11.22
 * Postgres Container Image V12: 12.22
 * Postgres Container Image V13: 13.23
-* Postgres Container Image V14: 14.22
-* Postgres Container Image V15: 15.17
-* Postgres Container Image V16: 16.13
-* Postgres Container Image V17: 17.9
-* Postgres Container Image V18: 18.3
+* Postgres Container Image V14: 14.23
+* Postgres Container Image V15: 15.18
+* Postgres Container Image V16: 16.14
+* Postgres Container Image V17: 17.10
+* Postgres Container Image V18: 18.4
 * Postgres Container Image V9: 9.6.24
 * Postmoogle: v0.9.31
 * Prometheus: v3.11.3
@@ -60,7 +60,7 @@
 * Registration: v0.7.2
 * Schildichat: 1.11.109-sc.0.test.0
 * Signal: v26.02.2
-* Slack: v0.2604.0
+* Slack: v0.2605.0
 * Spam Checker Mjolnir Antispam Git: v1.12.1
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.42.0
@@ -69,10 +69,10 @@
 * Synapse: v1.152.1
 * Synapse Auto Compressor: v0.0.3
 * Synapse Http Antispam Git: v0.5.0
-* Synapse Reverse Proxy Companion: 1.30.0-alpine
+* Synapse Reverse Proxy Companion: 1.31.0-alpine
 * Synapse Rust Synapse Compress State Container Image: v0.0.3
-* Synapse S3 Storage Provider: 1.6.0
-* Telegram: v0.2604.0
+* Synapse S3 Storage Provider: 1.6.1
+* Telegram: v0.2605.0
 * Traefik: v3.7.1
 * Traefik Certs Dumper: v2.10.0
 * Traefik Config Tcp Servertransports Default Proxyprotocol: 1
@@ -83,4 +83,4 @@
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
 * Wg Easy: 15.2.2
-* Whatsapp: v0.2604.0
+* Whatsapp: v0.2605.0

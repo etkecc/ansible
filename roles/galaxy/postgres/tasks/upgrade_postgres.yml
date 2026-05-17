@@ -1,4 +1,35 @@
 ---
+# The `upgrade-postgres` tag is meant to be run on its own.
+#
+# When combined with `setup-all`/`setup-postgres`/`install-all`/`install-postgres` (or with the
+# implicit `all` tag — i.e., no `--tags` at all), the install pass runs first and pins
+# `postgres_container_image_to_use` to the *currently-installed* major version (so the playbook
+# does not auto-upgrade unintentionally). The upgrade pass then re-runs install with that same
+# pinned image, so the dump is restored into the same version you started on — a silent no-op
+# upgrade that round-trips your data through pg_dumpall for no reason.
+- name: Fail if upgrade-postgres is combined with setup/install tags
+  ansible.builtin.fail:
+    msg: |-
+      Refusing to upgrade Postgres while another tag from
+      `all`, `setup-all`, `setup-postgres`, `install-all`, `install-postgres`
+      is also active.
+
+      Combining these tags is unsafe: the install pass pins Postgres to the
+      *currently-installed* major version, and the upgrade pass then re-runs
+      install with that same pinned image. The dump would be restored into
+      the same version you started on — a silent no-op upgrade.
+
+      Re-run with the upgrade tag alone, e.g.:
+          ansible-playbook ... --tags=upgrade-postgres
+
+      See your playbook's Postgres maintenance documentation for details.
+  when: >-
+    ansible_run_tags | intersect([
+      'all',
+      'setup-all', 'setup-postgres',
+      'install-all', 'install-postgres',
+    ]) | length > 0
+
 - name: Set default postgres_dump_dir, if not provided
   ansible.builtin.set_fact:
     postgres_dump_dir: "/tmp"

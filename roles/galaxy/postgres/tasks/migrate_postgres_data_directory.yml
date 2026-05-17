@@ -19,7 +19,7 @@
 
 - name: Warn if old Postgres data directory detected
   ansible.builtin.debug:
-    msg: >
+    msg: >-
       Found that you have Postgres data in `{{ postgres_base_path }}`.
       From now on, Postgres data is supposed to be stored in `{{ postgres_data_path }}` instead.
       We'll stop Postgres and relocate the files there for you.

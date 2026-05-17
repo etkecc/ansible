@@ -41,7 +41,7 @@
             devture_playbook_runtime_messages_list | default([])
             +
             [
-              "NOTE: Your setup is on an old Postgres version (" + postgres_detected_version_number | string + ") and can be upgraded to version " + postgres_available_upgrade_versions | max | string + ". You can upgrade using --tags=upgrade-postgres"
+              "NOTE: Your setup is on an old Postgres version (" + postgres_detected_version_number | string + ") and can be upgraded to version " + postgres_available_upgrade_versions | max | string + ". To upgrade, re-run the playbook with `--tags=upgrade-postgres` on its own. Do not combine it with `setup-all`/`setup-postgres`/`install-all`/`install-postgres`. See your playbook's Postgres maintenance documentation for details."
             ]
           }}
       when: "postgres_detected_existing and postgres_available_upgrade_versions | length > 0"
