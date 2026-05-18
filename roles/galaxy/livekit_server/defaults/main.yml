@@ -15,7 +15,7 @@ livekit_server_base_path: "/{{ livekit_server_identifier }}"
 livekit_server_config_path: "{{ livekit_server_base_path }}/config"
 
 # renovate: datasource=docker depName=docker.io/livekit/livekit-server
-livekit_server_version: v1.11.0
+livekit_server_version: v1.12.0
 
 livekit_server_uid: ""
 livekit_server_gid: ""
@@ -372,6 +372,34 @@ livekit_server_config_turn_relay_range_start: 30000
 # Controls the `turn.relay_range_end` configuration property.
 # Keep this range intentionally small to avoid very long Docker port-publishing startup times.
 livekit_server_config_turn_relay_range_end: 30020
+
+# Controls the `turn.ttl_seconds` configuration property.
+# Time-To-Live (in seconds) of TURN credentials beyond which they are no longer valid for joining a room.
+# The TTL is always used when constructing credentials, so a value of 0 produces credentials that expire immediately.
+livekit_server_config_turn_ttl_seconds: 300
+
+# Controls the `turn.allow_restricted_peer_cidrs` configuration property.
+# List of restricted peer CIDRs (loopback, link-local (unicast, multicast), multicast, private, unspecified)
+# that the TURN server is allowed to relay traffic to.
+#
+# By default (empty list), TURN does not relay traffic to restricted peer CIDRs.
+# When non-empty, only the specified CIDRs are allowed access; the check applies to restricted peer CIDRs only.
+#
+# Example:
+# livekit_server_config_turn_allow_restricted_peer_cidrs:
+#   - 10.0.0.0/8
+#   - 192.168.0.0/16
+livekit_server_config_turn_allow_restricted_peer_cidrs: []
+
+# Controls the `turn.deny_peer_cidrs` configuration property.
+# List of peer CIDRs to deny access to. Applies to all peer CIDRs (including restricted ones).
+# The deny list takes precedence over `livekit_server_config_turn_allow_restricted_peer_cidrs`.
+#
+# Example:
+# livekit_server_config_turn_deny_peer_cidrs:
+#   - 10.0.0.0/8
+#   - 192.168.0.0/16
+livekit_server_config_turn_deny_peer_cidrs: []
 
 ########################################################################################
 #                                                                                      #

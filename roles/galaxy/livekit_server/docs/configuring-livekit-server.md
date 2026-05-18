@@ -95,6 +95,21 @@ The default in this role is `false`.
 
 When external TLS mode is enabled, the role expects Traefik TCP labels to be set (`livekit_server_container_labels_turn_traefik_enabled: true` and a non-empty `livekit_server_container_labels_turn_traefik_entrypoints`) and does not configure cert files for TURN.
 
+### TURN access controls and credential TTL
+
+The TURN server enforces a credential TTL and restricts which peer CIDRs it will relay to. The defaults are secure and suitable for typical deployments where TURN peers live on the public Internet, so most setups do not need to configure these.
+
+- `livekit_server_config_turn_ttl_seconds` (default: `300`) — TTL of TURN credentials in seconds. A value of `0` produces credentials that expire immediately, so don't set it to `0` unless you intentionally want to break TURN.
+- `livekit_server_config_turn_allow_restricted_peer_cidrs` (default: `[]`) — TURN does not relay traffic to restricted peer CIDRs (loopback, link-local, multicast, private, unspecified addresses) unless they are listed here. Use this if your deployment legitimately needs TURN to reach specific private ranges:
+
+    ```yaml
+    livekit_server_config_turn_allow_restricted_peer_cidrs:
+      - 10.0.0.0/8
+      - 192.168.0.0/16
+    ```
+
+- `livekit_server_config_turn_deny_peer_cidrs` (default: `[]`) — explicit deny list. Takes precedence over the allow list and applies to all peer CIDRs (including non-restricted ones).
+
 ### Limitations
 
 LiveKit Server's TURN listener behavior depends on where TLS is terminated:

@@ -5,7 +5,7 @@
 * Borg: 1.4.4
 * Borgmatic: 2.1.4
 * Buscarron: v1.4.3
-* Cinny: v4.11.1
+* Cinny: v4.12.1
 * Container Socket Proxy: v0.4.2
 * Coturn: 4.9.0
 * Discord: v0.7.6
@@ -33,7 +33,7 @@
 * Linkding: 1.45.0
 * Linkedin: latest
 * Livekit Jwt Service: 0.4.4
-* Livekit Server: v1.11.0
+* Livekit Server: v1.12.0
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.6.0
 * Meta Instagram: v0.2605.0

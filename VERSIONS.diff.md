@@ -6,7 +6,9 @@
 
 ### Component Updates
 
+* [Cinny](https://github.com/ajbura/cinny): [v4.11.1](https://github.com/ajbura/cinny/releases/tag/v4.11.1) ⇾ [v4.12.1](https://github.com/ajbura/cinny/releases/tag/v4.12.1)
 * [Gmessages](https://github.com/mautrix/gmessages): [v0.2604.0](https://github.com/mautrix/gmessages/releases/tag/v0.2604.0) ⇾ [v0.2605.0](https://github.com/mautrix/gmessages/releases/tag/v0.2605.0)
+* [Livekit Server](https://github.com/livekit/livekit): [v1.11.0](https://github.com/livekit/livekit/releases/tag/v1.11.0) ⇾ [v1.12.0](https://github.com/livekit/livekit/releases/tag/v1.12.0)
 * [Meta Instagram](https://github.com/mautrix/meta): [v0.2604.0](https://github.com/mautrix/meta/releases/tag/v0.2604.0) ⇾ [v0.2605.0](https://github.com/mautrix/meta/releases/tag/v0.2605.0)
 * [Meta Messenger](https://github.com/mautrix/meta): [v0.2604.0](https://github.com/mautrix/meta/releases/tag/v0.2604.0) ⇾ [v0.2605.0](https://github.com/mautrix/meta/releases/tag/v0.2605.0)
 * [Miniflux](https://github.com/miniflux/v2): [2.2.19](https://github.com/miniflux/v2/releases/tag/2.2.19) ⇾ [2.3.0](https://github.com/miniflux/v2/releases/tag/2.3.0)

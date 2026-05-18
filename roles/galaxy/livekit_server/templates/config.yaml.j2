@@ -41,6 +41,9 @@ turn:
   relay_range_start: {{ livekit_server_config_turn_relay_range_start | int | to_json }}
   relay_range_end: {{ livekit_server_config_turn_relay_range_end | int | to_json }}
   external_tls: {{ livekit_server_config_turn_external_tls | to_json }}
+  ttl_seconds: {{ livekit_server_config_turn_ttl_seconds | int | to_json }}
+  allow_restricted_peer_cidrs: {{ livekit_server_config_turn_allow_restricted_peer_cidrs | to_json }}
+  deny_peer_cidrs: {{ livekit_server_config_turn_deny_peer_cidrs | to_json }}
 {% endif %}
 
 {% if livekit_server_config_prometheus_enabled %}
