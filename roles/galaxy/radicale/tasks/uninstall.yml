@@ -24,6 +24,39 @@
         path: "{{ devture_systemd_docker_base_systemd_path }}/{{ radicale_identifier }}.service"
         state: absent
 
+    - name: Ensure Radicale support files do not exist
+      ansible.builtin.file:
+        path: "{{ radicale_base_path }}/{{ item }}"
+        state: absent
+      with_items:
+        - env
+        - labels
+
+    - name: Ensure Radicale image source files path does not exist
+      ansible.builtin.file:
+        path: "{{ radicale_container_image_self_build_src_files_path }}"
+        state: absent
+
+    - name: Ensure Radicale local config path does not exist
+      # Removing the path should be fine because it is used for mounting the configuration file generated on the template
+      ansible.builtin.file:
+        path: "{{ radicale_config_path }}"
+        state: absent
+
+    - name: Ensure Radicale local data path does not exist if empty
+      ansible.builtin.command:
+        cmd: "rmdir {{ radicale_data_path }}"
+      register: radicale_data_path_deletion_result
+      changed_when: radicale_data_path_deletion_result.rc == 0
+      failed_when: false
+
+    - name: Ensure Radicale base path does not exist if empty
+      ansible.builtin.command:
+        cmd: "rmdir {{ radicale_base_path }}"
+      register: radicale_base_path_deletion_result
+      changed_when: radicale_base_path_deletion_result.rc == 0
+      failed_when: false
+
     - name: Ensure Radicale container network does not exist
       when: radicale_container_network_deletion_enabled
       block:
@@ -43,7 +76,20 @@
           register: radicale_network_deletion_result
           changed_when: radicale_container_network in radicale_network_deletion_result.stdout
 
-    - name: Ensure Radicale path does not exist
-      ansible.builtin.file:
-        path: "{{ radicale_base_path }}"
-        state: absent
+- name: Check existence of Radicale local data path
+  ansible.builtin.stat:
+    path: "{{ radicale_data_path }}"
+  register: radicale_data_path_stat
+
+# We just want to notify the user. Deleting data is too destructive.
+- name: Inject the message about the remaining Radicale local data path
+  when: radicale_data_path_stat.stat.exists | bool
+  ansible.builtin.set_fact:
+    devture_playbook_runtime_messages_list: |
+      {{
+        devture_playbook_runtime_messages_list | default([])
+        +
+        [
+          "Note: As the local Radicale instance has been removed, local data remains in `" + radicale_data_path + "`. Feel free to delete it."
+        ]
+      }}

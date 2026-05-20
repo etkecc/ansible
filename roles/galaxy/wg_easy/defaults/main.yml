@@ -16,7 +16,7 @@ wg_easy_base_path: "/{{ wg_easy_identifier }}"
 wg_easy_data_path: "{{ wg_easy_base_path }}/data"
 
 # renovate: datasource=docker depName=ghcr.io/wg-easy/wg-easy
-wg_easy_version: 15.2.2
+wg_easy_version: 15.3.0
 
 wg_easy_uid: ""
 wg_easy_gid: ""

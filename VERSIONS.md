@@ -1,5 +1,5 @@
 * Alpine: edge
-* Authentication Service: 1.16.0
+* Authentication Service: 1.17.0
 * Baibot: v1.19.1
 * Bluesky: v0.2510.0
 * Borg: 1.4.4
@@ -56,8 +56,7 @@
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.11.1
 * Prometheus Postgres Exporter: v0.19.1
-* Radicale: 3.6.1.0
-* Registration: v0.7.2
+* Radicale: 3.7.3.0
 * Schildichat: 1.11.109-sc.0.test.0
 * Signal: v26.02.2
 * Slack: v0.2605.0
@@ -66,7 +65,7 @@
 * Static Files: 2.42.0
 * Steam Bridge: 1.1.0
 * Sygnal: v0.15.1
-* Synapse: v1.152.1
+* Synapse: v1.153.0
 * Synapse Auto Compressor: v0.0.3
 * Synapse Http Antispam Git: v0.5.0
 * Synapse Reverse Proxy Companion: 1.31.0-alpine
@@ -78,9 +77,9 @@
 * Traefik Config Tcp Servertransports Default Proxyprotocol: 1
 * Twitter: v0.2604.0
 * Uptime Kuma: 1.23.17
-* Valkey: 9.0.4
+* Valkey: 9.1.0
 * Vaultwarden: 1.36.0
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
-* Wg Easy: 15.2.2
+* Wg Easy: 15.3.0
 * Whatsapp: v0.2605.0

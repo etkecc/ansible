@@ -53,27 +53,25 @@
 - name: Run if self-building of Radicale container image is not enabled
   when: "not radicale_container_image_self_build | bool"
   block:
-    - name: Ensure Radicale container image is pulled via community.docker.docker_image
+    - name: Ensure Radicale container image is pulled via community.docker.docker_image_pull
       when: devture_systemd_docker_base_container_image_pull_method == 'ansible-module'
-      community.docker.docker_image:
+      community.docker.docker_image_pull:
         name: "{{ radicale_container_image }}"
-        source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
-        force_source: "{{ radicale_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
-        force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else radicale_container_image_force_pull }}"
-      register: radicale_container_image_pull_result
+        pull: always
+      register: radicale_container_image_pull_result_ansible_module
       retries: "{{ devture_playbook_help_container_retries_count }}"
       delay: "{{ devture_playbook_help_container_retries_delay }}"
-      until: radicale_container_image_pull_result is not failed
+      until: radicale_container_image_pull_result_ansible_module is not failed
 
     - name: Ensure Radicale container image is pulled via ansible.builtin.command
       when: devture_systemd_docker_base_container_image_pull_method == 'command'
       ansible.builtin.command:
         cmd: "{{ devture_systemd_docker_base_host_command_docker }} pull {{ radicale_container_image }}"
-      register: radicale_container_image_pull_result
+      register: radicale_container_image_pull_result_command
       retries: "{{ devture_playbook_help_container_retries_count }}"
       delay: "{{ devture_playbook_help_container_retries_delay }}"
-      until: radicale_container_image_pull_result is not failed
-      changed_when: "'Downloaded newer image' in radicale_container_image_pull_result.stdout"
+      until: radicale_container_image_pull_result_command is not failed
+      changed_when: "'Downloaded newer image' in radicale_container_image_pull_result_command.stdout"
 
 - name: Run if self-building of Radicale container image is enabled
   when: "radicale_container_image_self_build | bool"
@@ -87,16 +85,12 @@
       register: radicale_git_pull_results
 
     - name: Ensure Radicale container image is built
-      community.docker.docker_image:
+      community.docker.docker_image_build:
         name: "{{ radicale_container_image_self_build_name }}"
-        source: build
-        force_source: "{{ radicale_git_pull_results.changed if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
-        force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else radicale_git_pull_results.changed }}"
-        build:
-          dockerfile: Dockerfile
-          path: "{{ radicale_container_image_self_build_src_files_path }}"
-          pull: true
-          args:
+        dockerfile: Dockerfile
+        path: "{{ radicale_container_image_self_build_src_files_path }}"
+        pull: true
+        rebuild: "{{ 'always' if radicale_git_pull_results.changed | bool else 'never' }}"
       register: radicale_container_image_build_result
 
 - name: Ensure Radicale container network is created via community.docker.docker_network
@@ -134,6 +128,7 @@
         radicale_support_files_result.changed | default(false)
         or radicale_config_files_result.changed | default(false)
         or radicale_systemd_service_result.changed | default(false)
-        or radicale_container_image_pull_result.changed | default(false)
+        or radicale_container_image_pull_result_ansible_module.changed | default(false)
+        or radicale_container_image_pull_result_command.changed | default(false)
         or radicale_container_image_build_result.changed | default(false)
       }}

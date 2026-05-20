@@ -29,7 +29,7 @@
   version: v7.2.3-7
   name: peertube
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-radicale.git
-  version: v3.6.1.0-1
+  version: v3.7.3.0-0
   name: radicale
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-ssh.git
   version: main
@@ -47,5 +47,5 @@
   version: v1.36.0-1
   name: vaultwarden
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-wg-easy.git
-  version: v15.2.2-2
+  version: v15.3.0-0
   name: wg_easy
