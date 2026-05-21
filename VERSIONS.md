@@ -1,6 +1,6 @@
 * Alpine: edge
 * Authentication Service: 1.17.0
-* Baibot: v1.19.1
+* Baibot: v1.19.2
 * Bluesky: v0.2510.0
 * Borg: 1.4.4
 * Borgmatic: 2.1.4
@@ -25,7 +25,7 @@
 * Honoroit: v0.9.30
 * Hookshot: 7.3.2
 * Hydrogen: v0.5.1
-* Jitsi: stable-10888
+* Jitsi: stable-10978
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
 * Ketesa: v1.2.1
