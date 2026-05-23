@@ -17,7 +17,6 @@
 * Fluffychat: v2.5.1
 * Funkwhale: 1.4.1
 * Gmessages: v0.2605.0
-* Go Neb: latest
 * Googlechat: v0.5.2
 * Gotosocial: 0.21.2
 * Grafana: 11.6.5
@@ -68,7 +67,7 @@
 * Synapse: v1.153.0
 * Synapse Auto Compressor: v0.0.3
 * Synapse Http Antispam Git: v0.5.0
-* Synapse Reverse Proxy Companion: 1.31.0-alpine
+* Synapse Reverse Proxy Companion: 1.31.1-alpine
 * Synapse Rust Synapse Compress State Container Image: v0.0.3
 * Synapse S3 Storage Provider: 1.6.1
 * Telegram: v0.2605.0
