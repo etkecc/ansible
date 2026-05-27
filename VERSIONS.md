@@ -1,6 +1,6 @@
 * Alpine: edge
 * Authentication Service: 1.17.0
-* Baibot: v1.19.2
+* Baibot: v1.19.3
 * Bluesky: v0.2510.0
 * Borg: 1.4.4
 * Borgmatic: 2.1.4
@@ -10,7 +10,7 @@
 * Coturn: 4.9.0
 * Discord: v0.7.6
 * Draupnir: v3.1.0
-* Element: v1.12.18
+* Element: v1.12.19
 * Etherpad: 2.7.2
 * Exim Relay: 4.99.1-r0-2
 * Firezone: 0.7.36
@@ -62,7 +62,7 @@
 * Spam Checker Mjolnir Antispam Git: v1.12.1
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.42.0
-* Steam Bridge: 1.1.0
+* Steam Bridge: 1.2.0
 * Sygnal: v0.15.1
 * Synapse: v1.153.0
 * Synapse Auto Compressor: v0.0.3
