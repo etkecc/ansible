@@ -35,9 +35,9 @@
 * Livekit Server: v1.12.0
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.6.0
-* Meta Instagram: v0.2605.0
-* Meta Messenger: v0.2605.0
-* Miniflux: 2.3.0
+* Meta Instagram: v0.2605.1
+* Meta Messenger: v0.2605.1
+* Miniflux: 2.3.1
 * Ntfy: v2.22.0
 * Peertube: v7.2.3
 * Postgres Container Image V10: 10.23
@@ -51,7 +51,7 @@
 * Postgres Container Image V18: 18.4
 * Postgres Container Image V9: 9.6.24
 * Postmoogle: v0.9.31
-* Prometheus: v3.11.3
+* Prometheus: v3.12.0
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.11.1
 * Prometheus Postgres Exporter: v0.19.1
