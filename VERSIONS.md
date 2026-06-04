@@ -1,6 +1,6 @@
 * Alpine: edge
-* Authentication Service: 1.17.0
-* Baibot: v1.19.3
+* Authentication Service: 1.18.0
+* Baibot: v1.20.0
 * Bluesky: v0.2510.0
 * Borg: 1.4.4
 * Borgmatic: 2.1.4
@@ -31,7 +31,7 @@
 * Languagetool: 6.7-dockerupdate-1
 * Linkding: 1.45.0
 * Linkedin: latest
-* Livekit Jwt Service: 0.4.4
+* Livekit Jwt Service: 0.5.0
 * Livekit Server: v1.12.0
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.6.0
