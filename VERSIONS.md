@@ -64,7 +64,7 @@
 * Static Files: 2.42.0
 * Steam Bridge: 1.2.0
 * Sygnal: v0.15.1
-* Synapse: v1.153.0
+* Synapse: v1.154.0
 * Synapse Auto Compressor: v0.0.3
 * Synapse Http Antispam Git: v0.5.0
 * Synapse Reverse Proxy Companion: 1.31.1-alpine

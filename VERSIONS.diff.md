@@ -16,4 +16,5 @@
 * [Miniflux](https://github.com/miniflux/v2): [2.3.0](https://github.com/miniflux/v2/releases/tag/2.3.0) ⇾ [2.3.1](https://github.com/miniflux/v2/releases/tag/2.3.1)
 * [Prometheus](https://github.com/prometheus/prometheus): [v3.11.3](https://github.com/prometheus/prometheus/releases/tag/v3.11.3) ⇾ [v3.12.0](https://github.com/prometheus/prometheus/releases/tag/v3.12.0)
 * Steam Bridge: 1.1.0 ⇾ 1.2.0
+* [Synapse](https://github.com/element-hq/synapse): [v1.153.0](https://github.com/element-hq/synapse/releases/tag/v1.153.0) ⇾ [v1.154.0](https://github.com/element-hq/synapse/releases/tag/v1.154.0)
 * Synapse Reverse Proxy Companion: 1.31.0-alpine ⇾ 1.31.1-alpine
