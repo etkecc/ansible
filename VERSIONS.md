@@ -1,6 +1,6 @@
 * Alpine: edge
 * Authentication Service: 1.18.0
-* Baibot: v1.20.0
+* Baibot: v1.21.1
 * Bluesky: v0.2510.0
 * Borg: 1.4.4
 * Borgmatic: 2.1.4
@@ -38,7 +38,7 @@
 * Meta Instagram: v0.2605.1
 * Meta Messenger: v0.2605.1
 * Miniflux: 2.3.1
-* Ntfy: v2.22.0
+* Ntfy: v2.24.0
 * Peertube: v7.2.3
 * Postgres Container Image V10: 10.23
 * Postgres Container Image V11: 11.22
@@ -71,7 +71,7 @@
 * Synapse Rust Synapse Compress State Container Image: v0.0.3
 * Synapse S3 Storage Provider: 1.6.1
 * Telegram: v0.2605.0
-* Traefik: v3.7.1
+* Traefik: v3.7.3
 * Traefik Certs Dumper: v2.10.0
 * Traefik Config Tcp Servertransports Default Proxyprotocol: 1
 * Twitter: v0.2604.0
