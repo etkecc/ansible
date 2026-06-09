@@ -24,7 +24,7 @@
 * Honoroit: v0.9.30
 * Hookshot: 7.3.2
 * Hydrogen: v0.5.1
-* Jitsi: stable-10978
+* Jitsi: stable-11031
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
 * Ketesa: v1.2.1
