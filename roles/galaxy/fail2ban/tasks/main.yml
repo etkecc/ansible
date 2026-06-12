@@ -1,23 +1,26 @@
 ---
-- block:
-  - name: Install fail2ban
-    ansible.builtin.package:
-      name: fail2ban
-      state: present
-
-  - name: Ensure jail.local is present
-    ansible.builtin.template:
-      src: etc/fail2ban/jail.local.j2
-      dest: /etc/fail2ban/jail.local
-
-  - name: Ensure fail2ban stared and running
-    ansible.builtin.service:
-      state: started
-      enabled: true
-      name: fail2ban
-  when: system_security_fail2ban_enabled | bool
+- name: Manage fail2ban
   tags:
     - setup-all
     - setup-fail2ban
     - install-all
     - install-fail2ban
+  when: system_security_fail2ban_enabled | bool
+  block:
+    - name: Install fail2ban
+      ansible.builtin.package:
+        name: fail2ban
+        state: present
+
+    - name: Ensure jail.local is present
+      ansible.builtin.template:
+        src: etc/fail2ban/jail.local.j2
+        dest: /etc/fail2ban/jail.local
+        mode: "0644"
+      notify: Restart fail2ban
+
+    - name: Ensure fail2ban started and running
+      ansible.builtin.service:
+        state: started
+        enabled: true
+        name: fail2ban

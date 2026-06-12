@@ -5,5 +5,13 @@ system_security_fail2ban_enabled: true
 # ssh port for sshd jail
 system_security_fail2ban_sshd_port: 22
 
+# IPs/CIDRs/DNS names fail2ban will never ban (space- or comma-separated).
+# Real infra hosts (vpn/ctrl/mon) go in group_vars; default is loopback only.
+system_security_fail2ban_ignoreip: '127.0.0.1/8 ::1'
+
+# Escalating bans for repeat offenders (DB-backed). Only ever extends an
+# already-banned IP's ban, and our infra is in ignoreip, so it can't reach us.
+system_security_fail2ban_bantime_increment: true
+
 # custom configuration
 system_security_fail2ban_configuration_extension: ''

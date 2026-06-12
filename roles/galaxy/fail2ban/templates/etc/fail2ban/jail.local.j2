@@ -1,5 +1,9 @@
 # {{ ansible_managed }}
 
+[DEFAULT]
+ignoreip = {{ system_security_fail2ban_ignoreip }}
+bantime.increment = {{ 'true' if system_security_fail2ban_bantime_increment | bool else 'false' }}
+
 [sshd]
 enabled  = true
 port     = {{ system_security_fail2ban_sshd_port }}

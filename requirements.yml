@@ -5,7 +5,7 @@
   version: v1.0.0-0
   name: cleanup
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-fail2ban.git
-  version: main
+  version: v1.0.0-0
   name: fail2ban
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-firezone.git
   version: v0.7.36-11
@@ -32,7 +32,7 @@
   version: v3.7.3.0-0
   name: radicale
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-ssh.git
-  version: main
+  version: v1.0.2-0
   name: ssh
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-swap.git
   version: main

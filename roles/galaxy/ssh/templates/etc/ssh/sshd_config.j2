@@ -11,6 +11,9 @@ Compression {{ 'yes' if system_security_ssh_compression|bool else 'no' }}
 GatewayPorts {{ 'yes' if system_security_ssh_gateway_ports|bool else 'no' }}
 IgnoreRhosts {{ 'yes' if system_security_ssh_ignore_rhosts|bool else 'no' }}
 MaxAuthTries {{ system_security_ssh_max_auth_tries }}
+{% if system_security_ssh_per_source_max_startups | int > 0 %}
+PerSourceMaxStartups {{ system_security_ssh_per_source_max_startups | int }}
+{% endif %}
 PasswordAuthentication {{ 'yes' if system_security_ssh_password_authentication|bool else 'no' }}
 
 MACs {{ system_security_ssh_macs }}

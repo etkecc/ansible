@@ -36,3 +36,16 @@
     msg: >-
       You need to define prometheus_hostname to use Traefik labels.
   when: prometheus_container_labels_traefik_enabled and prometheus_hostname == ''
+
+- name: Fail if Prometheus process arguments do not contain a configuration file argument
+  ansible.builtin.fail:
+    msg: >-
+      The final list of Prometheus process arguments (`prometheus_process_extra_arguments`) does not contain a `--config.file` argument,
+      which would cause Prometheus to fail to start (see https://github.com/mother-of-all-self-hosting/ansible-role-prometheus/issues/35).
+      Since https://github.com/mother-of-all-self-hosting/ansible-role-prometheus/commit/9031043139274eeb395d6adc43c76197f7fef2f9,
+      `prometheus_process_extra_arguments` holds the final list of process arguments, not just your extra ones.
+      If you are redefining `prometheus_process_extra_arguments` (or `prometheus_process_extra_arguments_default`),
+      make sure the final list still contains a `--config.file` argument.
+      If you merely wish to pass extra arguments on top of the defaults,
+      define them in `prometheus_process_extra_arguments_custom` instead.
+  when: "'--config.file' not in prometheus_process_extra_arguments | join(' ')"

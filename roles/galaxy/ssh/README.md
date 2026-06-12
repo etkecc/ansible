@@ -66,9 +66,15 @@ When enabled, this role:
 
 ## Session & connection behavior
 
-* `system_security_ssh_login_grace_time` (int, default: `0`)
+* `system_security_ssh_login_grace_time` (int, default: `30`)
 
   * Time (in seconds) allowed for successful login before disconnect.
+  * `0` disables the timer, leaving stalled pre-auth connections un-reaped; keep it finite.
+
+* `system_security_ssh_per_source_max_startups` (int, default: `4`)
+
+  * Caps unauthenticated connections per source IP (`PerSourceMaxStartups`).
+  * Requires OpenSSH ≥ 8.5. Set to `0` on older hosts (e.g. Debian bullseye, Ubuntu 20.04) to omit the directive, which they reject.
 
 * `system_security_ssh_client_alive_interval` (int, default: `120`)
 

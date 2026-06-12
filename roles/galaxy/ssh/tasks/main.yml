@@ -35,6 +35,7 @@
     mode: "0644"
     owner: root
     group: root
+    validate: '/usr/sbin/sshd -t -f %s'
 
 - name: Reload ssh daemon
   tags:

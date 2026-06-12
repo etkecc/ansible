@@ -24,7 +24,14 @@ system_security_ssh_challenge_response_authentication: false
 system_security_ssh_client_alive_interval: 120
 
 # LoginGraceTime setting (in seconds)
-system_security_ssh_login_grace_time: 0
+# A value of 0 disables the timer entirely, so a half-open pre-auth connection
+# is never reaped; keep it finite so sshd drops stalled handshakes.
+system_security_ssh_login_grace_time: 30
+
+# PerSourceMaxStartups: cap unauthenticated connections per source IP.
+# 0 = don't emit the directive at all (for hosts on OpenSSH < 8.5, e.g.
+# Debian bullseye / Ubuntu 20.04, which reject it). Needs OpenSSH >= 8.5.
+system_security_ssh_per_source_max_startups: 4
 
 # Compression: true - allow, false - block
 system_security_ssh_compression: false
