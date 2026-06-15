@@ -11,7 +11,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 This is an [Ansible](https://www.ansible.com/) role which installs [LiveKit Server](https://docs.livekit.io/home/) to run as a [Docker](https://www.docker.com/) container wrapped in a systemd service.
 
-> LiveKit is an open source platform for developers building realtime media applications. It makes it easy to integrate audio, video, text, data, and AI models while offering scalable realtime infrastructure built on top of WebRTC.
+> LiveKit is an open-source platform for developers building realtime media applications. It makes it easy to integrate audio, video, text, data, and AI models while offering scalable realtime infrastructure built on top of WebRTC.
 
 <small>Refer: https://docs.livekit.io/home/get-started/intro-to-livekit/</small>
 
@@ -99,7 +99,7 @@ When external TLS mode is enabled, the role expects Traefik TCP labels to be set
 
 The TURN server enforces a credential TTL and restricts which peer CIDRs it will relay to. The defaults are secure and suitable for typical deployments where TURN peers live on the public Internet, so most setups do not need to configure these.
 
-- `livekit_server_config_turn_ttl_seconds` (default: `300`) — TTL of TURN credentials in seconds. A value of `0` produces credentials that expire immediately, so don't set it to `0` unless you intentionally want to break TURN.
+- `livekit_server_config_turn_ttl_seconds` (default: `300`) — TTL of TURN credentials in seconds. Since LiveKit v1.13.1, backwards compatibility for TURN authentication without a TTL has been removed, so this must be a positive value when TURN is enabled. A value of `0` produces credentials that expire immediately and renders TURN unusable.
 - `livekit_server_config_turn_allow_restricted_peer_cidrs` (default: `[]`) — TURN does not relay traffic to restricted peer CIDRs (loopback, link-local, multicast, private, unspecified addresses) unless they are listed here. Use this if your deployment legitimately needs TURN to reach specific private ranges:
 
     ```yaml

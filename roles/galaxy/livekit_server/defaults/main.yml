@@ -15,7 +15,7 @@ livekit_server_base_path: "/{{ livekit_server_identifier }}"
 livekit_server_config_path: "{{ livekit_server_base_path }}/config"
 
 # renovate: datasource=docker depName=docker.io/livekit/livekit-server
-livekit_server_version: v1.12.0
+livekit_server_version: v1.13.1
 
 livekit_server_uid: ""
 livekit_server_gid: ""
@@ -375,7 +375,11 @@ livekit_server_config_turn_relay_range_end: 30020
 
 # Controls the `turn.ttl_seconds` configuration property.
 # Time-To-Live (in seconds) of TURN credentials beyond which they are no longer valid for joining a room.
-# The TTL is always used when constructing credentials, so a value of 0 produces credentials that expire immediately.
+#
+# The TTL is always used when constructing credentials. Since LiveKit v1.13.1, backwards
+# compatibility for TURN authentication without a TTL has been removed, so when TURN is enabled
+# this must be a positive value. A value of 0 produces credentials that expire immediately,
+# which renders TURN unusable.
 livekit_server_config_turn_ttl_seconds: 300
 
 # Controls the `turn.allow_restricted_peer_cidrs` configuration property.

@@ -16,7 +16,7 @@ languagetool_base_path: "/{{ languagetool_identifier }}"
 languagetool_data_path: "{{ languagetool_base_path }}/data"
 
 # renovate: datasource=docker depName=erikvl87/languagetool
-languagetool_version: 6.7-dockerupdate-1
+languagetool_version: 6.8
 
 languagetool_uid: ""
 languagetool_gid: ""
@@ -33,7 +33,6 @@ languagetool_container_image_tag: "{{ languagetool_version }}"
 languagetool_container_image_registry_prefix: "{{ languagetool_container_image_registry_prefix_upstream }}"
 languagetool_container_image_registry_prefix_upstream: "{{ languagetool_container_image_registry_prefix_upstream_default }}"
 languagetool_container_image_registry_prefix_upstream_default: docker.io/
-languagetool_container_image_force_pull: "{{ languagetool_container_image.endswith(':latest') }}"
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 languagetool_container_network: "{{ languagetool_identifier }}"
@@ -176,6 +175,37 @@ languagetool_systemd_wanted_services_list: "{{ languagetool_systemd_wanted_servi
 languagetool_systemd_wanted_services_list_default: []
 languagetool_systemd_wanted_services_list_auto: []
 languagetool_systemd_wanted_services_list_custom: []
+
+# Controls how long to wait for the container to stop gracefully before killing it.
+languagetool_container_stop_grace_time_seconds: "{{ devture_systemd_docker_base_container_stop_grace_time_seconds }}"
+
+# Controls how long the pre-start cleanup should wait for stale container-name release
+# before failing startup explicitly.
+languagetool_container_cleanup_timeout_seconds: "{{ devture_systemd_docker_base_container_cleanup_timeout_seconds }}"
+
+# Controls the delay between pre-start cleanup retries.
+languagetool_container_cleanup_retry_delay_seconds: "{{ devture_systemd_docker_base_container_cleanup_retry_delay_seconds }}"
+
+# Shell command used in the systemd pre-start phase to deterministically remove a stale
+# container and wait until Docker releases its name.
+languagetool_container_cleanup_command: |
+  i=0;
+  while [ "$i" -lt {{ languagetool_container_cleanup_timeout_seconds }} ]; do
+  {{ devture_systemd_docker_base_host_command_docker }} stop -t {{ languagetool_container_stop_grace_time_seconds }} {{ languagetool_identifier }} >/dev/null 2>&1 || true;
+  {{ devture_systemd_docker_base_host_command_docker }} rm -f {{ languagetool_identifier }} >/dev/null 2>&1 || true;
+  if {{ devture_systemd_docker_base_host_command_docker }} container inspect {{ languagetool_identifier }} >/dev/null 2>&1; then
+  i=$((i + 1));
+  sleep {{ languagetool_container_cleanup_retry_delay_seconds }};
+  continue;
+  fi;
+  if {{ devture_systemd_docker_base_host_command_docker }} info >/dev/null 2>&1; then
+  exit 0;
+  fi;
+  echo "Failed to query Docker daemon while cleaning up {{ languagetool_identifier }}" >&2;
+  exit 1;
+  done;
+  echo "Failed to remove stale container {{ languagetool_identifier }} after {{ languagetool_container_cleanup_timeout_seconds }} attempts" >&2;
+  exit 1
 
 # n-grams
 # WARNING: n-grams require A LOT of storage (zip is > 8gb, unpacked - even more!)

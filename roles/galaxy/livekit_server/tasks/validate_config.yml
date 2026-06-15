@@ -61,6 +61,16 @@
     livekit_server_config_turn_relay_range_end | string | length > 0 and
     (livekit_server_config_turn_relay_range_start | int) > (livekit_server_config_turn_relay_range_end | int)
 
+- name: Fail if LiveKit TURN credential TTL is not positive
+  ansible.builtin.fail:
+    msg: >-
+      livekit_server_config_turn_ttl_seconds must be a positive value when TURN is enabled.
+      Since LiveKit v1.13.1, backwards compatibility for TURN authentication without a TTL has been removed,
+      so a value of 0 (or less) produces credentials that expire immediately and renders TURN unusable.
+  when: >
+    livekit_server_config_turn_enabled | bool and
+    (livekit_server_config_turn_ttl_seconds | int) <= 0
+
 - name: Fail if LiveKit Server logging level is invalid
   ansible.builtin.fail:
     msg: >-

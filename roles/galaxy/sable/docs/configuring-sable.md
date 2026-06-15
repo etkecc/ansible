@@ -20,11 +20,11 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Setting up Sable
 
-This is an [Ansible](https://www.ansible.com/) role which installs [Sable](https://github.com/7w1/sable) (a fork of [Cinny](https://github.com/cinnyapp/cinny)) to run as a [Docker](https://www.docker.com/) container wrapped in a systemd service.
+This is an [Ansible](https://www.ansible.com/) role which installs [Sable](https://github.com/SableClient/Sable) (a fork of [Cinny](https://github.com/cinnyapp/cinny)) to run as a [Docker](https://www.docker.com/) container wrapped in a systemd service.
 
 Sable is a web client for [Matrix](https://matrix.org/), realtime communication (chat) network. It focuses primarily on simple, elegant and secure interface.
 
-See the project's [documentation](https://github.com/7w1/sable) to learn what Sable does and why it might be useful to you.
+See the project's [documentation](https://github.com/SableClient/Sable/blob/dev/README.md) to learn what Sable does and why it might be useful to you.
 
 >[!NOTE]
 > This role merely enables you to set up the client; To communicate with other people on the Matrix network you need to prepare a Matrix homeserver which this client can connect to. While it is still possible to use a public homeserver with the Sable instance, [this "matrix-docker-ansible-deploy" Ansible playbook](https://github.com/spantaleev/matrix-docker-ansible-deploy/) lets you set up Matrix services from the core ones such as a homeserver to other goodies like "bridges" on your server — it is pretty complete and well maintained.

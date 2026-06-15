@@ -21,7 +21,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 This is an [Ansible](https://www.ansible.com/) role which installs [LanguageTool](https://languagetool.org) to run as a [Docker](https://www.docker.com/) container wrapped in a systemd service.
 
-LanguageTool is an open source online grammar, style and spell checker.
+LanguageTool is an open-source online grammar, style and spell checker.
 
 See the project's [documentation](https://languagetool.org/dev) to learn what LanguageTool does and why it might be useful to you.
 
