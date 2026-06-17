@@ -21,7 +21,7 @@ traefik_certs_dumper_dumped_certificates_dir_group: "{{ traefik_certs_dumper_gid
 traefik_certs_dumper_dumped_certificates_dir_mode: "0750"
 
 # renovate: datasource=docker depName=ghcr.io/ldez/traefik-certs-dumper versioning=semver
-traefik_certs_dumper_version: v2.10.0
+traefik_certs_dumper_version: v2.11.4
 
 traefik_certs_dumper_uid: ""
 traefik_certs_dumper_gid: ""

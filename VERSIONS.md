@@ -35,8 +35,8 @@
 * Livekit Server: v1.13.1
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.6.0
-* Meta Instagram: v0.2605.1
-* Meta Messenger: v0.2605.1
+* Meta Instagram: v0.2606.0
+* Meta Messenger: v0.2606.0
 * Miniflux: 2.3.1
 * Ntfy: v2.24.0
 * Peertube: v7.2.3
@@ -57,28 +57,28 @@
 * Prometheus Postgres Exporter: v0.19.1
 * Radicale: 3.7.3.0
 * Schildichat: 1.11.109-sc.0.test.0
-* Signal: v0.2605.0
-* Slack: v0.2605.0
+* Signal: v0.2606.0
+* Slack: v0.2606.0
 * Spam Checker Mjolnir Antispam Git: v1.12.1
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.43.0
 * Steam Bridge: 1.2.0
 * Sygnal: v0.15.1
-* Synapse: v1.154.0
+* Synapse: v1.155.0
 * Synapse Auto Compressor: v0.0.3
 * Synapse Http Antispam Git: v0.5.0
 * Synapse Reverse Proxy Companion: 1.31.1-alpine
 * Synapse Rust Synapse Compress State Container Image: v0.0.3
 * Synapse S3 Storage Provider: 1.6.1
-* Telegram: v0.2605.0
+* Telegram: v0.2606.0
 * Traefik: v3.7.5
-* Traefik Certs Dumper: v2.10.0
+* Traefik Certs Dumper: v2.11.4
 * Traefik Config Tcp Servertransports Default Proxyprotocol: 1
-* Twitter: v0.2604.0
+* Twitter: v0.2606.0
 * Uptime Kuma: 1.23.17
 * Valkey: 9.1.0
 * Vaultwarden: 1.36.0
 * Wechat: 0.2.4
 * Wechat Agent: 0.0.1
 * Wg Easy: 15.3.0
-* Whatsapp: v0.2605.0
+* Whatsapp: v0.2606.0
