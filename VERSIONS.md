@@ -1,10 +1,10 @@
 * Alpine: edge
-* Authentication Service: 1.18.0
+* Authentication Service: 1.19.0
 * Baibot: v1.21.1
 * Bluesky: v0.2510.0
 * Borg: 1.4.4
 * Borgmatic: 2.1.4
-* Buscarron: v1.4.3
+* Buscarron: v1.5.0
 * Cinny: v4.12.2
 * Container Socket Proxy: v0.4.2
 * Coturn: 4.9.0
@@ -67,7 +67,7 @@
 * Synapse: v1.155.0
 * Synapse Auto Compressor: v0.0.3
 * Synapse Http Antispam Git: v0.5.0
-* Synapse Reverse Proxy Companion: 1.31.1-alpine
+* Synapse Reverse Proxy Companion: 1.31.2-alpine
 * Synapse Rust Synapse Compress State Container Image: v0.0.3
 * Synapse S3 Storage Provider: 1.6.1
 * Telegram: v0.2606.0
