@@ -27,7 +27,7 @@
 * Jitsi: stable-11031
 * Jitsi Ldap: 3
 * Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
-* Ketesa: v1.2.1
+* Ketesa: v1.3.0
 * Languagetool: 6.8
 * Linkding: 1.45.0
 * Linkedin: latest
