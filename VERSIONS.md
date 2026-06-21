@@ -11,10 +11,10 @@
 * Discord: v0.7.6
 * Draupnir: v3.1.0
 * Element: v1.12.21
-* Etherpad: 2.7.2
+* Etherpad: 2.7.3
 * Exim Relay: 4.99.1-r0-2
 * Firezone: 0.7.36
-* Fluffychat: v2.5.1
+* Fluffychat: v2.7.0
 * Funkwhale: 1.4.1
 * Gmessages: v0.2605.0
 * Googlechat: v0.5.2
