@@ -7,6 +7,7 @@
 ### Component Updates
 
 * [Authentication Service](https://github.com/element-hq/matrix-authentication-service): [1.18.0](https://github.com/element-hq/matrix-authentication-service/releases/tag/1.18.0) ⇾ [1.19.0](https://github.com/element-hq/matrix-authentication-service/releases/tag/1.19.0)
+* [Baibot](https://github.com/etkecc/baibot): [v1.21.1](https://github.com/etkecc/baibot/releases/tag/v1.21.1) ⇾ [v1.22.0](https://github.com/etkecc/baibot/releases/tag/v1.22.0)
 * [Buscarron](https://github.com/etkecc/buscarron): [v1.4.3](https://github.com/etkecc/buscarron/releases/tag/v1.4.3) ⇾ [v1.5.0](https://github.com/etkecc/buscarron/releases/tag/v1.5.0)
 * [Ketesa](https://github.com/etkecc/ketesa): [v1.2.1](https://github.com/etkecc/ketesa/releases/tag/v1.2.1) ⇾ [v1.3.0](https://github.com/etkecc/ketesa/releases/tag/v1.3.0)
 * [Languagetool](https://github.com/Erikvl87/docker-languagetool): [6.7-dockerupdate-1](https://github.com/Erikvl87/docker-languagetool/releases/tag/v6.7-dockerupdate-1) ⇾ [6.8](https://github.com/Erikvl87/docker-languagetool/releases/tag/v6.8)
