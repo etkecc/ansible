@@ -5,7 +5,7 @@
 * Borg: 1.4.4
 * Borgmatic: 2.1.4
 * Buscarron: v1.5.0
-* Cinny: v4.12.2
+* Cinny: v4.12.3
 * Container Socket Proxy: v0.4.2
 * Coturn: 4.9.0
 * Discord: v0.7.6
@@ -14,7 +14,7 @@
 * Etherpad: 2.7.2
 * Exim Relay: 4.99.1-r0-2
 * Firezone: 0.7.36
-* Fluffychat: v2.7.0
+* Fluffychat: v2.7.2
 * Funkwhale: 1.4.1
 * Gmessages: v0.2605.0
 * Googlechat: v0.5.2
@@ -55,7 +55,7 @@
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.11.1
 * Prometheus Postgres Exporter: v0.19.1
-* Radicale: 3.7.3.0
+* Radicale: 3.7.5.0
 * Schildichat: 1.11.109-sc.0.test.0
 * Signal: v0.2606.0
 * Slack: v0.2606.0
