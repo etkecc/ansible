@@ -1,6 +1,6 @@
 * Alpine: edge
 * Authentication Service: 1.19.0
-* Baibot: v1.22.0
+* Baibot: v1.23.0
 * Bluesky: v0.2510.0
 * Borg: 1.4.4
 * Borgmatic: 2.1.4
@@ -19,7 +19,7 @@
 * Gmessages: v0.2605.0
 * Googlechat: v0.5.2
 * Gotosocial: 0.21.2
-* Grafana: 11.6.5
+* Grafana: 13.0.2
 * Heisenbridge: 1.15.4
 * Honoroit: v0.9.30
 * Hookshot: 7.3.2

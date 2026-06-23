@@ -16,6 +16,9 @@
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-gotosocial.git
   version: v0.21.2-4
   name: gotosocial
+- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-grafana.git
+  version: v11.6.5-10
+  name: grafana
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-languagetool.git
   version: v6.8-0
   name: languagetool
