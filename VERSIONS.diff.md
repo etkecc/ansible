@@ -7,9 +7,10 @@
 ### Component Updates
 
 * [Authentication Service](https://github.com/element-hq/matrix-authentication-service): [1.18.0](https://github.com/element-hq/matrix-authentication-service/releases/tag/1.18.0) ⇾ [1.19.0](https://github.com/element-hq/matrix-authentication-service/releases/tag/1.19.0)
-* [Baibot](https://github.com/etkecc/baibot): [v1.21.1](https://github.com/etkecc/baibot/releases/tag/v1.21.1) ⇾ [v1.23.0](https://github.com/etkecc/baibot/releases/tag/v1.23.0)
+* [Baibot](https://github.com/etkecc/baibot): [v1.21.1](https://github.com/etkecc/baibot/releases/tag/v1.21.1) ⇾ [v1.23.1](https://github.com/etkecc/baibot/releases/tag/v1.23.1)
 * [Buscarron](https://github.com/etkecc/buscarron): [v1.4.3](https://github.com/etkecc/buscarron/releases/tag/v1.4.3) ⇾ [v1.5.0](https://github.com/etkecc/buscarron/releases/tag/v1.5.0)
 * [Cinny](https://github.com/ajbura/cinny): [v4.12.2](https://github.com/ajbura/cinny/releases/tag/v4.12.2) ⇾ [v4.12.3](https://github.com/ajbura/cinny/releases/tag/v4.12.3)
+* [Element](https://github.com/element-hq/element-web): [v1.12.21](https://github.com/element-hq/element-web/releases/tag/v1.12.21) ⇾ [v1.12.22](https://github.com/element-hq/element-web/releases/tag/v1.12.22)
 * [Fluffychat](https://github.com/krille-chan/fluffychat): [v2.5.1](https://github.com/krille-chan/fluffychat/releases/tag/v2.5.1) ⇾ [v2.7.2](https://github.com/krille-chan/fluffychat/releases/tag/v2.7.2)
 * [Grafana](https://github.com/grafana/grafana): [11.6.5](https://github.com/grafana/grafana/releases/tag/v11.6.5) ⇾ [13.0.2](https://github.com/grafana/grafana/releases/tag/v13.0.2)
 * [Ketesa](https://github.com/etkecc/ketesa): [v1.2.1](https://github.com/etkecc/ketesa/releases/tag/v1.2.1) ⇾ [v1.3.0](https://github.com/etkecc/ketesa/releases/tag/v1.3.0)

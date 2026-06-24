@@ -1,6 +1,6 @@
 * Alpine: edge
 * Authentication Service: 1.19.0
-* Baibot: v1.23.0
+* Baibot: v1.23.1
 * Bluesky: v0.2510.0
 * Borg: 1.4.4
 * Borgmatic: 2.1.4
@@ -10,7 +10,7 @@
 * Coturn: 4.9.0
 * Discord: v0.7.6
 * Draupnir: v3.1.0
-* Element: v1.12.21
+* Element: v1.12.22
 * Etherpad: 2.7.2
 * Exim Relay: 4.99.1-r0-2
 * Firezone: 0.7.36
