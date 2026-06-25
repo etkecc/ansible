@@ -19,7 +19,7 @@
 * Gmessages: v0.2605.0
 * Googlechat: v0.5.2
 * Gotosocial: 0.21.2
-* Grafana: 13.0.2
+* Grafana: 11.6.5
 * Heisenbridge: 1.15.4
 * Honoroit: v0.9.30
 * Hookshot: 7.3.2
@@ -38,7 +38,7 @@
 * Meta Instagram: v0.2606.0
 * Meta Messenger: v0.2606.0
 * Miniflux: 2.3.1
-* Ntfy: v2.24.0
+* Ntfy: v2.25.0
 * Peertube: v7.2.3
 * Postgres Container Image V10: 10.23
 * Postgres Container Image V11: 11.22
