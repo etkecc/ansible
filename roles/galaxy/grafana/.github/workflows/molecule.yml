@@ -1,0 +1,60 @@
+# SPDX-FileCopyrightText: 2026 spatterlight
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+name: molecule
+
+on: [push, pull_request]  # yamllint disable-line rule:truthy
+
+jobs:
+  molecule:
+    name: Run Molecule scenario '${{ matrix.scenario }}' on ubuntu2604
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        scenario:
+          - default
+          - features
+      fail-fast: false
+
+    env:
+      MOLECULE_DISTRO: ubuntu2604
+      PY_COLORS: "1"
+      ANSIBLE_FORCE_COLOR: "1"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.2
+        with:
+          path: grafana
+
+      - name: Set up Python
+        uses: actions/setup-python@v6.2.0
+        with:
+          python-version-file: grafana/.python-version
+          cache: pip
+          cache-dependency-path: grafana/molecule/requirements.txt
+
+      - name: Install Python dependencies
+        working-directory: grafana
+        run: pip install -r molecule/requirements.txt
+
+      - name: Cache Ansible collections
+        uses: actions/cache@v5.0.5
+        with:
+          path: ~/.ansible/collections
+          key: ansible-collections-${{ hashFiles('grafana/molecule/default/requirements.yml') }}
+
+      - name: Install Ansible roles
+        working-directory: grafana
+        run: ansible-galaxy role install -r molecule/default/requirements.yml
+
+      - name: Install Ansible collections
+        working-directory: grafana
+        run: ansible-galaxy collection install -r molecule/default/requirements.yml
+
+      - name: Run Molecule
+        working-directory: grafana
+        run: molecule test --scenario-name ${{ matrix.scenario }}

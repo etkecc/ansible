@@ -12,7 +12,13 @@
       "matchFileNames": [
         ".pre-commit-config.yaml",
         ".github/workflows/autotag.yml",
-        ".github/workflows/pre-commit.yml"
+        ".github/workflows/close-stale-issues.yml",
+        ".github/workflows/molecule.yml",
+        ".github/workflows/pre-commit.yml",
+        "mise.toml",
+        "molecule/default/requirements.yml",
+        "molecule/features/requirements.yml",
+        "molecule/requirements.txt"
       ],
       "enabled": true,
       "automerge": true,
@@ -33,6 +39,9 @@
     }
   ],
   "pre-commit": {
+    "enabled": true
+  },
+  "pyenv": {
     "enabled": true
   }
 }

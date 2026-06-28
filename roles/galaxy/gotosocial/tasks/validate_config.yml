@@ -33,13 +33,13 @@
       You need to define a required configuration setting (`{{ item.name }}`).
   when: "item.when | bool and lookup('vars', item.name, default='') | string | length == 0"
   with_items:
-    - { "name": "gotosocial_identifier", when: true}
-    - { "name": "gotosocial_uid", when: true}
-    - { "name": "gotosocial_gid", when: true}
-    - { "name": "gotosocial_hostname", when: true}
-    - { "name": "gotosocial_path_prefix", when: true}
-    - { "name": "gotosocial_container_network", when: true}
-    - { "name": "gotosocial_container_labels_traefik_hostname", when: "{{ gotosocial_container_labels_traefik_enabled }}"}
+    - { "name": "gotosocial_identifier", when: true }
+    - { "name": "gotosocial_uid", when: true }
+    - { "name": "gotosocial_gid", when: true }
+    - { "name": "gotosocial_hostname", when: true }
+    - { "name": "gotosocial_path_prefix", when: true }
+    - { "name": "gotosocial_container_network", when: true }
+    - { "name": "gotosocial_container_labels_traefik_hostname", when: "{{ gotosocial_container_labels_traefik_enabled }}" }
 
 - name: Fail if GoToSocial database type invalid
   ansible.builtin.fail:

@@ -1,0 +1,245 @@
+# SPDX-FileCopyrightText: 2026 spatterlight
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify Grafana features scenario
+  hosts: all
+  become: true
+  gather_facts: false
+  vars:
+    grafana_url: "http://localhost:3000"
+  tasks:
+    - name: Wait for grafana to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: grafana.service
+      register: grafana_service
+      until: grafana_service.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert grafana is active
+      ansible.builtin.assert:
+        that: grafana_service.status.ActiveState == 'active'
+        fail_msg: "grafana.service not active ({{ grafana_service.status.ActiveState }})"
+        success_msg: "grafana.service is active"
+
+    - name: Wait for Grafana HTTP API to respond (up to 120s)
+      ansible.builtin.uri:
+        url: "{{ grafana_url }}/api/health"
+        method: GET
+        status_code: 200
+      register: grafana_health
+      until: grafana_health.status == 200
+      retries: 24
+      delay: 5
+
+    - name: Assert Grafana API reports a healthy database
+      ansible.builtin.assert:
+        that: grafana_health.json.database == 'ok'
+        fail_msg: "Grafana database health: {{ grafana_health.json.database | default('no response') }}"
+        success_msg: "Grafana database is ok"
+
+    - name: Query provisioned datasources via the Grafana API
+      ansible.builtin.uri:
+        url: "{{ grafana_url }}/api/datasources"
+        method: GET
+        url_username: "{{ grafana_default_admin_user }}"
+        url_password: "{{ grafana_default_admin_password }}"
+        force_basic_auth: true
+        status_code: 200
+      register: grafana_datasources
+
+    - name: Assert the TestData datasource is provisioned
+      ansible.builtin.assert:
+        that: "'TestData' in (grafana_datasources.json | map(attribute='name') | list)"
+        fail_msg: "TestData datasource not found ({{ grafana_datasources.json | map(attribute='name') | list }})"
+        success_msg: "TestData datasource is provisioned"
+
+    - name: Fetch the /metrics endpoint
+      ansible.builtin.uri:
+        url: "{{ grafana_url }}/metrics"
+        method: GET
+        return_content: true
+        status_code: 200
+      register: grafana_metrics
+
+    - name: Assert /metrics returns Prometheus content
+      ansible.builtin.assert:
+        that:
+          - grafana_metrics.status == 200
+          - "'grafana_build_info' in grafana_metrics.content"
+        fail_msg: "/metrics did not return expected Prometheus content"
+        success_msg: "Metrics endpoint is enabled"
+
+    - name: Assert wrong password is rejected with 401
+      ansible.builtin.uri:
+        url: "{{ grafana_url }}/api/org"
+        method: GET
+        url_username: "{{ grafana_default_admin_user }}"
+        url_password: wrongpassword
+        force_basic_auth: true
+        status_code: 401
+      register: grafana_bad_auth
+
+    - name: Assert wrong password returns 401
+      ansible.builtin.assert:
+        that: grafana_bad_auth.status == 401
+        fail_msg: "Wrong password should return 401, got {{ grafana_bad_auth.status }}"
+        success_msg: "Custom admin credentials are enforced"
+
+    - name: Assert Content-Security-Policy header is present
+      ansible.builtin.assert:
+        that: "'content_security_policy' in grafana_bad_auth"
+        fail_msg: "Content-Security-Policy header not found"
+        success_msg: "Content-Security-Policy header is present"
+
+    - name: Assert X-Frame-Options is absent (allow_embedding is enabled)
+      ansible.builtin.assert:
+        that: "'x_frame_options' not in grafana_bad_auth"
+        fail_msg: "X-Frame-Options is present — embedding appears blocked"
+        success_msg: "X-Frame-Options is absent (embedding allowed)"
+
+    - name: Assert custom admin credentials authenticate
+      ansible.builtin.uri:
+        url: "{{ grafana_url }}/api/org"
+        method: GET
+        url_username: "{{ grafana_default_admin_user }}"
+        url_password: "{{ grafana_default_admin_password }}"
+        force_basic_auth: true
+        status_code: 200
+      register: grafana_good_auth
+
+    - name: Assert correct credentials return 200
+      ansible.builtin.assert:
+        that: grafana_good_auth.status == 200
+        fail_msg: "Custom admin credentials failed ({{ grafana_good_auth.status }})"
+        success_msg: "Custom admin credentials work correctly"
+
+    - name: Search for provisioned dashboard template file
+      ansible.builtin.uri:
+        url: "{{ grafana_url }}/api/search?query=Molecule+Test+Dashboard&type=dash-db"
+        method: GET
+        url_username: "{{ grafana_default_admin_user }}"
+        url_password: "{{ grafana_default_admin_password }}"
+        force_basic_auth: true
+        status_code: 200
+      register: grafana_dashboard_search
+
+    - name: Assert Molecule Test Dashboard is provisioned
+      ansible.builtin.assert:
+        that: >-
+          'Molecule Test Dashboard' in
+          (grafana_dashboard_search.json | map(attribute='title') | list)
+        fail_msg: "Molecule Test Dashboard not found: {{ grafana_dashboard_search.json | map(attribute='title') | list }}"
+        success_msg: "Molecule Test Dashboard is provisioned"
+
+    - name: Query provisioned alert rules
+      ansible.builtin.uri:
+        url: "{{ grafana_url }}/api/v1/provisioning/alert-rules"
+        method: GET
+        url_username: "{{ grafana_default_admin_user }}"
+        url_password: "{{ grafana_default_admin_password }}"
+        force_basic_auth: true
+        status_code: 200
+      register: grafana_alert_rules
+
+    - name: Assert test alert rule is provisioned
+      ansible.builtin.assert:
+        that: >-
+          'TestData Always-Normal Rule' in
+          (grafana_alert_rules.json | map(attribute='title') | list)
+        fail_msg: "Alert rule not found: {{ grafana_alert_rules.json | map(attribute='title') | list }}"
+        success_msg: "Alert rule is provisioned"
+
+    - name: Query provisioned contact points
+      ansible.builtin.uri:
+        url: "{{ grafana_url }}/api/v1/provisioning/contact-points"
+        method: GET
+        url_username: "{{ grafana_default_admin_user }}"
+        url_password: "{{ grafana_default_admin_password }}"
+        force_basic_auth: true
+        status_code: 200
+      register: grafana_contact_points
+
+    - name: Assert test-contact-point is provisioned
+      ansible.builtin.assert:
+        that: >-
+          'test-contact-point' in
+          (grafana_contact_points.json | map(attribute='name') | list)
+        fail_msg: "Contact point not found: {{ grafana_contact_points.json | map(attribute='name') | list }}"
+        success_msg: "Contact point is provisioned"
+
+    - name: Query provisioned notification policies
+      ansible.builtin.uri:
+        url: "{{ grafana_url }}/api/v1/provisioning/policies"
+        method: GET
+        url_username: "{{ grafana_default_admin_user }}"
+        url_password: "{{ grafana_default_admin_password }}"
+        force_basic_auth: true
+        status_code: 200
+      register: grafana_policies
+
+    - name: Assert root policy receiver is test-contact-point
+      ansible.builtin.assert:
+        that: grafana_policies.json.receiver == 'test-contact-point'
+        fail_msg: "Root policy receiver: {{ grafana_policies.json.receiver | default('') }}"
+        success_msg: "Notification policy is provisioned"
+
+    - name: Query provisioned mute timings
+      ansible.builtin.uri:
+        url: "{{ grafana_url }}/api/v1/provisioning/mute-timings"
+        method: GET
+        url_username: "{{ grafana_default_admin_user }}"
+        url_password: "{{ grafana_default_admin_password }}"
+        force_basic_auth: true
+        status_code: 200
+      register: grafana_mute_timings
+
+    - name: Assert test-mute-timing is provisioned
+      ansible.builtin.assert:
+        that: >-
+          'test-mute-timing' in
+          (grafana_mute_timings.json | map(attribute='name') | list)
+        fail_msg: "Mute timing not found: {{ grafana_mute_timings.json | map(attribute='name') | list }}"
+        success_msg: "Mute timing is provisioned"
+
+    - name: Query provisioned notification templates
+      ansible.builtin.uri:
+        url: "{{ grafana_url }}/api/v1/provisioning/templates"
+        method: GET
+        url_username: "{{ grafana_default_admin_user }}"
+        url_password: "{{ grafana_default_admin_password }}"
+        force_basic_auth: true
+        status_code: 200
+      register: grafana_notif_templates
+
+    - name: Assert test-notification-template is provisioned
+      ansible.builtin.assert:
+        that: >-
+          'test-notification-template' in
+          (grafana_notif_templates.json | map(attribute='name') | list)
+        fail_msg: "Notification template not found: {{ grafana_notif_templates.json | map(attribute='name') | list }}"
+        success_msg: "Notification template is provisioned"
+
+    - name: Assert test-extra-template is provisioned via alerting template file
+      ansible.builtin.assert:
+        that: >-
+          'test-extra-template' in
+          (grafana_notif_templates.json | map(attribute='name') | list)
+        fail_msg: "Extra template not found: {{ grafana_notif_templates.json | map(attribute='name') | list }}"
+        success_msg: "Alerting template file is provisioned"
+
+    - name: Show Grafana features status summary
+      ansible.builtin.debug:
+        msg:
+          - "grafana systemd: {{ grafana_service.status.ActiveState }}"
+          - "grafana HTTP: {{ grafana_health.status }}"
+          - "grafana database: {{ grafana_health.json.database }}"
+          - "datasources: {{ grafana_datasources.json | map(attribute='name') | list }}"
+          - "metrics HTTP: {{ grafana_metrics.status }}"
+          - "alert rules: {{ grafana_alert_rules.json | map(attribute='title') | list }}"
+          - "contact points: {{ grafana_contact_points.json | map(attribute='name') | list }}"
+          - "mute timings: {{ grafana_mute_timings.json | map(attribute='name') | list }}"
+          - "notification templates: {{ grafana_notif_templates.json | map(attribute='name') | list }}"
+          - "dashboards: {{ grafana_dashboard_search.json | map(attribute='title') | list }}"

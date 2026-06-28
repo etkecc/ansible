@@ -1,0 +1,157 @@
+# SPDX-FileCopyrightText: 2026 spatterlight
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+dependency:
+  name: galaxy
+  options:
+    requirements-file: requirements.yml
+driver:
+  name: docker
+platforms:
+  - name: grafana-${MOLECULE_DISTRO:-ubuntu2604}-features
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2604}-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+    privileged: true
+    pre_build_image: true
+    published_ports:
+      - 127.0.0.1:3000:3000
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callback_result_format: yaml
+  inventory:
+    group_vars:
+      all:
+        grafana_uid: 1000
+        grafana_gid: 1000
+        grafana_hostname: grafana
+        grafana_container_labels_traefik_enabled: false
+        grafana_container_http_host_bind_port: 3000
+
+        grafana_default_admin_user: testadmin
+        grafana_default_admin_password: T3stP@ss!
+
+        grafana_allow_embedding: true
+        grafana_content_security_policy: true
+
+        grafana_metrics_enabled: true
+
+        grafana_provisioning_datasources_prune: true
+        grafana_provisioning_datasources_datasources:
+          - name: TestData
+            uid: testdata-ds
+            type: grafana-testdata-datasource
+            access: proxy
+            isDefault: true
+
+        grafana_provisioning_dashboard_template_files:
+          - path: "{{ molecule_scenario_directory }}/files/test-dashboard.json.j2"
+            name: test-dashboard.json
+
+        grafana_provisioning_dashboards_providers:
+          - name: Dashboards
+            folder: ""
+            type: file
+            allowUiUpdates: true
+            options:
+              path: /etc/grafana/dashboards
+          - name: MoleculeTestDashboards
+            folder: Molecule Tests
+            type: file
+            allowUiUpdates: false
+            options:
+              path: /etc/grafana/provisioning/dashboards
+
+        grafana_provisioning_alerts_groups:
+          - orgId: 1
+            name: test-alert-group
+            folder: TestAlerts
+            interval: 1m
+            rules:
+              - uid: test-alert-rule-01
+                title: TestData Always-Normal Rule
+                condition: C
+                data:
+                  - refId: A
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: testdata-ds
+                    model:
+                      datasource:
+                        type: grafana-testdata-datasource
+                        uid: testdata-ds
+                      refId: A
+                      scenarioId: random_walk
+                  - refId: C
+                    relativeTimeRange:
+                      from: 0
+                      to: 0
+                    datasourceUid: -100
+                    model:
+                      conditions:
+                        - evaluator:
+                            params: [1000]
+                            type: gt
+                          operator:
+                            type: and
+                          query:
+                            params: [A]
+                          reducer:
+                            type: last
+                          type: query
+                      datasource:
+                        type: __expr__
+                        uid: -100
+                      expression: A
+                      refId: C
+                      type: classic_conditions
+                noDataState: NoData
+                execErrState: Error
+                for: 5m
+                isPaused: true
+
+        grafana_provisioning_contact_points_contactPoints:
+          - orgId: 1
+            name: test-contact-point
+            receivers:
+              - uid: test-receiver-01
+                type: email
+                settings:
+                  addresses: noreply@example.com
+                disableResolveMessage: false
+
+        grafana_provisioning_notification_policies_policies:
+          - orgId: 1
+            receiver: test-contact-point
+
+        grafana_provisioning_mute_timings_muteTimes:
+          - orgId: 1
+            name: test-mute-timing
+            time_intervals:
+              - times:
+                  - start_time: "00:00"
+                    end_time: "23:59"
+                weekdays:
+                  - saturday
+                  - sunday
+
+        grafana_provisioning_notification_template_groups_templates:
+          - orgId: 1
+            name: test-notification-template
+            template: Molecule test notification template
+
+        grafana_provisioning_alerting_template_files:
+          - path: "{{ molecule_scenario_directory }}/files/test-alerting-template.yaml.j2"
+            name: test-extra-alerting.yaml
+  env:
+    # This is a hack to resolve https://github.com/ansible/molecule/issues/4391
+    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles
+verifier:
+  name: ansible

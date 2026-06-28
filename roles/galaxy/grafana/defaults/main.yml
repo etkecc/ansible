@@ -7,7 +7,7 @@
 
 ---
 
-# Grafana is open source visualization and analytics software
+# Grafana is open-source visualization and analytics software
 # Project source code URL: https://github.com/grafana/grafana
 
 grafana_enabled: true
@@ -18,7 +18,7 @@ grafana_config_path: "{{ grafana_base_path }}/config"
 grafana_data_path: "{{ grafana_base_path }}/data"
 
 # renovate: datasource=docker depName=grafana/grafana-oss versioning=semver
-grafana_version: 11.6.5
+grafana_version: 13.0.2
 
 grafana_uid: ""
 grafana_gid: ""

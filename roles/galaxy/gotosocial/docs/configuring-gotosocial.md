@@ -24,7 +24,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 This is an [Ansible](https://www.ansible.com/) role which installs [GoToSocial](https://gotosocial.org/) to run as a [Docker](https://www.docker.com/) container wrapped in a systemd service.
 
-GoToSocial is a self-hosted [ActivityPub](https://activitypub.rocks/) social network server. With GoToSocial, you can keep in touch with your friends, post, read, and share images and articles.
+GoToSocial is a self-hosted [ActivityPub](https://activitypub.rocks/) federated microblogging platform. With GoToSocial, you can keep in touch with your friends, post, read, and share images and articles.
 
 See the project's [documentation](https://docs.gotosocial.org/) to learn what GoToSocial does and why it might be useful to you.
 

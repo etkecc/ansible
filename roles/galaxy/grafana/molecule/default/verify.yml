@@ -1,0 +1,46 @@
+# SPDX-FileCopyrightText: 2026 spatterlight
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify Grafana systemd service
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Wait for grafana to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: grafana.service
+      register: grafana_service
+      until: grafana_service.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert grafana is active
+      ansible.builtin.assert:
+        that: grafana_service.status.ActiveState == 'active'
+        fail_msg: "grafana.service not active ({{ grafana_service.status.ActiveState }})"
+        success_msg: "grafana.service is active"
+
+    - name: Wait for Grafana HTTP API to respond (up to 120s)
+      ansible.builtin.uri:
+        url: "http://localhost:3000/api/health"
+        method: GET
+        status_code: 200
+      register: grafana_health
+      until: grafana_health.status == 200
+      retries: 24
+      delay: 5
+
+    - name: Assert Grafana API reports a healthy database
+      ansible.builtin.assert:
+        that: grafana_health.json.database == 'ok'
+        fail_msg: "Grafana database health: {{ grafana_health.json.database | default('no response') }}"
+        success_msg: "Grafana database is ok"
+
+    - name: Show Grafana status summary
+      ansible.builtin.debug:
+        msg:
+          - "grafana systemd: {{ grafana_service.status.ActiveState }}"
+          - "grafana HTTP: {{ grafana_health.status }}"
+          - "grafana database: {{ grafana_health.json.database }}"

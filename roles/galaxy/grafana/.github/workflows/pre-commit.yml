@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: 2025 Suguru Hirahara
 # SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -34,7 +35,10 @@ jobs:
           key: arch-prek-v1-${{ hashFiles('.pre-commit-config.yaml') }}
 
       - name: Install dependencies
-        run: pacman -S --noconfirm --needed just mise python
+        run: pacman -S --noconfirm --needed just mise python ansible-core
+
+      - name: Install Ansible collections
+        run: ansible-galaxy collection install -r molecule/default/requirements.yml
 
       - name: Run prek hooks
         run: |

@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   stale:
-    if: github.repository == 'mother-of-all-self-hosting/ansible-role-grafana'
+    if: github.repository == 'mother-of-all-self-hosting/ansible-role-gotosocial'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/stale@v10.3.0

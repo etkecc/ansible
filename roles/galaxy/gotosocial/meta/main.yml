@@ -4,7 +4,7 @@ galaxy_info:
   company: Hyteck
   role_name: gotosocial
   namespace: mash
-  description: Ansible role to install gotosocial, a self-hosted ActivityPub social network server.
+  description: Ansible role to install gotosocial, a self-hosted ActivityPub federated microblogging platform.
   platforms:
     - name: Debian
       versions:

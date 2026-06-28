@@ -18,8 +18,8 @@
 * Funkwhale: 1.4.1
 * Gmessages: v0.2605.0
 * Googlechat: v0.5.2
-* Gotosocial: 0.21.2
-* Grafana: 11.6.5
+* Gotosocial: 0.21.3
+* Grafana: 13.0.2
 * Heisenbridge: 1.15.4
 * Honoroit: v0.9.30
 * Hookshot: 7.3.2
@@ -32,12 +32,12 @@
 * Linkding: 1.45.0
 * Linkedin: latest
 * Livekit Jwt Service: 0.5.0
-* Livekit Server: v1.13.1
+* Livekit Server: v1.13.2
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.6.0
 * Meta Instagram: v0.2606.0
 * Meta Messenger: v0.2606.0
-* Miniflux: 2.3.1
+* Miniflux: 2.3.2
 * Ntfy: v2.25.0
 * Peertube: v7.2.3
 * Postgres Container Image V10: 10.23
