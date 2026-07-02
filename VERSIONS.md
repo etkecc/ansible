@@ -18,7 +18,7 @@
 * Funkwhale: 1.4.1
 * Gmessages: v0.2605.0
 * Googlechat: v0.5.2
-* Gotosocial: 0.21.3
+* Gotosocial: 0.22.0
 * Grafana: 13.0.2
 * Heisenbridge: 1.15.4
 * Honoroit: v0.9.30
@@ -51,10 +51,10 @@
 * Postgres Container Image V18: 18.4
 * Postgres Container Image V9: 9.6.24
 * Postmoogle: v0.9.31
-* Prometheus: v3.12.0
+* Prometheus: v3.13.0
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.11.1
-* Prometheus Postgres Exporter: v0.19.1
+* Prometheus Postgres Exporter: v0.20.0
 * Radicale: 3.7.5.0
 * Schildichat: 1.11.109-sc.0.test.0
 * Signal: v0.2606.0
@@ -71,7 +71,7 @@
 * Synapse Rust Synapse Compress State Container Image: v0.0.3
 * Synapse S3 Storage Provider: 1.6.1
 * Telegram: v0.2606.0
-* Traefik: v3.7.5
+* Traefik: v3.7.6
 * Traefik Certs Dumper: v2.11.4
 * Traefik Config Tcp Servertransports Default Proxyprotocol: 1
 * Twitter: v0.2606.0
