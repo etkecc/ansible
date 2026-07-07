@@ -18,6 +18,7 @@
     - { "old": "funkwhale_config_redis_database", "new": "funkwhale_redis_database" }
     - { "old": "funkwhale_config_redis_url", "new": "funkwhale_redis_url" }
     - { "old": "funkwhale_frontend_env_path", "new": "<Removed>" }
+    - { "old": "funkwhale_api_container_port", "new": "funkwhale_api_container_http_port" }
     - { "old": "funkwhale_api_http_header_content_permission_policy", "new": "funkwhale_api_http_header_permissions_policy" }
     - { "old": "funkwhale_frontend_http_header_content_permission_policy", "new": "funkwhale_frontend_http_header_permissions_policy" }
     - { "old": "funkwhale_email_protocol", "new": "funkwhale_api_environment_variables_email_config_protocol" }
@@ -27,6 +28,9 @@
     - { "old": "funkwhale_email_password", "new": "funkwhale_api_environment_variables_email_config_password" }
     - { "old": "funkwhale_email_from", "new": "funkwhale_api_environment_variables_email_config_from" }
     - { "old": "funkwhale_account_email_verification_enforce", "new": "funkwhale_api_environment_variables_account_email_verification_enforce" }
+    - { "old": "funkwhale_loglevel", "new": "funkwhale_environment_variables_loglevel" }
+    - { "old": "funkwhale_api_container_image_force_pull", "new": "<removed> (the new community.docker.docker_image_pull module handles this natively)" }
+    - { "old": "funkwhale_frontend_container_image_force_pull", "new": "<removed> (the new community.docker.docker_image_pull module handles this natively)" }
 
 - name: Fail if required Funkwhale settings not defined
   ansible.builtin.fail:
@@ -66,3 +70,14 @@
         msg: >-
           funkwhale_api_container_labels_traefik_path_prefix (`{{ funkwhale_api_container_labels_traefik_path_prefix }}`) must either be `/` or not end with a slash (e.g. `/funkwhale`).
       when: "funkwhale_api_container_labels_traefik_path_prefix != '/' and funkwhale_api_container_labels_traefik_path_prefix[-1] == '/'"
+
+- name: Run if Traefik is enabled for Funkwhale's frontend
+  when: funkwhale_frontend_container_labels_traefik_enabled | bool
+  block:
+    - name: Fail if Traefik settings required for Funkwhale's frontend are not defined
+      ansible.builtin.fail:
+        msg: >-
+          You need to define a required configuration setting (`{{ item }}`).
+      when: "lookup('vars', item, default='') | string | length == 0"
+      with_items:
+        - funkwhale_frontend_container_labels_traefik_hostname

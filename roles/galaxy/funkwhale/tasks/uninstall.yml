@@ -36,7 +36,54 @@
       failed_when: network_deletion_result.rc > 0 and 'not found' not in network_deletion_result.stderr
       changed_when: funkwhale_container_network in network_deletion_result.stdout
 
-- name: Ensure Funkwhale path does not exist
+- name: Ensure Funkwhale support files do not exist
   ansible.builtin.file:
-    path: "{{ funkwhale_base_path }}"
+    path: "{{ item }}"
     state: absent
+  with_items:
+    - "{{ funkwhale_api_base_path }}/env"
+    - "{{ funkwhale_api_base_path }}/labels"
+    - "{{ funkwhale_frontend_base_path }}/env"
+    - "{{ funkwhale_frontend_base_path }}/labels"
+
+- name: Ensure Funkwhale local paths except data path do not exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ funkwhale_api_base_path }}"
+    - "{{ funkwhale_celery_beat_base_path }}"
+    - "{{ funkwhale_celery_worker_base_path }}"
+    - "{{ funkwhale_frontend_base_path }}"
+
+- name: Ensure Funkwhale local data path does not exist if empty
+  ansible.builtin.command:
+    cmd: "rmdir {{ funkwhale_data_path }}"
+  register: funkwhale_data_path_deletion_result
+  changed_when: funkwhale_data_path_deletion_result.rc == 0
+  failed_when: false
+
+- name: Ensure Funkwhale base path does not exist if empty
+  ansible.builtin.command:
+    cmd: "rmdir {{ funkwhale_base_path }}"
+  register: funkwhale_base_path_deletion_result
+  changed_when: funkwhale_base_path_deletion_result.rc == 0
+  failed_when: false
+
+- name: Check existence of Funkwhale local data path
+  ansible.builtin.stat:
+    path: "{{ funkwhale_data_path }}"
+  register: funkwhale_data_path_stat
+
+# We just want to notify the user. Deleting data is too destructive.
+- name: Inject the message about the remaining Funkwhale local data path
+  when: funkwhale_data_path_stat.stat.exists | bool
+  ansible.builtin.set_fact:
+    devture_playbook_runtime_messages_list: |
+      {{
+        devture_playbook_runtime_messages_list | default([])
+        +
+        [
+          "Note: As the local Funkwhale instance has been removed, some old data remains in `" + funkwhale_data_path + "`. Feel free to delete it."
+        ]
+      }}

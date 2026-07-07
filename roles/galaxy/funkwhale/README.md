@@ -15,19 +15,16 @@ This role *implicitly* depends on:
 - [`com.devture.ansible.role.playbook_help`](https://github.com/devture/com.devture.ansible.role.playbook_help)
 - [`com.devture.ansible.role.systemd_docker_base`](https://github.com/devture/com.devture.ansible.role.systemd_docker_base)
 
-Check [`defaults/main.yml`](defaults/main.yml) for the full list of supported options.
+Check [`defaults/main.yml`](defaults/main.yml) for the full list of supported options. Refer to [this page](docs/configuring-funkwhale.md) for details about setting up the service with this role.
 
 💡 For an Ansible playbook which integrates this role and makes it easier to use, see the [Mother-of-All-Self-Hosting Ansible playbook](https://github.com/mother-of-all-self-hosting/mash-playbook).
 
-## Usage
-
-If you wish to boost the performance of your pod, you can try tweaking these variables:
-
-- `funkwhale_frontend_web_workers`: increase to allow more parallel connections of web workers
-- `funkwhale_celery_worker_concurrency`: increase the number of worker processes for background tasks
-
 ## Development
 
-You can optionally install [pre-commit](https://pre-commit.com/) so that simple mistakes are checked and noticed before changes are pushed to a remote branch. See [`.pre-commit-config.yaml`](./.pre-commit-config.yaml) for which hooks are to be executed.
+You can optionally install a Git pre-commit hook (via [mise](https://mise.jdx.dev/) + [prek](https://prek.j178.dev/)) that runs formatting and linting checks before each commit. See [`.pre-commit-config.yaml`](./.pre-commit-config.yaml) for which hooks are to be executed.
 
-See [this section](https://pre-commit.com/#usage) on the official documentation for usage.
+To install the hook, run the [`just`](https://github.com/casey/just) command below:
+
+```sh
+just prek-install-git-pre-commit-hook
+```

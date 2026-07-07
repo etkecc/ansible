@@ -12,13 +12,15 @@
       "matchFileNames": [
         ".pre-commit-config.yaml",
         ".github/workflows/autotag.yml",
-        ".github/workflows/pre-commit.yml"
+        ".github/workflows/close-stale-issues.yml",
+        ".github/workflows/pre-commit.yml",
+        "mise.toml"
       ],
       "enabled": true,
       "automerge": true,
       "automergeType": "branch",
       "schedule": ["* * 1 */6 *"],
-      "automergeSchedule": ["* * 1-3 */6 *"]
+      "automergeSchedule": ["* * 1-14 */6 *"]
     }
   ],
   "customManagers": [

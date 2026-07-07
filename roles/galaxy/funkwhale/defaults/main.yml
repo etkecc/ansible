@@ -3,6 +3,7 @@
 # SPDX-FileCopyrightText: 2023, 2025 MASH project contributors
 # SPDX-FileCopyrightText: 2023-2025 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2024 Sergio Durigan Junior
+# SPDX-FileCopyrightText: 2024 noah
 # SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -14,21 +15,24 @@ funkwhale_enabled: true
 
 funkwhale_identifier: funkwhale
 funkwhale_base_path: "/{{ funkwhale_identifier }}"
-funkwhale_frontend_base_path: "{{ funkwhale_base_path }}/frontend"
 funkwhale_api_base_path: "{{ funkwhale_base_path }}/api"
 funkwhale_celery_beat_base_path: "{{ funkwhale_base_path }}/celery-beat"
 funkwhale_celery_worker_base_path: "{{ funkwhale_base_path }}/celery-worker"
+funkwhale_frontend_base_path: "{{ funkwhale_base_path }}/frontend"
+funkwhale_frontend_static_path: "{{ funkwhale_frontend_base_path }}/appstatic"
 funkwhale_data_path: "{{ funkwhale_base_path }}/data"
 funkwhale_static_path: "{{ funkwhale_data_path }}/static"
 funkwhale_media_path: "{{ funkwhale_data_path }}/media" # Defines where media is stored
 funkwhale_music_path: "{{ funkwhale_data_path }}/music" # Defines where music files to be imported to Funkwhale from
-funkwhale_frontend_static_path: "{{ funkwhale_frontend_base_path }}/appstatic"
 
 # renovate: datasource=docker depName=funkwhale/api
 funkwhale_version: 1.4.1
 
 funkwhale_uid: ""
 funkwhale_gid: ""
+
+# The scheme used for serving Funkwhale.
+funkwhale_scheme: https
 
 # The hostname at which Funkwhale is served.
 funkwhale_hostname: ""
@@ -138,32 +142,27 @@ funkwhale_aws_s3_region_name: ""
 funkwhale_aws_s3_endpoint_url: ""
 funkwhale_aws_location: 'funkwhale'
 
-# This var holds the list of users that should be created automatically by playbooks/roles/group vars,
+# funkwhale_users contains a list of users that should be created automatically
 # To add your own users for specific host, use `funkwhale_users_additional`
-# funkwhale_users_auto:
-# - username: admin
-#   initial_email: admin@example.com
-#   initial_password: password
-#   initial_type: admin
-# - username: user
-#   initial_email: admin@example.com
-#   initial_password: password
-#   initial_type: user
-funkwhale_users_auto: []
-# This var holds the list of users that should be created automatically by specific host (using host's vars.yml) instead of playbook/role/group vars
+#
+# Example:
 # funkwhale_users_additional:
-# - username: rssbot
-#   initial_email: bots@example.com
-#   initial_password: password
-#   initial_type: user
-funkwhale_users_additional: []
-# Use funkwhale_users_auto and funkwhale_users_additional to define users that should be created automatically.
+#   - username: admin
+#     initial_email: admin@example.com
+#     initial_password: password
+#     initial_type: admin
+#   - username: user
+#     initial_email: user@example.com
+#     initial_password: password
+#     initial_type: user
 funkwhale_users: "{{ funkwhale_users_auto + funkwhale_users_additional }}"
+funkwhale_users_auto: []
+funkwhale_users_additional: []
 
 funkwhale_django_secret_key: ""
 
 # Must be one of debug, info, warning, error, critical
-funkwhale_loglevel: error
+funkwhale_environment_variables_loglevel: error
 
 # Specify the timezone
 funkwhale_environment_variables_tz: UTC
@@ -198,18 +197,17 @@ funkwhale_api_hostname: "{{ funkwhale_hostname }}"
 funkwhale_api_container_image: "{{ funkwhale_api_container_image_registry_prefix }}funkwhale/api:{{ funkwhale_api_container_image_tag }}"
 funkwhale_api_container_image_registry_prefix: "{{ funkwhale_container_image_registry_prefix }}"
 funkwhale_api_container_image_tag: "{{ funkwhale_api_version }}"
-funkwhale_api_container_image_force_pull: "{{ funkwhale_api_container_image.endswith(':latest') }}"
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 funkwhale_api_container_network: "{{ funkwhale_container_network }}"
 
-# Specify how the API container publishes its HTTP port (as defined by `funkwhale_api_container_port`).
+# Specify how the API container publishes its HTTP port (as defined by `funkwhale_api_container_http_port`).
 #
 # Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
 funkwhale_api_container_http_host_bind_port: ""
 
 # The port number in the container
-funkwhale_api_container_port: 5000
+funkwhale_api_container_http_port: 5000
 
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
@@ -222,7 +220,7 @@ funkwhale_api_container_additional_networks_custom: []
 # See `../templates/labels_api.j2` for details.
 #
 # To inject your own other container labels, see `funkwhale_container_labels_additional_labels_custom`.
-funkwhale_api_container_labels_traefik_enabled: true
+funkwhale_api_container_labels_traefik_enabled: false
 funkwhale_api_container_labels_traefik_docker_network: "{{ funkwhale_container_network }}"
 funkwhale_api_container_labels_traefik_hostname: "{{ funkwhale_hostname }}"
 # The path prefix must either be `/` or not end with a slash (e.g. `/api`).
@@ -334,6 +332,12 @@ funkwhale_api_systemd_required_services_list_default: "{{ [devture_systemd_docke
 funkwhale_api_systemd_required_services_list_auto: []
 funkwhale_api_systemd_required_services_list_custom: []
 
+# List of systemd services that the Funkwhale API systemd service wants
+funkwhale_api_systemd_wanted_services_list: "{{ funkwhale_api_systemd_wanted_services_list_default + funkwhale_api_systemd_wanted_services_list_auto + funkwhale_api_systemd_wanted_services_list_custom }}"
+funkwhale_api_systemd_wanted_services_list_default: []
+funkwhale_api_systemd_wanted_services_list_auto: []
+funkwhale_api_systemd_wanted_services_list_custom: []
+
 # Controls how long to wait for the container to stop gracefully before killing it.
 funkwhale_api_container_stop_grace_time_seconds: "{{ devture_systemd_docker_base_container_stop_grace_time_seconds }}"
 
@@ -411,7 +415,6 @@ funkwhale_frontend_hostname: "{{ funkwhale_hostname }}"
 funkwhale_frontend_container_image: "{{ funkwhale_frontend_container_image_registry_prefix }}funkwhale/front:{{ funkwhale_frontend_container_image_tag }}"
 funkwhale_frontend_container_image_registry_prefix: "{{ funkwhale_container_image_registry_prefix }}"
 funkwhale_frontend_container_image_tag: "{{ funkwhale_frontend_version }}"
-funkwhale_frontend_container_image_force_pull: "{{ funkwhale_frontend_container_image.endswith(':latest') }}"
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 funkwhale_frontend_container_network: "{{ funkwhale_container_network }}"
@@ -436,7 +439,9 @@ funkwhale_frontend_container_additional_networks_custom: []
 #
 # To inject your own other container labels, see `funkwhale_container_labels_additional_labels_custom`.
 funkwhale_frontend_container_labels_traefik_enabled: true
-funkwhale_frontend_container_labels_traefik_docker_network: "{{ funkwhale_frontend_network }}"
+funkwhale_frontend_container_labels_traefik_docker_network: "{{ funkwhale_frontend_container_network }}"
+funkwhale_frontend_container_labels_traefik_hostname: "{{ funkwhale_frontend_hostname }}"
+funkwhale_frontend_container_labels_traefik_rule: "Host(`{{ funkwhale_frontend_container_labels_traefik_hostname }}`)"
 funkwhale_frontend_container_labels_traefik_priority: 0
 funkwhale_frontend_container_labels_traefik_entrypoints: web-secure
 funkwhale_frontend_container_labels_traefik_tls: "{{ funkwhale_frontend_container_labels_traefik_entrypoints != 'web' }}"
@@ -535,9 +540,20 @@ funkwhale_frontend_hsts_preload_enabled: false
 
 # List of systemd services that the Funkwhale frontend systemd service depends on
 funkwhale_frontend_systemd_required_services_list: "{{ funkwhale_frontend_systemd_required_services_list_default + funkwhale_frontend_systemd_required_services_list_auto + funkwhale_frontend_systemd_required_services_list_custom }}"
-funkwhale_frontend_systemd_required_services_list_default: ['docker.service', '{{ funkwhale_api_identifier }}.service']
+funkwhale_frontend_systemd_required_services_list_default: |
+  {{
+    ([devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [])
+    +
+    ([funkwhale_api_identifier ~ '.service'])
+  }}
 funkwhale_frontend_systemd_required_services_list_auto: []
 funkwhale_frontend_systemd_required_services_list_custom: []
+
+# List of systemd services that the Funkwhale frontend systemd service wants
+funkwhale_frontend_systemd_wanted_services_list: "{{ funkwhale_frontend_systemd_wanted_services_list_default + funkwhale_frontend_systemd_wanted_services_list_auto + funkwhale_frontend_systemd_wanted_services_list_custom }}"
+funkwhale_frontend_systemd_wanted_services_list_default: []
+funkwhale_frontend_systemd_wanted_services_list_auto: []
+funkwhale_frontend_systemd_wanted_services_list_custom: []
 
 # Controls how long to wait for the container to stop gracefully before killing it.
 funkwhale_frontend_container_stop_grace_time_seconds: "{{ devture_systemd_docker_base_container_stop_grace_time_seconds }}"
@@ -569,6 +585,12 @@ funkwhale_frontend_container_cleanup_command: |
   done;
   echo "Failed to remove stale container {{ funkwhale_frontend_identifier }} after {{ funkwhale_frontend_container_cleanup_timeout_seconds }} attempts" >&2;
   exit 1
+
+# Specify the hostname of the Funkwhale API instance
+funkwhale_frontend_variables_funkwhale_api_host: "{{ funkwhale_api_identifier }}"
+
+# Specify the port number of the Funkwhale API instance
+funkwhale_frontend_variables_funkwhale_api_port: "{{ funkwhale_api_container_http_port }}"
 
 # Additional environment variables.
 funkwhale_frontend_variables_additional_variables: ""

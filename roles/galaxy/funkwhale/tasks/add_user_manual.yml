@@ -4,41 +4,34 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: Fail if playbook called incorrectly
+- name: Fail if playbook called incorrectly for Funkwhale
   ansible.builtin.fail:
-    msg: "The `username` variable needs to be provided to this playbook, via --extra-vars"
-  when: "username is not defined or username == '<username>'"
+    msg: "The `username`, `password`, and `email` variables need to be provided via --extra-vars"
+  when: >-
+    username is not defined or username == 'USERNAME_HERE' or
+    email is not defined or email == 'EMAIL_ADDRESS_HERE' or
+    password is not defined or password == 'PASSWORD_HERE'
 
-- name: Fail if playbook called incorrectly
-  ansible.builtin.fail:
-    msg: "The `email` variable needs to be provided to this playbook, via --extra-vars"
-  when: "email is not defined or email == '<email>'"
-
-- name: Fail if playbook called incorrectly
-  ansible.builtin.fail:
-    msg: "The `password` variable needs to be provided to this playbook, via --extra-vars"
-  when: "password is not defined or password == '<password>'"
-
-- name: Set the initial role to 'user' when running 'create-user-funkwhale'
+- name: Set the initial role to 'user' when running 'create-user-funkwhale' for Funkwhale
   ansible.builtin.set_fact:
     initial_role: user
-  tags:
-    - create-user-funkwhale
+  when: "'create-user-funkwhale' in ansible_run_tags"
 
-- name: Set the initial role to 'admin' when running 'create-superuser-funkwhale' or 'create-admin-funkwhale'
+- name: Set the initial role to 'admin' when running 'create-superuser-funkwhale' or 'create-admin-funkwhale' for Funkwhale
   ansible.builtin.set_fact:
     initial_role: admin
-  tags:
-    - create-superuser-funkwhale
-    - create-admin-funkwhale
+  when: >-
+    'create-admin-funkwhale' in ansible_run_tags or
+    'create-superuser-funkwhale' in ansible_run_tags
 
-- name: Set user details
+- name: Set user details for Funkwhale
   ansible.builtin.set_fact:
     user:
       username: "{{ username }}"
       initial_email: "{{ email }}"
       initial_password: "{{ password }}"
       initial_type: "{{ initial_role }}"
+  no_log: true # hide raw password
 
 - name: Ensure Funkwhale API service is started
   ansible.builtin.service:
@@ -52,6 +45,6 @@
     seconds: 7
   when: "start_result.changed"
 
-- name: "Ensure Funkwhale user is created - {{ user.username }}"
+- name: "Ensure Funkwhale user is created — {{ user.username }}"
   ansible.builtin.include_tasks: "{{ role_path }}/tasks/util/ensure_user_registered.yml"
   no_log: true

@@ -37,7 +37,7 @@
 
 - name: Fail if prometheus-nginxlog-exporter container image not available for architecture
   ansible.builtin.fail:
-    msg: >
+    msg: >-
       'prometheus-nginxlog-exporter' container image is not available for your arch architecture '{{ prometheus_nginxlog_exporter_architecture }}'.
 
       We currently do not support building an image using this role.

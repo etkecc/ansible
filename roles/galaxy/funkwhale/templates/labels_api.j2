@@ -1,8 +1,50 @@
 {#
 SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
+SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
+
+{% if funkwhale_api_container_labels_traefik_enabled %}
+traefik.enable=true
+
+{% if funkwhale_api_container_labels_traefik_docker_network %}
+traefik.docker.network={{ funkwhale_api_container_labels_traefik_docker_network }}
+{% endif %}
+
+{% set middlewares = [] %}
+
+{% if funkwhale_api_container_labels_traefik_additional_request_headers.keys() | length > 0 %}
+{% for name, value in funkwhale_api_container_labels_traefik_additional_request_headers.items() %}
+traefik.http.middlewares.{{ funkwhale_api_identifier }}-add-request-headers.headers.customrequestheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [funkwhale_api_identifier + '-add-request-headers'] %}
+{% endif %}
+
+{% if funkwhale_api_container_labels_traefik_additional_response_headers.keys() | length > 0 %}
+{% for name, value in funkwhale_api_container_labels_traefik_additional_response_headers.items() %}
+traefik.http.middlewares.{{ funkwhale_api_identifier }}-add-response-headers.headers.customresponseheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [funkwhale_api_identifier + '-add-response-headers'] %}
+{% endif %}
+
+traefik.http.routers.{{ funkwhale_api_identifier }}.rule={{ funkwhale_api_container_labels_traefik_rule }}
+{% if funkwhale_api_container_labels_traefik_priority | int > 0 %}
+traefik.http.routers.{{ funkwhale_api_identifier }}.priority={{ funkwhale_api_container_labels_traefik_priority }}
+{% endif %}
+traefik.http.routers.{{ funkwhale_api_identifier }}.service={{ funkwhale_api_identifier }}
+{% if middlewares | length > 0 %}
+traefik.http.routers.{{ funkwhale_api_identifier }}.middlewares={{ middlewares | join(',') }}
+{% endif %}
+traefik.http.routers.{{ funkwhale_api_identifier }}.entrypoints={{ funkwhale_api_container_labels_traefik_entrypoints }}
+traefik.http.routers.{{ funkwhale_api_identifier }}.tls={{ funkwhale_api_container_labels_traefik_tls | to_json }}
+{% if funkwhale_api_container_labels_traefik_tls %}
+traefik.http.routers.{{ funkwhale_api_identifier }}.tls.certResolver={{ funkwhale_api_container_labels_traefik_tls_certResolver }}
+{% endif %}
+
+traefik.http.services.{{ funkwhale_api_identifier }}.loadbalancer.server.port={{ funkwhale_api_container_http_port }}
+{% endif %}
 
 {% for arg in funkwhale_api_container_labels_additional_labels %}
 {{ arg }}

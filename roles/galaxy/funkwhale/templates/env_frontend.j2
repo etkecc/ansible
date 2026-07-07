@@ -11,10 +11,10 @@ TZ={{ funkwhale_environment_variables_tz }}
 # your instance. It cannot be changed after initial deployment
 # without breaking your instance.
 FUNKWHALE_HOSTNAME={{ funkwhale_hostname }}
-FUNKWHALE_PROTOCOL=https
+FUNKWHALE_PROTOCOL={{ funkwhale_scheme }}
 
-FUNKWHALE_API_HOST={{ funkwhale_api_identifier }}
-FUNKWHALE_API_PORT={{ funkwhale_api_container_port }}
+FUNKWHALE_API_HOST={{ funkwhale_frontend_variables_funkwhale_api_host }}
+FUNKWHALE_API_PORT={{ funkwhale_frontend_variables_funkwhale_api_port }}
 
 MEDIA_ROOT={{ funkwhale_frontend_container_media_path }}
 MUSIC_DIRECTORY_PATH={{ funkwhale_frontend_container_music_path }}

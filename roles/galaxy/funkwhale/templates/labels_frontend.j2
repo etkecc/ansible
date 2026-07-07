@@ -1,10 +1,14 @@
 {#
 SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
+SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
 
 {% if funkwhale_frontend_container_labels_traefik_enabled %}
+traefik.enable=true
+
 {% if funkwhale_frontend_container_labels_traefik_docker_network %}
 traefik.docker.network={{ funkwhale_frontend_container_labels_traefik_docker_network }}
 {% endif %}
@@ -25,22 +29,22 @@ traefik.http.middlewares.{{ funkwhale_frontend_identifier }}-add-response-header
 {% set middlewares = middlewares + [funkwhale_frontend_identifier + '-add-response-headers'] %}
 {% endif %}
 
-traefik.enable=true
-{% endif %}
-traefik.http.routers.{{ funkwhale_frontend_identifier }}.rule=Host("{{ funkwhale_frontend_hostname }}")
+traefik.http.routers.{{ funkwhale_frontend_identifier }}.rule={{ funkwhale_frontend_container_labels_traefik_rule }}
 {% if funkwhale_frontend_container_labels_traefik_priority | int > 0 %}
 traefik.http.routers.{{ funkwhale_frontend_identifier }}.priority={{ funkwhale_frontend_container_labels_traefik_priority }}
 {% endif %}
+traefik.http.routers.{{ funkwhale_frontend_identifier }}.service={{ funkwhale_frontend_identifier }}
 {% if middlewares | length > 0 %}
 traefik.http.routers.{{ funkwhale_frontend_identifier }}.middlewares={{ middlewares | join(',') }}
 {% endif %}
-traefik.http.routers.{{ funkwhale_frontend_identifier }}.service={{ funkwhale_frontend_identifier }}
 traefik.http.routers.{{ funkwhale_frontend_identifier }}.entrypoints={{ funkwhale_frontend_container_labels_traefik_entrypoints }}
 traefik.http.routers.{{ funkwhale_frontend_identifier }}.tls={{ funkwhale_frontend_container_labels_traefik_tls | to_json }}
 {% if funkwhale_frontend_container_labels_traefik_tls %}
 traefik.http.routers.{{ funkwhale_frontend_identifier }}.tls.certResolver={{ funkwhale_frontend_container_labels_traefik_tls_certResolver }}
 {% endif %}
+
 traefik.http.services.{{ funkwhale_frontend_identifier }}.loadbalancer.server.port={{ funkwhale_frontend_container_http_port }}
+{% endif %}
 
 {% for arg in funkwhale_frontend_container_labels_additional_labels %}
 {{ arg }}
