@@ -71,7 +71,7 @@
 * Synapse Rust Synapse Compress State Container Image: v0.0.3
 * Synapse S3 Storage Provider: 1.6.1
 * Telegram: v0.2606.0
-* Traefik: v3.7.6
+* Traefik: v3.7.7
 * Traefik Certs Dumper: v2.11.4
 * Traefik Config Tcp Servertransports Default Proxyprotocol: 1
 * Twitter: v0.2606.0
