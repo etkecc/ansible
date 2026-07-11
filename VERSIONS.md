@@ -1,5 +1,5 @@
 * Alpine: edge
-* Authentication Service: 1.19.0
+* Authentication Service: 1.20.0
 * Baibot: v1.25.0
 * Bluesky: v0.2510.0
 * Borg: 1.4.4
@@ -38,7 +38,7 @@
 * Meta Instagram: v0.2606.0
 * Meta Messenger: v0.2606.0
 * Miniflux: 2.3.2
-* Ntfy: v2.25.0
+* Ntfy: v2.26.0
 * Peertube: v7.2.3
 * Postgres Container Image V10: 10.23
 * Postgres Container Image V11: 11.22

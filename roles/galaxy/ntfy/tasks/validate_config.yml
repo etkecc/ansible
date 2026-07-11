@@ -66,7 +66,7 @@
     - name: Fail if Traefik settings required for ntfy metrics endpoint are not defined
       ansible.builtin.fail:
         msg: >-
-          You need to define a required configuration setting (`{{ item.name }}`) for using this role.
+          You need to define a required configuration setting (`{{ item.name }}`) for enabling the Prometheus endpoint.
       when: "item.when | bool and lookup('vars', item.name, default='') | string | length == 0"
       with_items:
         - { "name": "ntfy_container_labels_traefik_metrics_hostname", when: true }
