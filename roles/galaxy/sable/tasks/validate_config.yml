@@ -18,16 +18,15 @@
 - name: Fail if required Sable settings not defined
   ansible.builtin.fail:
     msg: >-
-      You need to define a required configuration setting (`{{ item.name }}`).
-  when: "item.when | bool and lookup('vars', item.name, default='') | string | length == 0"
+      You need to define a required configuration setting (`{{ item }}`).
+  when: "lookup('vars', item, default='') | string | length == 0"
   with_items:
-    - { "name": "sable_uid", when: true }
-    - { "name": "sable_gid", when: true }
-    - { "name": "sable_hostname", when: true }
-    - { "name": "sable_path_prefix", when: true }
-    - { "name": "sable_container_network", when: true }
-    - { "name": "sable_default_hs_url", when: true }
-    - { "name": "sable_container_labels_traefik_compression_middleware_name", when: "{{ sable_container_labels_traefik_compression_middleware_enabled }}" }
+    - sable_uid
+    - sable_gid
+    - sable_hostname
+    - sable_path_prefix
+    - sable_container_network
+    - sable_default_hs_url
 
 - name: Run if Traefik is enabled
   when: sable_container_labels_traefik_enabled | bool
@@ -35,11 +34,12 @@
     - name: Fail if Traefik settings required for Sable are not defined
       ansible.builtin.fail:
         msg: >-
-          You need to define a required configuration setting (`{{ item }}`).
-      when: "lookup('vars', item, default='') | string | length == 0"
+          You need to define a required configuration setting (`{{ item.name }}`).
+      when: "item.when | bool and lookup('vars', item.name, default='') | string | length == 0"
       with_items:
-        - sable_container_labels_traefik_hostname
-        - sable_container_labels_traefik_path_prefix
+        - { "name": "sable_container_labels_traefik_hostname", when: true }
+        - { "name": "sable_container_labels_traefik_path_prefix", when: true }
+        - { "name": "sable_container_labels_traefik_compression_middleware_name", when: "{{ sable_container_labels_traefik_compression_middleware_enabled }}" }
 
     - name: Fail if sable_container_labels_traefik_path_prefix is different than /
       ansible.builtin.fail:

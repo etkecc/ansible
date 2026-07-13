@@ -1,0 +1,62 @@
+# SPDX-FileCopyrightText: 2026 spatterlight
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+name: molecule
+
+on: [push, pull_request]  # yamllint disable-line rule:truthy
+
+jobs:
+  molecule:
+    name: Run Molecule scenario '${{ matrix.scenario }}' on ${{ matrix.distro }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        distro:
+          - ubuntu2604
+          - debian13
+        scenario:
+          - default
+      fail-fast: false
+
+    env:
+      MOLECULE_DISTRO: ${{ matrix.distro }}
+      PY_COLORS: "1"
+      ANSIBLE_FORCE_COLOR: "1"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7.0.0
+        with:
+          path: sable
+
+      - name: Set up Python
+        uses: actions/setup-python@v6.3.0
+        with:
+          python-version-file: sable/.python-version
+          cache: pip
+          cache-dependency-path: sable/molecule/requirements.txt
+
+      - name: Install Python dependencies
+        working-directory: sable
+        run: pip install -r molecule/requirements.txt
+
+      - name: Cache Ansible collections
+        uses: actions/cache@v6.1.0
+        with:
+          path: ~/.ansible/collections
+          key: ansible-collections-${{ hashFiles('sable/molecule/default/requirements.yml') }}
+
+      - name: Install Ansible roles
+        working-directory: sable
+        run: ansible-galaxy role install -r molecule/default/requirements.yml
+
+      - name: Install Ansible collections
+        working-directory: sable
+        run: ansible-galaxy collection install -r molecule/default/requirements.yml
+
+      - name: Run Molecule
+        working-directory: sable
+        run: molecule test --scenario-name ${{ matrix.scenario }}

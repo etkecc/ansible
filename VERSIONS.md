@@ -3,7 +3,7 @@
 * Baibot: v1.25.0
 * Bluesky: v0.2510.0
 * Borg: 1.4.4
-* Borgmatic: 2.1.4
+* Borgmatic: 2.1.6
 * Buscarron: v1.5.0
 * Cinny: v4.12.3
 * Container Socket Proxy: v0.4.2
@@ -51,9 +51,9 @@
 * Postgres Container Image V18: 18.4
 * Postgres Container Image V9: 9.6.24
 * Postmoogle: v0.9.31
-* Prometheus: v3.13.0
+* Prometheus: v3.13.1
 * Prometheus Nginxlog Exporter: v1.10.0
-* Prometheus Node Exporter: v1.11.1
+* Prometheus Node Exporter: v1.12.0
 * Prometheus Postgres Exporter: v0.20.1
 * Radicale: 3.7.5.0
 * Schildichat: 1.11.109-sc.0.test.0
@@ -63,7 +63,7 @@
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.43.0
 * Steam Bridge: 1.2.0
-* Sygnal: v0.15.1
+* Sygnal: v0.17.0
 * Synapse: v1.156.0
 * Synapse Auto Compressor: v0.0.3
 * Synapse Http Antispam Git: v0.5.0

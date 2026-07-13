@@ -52,8 +52,9 @@
     - name: Fail if Traefik settings required for Prometheus node exporter are not defined
       ansible.builtin.fail:
         msg: >-
-          You need to define a required configuration setting (`{{ item }}`).
-      when: "lookup('vars', item, default='') | string | length == 0"
+          You need to define a required configuration setting (`{{ item.name }}`).
+      when: "item.when | bool and lookup('vars', item.name, default='') | string | length == 0"
       with_items:
-        - prometheus_node_exporter_container_labels_metrics_hostname
-        - prometheus_node_exporter_container_labels_metrics_path_prefix
+        - { "name": "prometheus_node_exporter_container_labels_metrics_hostname", when: true }
+        - { "name": "prometheus_node_exporter_container_labels_metrics_path_prefix", when: true }
+        - { "name": "prometheus_node_exporter_container_labels_metrics_middleware_basic_auth_users", when: "{{ prometheus_node_exporter_container_labels_metrics_middleware_basic_auth_enabled }}" }

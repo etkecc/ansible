@@ -20,6 +20,7 @@
 - name: Perform Sable self-check tasks
   when: sable_enabled | bool
   tags:
+    - molecule-notest
     - self-check-sable
   block:
     - name: Run self-check for Sable

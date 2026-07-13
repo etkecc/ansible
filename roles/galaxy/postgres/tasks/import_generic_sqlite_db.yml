@@ -60,21 +60,48 @@
   become: false
   when: "postgres_ensure_started_result.changed | bool"
 
-- name: Import SQLite database from {{ sqlite_database_path }} into Postgres # noqa name[template]
-  ansible.builtin.command:
-    cmd: >-
-      {{ devture_systemd_docker_base_host_command_docker }} run
-      --rm
-      --user={{ postgres_container_uid }}:{{ postgres_container_gid }}
-      --cap-drop=ALL
-      --network={{ postgres_container_network }}
-      --mount type=bind,src={{ sqlite_database_path }},dst=/in.db,ro
-      --entrypoint={{ postgres_container_shell_path }}
-      {{ postgres_pgloader_container_image }}
-      -c
-      'pgloader /in.db {{ postgres_db_connection_string }}'
-  register: postgres_import_generic_sqlite_db_import_result
-  changed_when: postgres_import_generic_sqlite_db_import_result.rc == 0
+# The connection string contains a password. We pass it to pgloader via an environment file
+# (referenced by the pgloader command via an environment variable), instead of passing it on the
+# command line, where it would leak into the process list and into Ansible's error output if the
+# import fails. We use a uniquely-named temporary file (not a fixed path), so that concurrent
+# invocations against the same Postgres instance do not overwrite one another's connection string.
+- name: Create a temporary file for holding the pgloader connection string
+  ansible.builtin.tempfile:
+    state: file
+    path: "{{ postgres_base_path }}"
+    prefix: .env-postgres-pgloader
+  register: postgres_import_generic_sqlite_db_env_file
+
+- name: Perform pgloader import
+  block:
+    - name: Populate the pgloader environment file
+      ansible.builtin.copy:
+        content: "POSTGRES_DB_CONNECTION_STRING={{ postgres_db_connection_string }}"
+        dest: "{{ postgres_import_generic_sqlite_db_env_file.path }}"
+        mode: '0600'
+      no_log: true
+
+    - name: Import SQLite database from {{ sqlite_database_path }} into Postgres # noqa name[template]
+      ansible.builtin.command:
+        cmd: >-
+          {{ devture_systemd_docker_base_host_command_docker }} run
+          --rm
+          --user={{ postgres_container_uid }}:{{ postgres_container_gid }}
+          --cap-drop=ALL
+          --env-file={{ postgres_import_generic_sqlite_db_env_file.path }}
+          --network={{ postgres_container_network }}
+          --mount type=bind,src={{ sqlite_database_path }},dst=/in.db,ro
+          --entrypoint={{ postgres_container_shell_path }}
+          {{ postgres_pgloader_container_image }}
+          -c
+          'pgloader /in.db "$POSTGRES_DB_CONNECTION_STRING"'
+      register: postgres_import_generic_sqlite_db_import_result
+      changed_when: postgres_import_generic_sqlite_db_import_result.rc == 0
+  always:
+    - name: Remove the temporary pgloader environment file
+      ansible.builtin.file:
+        path: "{{ postgres_import_generic_sqlite_db_env_file.path }}"
+        state: absent
 
 - name: Archive SQLite database ({{ sqlite_database_path }} -> {{ sqlite_database_path }}.backup) # noqa name[template]
   ansible.builtin.command:
