@@ -1,0 +1,47 @@
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+# SPDX-FileCopyrightText: 2026 spatterlight
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify Radicale systemd service
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Wait for Radicale service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: radicale.service
+      register: radicale_service
+      until: radicale_service.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert Radicale service is active
+      ansible.builtin.assert:
+        that: radicale_service.status.ActiveState == 'active'
+        fail_msg: "radicale.service not active ({{ radicale_service.status.ActiveState }})"
+        success_msg: "radicale.service is active"
+
+    - name: Wait for Radicale HTTP endpoint to respond (up to 10m)
+      ansible.builtin.uri:
+        url: "http://localhost:5232/"
+        method: GET
+        status_code: [200, 302]
+        follow_redirects: none
+      register: radicale_endpoint
+      until: radicale_endpoint.status in [200, 302]
+      retries: 120
+      delay: 5
+
+    - name: Assert Radicale HTTP endpoint responds
+      ansible.builtin.assert:
+        that: radicale_endpoint.status in [200, 302]
+        fail_msg: "Radicale did not respond as expected ({{ radicale_endpoint.status | default('no response') }})"
+        success_msg: "Radicale responded with {{ radicale_endpoint.status }}"
+
+    - name: Show Radicale systemd service status summary
+      ansible.builtin.debug:
+        msg:
+          - "Radicale systemd: {{ radicale_service.status.ActiveState }}"
+          - "Radicale HTTP: {{ radicale_endpoint.status }}"

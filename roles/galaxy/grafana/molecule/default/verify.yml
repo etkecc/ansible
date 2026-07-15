@@ -8,7 +8,7 @@
   become: true
   gather_facts: false
   tasks:
-    - name: Wait for grafana to become active (up to 180s)
+    - name: Wait for Grafana to become active (up to 180s)
       ansible.builtin.systemd:
         name: grafana.service
       register: grafana_service
@@ -16,7 +16,7 @@
       retries: 36
       delay: 5
 
-    - name: Assert grafana is active
+    - name: Assert Grafana is active
       ansible.builtin.assert:
         that: grafana_service.status.ActiveState == 'active'
         fail_msg: "grafana.service not active ({{ grafana_service.status.ActiveState }})"
@@ -41,6 +41,6 @@
     - name: Show Grafana status summary
       ansible.builtin.debug:
         msg:
-          - "grafana systemd: {{ grafana_service.status.ActiveState }}"
-          - "grafana HTTP: {{ grafana_health.status }}"
-          - "grafana database: {{ grafana_health.json.database }}"
+          - "Grafana systemd: {{ grafana_service.status.ActiveState }}"
+          - "Grafana HTTP: {{ grafana_health.status }}"
+          - "Grafana database: {{ grafana_health.json.database }}"

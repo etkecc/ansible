@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 # SPDX-FileCopyrightText: 2026 spatterlight
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -10,7 +11,7 @@ dependency:
 driver:
   name: docker
 platforms:
-  - name: grafana-${MOLECULE_DISTRO:-ubuntu2604}-default
+  - name: radicale-${MOLECULE_DISTRO:-ubuntu2604}-default
     image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2604}-ansible:latest"
     command: ${MOLECULE_DOCKER_COMMAND:-""}
     volumes:
@@ -26,13 +27,13 @@ provisioner:
   inventory:
     group_vars:
       all:
-        grafana_uid: 1000
-        grafana_gid: 1000
-        grafana_hostname: grafana
-        grafana_container_labels_traefik_enabled: false
-        grafana_container_http_host_bind_port: 3000
+        radicale_uid: 1000
+        radicale_gid: 1000
+        radicale_hostname: radicale
+        radicale_container_labels_traefik_enabled: false
+        radicale_container_http_host_bind_port: 5232
   env:
-    # This is a hack to resolve https://github.com/ansible/molecule/issues/4391
+    # Workaround for https://github.com/ansible/molecule/issues/4391
     ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles
 verifier:
   name: ansible

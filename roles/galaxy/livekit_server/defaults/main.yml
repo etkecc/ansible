@@ -323,6 +323,19 @@ livekit_server_config_rtc_use_external_ip: true
 # See: https://github.com/livekit/livekit/issues/3747
 livekit_server_config_rtc_node_ip: ""
 
+# Controls the `rtc.ips.includes` configuration property.
+# This is a list of CIDRs restricting which of the machine's IP addresses may be used for RTC.
+# If both this and `livekit_server_config_rtc_ips_excludes` are defined, only the inclusion list takes effect.
+# When neither is defined, all IP addresses on the machine may be used.
+# Example: ['10.0.0.0/16']
+livekit_server_config_rtc_ips_includes: []
+
+# Controls the `rtc.ips.excludes` configuration property.
+# This is a list of CIDRs specifying which of the machine's IP addresses must not be used for RTC.
+# Related to `livekit_server_config_rtc_ips_includes`
+# Example: ['192.168.1.0/24']
+livekit_server_config_rtc_ips_excludes: []
+
 ########################################################################################
 #                                                                                      #
 # /RTC                                                                                 #

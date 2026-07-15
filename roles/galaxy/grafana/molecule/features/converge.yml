@@ -28,7 +28,7 @@
       ansible.builtin.systemd_service:
         daemon_reload: true
 
-    - name: Ensure grafana systemd service is started
+    - name: Ensure Grafana systemd service is started
       ansible.builtin.systemd_service:
         name: grafana.service
         state: started

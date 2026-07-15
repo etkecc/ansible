@@ -20,6 +20,7 @@
 * Googlechat: v0.5.2
 * Gotosocial: 0.22.0
 * Grafana: 13.0.2
+* Gvoice: v0.2605.0
 * Heisenbridge: 1.15.4
 * Honoroit: v0.9.30
 * Hookshot: 7.3.2
@@ -53,9 +54,9 @@
 * Postmoogle: v0.9.31
 * Prometheus: v3.13.1
 * Prometheus Nginxlog Exporter: v1.10.0
-* Prometheus Node Exporter: v1.12.0
+* Prometheus Node Exporter: v1.12.1
 * Prometheus Postgres Exporter: v0.20.1
-* Radicale: 3.7.5.0
+* Radicale: 3.7.6.0
 * Schildichat: 1.11.109-sc.0.test.0
 * Signal: v0.2606.0
 * Slack: v0.2606.0

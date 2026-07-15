@@ -19,12 +19,12 @@ repos:
       - id: mixed-line-ending
         args: [--fix=lf]
   - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.47.0
+    rev: v0.49.0
     hooks:
       - id: markdownlint
         args: [--disable=MD013]  # https://github.com/DavidAnson/markdownlint/blob/main/doc/md013.md
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.4.1
+    rev: v2.4.2
     hooks:
       - id: codespell
   - repo: https://github.com/fsfe/reuse-tool  # https://reuse.software/dev/#pre-commit-hook
@@ -32,11 +32,11 @@ repos:
     hooks:
       - id: reuse
   - repo: https://github.com/ansible/ansible-lint
-    rev: v26.1.1
+    rev: v26.6.0
     hooks:
       - id: ansible-lint
         language_version: python3
   - repo: https://github.com/renovatebot/pre-commit-hooks
-    rev: 42.84.0
+    rev: 43.251.0
     hooks:
       - id: renovate-config-validator

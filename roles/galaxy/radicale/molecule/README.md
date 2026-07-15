@@ -45,15 +45,11 @@ ansible-galaxy collection install -r molecule/default/requirements.yml
 
 ## Scenarios
 
-Currently there are several testing scenarios available.
+Currently there is one testing scenario available.
 
 ### `default`
 
-Tests a simple Grafana installation with no-added bells or whistles.
-
-### `features`
-
-Tests an advanced Grafana installation with several optional variables configured.
+Tests a standard Radicale installation.
 
 ## Running
 
@@ -61,7 +57,6 @@ By default it is configured to run the scenarios on Ubuntu 26.04.
 
 ```bash
 molecule test --scenario-name default
-molecule test --scenario-name features
 ```
 
 You can utilize other distributions by setting one to the `MOLECULE_DISTRO` environment variable:
@@ -69,9 +64,10 @@ You can utilize other distributions by setting one to the `MOLECULE_DISTRO` envi
 ```bash
 # Ubuntu 24.04
 MOLECULE_DISTRO=ubuntu2404 molecule test --scenario-name default
-MOLECULE_DISTRO=ubuntu2404 molecule test --scenario-name features
 
 # Debian 13
 MOLECULE_DISTRO=debian13 molecule test --scenario-name default
-MOLECULE_DISTRO=debian13 molecule test --scenario-name features
+
+# Debian 12
+MOLECULE_DISTRO=debian12 molecule test --scenario-name default
 ```

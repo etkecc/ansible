@@ -28,6 +28,16 @@ rtc:
   node_ip: {{ livekit_server_config_rtc_node_ip | to_json }}
   {% endif %}
 
+  {% if livekit_server_config_rtc_ips_includes or livekit_server_config_rtc_ips_excludes %}
+  ips:
+    {% if livekit_server_config_rtc_ips_includes %}
+    includes: {{ livekit_server_config_rtc_ips_includes | to_json }}
+    {% endif %}
+    {% if livekit_server_config_rtc_ips_excludes %}
+    excludes: {{ livekit_server_config_rtc_ips_excludes | to_json }}
+    {% endif %}
+  {% endif %}
+
 turn:
   enabled: {{ livekit_server_config_turn_enabled | to_json }}
 {% if livekit_server_config_turn_enabled %}

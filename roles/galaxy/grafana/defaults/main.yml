@@ -196,8 +196,15 @@ grafana_container_cleanup_command: |
 # Specify the timezone
 grafana_environment_variables_tz: UTC
 
-# grafana_dashboard_download_urls holds a list of URLs of dashboards to download
-grafana_dashboard_download_urls: []
+# grafana_dashboard_download_urls holds a list of URLs of dashboards to download.
+#
+# You should not set this variable directly.
+# Set grafana_dashboard_download_urls_custom instead, which gets combined with
+# the defaults and with what playbooks wire automatically (grafana_dashboard_download_urls_auto).
+grafana_dashboard_download_urls: "{{ grafana_dashboard_download_urls_default + grafana_dashboard_download_urls_auto + grafana_dashboard_download_urls_custom }}"
+grafana_dashboard_download_urls_default: []
+grafana_dashboard_download_urls_auto: []
+grafana_dashboard_download_urls_custom: []
 
 # Allow viewing Grafana without logging in.
 grafana_anonymous_access: false

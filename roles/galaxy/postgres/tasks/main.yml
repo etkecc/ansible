@@ -28,21 +28,25 @@
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/import_postgres.yml"
   tags:
     - import-postgres
+    - molecule-notest
 
 - block:
     - when: postgres_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/import_generic_sqlite_db.yml"
   tags:
     - import-generic-sqlite-db
+    - molecule-notest
 
 - block:
     - when: postgres_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/upgrade_postgres.yml"
   tags:
+    - molecule-notest
     - upgrade-postgres
 
 - block:
     - when: postgres_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/run_vacuum.yml"
   tags:
+    - molecule-notest
     - run-postgres-vacuum
