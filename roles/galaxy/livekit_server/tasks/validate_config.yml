@@ -39,9 +39,37 @@
       You need to either define both port range settings (livekit_server_config_rtc_port_range_start and livekit_server_config_rtc_port_range_end)
       or define a single UDP port (livekit_server_config_rtc_udp_port).
   when: >
-    (livekit_server_config_rtc_port_range_start | string | length > 0 and livekit_server_config_rtc_port_range_end | string | length == 0) or
-    (livekit_server_config_rtc_port_range_start | string | length == 0 and livekit_server_config_rtc_port_range_end | string | length > 0) or
-    (livekit_server_config_rtc_port_range_start | string | length == 0 and livekit_server_config_rtc_port_range_end | string | length == 0 and livekit_server_config_rtc_udp_port | string | length == 0)
+    (livekit_server_config_rtc_port_range_start | default('', true) | string | length > 0 and livekit_server_config_rtc_port_range_end | default('', true) | string | length == 0) or
+    (livekit_server_config_rtc_port_range_start | default('', true) | string | length == 0 and livekit_server_config_rtc_port_range_end | default('', true) | string | length > 0) or
+    (livekit_server_config_rtc_port_range_start | default('', true) | string | length == 0 and livekit_server_config_rtc_port_range_end | default('', true) | string | length == 0 and livekit_server_config_rtc_udp_port | default('', true) | string | length == 0)
+
+- name: Fail if both a LiveKit Server port range and a UDP port are defined
+  ansible.builtin.fail:
+    msg: >-
+      You have defined both a port range (livekit_server_config_rtc_port_range_start and livekit_server_config_rtc_port_range_end)
+      and a multiplexed UDP port (livekit_server_config_rtc_udp_port, which defaults to 7882).
+      Only one of the two can be in effect, so the role requires you to pick one explicitly.
+      When defining a port range, unset the UDP port (livekit_server_config_rtc_udp_port: '').
+  when: >
+    livekit_server_config_rtc_port_range_start | default('', true) | string | length > 0 and
+    livekit_server_config_rtc_port_range_end | default('', true) | string | length > 0 and
+    livekit_server_config_rtc_udp_port | default('', true) | string | length > 0
+
+- name: Fail if LiveKit Server UDP port is invalid
+  ansible.builtin.fail:
+    msg: >-
+      livekit_server_config_rtc_udp_port must be a single port (example: 7882) or a `start-end` port pool (example: '7882-7892').
+  when: >
+    livekit_server_config_rtc_udp_port | default('', true) | string | length > 0 and
+    not (livekit_server_config_rtc_udp_port | string is match('^[0-9]+(-[0-9]+)?$'))
+
+- name: Fail if LiveKit Server UDP port pool is reversed
+  ansible.builtin.fail:
+    msg: >-
+      The end port of the livekit_server_config_rtc_udp_port pool must be greater than its start port.
+  when: >
+    '-' in (livekit_server_config_rtc_udp_port | default('', true) | string) and
+    (livekit_server_config_rtc_udp_port | string | split('-') | first | int) >= (livekit_server_config_rtc_udp_port | string | split('-') | last | int)
 
 - name: Fail if LiveKit TURN relay range configuration is invalid
   ansible.builtin.fail:

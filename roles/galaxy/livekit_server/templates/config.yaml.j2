@@ -11,7 +11,7 @@ rtc:
   tcp_port: {{ livekit_server_config_rtc_tcp_port | int | to_json }}
 
   {% if livekit_server_config_rtc_udp_port %}
-  udp_port: {{ livekit_server_config_rtc_udp_port | int | to_json }}
+  udp_port: {{ (livekit_server_config_rtc_udp_port | string | to_json) if '-' in (livekit_server_config_rtc_udp_port | string) else (livekit_server_config_rtc_udp_port | int | to_json) }}
   {% endif %}
 
   {% if livekit_server_config_rtc_port_range_start %}

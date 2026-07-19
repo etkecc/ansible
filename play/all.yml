@@ -35,7 +35,6 @@
     - custom/matrix-authentication-service
     - custom/matrix-appservice-double-puppet
     - custom/matrix-bridge-beeper-linkedin
-    - custom/matrix-bridge-wechat
     - custom/matrix-bridge-mautrix-twitter
     - custom/matrix-bridge-mautrix-googlechat
     - custom/matrix-bridge-mautrix-meta-messenger

@@ -156,6 +156,16 @@ prometheus_nginxlog_exporter_container_cleanup_command: |
 # This role doesn't make use of this variable, but you can hook this into other roles.
 prometheus_nginxlog_exporter_dashboard_urls: []
 
+# Controls the name of the namespace that log lines are collected under.
+# The value is attached to each metric as a `namespace` label.
+prometheus_nginxlog_exporter_config_namespace_name: nginx
+
+# Controls the prefix for metric names (the `metrics_override.prefix` configuration option).
+# An empty value means metric names are not prefixed (e.g. `http_response_count_total`).
+# The Grafana dashboard bundled with this role (`templates/grafana/nginx-proxy.json`) expects unprefixed metric names.
+# If you set a prefix here, you will need to adjust your dashboards accordingly.
+prometheus_nginxlog_exporter_config_namespace_metrics_prefix: ""
+
 prometheus_nginxlog_exporter_config_namespaces_source_tags: "{{ prometheus_nginxlog_exporter_config_namespaces_source_tags_auto + prometheus_nginxlog_exporter_config_namespaces_source_tags_custom }}"
 prometheus_nginxlog_exporter_config_namespaces_source_tags_auto: []
 prometheus_nginxlog_exporter_config_namespaces_source_tags_custom: []

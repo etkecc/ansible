@@ -23,6 +23,12 @@
         fail_msg: "sable.service not active ({{ sable_service.status.ActiveState }})"
         success_msg: "sable.service is active"
 
+    - name: Retrieve Sable service log for debugging
+      when: sable_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu sable.service
+      changed_when: false
+
     - name: Wait for Sable HTTP endpoint to respond (up to 10m)
       ansible.builtin.uri:
         url: "http://localhost:8080/"

@@ -27,9 +27,14 @@ provisioner:
   inventory:
     group_vars:
       all:
+        # Helper variables
+        sable_debug_service_enabled: false
+
+        # Variables for Sable
         sable_uid: 1000
         sable_gid: 1000
-        sable_hostname: sable
+        sable_scheme: http
+        sable_hostname: localhost
         sable_container_labels_traefik_enabled: false
         sable_container_http_host_bind_port: 8080
         sable_default_hs_url: https://matrix.org

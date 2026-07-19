@@ -16,7 +16,6 @@
         ".github/workflows/pre-commit.yml",
         ".pre-commit-config.yaml",
         "mise.toml",
-        "molecule/default/requirements.yml",
         "molecule/requirements.txt"
       ],
       "enabled": true,
@@ -24,6 +23,14 @@
       "automergeType": "branch",
       "schedule": ["* * 1 */6 *"],
       "automergeSchedule": ["* * 1-14 */6 *"]
+    },
+    {
+      "matchFileNames": [
+        "molecule/**/requirements.yml"
+      ],
+      "enabled": true,
+      "automerge": true,
+      "automergeType": "branch"
     }
   ],
   "customManagers": [

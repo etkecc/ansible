@@ -1,14 +1,31 @@
 * Alpine: edge
 * Authentication Service: 1.20.0
 * Baibot: v1.25.0
-* Bluesky: v0.2510.0
 * Borg: 1.4.4
 * Borgmatic: 2.1.6
+* Bridge Beeper Linkedin: latest
+* Bridge Heisenbridge: 1.15.4
+* Bridge Hookshot: 7.3.2
+* Bridge Mautrix Bluesky: v0.2510.0
+* Bridge Mautrix Discord: v0.7.6
+* Bridge Mautrix Gmessages: v0.2605.0
+* Bridge Mautrix Googlechat: v0.5.2
+* Bridge Mautrix Gvoice: v0.2605.0
+* Bridge Mautrix Meta Instagram: v0.2607.0
+* Bridge Mautrix Meta Messenger: v0.2607.0
+* Bridge Mautrix Signal: v0.2607.0
+* Bridge Mautrix Slack: v0.2607.0
+* Bridge Mautrix Telegram: v0.2607.0
+* Bridge Mautrix Twitter: v0.2606.0
+* Bridge Mautrix Whatsapp: v0.2607.0
+* Bridge Postmoogle: v0.9.31
+* Bridge Steam: 1.3.0
+* Bridge Wechat: 0.2.4
+* Bridge Wechat Agent: 0.0.1
 * Buscarron: v1.5.0
 * Cinny: v4.12.3
 * Container Socket Proxy: v0.4.2
 * Coturn: 4.9.0
-* Discord: v0.7.6
 * Draupnir: v3.1.0
 * Element: v1.12.23
 * Etherpad: 2.7.2
@@ -16,14 +33,9 @@
 * Firezone: 0.7.36
 * Fluffychat: v2.7.2
 * Funkwhale: 1.4.1
-* Gmessages: v0.2605.0
-* Googlechat: v0.5.2
 * Gotosocial: 0.22.0
 * Grafana: 13.0.2
-* Gvoice: v0.2605.0
-* Heisenbridge: 1.15.4
 * Honoroit: v0.9.30
-* Hookshot: 7.3.2
 * Hydrogen: v0.5.1
 * Jitsi: stable-11031
 * Jitsi Ldap: 3
@@ -31,13 +43,10 @@
 * Ketesa: v1.3.0
 * Languagetool: 6.8
 * Linkding: 1.45.0
-* Linkedin: latest
 * Livekit Jwt Service: 0.5.0
-* Livekit Server: v1.13.3
+* Livekit Server: v1.13.4
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.6.0
-* Meta Instagram: v0.2606.0
-* Meta Messenger: v0.2606.0
 * Miniflux: 2.3.2
 * Ntfy: v2.26.0
 * Peertube: v7.2.3
@@ -51,35 +60,26 @@
 * Postgres Container Image V17: 17.10
 * Postgres Container Image V18: 18.4
 * Postgres Container Image V9: 9.6.24
-* Postmoogle: v0.9.31
 * Prometheus: v3.13.1
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.12.1
 * Prometheus Postgres Exporter: v0.20.1
 * Radicale: 3.7.6.0
 * Schildichat: 1.11.109-sc.0.test.0
-* Signal: v0.2606.0
-* Slack: v0.2606.0
 * Spam Checker Mjolnir Antispam Git: v1.12.1
 * Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.43.0
-* Steam Bridge: 1.2.0
 * Sygnal: v0.17.0
 * Synapse: v1.156.0
 * Synapse Auto Compressor: v0.0.3
 * Synapse Http Antispam Git: v0.5.0
-* Synapse Reverse Proxy Companion: 1.31.2-alpine
+* Synapse Reverse Proxy Companion: 1.31.3-alpine
 * Synapse Rust Synapse Compress State Container Image: v0.0.3
 * Synapse S3 Storage Provider: 1.6.1
-* Telegram: v0.2606.0
 * Traefik: v3.7.7
 * Traefik Certs Dumper: v2.11.4
 * Traefik Config Tcp Servertransports Default Proxyprotocol: 1
-* Twitter: v0.2606.0
 * Uptime Kuma: 1.23.17
 * Valkey: 9.1.0
 * Vaultwarden: 1.36.0
-* Wechat: 0.2.4
-* Wechat Agent: 0.0.1
 * Wg Easy: 15.3.0
-* Whatsapp: v0.2606.0

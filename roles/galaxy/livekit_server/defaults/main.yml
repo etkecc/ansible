@@ -15,7 +15,7 @@ livekit_server_base_path: "/{{ livekit_server_identifier }}"
 livekit_server_config_path: "{{ livekit_server_base_path }}/config"
 
 # renovate: datasource=docker depName=docker.io/livekit/livekit-server
-livekit_server_version: v1.13.3
+livekit_server_version: v1.13.4
 
 livekit_server_uid: ""
 livekit_server_gid: ""
@@ -293,21 +293,28 @@ livekit_server_config_rtc_tcp_port: 7881
 
 # Controls the `rtc.port_range_start` configuration property.
 # This must be defined together with `livekit_server_config_rtc_port_range_end`,
-# or alternatively `livekit_server_config_rtc_udp_port` can be defined as a single port that handles all traffic.
+# or alternatively `livekit_server_config_rtc_udp_port` can be defined (as a single multiplexed port or a multiplexed port pool).
+# LiveKit allocates a port from this range for each participant session, binding it on demand.
+# This must not be defined together with `livekit_server_config_rtc_udp_port`.
+# When defining a port range, set `livekit_server_config_rtc_udp_port` to an empty string.
 # Example: 50100
 # See: https://docs.livekit.io/home/self-hosting/ports-firewall/
 livekit_server_config_rtc_port_range_start: ""
 
 # Controls the `rtc.port_range_end` configuration property.
 # This must be defined together with `livekit_server_config_rtc_port_range_start`,
-# or alternatively `livekit_server_config_rtc_udp_port` can be defined as a single port that handles all traffic.
+# or alternatively `livekit_server_config_rtc_udp_port` can be defined (as a single multiplexed port or a multiplexed port pool).
 # Example: 50200
 # See: https://docs.livekit.io/home/self-hosting/ports-firewall/
 livekit_server_config_rtc_port_range_end: ""
 
 # Controls the `rtc.udp_port` configuration property.
+# This is the UDP port (or port pool) that LiveKit multiplexes all RTC traffic over.
+# It can be defined as a single port (example: 7882) or as a `start-end` port pool (example: '7882-7892').
+# When a pool is defined, LiveKit multiplexes traffic over multiple ports from the pool (up to as many as there are CPU cores).
 # As an alternative to this, one may define both `livekit_server_config_rtc_port_range_start` and `livekit_server_config_rtc_port_range_end`.
-# Example: 7882
+# This must not be defined together with the port range settings.
+# When defining a port range, set this to an empty string.
 # See: https://docs.livekit.io/home/self-hosting/ports-firewall/
 livekit_server_config_rtc_udp_port: 7882
 
