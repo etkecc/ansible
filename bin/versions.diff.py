@@ -75,6 +75,18 @@ def get_git_repos_from_files(file_paths):
 
                 git_repos[role_name] = project_repo_val
                 found_project_repo = True
+
+        # Fallback for self-built roles that declare no source-URL comment
+        # (e.g. matrix-bridge-steam): use the self-build repo URL from vars.
+        if not found_project_repo:
+            data = yaml.safe_load(''.join(file_lines)) or {}
+            for key, val in data.items():
+                if key.endswith('_self_build_repo') and isinstance(val, str):
+                    repo_url = val.removesuffix('.git')
+                    if validate_url(repo_url):
+                        git_repos[role_name] = repo_url
+                        print(f'Using self-build repo URL for {role_name}: {repo_url}')
+                    break
     return git_repos
 
 
@@ -108,11 +120,14 @@ def get_version_url_custom(repo_url, version):
     if 'github.com/coturn/coturn' in repo_url:
         return f"{repo_url}/releases/tag/docker%2F{version}"
 
+    # Repos whose upstream release tags carry a 'v' prefix that the ansible
+    # *_version vars omit; add the tag prefix so the release URL resolves.
     github_repos = ['github.com/matrix-org/rageshake', 'github.com/Snapchat/KeyDB',
                     'github.com/grafana/grafana', 'github.com/Tecnativa/docker-socket-proxy',
                     'github.com/the-draupnir-project/Draupnir', 'github.com/Erikvl87/docker-languagetool',
                     'github.com/sissbruecker/linkding', 'github.com/SchildiChat/schildichat-desktop',
                     'github.com/element-hq/lk-jwt-service', 'github.com/hifi/heisenbridge',
+                    'github.com/jasonlaguidice/matrix-steam-bridge',
                     'codeberg.org/superseriousbusiness/gotosocial',]
 
     if not version.startswith('v') and any(repo in repo_url for repo in github_repos):

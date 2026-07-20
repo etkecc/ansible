@@ -6,24 +6,14 @@
 
 ### Component Updates
 
-* Bridge Beeper Linkedin: latest _new_
-* Bridge Heisenbridge: 1.15.4 _new_
-* Bridge Hookshot: 7.3.2 _new_
-* Bridge Mautrix Bluesky: v0.2510.0 _new_
-* Bridge Mautrix Discord: v0.7.6 _new_
-* Bridge Mautrix Gmessages: v0.2605.0 _new_
-* Bridge Mautrix Googlechat: v0.5.2 _new_
-* Bridge Mautrix Gvoice: v0.2605.0 _new_
-* Bridge Mautrix Meta Instagram: v0.2607.0 _new_
-* Bridge Mautrix Meta Messenger: v0.2607.0 _new_
-* Bridge Mautrix Signal: v0.2607.0 _new_
-* Bridge Mautrix Slack: v0.2607.0 _new_
-* Bridge Mautrix Telegram: v0.2607.0 _new_
-* Bridge Mautrix Twitter: v0.2606.0 _new_
-* Bridge Mautrix Whatsapp: v0.2607.0 _new_
-* Bridge Postmoogle: v0.9.31 _new_
-* Bridge Steam: 1.3.0 _new_
-* Bridge Wechat: 0.2.4 _new_
-* Bridge Wechat Agent: 0.0.1 _new_
+* Borg: 1.4.4 ⇾ 1.4.5
+* [Fluffychat](https://github.com/krille-chan/fluffychat): [v2.7.2](https://github.com/krille-chan/fluffychat/releases/tag/v2.7.2) ⇾ [v2.8.0](https://github.com/krille-chan/fluffychat/releases/tag/v2.8.0)
 * [Livekit Server](https://github.com/livekit/livekit): [v1.13.3](https://github.com/livekit/livekit/releases/tag/v1.13.3) ⇾ [v1.13.4](https://github.com/livekit/livekit/releases/tag/v1.13.4)
+* [Meta Instagram](https://github.com/mautrix/meta): [v0.2606.0](https://github.com/mautrix/meta/releases/tag/v0.2606.0) ⇾ [v0.2607.0](https://github.com/mautrix/meta/releases/tag/v0.2607.0)
+* [Meta Messenger](https://github.com/mautrix/meta): [v0.2606.0](https://github.com/mautrix/meta/releases/tag/v0.2606.0) ⇾ [v0.2607.0](https://github.com/mautrix/meta/releases/tag/v0.2607.0)
+* [Signal](https://github.com/mautrix/signal): [v0.2606.0](https://github.com/mautrix/signal/releases/tag/v0.2606.0) ⇾ [v0.2607.0](https://github.com/mautrix/signal/releases/tag/v0.2607.0)
+* [Slack](https://github.com/mautrix/slack): [v0.2606.0](https://github.com/mautrix/slack/releases/tag/v0.2606.0) ⇾ [v0.2607.0](https://github.com/mautrix/slack/releases/tag/v0.2607.0)
+* [Steam](https://github.com/jasonlaguidice/matrix-steam-bridge): [1.3.0](https://github.com/jasonlaguidice/matrix-steam-bridge/releases/tag/v1.3.0) _new_
 * Synapse Reverse Proxy Companion: 1.31.2-alpine ⇾ 1.31.3-alpine
+* [Telegram](https://github.com/mautrix/telegram): [v0.2606.0](https://github.com/mautrix/telegram/releases/tag/v0.2606.0) ⇾ [v0.2607.0](https://github.com/mautrix/telegram/releases/tag/v0.2607.0)
+* [Whatsapp](https://github.com/mautrix/whatsapp): [v0.2606.0](https://github.com/mautrix/whatsapp/releases/tag/v0.2606.0) ⇾ [v0.2607.0](https://github.com/mautrix/whatsapp/releases/tag/v0.2607.0)

@@ -11,6 +11,7 @@ ignored = [
 ]
 prefixes = [
     'matrix_',
+    'bridge_',
     'custom_',
     'int_',
     'synapse_default_',
