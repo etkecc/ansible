@@ -64,6 +64,7 @@
     <outline text="mautrix-telegram" title="mautrix-telegram" type="rss" htmlUrl="https://github.com/mautrix/telegram" xmlUrl="https://github.com/mautrix/telegram/releases.atom" />
     <outline text="mautrix-twitter" title="mautrix-twitter" type="rss" htmlUrl="https://github.com/mautrix/twitter" xmlUrl="https://github.com/mautrix/twitter/releases.atom" />
     <outline text="mautrix-whatsapp" title="mautrix-whatsapp" type="rss" htmlUrl="https://github.com/mautrix/whatsapp" xmlUrl="https://github.com/mautrix/whatsapp/releases.atom" />
+    <outline text="media-repo" title="media-repo" type="rss" htmlUrl="https://github.com/turt2live/matrix-media-repo" xmlUrl="https://github.com/turt2live/matrix-media-repo/releases.atom" />
     <outline text="meshtastic-relay" title="meshtastic-relay" type="rss" htmlUrl="https://github.com/jeremiah-k/meshtastic-matrix-relay" xmlUrl="https://github.com/jeremiah-k/meshtastic-matrix-relay/releases.atom" />
     <outline text="miniflux" title="miniflux" type="rss" htmlUrl="https://github.com/miniflux/v2" xmlUrl="https://github.com/miniflux/v2/releases.atom" />
     <outline text="mjolnir" title="mjolnir" type="rss" htmlUrl="https://github.com/matrix-org/mjolnir" xmlUrl="https://github.com/matrix-org/mjolnir/releases.atom" />
@@ -86,6 +87,7 @@
     <outline text="sable" title="sable" type="rss" htmlUrl="https://github.com/sableclient/sable" xmlUrl="https://github.com/sableclient/sable/releases.atom" />
     <outline text="schildichat" title="schildichat" type="rss" htmlUrl="https://github.com/SchildiChat/schildichat-desktop" xmlUrl="https://github.com/SchildiChat/schildichat-desktop/releases.atom" />
     <outline text="sms" title="sms" type="rss" htmlUrl="https://github.com/benkuly/matrix-sms-bridge" xmlUrl="https://github.com/benkuly/matrix-sms-bridge/releases.atom" />
+    <outline text="steam" title="steam" type="rss" htmlUrl="https://github.com/jasonlaguidice/matrix-steam-bridge" xmlUrl="https://github.com/jasonlaguidice/matrix-steam-bridge/releases.atom" />
     <outline text="sygnal" title="sygnal" type="rss" htmlUrl="https://github.com/matrix-org/sygnal" xmlUrl="https://github.com/matrix-org/sygnal/releases.atom" />
     <outline text="synapse" title="synapse" type="rss" htmlUrl="https://github.com/element-hq/synapse" xmlUrl="https://github.com/element-hq/synapse/releases.atom" />
     <outline text="synapse-auto-compressor" title="synapse-auto-compressor" type="rss" htmlUrl="https://github.com/matrix-org/rust-synapse-compress-state" xmlUrl="https://github.com/matrix-org/rust-synapse-compress-state/releases.atom" />

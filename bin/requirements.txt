@@ -1,0 +1,6 @@
+# Runtime dependency for the bin/ scripts. PyYAML already ships with ansible;
+# it's listed here so the scripts also run in a bare venv (CI, a laptop check).
+PyYAML
+
+# Dev/CI only, NOT needed to run the scripts:
+#   pytest   # runs bin/tests/

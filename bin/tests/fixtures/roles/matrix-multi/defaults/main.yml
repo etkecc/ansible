@@ -1,0 +1,4 @@
+# Project source code URL: https://github.com/example/multi
+# One repo, two version vars: both must get a link, not just the first.
+matrix_multi_server_version: "1.0.0"
+matrix_multi_client_version: "2.0.0"

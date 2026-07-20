@@ -1,79 +1,23 @@
 #!/usr/bin/env python3
 
+"""Writes VERSIONS.md: every active role's pinned component version, one bullet
+each. The name each component gets is naming.component_name, the same function
+versions.diff.py keys its links by, so the two can never drift apart again.
+"""
+
 import os
-import re
-import yaml
 
-ignored = [
-    'matrix_synapse_default_room_version',
-    'matrix_playbook_migration_validated_version',
-    'matrix_playbook_migration_expected_version',
-]
-prefixes = [
-    'matrix_',
-    'bridge_',
-    'custom_',
-    'int_',
-    'synapse_default_',
-    'synapse_ext_',
-    'mailer_container_',
-    'bot_',
-    'client_',
-    'mautrix_',
-    'devture_',
-    'beeper_',
-    'backup_borg_',
-]
-suffixes = [
-    '_version',
-]
-
-
-def find_versions(roles):
-    matches = {}
-    for root, dirs, files in os.walk('.'):
-        if root.endswith('defaults'):
-            if not any(role in root for role in roles):
-                continue
-            for file in files:
-                if file.endswith('main.yml'):
-                    path = os.path.join(root, file)
-                    with open(path, 'r') as f:
-                        data = yaml.safe_load(f)
-                        for key, value in data.items():
-                            if key.endswith('_version') and value and not re.search(r'{{|master|main|""', str(value)) and key not in ignored:
-                                sanitized_key = sanitize_key(key)
-                                matches[sanitized_key] = value
-    return matches
-
-
-def sanitize_key(key):
-    for prefix in prefixes:
-        key = key.removeprefix(prefix)
-    for suffix in suffixes:
-        key = key.removesuffix(suffix)
-    return key.replace('_', ' ').title()
-
-def get_active_roles_from_play(play_file):
-    roles = []
-    with open(play_file, 'r') as f:
-        play = yaml.safe_load(f)
-        for role in play[0].get('roles', []):
-            if isinstance(role, str):
-                roles.append(role)
-            elif isinstance(role, dict) and 'role' in role:
-                roles.append(role['role'])
-            else:
-                print(f"Unexpected role format in {play_file}: {role}")
-        return roles
+from lib import naming, roles, versions_md
 
 
 def generate_versions():
-    roles = get_active_roles_from_play(os.path.join(os.getcwd(), 'play/all.yml'))
-    versions = find_versions(roles)
-    with open(os.path.join(os.getcwd(), 'VERSIONS.md'), 'w') as f:
-        for key, value in sorted(versions.items()):
-            f.write(f'* {key}: {value}\n')
+    active = roles.active_roles(os.path.join(os.getcwd(), 'play/all.yml'))
+    versions = {}
+    for file in roles.role_default_files('.', active=active):
+        for var, value in roles.version_vars(file):
+            versions[naming.component_name(var)] = value
+    with open(os.path.join(os.getcwd(), 'VERSIONS.md'), 'w') as out:
+        out.write(versions_md.format_lines(versions))
 
 
 if __name__ == "__main__":

@@ -1,0 +1,8 @@
+# Self-built bridge: no "Project source code URL" comment, the repo lives in a
+# _self_build_repo var instead. This is the steam case that lost its link.
+matrix_bridge_steam_enabled: true
+matrix_bridge_steam_version: "1.2.3"
+matrix_bridge_steam_container_image_self_build: true
+matrix_bridge_steam_container_image_self_build_repo: "https://github.com/jasonlaguidice/matrix-steam-bridge.git"
+# Templated _version var: must be filtered out, not turned into a component.
+matrix_bridge_steam_container_image_self_build_repo_version: "{{ 'main' if matrix_bridge_steam_version == 'latest' else matrix_bridge_steam_version }}"

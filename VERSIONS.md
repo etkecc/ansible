@@ -1,14 +1,14 @@
 * Alpine: edge
 * Authentication Service: 1.20.0
 * Baibot: v1.25.0
-* Bluesky: v0.2510.0
+* Bluesky Bridge: v0.2510.0
 * Borg: 1.4.5
 * Borgmatic: 2.1.6
 * Buscarron: v1.5.0
 * Cinny: v4.12.3
 * Container Socket Proxy: v0.4.2
 * Coturn: 4.9.0
-* Discord: v0.7.6
+* Discord Bridge: v0.7.6
 * Draupnir: v3.1.0
 * Element: v1.12.23
 * Etherpad: 2.7.2
@@ -16,28 +16,28 @@
 * Firezone: 0.7.36
 * Fluffychat: v2.8.0
 * Funkwhale: 1.4.1
-* Gmessages: v0.2605.0
-* Googlechat: v0.5.2
+* Google Chat Bridge: v0.5.2
+* Google Messages Bridge: v0.2605.0
+* Google Voice Bridge: v0.2605.0
 * Gotosocial: 0.22.0
 * Grafana: 13.0.2
-* Gvoice: v0.2605.0
 * Heisenbridge: 1.15.4
 * Honoroit: v0.9.30
-* Hookshot: 7.3.2
+* Hookshot Bridge: 7.3.2
 * Hydrogen: v0.5.1
 * Jitsi: stable-11031
-* Jitsi Ldap: 3
-* Jitsi Prosody Auth Matrix User Verification Repo: 2839499cb03894d8cfc3e5b2219441427cb133d8
+* Jitsi LDAP: 3
+* Jitsi User Verification: 2839499cb03894d8cfc3e5b2219441427cb133d8
 * Ketesa: v1.3.0
 * Languagetool: 6.8
 * Linkding: 1.45.0
-* Linkedin: latest
-* Livekit Jwt Service: 0.5.0
+* LinkedIn Bridge: latest
+* Livekit JWT Service: 0.5.0
 * Livekit Server: v1.13.4
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.6.0
-* Meta Instagram: v0.2607.0
-* Meta Messenger: v0.2607.0
+* Meta Instagram Bridge: v0.2607.0
+* Meta Messenger Bridge: v0.2607.0
 * Miniflux: 2.3.2
 * Ntfy: v2.26.0
 * Peertube: v7.2.3
@@ -51,33 +51,33 @@
 * Postgres Container Image V17: 17.10
 * Postgres Container Image V18: 18.4
 * Postgres Container Image V9: 9.6.24
-* Postmoogle: v0.9.31
+* Postmoogle Bridge: v0.9.31
 * Prometheus: v3.13.1
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.12.1
 * Prometheus Postgres Exporter: v0.20.1
 * Radicale: 3.7.6.0
 * Schildichat: 1.11.109-sc.0.test.0
-* Signal: v0.2607.0
-* Slack: v0.2607.0
-* Spam Checker Mjolnir Antispam Git: v1.12.1
-* Spam Checker Synapse Simple Antispam Git: 5ab711971e3a4541a7a40310ff85e17f8262cc05
+* Signal Bridge: v0.2607.0
+* Slack Bridge: v0.2607.0
+* Spam Checker Mjolnir Antispam: v1.12.1
+* Spam Checker Synapse Simple Antispam: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.43.0
-* Steam: 1.3.0
+* Steam Bridge: 1.3.0
 * Sygnal: v0.17.0
 * Synapse: v1.156.0
 * Synapse Auto Compressor: v0.0.3
-* Synapse Http Antispam Git: v0.5.0
+* Synapse Compress State: v0.0.3
+* Synapse HTTP Antispam: v0.5.0
 * Synapse Reverse Proxy Companion: 1.31.3-alpine
-* Synapse Rust Synapse Compress State Container Image: v0.0.3
 * Synapse S3 Storage Provider: 1.6.1
-* Telegram: v0.2607.0
+* Telegram Bridge: v0.2607.0
 * Traefik: v3.7.7
 * Traefik Certs Dumper: v2.11.4
-* Traefik Config Tcp Servertransports Default Proxyprotocol: 1
-* Twitter: v0.2606.0
+* Traefik Proxy Protocol: 1
+* Twitter Bridge: v0.2606.0
 * Uptime Kuma: 1.23.17
 * Valkey: 9.1.0
 * Vaultwarden: 1.36.0
 * Wg Easy: 15.3.0
-* Whatsapp: v0.2607.0
+* WhatsApp Bridge: v0.2607.0

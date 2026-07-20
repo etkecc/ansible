@@ -1,213 +1,169 @@
 #!/usr/bin/env python3
 
-import git
+"""Writes VERSIONS.diff.md, the weekly "what changed" digest for
+#updates:etke.cc. Diffs VERSIONS.md between two branches and, for every bumped
+component, links its name and both versions to the upstream repo.
+
+The repo map is keyed by naming.component_name(var), the exact same name
+versions.py writes into VERSIONS.md. That is the whole point of this rewrite:
+the old version derived the key from the role DIRECTORY instead, and whenever a
+directory and its variable disagreed the link quietly vanished. Same function,
+same source, no disagreement possible.
+"""
+
 import os
-import yaml
-from urllib.parse import urlparse
+import subprocess
+import sys
+import urllib.error
+import urllib.request
 
-PROJECT_SOURCE_URL_STR = '# Project source code URL:'
-FORK_SOURCE_URL_STR = '# Fork source code URL:'
+from lib import naming, repos, roles, urls, versions_md
 
-
-def get_active_roles_from_play(play_file):
-    roles = []
-    with open(play_file, 'r') as f:
-        play = yaml.safe_load(f)
-        for role in play[0].get('roles', []):
-            if isinstance(role, str):
-                roles.append(role)
-            elif isinstance(role, dict) and 'role' in role:
-                roles.append(role['role'])
-            else:
-                print(f"Unexpected role format in {play_file}: {role}")
-        return roles
-
-def get_roles_files_from_dir(root_dir, active_roles):
-    file_paths = []
-    for dir_name, _, file_list in os.walk(root_dir):
-        if not any(role in dir_name for role in active_roles):
-            continue
-        for file_name in file_list:
-            if dir_name.endswith('defaults') and file_name == 'main.yml':
-                file_paths.append(os.path.join(dir_name, file_name))
-    return file_paths
+OLD_BRANCH = "main"
+NEW_BRANCH = "fresh"
+VERSIONS_FILE = "VERSIONS.md"
 
 
-def get_roles_files_from_dir_old(root_dir):
-    file_paths = []
-    for dir_name, _, file_list in os.walk(root_dir):
-        for file_name in file_list:
-            if dir_name.endswith('defaults') and file_name == 'main.yml':
-                file_paths.append(os.path.join(dir_name, file_name))
-    return file_paths
+def build_repo_map(role_files):
+    """component name -> upstream repo URL, one entry per version var. A role's
+    single source repo covers every *_version it pins, so each var gets a link,
+    not just the first (the old per-role keying dropped the rest).
 
-
-def get_git_repos_from_files(file_paths):
-    git_repos = {}
-    for file in file_paths:
-        role_name = file.split('/')[4]
-        if role_name == 'defaults':
-            role_name = file.split('/')[3]
-        role_name = role_name.removeprefix('matrix-bot-').removeprefix('matrix-bridge-').removeprefix('matrix-client-').removeprefix('matrix-').removeprefix('mautrix-')
-        role_name = role_name.replace('-', '_').replace('_', ' ').title()
+    Hard stop on a name collision: if two vars derive to the same component
+    name, one repo would silently overwrite the other and one link would be
+    wrong with no error. VERSIONS.md has the same collapse, so a collision here
+    means data is already being lost upstream in the pipeline. Scream, don't
+    guess.
+    """
+    repo_map = {}
+    names = []
+    for file in role_files:
         with open(file, 'r') as handle:
-            file_lines = handle.readlines()
-        found_project_repo = False
-        for line in file_lines:
-            project_repo_val = ''
-            if PROJECT_SOURCE_URL_STR in line:
-                # extract the value from a line like this:
-                # Project source code URL: https://github.com/mautrix/signal
-                project_repo_val = line.split(PROJECT_SOURCE_URL_STR)[1].strip()
-                if not validate_url(project_repo_val):
-                    print('Invalid url for line ', line)
-                    break
-            if FORK_SOURCE_URL_STR in line:
-                # extract the value from a line like this:
-                # Fork source code URL: https://github.com/mautrix/signal
-                project_repo_val = line.split(FORK_SOURCE_URL_STR)[1].strip()
-                if not validate_url(project_repo_val):
-                    print('Invalid url for line ', line)
-                    break
-            if project_repo_val != '':
-                if file not in git_repos:
-                    git_repos[role_name] = ''
+            urls_found = repos.source_urls(handle.readlines())
+        if not urls_found:
+            continue
+        if len(urls_found) > 1:
+            print(f'Warning: {file} declares {len(urls_found)} source repos; '
+                  f'diff links use the first ({urls_found[0]}).')
+        repo = urls_found[0]
+        for var, _ in roles.version_vars(file):
+            name = naming.component_name(var)
+            names.append(name)
+            repo_map[name] = repo
 
-                git_repos[role_name] = project_repo_val
-                found_project_repo = True
-
-        # Fallback for self-built roles that declare no source-URL comment
-        # (e.g. matrix-bridge-steam): use the self-build repo URL from vars.
-        if not found_project_repo:
-            data = yaml.safe_load(''.join(file_lines)) or {}
-            for key, val in data.items():
-                if key.endswith('_self_build_repo') and isinstance(val, str):
-                    repo_url = val.removesuffix('.git')
-                    if validate_url(repo_url):
-                        git_repos[role_name] = repo_url
-                        print(f'Using self-build repo URL for {role_name}: {repo_url}')
-                    break
-    return git_repos
+    if len(repo_map) != len(names):
+        seen, collisions = set(), set()
+        for name in names:
+            if name in seen:
+                collisions.add(name)
+            seen.add(name)
+        raise AssertionError(
+            f'component name collision would silently drop a link: {sorted(collisions)}')
+    return repo_map
 
 
-def validate_url(text):
-    try:
-        result = urlparse(text)
-        return all([result.scheme, result.netloc])
-    except:
-        return False
+def _file_at_branch(branch, file_path):
+    return subprocess.check_output(['git', 'show', f'{branch}:{file_path}']).decode()
 
 
-def get_version_url(repo_url, version):
-    custom = get_version_url_custom(repo_url, version)
-    if custom:
-        return custom
+def version_changes(old_branch, new_branch, file_path):
+    """(component, old, new) for every component that changed between the two
+    branches; old is None for a brand-new one. When new_branch is the current
+    HEAD we read the working tree instead of the committed blob, so an
+    uncommitted regenerate still diffs.
+    """
+    old_versions = versions_md.parse(_file_at_branch(old_branch, file_path))
 
-    if 'github' in repo_url:
-        return f"{repo_url}/releases/tag/{version}"
-    elif any(substring in repo_url for substring in ['gitlab', 'mau.dev', 'dev.funkwhale.audio']):
-        return f"{repo_url}/-/tags/{version}"
-    else:
-        print(f'Unrecognized git repository: {repo_url}')
-        return None
-
-
-def get_version_url_custom(repo_url, version):
-    if 'github.com/nginx/nginx' in repo_url:
-        version = version.split('-')[0]
-        return f"{repo_url}/releases/tag/release-{version}"
-
-    if 'github.com/coturn/coturn' in repo_url:
-        return f"{repo_url}/releases/tag/docker%2F{version}"
-
-    # Repos whose upstream release tags carry a 'v' prefix that the ansible
-    # *_version vars omit; add the tag prefix so the release URL resolves.
-    github_repos = ['github.com/matrix-org/rageshake', 'github.com/Snapchat/KeyDB',
-                    'github.com/grafana/grafana', 'github.com/Tecnativa/docker-socket-proxy',
-                    'github.com/the-draupnir-project/Draupnir', 'github.com/Erikvl87/docker-languagetool',
-                    'github.com/sissbruecker/linkding', 'github.com/SchildiChat/schildichat-desktop',
-                    'github.com/element-hq/lk-jwt-service', 'github.com/hifi/heisenbridge',
-                    'github.com/jasonlaguidice/matrix-steam-bridge',
-                    'codeberg.org/superseriousbusiness/gotosocial',]
-
-    if not version.startswith('v') and any(repo in repo_url for repo in github_repos):
-        return f"{repo_url}/releases/tag/v{version}"
-
-    return None
-
-
-def parse_version_line(line):
-    component, version = line.split(": ", 1)
-    return component.strip("* "), version.strip()
-
-
-def get_version_diff(repo_path, old_branch, new_branch, file_path):
-    repo = git.Repo(repo_path)
-
-    old_commit = repo.commit(old_branch)
-    new_commit = repo.commit(new_branch)
-
-    old_version = old_commit.tree / file_path
-    new_version = new_commit.tree / file_path
-
-    old_content = old_version.data_stream.read().decode().splitlines()
-    if new_commit == repo.head.commit:
+    head = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode().strip()
+    new_ref = subprocess.check_output(['git', 'rev-parse', new_branch]).decode().strip()
+    if new_ref == head:
         with open(file_path, 'r') as handle:
-            new_content = handle.read().splitlines()
+            new_versions = versions_md.parse(handle.read())
     else:
-        new_content = new_version.data_stream.read().decode().splitlines()
-
-    old_versions = {}
-    new_versions = {}
-    for line in old_content:
-        if line.startswith('* '):
-            component, version = parse_version_line(line)
-            old_versions[component] = version
-    for line in new_content:
-        if line.startswith('* '):
-            component, version = parse_version_line(line)
-            new_versions[component] = version
+        new_versions = versions_md.parse(_file_at_branch(new_branch, file_path))
 
     changes = []
-    for component in new_versions.keys():
-        if component not in old_versions:
-            changes.append((component, None, new_versions[component]))
-        elif old_versions[component] != new_versions[component]:
-            changes.append((component, old_versions[component], new_versions[component]))
-
+    for component, new_version in new_versions.items():
+        old_version = old_versions.get(component)
+        if old_version is None:
+            changes.append((component, None, new_version))
+        elif old_version != new_version:
+            changes.append((component, old_version, new_version))
     return changes
 
 
-if __name__ == "__main__":
-    repo_path = "."
-    old_branch = "main"
-    new_branch = "fresh"
-    file_path = "VERSIONS.md"
+def _http_status(url):
+    """The HTTP status for url, or None if the forge couldn't be reached at all.
+    A real 404 comes back as 404; a timeout or DNS failure comes back as None so
+    the caller can tell "the tag doesn't exist" from "github didn't answer".
+    """
+    request = urllib.request.Request(url, headers={'User-Agent': 'etke-versions-diff'})
+    try:
+        with urllib.request.urlopen(request, timeout=15) as response:
+            return response.status
+    except urllib.error.HTTPError as err:
+        code = err.code
+        err.close()
+        return code
+    except Exception:
+        return None
 
-    roles = get_active_roles_from_play(os.path.join(repo_path, 'play', 'all.yml'))
-    role_files = get_roles_files_from_dir(repo_path, roles)
-    git_repos = get_git_repos_from_files(role_files)
-    added_or_changed_lines = get_version_diff(repo_path, old_branch, new_branch, file_path)
 
-    if not added_or_changed_lines:
-        print("No changes detected in VERSIONS.md. Skipping generation of VERSIONS.diff.md")
-        exit(0)
+def _pick_release_url(candidates, probe=_http_status):
+    """Pick the tag URL to link and say how sure we are, as (url, status):
+      'ok'         a candidate answered 2xx/3xx, link it, done.
+      'broken'     every candidate answered a flat 404, the tag is genuinely
+                   gone: link nothing, render plain text.
+      'unverified' the forge stonewalled us (timeout, or a 429/5xx that is NOT
+                   a 404): keep the best guess and link it, but say we couldn't
+                   confirm. Only a real 404 condemns a URL; a rate-limit must
+                   not, or a busy week drops every link at once.
+    """
+    unverified = None
+    for url in candidates:
+        code = probe(url)
+        if code is not None and 200 <= code < 400:
+            return url, 'ok'
+        if code != 404 and unverified is None:
+            unverified = url
+    if unverified is not None:
+        return unverified, 'unverified'
+    return None, 'broken'
 
+
+def _version_link(version, repo, dropped, unverified):
+    """The version linked to a tag URL that exists, or bare text when it doesn't.
+    A dead tag goes in dropped (rendered plain, no "[1.2.3](404)" ever ships); a
+    tag we couldn't check goes in unverified (still linked, just flagged).
+    """
+    url, status = _pick_release_url(urls.release_url_candidates(repo, version))
+    if status == 'broken':
+        dropped.append((repo, version))
+        return version
+    if status == 'unverified':
+        unverified.append((repo, version))
+    return f"[{version}]({url})"
+
+
+def write_diff(changes, repo_map):
+    """Write VERSIONS.diff.md and return (dropped, unverified): the (repo,
+    version) pairs whose tag URL was a dead 404, and the ones the forge wouldn't
+    confirm, so the caller can report both.
+    """
+    dropped, unverified = [], []
     with open(os.path.join(os.getcwd(), 'VERSIONS.diff.md'), 'w') as f:
         f.write("## Weekly Recap\n\n")
         f.write("> These updates were originally shared in #updates:etke.cc and are collected here in a weekly digest for convenience.\n\n")
         f.write("---\n\n")
         f.write("### Component Updates\n\n")
-        for component, old_version, new_version in added_or_changed_lines:
+        for component, old_version, new_version in changes:
             if old_version == new_version or new_version is None:
                 continue
-            if component in git_repos:
-                component_link = f"[{component}]({git_repos[component]})"
-                if old_version:
-                    old_version_url = f"[{old_version}]({get_version_url(git_repos[component], old_version)})"
-                else:
-                    old_version_url = old_version
-                new_version_url = f"[{new_version}]({get_version_url(git_repos[component], new_version)})"
+            if component in repo_map:
+                repo = repo_map[component]
+                component_link = f"[{component}]({repo})"
+                old_version_url = _version_link(old_version, repo, dropped, unverified) if old_version else old_version
+                new_version_url = _version_link(new_version, repo, dropped, unverified)
             else:
                 component_link = component
                 old_version_url = old_version
@@ -216,5 +172,32 @@ if __name__ == "__main__":
                 f.write(f"* {component_link}: {new_version_url} _new_\n")
             else:
                 f.write(f"* {component_link}: {old_version_url} ⇾ {new_version_url}\n")
+    return dropped, unverified
 
+
+if __name__ == "__main__":
+    active = roles.active_roles(os.path.join('.', 'play', 'all.yml'))
+    role_files = roles.role_default_files('.', active=active)
+    repo_map = build_repo_map(role_files)
+    changes = version_changes(OLD_BRANCH, NEW_BRANCH, VERSIONS_FILE)
+
+    if not changes:
+        print("No changes detected in VERSIONS.md. Skipping generation of VERSIONS.diff.md")
+        exit(0)
+
+    dropped, unverified = write_diff(changes, repo_map)
     print("VERSIONS.diff.md generated successfully")
+
+    if dropped:
+        print(f'\n{len(dropped)} release link(s) had no working tag URL and '
+              f'shipped as plain text. Worth a look, the pin or the source URL '
+              f'is probably off:', file=sys.stderr)
+        for repo, version in dropped:
+            print(f'  {version}  {repo}', file=sys.stderr)
+
+    if unverified:
+        print(f'\n{len(unverified)} release link(s) went out unverified, the '
+              f'forge would not answer (rate limit, timeout). Kept the link, but '
+              f'no promise it resolves:', file=sys.stderr)
+        for repo, version in unverified:
+            print(f'  {version}  {repo}', file=sys.stderr)

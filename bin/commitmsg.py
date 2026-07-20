@@ -1,40 +1,39 @@
 #!/usr/bin/env python3
 
+"""Prints the commit message for a VERSIONS.md bump: 'update foo (1 -> 2); add
+bar (3); ...'. Reads the working-tree diff of VERSIONS.md and lets
+versions_md.parse_diff do the line reading, so the parsing lives in one place.
+"""
+
 import subprocess
-import re
 
-def main():
-    git_diff = subprocess.check_output(['git', 'diff', '--no-ext-diff', 'VERSIONS.md']).decode('utf-8')
-    prefix_old = r"\-\*"
-    prefix_new = r"\+\*"
-    change_symbol = "->"
-    changes = {}
+from lib import versions_md
 
-    for line in git_diff.split('\n'):
-        if re.match(f'^{prefix_old}.*', line):
-            line_parts = line.replace('-* ','').split(':')
-            item = line_parts[0].lower().strip()
-            version = line_parts[1].lower().strip()
-            changes[item] = f"{version} {change_symbol} "
+CHANGE_SYMBOL = "->"
 
-        if re.match(f'^{prefix_new}.*', line):
-            line_parts = line.replace('+* ', '').split(':')
-            item = line_parts[0].lower().strip()
-            version = line_parts[1].lower().strip()
-            changes[item] = changes.get(item, '') + version
 
+def format_message(changes):
+    """The one-line commit message from parse_diff's {item: change} map. A bare
+    old version with nothing after the arrow means the component was dropped, so
+    it reads "remove", not a dangling "update foo (1.2.3 -> )".
+    """
     message = ""
     for item, change in changes.items():
-        if change_symbol in change:
+        if change.rstrip().endswith(CHANGE_SYMBOL):
+            old = change.replace(CHANGE_SYMBOL, '').strip()
+            message += f"remove {item} ({old}); "
+        elif CHANGE_SYMBOL in change:
             message += f"update {item} ({change}); "
         else:
             message += f"add {item} ({change}); "
+    return message or "[skip ci] update without version changes"
 
-    if not message:
-        message = "[skip ci] update without version changes"
 
+def main():
+    git_diff = subprocess.check_output(['git', 'diff', '--no-ext-diff', 'VERSIONS.md']).decode('utf-8')
     print("COMMIT MESSAGE")
-    print(message)
+    print(format_message(versions_md.parse_diff(git_diff)))
+
 
 if __name__ == "__main__":
     main()
