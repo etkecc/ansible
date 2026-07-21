@@ -1,0 +1,88 @@
+# Hourly component auto-update on `fresh`. Pushes via SSH_DEPLOY_KEY, not the
+# default token, so the push retriggers the pipeline (token pushes don't).
+name: Update
+on:
+  schedule:
+    - cron: "23 * * * *" # hourly, off :00 to dodge GitHub scheduler congestion
+  workflow_dispatch:
+concurrency:
+  group: update
+  cancel-in-progress: false
+env:
+  AGRU_VERSION: v0.2.1
+  AGRU_SHA256: 6b8f9cdefe0ca981cc73e344384cbc380a68fd88a42ca7aba7517b2392f9ad42
+jobs:
+  guard:
+    name: Skip if a fresh pipeline is in flight
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+    outputs:
+      proceed: ${{ steps.check.outputs.proceed }}
+    steps:
+      - id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          active=$(gh api \
+            "repos/${{ github.repository }}/actions/workflows/workflow.yml/runs?branch=fresh&per_page=100" \
+            -q '[.workflow_runs[] | select(.status != "completed")] | length')
+          if [ "$active" -gt 0 ]; then
+            echo "fresh pipeline in flight ($active active run(s)); skipping this hour to keep #updates 1:1"
+            echo "proceed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "proceed=true" >> "$GITHUB_OUTPUT"
+          fi
+  update:
+    name: Update components
+    needs: guard
+    if: ${{ needs.guard.outputs.proceed == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: fresh
+          ssh-key: ${{ secrets.SSH_DEPLOY_KEY }}
+          submodules: recursive
+      - name: Fetch main (versions.diff.py diff-base)
+        run: git fetch origin main:main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install python deps
+        run: python3 -m pip install -r bin/requirements.txt
+      - name: Install agru
+        run: |
+          set -euo pipefail
+          mkdir -p "$HOME/bin"
+          curl -fsSL -o /tmp/agru.tar.gz \
+            "https://github.com/etkecc/agru/releases/download/${AGRU_VERSION}/agru_Linux_x86_64.tar.gz"
+          echo "${AGRU_SHA256}  /tmp/agru.tar.gz" | sha256sum -c -
+          tar -xzf /tmp/agru.tar.gz -C "$HOME/bin" agru
+          echo "$HOME/bin" >> "$GITHUB_PATH"
+      - name: Update components
+        run: |
+          set -euo pipefail
+          git -C upstream fetch origin master
+          git -C upstream checkout master
+          git -C upstream pull --ff-only origin master
+          agru -u
+          python3 bin/feeds.py . dump
+          python3 bin/versions.py
+          python3 bin/versions.diff.py
+      - name: Commit and push if changed
+        run: |
+          set -euo pipefail
+          git config user.name "Sisyphus"
+          git config user.email "sisyphus@users.noreply.github.com"
+          python3 bin/commitmsg.py | tail -n +2 > /tmp/commitmsg.txt
+          git add -A
+          if git diff --cached --quiet; then
+            echo "no changes this hour, nothing to commit"
+            exit 0
+          fi
+          git commit -F /tmp/commitmsg.txt
+          git push origin fresh

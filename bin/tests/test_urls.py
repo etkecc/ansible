@@ -48,6 +48,13 @@ def test_candidates_empty_for_unknown_forge():
     assert urls.release_url('https://app.radicle.xyz/z/thing', '1.0') is None
 
 
+def test_candidates_reject_host_spoofed_by_path():
+    # 'github' in the path must not make a non-forge host look addressable, or
+    # versions.diff.py fetches whatever host an upstream comment points at.
+    assert urls.release_url_candidates('http://169.254.169.254/?x=github', '1.0') == []
+    assert urls.release_url_candidates('http://evil.example/gitlab/x', '1.0') == []
+
+
 def test_feed_url_by_host():
     assert urls.feed_url('https://github.com/mautrix/signal') == \
         'https://github.com/mautrix/signal/releases.atom'

@@ -1,7 +1,7 @@
-name: CI
+name: fresh
 on:
   push:
-    branches: [ "main", "fresh" ]
+    branches: [ "fresh" ]
 env:
   alpine: "3.22.2"
   ansible: "12.1.0"
@@ -15,7 +15,6 @@ jobs:
   build-base:
     name: Build base image
     runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/fresh' }}
     steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
@@ -57,7 +56,6 @@ jobs:
     name: Sync images
     needs: build-base
     runs-on: self-hosted
-    if: ${{ github.ref == 'refs/heads/fresh' }}
     container:
       image: ghcr.io/${{ github.repository }}/base
       options: --user root
@@ -80,7 +78,6 @@ jobs:
     name: Build ansible image (fresh)
     needs: sync-images
     runs-on: self-hosted
-    if: ${{ github.ref == 'refs/heads/fresh' }}
     steps:
       - uses: actions/checkout@v7
       - name: Set up Docker Buildx
@@ -118,7 +115,6 @@ jobs:
     needs: build-fresh
     runs-on: ubuntu-latest
     timeout-minutes: 120
-    if: ${{ github.ref == 'refs/heads/fresh' }}
     steps:
       - name: Trigger maintenance run
         env:
@@ -150,7 +146,6 @@ jobs:
     needs: build-fresh
     runs-on: ubuntu-latest
     timeout-minutes: 120
-    if: ${{ github.ref == 'refs/heads/fresh' }}
     steps:
       - name: Trigger maintenance run
         env:
@@ -182,7 +177,6 @@ jobs:
     name: Build ansible image (stable)
     needs: [test-base, test-full]
     runs-on: self-hosted
-    if: ${{ github.ref == 'refs/heads/fresh' }}
     steps:
       - uses: actions/checkout@v7
       - name: Set up Docker Buildx

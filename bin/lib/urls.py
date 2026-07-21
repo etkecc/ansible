@@ -34,6 +34,21 @@ RULE_TEMPLATES = {
     'forgejo': '{repo}/releases.atom',
 }
 
+GITLAB_RELEASE_HOSTS = ('gitlab.com', 'mau.dev', 'dev.funkwhale.audio')
+
+
+def _release_host_kind(repo):
+    """'github', 'gitlab', or '' for repo's host. Hostname match, not substring,
+    so a path like .../?x=github can't walk an SSRF into versions.diff's fetch.
+    """
+    host = repos.hostname(repo)
+    if host == 'github.com' or host.endswith('.github.com'):
+        return 'github'
+    if host in GITLAB_RELEASE_HOSTS:
+        return 'gitlab'
+    return ''
+
+
 def release_url_candidates(repo, version):
     """The tag URLs worth trying for one release, best guess first. Upstreams
     can't agree whether a tag wears a 'v' (the *_version vars drop it, half the
@@ -41,15 +56,16 @@ def release_url_candidates(repo, version):
     caller both spellings and let it probe which one actually exists. Empty list
     for a forge we can't address at all. Pure: builds strings, touches nothing.
     """
+    kind = _release_host_kind(repo)
+    if not kind:
+        return []
     custom = _custom_release_url(repo, version)
     if custom:
         return [custom]
-    if 'github' in repo:
+    if kind == 'github':
         base = f"{repo}/releases/tag/"
-    elif any(host in repo for host in ['gitlab', 'mau.dev', 'dev.funkwhale.audio']):
-        base = f"{repo}/-/tags/"
     else:
-        return []
+        base = f"{repo}/-/tags/"
     return list(dict.fromkeys([base + version, base + _toggle_v(version)]))
 
 
