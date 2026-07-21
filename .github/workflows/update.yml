@@ -76,8 +76,8 @@ jobs:
       - name: Commit and push if changed
         run: |
           set -euo pipefail
-          git config user.name "Sisyphus"
-          git config user.email "sisyphus@users.noreply.github.com"
+          git config user.name "Sisyphus[bot]"
+          git config user.email "sisyphus[bot]@users.noreply.github.com"
           python3 bin/commitmsg.py | tail -n +2 > /tmp/commitmsg.txt
           git add -A
           if git diff --cached --quiet; then
