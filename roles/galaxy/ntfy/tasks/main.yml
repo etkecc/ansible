@@ -33,6 +33,7 @@
 - name: Perform ntfy self-check tasks
   when: ntfy_enabled | bool
   tags:
+    - molecule-notest
     - self-check
   block:
     - name: Run self-check for ntfy

@@ -31,6 +31,7 @@
   tags:
     - ensure-gotosocial-users-created
     - ensure-users-created
+    - molecule-notest
   block:
     - name: Add users to GoToSocial automatically
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/add_users_auto.yml"
@@ -40,6 +41,7 @@
   tags:
     - create-user-gotosocial
     - create-admin-gotosocial
+    - molecule-notest
   block:
     - name: Add users to GoToSocial manually
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/add_user_manual.yml"

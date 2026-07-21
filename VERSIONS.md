@@ -1,5 +1,5 @@
 * Alpine: edge
-* Authentication Service: 1.20.0
+* Authentication Service: 1.21.0
 * Baibot: v1.25.0
 * Bluesky Bridge: v0.2510.0
 * Borg: 1.4.5
@@ -10,7 +10,7 @@
 * Coturn: 4.9.0
 * Discord Bridge: v0.7.6
 * Draupnir: v3.1.0
-* Element: v1.12.23
+* Element: v1.12.24
 * Etherpad: 2.7.2
 * Exim Relay: 4.99.1-r0-2
 * Firezone: 0.7.36
@@ -19,7 +19,7 @@
 * Google Chat Bridge: v0.5.2
 * Google Messages Bridge: v0.2605.0
 * Google Voice Bridge: v0.2605.0
-* Gotosocial: 0.22.0
+* Gotosocial: 0.22.1
 * Grafana: 13.0.2
 * Heisenbridge: 1.15.4
 * Honoroit: v0.9.30
@@ -39,7 +39,7 @@
 * Meta Instagram Bridge: v0.2607.0
 * Meta Messenger Bridge: v0.2607.0
 * Miniflux: 2.3.2
-* Ntfy: v2.26.0
+* Ntfy: v2.26.3
 * Peertube: v7.2.3
 * Postgres Container Image V10: 10.23
 * Postgres Container Image V11: 11.22
@@ -65,7 +65,7 @@
 * Static Files: 2.43.0
 * Steam Bridge: 1.3.0
 * Sygnal: v0.17.0
-* Synapse: v1.156.0
+* Synapse: v1.157.0
 * Synapse Auto Compressor: v0.0.3
 * Synapse Compress State: v0.0.3
 * Synapse HTTP Antispam: v0.5.0

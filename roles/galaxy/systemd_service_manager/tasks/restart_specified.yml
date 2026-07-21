@@ -10,7 +10,7 @@
     devture_systemd_service_manager_services_needing_restart: >-
       {{
         devture_systemd_service_manager_services_list_to_work_with
-        if not devture_systemd_service_manager_conditional_restart_enabled
+        if not (devture_systemd_service_manager_conditional_restart_enabled | bool)
         else
         (devture_systemd_service_manager_services_list_to_work_with
          | selectattr('restart_necessary', 'defined')
@@ -22,7 +22,7 @@
     devture_systemd_service_manager_services_start_only: >-
       {{
         []
-        if not devture_systemd_service_manager_conditional_restart_enabled
+        if not (devture_systemd_service_manager_conditional_restart_enabled | bool)
         else
         (devture_systemd_service_manager_services_list_to_work_with
          | selectattr('restart_necessary', 'defined')

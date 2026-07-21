@@ -30,16 +30,14 @@
 - name: Fail if required GoToSocial settings not defined
   ansible.builtin.fail:
     msg: >-
-      You need to define a required configuration setting (`{{ item.name }}`).
-  when: "item.when | bool and lookup('vars', item.name, default='') | string | length == 0"
+      You need to define a required configuration setting (`{{ item }}`).
+  when: "lookup('vars', item, default='') | string | length == 0"
   with_items:
-    - { "name": "gotosocial_identifier", when: true }
-    - { "name": "gotosocial_uid", when: true }
-    - { "name": "gotosocial_gid", when: true }
-    - { "name": "gotosocial_hostname", when: true }
-    - { "name": "gotosocial_path_prefix", when: true }
-    - { "name": "gotosocial_container_network", when: true }
-    - { "name": "gotosocial_container_labels_traefik_hostname", when: "{{ gotosocial_container_labels_traefik_enabled }}" }
+    - gotosocial_uid
+    - gotosocial_gid
+    - gotosocial_hostname
+    - gotosocial_path_prefix
+    - gotosocial_container_network
 
 - name: Fail if GoToSocial database type invalid
   ansible.builtin.fail:
@@ -124,7 +122,7 @@
     - name: Fail if Traefik settings required for GoToSocial metrics endpoint are not defined
       ansible.builtin.fail:
         msg: >-
-          You need to define a required configuration setting (`{{ item.name }}`) for using this role.
+          You need to define a required configuration setting (`{{ item.name }}`) for enabling the Prometheus endpoint.
       when: "item.when | bool and lookup('vars', item.name, default='') | string | length == 0"
       with_items:
         - { "name": "gotosocial_container_labels_metrics_hostname", when: true }

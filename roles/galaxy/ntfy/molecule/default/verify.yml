@@ -1,0 +1,53 @@
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+# SPDX-FileCopyrightText: 2026 spatterlight
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify ntfy systemd service
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Wait for ntfy service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: ntfy.service
+      register: ntfy_service
+      until: ntfy_service.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert ntfy service is active
+      ansible.builtin.assert:
+        that: ntfy_service.status.ActiveState == 'active'
+        fail_msg: "ntfy.service not active ({{ ntfy_service.status.ActiveState }})"
+        success_msg: "ntfy.service is active"
+
+    - name: Retrieve ntfy service log for debugging
+      when: ntfy_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu ntfy.service
+      changed_when: false
+
+    - name: Wait for ntfy HTTP endpoint to respond (up to 10m)
+      ansible.builtin.uri:
+        url: "http://localhost:8080/"
+        method: GET
+        status_code: [200, 302]
+        follow_redirects: none
+      register: ntfy_endpoint
+      until: ntfy_endpoint.status in [200, 302]
+      retries: 120
+      delay: 5
+
+    - name: Assert ntfy HTTP endpoint responds
+      ansible.builtin.assert:
+        that: ntfy_endpoint.status in [200, 302]
+        fail_msg: "ntfy did not respond as expected ({{ ntfy_endpoint.status | default('no response') }})"
+        success_msg: "ntfy responded with {{ ntfy_endpoint.status }}"
+
+    - name: Show ntfy systemd service status summary
+      ansible.builtin.debug:
+        msg:
+          - "ntfy systemd: {{ ntfy_service.status.ActiveState }}"
+          - "ntfy HTTP: {{ ntfy_endpoint.status }}"
