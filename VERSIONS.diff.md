@@ -38,4 +38,5 @@
 * [Telegram Bridge](https://github.com/mautrix/telegram): [v0.2607.0](https://github.com/mautrix/telegram/releases/tag/v0.2607.0) _new_
 * [Traefik Proxy Protocol](https://github.com/traefik/traefik): 1 _new_
 * [Twitter Bridge](https://github.com/mautrix/twitter): [v0.2606.0](https://github.com/mautrix/twitter/releases/tag/v0.2606.0) _new_
+* [Valkey](https://github.com/valkey-io/valkey): [9.1.0](https://github.com/valkey-io/valkey/releases/tag/9.1.0) ⇾ [9.1.1](https://github.com/valkey-io/valkey/releases/tag/9.1.1)
 * [WhatsApp Bridge](https://github.com/mautrix/whatsapp): [v0.2607.0](https://github.com/mautrix/whatsapp/releases/tag/v0.2607.0) _new_
