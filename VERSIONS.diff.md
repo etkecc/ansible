@@ -19,6 +19,7 @@
 * [Hookshot Bridge](https://github.com/matrix-org/matrix-hookshot): [7.3.2](https://github.com/matrix-org/matrix-hookshot/releases/tag/7.3.2) _new_
 * [Jitsi LDAP](https://github.com/jitsi/docker-jitsi-meet): 3 _new_
 * [Jitsi User Verification](https://github.com/jitsi/docker-jitsi-meet): 2839499cb03894d8cfc3e5b2219441427cb133d8 _new_
+* [Ketesa](https://github.com/etkecc/ketesa): [v1.3.0](https://github.com/etkecc/ketesa/releases/tag/v1.3.0) ⇾ [v1.4.0](https://github.com/etkecc/ketesa/releases/tag/v1.4.0)
 * [LinkedIn Bridge](https://github.com/beeper/linkedin): latest _new_
 * [Livekit JWT Service](https://github.com/element-hq/lk-jwt-service): [0.5.0](https://github.com/element-hq/lk-jwt-service/releases/tag/v0.5.0) _new_
 * [Livekit Server](https://github.com/livekit/livekit): [v1.13.3](https://github.com/livekit/livekit/releases/tag/v1.13.3) ⇾ [v1.13.4](https://github.com/livekit/livekit/releases/tag/v1.13.4)
