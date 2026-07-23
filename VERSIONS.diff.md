@@ -31,7 +31,7 @@
 * [Spam Checker Mjolnir Antispam](https://github.com/element-hq/synapse): [v1.12.1](https://github.com/element-hq/synapse/releases/tag/v1.12.1) _new_
 * [Spam Checker Synapse Simple Antispam](https://github.com/element-hq/synapse): 5ab711971e3a4541a7a40310ff85e17f8262cc05 _new_
 * [Steam Bridge](https://github.com/jasonlaguidice/matrix-steam-bridge): [1.2.0](https://github.com/jasonlaguidice/matrix-steam-bridge/releases/tag/v1.2.0) ⇾ [1.3.0](https://github.com/jasonlaguidice/matrix-steam-bridge/releases/tag/v1.3.0)
-* [Synapse](https://github.com/element-hq/synapse): [v1.156.0](https://github.com/element-hq/synapse/releases/tag/v1.156.0) ⇾ [v1.157.0](https://github.com/element-hq/synapse/releases/tag/v1.157.0)
+* [Synapse](https://github.com/element-hq/synapse): [v1.156.0](https://github.com/element-hq/synapse/releases/tag/v1.156.0) ⇾ [v1.157.1](https://github.com/element-hq/synapse/releases/tag/v1.157.1)
 * [Synapse Compress State](https://github.com/element-hq/synapse): v0.0.3 _new_
 * [Synapse HTTP Antispam](https://github.com/element-hq/synapse): [v0.5.0](https://github.com/element-hq/synapse/releases/tag/v0.5.0) _new_
 * [Synapse Reverse Proxy Companion](https://github.com/element-hq/synapse): 1.31.2-alpine ⇾ 1.31.3-alpine
