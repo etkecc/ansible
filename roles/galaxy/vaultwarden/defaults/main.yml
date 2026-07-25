@@ -23,7 +23,7 @@ vaultwarden_data_path: "{{ vaultwarden_base_path }}/data"
 vaultwarden_ephemeral_path: "{{ vaultwarden_base_path }}/ephemeral"
 
 # renovate: datasource=docker depName=ghcr.io/dani-garcia/vaultwarden versioning=semver
-vaultwarden_version: 1.36.0
+vaultwarden_version: 1.37.0
 
 vaultwarden_uid: ""
 vaultwarden_gid: ""
@@ -301,7 +301,7 @@ vaultwarden_config_database_mysql_url: |-
   {{ vaultwarden_database_mysql_hostname }}:{{ vaultwarden_database_mysql_port }}/{{ vaultwarden_database_name }}
   {%- endif -%}
 
-vaultwarden_config_database_sqlite_url: "data/db.sqlite3"
+vaultwarden_config_database_sqlite_url: sqlite://data/db.sqlite3
 
 ########################################################################
 #                                                                      #

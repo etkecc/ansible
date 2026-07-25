@@ -38,7 +38,7 @@
 * Maubot: v0.6.0
 * Meta Instagram Bridge: v0.2607.0
 * Meta Messenger Bridge: v0.2607.0
-* Miniflux: 2.3.2
+* Miniflux: 2.3.3
 * Ntfy: v2.26.3
 * Peertube: v7.2.3
 * Postgres Container Image V10: 10.23
@@ -72,12 +72,12 @@
 * Synapse Reverse Proxy Companion: 1.31.3-alpine
 * Synapse S3 Storage Provider: 1.6.1
 * Telegram Bridge: v0.2607.0
-* Traefik: v3.7.7
+* Traefik: v3.7.9
 * Traefik Certs Dumper: v2.11.4
 * Traefik Proxy Protocol: 1
 * Twitter Bridge: v0.2606.0
 * Uptime Kuma: 1.23.17
 * Valkey: 9.1.1
-* Vaultwarden: 1.36.0
+* Vaultwarden: 1.37.0
 * Wg Easy: 15.3.0
 * WhatsApp Bridge: v0.2607.0

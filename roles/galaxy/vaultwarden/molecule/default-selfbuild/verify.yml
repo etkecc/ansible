@@ -1,0 +1,53 @@
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+# SPDX-FileCopyrightText: 2026 spatterlight
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify Vaultwarden systemd service
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Wait for Vaultwarden service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: vaultwarden.service
+      register: vaultwarden_service
+      until: vaultwarden_service.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert Vaultwarden service is active
+      ansible.builtin.assert:
+        that: vaultwarden_service.status.ActiveState == 'active'
+        fail_msg: "vaultwarden.service not active ({{ vaultwarden_service.status.ActiveState }})"
+        success_msg: "vaultwarden.service is active"
+
+    - name: Retrieve Vaultwarden service log for debugging
+      when: vaultwarden_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu vaultwarden.service
+      changed_when: false
+
+    - name: Wait for Vaultwarden HTTP endpoint to respond (up to 10m)
+      ansible.builtin.uri:
+        url: "http://localhost:8080/"
+        method: GET
+        status_code: [200, 302]
+        follow_redirects: none
+      register: vaultwarden_endpoint
+      until: vaultwarden_endpoint.status in [200, 302]
+      retries: 120
+      delay: 5
+
+    - name: Assert Vaultwarden HTTP endpoint responds
+      ansible.builtin.assert:
+        that: vaultwarden_endpoint.status in [200, 302]
+        fail_msg: "Vaultwarden did not respond as expected ({{ vaultwarden_endpoint.status | default('no response') }})"
+        success_msg: "Vaultwarden responded with {{ vaultwarden_endpoint.status }}"
+
+    - name: Show Vaultwarden systemd service status summary
+      ansible.builtin.debug:
+        msg:
+          - "Vaultwarden systemd: {{ vaultwarden_service.status.ActiveState }}"
+          - "Vaultwarden HTTP: {{ vaultwarden_endpoint.status }}"
