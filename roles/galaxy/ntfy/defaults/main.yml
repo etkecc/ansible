@@ -296,6 +296,27 @@ ntfy_visitor_email_limit_replenish: "1h"  # default
 # - `home` serves some homepage (like https://ntfy.sh), which doesn't seem useful
 ntfy_web_root: disable
 
+# Controls the `enable-login` configuration setting, which specifies whether users may log in
+# (via the web app or the API) with an account on this ntfy server.
+#
+# This defaults to being enabled whenever authentication is set up (see `ntfy_auth_enabled`),
+# because a server which restricts access to its topics needs to let its users authenticate.
+#
+# Note that logging in via the web app also requires the web app to be served (see `ntfy_web_root`).
+ntfy_enable_login: "{{ ntfy_auth_enabled }}"
+
+# Controls the `enable-signup` configuration setting, which specifies whether visitors may
+# create an account on this ntfy server themselves.
+#
+# Accounts created this way only get the access defined by `ntfy_auth_default_access`.
+ntfy_enable_signup: false
+
+# Controls the `enable-reservations` configuration setting, which specifies whether users may
+# reserve topics (that is, claim a topic name and decide who else may access it).
+#
+# Reserving a topic requires an account, so `ntfy_enable_login` needs to be enabled as well.
+ntfy_enable_reservations: false
+
 # Controls the NTFY_VISITOR_REQUEST_LIMIT_EXEMPT_HOSTS environment variable's value.
 # Exempted hosts can be defined as hostnames, IP addresses or network ranges.
 #
@@ -374,19 +395,84 @@ ntfy_configuration_extension: "{{ ntfy_configuration_extension_yaml | from_yaml 
 # You most likely don't need to touch this variable. Instead, see `ntfy_configuration_yaml`.
 ntfy_configuration: "{{ ntfy_configuration_yaml | from_yaml | combine(ntfy_configuration_extension, recursive=True) }}"
 
-# List of user credentials for ntfy authentication.
-# If left empty (ntfy_credentials: []), authentication will be disabled,
-# allowing unrestricted access to all topics.
-# To enable authentication, add users with a username and password:
-# ntfy_credentials:
-#   - username: user1
-#     password: password1
-#     admin: true
-#   - username: user2
-#     password: password2
-#     admin: true
-# When credentials are provided, ntfy will enforce authentication.
-ntfy_credentials: []
+# Controls whether ntfy is set up with authentication and access control.
+#
+# When enabled, the role configures the `auth-file` setting (making ntfy maintain a user database),
+# restricts what unauthenticated visitors may do (see `ntfy_auth_default_access`)
+# and provisions the users and access-control entries declared in
+# `ntfy_auth_users` and `ntfy_auth_access`.
+#
+# By default, this happens automatically as soon as at least one user is declared.
+# See: https://docs.ntfy.sh/config/#access-control
+ntfy_auth_enabled: "{{ ntfy_auth_users | length > 0 }}"
+
+# Controls the `auth-default-access` configuration setting, which defines the access that
+# visitors get when no access-control entry (see `ntfy_auth_access`) matches.
+#
+# Supported values: `read-write`, `read-only`, `write-only` and `deny-all`.
+#
+# This only takes effect when `ntfy_auth_enabled` is enabled.
+ntfy_auth_default_access: deny-all
+
+# Controls the `auth-users` configuration setting, which declares the users that ntfy
+# provisions into its user database on startup.
+#
+# Passwords are specified as bcrypt hashes, not as plaintext.
+# You can generate a hash by running:
+# docker run --rm -it docker.io/binwiederhier/ntfy:latest user hash
+#
+# Each entry is an object with the following keys:
+# - `username` - the name of the user
+# - `password_hash` - the user's bcrypt password hash
+# - `role` - either `admin` (read-write access to all topics) or `user` (the default; governed by `ntfy_auth_access`)
+#
+# Beware that ntfy manages these users declaratively.
+# Removing a user from this list deletes it from the user database the next time ntfy starts.
+#
+# Define your own users in `ntfy_auth_users_custom`.
+# See: https://docs.ntfy.sh/config/#users-via-the-config
+#
+# Example:
+# ntfy_auth_users_custom:
+#   - username: alice
+#     password_hash: $2a$10$YLiO8U21sX1uhZamTLJXHuxgVC0Z/GKISibrKCLohPgtG7yIxSk4C
+#     role: admin
+ntfy_auth_users: "{{ ntfy_auth_users_default + ntfy_auth_users_auto + ntfy_auth_users_custom }}"
+ntfy_auth_users_default: []
+ntfy_auth_users_auto: []
+ntfy_auth_users_custom: []
+
+# Controls the `auth-access` configuration setting, which declares the access-control entries
+# that ntfy provisions into its user database on startup.
+#
+# Each entry is an object with the following keys:
+# - `username` - a user declared in `ntfy_auth_users`, or `*` (also spelled `everyone`) for anonymous visitors
+# - `topic_pattern` - a topic name, optionally containing a `*` wildcard
+# - `access` - one of `read-write` (`rw`), `read-only` (`ro`), `write-only` (`wo`) or `deny-all` (`deny`)
+#
+# Beware that ntfy manages these entries declaratively.
+# Removing an entry from this list deletes it from the user database the next time ntfy starts.
+#
+# Define your own entries in `ntfy_auth_access_custom`.
+# See: https://docs.ntfy.sh/config/#acl-entries-via-the-config
+#
+# Example:
+# ntfy_auth_access_custom:
+#   - username: alice
+#     topic_pattern: alerts-*
+#     access: read-write
+ntfy_auth_access: "{{ ntfy_auth_access_default + ntfy_auth_access_auto + ntfy_auth_access_custom }}"
+
+# UnifiedPush application servers need to be able to push to the topic they were handed,
+# without having an account on this ntfy server.
+# See: https://docs.ntfy.sh/config/#example-unifiedpush
+ntfy_auth_access_default:
+  - username: "*"
+    topic_pattern: "up*"
+    access: write-only
+
+ntfy_auth_access_auto: []
+ntfy_auth_access_custom: []
 
 # Specify the timezone
 ntfy_environment_variables_tz: UTC

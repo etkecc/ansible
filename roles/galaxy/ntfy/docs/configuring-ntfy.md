@@ -92,23 +92,64 @@ After adjusting the hostname, make sure to adjust your DNS records to point the 
 
 **By default, the ntfy server is open for everyone, meaning anyone can read and write to any topic.** To restrict access to it, you can optionally configure authentication with [access control](https://docs.ntfy.sh/config/#access-control).
 
-To enable authentication, add users with a username and password to `ntfy_credentials` on your `vars.yml` file (adapt to your needs):
+To enable authentication, declare users in `ntfy_auth_users_custom` on your `vars.yml` file (adapt to your needs):
 
 ```yaml
-ntfy_credentials:
-  - username: user1
-    password: password1
-    admin: true
-  - username: user2
-    password: password2
-    admin: false
+ntfy_auth_users_custom:
+  - username: alice
+    password_hash: $2a$10$YLiO8U21sX1uhZamTLJXHuxgVC0Z/GKISibrKCLohPgtG7yIxSk4C
+    role: admin
+  - username: bob
+    password_hash: $2a$10$NKbrNb7HPMjtQXWJ0f1pouw03LDLT/WzlO9VAv44x84bRCkh19h6m
+    role: user
 ```
 
-If the variable is left empty (`ntfy_credentials: []`), authentication will be disabled, allowing unrestricted access to any topics.
+**Passwords are specified as [bcrypt](https://en.wikipedia.org/wiki/Bcrypt) hashes, not as plaintext.** To generate a hash for a password, run the following command on any machine which has Docker installed. It asks for the password and prints its hash:
+
+```sh
+docker run --rm -it docker.io/binwiederhier/ntfy:latest user hash
+```
+
+Users with the `admin` role get read-write access to all topics. Users with the `user` role (the default) only get the access granted to them by the access-control entries described below.
+
+As long as no users are declared, authentication stays disabled and the server remains open to everyone.
+
+#### Grant access to topics
+
+Users with the `user` role start without access to any topic, because unmatched requests fall back to `ntfy_auth_default_access`, which is `deny-all`.
+
+To grant access, add access-control entries to `ntfy_auth_access_custom` on your `vars.yml` file (adapt to your needs):
+
+```yaml
+ntfy_auth_access_custom:
+  - username: bob
+    topic_pattern: alerts-*
+    access: read-write
+  - username: bob
+    topic_pattern: system-logs
+    access: read-only
+
+  # `*` (also spelled `everyone`) refers to anonymous visitors
+  - username: "*"
+    topic_pattern: announcements
+    access: read-only
+```
+
+`topic_pattern` is a topic name which may contain a `*` wildcard. `access` is one of `read-write` (`rw`), `read-only` (`ro`), `write-only` (`wo`) or `deny-all` (`deny`).
+
+To change what visitors may do when no entry matches, adjust `ntfy_auth_default_access`:
+
+```yaml
+# Supported values: `read-write`, `read-only`, `write-only` and `deny-all`
+ntfy_auth_default_access: read-only
+```
+
+>[!WARNING]
+> ntfy provisions users and access-control entries **declaratively**. Removing an entry from `ntfy_auth_users_custom` or `ntfy_auth_access_custom` deletes it from ntfy's user database the next time ntfy starts. Users and entries which you have created by hand (by invoking the `ntfy user` or `ntfy access` commands yourself) are left alone.
+
+UnifiedPush requires application servers to be provided anonymous write access to the topic which will be used for pushing messages, according to [this ntfy's documentation](https://docs.ntfy.sh/config/#example-unifiedpush). This role takes care of it by declaring such an access-control entry in `ntfy_auth_access_default`, so you do not need to allow it manually by running the `ntfy access` command as described on the documentation.
 
 See [this section](https://docs.ntfy.sh/config/#access-control) on the official documentation about authentication.
-
-UnifiedPush requires application servers to be provided anonymous write access to the topic which will be used for pushing messages, according to [this ntfy's documentation](https://docs.ntfy.sh/config/#example-unifiedpush). As this role takes care of the configuration when creating users (see: [tasks/setup_users.yml](../tasks/setup_users.yml)), you do not need to allow it manually by running `ntfy access` command as described on the documentation.
 
 ### Enable web app (optional)
 
@@ -122,6 +163,42 @@ To enable it, add the following configuration to your `vars.yml` file:
 
 ```yaml
 ntfy_web_root: "app"
+```
+
+#### Log in from the web app
+
+If you have [enabled access control with authentication](#enable-access-control-with-authentication-optional), the topics on your server are not reachable until your users log in.
+
+The role lets users log in (from the web app and from the API) as soon as you declare users, so the combination you most likely want is just these two settings:
+
+```yaml
+# Serve the web app, so that there is a login screen to begin with
+ntfy_web_root: "app"
+
+ntfy_auth_users_custom:
+  - username: alice
+    password_hash: $2a$10$YLiO8U21sX1uhZamTLJXHuxgVC0Z/GKISibrKCLohPgtG7yIxSk4C
+    role: admin
+```
+
+Logging in is controlled by `ntfy_enable_login`, which follows `ntfy_auth_enabled` by default. To decide for yourself, set it explicitly:
+
+```yaml
+ntfy_enable_login: true
+```
+
+**Note**: the web app is served from the root path, so it is only reachable when `ntfy_path_prefix` is `/` (see above).
+
+You can also let visitors register an account themselves, which grants them the access defined by `ntfy_auth_default_access` (`deny-all` by default, so newly registered users cannot do anything until you grant them access):
+
+```yaml
+ntfy_enable_signup: true
+```
+
+Finally, users may be allowed to reserve topics, claiming a topic name for themselves and deciding who else may access it:
+
+```yaml
+ntfy_enable_reservations: true
 ```
 
 ### Message cache

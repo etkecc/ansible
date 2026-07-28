@@ -16,10 +16,6 @@
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
     - name: Install ntfy
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
-    - name: Set up ntfy users
-      when:
-        - ntfy_credentials | length > 0
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/setup_users.yml"
 
 - name: Perform ntfy uninstallation tasks
   when: not ntfy_enabled | bool

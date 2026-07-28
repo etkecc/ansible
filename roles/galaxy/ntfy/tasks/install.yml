@@ -35,7 +35,9 @@
   ansible.builtin.copy:
     content: "{{ ntfy_configuration | to_nice_yaml(indent=2, width=999999) }}"
     dest: "{{ ntfy_config_path }}/server.yml"
-    mode: "0644"
+    # The configuration file carries secrets (`smtp-sender-pass`, the password hashes in `auth-users`, ..).
+    # ntfy reads it as the user the container runs as, which is also the owner of the file.
+    mode: "0640"
     owner: "{{ ntfy_uid }}"
     group: "{{ ntfy_gid }}"
   register: ntfy_config_file_result
