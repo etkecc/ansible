@@ -57,6 +57,7 @@
     <outline text="mautrix-go" title="mautrix-go" type="rss" htmlUrl="https://github.com/mautrix/go/releases" xmlUrl="https://github.com/mautrix/go/releases.atom" />
     <outline text="mautrix-googlechat" title="mautrix-googlechat" type="rss" htmlUrl="https://github.com/mautrix/googlechat" xmlUrl="https://github.com/mautrix/googlechat/releases.atom" />
     <outline text="mautrix-gvoice" title="mautrix-gvoice" type="rss" htmlUrl="https://github.com/mautrix/gvoice" xmlUrl="https://github.com/mautrix/gvoice/releases.atom" />
+    <outline text="mautrix-linkedin" title="mautrix-linkedin" type="rss" htmlUrl="https://github.com/mautrix/linkedin" xmlUrl="https://github.com/mautrix/linkedin/releases.atom" />
     <outline text="mautrix-meta-instagram" title="mautrix-meta-instagram" type="rss" htmlUrl="https://github.com/mautrix/meta" xmlUrl="https://github.com/mautrix/meta/releases.atom" />
     <outline text="mautrix-meta-messenger" title="mautrix-meta-messenger" type="rss" htmlUrl="https://github.com/mautrix/meta" xmlUrl="https://github.com/mautrix/meta/releases.atom" />
     <outline text="mautrix-signal" title="mautrix-signal" type="rss" htmlUrl="https://github.com/mautrix/signal" xmlUrl="https://github.com/mautrix/signal/releases.atom" />
