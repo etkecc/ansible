@@ -12,7 +12,7 @@ dependency:
 driver:
   name: docker
 platforms:
-  - name: ntfy-${MOLECULE_DISTRO:-ubuntu2604}-default
+  - name: container-socket-proxy-${MOLECULE_DISTRO:-ubuntu2604}-default
     image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2604}-ansible:latest"
     command: ${MOLECULE_DOCKER_COMMAND:-""}
     volumes:
@@ -29,16 +29,11 @@ provisioner:
     group_vars:
       all:
         # Helper variables
-        ntfy_debug_service_enabled: false
+        container_socket_proxy_debug_service_enabled: false
 
-        # Variables for ntfy
-        ntfy_uid: 1000
-        ntfy_gid: 1000
-        ntfy_scheme: http
-        ntfy_hostname: localhost
-        ntfy_container_labels_traefik_enabled: false
-        ntfy_container_http_host_bind_port: 8080
-        ntfy_web_root: app
+        # Variables for Container Socket Proxy
+        container_socket_proxy_uid: 1000
+        container_socket_proxy_gid: 1000
   env:
     # Workaround for https://github.com/ansible/molecule/issues/4391
     ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles

@@ -6,7 +6,7 @@
 * Borgmatic: 2.1.6
 * Buscarron: v1.5.0
 * Cinny: v4.12.3
-* Container Socket Proxy: v0.4.2
+* Container Socket Proxy: v0.5.0
 * Coturn: 4.9.0
 * Discord Bridge: v0.7.6
 * Draupnir: v3.1.0

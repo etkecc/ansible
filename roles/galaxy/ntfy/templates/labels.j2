@@ -90,7 +90,7 @@ traefik.http.routers.{{ ntfy_identifier }}-metrics.tls={{ ntfy_container_labels_
 traefik.http.routers.{{ ntfy_identifier }}-metrics.tls.certResolver={{ ntfy_container_labels_traefik_metrics_tls_certResolver }}
 {% endif %}
 
-traefik.http.services.{{ ntfy_identifier }}-metrics.loadbalancer.server.port={{ ntfy_container_http_port }}
+traefik.http.services.{{ ntfy_identifier }}-metrics.loadbalancer.server.port={{ ntfy_metrics_container_port }}
 
 ########################################################################
 #                                                                      #

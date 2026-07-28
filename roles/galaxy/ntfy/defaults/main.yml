@@ -92,7 +92,9 @@ ntfy_container_labels_traefik_tls: "{{ ntfy_container_labels_traefik_entrypoints
 ntfy_container_labels_traefik_tls_certResolver: default  # noqa var-naming
 
 # Controls if labels are added to expose the Prometheus metrics publicly.
-ntfy_container_labels_traefik_metrics_enabled: "{{ ntfy_metrics_default_enabled }}"
+# This defaults to being enabled whenever the metrics endpoint is served,
+# be it on the regular HTTP port (`ntfy_metrics_default_enabled`) or on a dedicated one (`ntfy_metrics_listen_http_port`).
+ntfy_container_labels_traefik_metrics_enabled: "{{ ntfy_metrics_enabled }}"
 ntfy_container_labels_traefik_metrics_hostname: "{{ ntfy_hostname }}"
 # The path prefix must either be `/` or not end with a slash (e.g. `/metrics`).
 ntfy_container_labels_traefik_metrics_path_prefix: /metrics

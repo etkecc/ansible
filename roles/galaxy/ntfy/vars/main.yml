@@ -18,3 +18,13 @@ ntfy_visitor_request_limit_exempt_hosts_container_networks_inspect_commands_stri
 #   '$(/usr/bin/env docker network inspect second-network -f "{{ (index .IPAM.Config 0).Subnet }}")',
 # ]
 ntfy_visitor_request_limit_exempt_hosts_container_networks_inspect_commands_list: "{{ ntfy_visitor_request_limit_exempt_hosts_container_networks_inspect_commands_string | split('###') }}"
+
+# Tells whether the `/metrics` endpoint is served at all.
+# ntfy serves it either on the regular HTTP port (`ntfy_metrics_default_enabled`)
+# or on a dedicated port (`ntfy_metrics_listen_http_port`).
+ntfy_metrics_enabled: "{{ ntfy_metrics_default_enabled or ntfy_metrics_listen_http_port | string | length > 0 }}"
+
+# The container port that the `/metrics` endpoint is served on.
+# When a dedicated metrics port is configured, ntfy serves the endpoint only there
+# and the regular HTTP port does not serve `/metrics` anymore.
+ntfy_metrics_container_port: "{{ ntfy_metrics_listen_http_port if ntfy_metrics_listen_http_port | string | length > 0 else ntfy_container_http_port }}"

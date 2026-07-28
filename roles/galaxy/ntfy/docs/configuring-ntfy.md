@@ -235,20 +235,33 @@ ntfy_visitor_request_limit_exempt_hosts_hostnames_custom: |
 
 You can configure the ntfy server so that it can expose a `/metrics` endpoint for Prometheus.
 
-To expose the endpoint with the default port, add the following configuration to your `vars.yml` file:
+There are 2 ways to serve the endpoint. Either of them is enough on its own and both of them make the role add Traefik labels for exposing the endpoint publicly (see `ntfy_container_labels_traefik_metrics_enabled` and the other `ntfy_container_labels_traefik_metrics_*` variables in [`defaults/main.yml`](../defaults/main.yml)).
+
+To serve the endpoint on the regular HTTP port that ntfy listens on, add the following configuration to your `vars.yml` file:
 
 ```yaml
 ntfy_metrics_default_enabled: true
 ```
 
-Alternatively, you can expose the endpoint via a specified IP address and/or port by adding the following configuration to your `vars.yml` file (adapt to your needs). `ntfy_metrics_listen_http_host` can be omitted.
+Alternatively, you can serve the endpoint on a dedicated port by adding the following configuration to your `vars.yml` file (adapt to your needs). `ntfy_metrics_listen_http_host` can be omitted.
 
 ```yaml
 ntfy_metrics_listen_http_host: 0.0.0.0
 ntfy_metrics_listen_http_port: 9090
 ```
 
+**Note**: serving the endpoint on a dedicated port is the safer option of the two and is what we recommend. When the endpoint is served on the regular HTTP port, it also becomes reachable at `https://ntfy.example.com/metrics` (that is, on the hostname that ntfy itself is served at), without any authentication. ntfy does not apply its own [access control](https://docs.ntfy.sh/config/#access-control) rules to the metrics endpoint, so restricting access to your ntfy server does not help here either. Serving the endpoint on a dedicated port avoids this, because ntfy then stops serving `/metrics` on the regular HTTP port.
+
 See [this section](https://docs.ntfy.sh/config/#monitoring) on the official documentation for details.
+
+Because the exposed endpoint is publicly reachable, you are strongly encouraged to protect it with [HTTP Basic Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication) by adding the following configuration to your `vars.yml` file (adapt to your needs):
+
+```yaml
+ntfy_container_labels_traefik_metrics_middleware_basic_auth_enabled: true
+
+# Generate the credentials with the `htpasswd` tool. Multiple username/password pairs can be listed.
+ntfy_container_labels_traefik_metrics_middleware_basic_auth_users: ''
+```
 
 If you are looking for an integration, you can check out the MASH playbook. See [this section of the documentation on the playbook](https://github.com/mother-of-all-self-hosting/mash-playbook/blob/main/docs/services/ntfy.md#integrating-with-prometheus-optional) for more information.
 

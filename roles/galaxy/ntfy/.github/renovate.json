@@ -31,7 +31,9 @@
       ],
       "enabled": true,
       "automerge": true,
-      "automergeType": "branch"
+      "automergeType": "branch",
+      "ignoreUnstable": false,
+      "versioning": "loose"
     }
   ],
   "customManagers": [

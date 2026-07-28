@@ -51,9 +51,8 @@ visitor-email-limit-burst: {{ ntfy_visitor_email_limit_burst | to_json }}
 visitor-email-limit-replenish: {{ ntfy_visitor_email_limit_replenish | to_json }}
 {% endif %}
 
-{% if ntfy_metrics_default_enabled and ntfy_metrics_listen_http_port == '' %}
-enable-metrics: true
-{% endif %}
-{% if ntfy_metrics_listen_http_port != '' %}
+{% if ntfy_metrics_listen_http_port | string | length > 0 %}
 metrics-listen-http: "{{ ntfy_metrics_listen_http_host }}:{{ ntfy_metrics_listen_http_port }}"
+{% elif ntfy_metrics_default_enabled %}
+enable-metrics: true
 {% endif %}

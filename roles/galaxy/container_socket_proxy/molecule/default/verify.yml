@@ -1,0 +1,35 @@
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+# SPDX-FileCopyrightText: 2026 spatterlight
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify Container Socket Proxy systemd service
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Wait for Container Socket Proxy service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: container-socket-proxy.service
+      register: container_socket_proxy_service
+      until: container_socket_proxy_service.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert Container Socket Proxy service is active
+      ansible.builtin.assert:
+        that: container_socket_proxy_service.status.ActiveState == 'active'
+        fail_msg: "container-socket-proxy.service not active ({{ container_socket_proxy_service.status.ActiveState }})"
+        success_msg: "container-socket-proxy.service is active"
+
+    - name: Retrieve Container Socket Proxy service log for debugging
+      when: container_socket_proxy_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu container-socket-proxy.service
+      changed_when: false
+
+    - name: Show Container Socket Proxy systemd service status summary
+      ansible.builtin.debug:
+        msg:
+          - "Container Socket Proxy systemd: {{ container_socket_proxy_service.status.ActiveState }}"
