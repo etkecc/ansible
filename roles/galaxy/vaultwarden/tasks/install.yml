@@ -65,17 +65,15 @@
       register: vaultwarden_git_pull_results
 
     - name: Ensure Vaultwarden container image is built
-      ansible.builtin.shell:
-        chdir: "{{ vaultwarden_container_image_self_build_src_files_path }}"
-        cmd: |
-          {{ devture_systemd_docker_base_host_command_docker }} build \
-          -t "{{ vaultwarden_container_image_self_build_name }}" \
-          -f docker/Dockerfile.debian \
-          .
-      environment:
-        BUILDPLATFORM: "{{ vaultwarden_container_image_self_build_environment_buildplatform }}"
+      community.docker.docker_image_build:
+        name: "{{ vaultwarden_container_image_self_build_name }}"
+        dockerfile: docker/Dockerfile.debian
+        path: "{{ vaultwarden_container_image_self_build_src_files_path }}"
+        pull: true
+        rebuild: "{{ 'always' if vaultwarden_git_pull_results.changed | bool else 'never' }}"
+        args:
+          BUILDPLATFORM: "{{ vaultwarden_container_image_self_build_environment_buildplatform }}"
       register: vaultwarden_container_image_build_result
-      changed_when: "'Successfully built' in vaultwarden_container_image_build_result.stdout or ('writing image' in vaultwarden_container_image_build_result.stderr and 'CACHED' not in vaultwarden_container_image_build_result.stderr)"
 
 - name: Ensure Vaultwarden container network is created via community.docker.docker_network
   when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
