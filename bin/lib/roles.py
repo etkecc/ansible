@@ -30,11 +30,16 @@ def active_roles(play_file):
 
 
 def role_default_files(root, active=None, exclude=None):
-    """Every defaults/main.yml under root. Pass active to keep only the roles
-    the play enables (substring match against the dir path, same as before);
-    pass exclude to drop any dir at or under a given path prefix (feeds skips
-    the feedless Gitea repo, and the scripts' own bin/tests fixtures). Leave
-    both off and you get the lot.
+    """Every defaults/main.yml under root, in play order when active is given
+    (alphabetical otherwise). Pass active to keep only the roles the play
+    enables (substring match against the dir path); pass exclude to drop any
+    dir at or under a given path prefix (feeds skips the feedless Gitea repo,
+    and the scripts' own bin/tests fixtures). Leave both off and you get the lot.
+
+    Callers resolving a duplicate by "last one wins" depend on this order, so
+    a superseding role goes below the one it replaces in play/all.yml. Raw
+    os.walk order is readdir order, which varies by filesystem and would make
+    that resolution a coin flip.
     """
     exclude = exclude or []
     file_paths = []
@@ -48,7 +53,14 @@ def role_default_files(root, active=None, exclude=None):
         for file_name in file_list:
             if file_name == 'main.yml':
                 file_paths.append(os.path.join(dir_name, file_name))
-    return file_paths
+
+    if active is None:
+        return sorted(file_paths)
+    # a dir matching several active entries takes the latest, same tiebreak as the callers
+    def play_index(path):
+        matches = [i for i, role in enumerate(active) if role in path]
+        return max(matches) if matches else len(active)
+    return sorted(file_paths, key=lambda path: (play_index(path), path))
 
 
 def version_vars(file):

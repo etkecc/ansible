@@ -25,18 +25,16 @@ VERSIONS_FILE = "VERSIONS.md"
 
 
 def build_repo_map(role_files):
-    """component name -> upstream repo URL, one entry per version var. A role's
-    single source repo covers every *_version it pins, so each var gets a link,
-    not just the first (the old per-role keying dropped the rest).
+    """component name -> upstream repo URL. A role's single source repo covers
+    every *_version it pins, so every one of those vars gets its own link.
 
-    Hard stop on a name collision: if two vars derive to the same component
-    name, one repo would silently overwrite the other and one link would be
-    wrong with no error. VERSIONS.md has the same collapse, so a collision here
-    means data is already being lost upstream in the pipeline. Scream, don't
-    guess.
+    Two roles can bridge the same service and derive to one component name
+    (beeper-linkedin and mautrix-linkedin both land on "LinkedIn Bridge"). The
+    last role wins, and role_files arrives in play/all.yml order, so put the
+    superseding role below the one it replaces in the play and its repo is the
+    one that gets linked.
     """
     repo_map = {}
-    names = []
     for file in role_files:
         with open(file, 'r') as handle:
             urls_found = repos.source_urls(handle.readlines())
@@ -47,18 +45,7 @@ def build_repo_map(role_files):
                   f'diff links use the first ({urls_found[0]}).')
         repo = urls_found[0]
         for var, _ in roles.version_vars(file):
-            name = naming.component_name(var)
-            names.append(name)
-            repo_map[name] = repo
-
-    if len(repo_map) != len(names):
-        seen, collisions = set(), set()
-        for name in names:
-            if name in seen:
-                collisions.add(name)
-            seen.add(name)
-        raise AssertionError(
-            f'component name collision would silently drop a link: {sorted(collisions)}')
+            repo_map[naming.component_name(var)] = repo
     return repo_map
 
 

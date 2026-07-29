@@ -1,7 +1,5 @@
 import os
 
-import pytest
-
 from conftest import FIXTURES, load_script
 
 from lib import roles
@@ -39,9 +37,18 @@ def test_repo_map_covers_exactly_the_sourced_components():
     assert set(repo_map) == {'Steam Bridge', 'Signal Bridge', 'Multi Server', 'Multi Client', 'Gitlabby'}
 
 
-def test_collision_makes_the_assert_scream():
-    with pytest.raises(AssertionError):
-        _repo_map(os.path.join('collision', 'roles'))
+def test_collision_takes_the_role_listed_last_in_the_play():
+    # two roles bridging one service; whoever sits lower in play/all.yml owns the link.
+    subtree = os.path.join(FIXTURES, 'collision', 'roles')
+
+    def repo_map(active):
+        return diff.build_repo_map(roles.role_default_files(subtree, active=active))
+
+    later = repo_map(['matrix-bridge-collide', 'matrix-collide-a'])
+    assert later['Collide'] == 'https://github.com/example/collide-a'
+
+    flipped = repo_map(['matrix-collide-a', 'matrix-bridge-collide'])
+    assert flipped['Collide'] == 'https://github.com/example/collide-b'
 
 
 def test_pick_release_url_first_reachable_wins():
