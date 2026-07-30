@@ -1,0 +1,53 @@
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+# SPDX-FileCopyrightText: 2026 spatterlight
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify Prometheus systemd service
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Wait for Prometheus service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: prometheus.service
+      register: prometheus_service
+      until: prometheus_service.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert Prometheus service is active
+      ansible.builtin.assert:
+        that: prometheus_service.status.ActiveState == 'active'
+        fail_msg: "prometheus.service not active ({{ prometheus_service.status.ActiveState }})"
+        success_msg: "prometheus.service is active"
+
+    - name: Retrieve Prometheus service log for debugging
+      when: prometheus_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu prometheus.service
+      changed_when: false
+
+    - name: Wait for Prometheus HTTP endpoint to respond (up to 10m)
+      ansible.builtin.uri:
+        url: "http://localhost:9090/"
+        method: GET
+        status_code: [200, 302]
+        follow_redirects: none
+      register: prometheus_endpoint
+      until: prometheus_endpoint.status in [200, 302]
+      retries: 120
+      delay: 5
+
+    - name: Assert Prometheus HTTP endpoint responds
+      ansible.builtin.assert:
+        that: prometheus_endpoint.status in [200, 302]
+        fail_msg: "Prometheus did not respond as expected ({{ prometheus_endpoint.status | default('no response') }})"
+        success_msg: "Prometheus responded with {{ prometheus_endpoint.status }}"
+
+    - name: Show Prometheus systemd service status summary
+      ansible.builtin.debug:
+        msg:
+          - "Prometheus systemd: {{ prometheus_service.status.ActiveState }}"
+          - "Prometheus HTTP: {{ prometheus_endpoint.status }}"
