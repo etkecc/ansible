@@ -34,7 +34,7 @@
 * Linkding: 1.45.0
 * LinkedIn Bridge: v0.2604.0
 * Livekit JWT Service: 0.5.0
-* Livekit Server: v1.13.4
+* Livekit Server: v1.13.5
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.6.0
 * Meta Instagram Bridge: v0.2607.0
