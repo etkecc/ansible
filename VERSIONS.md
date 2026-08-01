@@ -74,7 +74,7 @@
 * Synapse Reverse Proxy Companion: 1.31.3-alpine
 * Synapse S3 Storage Provider: 1.6.1
 * Telegram Bridge: v0.2607.0
-* Traefik: v3.7.9
+* Traefik: v3.7.10
 * Traefik Certs Dumper: v2.11.4
 * Traefik Proxy Protocol: 1
 * Twitter Bridge: v0.2606.0
