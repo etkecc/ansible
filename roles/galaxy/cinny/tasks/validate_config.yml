@@ -17,16 +17,15 @@
 - name: Fail if required Cinny settings not defined
   ansible.builtin.fail:
     msg: >-
-      You need to define a required configuration setting (`{{ item.name }}`).
-  when: "item.when | bool and lookup('vars', item.name, default='') | string | length == 0"
+      You need to define a required configuration setting (`{{ item }}`).
+  when: "lookup('vars', item, default='') | string | length == 0"
   with_items:
-    - { "name": "cinny_uid", when: true }
-    - { "name": "cinny_gid", when: true }
-    - { "name": "cinny_hostname", when: true }
-    - { "name": "cinny_path_prefix", when: true }
-    - { "name": "cinny_container_network", when: true }
-    - { "name": "cinny_default_hs_url", when: true }
-    - { "name": "cinny_container_labels_traefik_compression_middleware_name", when: "{{ cinny_container_labels_traefik_compression_middleware_enabled }}" }
+    - cinny_uid
+    - cinny_gid
+    - cinny_hostname
+    - cinny_path_prefix
+    - cinny_container_network
+    - cinny_default_hs_url
 
 - name: Run if Traefik is enabled
   when: cinny_container_labels_traefik_enabled | bool
@@ -34,11 +33,12 @@
     - name: Fail if Traefik settings required for Cinny are not defined
       ansible.builtin.fail:
         msg: >-
-          You need to define a required configuration setting (`{{ item }}`).
-      when: "lookup('vars', item, default='') | string | length == 0"
+          You need to define a required configuration setting (`{{ item.name }}`).
+      when: "item.when | bool and lookup('vars', item.name, default='') | string | length == 0"
       with_items:
-        - cinny_container_labels_traefik_hostname
-        - cinny_container_labels_traefik_path_prefix
+        - { "name": "cinny_container_labels_traefik_hostname", when: true }
+        - { "name": "cinny_container_labels_traefik_path_prefix", when: true }
+        - { "name": "cinny_container_labels_traefik_compression_middleware_name", when: "{{ cinny_container_labels_traefik_compression_middleware_enabled }}" }
 
     - name: Fail if cinny_container_labels_traefik_path_prefix is different than /
       ansible.builtin.fail:

@@ -1,0 +1,53 @@
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+# SPDX-FileCopyrightText: 2026 spatterlight
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify Cinny systemd service
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Wait for Cinny service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: cinny.service
+      register: cinny_service
+      until: cinny_service.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert Cinny service is active
+      ansible.builtin.assert:
+        that: cinny_service.status.ActiveState == 'active'
+        fail_msg: "cinny.service not active ({{ cinny_service.status.ActiveState }})"
+        success_msg: "cinny.service is active"
+
+    - name: Retrieve Cinny service log for debugging
+      when: cinny_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu cinny.service
+      changed_when: false
+
+    - name: Wait for Cinny HTTP endpoint to respond (up to 10m)
+      ansible.builtin.uri:
+        url: "http://localhost:8080/"
+        method: GET
+        status_code: [200, 302]
+        follow_redirects: none
+      register: cinny_endpoint
+      until: cinny_endpoint.status in [200, 302]
+      retries: 120
+      delay: 5
+
+    - name: Assert Cinny HTTP endpoint responds
+      ansible.builtin.assert:
+        that: cinny_endpoint.status in [200, 302]
+        fail_msg: "Cinny did not respond as expected ({{ cinny_endpoint.status | default('no response') }})"
+        success_msg: "Cinny responded with {{ cinny_endpoint.status }}"
+
+    - name: Show Cinny systemd service status summary
+      ansible.builtin.debug:
+        msg:
+          - "Cinny systemd: {{ cinny_service.status.ActiveState }}"
+          - "Cinny HTTP: {{ cinny_endpoint.status }}"

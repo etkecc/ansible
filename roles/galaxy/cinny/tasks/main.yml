@@ -20,6 +20,7 @@
 - name: Perform Cinny self-check tasks
   when: cinny_enabled | bool
   tags:
+    - molecule-notest
     - self-check-cinny
   block:
     - name: Run self-check for Cinny
