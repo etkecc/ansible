@@ -49,7 +49,7 @@ jobs:
           submodules: recursive
       - name: Fetch main (versions.diff.py diff-base)
         run: git fetch origin main:main
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - name: Install python deps
