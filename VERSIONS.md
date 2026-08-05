@@ -1,5 +1,5 @@
 * Alpine: edge
-* Authentication Service: 1.21.0
+* Authentication Service: 1.22.0
 * Baibot: v1.25.0
 * Bluesky Bridge: v0.2510.0
 * Borg: 1.4.5
@@ -67,7 +67,7 @@
 * Static Files: 2.44.0
 * Steam Bridge: 1.3.0
 * Sygnal: v0.17.0
-* Synapse: v1.157.2
+* Synapse: v1.158.0
 * Synapse Auto Compressor: v0.0.3
 * Synapse Compress State: v0.0.3
 * Synapse HTTP Antispam: v0.5.0
