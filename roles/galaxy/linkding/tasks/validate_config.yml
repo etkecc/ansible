@@ -25,6 +25,7 @@
     - { "old": "linkding_environment_variable_superuser_username", "new": "linkding_superuser_username" }
     - { "old": "linkding_environment_variable_superuser_password", "new": "linkding_superuser_password" }
     - { "old": "linkding_http_header_content_permission_policy", "new": "linkding_http_header_permissions_policy" }
+    - { "old": "linkding_container_image_force_pull", "new": "<removed> (the new community.docker.docker_image_pull module handles this natively)" }
 
 - name: Fail if required linkding settings not defined
   ansible.builtin.fail:

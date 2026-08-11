@@ -66,7 +66,9 @@ linkding_hostname: "example.com"
 
 After adjusting the hostname, make sure to adjust your DNS records to point the domain to your server.
 
-### Specify database (optional)
+### Configuring database
+
+#### Specify database (optional)
 
 You can specify a database used by linkding. By default it is configured to use SQLite.
 
@@ -78,7 +80,7 @@ linkding_database_type: postgres
 
 For other settings, check variables such as `linkding_database_*` on [`defaults/main.yml`](../defaults/main.yml).
 
-### Configuring connection to Postgres server (optional)
+#### Configuring connection to the database server (optional)
 
 By default the role is configured to establish connection with the Postgres server via the Unix socket. You can mount the Unix socket by adding the following configuration to your `vars.yml` file:
 

@@ -1,0 +1,53 @@
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+# SPDX-FileCopyrightText: 2026 spatterlight
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify linkding systemd service
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Wait for linkding service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: linkding.service
+      register: linkding_service
+      until: linkding_service.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert linkding service is active
+      ansible.builtin.assert:
+        that: linkding_service.status.ActiveState == 'active'
+        fail_msg: "linkding.service not active ({{ linkding_service.status.ActiveState }})"
+        success_msg: "linkding.service is active"
+
+    - name: Retrieve linkding service log for debugging
+      when: linkding_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu linkding.service
+      changed_when: false
+
+    - name: Wait for linkding HTTP endpoint to respond (up to 10m)
+      ansible.builtin.uri:
+        url: "http://localhost:9090/"
+        method: GET
+        status_code: [200, 302]
+        follow_redirects: none
+      register: linkding_endpoint
+      until: linkding_endpoint.status in [200, 302]
+      retries: 120
+      delay: 5
+
+    - name: Assert linkding HTTP endpoint responds
+      ansible.builtin.assert:
+        that: linkding_endpoint.status in [200, 302]
+        fail_msg: "linkding did not respond as expected ({{ linkding_endpoint.status | default('no response') }})"
+        success_msg: "linkding responded with {{ linkding_endpoint.status }}"
+
+    - name: Show linkding systemd service status summary
+      ansible.builtin.debug:
+        msg:
+          - "linkding systemd: {{ linkding_service.status.ActiveState }}"
+          - "linkding HTTP: {{ linkding_endpoint.status }}"
