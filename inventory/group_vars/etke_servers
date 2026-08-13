@@ -36,6 +36,7 @@ matrix_media_repo_metrics_enabled: false
 prometheus_nginxlog_exporter_container_metrics_port: '4040'
 matrix_media_repo_identifier: matrix-media-repo
 matrix_media_repo_metrics_port: 9000
+matrix_bot_meowlnir_synapse_http_antispam_enabled: false
 
 ########################################################################
 #                                                                      #
