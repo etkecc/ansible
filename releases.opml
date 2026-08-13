@@ -67,6 +67,7 @@
     <outline text="mautrix-twitter" title="mautrix-twitter" type="rss" htmlUrl="https://github.com/mautrix/twitter" xmlUrl="https://github.com/mautrix/twitter/releases.atom" />
     <outline text="mautrix-whatsapp" title="mautrix-whatsapp" type="rss" htmlUrl="https://github.com/mautrix/whatsapp" xmlUrl="https://github.com/mautrix/whatsapp/releases.atom" />
     <outline text="media-repo" title="media-repo" type="rss" htmlUrl="https://github.com/turt2live/matrix-media-repo" xmlUrl="https://github.com/turt2live/matrix-media-repo/releases.atom" />
+    <outline text="meowlnir" title="meowlnir" type="rss" htmlUrl="https://github.com/maunium/meowlnir" xmlUrl="https://github.com/maunium/meowlnir/releases.atom" />
     <outline text="meshtastic-relay" title="meshtastic-relay" type="rss" htmlUrl="https://github.com/jeremiah-k/meshtastic-matrix-relay" xmlUrl="https://github.com/jeremiah-k/meshtastic-matrix-relay/releases.atom" />
     <outline text="miniflux" title="miniflux" type="rss" htmlUrl="https://github.com/miniflux/v2" xmlUrl="https://github.com/miniflux/v2/releases.atom" />
     <outline text="mjolnir" title="mjolnir" type="rss" htmlUrl="https://github.com/matrix-org/mjolnir" xmlUrl="https://github.com/matrix-org/mjolnir/releases.atom" />
