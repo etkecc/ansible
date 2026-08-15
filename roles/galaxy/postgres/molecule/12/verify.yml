@@ -1,0 +1,35 @@
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+# SPDX-FileCopyrightText: 2026 spatterlight
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify Postgres systemd service
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Wait for Postgres service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: postgres.service
+      register: postgres_service
+      until: postgres_service.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert Postgres service is active
+      ansible.builtin.assert:
+        that: postgres_service.status.ActiveState == 'active'
+        fail_msg: "postgres.service not active ({{ postgres_service.status.ActiveState }})"
+        success_msg: "postgres.service is active"
+
+    - name: Retrieve Postgres service log for debugging
+      when: postgres_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu postgres.service
+      changed_when: false
+
+    - name: Show Postgres systemd service status summary
+      ansible.builtin.debug:
+        msg:
+          - "Postgres systemd: {{ postgres_service.status.ActiveState }}"

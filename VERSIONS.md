@@ -46,11 +46,11 @@
 * Postgres Container Image V11: 11.22
 * Postgres Container Image V12: 12.22
 * Postgres Container Image V13: 13.23
-* Postgres Container Image V14: 14.23
-* Postgres Container Image V15: 15.18
-* Postgres Container Image V16: 16.14
-* Postgres Container Image V17: 17.10
-* Postgres Container Image V18: 18.4
+* Postgres Container Image V14: 14.24
+* Postgres Container Image V15: 15.19
+* Postgres Container Image V16: 16.15
+* Postgres Container Image V17: 17.11
+* Postgres Container Image V18: 18.6
 * Postgres Container Image V9: 9.6.24
 * Postmoogle Bridge: v0.9.31
 * Prometheus: v3.13.2
