@@ -1,0 +1,53 @@
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+# SPDX-FileCopyrightText: 2026 spatterlight
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify WireGuard Easy systemd service
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Wait for WireGuard Easy service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: wg-easy.service
+      register: wg_easy_service
+      until: wg_easy_service.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert WireGuard Easy service is active
+      ansible.builtin.assert:
+        that: wg_easy_service.status.ActiveState == 'active'
+        fail_msg: "wg-easy.service not active ({{ wg_easy_service.status.ActiveState }})"
+        success_msg: "wg-easy.service is active"
+
+    - name: Retrieve WireGuard Easy service log for debugging
+      when: wg_easy_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu wg-easy.service
+      changed_when: false
+
+    - name: Wait for WireGuard Easy HTTP endpoint to respond (up to 10m)
+      ansible.builtin.uri:
+        url: "http://localhost:8080/"
+        method: GET
+        status_code: [200, 302]
+        follow_redirects: none
+      register: wg_easy_endpoint
+      until: wg_easy_endpoint.status in [200, 302]
+      retries: 120
+      delay: 5
+
+    - name: Assert WireGuard Easy HTTP endpoint responds
+      ansible.builtin.assert:
+        that: wg_easy_endpoint.status in [200, 302]
+        fail_msg: "WireGuard Easy did not respond as expected ({{ wg_easy_endpoint.status | default('no response') }})"
+        success_msg: "WireGuard Easy responded with {{ wg_easy_endpoint.status }}"
+
+    - name: Show WireGuard Easy systemd service status summary
+      ansible.builtin.debug:
+        msg:
+          - "WireGuard Easy systemd: {{ wg_easy_service.status.ActiveState }}"
+          - "WireGuard Easy HTTP: {{ wg_easy_endpoint.status }}"
