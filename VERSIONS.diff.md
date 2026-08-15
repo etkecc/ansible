@@ -6,6 +6,7 @@
 
 ### Component Updates
 
+* [Borgmatic](https://github.com/etkecc/borgmatic): 2.1.6 ⇾ 2.1.7
 * [Linkding](https://github.com/sissbruecker/linkding): [1.46.0](https://github.com/sissbruecker/linkding/releases/tag/v1.46.0) ⇾ [1.46.1](https://github.com/sissbruecker/linkding/releases/tag/v1.46.1)
 * [Postgres Container Image V14](https://github.com/postgres/postgres): 14.23 ⇾ 14.24
 * [Postgres Container Image V15](https://github.com/postgres/postgres): 15.18 ⇾ 15.19
