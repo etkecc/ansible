@@ -8,7 +8,7 @@
 * Cinny: v4.12.6
 * Container Socket Proxy: v0.5.0
 * Coturn: 4.9.0
-* Discord Bridge: v0.7.6
+* Discord Bridge: v0.7.7
 * Draupnir: v3.1.0
 * Element: v1.12.25
 * Etherpad: 2.7.2
@@ -17,7 +17,7 @@
 * Fluffychat: v2.8.0
 * Funkwhale: 1.4.1
 * Google Chat Bridge: v0.5.2
-* Google Messages Bridge: v0.2605.0
+* Google Messages Bridge: v0.2608.0
 * Google Voice Bridge: v0.2605.0
 * Gotosocial: 0.22.1
 * Grafana: 13.0.2
@@ -32,7 +32,7 @@
 * Languagetool: 6.8
 * Line Bridge: 412eda7f028f0ee946d6fe584c64c7e97f27c7a7
 * Linkding: 1.46.1
-* LinkedIn Bridge: v0.2604.0
+* LinkedIn Bridge: v0.2608.0
 * Livekit JWT Service: 0.5.0
 * Livekit Server: v1.13.5
 * Matrix Reminder Bot: v0.4.0
