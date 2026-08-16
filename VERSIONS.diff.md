@@ -20,6 +20,7 @@
 * [Postgres Container Image V18](https://github.com/postgres/postgres): 18.4 ⇾ 18.6
 * [Signal Bridge](https://github.com/mautrix/signal): [v0.2607.0](https://github.com/mautrix/signal/releases/tag/v0.2607.0) ⇾ [v0.2608.0](https://github.com/mautrix/signal/releases/tag/v0.2608.0)
 * [Slack Bridge](https://github.com/mautrix/slack): [v0.2607.0](https://github.com/mautrix/slack/releases/tag/v0.2607.0) ⇾ [v0.2608.0](https://github.com/mautrix/slack/releases/tag/v0.2608.0)
+* [Telegram Bridge](https://github.com/mautrix/telegram): [v0.2607.0](https://github.com/mautrix/telegram/releases/tag/v0.2607.0) ⇾ [v0.2608.0](https://github.com/mautrix/telegram/releases/tag/v0.2608.0)
 * [Twitter Bridge](https://github.com/mautrix/twitter): [v0.2606.0](https://github.com/mautrix/twitter/releases/tag/v0.2606.0) ⇾ [v0.2608.0](https://github.com/mautrix/twitter/releases/tag/v0.2608.0)
 * [Wg Easy](https://github.com/wg-easy/wg-easy): [15.3.0](https://github.com/wg-easy/wg-easy/releases/tag/v15.3.0) ⇾ [15.4.0](https://github.com/wg-easy/wg-easy/releases/tag/v15.4.0)
 * [WhatsApp Bridge](https://github.com/mautrix/whatsapp): [v0.2607.0](https://github.com/mautrix/whatsapp/releases/tag/v0.2607.0) ⇾ [v0.2608.0](https://github.com/mautrix/whatsapp/releases/tag/v0.2608.0)
