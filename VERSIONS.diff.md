@@ -8,6 +8,7 @@
 
 * [Borgmatic](https://github.com/etkecc/borgmatic): 2.1.6 ⇾ 2.1.7
 * [Discord Bridge](https://github.com/mautrix/discord): [v0.7.6](https://github.com/mautrix/discord/releases/tag/v0.7.6) ⇾ [v0.7.7](https://github.com/mautrix/discord/releases/tag/v0.7.7)
+* [Fluffychat](https://github.com/krille-chan/fluffychat): [v2.8.0](https://github.com/krille-chan/fluffychat/releases/tag/v2.8.0) ⇾ [v2.9.1](https://github.com/krille-chan/fluffychat/releases/tag/v2.9.1)
 * [Google Messages Bridge](https://github.com/mautrix/gmessages): [v0.2605.0](https://github.com/mautrix/gmessages/releases/tag/v0.2605.0) ⇾ [v0.2608.0](https://github.com/mautrix/gmessages/releases/tag/v0.2608.0)
 * [Linkding](https://github.com/sissbruecker/linkding): [1.46.0](https://github.com/sissbruecker/linkding/releases/tag/v1.46.0) ⇾ [1.46.1](https://github.com/sissbruecker/linkding/releases/tag/v1.46.1)
 * [LinkedIn Bridge](https://github.com/mautrix/linkedin): [v0.2604.0](https://github.com/mautrix/linkedin/releases/tag/v0.2604.0) ⇾ [v0.2608.0](https://github.com/mautrix/linkedin/releases/tag/v0.2608.0)
