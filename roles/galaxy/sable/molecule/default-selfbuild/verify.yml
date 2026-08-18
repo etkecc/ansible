@@ -1,0 +1,53 @@
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+# SPDX-FileCopyrightText: 2026 spatterlight
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify Sable systemd service
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Wait for Sable service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: sable.service
+      register: sable_service
+      until: sable_service.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert Sable service is active
+      ansible.builtin.assert:
+        that: sable_service.status.ActiveState == 'active'
+        fail_msg: "sable.service not active ({{ sable_service.status.ActiveState }})"
+        success_msg: "sable.service is active"
+
+    - name: Retrieve Sable service log for debugging
+      when: sable_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu sable.service
+      changed_when: false
+
+    - name: Wait for Sable HTTP endpoint to respond (up to 10m)
+      ansible.builtin.uri:
+        url: "http://localhost:8080/"
+        method: GET
+        status_code: [200, 302]
+        follow_redirects: none
+      register: sable_endpoint
+      until: sable_endpoint.status in [200, 302]
+      retries: 120
+      delay: 5
+
+    - name: Assert Sable HTTP endpoint responds
+      ansible.builtin.assert:
+        that: sable_endpoint.status in [200, 302]
+        fail_msg: "Sable did not respond as expected ({{ sable_endpoint.status | default('no response') }})"
+        success_msg: "Sable responded with {{ sable_endpoint.status }}"
+
+    - name: Show Sable systemd service status summary
+      ansible.builtin.debug:
+        msg:
+          - "Sable systemd: {{ sable_service.status.ActiveState }}"
+          - "Sable HTTP: {{ sable_endpoint.status }}"

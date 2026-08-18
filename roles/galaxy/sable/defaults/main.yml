@@ -21,7 +21,7 @@ sable_base_path: "/{{ sable_identifier }}"
 sable_config_path: "{{ sable_base_path }}/config"
 
 # renovate: datasource=docker depName=ghcr.io/sableclient/sable
-sable_version: 1.20.0
+sable_version: 1.21.0
 
 sable_uid: ""
 sable_gid: ""
@@ -48,7 +48,7 @@ sable_container_image_registry_prefix_upstream_default: ghcr.io/
 sable_container_image_self_build: false
 sable_container_image_self_build_name: "sableclient/sable:{{ sable_container_image_self_build_repo_version }}"
 sable_container_image_self_build_repo: "https://github.com/sableclient/sable.git"
-sable_container_image_self_build_repo_version: "{{ sable_version if sable_version != 'latest' else 'main' }}"
+sable_container_image_self_build_repo_version: "{{ 'v' + sable_version if sable_version != 'latest' else 'main' }}"
 sable_container_image_self_build_src_files_path: "{{ sable_base_path }}/docker-src"
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.

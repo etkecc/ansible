@@ -19,6 +19,7 @@ jobs:
           - debian13
         scenario:
           - default
+          - default-selfbuild
       fail-fast: false
 
     env:

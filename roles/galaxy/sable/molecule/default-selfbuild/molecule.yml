@@ -39,6 +39,9 @@ provisioner:
         sable_container_labels_traefik_enabled: false
         sable_container_http_host_bind_port: 8080
         sable_default_hs_url: https://matrix.org
+
+        # Test self-building
+        sable_container_image_self_build: true
   env:
     # Workaround for https://github.com/ansible/molecule/issues/4391
     ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles

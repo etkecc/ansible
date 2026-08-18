@@ -19,6 +19,7 @@
 * [Postgres Container Image V16](https://github.com/postgres/postgres): 16.14 ⇾ 16.15
 * [Postgres Container Image V17](https://github.com/postgres/postgres): 17.10 ⇾ 17.11
 * [Postgres Container Image V18](https://github.com/postgres/postgres): 18.4 ⇾ 18.6
+* [Sable](https://github.com/sableclient/sable): [1.20.0](https://github.com/sableclient/sable/releases/tag/v1.20.0) ⇾ [1.21.0](https://github.com/sableclient/sable/releases/tag/v1.21.0)
 * [Signal Bridge](https://github.com/mautrix/signal): [v0.2607.0](https://github.com/mautrix/signal/releases/tag/v0.2607.0) ⇾ [v0.2608.0](https://github.com/mautrix/signal/releases/tag/v0.2608.0)
 * [Slack Bridge](https://github.com/mautrix/slack): [v0.2607.0](https://github.com/mautrix/slack/releases/tag/v0.2607.0) ⇾ [v0.2608.0](https://github.com/mautrix/slack/releases/tag/v0.2608.0)
 * [Telegram Bridge](https://github.com/mautrix/telegram): [v0.2607.0](https://github.com/mautrix/telegram/releases/tag/v0.2607.0) ⇾ [v0.2608.0](https://github.com/mautrix/telegram/releases/tag/v0.2608.0)
