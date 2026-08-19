@@ -1,5 +1,5 @@
 * Alpine: edge
-* Authentication Service: 1.22.0
+* Authentication Service: 1.23.0
 * Baibot: v1.25.0
 * Bluesky Bridge: v0.2510.0
 * Borg: 1.4.5
@@ -10,7 +10,7 @@
 * Coturn: 4.9.0
 * Discord Bridge: v0.7.7
 * Draupnir: v3.1.0
-* Element: v1.12.25
+* Element: v1.12.26
 * Etherpad: 2.7.2
 * Exim Relay: 4.99.1-r0-2
 * Firezone: 0.7.36
@@ -31,7 +31,7 @@
 * Ketesa: v1.4.0
 * Languagetool: 6.8
 * Line Bridge: 412eda7f028f0ee946d6fe584c64c7e97f27c7a7
-* Linkding: 1.46.1
+* Linkding: 1.46.2
 * LinkedIn Bridge: v0.2608.0
 * Livekit JWT Service: 0.5.0
 * Livekit Server: v1.13.5
@@ -53,7 +53,7 @@
 * Postgres Container Image V18: 18.6
 * Postgres Container Image V9: 9.6.24
 * Postmoogle Bridge: v0.9.31
-* Prometheus: v3.13.2
+* Prometheus: v3.14.0
 * Prometheus Nginxlog Exporter: v1.10.0
 * Prometheus Node Exporter: v1.12.1
 * Prometheus Postgres Exporter: v0.20.1
@@ -67,12 +67,12 @@
 * Static Files: 2.44.0
 * Steam Bridge: 1.3.1
 * Sygnal: v0.17.0
-* Synapse: v1.158.0
+* Synapse: v1.159.0
 * Synapse Auto Compressor: v0.0.3
 * Synapse Compress State: v0.0.3
 * Synapse HTTP Antispam: v0.5.1
 * Synapse Reverse Proxy Companion: 1.31.3-alpine
-* Synapse S3 Storage Provider: 1.6.1
+* Synapse S3 Storage Provider: 1.7.0
 * Telegram Bridge: v0.2608.0
 * Traefik: v3.7.10
 * Traefik Certs Dumper: v2.11.4
