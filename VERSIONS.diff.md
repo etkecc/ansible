@@ -14,6 +14,7 @@
 * [Google Messages Bridge](https://github.com/mautrix/gmessages): [v0.2605.0](https://github.com/mautrix/gmessages/releases/tag/v0.2605.0) ⇾ [v0.2608.0](https://github.com/mautrix/gmessages/releases/tag/v0.2608.0)
 * [Linkding](https://github.com/sissbruecker/linkding): [1.46.0](https://github.com/sissbruecker/linkding/releases/tag/v1.46.0) ⇾ [1.46.2](https://github.com/sissbruecker/linkding/releases/tag/v1.46.2)
 * [LinkedIn Bridge](https://github.com/mautrix/linkedin): [v0.2604.0](https://github.com/mautrix/linkedin/releases/tag/v0.2604.0) ⇾ [v0.2608.0](https://github.com/mautrix/linkedin/releases/tag/v0.2608.0)
+* [Livekit JWT Service](https://github.com/element-hq/lk-jwt-service): [0.5.0](https://github.com/element-hq/lk-jwt-service/releases/tag/v0.5.0) ⇾ [0.6.0](https://github.com/element-hq/lk-jwt-service/releases/tag/v0.6.0)
 * [Meta Instagram Bridge](https://github.com/mautrix/meta): [v0.2607.0](https://github.com/mautrix/meta/releases/tag/v0.2607.0) ⇾ [v0.2608.0](https://github.com/mautrix/meta/releases/tag/v0.2608.0)
 * [Meta Messenger Bridge](https://github.com/mautrix/meta): [v0.2607.0](https://github.com/mautrix/meta/releases/tag/v0.2607.0) ⇾ [v0.2608.0](https://github.com/mautrix/meta/releases/tag/v0.2608.0)
 * [Postgres Container Image V14](https://github.com/postgres/postgres): 14.23 ⇾ 14.24
