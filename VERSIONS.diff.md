@@ -29,6 +29,7 @@
 * [Synapse](https://github.com/element-hq/synapse): [v1.158.0](https://github.com/element-hq/synapse/releases/tag/v1.158.0) ⇾ [v1.159.0](https://github.com/element-hq/synapse/releases/tag/v1.159.0)
 * [Synapse S3 Storage Provider](https://github.com/element-hq/synapse): [1.6.1](https://github.com/element-hq/synapse/releases/tag/v1.6.1) ⇾ [1.7.0](https://github.com/element-hq/synapse/releases/tag/v1.7.0)
 * [Telegram Bridge](https://github.com/mautrix/telegram): [v0.2607.0](https://github.com/mautrix/telegram/releases/tag/v0.2607.0) ⇾ [v0.2608.0](https://github.com/mautrix/telegram/releases/tag/v0.2608.0)
+* [Traefik](https://github.com/traefik/traefik): [v3.7.10](https://github.com/traefik/traefik/releases/tag/v3.7.10) ⇾ [v3.7.11](https://github.com/traefik/traefik/releases/tag/v3.7.11)
 * [Twitter Bridge](https://github.com/mautrix/twitter): [v0.2606.0](https://github.com/mautrix/twitter/releases/tag/v0.2606.0) ⇾ [v0.2608.0](https://github.com/mautrix/twitter/releases/tag/v0.2608.0)
 * [Wg Easy](https://github.com/wg-easy/wg-easy): [15.3.0](https://github.com/wg-easy/wg-easy/releases/tag/v15.3.0) ⇾ [15.4.0](https://github.com/wg-easy/wg-easy/releases/tag/v15.4.0)
 * [WhatsApp Bridge](https://github.com/mautrix/whatsapp): [v0.2607.0](https://github.com/mautrix/whatsapp/releases/tag/v0.2607.0) ⇾ [v0.2608.0](https://github.com/mautrix/whatsapp/releases/tag/v0.2608.0)
