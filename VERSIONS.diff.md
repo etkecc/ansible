@@ -12,6 +12,7 @@
 * [Element](https://github.com/element-hq/element-web): [v1.12.25](https://github.com/element-hq/element-web/releases/tag/v1.12.25) ⇾ [v1.12.26](https://github.com/element-hq/element-web/releases/tag/v1.12.26)
 * [Fluffychat](https://github.com/krille-chan/fluffychat): [v2.8.0](https://github.com/krille-chan/fluffychat/releases/tag/v2.8.0) ⇾ [v2.9.1](https://github.com/krille-chan/fluffychat/releases/tag/v2.9.1)
 * [Google Messages Bridge](https://github.com/mautrix/gmessages): [v0.2605.0](https://github.com/mautrix/gmessages/releases/tag/v0.2605.0) ⇾ [v0.2608.0](https://github.com/mautrix/gmessages/releases/tag/v0.2608.0)
+* [Jitsi](https://github.com/jitsi/docker-jitsi-meet): [stable-11146-1](https://github.com/jitsi/docker-jitsi-meet/releases/tag/stable-11146-1) ⇾ [stable-11146-2](https://github.com/jitsi/docker-jitsi-meet/releases/tag/stable-11146-2)
 * [Linkding](https://github.com/sissbruecker/linkding): [1.46.0](https://github.com/sissbruecker/linkding/releases/tag/v1.46.0) ⇾ [1.46.2](https://github.com/sissbruecker/linkding/releases/tag/v1.46.2)
 * [LinkedIn Bridge](https://github.com/mautrix/linkedin): [v0.2604.0](https://github.com/mautrix/linkedin/releases/tag/v0.2604.0) ⇾ [v0.2608.0](https://github.com/mautrix/linkedin/releases/tag/v0.2608.0)
 * [Livekit JWT Service](https://github.com/element-hq/lk-jwt-service): [0.5.0](https://github.com/element-hq/lk-jwt-service/releases/tag/v0.5.0) ⇾ [0.6.0](https://github.com/element-hq/lk-jwt-service/releases/tag/v0.6.0)
