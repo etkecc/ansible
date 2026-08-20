@@ -71,7 +71,7 @@
 * Synapse Auto Compressor: v0.0.3
 * Synapse Compress State: v0.0.3
 * Synapse HTTP Antispam: v0.5.1
-* Synapse Reverse Proxy Companion: 1.31.3-alpine
+* Synapse Reverse Proxy Companion: 1.31.4-alpine
 * Synapse S3 Storage Provider: 1.7.0
 * Telegram Bridge: v0.2608.0
 * Traefik: v3.7.11

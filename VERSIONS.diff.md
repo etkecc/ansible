@@ -28,6 +28,7 @@
 * [Signal Bridge](https://github.com/mautrix/signal): [v0.2607.0](https://github.com/mautrix/signal/releases/tag/v0.2607.0) ⇾ [v0.2608.0](https://github.com/mautrix/signal/releases/tag/v0.2608.0)
 * [Slack Bridge](https://github.com/mautrix/slack): [v0.2607.0](https://github.com/mautrix/slack/releases/tag/v0.2607.0) ⇾ [v0.2608.0](https://github.com/mautrix/slack/releases/tag/v0.2608.0)
 * [Synapse](https://github.com/element-hq/synapse): [v1.158.0](https://github.com/element-hq/synapse/releases/tag/v1.158.0) ⇾ [v1.159.0](https://github.com/element-hq/synapse/releases/tag/v1.159.0)
+* [Synapse Reverse Proxy Companion](https://github.com/element-hq/synapse): 1.31.3-alpine ⇾ 1.31.4-alpine
 * [Synapse S3 Storage Provider](https://github.com/element-hq/synapse): [1.6.1](https://github.com/element-hq/synapse/releases/tag/v1.6.1) ⇾ [1.7.0](https://github.com/element-hq/synapse/releases/tag/v1.7.0)
 * [Telegram Bridge](https://github.com/mautrix/telegram): [v0.2607.0](https://github.com/mautrix/telegram/releases/tag/v0.2607.0) ⇾ [v0.2608.0](https://github.com/mautrix/telegram/releases/tag/v0.2608.0)
 * [Traefik](https://github.com/traefik/traefik): [v3.7.10](https://github.com/traefik/traefik/releases/tag/v3.7.10) ⇾ [v3.7.11](https://github.com/traefik/traefik/releases/tag/v3.7.11)
