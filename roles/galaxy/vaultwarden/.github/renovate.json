@@ -1,56 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended",
-    ":semanticCommitsDisabled"
-  ],
-  "labels": [
-    "dependencies"
-  ],
-  "packageRules": [
-    {
-      "matchFileNames": [
-        ".github/workflows/autotag.yml",
-        ".github/workflows/close-stale-issues.yml",
-        ".github/workflows/molecule.yml",
-        ".github/workflows/pre-commit.yml",
-        ".pre-commit-config.yaml",
-        ".python-version",
-        "mise.toml",
-        "molecule/requirements.txt"
-      ],
-      "enabled": true,
-      "automerge": true,
-      "automergeType": "branch",
-      "schedule": ["* * 1 */6 *"],
-      "automergeSchedule": ["* * 1-14 */6 *"]
-    },
-    {
-      "matchFileNames": [
-        "molecule/**/requirements.yml"
-      ],
-      "enabled": true,
-      "automerge": true,
-      "automergeType": "branch",
-      "ignoreUnstable": false,
-      "versioning": "loose"
-    }
-  ],
-  "customManagers": [
-    {
-      "customType": "regex",
-      "managerFilePatterns": [
-        "/defaults/main.yml$/"
-      ],
-      "matchStrings": [
-        "# renovate: datasource=(?<datasource>[a-z-.]+?) depName=(?<depName>[^\\s]+?)(?: (?:lookupName|packageName)=(?<packageName>[^\\s]+?))?(?: versioning=(?<versioning>[a-z-0-9]+?))?\\s+[A-Za-z0-9_]+?(?:_version|_tag)\\s*:\\s*[\"']?(?<currentValue>.+?)[\"']?\\s"
-      ]
-    }
-  ],
-  "pre-commit": {
-    "enabled": true
-  },
-  "pyenv": {
-    "enabled": true
-  }
+    "github>mother-of-all-self-hosting/renovate-config",
+    "github>mother-of-all-self-hosting/renovate-config//patch-automerge"
+  ]
 }
