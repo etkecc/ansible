@@ -26,27 +26,25 @@
     - labels
   register: uptime_kuma_support_files_result
 
-- name: Ensure Uptime Kuma container image is pulled via community.docker.docker_image
+- name: Ensure Uptime Kuma container image is pulled via community.docker.docker_image_pull
   when: devture_systemd_docker_base_container_image_pull_method == 'ansible-module'
-  community.docker.docker_image:
+  community.docker.docker_image_pull:
     name: "{{ uptime_kuma_container_image }}"
-    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
-    force_source: "{{ uptime_kuma_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
-    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else uptime_kuma_container_image_force_pull }}"
-  register: uptime_kuma_container_image_pull_result
+    pull: always
+  register: uptime_kuma_container_image_pull_result_ansible_module
   retries: "{{ devture_playbook_help_container_retries_count }}"
   delay: "{{ devture_playbook_help_container_retries_delay }}"
-  until: uptime_kuma_container_image_pull_result is not failed
+  until: uptime_kuma_container_image_pull_result_ansible_module is not failed
 
 - name: Ensure Uptime Kuma container image is pulled via ansible.builtin.command
   when: devture_systemd_docker_base_container_image_pull_method == 'command'
   ansible.builtin.command:
     cmd: "{{ devture_systemd_docker_base_host_command_docker }} pull {{ uptime_kuma_container_image }}"
-  register: uptime_kuma_container_image_pull_result
+  register: uptime_kuma_container_image_pull_result_command
   retries: "{{ devture_playbook_help_container_retries_count }}"
   delay: "{{ devture_playbook_help_container_retries_delay }}"
-  until: uptime_kuma_container_image_pull_result is not failed
-  changed_when: "'Downloaded newer image' in uptime_kuma_container_image_pull_result.stdout"
+  until: uptime_kuma_container_image_pull_result_command is not failed
+  changed_when: "'Downloaded newer image' in uptime_kuma_container_image_pull_result_command.stdout"
 
 - name: Ensure Uptime Kuma container network is created via community.docker.docker_network
   when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
@@ -82,5 +80,6 @@
       {{
         uptime_kuma_support_files_result.changed | default(false)
         or uptime_kuma_systemd_service_result.changed | default(false)
-        or uptime_kuma_container_image_pull_result.changed | default(false)
+        or uptime_kuma_container_image_pull_result_ansible_module.changed | default(false)
+        or uptime_kuma_container_image_pull_result_command.changed | default(false)
       }}

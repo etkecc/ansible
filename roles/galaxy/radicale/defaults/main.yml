@@ -36,6 +36,15 @@ radicale_container_image_registry_prefix: "{{ radicale_container_image_registry_
 radicale_container_image_registry_prefix_upstream: "{{ radicale_container_image_registry_prefix_upstream_default }}"
 radicale_container_image_registry_prefix_upstream_default: docker.io/
 
+# Controls whether the container image is built from Radicale's own sources,
+# instead of pulling the `tomsquest/docker-radicale` image.
+#
+# The two images do not start Radicale the same way: the `tomsquest/docker-radicale`
+# image points Radicale at `/config/config` itself, while an image built from
+# Radicale's own `Dockerfile` starts it with no `--config` argument at all.
+# The systemd service therefore passes the configuration file path explicitly
+# when self-building. Without it, Radicale runs on its built-in defaults, which
+# deny every login and keep collections somewhere other than this role's `/data` mount.
 radicale_container_image_self_build: false
 radicale_container_image_self_build_name: "kozea/radicale:{{ radicale_container_image_self_build_repo_version }}" # The image name must be lowercase
 radicale_container_image_self_build_repo: "https://github.com/Kozea/Radicale.git"

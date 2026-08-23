@@ -1,0 +1,146 @@
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+# SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify Uptime Kuma
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    # Role defaults are not in scope here, but the version that Renovate bumps
+    # lives in them and is what the running server is checked against below.
+    - name: Load the Uptime Kuma role defaults
+      ansible.builtin.include_vars:
+        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+        name: uptime_kuma_defaults
+
+    - name: Wait for Uptime Kuma service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: uptime-kuma.service
+      register: uptime_kuma_service
+      until: uptime_kuma_service.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert Uptime Kuma service is active
+      ansible.builtin.assert:
+        that: uptime_kuma_service.status.ActiveState == 'active'
+        fail_msg: "uptime-kuma.service not active ({{ uptime_kuma_service.status.ActiveState }})"
+        success_msg: "uptime-kuma.service is active"
+
+    - name: Retrieve Uptime Kuma service log for debugging
+      when: uptime_kuma_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu uptime-kuma.service
+      changed_when: false
+
+    # This only establishes that something is listening, and deliberately
+    # asserts nothing about it. Uptime Kuma answers 200 with the same
+    # application shell on every path, including paths that do not exist, so an
+    # HTTP response here is not evidence that Uptime Kuma is what answered, nor
+    # that it is configured. The Socket.IO probe below is what establishes that.
+    - name: Wait for the Uptime Kuma port to start answering (up to 10m)
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:{{ uptime_kuma_container_http_host_bind_port }}/"
+        method: GET
+      register: uptime_kuma_port
+      until: uptime_kuma_port.status == 200
+      retries: 120
+      delay: 5
+
+    # Completes the setup wizard, logs in as the admin it created and reads back
+    # what the running server reports about itself. See the script for why none
+    # of this is reachable over plain HTTP.
+    - name: Probe the Uptime Kuma Socket.IO API
+      ansible.builtin.script:
+        cmd: >-
+          files/probe-uptime-kuma.py
+          http://127.0.0.1:{{ uptime_kuma_container_http_host_bind_port }}
+          {{ uptime_kuma_molecule_admin_username | quote }}
+          {{ uptime_kuma_molecule_admin_password | quote }}
+      register: uptime_kuma_probe
+      changed_when: false
+
+    - name: Parse the Uptime Kuma probe report
+      ansible.builtin.set_fact:
+        uptime_kuma_report: "{{ uptime_kuma_probe.stdout | from_json }}"
+
+    # The admin is written into the SQLite database under `/app/data`, which is
+    # the directory this role creates, chowns to the configured uid/gid and
+    # bind-mounts into the container. A wrong mount or wrong ownership fails
+    # here rather than passing silently.
+    - name: Assert the Uptime Kuma setup wizard could be completed
+      ansible.builtin.assert:
+        that:
+          - uptime_kuma_report.ok
+          - uptime_kuma_report.setup_completed or uptime_kuma_report.already_configured
+          - uptime_kuma_report.login_ok
+          - uptime_kuma_report.token_returned
+        fail_msg: "Uptime Kuma could not be set up and logged into: {{ uptime_kuma_report }}"
+        success_msg: "Uptime Kuma accepted the setup wizard and issued a session token"
+
+    # Uptime Kuma withholds its version from anonymous connections, so this is
+    # the version the running Node process reports about itself once
+    # authenticated, not a tag name read back from Docker.
+    - name: Assert the running Uptime Kuma is the version this role installs
+      ansible.builtin.assert:
+        that: uptime_kuma_report.info.version == uptime_kuma_defaults.uptime_kuma_version
+        fail_msg: >-
+          Uptime Kuma reports {{ uptime_kuma_report.info.version }},
+          expected {{ uptime_kuma_defaults.uptime_kuma_version }}
+        success_msg: "Uptime Kuma reports {{ uptime_kuma_report.info.version }}"
+
+    # `uptime_kuma_environment_variables_tz` and
+    # `uptime_kuma_environment_variables_additional_variables` are both rendered
+    # into `templates/env.j2`, which the systemd unit passes as `--env-file`.
+    # The scenario sets both to non-default values, so these two assertions fail
+    # if that chain is broken anywhere between the role defaults and the process.
+    - name: Assert the environment file reached the Uptime Kuma process
+      ansible.builtin.assert:
+        that:
+          - uptime_kuma_report.info.serverTimezone == uptime_kuma_environment_variables_tz
+          - uptime_kuma_report.info.isContainer
+        fail_msg: >-
+          Uptime Kuma reports timezone {{ uptime_kuma_report.info.serverTimezone }}
+          (expected {{ uptime_kuma_environment_variables_tz }})
+          and isContainer {{ uptime_kuma_report.info.isContainer }} (expected true)
+        success_msg: >-
+          Uptime Kuma runs with the configured timezone
+          ({{ uptime_kuma_report.info.serverTimezone }}) and additional environment variables
+
+    - name: Retrieve the Uptime Kuma container definition
+      ansible.builtin.command:
+        cmd: docker inspect uptime-kuma
+      register: uptime_kuma_container_inspect
+      changed_when: false
+
+    - name: Parse the Uptime Kuma container definition
+      ansible.builtin.set_fact:
+        uptime_kuma_container: "{{ uptime_kuma_container_inspect.stdout | from_json | first }}"
+
+    # `templates/labels.j2` is passed to the container as `--label-file`. The
+    # scenario adds labels through
+    # `uptime_kuma_container_labels_additional_labels_custom`, so finding them
+    # on the running container proves that file is rendered and applied.
+    - name: Assert the label file reached the Uptime Kuma container
+      ansible.builtin.assert:
+        # Subscripting a missing label raises instead of failing the assertion,
+        # which would bury `fail_msg` under a Jinja error, so ask for it.
+        that:
+          - uptime_kuma_container.Config.Labels.get('mash.molecule.role') == 'uptime-kuma'
+          - uptime_kuma_container.Config.Labels.get('mash.molecule.scenario') == 'default'
+        fail_msg: "The configured container labels are missing: {{ uptime_kuma_container.Config.Labels }}"
+        success_msg: "The configured container labels are applied to the running container"
+
+    - name: Show Uptime Kuma verification summary
+      ansible.builtin.debug:
+        msg:
+          - "Uptime Kuma systemd: {{ uptime_kuma_service.status.ActiveState }}"
+          - "Uptime Kuma version: {{ uptime_kuma_report.info.version }}"
+          - "Uptime Kuma setup wizard offered: {{ uptime_kuma_report.setup_offered }}"
+          - "Uptime Kuma admin created by this run: {{ uptime_kuma_report.setup_completed }}"
+          - "Uptime Kuma timezone: {{ uptime_kuma_report.info.serverTimezone }}"
+          - "Uptime Kuma container labels: {{ uptime_kuma_container.Config.Labels }}"

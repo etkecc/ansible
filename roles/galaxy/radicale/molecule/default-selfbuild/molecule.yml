@@ -13,7 +13,7 @@ dependency:
 driver:
   name: docker
 platforms:
-  - name: radicale-${MOLECULE_DISTRO:-ubuntu2604}-default
+  - name: radicale-${MOLECULE_DISTRO:-ubuntu2604}-default-selfbuild
     image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2604}-ansible:latest"
     command: ${MOLECULE_DOCKER_COMMAND:-""}
     volumes:
@@ -43,11 +43,15 @@ provisioner:
         # many dot-separated components of `radicale_version` it can be compared
         # against.
         #
-        # The `tomsquest/docker-radicale` image carries its own release number as
-        # a fourth component (image 3.7.6.0 packages Radicale 3.7.6), so only the
-        # first three belong to Radicale itself. The role derives the self-build
-        # branch name from the same three.
-        radicale_molecule_version_command: /venv/bin/radicale --version
+        # The self-built image comes out of Radicale's own `Dockerfile`, which
+        # installs into a virtualenv at `/app` whose console scripts still carry
+        # the shebang of the build stage. Radicale therefore has to be started
+        # through the interpreter, the same way that image's entrypoint does.
+        #
+        # The role builds it from the first three components of `radicale_version`
+        # (image 3.7.6.0 packages Radicale 3.7.6), so the same three are what the
+        # running version is compared against.
+        radicale_molecule_version_command: /app/bin/python /app/bin/radicale --version
         radicale_molecule_version_components: 3
 
         # Where the `[storage] filesystem_folder` setting in the configuration
@@ -74,6 +78,9 @@ provisioner:
         radicale_hostname: localhost
         radicale_container_labels_traefik_enabled: false
         radicale_container_http_host_bind_port: "127.0.0.1:5232"
+
+        # Test self-building
+        radicale_container_image_self_build: true
 
         # The test user's credentials are deliberately NOT defined here.
         # A bcrypt password hash is full of dollar signs, and Molecule expands

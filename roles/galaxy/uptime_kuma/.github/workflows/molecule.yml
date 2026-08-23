@@ -43,7 +43,6 @@ jobs:
           - debian13
         scenario:
           - default
-          - default-selfbuild
       fail-fast: false
 
     env:
@@ -55,25 +54,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7.0.0
         with:
-          path: radicale
+          path: uptime-kuma
 
       - name: Set up Python
         uses: actions/setup-python@v6.3.0
         with:
-          python-version-file: radicale/.python-version
+          python-version-file: uptime-kuma/.python-version
           cache: pip
-          cache-dependency-path: radicale/molecule/requirements.txt
+          cache-dependency-path: uptime-kuma/molecule/requirements.txt
 
       - name: Install Python dependencies
-        working-directory: radicale
+        working-directory: uptime-kuma
         run: pip install -r molecule/requirements.txt
 
       - name: Cache Ansible collections
         uses: actions/cache@v6.1.0
         with:
           path: ~/.ansible/collections
-          key: ansible-collections-${{ hashFiles('radicale/molecule/default/requirements.yml') }}
+          key: ansible-collections-${{ hashFiles('uptime-kuma/molecule/default/requirements.yml') }}
 
       - name: Run Molecule
-        working-directory: radicale
+        working-directory: uptime-kuma
         run: molecule test --scenario-name ${{ matrix.scenario }}

@@ -1,0 +1,66 @@
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+# SPDX-FileCopyrightText: 2026 spatterlight
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+dependency:
+  name: galaxy
+  options:
+    requirements-file: requirements.yml
+    force: true
+driver:
+  name: docker
+platforms:
+  - name: uptime-kuma-${MOLECULE_DISTRO:-ubuntu2604}-default
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2604}-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callback_result_format: yaml
+  inventory:
+    group_vars:
+      all:
+        # Helper variables
+        uptime_kuma_debug_service_enabled: false
+
+        # The admin that `verify.yml` creates by completing the setup wizard.
+        # Uptime Kuma refuses passwords shorter than 6 characters.
+        uptime_kuma_molecule_admin_username: molecule
+        uptime_kuma_molecule_admin_password: molecule-probe-password
+
+        # Variables for Uptime Kuma
+        uptime_kuma_uid: 1000
+        uptime_kuma_gid: 1000
+        uptime_kuma_hostname: localhost
+        uptime_kuma_container_labels_traefik_enabled: false
+        uptime_kuma_container_http_host_bind_port: 3001
+
+        # Deliberately not the role default of UTC. The running server reports
+        # its timezone back over Socket.IO, so `verify.yml` can tell whether
+        # `templates/env.j2` actually reached the process.
+        uptime_kuma_environment_variables_tz: Asia/Tokyo
+
+        # Uptime Kuma reports `isContainer` based on this variable, which gives
+        # `verify.yml` a second, independently rendered line of the environment
+        # file to observe from the outside.
+        uptime_kuma_environment_variables_additional_variables: |
+          UPTIME_KUMA_IS_CONTAINER=1
+
+        # Rendered into `templates/labels.j2` and applied to the container via
+        # `--label-file`, so that `verify.yml` can confirm that file is used.
+        uptime_kuma_container_labels_additional_labels_custom:
+          - mash.molecule.role=uptime-kuma
+          - mash.molecule.scenario=default
+  env:
+    # Workaround for https://github.com/ansible/molecule/issues/4391
+    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles
+verifier:
+  name: ansible

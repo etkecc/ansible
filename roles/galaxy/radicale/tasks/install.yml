@@ -84,11 +84,19 @@
         force: "yes"
       register: radicale_git_pull_results
 
+    # Radicale's `Dockerfile` is deliberately independent of the source tree it
+    # sits in: it installs Radicale from a release archive chosen by its
+    # `VERSION` build argument, which defaults to `master`. Checking the
+    # repository out at a tag therefore only picks the `Dockerfile`, not the
+    # Radicale that ends up in the image - the build argument has to be passed
+    # too, or every self-built image runs Radicale's development branch.
     - name: Ensure Radicale container image is built
       community.docker.docker_image_build:
         name: "{{ radicale_container_image_self_build_name }}"
         dockerfile: Dockerfile
         path: "{{ radicale_container_image_self_build_src_files_path }}"
+        args:
+          VERSION: "{{ radicale_container_image_self_build_repo_version }}"
         pull: true
         rebuild: "{{ 'always' if radicale_git_pull_results.changed | bool else 'never' }}"
       register: radicale_container_image_build_result

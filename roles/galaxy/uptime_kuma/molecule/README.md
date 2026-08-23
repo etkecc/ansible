@@ -43,15 +43,15 @@ pip3 install -r ./molecule/requirements.txt
 
 ## Scenarios
 
-Currently these testing scenarios are available:
+Currently there is one testing scenario available.
 
 ### `default`
 
-Tests a standard Radicale installation.
+Tests a standard Uptime Kuma installation.
 
-### `default-selfbuild`
+Uptime Kuma answers `200` with the same single-page-application shell on every path, including paths that do not exist, so an HTTP response proves nothing about the server behind it. The scenario therefore verifies the installation over Uptime Kuma's Socket.IO API instead (see `default/files/probe-uptime-kuma.py`): it completes the setup wizard, which writes the admin into the SQLite database in the bind-mounted data directory, logs in as that admin, and reads back the version the running server reports — a version Uptime Kuma withholds from unauthenticated connections.
 
-Tests a standard Radicale installation with self-building the container image.
+The scenario also sets the timezone, an additional environment variable and container labels to values that are not the role defaults, so that the assertions fail if `templates/env.j2` or `templates/labels.j2` stop reaching the container.
 
 ## Running
 
