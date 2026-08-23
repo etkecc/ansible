@@ -13,12 +13,16 @@
       ansible.builtin.apt:
         update_cache: true
         cache_valid_time: 600
-      when: ansible_os_family == 'Debian'
+      when: ansible_facts["os_family"] == 'Debian'
 
     - name: Ensure required packages are installed for WireGuard Easy Molecule tests preparation
       ansible.builtin.package:
         name:
           - python3-requests
+          # Provides `modprobe`, which the role's systemd unit calls to load
+          # the iptables modules that wg-quick needs. The base image does not
+          # ship it, as containers do not usually load kernel modules.
+          - kmod
         state: present
 
     - name: Ensure Docker is installed for WireGuard Easy Molecule tests preparation

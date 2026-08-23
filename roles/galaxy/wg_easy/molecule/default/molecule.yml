@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2026 Suguru Hirahara
 # SPDX-FileCopyrightText: 2026 spatterlight
 #
@@ -17,6 +18,13 @@ platforms:
     command: ${MOLECULE_DOCKER_COMMAND:-""}
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
+      # wg-easy brings its WireGuard interface up with `wg-quick`, which shells
+      # out to `iptables` to install the NAT rules that make the VPN forward
+      # traffic. That needs the `ip_tables`/`ip6_tables` kernel modules, which
+      # the role modprobes below. Kernel modules are a property of the host
+      # rather than of the container, so the host module tree has to be
+      # reachable for `modprobe` to find them.
+      - /lib/modules:/lib/modules:ro
     cgroupns_mode: host
     privileged: true
     pre_build_image: true
@@ -38,6 +46,27 @@ provisioner:
         wg_easy_hostname: localhost
         wg_easy_container_labels_traefik_enabled: false
         wg_easy_container_http_host_bind_port: 8080
+
+        # Without credentials, wg-easy's unattended setup stops half-way and
+        # every request lands on the `/setup/1` wizard, where no VPN exists and
+        # the API is not routed. Supplying them puts wg-easy into the state a
+        # real instance is in after setup, so that the verification exercises
+        # wg-easy itself rather than its installer.
+        #
+        # These are passed through to `INIT_USERNAME`/`INIT_PASSWORD`, which
+        # wg-easy hashes (argon2) on first start. wg-easy rejects passwords
+        # shorter than 12 characters.
+        wg_easy_environment_variables_additional_variable_init_username: molecule
+        wg_easy_environment_variables_additional_variable_init_password: molecule-verify-password
+
+        # `wg-quick` installs its NAT rules with the legacy iptables binaries,
+        # which need these modules present. Docker on the host may well have
+        # loaded them already, but nothing guarantees it - and when they are
+        # missing, wg-quick fails and wg-easy comes up with no VPN at all
+        # while still serving HTTP. Turning the role's own modprobe support on
+        # both covers that and exercises the feature.
+        wg_easy_systemd_modprobe_iptables_enabled: true
+        wg_easy_systemd_modprobe_ip6tables_enabled: true
   env:
     # Workaround for https://github.com/ansible/molecule/issues/4391
     ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles

@@ -1,14 +1,36 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2026 Suguru Hirahara
 # SPDX-FileCopyrightText: 2026 spatterlight
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: Verify WireGuard Easy systemd service
+- name: Verify WireGuard Easy
   hosts: all
   become: true
   gather_facts: false
+
+  vars:
+    wg_easy_verify_base_url: "http://localhost:{{ wg_easy_container_http_host_bind_port }}"
+
+    # A client created through the API below, to prove that wg-easy can mint
+    # WireGuard peers and hand out configuration for them.
+    wg_easy_verify_client_name: molecule
+
   tasks:
+    # The role is not included in this playbook, so its defaults are not in
+    # scope. Reading defaults/main.yml directly ties the version assertion
+    # below to the value that Renovate bumps, with nothing to keep in sync
+    # here. include_vars reads from the controller.
+    #
+    # Only leaf values may be read out of this: most of these defaults are
+    # Jinja expressions referring to one another, and resolving those outside
+    # of the role fails.
+    - name: Load the WireGuard Easy role defaults
+      ansible.builtin.include_vars:
+        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+        name: wg_easy_defaults
+
     - name: Wait for WireGuard Easy service to become active (up to 180s)
       ansible.builtin.systemd:
         name: wg-easy.service
@@ -29,25 +51,233 @@
         cmd: journalctl -xeu wg-easy.service
       changed_when: false
 
-    - name: Wait for WireGuard Easy HTTP endpoint to respond (up to 10m)
+    # wg-easy answers this without authentication from the moment its HTTP
+    # listener is up, which makes it the readiness probe. It also reports the
+    # version of the running wg-easy, asserted against the pinned one below.
+    - name: Wait for WireGuard Easy to report its version (up to 10m)
       ansible.builtin.uri:
-        url: "http://localhost:8080/"
+        url: "{{ wg_easy_verify_base_url }}/api/information"
         method: GET
-        status_code: [200, 302]
-        follow_redirects: none
-      register: wg_easy_endpoint
-      until: wg_easy_endpoint.status in [200, 302]
+        return_content: true
+      register: wg_easy_information
+      until: wg_easy_information.status == 200
       retries: 120
       delay: 5
 
-    - name: Assert WireGuard Easy HTTP endpoint responds
+    # wg-easy reports its release with a leading `v` (`v15.4.0`), while the
+    # role variable does not carry one. A prefix match tolerates any build
+    # metadata that a release may append.
+    - name: Assert the running WireGuard Easy is the version this role installs
       ansible.builtin.assert:
-        that: wg_easy_endpoint.status in [200, 302]
-        fail_msg: "WireGuard Easy did not respond as expected ({{ wg_easy_endpoint.status | default('no response') }})"
-        success_msg: "WireGuard Easy responded with {{ wg_easy_endpoint.status }}"
+        that:
+          - wg_easy_information.json.currentRelease | regex_replace('^v', '') is match(wg_easy_defaults.wg_easy_version | string | regex_escape)
+        fail_msg: >-
+          wg-easy reports {{ wg_easy_information.json.currentRelease | default('nothing') }},
+          but the role asks for {{ wg_easy_defaults.wg_easy_version }}
+        success_msg: "wg-easy reports version {{ wg_easy_information.json.currentRelease }}"
 
-    - name: Show WireGuard Easy systemd service status summary
+    # A wg-easy whose unattended setup did not complete redirects every request
+    # to its `/setup/1` wizard, serves no VPN and routes no API - yet still
+    # answers on its HTTP port and passes a container health-check. Pinning the
+    # redirect target to `/login` is what tells a set-up wg-easy apart from a
+    # merely listening one.
+    - name: Retrieve the WireGuard Easy web interface
+      ansible.builtin.uri:
+        url: "{{ wg_easy_verify_base_url }}/"
+        method: GET
+        status_code: [302]
+        follow_redirects: none
+      register: wg_easy_endpoint
+
+    # wg-easy sends a relative `Location`, but the uri module reports it back
+    # resolved against the request URL, so only the path is compared here.
+    - name: Assert WireGuard Easy completed its unattended setup
+      ansible.builtin.assert:
+        that: wg_easy_endpoint.location | urlsplit('path') == '/login'
+        fail_msg: >-
+          wg-easy redirects to {{ wg_easy_endpoint.location | default('nowhere') }} rather than to /login,
+          which means its unattended setup did not complete
+        success_msg: "wg-easy is set up and asks for a login"
+
+    # Everything below goes through the authenticated API, so an instance that
+    # let anyone in would sail through those probes without proving anything.
+    - name: Query the WireGuard Easy client list without authenticating
+      ansible.builtin.uri:
+        url: "{{ wg_easy_verify_base_url }}/api/client"
+        method: GET
+        status_code: [401]
+      register: wg_easy_anonymous
+
+    - name: Assert WireGuard Easy rejects unauthenticated API access
+      ansible.builtin.assert:
+        that: wg_easy_anonymous.status == 401
+        fail_msg: "wg-easy served its client list without authentication"
+        success_msg: "wg-easy rejects unauthenticated API access"
+
+    - name: Attempt to log in to WireGuard Easy with the wrong password
+      ansible.builtin.uri:
+        url: "{{ wg_easy_verify_base_url }}/api/auth/password"
+        method: POST
+        body_format: json
+        body:
+          username: "{{ wg_easy_environment_variables_additional_variable_init_username }}"
+          # Long enough to get past wg-easy's length validation, so that this
+          # is rejected for being wrong rather than for being malformed.
+          password: definitely-not-the-configured-password
+          remember: false
+        status_code: [401]
+      register: wg_easy_bad_login
+
+    - name: Assert WireGuard Easy rejects the wrong password
+      ansible.builtin.assert:
+        that: wg_easy_bad_login.status == 401
+        fail_msg: "wg-easy accepted a password it should have rejected"
+        success_msg: "wg-easy rejects the wrong password"
+
+    # The credentials the role passed through `INIT_USERNAME`/`INIT_PASSWORD`
+    # were hashed by wg-easy on first start. Logging in with them proves that
+    # its unattended setup consumed what the role configured.
+    - name: Log in to WireGuard Easy
+      ansible.builtin.uri:
+        url: "{{ wg_easy_verify_base_url }}/api/auth/password"
+        method: POST
+        body_format: json
+        body:
+          username: "{{ wg_easy_environment_variables_additional_variable_init_username }}"
+          password: "{{ wg_easy_environment_variables_additional_variable_init_password }}"
+          remember: false
+        status_code: [200]
+      register: wg_easy_login
+
+    - name: Assert the WireGuard Easy login succeeded
+      ansible.builtin.assert:
+        that: wg_easy_login.json.status == 'success'
+        fail_msg: "Unexpected login response: {{ wg_easy_login.json | default('no payload') }}"
+        success_msg: "wg-easy accepts the credentials the role configured"
+
+    - name: Read the WireGuard Easy session back
+      ansible.builtin.uri:
+        url: "{{ wg_easy_verify_base_url }}/api/session"
+        method: GET
+        headers:
+          Cookie: "{{ wg_easy_login.cookies_string }}"
+        status_code: [200]
+        return_content: true
+      register: wg_easy_session
+
+    - name: Assert the WireGuard Easy session belongs to the configured admin
+      ansible.builtin.assert:
+        that: wg_easy_session.json.username == wg_easy_environment_variables_additional_variable_init_username
+        fail_msg: >-
+          wg-easy reports the session as {{ wg_easy_session.json.username | default('nobody') }},
+          expected {{ wg_easy_environment_variables_additional_variable_init_username }}
+        success_msg: "wg-easy signed in as {{ wg_easy_session.json.username }}"
+
+    # Creating a client is the one thing wg-easy exists to do, and it is the
+    # probe that reaches past HTTP into the VPN itself: wg-easy writes the new
+    # peer into the live `wg0` interface, and answers with a server error when
+    # that interface is not there. wg-quick brings `wg0` up only if the kernel
+    # modules, capabilities and sysctls that the role arranges for are all in
+    # place, so a green run here means the VPN genuinely came up.
+    - name: Create a WireGuard Easy client
+      ansible.builtin.uri:
+        url: "{{ wg_easy_verify_base_url }}/api/client"
+        method: POST
+        headers:
+          Cookie: "{{ wg_easy_login.cookies_string }}"
+        body_format: json
+        body:
+          name: "{{ wg_easy_verify_client_name }}"
+          expiresAt: null
+        status_code: [200]
+      register: wg_easy_client_creation
+      changed_when: true
+
+    - name: Read the WireGuard Easy clients back
+      ansible.builtin.uri:
+        url: "{{ wg_easy_verify_base_url }}/api/client"
+        method: GET
+        headers:
+          Cookie: "{{ wg_easy_login.cookies_string }}"
+        status_code: [200]
+        return_content: true
+      register: wg_easy_clients
+
+    - name: Select the created WireGuard Easy client
+      ansible.builtin.set_fact:
+        wg_easy_verify_client: "{{ wg_easy_clients.json | selectattr('name', 'equalto', wg_easy_verify_client_name) | first }}"
+
+    # The address has to come out of the pool the role configured, which is
+    # what ties the issued client back to `INIT_IPV4_CIDR`. The default pool is
+    # a /24, so comparing the first three octets is enough.
+    - name: Assert the WireGuard Easy client was given a peer identity
+      ansible.builtin.assert:
+        that:
+          - wg_easy_verify_client.publicKey | length > 0
+          - wg_easy_verify_client.ipv4Address.startswith(wg_easy_defaults.wg_easy_environment_variables_additional_variable_init_ipv4_cidr.split('/') | first | regex_replace('[0-9]+$', ''))
+        fail_msg: "Unexpected client record: {{ wg_easy_verify_client }}"
+        success_msg: >-
+          wg-easy issued {{ wg_easy_verify_client.ipv4Address }} to the client,
+          out of {{ wg_easy_defaults.wg_easy_environment_variables_additional_variable_init_ipv4_cidr }}
+
+    # Reading the interface out of the kernel, rather than trusting wg-easy's
+    # own account of it, is what proves the peer is really established: the
+    # public key wg-easy handed out over HTTP has to be the one that `wg` sees
+    # inside the container's network namespace.
+    - name: Read the WireGuard interface from inside the container
+      ansible.builtin.command:
+        cmd: docker exec {{ wg_easy_defaults.wg_easy_identifier }} wg show
+      register: wg_easy_wg_show
+      changed_when: false
+
+    - name: Assert the WireGuard interface carries the client as a peer
+      ansible.builtin.assert:
+        that:
+          - "'interface: wg0' in wg_easy_wg_show.stdout"
+          - wg_easy_verify_client.publicKey in wg_easy_wg_show.stdout
+        fail_msg: >-
+          The WireGuard interface does not carry the created client as a peer:
+          {{ wg_easy_wg_show.stdout }}
+        success_msg: "The WireGuard interface carries the created client as a peer"
+
+    # The configuration wg-easy hands to a client is what a real user would
+    # feed to their VPN client. It is assembled out of the values the role
+    # configured, so checking them here covers the whole path from the role's
+    # environment file through to what an end user ends up receiving.
+    - name: Download the WireGuard Easy client configuration
+      ansible.builtin.uri:
+        url: "{{ wg_easy_verify_base_url }}/api/client/{{ wg_easy_verify_client.id }}/configuration"
+        method: GET
+        headers:
+          Cookie: "{{ wg_easy_login.cookies_string }}"
+        status_code: [200]
+        return_content: true
+      register: wg_easy_client_configuration
+
+    - name: Assert the client configuration reflects what the role configured
+      ansible.builtin.assert:
+        that:
+          - "'[Interface]' in wg_easy_client_configuration.content"
+          - "'[Peer]' in wg_easy_client_configuration.content"
+          # The endpoint clients dial, from `INIT_HOST` and `INIT_PORT`.
+          - >-
+            ('Endpoint = ' + wg_easy_hostname + ':' + wg_easy_defaults.wg_easy_environment_variables_additional_variable_init_port | string)
+            in wg_easy_client_configuration.content
+          # The resolvers clients are pointed at, from `INIT_DNS`. wg-easy
+          # renders the list with a space after each comma, while the role
+          # default is written without one.
+          - >-
+            ('DNS = ' + (wg_easy_defaults.wg_easy_environment_variables_additional_variable_init_dns.split(',') | map('trim') | join(', ')))
+            in wg_easy_client_configuration.content
+        fail_msg: "Unexpected client configuration: {{ wg_easy_client_configuration.content }}"
+        success_msg: "wg-easy hands out a client configuration built out of the role's settings"
+
+    - name: Show WireGuard Easy verification summary
       ansible.builtin.debug:
         msg:
           - "WireGuard Easy systemd: {{ wg_easy_service.status.ActiveState }}"
-          - "WireGuard Easy HTTP: {{ wg_easy_endpoint.status }}"
+          - "Version: {{ wg_easy_information.json.currentRelease }}"
+          - "Web interface: {{ wg_easy_endpoint.status }} -> {{ wg_easy_endpoint.location }}"
+          - "Session: {{ wg_easy_session.json.username }}"
+          - "Client: {{ wg_easy_verify_client.name }} ({{ wg_easy_verify_client.ipv4Address }})"
+          - "Peer public key: {{ wg_easy_verify_client.publicKey }}"
