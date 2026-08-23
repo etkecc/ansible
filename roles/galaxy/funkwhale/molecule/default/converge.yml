@@ -1,0 +1,68 @@
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+# SPDX-FileCopyrightText: 2026 spatterlight
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Include roles for Funkwhale Molecule tests
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Include roles for Funkwhale Molecule tests
+      ansible.builtin.include_role:
+        name: "{{ role_name }}"
+        public: true
+      loop:
+        - com.devture.ansible.role.playbook_help
+        - com.devture.ansible.role.systemd_docker_base
+        - ansible-role-postgres
+        - ansible-role-valkey
+        - "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+      loop_control:
+        loop_var: role_name
+
+- name: Ensure services are started
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Ensure systemd daemon is reloaded
+      ansible.builtin.systemd_service:
+        daemon_reload: true
+
+    - name: Ensure Postgres systemd service is started
+      ansible.builtin.systemd_service:
+        name: postgres.service
+        state: started
+
+    - name: Ensure Valkey systemd service is started
+      ansible.builtin.systemd_service:
+        name: valkey.service
+        state: started
+
+    - name: Ensure Funkwhale API systemd service is started
+      ansible.builtin.systemd_service:
+        name: funkwhale-api.service
+        state: started
+
+    - name: Ensure Funkwhale frontend systemd service is started
+      ansible.builtin.systemd_service:
+        name: funkwhale-frontend.service
+        state: started
+
+    - name: Ensure Funkwhale celery beat systemd service is started
+      ansible.builtin.systemd_service:
+        name: funkwhale-celery-beat.service
+        state: started
+
+    - name: Ensure Funkwhale celery worker systemd service is started
+      ansible.builtin.systemd_service:
+        name: funkwhale-celery-worker.service
+        state: started
+
+    - name: Ensure Funkwhale watch imports systemd service is started
+      when: funkwhale_watch_imports_enabled
+      ansible.builtin.systemd_service:
+        name: funkwhale-watch-imports.service
+        state: started

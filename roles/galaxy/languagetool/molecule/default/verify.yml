@@ -1,0 +1,248 @@
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+# SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify LanguageTool
+  hosts: all
+  become: true
+  gather_facts: false
+
+  vars:
+    languagetool_molecule_api_base_url: "http://localhost:{{ languagetool_molecule_http_bind_port }}"
+
+    # A sentence with a subject-verb agreement error that LanguageTool's
+    # English grammar rules are expected to catch, and the clean sentence it is
+    # checked against. Both are needed: a checker that flags everything and a
+    # checker that flags nothing would each satisfy only one of them.
+    languagetool_molecule_text_with_error: This are a test.
+    languagetool_molecule_text_without_error: The quick brown fox jumps over the lazy dog.
+
+  tasks:
+    # Role defaults are not in scope here, but the version that Renovate bumps
+    # lives in them and is what the running server is checked against below.
+    # Only literal leaf values are read out of this - anything derived would be
+    # unresolvable outside a play that has the role's variables.
+    - name: Load the LanguageTool role defaults
+      ansible.builtin.include_vars:
+        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+        name: languagetool_defaults
+
+    - name: Wait for LanguageTool service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: languagetool.service
+      register: languagetool_service
+      until: languagetool_service.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert LanguageTool service is active
+      ansible.builtin.assert:
+        that: languagetool_service.status.ActiveState == 'active'
+        fail_msg: "languagetool.service not active ({{ languagetool_service.status.ActiveState }})"
+        success_msg: "languagetool.service is active"
+
+    - name: Retrieve LanguageTool service log for debugging
+      when: languagetool_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu languagetool.service
+      changed_when: false
+
+    # The readiness gate for everything below. A JVM that has to load rules and
+    # dictionaries for every language it supports takes a while to answer, so
+    # this is where the waiting happens - the probes that follow can then be
+    # single-shot and fail loudly rather than time out.
+    #
+    # `/v2/languages` is served from the languages LanguageTool actually managed
+    # to initialize, so it is a statement about the checker being ready and not
+    # merely about a socket being open.
+    - name: Wait for LanguageTool to list its languages (up to 10m)
+      ansible.builtin.uri:
+        url: "{{ languagetool_molecule_api_base_url }}/v2/languages"
+        method: GET
+        follow_redirects: none
+        status_code: [200, 301, 302, 404, 500, 502, 503]
+        return_content: true
+      register: languagetool_languages
+      until: languagetool_languages.status == 200
+      retries: 120
+      delay: 5
+      changed_when: false
+
+    - name: Assert LanguageTool lists the languages it can check
+      ansible.builtin.assert:
+        that:
+          - languagetool_languages.status == 200
+          - languagetool_languages.json | length > 10
+          - "'en-US' in (languagetool_languages.json | map(attribute='longCode') | list)"
+          - "'de-DE' in (languagetool_languages.json | map(attribute='longCode') | list)"
+        fail_msg: >-
+          /v2/languages returned {{ languagetool_languages.status }} with
+          {{ languagetool_languages.json | default([]) | length }} languages
+        success_msg: >-
+          /v2/languages lists {{ languagetool_languages.json | length }} languages,
+          including en-US and de-DE
+
+    # Everything above is LanguageTool answering about itself. Checking a
+    # sentence is the probe that makes it do its actual job: the text goes
+    # through the tokenizer, the tagger and the English rule set, so only a
+    # server that loaded all of them produces a match here.
+    - name: Check a sentence containing a grammar error through LanguageTool
+      ansible.builtin.uri:
+        url: "{{ languagetool_molecule_api_base_url }}/v2/check"
+        method: POST
+        follow_redirects: none
+        body_format: form-urlencoded
+        body:
+          language: en-US
+          text: "{{ languagetool_molecule_text_with_error }}"
+        status_code: [200, 400, 500, 502, 503]
+        timeout: 120
+        return_content: true
+      register: languagetool_check_with_error
+      changed_when: false
+
+    # `THIS_NNS` is LanguageTool's rule for a singular demonstrative pronoun
+    # taking a plural verb, which is exactly the error in the sentence above.
+    # Naming the rule, rather than accepting any match at all, is what keeps
+    # this from passing on a server that merely dislikes the sentence for some
+    # unrelated reason such as spelling.
+    - name: Assert LanguageTool reports the expected grammar error
+      ansible.builtin.assert:
+        that:
+          - languagetool_check_with_error.status == 200
+          - languagetool_check_with_error.json.matches | length > 0
+          - "'THIS_NNS' in (languagetool_check_with_error.json.matches | map(attribute='rule.id') | list)"
+          - "'GRAMMAR' in (languagetool_check_with_error.json.matches | map(attribute='rule.category.id') | list)"
+          - "'These' in (languagetool_check_with_error.json.matches | map(attribute='replacements') | flatten | map(attribute='value') | list)"
+        fail_msg: >-
+          Checking "{{ languagetool_molecule_text_with_error }}" returned
+          {{ languagetool_check_with_error.status }} with rules
+          {{ languagetool_check_with_error.json.matches | default([]) | map(attribute='rule.id') | list }}
+        success_msg: >-
+          Checking "{{ languagetool_molecule_text_with_error }}" reports
+          {{ languagetool_check_with_error.json.matches | map(attribute='rule.id') | list | join(', ') }}
+          and suggests "These"
+
+    # The other direction. Without this, a server that returned a match for
+    # every input - or one whose rule set was so broken that everything looked
+    # wrong - would still satisfy the assertion above.
+    - name: Check a sentence containing no grammar error through LanguageTool
+      ansible.builtin.uri:
+        url: "{{ languagetool_molecule_api_base_url }}/v2/check"
+        method: POST
+        follow_redirects: none
+        body_format: form-urlencoded
+        body:
+          language: en-US
+          text: "{{ languagetool_molecule_text_without_error }}"
+        status_code: [200, 400, 500, 502, 503]
+        timeout: 120
+        return_content: true
+      register: languagetool_check_without_error
+      changed_when: false
+
+    - name: Assert LanguageTool reports no error for a correct sentence
+      ansible.builtin.assert:
+        that:
+          - languagetool_check_without_error.status == 200
+          - languagetool_check_without_error.json.matches | length == 0
+        fail_msg: >-
+          Checking "{{ languagetool_molecule_text_without_error }}" returned
+          {{ languagetool_check_without_error.status }} with unexpected rules
+          {{ languagetool_check_without_error.json.matches | default([]) | map(attribute='rule.id') | list }}
+        success_msg: >-
+          Checking "{{ languagetool_molecule_text_without_error }}" reports no matches
+
+    # Upstream tags container-only rebuilds of an unchanged LanguageTool as
+    # `6.7-dockerupdate-4`, and such a server reports plain `6.7` - one
+    # component fewer than the role pins. Comparing against the part of the
+    # pinned value before the first dash covers both tag shapes, while still
+    # failing if the running server is a different LanguageTool release than
+    # the one Renovate bumped.
+    - name: Assert the running LanguageTool is the version this role installs
+      ansible.builtin.assert:
+        that:
+          - languagetool_check_with_error.json.software.name == 'LanguageTool'
+          - languagetool_check_with_error.json.software.version == (languagetool_defaults.languagetool_version | string | split('-') | first)
+        fail_msg: >-
+          LanguageTool reports {{ languagetool_check_with_error.json.software.version | default('no version') }},
+          which is not the version of the pinned {{ languagetool_defaults.languagetool_version }}
+        success_msg: >-
+          {{ languagetool_check_with_error.json.software.name }} reports
+          {{ languagetool_check_with_error.json.software.version }}, matching the pinned
+          {{ languagetool_defaults.languagetool_version }}
+
+    # `languagetool_java_heap_min` and `languagetool_java_heap_max` are written
+    # into the env file by `templates/env.j2` and referenced from the systemd
+    # unit as `--env-file`. Reading them back off the container proves that
+    # file is being produced and passed, rather than silently ignored.
+    - name: Retrieve the LanguageTool container definition
+      ansible.builtin.command:
+        cmd: "docker inspect {{ languagetool_defaults.languagetool_identifier }}"
+      register: languagetool_container_inspect
+      changed_when: false
+
+    - name: Assert the role's heap settings reached the container environment
+      ansible.builtin.assert:
+        that:
+          - "'Java_Xms=' ~ languagetool_java_heap_min in (languagetool_container_inspect.stdout | from_json | first).Config.Env"
+          - "'Java_Xmx=' ~ languagetool_java_heap_max in (languagetool_container_inspect.stdout | from_json | first).Config.Env"
+        fail_msg: >-
+          The container environment is
+          {{ (languagetool_container_inspect.stdout | from_json | first).Config.Env }},
+          which does not carry Java_Xms={{ languagetool_java_heap_min }} and
+          Java_Xmx={{ languagetool_java_heap_max }}
+        success_msg: >-
+          The container environment carries Java_Xms={{ languagetool_java_heap_min }}
+          and Java_Xmx={{ languagetool_java_heap_max }} from the role's env file
+
+    # The env file reaching the container is only half of it - the image's
+    # `start.sh` still has to turn those variables into JVM flags. Reading the
+    # command line of the process actually serving the requests above is what
+    # closes the gap between the role's configuration and the running process.
+    - name: Retrieve the command line of the LanguageTool JVM
+      ansible.builtin.command:
+        argv:
+          - docker
+          - exec
+          - "{{ languagetool_defaults.languagetool_identifier }}"
+          - sh
+          - -c
+          - tr '\0' '\n' < /proc/1/cmdline
+      register: languagetool_jvm_cmdline
+      changed_when: false
+
+    - name: Assert the role's heap settings reached the LanguageTool JVM
+      ansible.builtin.assert:
+        that:
+          - "'-Xms' ~ languagetool_java_heap_min in languagetool_jvm_cmdline.stdout_lines"
+          - "'-Xmx' ~ languagetool_java_heap_max in languagetool_jvm_cmdline.stdout_lines"
+          - "'org.languagetool.server.HTTPServer' in languagetool_jvm_cmdline.stdout_lines"
+        fail_msg: >-
+          The LanguageTool JVM was started as
+          {{ languagetool_jvm_cmdline.stdout_lines | join(' ') }},
+          which does not carry -Xms{{ languagetool_java_heap_min }} and
+          -Xmx{{ languagetool_java_heap_max }}
+        success_msg: >-
+          The LanguageTool JVM runs with -Xms{{ languagetool_java_heap_min }} and
+          -Xmx{{ languagetool_java_heap_max }}, as configured by the role
+
+    - name: Show LanguageTool verification summary
+      ansible.builtin.debug:
+        msg:
+          - "systemd: {{ languagetool_service.status.ActiveState }}"
+          - >-
+            version: {{ languagetool_check_with_error.json.software.name }}
+            {{ languagetool_check_with_error.json.software.version }}
+            (role pins {{ languagetool_defaults.languagetool_version }})
+          - "languages: {{ languagetool_languages.json | length }} listed"
+          - >-
+            grammar: "{{ languagetool_molecule_text_with_error }}" reports
+            {{ languagetool_check_with_error.json.matches | map(attribute='rule.id') | list | join(', ') }};
+            "{{ languagetool_molecule_text_without_error }}" reports nothing
+          - >-
+            heap: the JVM runs with -Xms{{ languagetool_java_heap_min }}
+            -Xmx{{ languagetool_java_heap_max }} from the role's env file

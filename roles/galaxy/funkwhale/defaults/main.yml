@@ -25,7 +25,7 @@ funkwhale_static_path: "{{ funkwhale_data_path }}/static"
 funkwhale_media_path: "{{ funkwhale_data_path }}/media" # Defines where media is stored
 funkwhale_music_path: "{{ funkwhale_data_path }}/music" # Defines where music files to be imported to Funkwhale from
 
-# renovate: datasource=docker depName=funkwhale/api
+# renovate: datasource=docker depName=funkwhale/api versioning=semver
 funkwhale_version: 1.4.1
 
 funkwhale_uid: ""
@@ -216,7 +216,7 @@ funkwhale_api_container_additional_networks: "{{ funkwhale_api_container_additio
 funkwhale_api_container_additional_networks_auto: []
 funkwhale_api_container_additional_networks_custom: []
 
-# funkwhale_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
+# funkwhale_api_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
 # See `../templates/labels_api.j2` for details.
 #
 # To inject your own other container labels, see `funkwhale_container_labels_additional_labels_custom`.
@@ -434,7 +434,7 @@ funkwhale_frontend_container_additional_networks: "{{ funkwhale_frontend_contain
 funkwhale_frontend_container_additional_networks_auto: []
 funkwhale_frontend_container_additional_networks_custom: []
 
-# funkwhale_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
+# funkwhale_frontend_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
 # See `../templates/labels_frontend.j2` for details.
 #
 # To inject your own other container labels, see `funkwhale_container_labels_additional_labels_custom`.

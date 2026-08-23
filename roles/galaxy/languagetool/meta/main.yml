@@ -2,7 +2,7 @@
 galaxy_info:
   author: etke.cc
   company: etke.cc
-  role_name: langaugetool
+  role_name: languagetool
   namespace: etkecc
   description: LanguageTool
   platforms:

@@ -1,0 +1,540 @@
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+# SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify Funkwhale
+  hosts: all
+  become: true
+  gather_facts: false
+
+  vars:
+    # Everything is reached through the frontend's published port rather than
+    # through the API directly. The API container publishes no port in this
+    # scenario, so every API call below also exercises the nginx proxy that
+    # `templates/env_frontend.j2` points at the API container.
+    funkwhale_verify_base_url: "http://localhost:{{ funkwhale_frontend_container_http_host_bind_port }}"
+
+    funkwhale_verify_username: molecule
+    funkwhale_verify_email: molecule@example.com
+    funkwhale_verify_password: molecule-probe-password
+    funkwhale_verify_library_name: Molecule library
+
+    # The docker CLI is invoked directly here and below: the ansible-lint
+    # environment used by pre-commit has no collections installed, so
+    # community.docker.* would fail the playbook syntax check.
+    funkwhale_verify_psql_command: >-
+      docker exec --env=PGPASSWORD={{ funkwhale_database_password | quote }}
+      {{ postgres_identifier | default('postgres') }}
+      psql -U {{ funkwhale_database_username | quote }}
+      -d {{ funkwhale_database_name | quote }} -tAc
+
+  tasks:
+    # Role defaults are not in scope in a verify play, but the version that
+    # Renovate bumps lives in them and is what the running Funkwhale is checked
+    # against below. Only leaf literals may be read out of this namespace -
+    # `funkwhale_api_identifier` and friends are defined in terms of
+    # `funkwhale_identifier` and would resolve against an empty namespace.
+    - name: Load the Funkwhale role defaults
+      ansible.builtin.include_vars:
+        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+        name: funkwhale_defaults
+
+    # Composed from the leaf `funkwhale_identifier` the same way
+    # defaults/main.yml composes them, rather than read from the Jinja-derived
+    # variables that carry them there.
+    - name: Name the Funkwhale containers this scenario started
+      ansible.builtin.set_fact:
+        funkwhale_verify_api_container: "{{ funkwhale_defaults.funkwhale_identifier }}-api"
+        funkwhale_verify_frontend_container: "{{ funkwhale_defaults.funkwhale_identifier }}-frontend"
+
+    - name: Wait for Funkwhale API service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: funkwhale-api.service
+      register: funkwhale_service_api
+      until: funkwhale_service_api.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert Funkwhale API service is active
+      ansible.builtin.assert:
+        that: funkwhale_service_api.status.ActiveState == 'active'
+        fail_msg: "funkwhale-api.service not active ({{ funkwhale_service_api.status.ActiveState }})"
+        success_msg: "funkwhale-api.service is active"
+
+    - name: Retrieve Funkwhale API service log for debugging
+      when: funkwhale_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu funkwhale-api.service
+      changed_when: false
+
+    - name: Wait for Funkwhale frontend service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: funkwhale-frontend.service
+      register: funkwhale_service_frontend
+      until: funkwhale_service_frontend.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert Funkwhale frontend service is active
+      ansible.builtin.assert:
+        that: funkwhale_service_frontend.status.ActiveState == 'active'
+        fail_msg: "funkwhale-frontend.service not active ({{ funkwhale_service_frontend.status.ActiveState }})"
+        success_msg: "funkwhale-frontend.service is active"
+
+    - name: Retrieve Funkwhale frontend service log for debugging
+      when: funkwhale_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu funkwhale-frontend.service
+      changed_when: false
+
+    - name: Wait for Funkwhale celery beat service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: funkwhale-celery-beat.service
+      register: funkwhale_service_celery_beat
+      until: funkwhale_service_celery_beat.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert Funkwhale celery beat service is active
+      ansible.builtin.assert:
+        that: funkwhale_service_celery_beat.status.ActiveState == 'active'
+        fail_msg: "funkwhale-celery-beat.service not active ({{ funkwhale_service_celery_beat.status.ActiveState }})"
+        success_msg: "funkwhale-celery-beat.service is active"
+
+    - name: Retrieve Funkwhale celery beat service log for debugging
+      when: funkwhale_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu funkwhale-celery-beat.service
+      changed_when: false
+
+    - name: Wait for Funkwhale celery worker service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: funkwhale-celery-worker.service
+      register: funkwhale_service_celery_worker
+      until: funkwhale_service_celery_worker.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert Funkwhale celery worker service is active
+      ansible.builtin.assert:
+        that: funkwhale_service_celery_worker.status.ActiveState == 'active'
+        fail_msg: "funkwhale-celery-worker.service not active ({{ funkwhale_service_celery_worker.status.ActiveState }})"
+        success_msg: "funkwhale-celery-worker.service is active"
+
+    - name: Retrieve Funkwhale celery worker service log for debugging
+      when: funkwhale_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu funkwhale-celery-worker.service
+      changed_when: false
+
+    - name: Run if watch imports systemd service is enabled
+      when: funkwhale_watch_imports_enabled
+      block:
+        - name: Wait for Funkwhale watch imports service to become active (up to 180s)
+          ansible.builtin.systemd:
+            name: funkwhale-watch-imports.service
+          register: funkwhale_service_watch_imports
+          until: funkwhale_service_watch_imports.status.ActiveState == 'active'
+          retries: 36
+          delay: 5
+
+        - name: Assert Funkwhale watch imports service is active
+          ansible.builtin.assert:
+            that: funkwhale_service_watch_imports.status.ActiveState == 'active'
+            fail_msg: "funkwhale-watch-imports.service not active ({{ funkwhale_service_watch_imports.status.ActiveState }})"
+            success_msg: "funkwhale-watch-imports.service is active"
+
+        - name: Retrieve Funkwhale watch imports service log for debugging
+          when: funkwhale_debug_service_enabled | bool
+          ansible.builtin.command:
+            cmd: journalctl -xeu funkwhale-watch-imports.service
+          changed_when: false
+
+    # An active unit is a weak statement for every one of these services.
+    # `funkwhale-api.service` goes active the moment `docker start` attaches,
+    # while the container is still running `funkwhale-manage collectstatic` and
+    # `funkwhale-manage migrate` from its entrypoint. The Celery units are
+    # weaker still: they are `docker exec` calls into the API container, so
+    # they stay active as long as that exec lives, even while Celery is failing
+    # to reach its broker. Everything below therefore talks to the running
+    # application instead of to systemd.
+    #
+    # The frontend is where the trap is. Its image is nginx serving a pre-built
+    # Vue bundle, so `GET /` answers 200 with the full SPA shell out of the
+    # image itself - no API call, no database, nothing this role configured.
+    # Verified against a stack whose Postgres had been stopped: `/` kept
+    # answering 200 with an identical 3493-byte body. It is checked here
+    # because the SPA being served is worth knowing, but it is deliberately not
+    # the readiness gate.
+    - name: Retrieve the Funkwhale single-page application shell
+      ansible.builtin.uri:
+        url: "{{ funkwhale_verify_base_url }}/"
+        method: GET
+        status_code: [200, 502, 503, 504]
+        return_content: true
+      register: funkwhale_spa
+      until: funkwhale_spa.status == 200
+      retries: 60
+      delay: 5
+
+    - name: Assert the frontend serves the Funkwhale single-page application
+      ansible.builtin.assert:
+        that:
+          - funkwhale_spa.status == 200
+          - "'<meta name=\"generator\" content=\"Funkwhale\">' in funkwhale_spa.content"
+        fail_msg: "The frontend did not serve the Funkwhale SPA shell (HTTP {{ funkwhale_spa.status }})"
+        success_msg: "The frontend serves the Funkwhale single-page application"
+
+    # This is the readiness gate, and the one endpoint here that cannot lie.
+    # `/api/v1/instance/settings/` renders the `dynamic_preferences` tables, so
+    # it opens a database connection on every request and cannot be answered
+    # before `funkwhale-manage migrate` has finished. Against a stack whose
+    # Postgres had been stopped it answered 500 while `/` still answered 200.
+    #
+    # Reaching it at all also proves three separate pieces of wiring: nginx
+    # resolved and proxied to the API container (`FUNKWHALE_API_HOST` and
+    # `FUNKWHALE_API_PORT` from `templates/env_frontend.j2`), and the API
+    # reached Postgres over the Unix socket this scenario bind-mounts
+    # (`DATABASE_URL` from `templates/env_api.j2`).
+    - name: Wait for the Funkwhale instance settings to be served from the database (up to 10m)
+      ansible.builtin.uri:
+        url: "{{ funkwhale_verify_base_url }}/api/v1/instance/settings/"
+        method: GET
+        status_code: [200, 500, 502, 503, 504]
+        return_content: true
+      register: funkwhale_settings
+      until: funkwhale_settings.status == 200
+      retries: 120
+      delay: 5
+
+    - name: Assert Funkwhale serves its instance settings out of the database
+      ansible.builtin.assert:
+        that:
+          - funkwhale_settings.status == 200
+          - funkwhale_settings.json | selectattr('identifier', 'equalto', 'instance__name') | list | length == 1
+          - funkwhale_settings.json | selectattr('identifier', 'equalto', 'audio__max_channels') | list | length == 1
+        fail_msg: >-
+          Funkwhale did not serve its dynamic preferences (HTTP {{ funkwhale_settings.status }},
+          {{ funkwhale_settings.json | default([]) | length }} settings)
+        success_msg: >-
+          Funkwhale serves {{ funkwhale_settings.json | length }} instance settings out of its
+          database, so its schema is migrated and its database wiring works
+
+    # Nodeinfo reports the version of the running application, which is what
+    # ties this scenario to the value Renovate bumps: a bump to an image that
+    # cannot boot or migrate cannot get this far.
+    #
+    # Note that nodeinfo is NOT a readiness gate, even though it looks like the
+    # obvious one. Funkwhale caches the rendered document in Valkey, and it was
+    # observed answering 200 with a complete, correct-looking payload while
+    # Postgres was stopped. It is only read here after the settings endpoint
+    # above has already established that the database is live.
+    - name: Retrieve the Funkwhale nodeinfo document
+      ansible.builtin.uri:
+        url: "{{ funkwhale_verify_base_url }}/api/v1/instance/nodeinfo/2.0/"
+        method: GET
+        status_code: [200]
+        return_content: true
+      register: funkwhale_nodeinfo
+
+    - name: Assert the running Funkwhale is the version this role installs
+      ansible.builtin.assert:
+        that:
+          - funkwhale_nodeinfo.json.software.name == 'funkwhale'
+          - funkwhale_nodeinfo.json.software.version == funkwhale_defaults.funkwhale_version | string
+        fail_msg: >-
+          The running Funkwhale reports
+          {{ funkwhale_nodeinfo.json.software.version | default('no version at all') }},
+          but this role installs {{ funkwhale_defaults.funkwhale_version }}
+        success_msg: "The running Funkwhale reports {{ funkwhale_nodeinfo.json.software.version }}"
+
+    # `FUNKWHALE_HOSTNAME` from `templates/env_api.j2` is what Funkwhale builds
+    # its federation identity out of. An API started without it names its
+    # service actor after something else entirely, so this is a statement that
+    # the role's environment file reached the API process - not merely that
+    # some Funkwhale is running.
+    - name: Assert the federation service actor is named after the configured hostname
+      ansible.builtin.assert:
+        that: "'//' ~ funkwhale_hostname ~ '/federation/actors/' in funkwhale_nodeinfo.json.metadata.actorId"
+        fail_msg: >-
+          The federation service actor is {{ funkwhale_nodeinfo.json.metadata.actorId }}, which is
+          not under the {{ funkwhale_hostname }} this scenario configures
+        success_msg: "The federation service actor is {{ funkwhale_nodeinfo.json.metadata.actorId }}"
+
+    # `funkwhale-manage fw users create` is the command this role documents for
+    # provisioning accounts, run here exactly as
+    # `tasks/util/ensure_user_registered.yml` runs it. It writes through the
+    # same database connection the application uses, so it fails outright on a
+    # scenario whose database wiring is broken.
+    - name: Create a Funkwhale superuser
+      ansible.builtin.command:
+        cmd: >-
+          docker exec {{ funkwhale_verify_api_container }}
+          bash -c 'funkwhale-manage fw users create
+          --username {{ funkwhale_verify_username | quote }}
+          --email {{ funkwhale_verify_email | quote }}
+          --password {{ funkwhale_verify_password | quote }}
+          --superuser'
+      register: funkwhale_user_created
+      changed_when: "'created!' in funkwhale_user_created.stdout"
+
+    - name: Assert the Funkwhale superuser was created
+      ansible.builtin.assert:
+        that: "'created!' in funkwhale_user_created.stdout"
+        fail_msg: >-
+          Creating the '{{ funkwhale_verify_username }}' account did not report success:
+          {{ funkwhale_user_created.stdout | default('no output') }}
+        success_msg: "The '{{ funkwhale_verify_username }}' account was created"
+
+    # Funkwhale authenticates its API with OAuth2 only, and its authorization
+    # code flow needs a browser. The token is therefore minted directly, the
+    # way `manage.py shell` is used to mint credentials in a Django app.
+    #
+    # Both the application and the token must carry the scopes: Funkwhale
+    # intersects the token's scopes with the application's before deciding, so
+    # a token minted with every scope against an application with none is
+    # authenticated but refused with a 403 on every read.
+    - name: Mint an OAuth access token for that Funkwhale account
+      ansible.builtin.command:
+        argv:
+          - docker
+          - exec
+          - "{{ funkwhale_verify_api_container }}"
+          - funkwhale-manage
+          - shell
+          - -c
+          - |
+            import datetime
+            import secrets
+            from django.conf import settings
+            from django.utils import timezone
+            from funkwhale_api.users.models import AccessToken, Application, User
+            user = User.objects.get(username="{{ funkwhale_verify_username }}")
+            scopes = " ".join(sorted(settings.OAUTH2_PROVIDER["SCOPES"].keys()))
+            application, _ = Application.objects.get_or_create(
+                name="molecule",
+                defaults={
+                    "client_type": "confidential",
+                    "authorization_grant_type": "password",
+                    "user": user,
+                },
+            )
+            application.scope = scopes
+            application.save()
+            token = secrets.token_urlsafe(32)
+            AccessToken.objects.create(
+                user=user,
+                application=application,
+                token=token,
+                scope=scopes,
+                expires=timezone.now() + datetime.timedelta(hours=1),
+            )
+            print("ACCESS_TOKEN=" + token)
+      register: funkwhale_token_result
+      changed_when: true
+
+    # Funkwhale's shell prints a plugin banner before anything else, so the
+    # token is picked out by its marker rather than taken as the whole of stdout.
+    - name: Remember the Funkwhale access token
+      ansible.builtin.set_fact:
+        funkwhale_verify_access_token: "{{ funkwhale_token_result.stdout_lines | select('match', '^ACCESS_TOKEN=') | first | regex_replace('^ACCESS_TOKEN=', '') }}"
+      no_log: true
+
+    - name: Read the Funkwhale account back over the API
+      ansible.builtin.uri:
+        url: "{{ funkwhale_verify_base_url }}/api/v1/users/me/"
+        method: GET
+        headers:
+          Authorization: "Bearer {{ funkwhale_verify_access_token }}"
+        status_code: [200]
+        return_content: true
+      register: funkwhale_me
+
+    # `full_username` is assembled by the API from the account name and
+    # `FUNKWHALE_HOSTNAME`, so it is a second, independent witness that the
+    # role's environment file reached the process - this time through an
+    # authenticated read rather than through the cached nodeinfo document.
+    - name: Assert the API reports the account this scenario created
+      ansible.builtin.assert:
+        that:
+          - funkwhale_me.json.username == funkwhale_verify_username
+          - funkwhale_me.json.email == funkwhale_verify_email
+          - funkwhale_me.json.is_superuser
+          - funkwhale_me.json.full_username == funkwhale_verify_username ~ '@' ~ funkwhale_hostname
+        # Reported field by field rather than as the whole payload: `/api/v1/users/me/`
+        # hands out a `tokens.listen` credential that has no business in CI logs.
+        fail_msg: >-
+          Unexpected account: username={{ funkwhale_me.json.username | default('none') }},
+          email={{ funkwhale_me.json.email | default('none') }},
+          full_username={{ funkwhale_me.json.full_username | default('none') }},
+          is_superuser={{ funkwhale_me.json.is_superuser | default('none') }}
+        success_msg: >-
+          The API reports {{ funkwhale_me.json.full_username }} as a superuser, so the account
+          created through funkwhale-manage is readable over HTTP
+
+    # A library is the thing a Funkwhale account owns music in, and creating
+    # one is the first step of every real use of this application. This writes
+    # a row through the authenticated API and is read back below, so nothing
+    # short of a working application on a working database can satisfy it.
+    - name: Create a Funkwhale library over the API
+      ansible.builtin.uri:
+        url: "{{ funkwhale_verify_base_url }}/api/v1/libraries/"
+        method: POST
+        headers:
+          Authorization: "Bearer {{ funkwhale_verify_access_token }}"
+        body_format: json
+        body:
+          name: "{{ funkwhale_verify_library_name }}"
+          privacy_level: me
+        status_code: [201]
+        return_content: true
+      register: funkwhale_library_created
+      changed_when: true
+
+    - name: Assert the library was created and is owned by this account
+      ansible.builtin.assert:
+        that:
+          - funkwhale_library_created.json.name == funkwhale_verify_library_name
+          - funkwhale_library_created.json.privacy_level == 'me'
+          - funkwhale_library_created.json.uploads_count == 0
+          - funkwhale_library_created.json.actor.preferred_username == funkwhale_verify_username
+          - "'//' ~ funkwhale_hostname ~ '/federation/music/libraries/' in funkwhale_library_created.json.fid"
+        fail_msg: "Unexpected library payload: {{ funkwhale_library_created.json | default('no payload') }}"
+        success_msg: >-
+          The library '{{ funkwhale_verify_library_name }}' was created at
+          {{ funkwhale_library_created.json.fid }}
+
+    - name: Read the library back over the API
+      ansible.builtin.uri:
+        url: "{{ funkwhale_verify_base_url }}/api/v1/libraries/"
+        method: GET
+        headers:
+          Authorization: "Bearer {{ funkwhale_verify_access_token }}"
+        status_code: [200]
+        return_content: true
+      register: funkwhale_libraries
+
+    - name: Assert the library is listed for this account
+      ansible.builtin.assert:
+        that:
+          - funkwhale_libraries.json.count == 1
+          - funkwhale_libraries.json.results | map(attribute='uuid') | list == [funkwhale_library_created.json.uuid]
+        fail_msg: >-
+          The library list does not hold the library that was just created:
+          {{ funkwhale_libraries.json | default('no payload') }}
+        success_msg: "The library round trip closed: it was created over HTTP and read back over HTTP"
+
+    # Everything above would read the same if Funkwhale had quietly fallen back
+    # to some other database, so the schema and the row this run just wrote are
+    # looked up in the Postgres container from the other end.
+    - name: Count the Funkwhale tables in the Postgres container
+      ansible.builtin.command:
+        cmd: "{{ funkwhale_verify_psql_command }} {{ \"SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public'\" | quote }}"
+      register: funkwhale_db_tables
+      changed_when: false
+
+    - name: Assert Funkwhale migrated its schema into that database
+      ansible.builtin.assert:
+        that: funkwhale_db_tables.stdout | trim | int > 0
+        fail_msg: "The database '{{ funkwhale_database_name }}' holds no tables - Funkwhale is not using it"
+        success_msg: >-
+          The database '{{ funkwhale_database_name }}' holds
+          {{ funkwhale_db_tables.stdout | trim }} tables
+
+    - name: Read the created library out of the Postgres container
+      ansible.builtin.command:
+        cmd: >-
+          {{ funkwhale_verify_psql_command }}
+          {{ ("SELECT name, privacy_level FROM music_library WHERE uuid = '" ~ funkwhale_library_created.json.uuid ~ "'") | quote }}
+      register: funkwhale_db_library_row
+      changed_when: false
+
+    - name: Assert the library was written to that database
+      ansible.builtin.assert:
+        that: funkwhale_db_library_row.stdout | trim == funkwhale_verify_library_name ~ '|me'
+        fail_msg: >-
+          The music_library row for {{ funkwhale_library_created.json.uuid }} reads
+          '{{ funkwhale_db_library_row.stdout | trim | default('nothing at all', true) }}',
+          expected '{{ funkwhale_verify_library_name }}|me'
+        success_msg: "The music_library row for the new library is present in Postgres"
+
+    # The Celery worker is the half of Funkwhale that imports and tags music,
+    # and its systemd unit proves nothing about it (see above). Asking Celery
+    # to ping its workers sends a control message through Valkey and waits for
+    # a reply, so a worker that is alive but cannot reach the broker - the
+    # exact failure a wrong `CELERY_BROKER_URL` produces - cannot answer.
+    #
+    # The ladder is generous because `funkwhale-celery-worker.service` execs
+    # into the API container and restarts every 30s until that container
+    # exists, so the worker can be several restarts behind the API.
+    - name: Wait for the Funkwhale Celery worker to answer a ping through Valkey (up to 5m)
+      ansible.builtin.command:
+        cmd: >-
+          docker exec {{ funkwhale_verify_api_container }}
+          celery --app=funkwhale_api.taskapp inspect ping --timeout 20
+      register: funkwhale_celery_ping
+      until: funkwhale_celery_ping.rc == 0 and 'pong' in funkwhale_celery_ping.stdout
+      retries: 30
+      delay: 10
+      changed_when: false
+
+    - name: Assert the Funkwhale Celery worker answered
+      ansible.builtin.assert:
+        that:
+          - funkwhale_celery_ping.rc == 0
+          - "'pong' in funkwhale_celery_ping.stdout"
+          - "'node online' in funkwhale_celery_ping.stdout"
+        fail_msg: "The Celery worker did not answer a ping: {{ funkwhale_celery_ping.stdout | default('no output') }}"
+        success_msg: "The Celery worker answered a ping sent through Valkey"
+
+    # Nodeinfo reports the API version but says nothing about the frontend,
+    # which is a separate image on the same `funkwhale_version`. Reading both
+    # images off the running containers covers the half that HTTP cannot see,
+    # and confirms the containers answering above are the ones this scenario
+    # started rather than something left behind.
+    - name: Inspect the Funkwhale containers
+      ansible.builtin.command:
+        cmd: "docker inspect {{ funkwhale_verify_api_container }} {{ funkwhale_verify_frontend_container }}"
+      register: funkwhale_container_inspection
+      changed_when: false
+
+    - name: Assert both Funkwhale containers run the images this role installs
+      vars:
+        funkwhale_verify_containers: "{{ funkwhale_container_inspection.stdout | from_json }}"
+        funkwhale_verify_api: >-
+          {{ funkwhale_verify_containers | selectattr('Name', 'equalto', '/' ~ funkwhale_verify_api_container) | first }}
+        funkwhale_verify_frontend: >-
+          {{ funkwhale_verify_containers | selectattr('Name', 'equalto', '/' ~ funkwhale_verify_frontend_container) | first }}
+      ansible.builtin.assert:
+        that:
+          - funkwhale_verify_api.State.Running
+          - funkwhale_verify_frontend.State.Running
+          - funkwhale_verify_api.Config.Image.endswith('funkwhale/api:' ~ funkwhale_defaults.funkwhale_version | string)
+          - funkwhale_verify_frontend.Config.Image.endswith('funkwhale/front:' ~ funkwhale_defaults.funkwhale_version | string)
+        fail_msg: >-
+          The running containers are {{ funkwhale_verify_api.Config.Image }} and
+          {{ funkwhale_verify_frontend.Config.Image }}, expected both at
+          {{ funkwhale_defaults.funkwhale_version }}
+        success_msg: >-
+          Both containers run {{ funkwhale_defaults.funkwhale_version }}:
+          {{ funkwhale_verify_api.Config.Image }} and {{ funkwhale_verify_frontend.Config.Image }}
+
+    - name: Show Funkwhale verification summary
+      ansible.builtin.debug:
+        msg:
+          - "Funkwhale API systemd: {{ funkwhale_service_api.status.ActiveState }}"
+          - "Funkwhale frontend systemd: {{ funkwhale_service_frontend.status.ActiveState }}"
+          - "Funkwhale celery beat systemd: {{ funkwhale_service_celery_beat.status.ActiveState }}"
+          - "Funkwhale celery worker systemd: {{ funkwhale_service_celery_worker.status.ActiveState }}"
+          - "Funkwhale watch imports systemd: {{ funkwhale_service_watch_imports.status.ActiveState if funkwhale_watch_imports_enabled else 'disabled' }}"
+          - "Instance settings served from the database: {{ funkwhale_settings.json | length }}"
+          - "Version: {{ funkwhale_nodeinfo.json.software.version }} (role installs {{ funkwhale_defaults.funkwhale_version }})"
+          - "Federation service actor: {{ funkwhale_nodeinfo.json.metadata.actorId }}"
+          - "Account: {{ funkwhale_me.json.full_username }} (superuser: {{ funkwhale_me.json.is_superuser }})"
+          - "Library over the API: {{ funkwhale_library_created.json.name }} ({{ funkwhale_library_created.json.uuid }})"
+          - "Library in Postgres: {{ funkwhale_db_library_row.stdout | trim }}"
+          - "Postgres tables: {{ funkwhale_db_tables.stdout | trim }}"
+          - "Celery worker: {{ funkwhale_celery_ping.stdout_lines | select('search', 'node online') | join(' ') }}"
