@@ -3,7 +3,7 @@ galaxy_info:
   author: etke.cc
   company: etke.cc
   role_name: miniflux
-  namespace: etkecc
+  namespace: mash
   description: Miniflux
   platforms:
     - name: Debian

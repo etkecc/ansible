@@ -3,5 +3,13 @@
   "extends": [
     "github>mother-of-all-self-hosting/renovate-config#v1.0.0",
     "github>mother-of-all-self-hosting/renovate-config//patch-automerge#v1.0.0"
+  ],
+  "packageRules": [
+    {
+      "description": "Uptime Kuma 2.x dropped the `-alpine` image flavor this role appends to the tag, so a 2.x bump yields an unpullable image. Moving to 2.x (with `-slim`) has database/migration implications and is a deliberate decision, not a Renovate bump - staying on 1.x until then.",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["louislam/uptime-kuma"],
+      "allowedVersions": "<2"
+    }
   ]
 }

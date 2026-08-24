@@ -3,7 +3,7 @@ galaxy_info:
   author: etke.cc
   company: etke.cc
   role_name: uptime_kuma
-  namespace: etkecc
+  namespace: mash
   description: uptime-kuma
   platforms:
     - name: Debian

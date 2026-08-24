@@ -3,7 +3,7 @@ galaxy_info:
   author: etke.cc
   company: etke.cc
   role_name: radicale
-  namespace: etkecc
+  namespace: mash
   description: Radicale
   platforms:
     - name: Debian

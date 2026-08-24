@@ -1,5 +1,5 @@
-# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 # SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -38,6 +38,11 @@ provisioner:
         miniflux_hostname: localhost
         miniflux_container_labels_traefik_enabled: false
         miniflux_container_http_host_bind_port: 8080
+
+        # An admin account, so that the verification can exercise the REST API,
+        # which requires authentication, and not just the public endpoints.
+        miniflux_admin_login: molecule
+        miniflux_admin_password: molecule-password
 
         # Variables required for Miniflux to connect to the Postgres database (via Unix socket)
         miniflux_database_username: my_database_username

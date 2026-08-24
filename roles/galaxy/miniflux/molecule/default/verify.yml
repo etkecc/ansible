@@ -1,14 +1,28 @@
-# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: Verify Miniflux systemd service
+- name: Verify Miniflux
   hosts: all
   become: true
   gather_facts: false
+
+  vars:
+    miniflux_verify_base_url: "http://localhost:8080"
+
   tasks:
+    # The role is not included in this playbook, so its defaults are not in
+    # scope. Reading defaults/main.yml directly keeps the version assertion
+    # below tied to the value that Renovate bumps, with nothing to keep in
+    # sync in this scenario. include_vars reads from the controller.
+    - name: Load the Miniflux role defaults
+      ansible.builtin.include_vars:
+        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+        name: miniflux_defaults
+
     - name: Wait for Miniflux service to become active (up to 180s)
       ansible.builtin.systemd:
         name: miniflux.service
@@ -29,25 +43,130 @@
         cmd: journalctl -xeu miniflux.service
       changed_when: false
 
-    - name: Wait for Miniflux HTTP endpoint to respond (up to 10m)
+    # /healthcheck is Miniflux's readiness probe: it answers 200/OK only after
+    # it has successfully pinged its database, so a passing probe proves that
+    # the Postgres wiring of this scenario (Unix socket, credentials, managed
+    # database) actually works, not merely that the process started.
+    - name: Wait for the Miniflux readiness probe to pass (up to 300s)
       ansible.builtin.uri:
-        url: "http://localhost:8080/"
+        url: "{{ miniflux_verify_base_url }}/healthcheck"
         method: GET
-        status_code: [200, 302]
-        follow_redirects: none
-      register: miniflux_endpoint
-      until: miniflux_endpoint.status in [200, 302]
-      retries: 120
+        status_code: [200]
+        return_content: true
+      register: miniflux_healthcheck
+      until: miniflux_healthcheck.status == 200
+      retries: 60
       delay: 5
 
-    - name: Assert Miniflux HTTP endpoint responds
+    - name: Assert the readiness probe reports a healthy database connection
       ansible.builtin.assert:
-        that: miniflux_endpoint.status in [200, 302]
-        fail_msg: "Miniflux did not respond as expected ({{ miniflux_endpoint.status | default('no response') }})"
-        success_msg: "Miniflux responded with {{ miniflux_endpoint.status }}"
+        that: miniflux_healthcheck.content is search('OK')
+        fail_msg: "Unexpected /healthcheck body: {{ miniflux_healthcheck.content | default('no content') }}"
+        success_msg: "Miniflux is ready and connected to its database"
 
-    - name: Show Miniflux systemd service status summary
+    # An actual page render, which exercises template rendering and the static
+    # asset pipeline rather than just the HTTP listener. Unauthenticated
+    # requests to the root path are answered with the login page.
+    - name: Fetch the Miniflux login page
+      ansible.builtin.uri:
+        url: "{{ miniflux_verify_base_url }}/"
+        method: GET
+        status_code: [200]
+        return_content: true
+      register: miniflux_login_page
+
+    - name: Assert the login page renders a login form
+      ansible.builtin.assert:
+        that:
+          - miniflux_login_page.content is search('Miniflux')
+          - miniflux_login_page.content is search('name="password"')
+        fail_msg: "The login page did not render a login form"
+        success_msg: "The login page renders a login form"
+
+    # The REST API only answers once the database migrations have run and the
+    # admin account has been created from the environment file, so this reads
+    # back state that the role put into Postgres.
+    - name: Query the authenticated Miniflux API for the current user
+      ansible.builtin.uri:
+        url: "{{ miniflux_verify_base_url }}/v1/me"
+        method: GET
+        url_username: "{{ miniflux_admin_login }}"
+        url_password: "{{ miniflux_admin_password }}"
+        force_basic_auth: true
+        status_code: [200]
+        return_content: true
+      register: miniflux_api_me
+
+    - name: Assert the admin account was created and is an administrator
+      ansible.builtin.assert:
+        that:
+          - miniflux_api_me.json.username == miniflux_admin_login
+          - miniflux_api_me.json.is_admin | bool
+        fail_msg: "Unexpected /v1/me payload: {{ miniflux_api_me.json | default('no payload') }}"
+        success_msg: "The admin account '{{ miniflux_admin_login }}' exists"
+
+    # A write against the database, read back through a separate request, which
+    # covers the whole path (API -> storage -> Postgres) in both directions.
+    - name: Create a category through the Miniflux API
+      ansible.builtin.uri:
+        url: "{{ miniflux_verify_base_url }}/v1/categories"
+        method: POST
+        url_username: "{{ miniflux_admin_login }}"
+        url_password: "{{ miniflux_admin_password }}"
+        force_basic_auth: true
+        body_format: json
+        body:
+          title: Molecule
+        status_code: [201]
+        return_content: true
+      register: miniflux_api_category_created
+      changed_when: true
+
+    - name: List the categories through the Miniflux API
+      ansible.builtin.uri:
+        url: "{{ miniflux_verify_base_url }}/v1/categories"
+        method: GET
+        url_username: "{{ miniflux_admin_login }}"
+        url_password: "{{ miniflux_admin_password }}"
+        force_basic_auth: true
+        status_code: [200]
+        return_content: true
+      register: miniflux_api_categories
+
+    - name: Assert the created category was persisted
+      ansible.builtin.assert:
+        that: "'Molecule' in (miniflux_api_categories.json | map(attribute='title') | list)"
+        fail_msg: "The created category was not persisted: {{ miniflux_api_categories.json | default('no payload') }}"
+        success_msg: "A category was written to and read back from the database"
+
+    # Tying the running version to `miniflux_version` is what makes this
+    # scenario a real test of the version that Renovate bumps: a bump that
+    # produces an unusable image cannot pass here.
+    - name: Query the version reported by the running Miniflux
+      ansible.builtin.uri:
+        url: "{{ miniflux_verify_base_url }}/v1/version"
+        method: GET
+        url_username: "{{ miniflux_admin_login }}"
+        url_password: "{{ miniflux_admin_password }}"
+        force_basic_auth: true
+        status_code: [200]
+        return_content: true
+      register: miniflux_api_version
+
+    - name: Assert the running version is the one the role asks for
+      ansible.builtin.assert:
+        that: miniflux_api_version.json.version == miniflux_defaults.miniflux_version
+        fail_msg: >-
+          Miniflux reports version {{ miniflux_api_version.json.version | default('none') }},
+          but the role asks for {{ miniflux_defaults.miniflux_version }}
+        success_msg: "Miniflux reports version {{ miniflux_api_version.json.version }}"
+
+    - name: Show Miniflux verification summary
       ansible.builtin.debug:
         msg:
           - "Miniflux systemd: {{ miniflux_service.status.ActiveState }}"
-          - "Miniflux HTTP: {{ miniflux_endpoint.status }}"
+          - "Readiness probe: {{ miniflux_healthcheck.status }}"
+          - "Login page: {{ miniflux_login_page.status }}"
+          - "API user: {{ miniflux_api_me.json.username }}"
+          - "API category write: {{ miniflux_api_category_created.status }}"
+          - "Version: {{ miniflux_api_version.json.version }}"
