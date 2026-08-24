@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2023 - 2026 Aine
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 ---
 # Enable fail2ban installation and config
 system_security_fail2ban_enabled: true

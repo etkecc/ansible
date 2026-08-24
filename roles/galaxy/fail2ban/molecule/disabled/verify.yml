@@ -1,0 +1,63 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify fail2ban
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Retrieve jail.local
+      ansible.builtin.slurp:
+        src: /etc/fail2ban/jail.local
+      register: fail2ban_jail_local
+
+    - name: Show jail.local
+      ansible.builtin.debug:
+        var: fail2ban_jail_local.content | b64decode
+
+    - name: Assert the role left jail.local alone
+      ansible.builtin.assert:
+        that:
+          # Byte for byte what prepare.yml wrote.
+          - (fail2ban_jail_local.content | b64decode) == fail2ban_molecule_sentinel_jail_local
+          # Spelled out separately, because these are the specific traces a
+          # role that ignored the switch would leave: the header its template
+          # starts with, and the values this scenario set for it to render.
+          - "'Ansible managed' not in (fail2ban_jail_local.content | b64decode)"
+          - "'2222' not in (fail2ban_jail_local.content | b64decode)"
+          - "'10.77.77.77' not in (fail2ban_jail_local.content | b64decode)"
+        fail_msg: The role rewrote jail.local even though it is disabled
+        success_msg: jail.local is still the file the scenario put there
+
+    - name: Retrieve the fail2ban service state
+      ansible.builtin.systemd_service:
+        name: fail2ban.service
+      register: fail2ban_service
+
+    - name: Assert the role did not start fail2ban
+      ansible.builtin.assert:
+        that: fail2ban_service.status.ActiveState != 'active'
+        fail_msg: >-
+          fail2ban.service is {{ fail2ban_service.status.ActiveState }} even
+          though the role is disabled
+        success_msg: "fail2ban.service is {{ fail2ban_service.status.ActiveState }}, as expected"
+
+    # A second, independent reading: the server's own socket. If something had
+    # started fail2ban-server, this would answer with a pong instead of
+    # failing to connect.
+    - name: Ping the fail2ban server
+      ansible.builtin.command:
+        cmd: fail2ban-client ping
+      register: fail2ban_ping
+      changed_when: false
+      failed_when: false
+
+    - name: Assert no fail2ban server is answering
+      ansible.builtin.assert:
+        that:
+          - fail2ban_ping.rc != 0
+          - "'pong' not in fail2ban_ping.stdout"
+        fail_msg: "A fail2ban server is running and answering: {{ fail2ban_ping.stdout }}"
+        success_msg: No fail2ban server is answering, as expected

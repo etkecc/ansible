@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Aine
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 ---
 - name: Restart fail2ban
   ansible.builtin.service:

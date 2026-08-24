@@ -1,0 +1,45 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Prepare fail2ban Molecule tests
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Ensure apt cache is updated for fail2ban Molecule tests preparation
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 600
+      when: ansible_facts["os_family"] == 'Debian'
+
+    # fail2ban is installed here on purpose. A disabled role doing nothing on
+    # a host that has no fail2ban proves very little; the interesting case is
+    # a host where fail2ban is present and configured by someone else, which
+    # the role must then leave exactly as it found it.
+    - name: Ensure fail2ban is installed for fail2ban Molecule tests preparation
+      ansible.builtin.package:
+        name: fail2ban
+        state: present
+
+    - name: Ensure fail2ban is stopped for fail2ban Molecule tests preparation
+      ansible.builtin.systemd_service:
+        name: fail2ban.service
+        state: stopped
+
+    - name: Ensure a foreign jail.local is present for fail2ban Molecule tests preparation
+      ansible.builtin.copy:
+        dest: /etc/fail2ban/jail.local
+        content: "{{ fail2ban_molecule_sentinel_jail_local }}"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Assert the foreign jail.local is in place for fail2ban Molecule tests preparation
+      ansible.builtin.slurp:
+        src: /etc/fail2ban/jail.local
+      register: fail2ban_jail_local_before_converge
+      failed_when: >-
+        (fail2ban_jail_local_before_converge.content | b64decode)
+        != fail2ban_molecule_sentinel_jail_local

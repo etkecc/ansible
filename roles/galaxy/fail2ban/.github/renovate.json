@@ -1,0 +1,12 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": [
+    "The //patch-automerge preset is deliberately not extended here, and adding it would change nothing if it were.",
+    "That preset only relaxes the `custom.regex` manager, which is the shared configuration's way of tracking the version of the software a role installs: a `# renovate: datasource=... depName=...` comment above a `*_version` or `*_tag` variable in defaults/main.yml.",
+    "This role installs no container image and pins no version. It runs `ansible.builtin.package: name=fail2ban state=present`, so the version that reaches a server is whatever the distribution ships that day. defaults/main.yml therefore has no version variable to annotate, and inventing one to have something for Renovate to bump would be a fiction that nothing enforces.",
+    "What Renovate does manage here - GitHub Actions, the mise and pre-commit tool versions, molecule/requirements.txt and the Molecule Galaxy collections - is already automerged on a branch by the shared configuration."
+  ],
+  "extends": [
+    "github>mother-of-all-self-hosting/renovate-config#v1.0.0"
+  ]
+}

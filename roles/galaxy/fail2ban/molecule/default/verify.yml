@@ -1,0 +1,382 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify fail2ban
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Retrieve the fail2ban service state
+      ansible.builtin.systemd_service:
+        name: fail2ban.service
+      register: fail2ban_service
+
+    - name: Assert the fail2ban service is running and enabled
+      ansible.builtin.assert:
+        that:
+          - fail2ban_service.status.ActiveState == 'active'
+          - fail2ban_service.status.UnitFileState == 'enabled'
+        fail_msg: >-
+          fail2ban.service is {{ fail2ban_service.status.ActiveState }}
+          ({{ fail2ban_service.status.UnitFileState }})
+        success_msg: fail2ban.service is active and enabled
+
+    # systemd calling a unit active only means its main process has not
+    # exited. fail2ban-server can sit there with every jail failed, so the
+    # server is asked over its own socket whether it is actually answering.
+    - name: Ping the fail2ban server
+      ansible.builtin.command:
+        cmd: fail2ban-client ping
+      register: fail2ban_ping
+      changed_when: false
+
+    - name: Assert the fail2ban server answers on its socket
+      ansible.builtin.assert:
+        that: "'pong' in fail2ban_ping.stdout"
+        fail_msg: "fail2ban-server did not reply to a ping: {{ fail2ban_ping.stdout }}"
+        success_msg: fail2ban-server replied to a ping
+
+    ##########################################################################
+    # The jails the role's jail.local asks for
+    ##########################################################################
+
+    - name: Retrieve the list of jails
+      ansible.builtin.command:
+        cmd: fail2ban-client status
+      register: fail2ban_overall_status
+      changed_when: false
+
+    # A jail that failed to start is not listed here at all, so membership in
+    # this list is a statement about jails that are running, not merely
+    # configured. Parsed into a list rather than matched as a substring, so
+    # that a jail named `molecule-sshd` could not stand in for `sshd`.
+    - name: Collect the jails fail2ban has started
+      ansible.builtin.set_fact:
+        fail2ban_started_jails: >-
+          {{
+            fail2ban_overall_status.stdout_lines
+            | select('search', 'Jail list:')
+            | map('regex_replace', '^.*Jail list:\s*', '')
+            | first | default('') | trim
+            | split(',') | map('trim') | select | list
+          }}
+
+    - name: Show the jails fail2ban has started
+      ansible.builtin.debug:
+        var: fail2ban_started_jails
+
+    - name: Assert both configured jails are running
+      ansible.builtin.assert:
+        that:
+          # From the [sshd] section the role's template always writes.
+          - "'sshd' in fail2ban_started_jails"
+          # From system_security_fail2ban_configuration_extension.
+          - fail2ban_molecule_probe_jail in fail2ban_started_jails
+        fail_msg: "Expected the sshd and {{ fail2ban_molecule_probe_jail }} jails, got {{ fail2ban_started_jails }}"
+        success_msg: "The sshd and {{ fail2ban_molecule_probe_jail }} jails are both running"
+
+    ##########################################################################
+    # The role's variables, as the running server understands them
+    ##########################################################################
+
+    - name: Retrieve the actions of the sshd jail
+      ansible.builtin.command:
+        cmd: fail2ban-client get sshd actions
+      register: fail2ban_sshd_actions_output
+      changed_when: false
+
+    - name: Collect the actions of the sshd jail
+      ansible.builtin.set_fact:
+        fail2ban_sshd_actions: "{{ fail2ban_sshd_actions_output.stdout_lines[1:] | map('trim') | select | list }}"
+
+    # The port is not a jail property but a property of the banning action,
+    # which is where it has to arrive for a ban to cover the right port.
+    - name: Retrieve the port the sshd jail bans on
+      ansible.builtin.command:
+        cmd: "fail2ban-client get sshd action {{ fail2ban_sshd_actions | first }} port"
+      register: fail2ban_sshd_port_output
+      changed_when: false
+
+    - name: Assert the sshd jail bans on the configured port
+      ansible.builtin.assert:
+        that: fail2ban_sshd_port_output.stdout | trim == system_security_fail2ban_sshd_port | string
+        fail_msg: >-
+          The sshd jail bans on port {{ fail2ban_sshd_port_output.stdout | trim }},
+          not on {{ system_security_fail2ban_sshd_port }}
+        success_msg: "The sshd jail bans on port {{ system_security_fail2ban_sshd_port }}"
+
+    - name: Retrieve the ignore list of the sshd jail
+      ansible.builtin.command:
+        cmd: fail2ban-client get sshd ignoreip
+      register: fail2ban_ignoreip_output
+      changed_when: false
+
+    - name: Collect the ignore list of the sshd jail
+      ansible.builtin.set_fact:
+        fail2ban_ignored_addresses: >-
+          {{
+            fail2ban_ignoreip_output.stdout_lines[1:]
+            | map('regex_replace', '^[|`]-\s*', '')
+            | map('trim') | select | list
+          }}
+
+    - name: Assert the configured ignore list reached the sshd jail
+      ansible.builtin.assert:
+        that:
+          # fail2ban normalizes the network address, so the `127.0.0.1/8` the
+          # role's default asks for comes back as `127.0.0.0/8`.
+          - "'127.0.0.0/8' in fail2ban_ignored_addresses"
+          - "'::1' in fail2ban_ignored_addresses"
+          - fail2ban_molecule_ignored_ip in fail2ban_ignored_addresses
+          # The other direction: the address the scenario expects to see
+          # banned must not have slipped into the ignore list, which would
+          # make the ban assertion below unfalsifiable.
+          - fail2ban_molecule_banned_ip not in fail2ban_ignored_addresses
+        fail_msg: "The sshd jail ignores {{ fail2ban_ignored_addresses }}"
+        success_msg: "The sshd jail ignores {{ fail2ban_ignored_addresses }}"
+
+    - name: Retrieve the ban-time escalation setting of the sshd jail
+      ansible.builtin.command:
+        cmd: fail2ban-client get sshd bantime.increment
+      register: fail2ban_bantime_increment_output
+      changed_when: false
+
+    - name: Assert the configured ban-time escalation reached the sshd jail
+      ansible.builtin.assert:
+        that: >-
+          fail2ban_bantime_increment_output.stdout | trim
+          == (system_security_fail2ban_bantime_increment | bool) | string
+        fail_msg: >-
+          The sshd jail reports bantime.increment
+          {{ fail2ban_bantime_increment_output.stdout | trim }}, expected
+          {{ (system_security_fail2ban_bantime_increment | bool) | string }}
+        success_msg: >-
+          The sshd jail reports bantime.increment
+          {{ (system_security_fail2ban_bantime_increment | bool) | string }}
+
+    ##########################################################################
+    # An actual ban
+    #
+    # Everything above describes what fail2ban has been told. The rest of this
+    # file provokes a real ban and then reads it back from two places that can
+    # disagree: fail2ban's own bookkeeping, and the netfilter ruleset the
+    # kernel enforces. A banning action that silently failed would leave the
+    # first one saying "banned" and the second one empty.
+    ##########################################################################
+
+    - name: Retrieve the actions of the probe jail
+      ansible.builtin.command:
+        cmd: "fail2ban-client get {{ fail2ban_molecule_probe_jail }} actions"
+      register: fail2ban_probe_actions_output
+      changed_when: false
+
+    # Debian and Ubuntu ship fail2ban with `banaction = nftables` (see
+    # /etc/fail2ban/jail.d/defaults-debian.conf) and without iptables
+    # installed at all, which is why the firewall half of this verification
+    # reads `nft`. If a distribution ever changes that, this assertion is what
+    # says so, instead of the nftables ruleset coming back empty and the ban
+    # assertion failing for a reason nobody can guess.
+    - name: Assert the probe jail bans through nftables
+      ansible.builtin.assert:
+        that: "'nftables' in (fail2ban_probe_actions_output.stdout_lines[1:] | map('trim') | list)"
+        fail_msg: >-
+          The probe jail bans through
+          {{ fail2ban_probe_actions_output.stdout_lines[1:] | map('trim') | list }},
+          not through nftables, so reading `nft` says nothing about it
+        success_msg: The probe jail bans through nftables
+
+    # Both addresses get the same number of failures, in the same log, read by
+    # the same jail through the same filter. The only thing that differs is
+    # that one of them is in system_security_fail2ban_ignoreip.
+    #
+    # The timestamp comes from the target's own `date`, so that it matches the
+    # clock and timezone fail2ban-server reads the log with. Without a
+    # timestamp fail2ban matches the line and then discards it.
+    - name: Write authentication failures to the probe log
+      ansible.builtin.shell:
+        cmd: |
+          set -eu
+          for attempt in 1 2 3 4; do
+            printf '%s molecule-host sshd[4711]: Failed password for root from %s port 55000 ssh2\n' \
+              "$(date '+%Y-%m-%d %H:%M:%S')" '{{ item }}' >> '{{ fail2ban_molecule_probe_logpath }}'
+          done
+      loop:
+        - "{{ fail2ban_molecule_banned_ip }}"
+        - "{{ fail2ban_molecule_ignored_ip }}"
+      changed_when: true
+
+    # Polling the log, matching, counting and banning all take a moment.
+    # Used only to decide when to look; the assertions below take their own
+    # readings.
+    - name: Wait for fail2ban to act on the failures
+      ansible.builtin.command:
+        cmd: "fail2ban-client banned {{ fail2ban_molecule_banned_ip }}"
+      register: fail2ban_ban_lookup
+      changed_when: false
+      until: fail2ban_molecule_probe_jail in fail2ban_ban_lookup.stdout
+      retries: 30
+      delay: 2
+
+    - name: Retrieve the status of the probe jail
+      ansible.builtin.command:
+        cmd: "fail2ban-client status {{ fail2ban_molecule_probe_jail }}"
+      register: fail2ban_probe_status
+      changed_when: false
+
+    - name: Show the status of the probe jail
+      ansible.builtin.debug:
+        var: fail2ban_probe_status.stdout_lines
+
+    - name: Collect the addresses the probe jail reports as banned
+      ansible.builtin.set_fact:
+        fail2ban_reported_bans: >-
+          {{
+            fail2ban_probe_status.stdout_lines
+            | select('search', 'Banned IP list:')
+            | map('regex_replace', '^.*Banned IP list:\s*', '')
+            | first | default('') | trim
+            | split(' ') | map('trim') | select | list
+          }}
+
+    - name: Collect the number of failures the probe jail has seen
+      ansible.builtin.set_fact:
+        fail2ban_total_failed: >-
+          {{
+            fail2ban_probe_status.stdout_lines
+            | select('search', 'Total failed:')
+            | map('regex_replace', '^.*Total failed:\s*', '')
+            | first | default('0') | trim | int
+          }}
+
+    # Establishes that the jail read the log at all. Without it, "the ignored
+    # address was not banned" would be equally true of a jail that never saw a
+    # single line.
+    - name: Assert the probe jail read the seeded failures
+      ansible.builtin.assert:
+        that: fail2ban_total_failed | int > 0
+        fail_msg: The probe jail counted no failures at all, so it never read the log
+        success_msg: "The probe jail counted {{ fail2ban_total_failed }} failure(s)"
+
+    # `Total failed` above counts only the failures fail2ban acted on; the
+    # ones it drops on account of the ignore list never reach that counter.
+    # So the ignored address' four lines have to be accounted for somewhere
+    # else, otherwise "it was not banned" would be equally true of lines
+    # fail2ban never read. fail2ban logs one of these per line it matched and
+    # then dropped, at the INFO level Debian and Ubuntu ship by default.
+    - name: Compose the log pattern for the ignored address
+      ansible.builtin.set_fact:
+        fail2ban_ignore_log_pattern: >-
+          \[{{ fail2ban_molecule_probe_jail | regex_escape }}\] Ignore {{ fail2ban_molecule_ignored_ip | regex_escape }} by ip
+
+    - name: Wait for fail2ban to record its decision about the ignored address
+      ansible.builtin.slurp:
+        src: /var/log/fail2ban.log
+      register: fail2ban_own_log
+      until: >-
+        (fail2ban_own_log.content | b64decode | split('\n'))
+        | select('search', fail2ban_ignore_log_pattern) | list | length >= 4
+      retries: 30
+      delay: 2
+
+    - name: Assert fail2ban read the ignored address' failures and spared them on purpose
+      ansible.builtin.assert:
+        that: >-
+          (fail2ban_own_log.content | b64decode | split('\n'))
+          | select('search', fail2ban_ignore_log_pattern) | list | length >= 4
+        fail_msg: >-
+          fail2ban did not report ignoring {{ fail2ban_molecule_ignored_ip }}
+          four times, so its failures may simply never have been read
+        success_msg: >-
+          fail2ban matched all four failures of {{ fail2ban_molecule_ignored_ip }}
+          and dropped them by ip
+
+    - name: Retrieve the netfilter ruleset
+      ansible.builtin.command:
+        cmd: nft --json list ruleset
+      register: fail2ban_nft_ruleset
+      changed_when: false
+
+    - name: Collect the netfilter objects
+      ansible.builtin.set_fact:
+        fail2ban_nft_objects: "{{ (fail2ban_nft_ruleset.stdout | from_json).nftables }}"
+
+    # A set full of addresses that no rule refers to blocks nothing, so the
+    # sets are narrowed down to the ones fail2ban's own rules actually match
+    # traffic against before their contents are believed.
+    - name: Collect the netfilter sets fail2ban's rules reject traffic from
+      ansible.builtin.set_fact:
+        fail2ban_nft_enforced_set_names: >-
+          {{
+            fail2ban_nft_objects
+            | selectattr('rule', 'defined') | map(attribute='rule')
+            | selectattr('table', 'equalto', 'f2b-table')
+            | map(attribute='expr') | flatten
+            | selectattr('match', 'defined') | map(attribute='match.right')
+            | select('string') | select('match', '^@')
+            | map('regex_replace', '^@', '') | unique | list
+          }}
+
+    - name: Collect the addresses the kernel is rejecting
+      ansible.builtin.set_fact:
+        fail2ban_nft_enforced_addresses: >-
+          {{
+            fail2ban_nft_objects
+            | selectattr('set', 'defined') | map(attribute='set')
+            | selectattr('table', 'equalto', 'f2b-table')
+            | selectattr('name', 'in', fail2ban_nft_enforced_set_names)
+            | map(attribute='elem', default=[]) | flatten | list
+          }}
+
+    - name: Show what the kernel is rejecting
+      ansible.builtin.debug:
+        msg:
+          - "Sets referenced by fail2ban's rules: {{ fail2ban_nft_enforced_set_names }}"
+          - "Addresses in those sets: {{ fail2ban_nft_enforced_addresses }}"
+
+    - name: Assert fail2ban banned the offending address
+      ansible.builtin.assert:
+        that: fail2ban_molecule_banned_ip in fail2ban_reported_bans
+        fail_msg: >-
+          {{ fail2ban_molecule_banned_ip }} is not banned;
+          the probe jail reports {{ fail2ban_reported_bans }}
+        success_msg: "{{ fail2ban_molecule_banned_ip }} is banned by the probe jail"
+
+    - name: Assert the kernel is rejecting the offending address
+      ansible.builtin.assert:
+        that: fail2ban_molecule_banned_ip in fail2ban_nft_enforced_addresses
+        fail_msg: >-
+          fail2ban reports {{ fail2ban_molecule_banned_ip }} as banned, but the
+          kernel rejects only {{ fail2ban_nft_enforced_addresses }}
+        success_msg: "The kernel rejects traffic from {{ fail2ban_molecule_banned_ip }}"
+
+    - name: Assert the ignored address was spared by both
+      ansible.builtin.assert:
+        that:
+          - fail2ban_molecule_ignored_ip not in fail2ban_reported_bans
+          - fail2ban_molecule_ignored_ip not in fail2ban_nft_enforced_addresses
+        fail_msg: >-
+          {{ fail2ban_molecule_ignored_ip }} is in
+          system_security_fail2ban_ignoreip but was banned anyway
+        success_msg: >-
+          {{ fail2ban_molecule_ignored_ip }} took the same failures and was not
+          banned, because it is in system_security_fail2ban_ignoreip
+
+    - name: Assert an address nobody complained about is untouched
+      ansible.builtin.assert:
+        that:
+          - fail2ban_molecule_untouched_ip not in fail2ban_reported_bans
+          - fail2ban_molecule_untouched_ip not in fail2ban_nft_enforced_addresses
+        fail_msg: "{{ fail2ban_molecule_untouched_ip }} was banned without ever failing anything"
+        success_msg: "{{ fail2ban_molecule_untouched_ip }} is untouched, as expected"
+
+    - name: Show the fail2ban verification summary
+      ansible.builtin.debug:
+        msg:
+          - "fail2ban.service: {{ fail2ban_service.status.ActiveState }} ({{ fail2ban_service.status.UnitFileState }})"
+          - "Jails running: {{ fail2ban_started_jails | join(', ') }}"
+          - "sshd jail bans on port {{ fail2ban_sshd_port_output.stdout | trim }} via {{ fail2ban_sshd_actions | join(', ') }}"
+          - "Ignored: {{ fail2ban_ignored_addresses | join(', ') }}"
+          - "Banned by fail2ban: {{ fail2ban_reported_bans | join(', ') }}"
+          - "Rejected by the kernel: {{ fail2ban_nft_enforced_addresses | join(', ') }}"

@@ -1,8 +1,9 @@
+---
 galaxy_info:
-  author: etke.cc
-  company: etke.cc
+  author: mash
+  company: mash
   role_name: fail2ban
-  namespace: etkecc
+  namespace: mash
   description: system fail2ban security role
   platforms:
     - name: Debian
@@ -18,4 +19,4 @@ galaxy_info:
       versions:
         - all
   license: GPL-3.0-or-later
-  min_ansible_version: '2.1'
+  min_ansible_version: "2.1"

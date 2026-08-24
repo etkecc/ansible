@@ -1,0 +1,88 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+driver:
+  name: docker
+platforms:
+  # The role installs an intrusion-prevention daemon onto whatever host it
+  # runs against and lets it program the firewall, so it must never be
+  # pointed at the machine running the tests. A Docker container gets its own
+  # network namespace, which is what makes this safe: the nftables rules
+  # fail2ban installs inside it apply to that container alone and leave the
+  # host's firewall (and every other container) untouched.
+  - name: fail2ban-${MOLECULE_DISTRO:-ubuntu2604}-default
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2604}-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+    # fail2ban needs CAP_NET_ADMIN to program netfilter, and the systemd-based
+    # images need a privileged container anyway.
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callback_result_format: yaml
+  inventory:
+    group_vars:
+      all:
+        # Scenario coordinates. They are referenced from the role variables
+        # below and from verify.yml, so that the log the scenario writes, the
+        # jail that reads it and the addresses the assertions look for cannot
+        # drift apart.
+        fail2ban_molecule_probe_jail: molecule-probe
+        fail2ban_molecule_probe_logpath: /var/log/molecule-probe.log
+
+        # The address the scenario hammers with authentication failures and
+        # expects to see banned.
+        fail2ban_molecule_banned_ip: 10.66.66.66
+
+        # The address that gets exactly the same treatment but is listed in
+        # `system_security_fail2ban_ignoreip`. It must come out unbanned. Same
+        # log, same filter, same jail, same number of failures - the only
+        # difference is the ignore list, which is what makes the ban assertion
+        # below evidence of anything.
+        fail2ban_molecule_ignored_ip: 10.77.77.77
+
+        # An address nothing ever writes a failure for. It must appear
+        # nowhere, so that the assertions cannot be satisfied by a firewall
+        # that simply blocks everybody.
+        fail2ban_molecule_untouched_ip: 10.88.88.88
+
+        # A deliberately non-default SSH port, so that verification can tell
+        # apart a jail that honors `system_security_fail2ban_sshd_port` from
+        # one that just kept fail2ban's own default of `ssh`.
+        system_security_fail2ban_sshd_port: 2222
+
+        system_security_fail2ban_ignoreip: "127.0.0.1/8 ::1 {{ fail2ban_molecule_ignored_ip }}"
+
+        system_security_fail2ban_bantime_increment: true
+
+        # A jail of the scenario's own, so that a ban can be provoked on
+        # demand. It runs fail2ban's stock `sshd` filter - the very filter the
+        # role's own [sshd] jail uses - but against a file this scenario
+        # appends to, rather than against the systemd journal, whose
+        # `_SYSTEMD_UNIT`/`_COMM` fields are set by systemd and cannot be
+        # forged from a playbook.
+        #
+        # `backend = polling` rather than the default `auto`, so that picking
+        # up an appended line does not depend on inotify working through the
+        # container's filesystem driver.
+        system_security_fail2ban_configuration_extension: |
+          [{{ fail2ban_molecule_probe_jail }}]
+          enabled  = true
+          filter   = sshd
+          backend  = polling
+          logpath  = {{ fail2ban_molecule_probe_logpath }}
+          maxretry = 3
+          findtime = 600
+          bantime  = 600
+  env:
+    # Workaround for https://github.com/ansible/molecule/issues/4391
+    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles
+verifier:
+  name: ansible

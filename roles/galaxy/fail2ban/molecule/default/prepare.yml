@@ -1,0 +1,36 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Prepare fail2ban Molecule tests
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Ensure apt cache is updated for fail2ban Molecule tests preparation
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 600
+      when: ansible_facts["os_family"] == 'Debian'
+
+    # Deliberately nothing else is installed: the role is supposed to install
+    # fail2ban itself, and the scenario is only meaningful if it starts from a
+    # host that has no intrusion prevention at all.
+    - name: Assert fail2ban is not installed yet for fail2ban Molecule tests preparation
+      ansible.builtin.stat:
+        path: /usr/bin/fail2ban-server
+      register: fail2ban_binary_before_converge
+      failed_when: fail2ban_binary_before_converge.stat.exists
+
+    # fail2ban refuses to start a file-backed jail whose log file does not
+    # exist, so this stands in for the log a real service would be writing.
+    # It stays empty here; verify.yml is what appends to it.
+    - name: Ensure the probe log file exists for fail2ban Molecule tests preparation
+      ansible.builtin.copy:
+        dest: "{{ fail2ban_molecule_probe_logpath }}"
+        content: ""
+        owner: root
+        group: root
+        mode: "0640"
+        force: false
