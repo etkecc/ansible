@@ -47,15 +47,25 @@ Currently these testing scenarios are available:
 
 ### `default`
 
-Tests a standard linkding installation.
+Tests a standard linkding installation on SQLite.
+
+Beyond the systemd service being active, it checks that linkding reports itself healthy on `/health` — the one endpoint that opens a database connection — that the version it reports and the version file inside the image both match `linkding_version`, that the environment file the role rendered reached the process, that the superuser the role was asked to create exists and that its password authenticates (and that a wrong one does not), and that a bookmark written through the REST API can be read back through the API and is found in the database and in the SQLite file on the host.
 
 ### `default-selfbuild`
 
 Tests a standard linkding installation with self-building the container image.
 
+It proves the running container was built here rather than pulled — the role tags a self-built image `v<version>`, which upstream never publishes, and a built image carries no registry digest. This scenario also deliberately configures no superuser, which is the case the other two do not cover: it asserts that no superuser variables reach the environment and that linkding creates no account at all.
+
 ### `postgres`
 
 Tests a standard linkding installation with the Postgres database.
+
+A scenario named after a backend is no proof that the application ended up using it — linkding falls back to SQLite whenever `LD_DB_ENGINE` does not say otherwise — so this one reads the backend off the connection Django actually opened, and then looks for the bookmark it wrote through the API in the Postgres database itself, with `psql`.
+
+### What these scenarios deliberately do not gate on
+
+linkding is a Django application, and its login page renders without ever touching the database. A container pointed at a nonexistent database host still answers `/` with a `302` and `/login/` with a `200`, with uWSGI up and every migration failed. Asserting on either would pass on a completely broken installation, so the scenarios gate on `/health` instead, which calls `ensure_connection()` and answers `500` when the database is unreachable.
 
 ## Running
 

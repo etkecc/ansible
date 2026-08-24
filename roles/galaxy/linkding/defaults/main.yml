@@ -245,9 +245,13 @@ linkding_environment_variables_ld_db_host: "{{ linkding_database_socket_path_con
 #                                                                      #
 ########################################################################
 
-# The username and password for the linkding superuser
-linkding_superuser_username:
-linkding_superuser_password:
+# The username and password for the initial linkding superuser.
+#
+# Both are optional. When `linkding_superuser_username` is left empty, the
+# variables that ask linkding to create an initial superuser are left out of the
+# environment file entirely, and no account is created.
+linkding_superuser_username: ""
+linkding_superuser_password: ""
 
 # Specify the timezone
 linkding_environment_variables_tz: UTC

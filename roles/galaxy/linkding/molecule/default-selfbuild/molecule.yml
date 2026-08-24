@@ -1,5 +1,5 @@
-# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 # SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -12,7 +12,7 @@ dependency:
 driver:
   name: docker
 platforms:
-  - name: linkding-${MOLECULE_DISTRO:-ubuntu2604}-default
+  - name: linkding-${MOLECULE_DISTRO:-ubuntu2604}-default-selfbuild
     image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2604}-ansible:latest"
     command: ${MOLECULE_DOCKER_COMMAND:-""}
     volumes:

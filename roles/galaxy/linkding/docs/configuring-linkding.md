@@ -110,6 +110,15 @@ linkding_superuser_username: SUPERUSER_USERNAME_HERE
 linkding_superuser_password: SUPERUSER_PASSWORD_HERE
 ```
 
+If you leave these unset, no account is created, and you will need to create one yourself before you can log in — for example with `docker exec -it linkding python manage.py createsuperuser`.
+
+> [!WARNING]
+> Instances installed before this was fixed may carry an account nobody asked for. Until then, leaving these two settings unset still wrote `LD_SUPERUSER_NAME=None` into linkding's environment file, and linkding created an administrator account named `None` whose password is `None`. If you never configured a superuser, check for such an account and remove it:
+>
+> ```sh
+> docker exec -it linkding python manage.py shell -c "from django.contrib.auth import get_user_model; print(get_user_model().objects.filter(username='None').delete())"
+> ```
+
 ### Extending the configuration
 
 There are some additional things you may wish to configure about the service.

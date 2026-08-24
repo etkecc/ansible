@@ -1,14 +1,88 @@
-# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 # SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: Verify linkding systemd service
+- name: Verify a self-built linkding
   hosts: all
   become: true
   gather_facts: false
+
+  vars:
+    linkding_verify_base_url: "http://localhost:{{ linkding_container_http_host_bind_port }}"
+
+    linkding_verify_bookmark_url: "http://linkding.molecule.invalid/selfbuild"
+    linkding_verify_bookmark_title: linkding Molecule probe (self-build)
+
+    # The account this scenario creates for itself, after having proved that
+    # the role created none. Deliberately not `linkding_superuser_username`,
+    # which this scenario leaves unset on purpose.
+    linkding_verify_username: molecule-selfbuild
+    linkding_verify_password: molecule-selfbuild-password-1234
+
+    # Reports the environment linkding is running with and every account that
+    # exists. This scenario configures no superuser, so the interesting answer
+    # is that there are none at all.
+    linkding_verify_account_probe: |
+      import json, os
+      from django.contrib.auth import get_user_model
+
+      print("LINKDING_PROBE=" + json.dumps({
+          "env_superuser_name": os.environ.get("LD_SUPERUSER_NAME", ""),
+          "env_superuser_name_present": "LD_SUPERUSER_NAME" in os.environ,
+          "env_superuser_password_present": "LD_SUPERUSER_PASSWORD" in os.environ,
+          "env_db_engine": os.environ.get("LD_DB_ENGINE", ""),
+          "usernames": sorted(get_user_model().objects.values_list("username", flat=True)),
+      }))
+
+    # Creates the account this scenario drives the API with, and hands back a
+    # token bound to it.
+    linkding_verify_account_creation: |
+      import json
+      from django.contrib.auth import get_user_model
+      from bookmarks.models import ApiToken
+
+      User = get_user_model()
+      user, _created = User.objects.get_or_create(
+          username="molecule-selfbuild",
+          defaults={"is_superuser": True, "is_staff": True},
+      )
+      user.set_password("molecule-selfbuild-password-1234")
+      user.save()
+      token, _token_created = ApiToken.objects.get_or_create(user=user, name="molecule-verify")
+
+      print("LINKDING_PROBE=" + json.dumps({"username": user.username, "token": token.key}))
+
+    linkding_verify_database_probe: |
+      import json
+      from django.conf import settings
+      from django.db import connections
+
+      connection = connections["default"]
+      cursor = connection.cursor()
+      cursor.execute("select url, title from bookmarks_bookmark order by id")
+      settings_dict = settings.DATABASES["default"]
+
+      print("LINKDING_PROBE=" + json.dumps({
+          "vendor": connection.vendor,
+          "engine": settings_dict["ENGINE"],
+          "name": str(settings_dict["NAME"]),
+          "bookmarks": [list(row) for row in cursor.fetchall()],
+      }))
+
   tasks:
+    # The role is not included in this playbook, so its defaults are not in
+    # scope. Reading defaults/main.yml directly keeps the assertions below tied
+    # to the values that Renovate bumps, with nothing to keep in sync in this
+    # scenario. Only literal leaf values are used from it - anything built with
+    # Jinja is unrendered here. include_vars reads from the controller.
+    - name: Load the linkding role defaults
+      ansible.builtin.include_vars:
+        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+        name: linkding_defaults
+
     - name: Wait for linkding service to become active (up to 180s)
       ansible.builtin.systemd:
         name: linkding.service
@@ -29,25 +103,279 @@
         cmd: journalctl -xeu linkding.service
       changed_when: false
 
-    - name: Wait for linkding HTTP endpoint to respond (up to 10m)
+    # linkding is a Django application, and its login page renders without ever
+    # touching the database: a container whose database is unreachable still
+    # answers `/` with a 302 and `/login/` with a 200. `/health` is the endpoint
+    # that opens a database connection and answers 500 "unhealthy" when that
+    # fails, so it is the only readiness gate here worth waiting on.
+    - name: Wait for linkding to report itself healthy (up to 10m)
       ansible.builtin.uri:
-        url: "http://localhost:9090/"
+        url: "{{ linkding_verify_base_url }}/health"
         method: GET
-        status_code: [200, 302]
-        follow_redirects: none
-      register: linkding_endpoint
-      until: linkding_endpoint.status in [200, 302]
+        status_code: [200, 500, 502, 503]
+        return_content: true
+      register: linkding_health
+      until: linkding_health.status == 200 and linkding_health.json.status | default('') == 'healthy'
       retries: 120
       delay: 5
 
-    - name: Assert linkding HTTP endpoint responds
+    - name: Assert linkding reports a working database connection
       ansible.builtin.assert:
-        that: linkding_endpoint.status in [200, 302]
-        fail_msg: "linkding did not respond as expected ({{ linkding_endpoint.status | default('no response') }})"
-        success_msg: "linkding responded with {{ linkding_endpoint.status }}"
+        that:
+          - linkding_health.status == 200
+          - linkding_health.json.status == 'healthy'
+        fail_msg: >-
+          linkding did not report itself healthy
+          (status {{ linkding_health.status | default('no response') }},
+          body {{ linkding_health.json | default('none') }})
+        success_msg: "linkding reports a working database connection"
 
-    - name: Show linkding systemd service status summary
+    - name: Assert the running version is the one the role asks for
+      ansible.builtin.assert:
+        that: linkding_health.json.version == linkding_defaults.linkding_version | string
+        fail_msg: >-
+          linkding reports version {{ linkding_health.json.version | default('none') }},
+          but the role asks for {{ linkding_defaults.linkding_version }}
+        success_msg: "linkding reports version {{ linkding_health.json.version }}"
+
+    - name: Read the version file shipped inside the linkding image
+      ansible.builtin.command:
+        argv:
+          - docker
+          - exec
+          - "{{ linkding_defaults.linkding_identifier }}"
+          - cat
+          - /etc/linkding/version.txt
+      register: linkding_version_file
+      changed_when: false
+
+    - name: Assert the image ships the version the role asks for
+      ansible.builtin.assert:
+        that: linkding_version_file.stdout | trim == linkding_defaults.linkding_version | string
+        fail_msg: >-
+          The image ships version {{ linkding_version_file.stdout | trim | default('nothing') }},
+          but the role asks for {{ linkding_defaults.linkding_version }}
+        success_msg: "The deployed image ships version {{ linkding_version_file.stdout | trim }}"
+
+    - name: Inspect the linkding container
+      ansible.builtin.command:
+        argv:
+          - docker
+          - inspect
+          - "{{ linkding_defaults.linkding_identifier }}"
+      register: linkding_container_inspection
+      changed_when: false
+
+    - name: Keep the image the linkding container was created from
+      ansible.builtin.set_fact:
+        linkding_container_image_name: "{{ (linkding_container_inspection.stdout | from_json)[0].Config.Image }}"
+
+    # The whole point of this scenario. The role tags a self-built image after
+    # the git ref it checked out - `v1.46.2` - whereas the images published on
+    # Docker Hub are tagged without that `v` (1.46.2, 1.46.2-alpine, 1.46.2-plus,
+    # 1.46.2-plus-alpine, and nothing else). A container running the `v`-prefixed
+    # tag can therefore only be running an image that was built on this host.
+    - name: Assert the container runs the self-built image, not a published one
+      ansible.builtin.assert:
+        that: linkding_container_image_name == ('sissbruecker/linkding:v' + (linkding_defaults.linkding_version | string))
+        fail_msg: >-
+          The linkding container runs '{{ linkding_container_image_name }}', not the
+          self-built 'sissbruecker/linkding:v{{ linkding_defaults.linkding_version }}'
+        success_msg: "The linkding container runs the self-built image '{{ linkding_container_image_name }}'"
+
+    - name: Inspect the self-built linkding image
+      ansible.builtin.command:
+        argv:
+          - docker
+          - image
+          - inspect
+          - "{{ linkding_container_image_name }}"
+      register: linkding_image_inspection
+      changed_when: false
+
+    # An image that was pulled carries the registry digest it was pulled by. One
+    # that was built here has never been in a registry and carries none, which
+    # rules out the tag above having simply been fetched from somewhere.
+    - name: Assert the image was built here rather than pulled
+      ansible.builtin.assert:
+        that: (linkding_image_inspection.stdout | from_json)[0].RepoDigests | length == 0
+        fail_msg: >-
+          The image '{{ linkding_container_image_name }}' carries registry digests
+          {{ (linkding_image_inspection.stdout | from_json)[0].RepoDigests }},
+          so it was pulled rather than built here
+        success_msg: "The image '{{ linkding_container_image_name }}' carries no registry digest, so it was built here"
+
+    - name: Probe the linkding environment and accounts
+      ansible.builtin.command:
+        argv:
+          - docker
+          - exec
+          - "{{ linkding_defaults.linkding_identifier }}"
+          - python
+          - manage.py
+          - shell
+          - -c
+          - "{{ linkding_verify_account_probe }}"
+      register: linkding_account_output
+      changed_when: false
+
+    - name: Keep the account probe result
+      ansible.builtin.set_fact:
+        linkding_account: "{{ linkding_account_output.stdout_lines | select('match', '^LINKDING_PROBE=') | first | regex_replace('^LINKDING_PROBE=', '') | from_json }}"
+
+    # This scenario deliberately configures no superuser, which is the case the
+    # other two do not cover. The role used to default the superuser settings to
+    # a bare YAML key - null - and emit them unconditionally, so Jinja rendered
+    # LD_SUPERUSER_NAME=None and linkding created a working admin account named
+    # `None`, with the password `None`, on every installation that configured
+    # none. Confirmed against sissbruecker/linkding:1.46.2, where logging in as
+    # None/None returned a valid session. Asserting on the environment as well
+    # as on the accounts keeps this honest whichever way it might regress.
+    - name: Assert no superuser variables were rendered into the environment
+      ansible.builtin.assert:
+        that:
+          - not linkding_account.env_superuser_name_present
+          - not linkding_account.env_superuser_password_present
+        fail_msg: >-
+          linkding is running with LD_SUPERUSER_NAME set to
+          '{{ linkding_account.env_superuser_name }}', although this scenario configures no superuser
+        success_msg: "linkding runs without the superuser variables in its environment"
+
+    - name: Assert linkding created no account of its own
+      ansible.builtin.assert:
+        that:
+          - linkding_account.usernames | length == 0
+          - "'None' not in linkding_account.usernames"
+        fail_msg: >-
+          linkding has {{ linkding_account.usernames | length }} account(s)
+          ({{ linkding_account.usernames | join(', ') }}), although this scenario configures no superuser
+        success_msg: "linkding created no account, as this scenario configures no superuser"
+
+    # With no account in existence there is no authenticated surface at all, so
+    # the API must turn everything away.
+    - name: Call the linkding API without credentials
+      ansible.builtin.uri:
+        url: "{{ linkding_verify_base_url }}/api/bookmarks/"
+        method: GET
+        status_code: [200, 401, 403]
+      register: linkding_api_anonymous
+
+    - name: Assert the API rejects unauthenticated callers
+      ansible.builtin.assert:
+        that: linkding_api_anonymous.status == 401
+        fail_msg: >-
+          The linkding API answered an unauthenticated caller with
+          {{ linkding_api_anonymous.status }} instead of 401
+        success_msg: "The linkding API rejects unauthenticated callers"
+
+    # Everything above describes the self-built image; the rest exercises it.
+    # The account is created here, by this playbook, rather than by the role -
+    # which is what lets the assertions above insist there were none.
+    - name: Create an account to exercise the self-built image with
+      ansible.builtin.command:
+        argv:
+          - docker
+          - exec
+          - "{{ linkding_defaults.linkding_identifier }}"
+          - python
+          - manage.py
+          - shell
+          - -c
+          - "{{ linkding_verify_account_creation }}"
+      register: linkding_account_creation_output
+      changed_when: true
+
+    - name: Keep the created account and its API token
+      ansible.builtin.set_fact:
+        linkding_verify_account: "{{ linkding_account_creation_output.stdout_lines | select('match', '^LINKDING_PROBE=') | first | regex_replace('^LINKDING_PROBE=', '') | from_json }}"
+
+    - name: Create a bookmark through the linkding API
+      ansible.builtin.uri:
+        url: "{{ linkding_verify_base_url }}/api/bookmarks/"
+        method: POST
+        headers:
+          Authorization: "Token {{ linkding_verify_account.token }}"
+        body_format: json
+        body:
+          url: "{{ linkding_verify_bookmark_url }}"
+          title: "{{ linkding_verify_bookmark_title }}"
+          description: Written through the linkding API by the Molecule verifier
+          tag_names:
+            - molecule
+        status_code: [201, 400, 401, 403]
+        return_content: true
+      register: linkding_bookmark_created
+      changed_when: linkding_bookmark_created.status == 201
+
+    - name: Assert the API accepted the bookmark
+      ansible.builtin.assert:
+        that:
+          - linkding_bookmark_created.status == 201
+          - linkding_bookmark_created.json.url == linkding_verify_bookmark_url
+        fail_msg: >-
+          The self-built linkding did not accept the bookmark
+          (status {{ linkding_bookmark_created.status | default('no response') }})
+        success_msg: "The self-built linkding accepted the bookmark {{ linkding_bookmark_created.json.id | default('none') }}"
+
+    - name: List the bookmarks through the linkding API
+      ansible.builtin.uri:
+        url: "{{ linkding_verify_base_url }}/api/bookmarks/"
+        method: GET
+        headers:
+          Authorization: "Token {{ linkding_verify_account.token }}"
+        status_code: [200, 401, 403]
+        return_content: true
+      register: linkding_bookmarks
+
+    - name: Assert the bookmark is listed
+      ansible.builtin.assert:
+        that:
+          - linkding_bookmarks.status == 200
+          - linkding_verify_bookmark_url in (linkding_bookmarks.json.results | map(attribute='url') | list)
+        fail_msg: "The created bookmark was not returned by the linkding bookmark listing"
+        success_msg: "The created bookmark was read back through the linkding API"
+
+    - name: Probe the linkding database
+      ansible.builtin.command:
+        argv:
+          - docker
+          - exec
+          - "{{ linkding_defaults.linkding_identifier }}"
+          - python
+          - manage.py
+          - shell
+          - -c
+          - "{{ linkding_verify_database_probe }}"
+      register: linkding_database_output
+      changed_when: false
+
+    - name: Keep the database probe result
+      ansible.builtin.set_fact:
+        linkding_database: "{{ linkding_database_output.stdout_lines | select('match', '^LINKDING_PROBE=') | first | regex_replace('^LINKDING_PROBE=', '') | from_json }}"
+
+    - name: Assert linkding is running on the database backend the role configured
+      ansible.builtin.assert:
+        that:
+          - linkding_database.vendor == 'sqlite'
+          - linkding_database.engine == 'django.db.backends.sqlite3'
+        fail_msg: >-
+          linkding is running on the {{ linkding_database.vendor | default('unknown') }} backend
+          ({{ linkding_database.engine | default('unknown') }}), not SQLite
+        success_msg: "linkding is running on SQLite ({{ linkding_database.name }})"
+
+    - name: Assert the bookmark was persisted into the database
+      ansible.builtin.assert:
+        that: linkding_verify_bookmark_url in (linkding_database.bookmarks | map(attribute=0) | list)
+        fail_msg: >-
+          The linkding database holds no bookmark for {{ linkding_verify_bookmark_url }}
+          (it holds {{ linkding_database.bookmarks | length }} bookmark(s))
+        success_msg: "The bookmark written through the API is stored in the linkding database"
+
+    - name: Show linkding verification summary
       ansible.builtin.debug:
         msg:
           - "linkding systemd: {{ linkding_service.status.ActiveState }}"
-          - "linkding HTTP: {{ linkding_endpoint.status }}"
+          - "linkding image: {{ linkding_container_image_name }} (built here, no registry digest)"
+          - "linkding version: {{ linkding_health.json.version }} (image ships {{ linkding_version_file.stdout | trim }})"
+          - "linkding database: {{ linkding_database.vendor }} at {{ linkding_database.name }}"
+          - "linkding bookmarks in the database: {{ linkding_database.bookmarks | length }}"

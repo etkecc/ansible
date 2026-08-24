@@ -1,5 +1,5 @@
-# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 # SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -12,7 +12,7 @@ dependency:
 driver:
   name: docker
 platforms:
-  - name: linkding-${MOLECULE_DISTRO:-ubuntu2604}-default
+  - name: linkding-${MOLECULE_DISTRO:-ubuntu2604}-postgres
     image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2604}-ansible:latest"
     command: ${MOLECULE_DOCKER_COMMAND:-""}
     volumes:
@@ -38,12 +38,18 @@ provisioner:
         linkding_hostname: localhost
         linkding_container_labels_traefik_enabled: false
         linkding_container_http_host_bind_port: 9090
-        linkding_database_type: postgres
+
+        # An initial superuser, so that the verifier has an account to log in
+        # with and to bind an API token to. Without one, linkding exposes no
+        # authenticated surface at all and there is nothing to test beyond the
+        # login page - which renders even when the database is unreachable.
+        linkding_superuser_username: molecule
+        linkding_superuser_password: molecule-password-1234
 
         # Variables required for linkding to connect to the Postgres database (via Unix socket)
+        linkding_database_type: postgres
         linkding_database_username: my_database_username
         linkding_database_password: my_database_password
-        linkding_database_sslmode: disable
         linkding_database_name: linkding
         linkding_database_socket_enabled: true
         linkding_database_socket_path_host: "{{ postgres_run_path }}"
