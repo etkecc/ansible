@@ -1,0 +1,18 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Include roles for ufw rule removal Molecule tests
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Include roles for ufw rule removal Molecule tests
+      ansible.builtin.include_role:
+        name: "{{ role_name }}"
+        public: true
+      loop:
+        - "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+      loop_control:
+        loop_var: role_name

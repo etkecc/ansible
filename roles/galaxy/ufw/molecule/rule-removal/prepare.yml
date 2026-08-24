@@ -1,0 +1,60 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Prepare ufw rule removal Molecule tests
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Ensure apt cache is updated for ufw rule removal Molecule tests preparation
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 600
+      when: ansible_facts["os_family"] == 'Debian'
+
+    # This scenario is about rules that already exist being taken away, so
+    # unlike the default scenario it has to bring ufw up itself first. The
+    # rules below are added with the ufw CLI rather than with the role, so
+    # that what verify.yml later observes cannot be an artifact of the role
+    # having never added them in the first place.
+    - name: Ensure ufw is installed for ufw rule removal Molecule tests preparation
+      ansible.builtin.package:
+        name: ufw
+        state: present
+
+    - name: Ensure rules to be retired exist for ufw rule removal Molecule tests preparation
+      ansible.builtin.command:
+        cmd: "ufw allow proto tcp to any port {{ item.port }} comment '{{ item.comment }}'"
+      loop:
+        - port: 2222
+          comment: SSH
+        - port: 19999
+          comment: Molecule retired rule
+      loop_control:
+        label: "{{ item.port }}/tcp"
+      changed_when: true
+
+    - name: Ensure the firewall is up for ufw rule removal Molecule tests preparation
+      ansible.builtin.command:
+        cmd: ufw --force enable
+      changed_when: true
+
+    - name: Retrieve the ufw status for ufw rule removal Molecule tests preparation
+      ansible.builtin.command:
+        cmd: ufw status verbose
+      register: ufw_status_before_converge
+      changed_when: false
+
+    # A negative control for the scenario itself. If these rules were not
+    # actually in place before the role ran, verify.yml finding them gone
+    # afterwards would prove nothing at all.
+    - name: Assert the rules to be retired are in place for ufw rule removal Molecule tests preparation
+      ansible.builtin.assert:
+        that: ufw_status_before_converge.stdout_lines | select('match', item) | list | length > 0
+        fail_msg: "{{ item }} was not in place before the role ran, so its removal cannot be tested"
+        success_msg: "{{ item }} is in place before the role runs"
+      loop:
+        - '^2222/tcp\s+ALLOW IN\s+Anywhere\s+# SSH$'
+        - '^19999/tcp\s+ALLOW IN\s+Anywhere\s+# Molecule retired rule$'

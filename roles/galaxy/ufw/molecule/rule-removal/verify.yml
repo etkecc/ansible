@@ -1,0 +1,79 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify ufw rule removal
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Retrieve the ufw status
+      ansible.builtin.command:
+        cmd: ufw status verbose
+      register: ufw_status
+      changed_when: false
+
+    - name: Retrieve the netfilter rules
+      ansible.builtin.command:
+        cmd: iptables-save -t filter
+      register: ufw_netfilter_rules
+      changed_when: false
+
+    - name: Show the ufw status for debugging
+      ansible.builtin.debug:
+        var: ufw_status.stdout_lines
+
+    - name: Assert the firewall is still up with a deny-by-default policy
+      ansible.builtin.assert:
+        that:
+          - "'Status: active' in ufw_status.stdout"
+          - "'Default: deny (incoming)' in ufw_status.stdout"
+        fail_msg: "The firewall is not active and denying by default: {{ ufw_status.stdout }}"
+        success_msg: The firewall is active and denying incoming traffic by default
+
+    # prepare.yml put both of these in place and asserted that they were
+    # there, so their absence here is the role having taken them away.
+    - name: Assert the retired rules were removed from the firewall
+      ansible.builtin.assert:
+        that:
+          - ufw_status.stdout_lines | select('match', item.status_pattern) | list | length == 0
+          - ufw_netfilter_rules.stdout_lines | select('search', item.netfilter_pattern) | list | length == 0
+        fail_msg: "{{ item.name }} is still in the firewall"
+        success_msg: "{{ item.name }} was removed from the firewall"
+      loop:
+        # Removed because system_security_ufw_ssh_allowed is false.
+        - name: The SSH rule
+          status_pattern: '^2222/tcp\s'
+          netfilter_pattern: '--dport 2222 '
+        # Removed because its rule carries `delete: true`.
+        - name: The retired custom rule
+          status_pattern: '^19999/tcp\s'
+          netfilter_pattern: '--dport 19999 '
+      loop_control:
+        label: "{{ item.name }}"
+
+    # The other direction: removing rules must not take the rest of the
+    # firewall down with them.
+    - name: Assert the base rules still reached the firewall
+      ansible.builtin.assert:
+        that:
+          - ufw_status.stdout_lines | select('match', item.status_pattern) | list | length > 0
+          - ufw_netfilter_rules.stdout_lines | select('search', item.netfilter_pattern) | list | length == 1
+        fail_msg: "{{ item.name }} is missing from the firewall"
+        success_msg: "{{ item.name }} is present in the firewall"
+      loop:
+        - name: The HTTP base rule
+          status_pattern: '^80/tcp\s+ALLOW IN\s+Anywhere\s+# HTTP$'
+          netfilter_pattern: '^-A ufw-user-input -p tcp -m tcp --dport 80 -j ACCEPT$'
+        - name: The HTTPS base rule
+          status_pattern: '^443/tcp\s+ALLOW IN\s+Anywhere\s+# HTTPS$'
+          netfilter_pattern: '^-A ufw-user-input -p tcp -m tcp --dport 443 -j ACCEPT$'
+      loop_control:
+        label: "{{ item.name }}"
+
+    - name: Show the ufw rule removal verification summary
+      ansible.builtin.debug:
+        msg:
+          - "Rules recorded by ufw: {{ ufw_status.stdout_lines | length }} line(s)"
+          - "Rules in the kernel's ufw-user-input chain: {{ ufw_netfilter_rules.stdout_lines | select('match', '^-A ufw-user-input ') | list | length }}"

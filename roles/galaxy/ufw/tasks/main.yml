@@ -1,43 +1,47 @@
+# SPDX-FileCopyrightText: 2023 - 2025 Aine
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 ---
-
-- block:
-  - name: Install ufw
-    ansible.builtin.package:
-      name: ufw
-      state: present
-
-  - name: Ensure ufw stared and running
-    ansible.builtin.service:
-      state: started
-      enabled: true
-      name: ufw
-
-  - name: Apply rules
-    community.general.ufw:
-      rule: "{{ item.rule }}"
-      port: "{{ item.port }}"
-      from: "{{ item.from | default(omit) }}"
-      proto: "{{ item.proto }}"
-      comment: "{{ item.name }}"
-      delete: "{{ item.delete | default(false) }}"
-    with_items: "{{ system_security_ufw_rules }}"
-
-  - name: Configure SSH access
-    community.general.ufw:
-      rule: allow
-      port: "{{ system_security_ssh_port }}"
-      proto: tcp
-      comment: SSH
-      delete: "{{ not system_security_ufw_ssh_allowed | bool }}"
-
-  - name: Start ufw
-    community.general.ufw:
-      logging: 'on'
-      policy: deny
-      state: enabled
+- name: Perform ufw installation and configuration tasks
   when: system_security_ufw_enabled | bool
   tags:
     - setup-all
     - setup-ufw
     - install-all
     - install-ufw
+  block:
+    - name: Install ufw
+      ansible.builtin.package:
+        name: ufw
+        state: present
+
+    - name: Ensure ufw started and running
+      ansible.builtin.service:
+        state: started
+        enabled: true
+        name: ufw
+
+    - name: Apply rules
+      community.general.ufw:
+        rule: "{{ item.rule }}"
+        port: "{{ item.port }}"
+        from: "{{ item.from | default(omit) }}"
+        proto: "{{ item.proto }}"
+        comment: "{{ item.name }}"
+        delete: "{{ item.delete | default(false) }}"
+      with_items: "{{ system_security_ufw_rules }}"
+
+    - name: Configure SSH access
+      community.general.ufw:
+        rule: allow
+        port: "{{ system_security_ssh_port }}"
+        proto: tcp
+        comment: SSH
+        delete: "{{ not system_security_ufw_ssh_allowed | bool }}"
+
+    - name: Start ufw
+      community.general.ufw:
+        logging: 'on'
+        policy: deny
+        state: enabled

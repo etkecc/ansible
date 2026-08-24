@@ -1,7 +1,10 @@
+---
 galaxy_info:
-  author: etke.cc
-  company: etke.cc
-  description: system ufw security role
+  author: mash
+  company: mash
+  role_name: ufw
+  namespace: mash
+  description: Uncomplicated Firewall (ufw)
   platforms:
     - name: Debian
       versions:
@@ -10,4 +13,4 @@ galaxy_info:
       versions:
         - all
   license: GPL-3.0-or-later
-  min_ansible_version: '2.1'
+  min_ansible_version: "2.1"

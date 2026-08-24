@@ -1,0 +1,24 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Prepare ufw Molecule tests
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Ensure apt cache is updated for ufw Molecule tests preparation
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 600
+      when: ansible_facts["os_family"] == 'Debian'
+
+    # Deliberately nothing else: the role is supposed to install ufw itself,
+    # and the scenario is only meaningful if it starts from a host that has
+    # no firewall at all.
+    - name: Assert ufw is not installed yet for ufw Molecule tests preparation
+      ansible.builtin.stat:
+        path: /usr/sbin/ufw
+      register: ufw_binary_before_converge
+      failed_when: ufw_binary_before_converge.stat.exists

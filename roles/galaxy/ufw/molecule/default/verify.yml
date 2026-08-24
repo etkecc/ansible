@@ -1,0 +1,140 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify ufw
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    # `ufw status` reports what ufw has recorded in its own rule files, which
+    # is not the same thing as what the kernel is enforcing. Both are checked
+    # below, so that a rule which ufw accepted but never managed to load would
+    # still be caught.
+    - name: Retrieve the ufw status
+      ansible.builtin.command:
+        cmd: ufw status verbose
+      register: ufw_status
+      changed_when: false
+
+    - name: Retrieve the netfilter rules
+      ansible.builtin.command:
+        cmd: iptables-save -t filter
+      register: ufw_netfilter_rules
+      changed_when: false
+
+    - name: Retrieve the ufw service state
+      ansible.builtin.systemd_service:
+        name: ufw.service
+      register: ufw_service
+
+    - name: Show the ufw status for debugging
+      ansible.builtin.debug:
+        var: ufw_status.stdout_lines
+
+    - name: Assert the ufw service is running and enabled
+      ansible.builtin.assert:
+        that:
+          - ufw_service.status.ActiveState == 'active'
+          - ufw_service.status.UnitFileState == 'enabled'
+        fail_msg: >-
+          ufw.service is {{ ufw_service.status.ActiveState }}
+          ({{ ufw_service.status.UnitFileState }})
+        success_msg: ufw.service is active and enabled
+
+    - name: Assert the firewall is up with a deny-by-default policy
+      ansible.builtin.assert:
+        that:
+          - "'Status: active' in ufw_status.stdout"
+          - "'Default: deny (incoming)' in ufw_status.stdout"
+          - "'Logging: on' in ufw_status.stdout"
+        fail_msg: "The firewall is not active and denying by default: {{ ufw_status.stdout }}"
+        success_msg: The firewall is active, logging, and denying incoming traffic by default
+
+    # Each pattern is anchored at the start of the line, because `ufw status`
+    # puts the destination in the first column and an unanchored `22/tcp`
+    # would happily match the `2222/tcp` line as well.
+    - name: Assert every configured rule reached the firewall
+      ansible.builtin.assert:
+        that: ufw_status.stdout_lines | select('match', item.pattern) | list | length > 0
+        fail_msg: "{{ item.name }} is missing from the firewall"
+        success_msg: "{{ item.name }} is present in the firewall"
+      loop:
+        # From system_security_ufw_rules_base
+        - name: The HTTP base rule
+          pattern: '^80/tcp\s+ALLOW IN\s+Anywhere\s+# HTTP$'
+        - name: The HTTPS base rule
+          pattern: '^443/tcp\s+ALLOW IN\s+Anywhere\s+# HTTPS$'
+        - name: The HTTPS-over-UDP base rule
+          pattern: '^443/udp\s+ALLOW IN\s+Anywhere\s+# HTTPS over UDP$'
+        # From system_security_ufw_rules_auto
+        - name: The playbook-contributed rule
+          pattern: '^18081/tcp\s+ALLOW IN\s+Anywhere\s+# Molecule auto rule$'
+        # From system_security_ufw_rules_custom
+        - name: The operator-defined rule
+          pattern: '^18080/tcp\s+ALLOW IN\s+Anywhere\s+# Molecule custom rule$'
+        - name: The operator-defined rule restricted to a source address
+          pattern: '^18082/tcp\s+ALLOW IN\s+10\.9\.8\.7\s+# Molecule restricted rule$'
+        # From system_security_ssh_port + system_security_ufw_ssh_allowed
+        - name: The SSH rule on the configured port
+          pattern: '^2222/tcp\s+ALLOW IN\s+Anywhere\s+# SSH$'
+      loop_control:
+        label: "{{ item.name }}"
+
+    # The other direction: the firewall must contain what the role was told to
+    # allow and nothing more. Without these, an assertion suite would pass just
+    # as happily against a firewall that allows everything.
+    - name: Assert rules that were not configured did not reach the firewall
+      ansible.builtin.assert:
+        that: ufw_status.stdout_lines | select('match', item.pattern) | list | length == 0
+        fail_msg: "{{ item.name }} unexpectedly reached the firewall"
+        success_msg: "{{ item.name }} is absent from the firewall, as expected"
+      loop:
+        # ufw's own conventional SSH port. It is absent only because the role
+        # honors system_security_ssh_port; a role that ignored the variable
+        # would allow 22/tcp here.
+        - name: An SSH rule on the default port
+          pattern: '^22/tcp\s'
+        # Never mentioned in any of the three rule lists.
+        - name: A rule for a port nobody configured
+          pattern: '^18083/tcp\s'
+      loop_control:
+        label: "{{ item.name }}"
+
+    # ufw's bookkeeping agreeing with itself proves little. These check what
+    # the kernel is actually enforcing.
+    - name: Assert the netfilter rules the kernel enforces match
+      ansible.builtin.assert:
+        that:
+          - ufw_netfilter_rules.stdout_lines | select('search', item.pattern) | list | length == item.expected_count
+        fail_msg: "{{ item.name }}: expected {{ item.expected_count }} matching netfilter rule(s)"
+        success_msg: "{{ item.name }}: the kernel agrees with ufw"
+      loop:
+        - name: The HTTP base rule
+          pattern: '^-A ufw-user-input -p tcp -m tcp --dport 80 -j ACCEPT$'
+          expected_count: 1
+        - name: The operator-defined rule
+          pattern: '^-A ufw-user-input -p tcp -m tcp --dport 18080 -j ACCEPT$'
+          expected_count: 1
+        - name: The operator-defined rule restricted to a source address
+          pattern: '^-A ufw-user-input -s 10\.9\.8\.7/32 -p tcp -m tcp --dport 18082 -j ACCEPT$'
+          expected_count: 1
+        - name: The SSH rule on the configured port
+          pattern: '^-A ufw-user-input -p tcp -m tcp --dport 2222 -j ACCEPT$'
+          expected_count: 1
+        - name: An SSH rule on the default port
+          pattern: '--dport 22 '
+          expected_count: 0
+        - name: A rule for a port nobody configured
+          pattern: '--dport 18083 '
+          expected_count: 0
+      loop_control:
+        label: "{{ item.name }}"
+
+    - name: Show the ufw verification summary
+      ansible.builtin.debug:
+        msg:
+          - "ufw.service: {{ ufw_service.status.ActiveState }} ({{ ufw_service.status.UnitFileState }})"
+          - "Rules recorded by ufw: {{ ufw_status.stdout_lines | length }} line(s)"
+          - "Rules in the kernel's ufw-user-input chain: {{ ufw_netfilter_rules.stdout_lines | select('match', '^-A ufw-user-input ') | list | length }}"

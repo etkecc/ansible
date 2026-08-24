@@ -1,0 +1,66 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+dependency:
+  name: galaxy
+  options:
+    requirements-file: requirements.yml
+    force: true
+driver:
+  name: docker
+platforms:
+  # The role reconfigures the firewall of whatever host it runs against, so it
+  # must never be pointed at the machine running the tests. A Docker container
+  # gets its own network namespace, which is what makes this safe: `ufw enable`
+  # inside it installs netfilter rules that apply to the container alone and
+  # leave the host's firewall (and every other container) untouched.
+  - name: ufw-${MOLECULE_DISTRO:-ubuntu2604}-default
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2604}-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+    # ufw needs CAP_NET_ADMIN to program netfilter, and the systemd-based
+    # images need a privileged container anyway.
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callback_result_format: yaml
+  inventory:
+    group_vars:
+      all:
+        # A deliberately non-default SSH port, so that verify.yml can tell
+        # apart a firewall that honors `system_security_ssh_port` from one
+        # that just happens to allow ufw's usual 22/tcp.
+        system_security_ssh_port: 2222
+        system_security_ufw_ssh_allowed: true
+
+        # Stands in for the rules a playbook contributes based on which
+        # services it has enabled.
+        system_security_ufw_rules_auto:
+          - name: Molecule auto rule
+            rule: allow
+            port: "18081"
+            proto: tcp
+
+        # Stands in for the rules an operator adds themselves.
+        system_security_ufw_rules_custom:
+          - name: Molecule custom rule
+            rule: allow
+            port: "18080"
+            proto: tcp
+          - name: Molecule restricted rule
+            rule: allow
+            port: "18082"
+            proto: tcp
+            from: 10.9.8.7
+  env:
+    # Workaround for https://github.com/ansible/molecule/issues/4391
+    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles
+verifier:
+  name: ansible
