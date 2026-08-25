@@ -1,0 +1,35 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Runs the role twice, with `system_swap_enabled` off.
+#
+# The second run is the interesting one: by then the swap file is gone, and
+# `tasks/uninstall.yml` has to notice that and do nothing, rather than call
+# `swapoff` on a path that no longer exists and fail. A playbook run is not a
+# one-off event - mash-playbook users re-run the whole thing on every change -
+# so an uninstall that only works once is an uninstall that breaks every
+# subsequent run.
+
+---
+- name: Include the swap role for the Molecule tests
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Include the swap role
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+
+# A second play rather than a second `include_role` in the first one: Ansible
+# keeps a per-play cache of the roles it has already run and would skip a repeat
+# with identical parameters, which would turn the whole point of this file into
+# a no-op that nothing notices.
+- name: Include the swap role a second time
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Include the swap role again
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"

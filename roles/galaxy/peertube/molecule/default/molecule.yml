@@ -1,0 +1,113 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+dependency:
+  name: galaxy
+  options:
+    requirements-file: requirements.yml
+    force: true
+driver:
+  name: docker
+platforms:
+  - name: peertube-${MOLECULE_DISTRO:-ubuntu2604}-default
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2604}-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callback_result_format: yaml
+  inventory:
+    group_vars:
+      all:
+        # Helper variables
+        peertube_debug_service_enabled: false
+
+        # Variables for PeerTube
+        peertube_uid: 1000
+        peertube_gid: 1000
+        # Deliberately not `localhost`. PeerTube refuses to hand out OAuth client
+        # credentials to a request whose Host header does not match the hostname it was
+        # configured with, which verify.yml uses to tell a PeerTube that got the role's
+        # configuration from one that fell back to its own defaults.
+        peertube_hostname: peertube.local
+        peertube_container_labels_traefik_enabled: false
+        # Deliberately not PeerTube's own default of 9000, so that a `listen.port` which
+        # never reaches the process cannot pass for one that did.
+        peertube_container_http_port: 9012
+        peertube_container_http_host_bind_port: "127.0.0.1:9012"
+        peertube_config_secret: molecule-secret
+        peertube_config_admin_email: molecule-admin@example.com
+        peertube_config_root_user_initial_password: molecule-root-password
+
+        # Variables required for PeerTube to connect to the Postgres database (via Unix socket)
+        peertube_database_username: my_database_username
+        peertube_database_password: my_database_password
+        peertube_database_ssl_enabled: false
+        peertube_database_name: peertube
+        peertube_database_socket_enabled: true
+        peertube_database_socket_path_host: "{{ postgres_run_path }}"
+        peertube_systemd_required_services_list_auto: |
+          {{
+            (['postgres.service'])
+          }}
+
+        # Variables required for PeerTube to connect to the Valkey data-store
+        peertube_redis_hostname: "{{ valkey_identifier }}"
+        # Deliberately not Valkey's default database of 0, so that verify.yml can tell
+        # PeerTube using the data-store the role pointed it at from PeerTube using it
+        # the way it would have on its own.
+        peertube_redis_db: 4
+        peertube_container_additional_networks_custom:
+          - "{{ valkey_container_network }}"
+        peertube_systemd_required_services_list_custom:
+          - "{{ valkey_identifier }}.service"
+
+        # Variables for Postgres
+        postgres_uid: 1000
+        postgres_gid: 1000
+        postgres_connection_password: postgres_password
+        postgres_container_unix_socket_enabled: true
+        postgres_managed_databases: |
+          {{
+            [{
+              'name': peertube_database_name,
+              'username': peertube_database_username,
+              'password': peertube_database_password,
+            }]
+          }}
+
+        # Variables for Valkey
+        valkey_uid: 1000
+        valkey_gid: 1000
+        valkey_arch: amd64
+  env:
+    # Workaround for https://github.com/ansible/molecule/issues/4391
+    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles
+scenario:
+  # See: https://docs.ansible.com/projects/molecule/configuration/?h=test_sequence#scenario
+  test_sequence:
+    - dependency
+    - cleanup
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    # Disable idempotence test for now due to ansible-role-postgres
+    # - idempotence
+    - side_effect
+    - verify
+    - cleanup
+    - destroy
+verifier:
+  name: ansible

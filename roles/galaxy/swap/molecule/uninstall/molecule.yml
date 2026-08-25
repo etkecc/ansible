@@ -1,0 +1,80 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+dependency:
+  name: galaxy
+  options:
+    requirements-file: requirements.yml
+    force: true
+driver:
+  name: docker
+platforms:
+  # Unprivileged and without systemd, for the reasons molecule/default/molecule.yml
+  # spells out: swap belongs to the kernel, and the kernel belongs to whoever is
+  # running this suite. prepare.yml asserts both properties before it seeds
+  # anything.
+  - name: swap-${MOLECULE_DISTRO:-ubuntu2604}-uninstall
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2604}-ansible:latest"
+    pre_build_image: true
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callback_result_format: yaml
+  inventory:
+    group_vars:
+      all:
+        # What this scenario is about. The role's default is `true`; turning it
+        # off is how mash-playbook, MDAD and etke.cc/ansible tell the role to
+        # take the swap file away again, and `tasks/uninstall.yml` is the half
+        # of the role that no fresh-install test ever reaches.
+        system_swap_enabled: false
+
+        # The role's default, restated. With the swapoff shim in place nothing
+        # in tasks/uninstall.yml is expected to fail, so a failure must fail the
+        # converge instead of being swallowed.
+        system_swap_ignore_errors: false
+
+        # Megabytes, used by prepare.yml to seed a swap file the size a previous
+        # install would have left behind. The role's default is 1024;
+        # prepare.yml refuses to run if this ever grows past 128.
+        system_swap_size: 48
+
+        # The role's default is /var/swap. prepare.yml seeds a second, identical
+        # swap file that the role was never told about, and verify.yml asserts
+        # that one is still there - which is what makes "the role removed the
+        # swap file" a statement about `system_swap_path` rather than about the
+        # directory.
+        system_swap_path: /var/swap-molecule
+
+        # Variables for the verification suite
+        # Where prepare.yml's shim records what the role asked it to do.
+        swap_molecule_swapoff_log: /var/log/molecule-swapoff.log
+        # A second swap file, seeded identically and registered in /etc/fstab
+        # identically, that the role has never heard of.
+        swap_molecule_decoy_path: /var/swap-molecule-decoy
+        # Seeded as if a previous install had written it. The role does not
+        # remove it, and verify.yml says so out loud.
+        swap_molecule_sysctl_file: /etc/sysctl.d/99-swap.conf
+  env:
+    # Workaround for https://github.com/ansible/molecule/issues/4391
+    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles
+scenario:
+  # `idempotence` is left out for the same reason as in the default scenario -
+  # `sysctl -p` reports a change on every run - but idempotence is exactly what
+  # the second half of this scenario is about, so converge.yml runs the role
+  # twice and verify.yml asserts the second run found nothing left to do rather
+  # than failing on a swap file that is already gone.
+  test_sequence:
+    - dependency
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    - verify
+    - destroy
+verifier:
+  name: ansible

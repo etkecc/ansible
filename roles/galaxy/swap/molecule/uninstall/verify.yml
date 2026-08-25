@@ -1,0 +1,251 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Verifies what the role does to a host that already has swap when
+# `system_swap_enabled` is turned off.
+#
+# This is the destructive half of the role, and the half a fresh-install test
+# structurally cannot reach. Two swap files were seeded identically and
+# registered in /etc/fstab identically; only one of them is named in the role's
+# variables. Every assertion below is about the difference between them.
+#
+# It also pins down two things the role deliberately does not do: it leaves
+# /etc/sysctl.d/99-swap.conf behind, and it takes no second bite when the swap
+# file is already gone.
+
+---
+- name: Verify the swap role's uninstallation tasks
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Verify that the swap role removed what it was supposed to
+      block:
+        - name: Include the role's default variables under a separate name
+          ansible.builtin.include_vars:
+            # Only leaf values may be read out of this. Loading it under a name
+            # of its own keeps it from outranking the values this scenario
+            # deliberately tuned.
+            file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+            name: swap_role_defaults
+
+        # Everything below is about the role removing the file it was given
+        # rather than a path it knows by heart. That only means something while
+        # the path it was given is not the one it would have used anyway.
+        - name: Assert that this scenario exercises a path the role does not default to
+          ansible.builtin.assert:
+            that:
+              - system_swap_path != swap_role_defaults.system_swap_path
+              - swap_molecule_decoy_path != swap_role_defaults.system_swap_path
+            fail_msg: >-
+              This scenario is configured with {{ system_swap_path }}, which is the role's own
+              default. A role that ignored `system_swap_path` entirely would pass every assertion
+              below.
+            success_msg: >-
+              This scenario uses {{ system_swap_path }}, not the role's default of
+              {{ swap_role_defaults.system_swap_path }}
+
+        ########################################################################
+        #                                                                      #
+        # the swap file, and the one the role was never told about             #
+        #                                                                      #
+        ########################################################################
+
+        - name: Look for the swap files
+          ansible.builtin.stat:
+            path: "{{ item }}"
+          register: swap_molecule_files
+          loop:
+            - "{{ system_swap_path }}"
+            - "{{ swap_molecule_decoy_path }}"
+
+        - name: Assert that the configured swap file was removed
+          vars:
+            swap_molecule_configured: "{{ swap_molecule_files.results[0].stat }}"
+          ansible.builtin.assert:
+            that: not swap_molecule_configured.exists
+            fail_msg: >-
+              {{ system_swap_path }} is still there, {{ swap_molecule_configured.size | default(0) }}
+              bytes of it. `system_swap_enabled` is {{ system_swap_enabled }}, so the role should
+              have taken it away.
+            success_msg: "{{ system_swap_path }} is gone"
+
+        # The negative control. This file was created by the same `dd`, given the
+        # same 0600, given a swap signature by the same `mkswap` and registered in
+        # /etc/fstab by the same module. The only thing that distinguishes it is
+        # that `system_swap_path` does not name it. A role that emptied the
+        # directory, or a suite that would pass against a host where nothing was
+        # ever seeded, fails here.
+        - name: Assert that the swap file the role was not told about survived
+          vars:
+            swap_molecule_decoy: "{{ swap_molecule_files.results[1].stat }}"
+          ansible.builtin.assert:
+            that:
+              - swap_molecule_decoy.exists
+              - swap_molecule_decoy.size | int == system_swap_size | int * 1024 * 1024
+              - swap_molecule_decoy.mode == '0600'
+            fail_msg: >-
+              {{ swap_molecule_decoy_path }} is gone or was changed (exists:
+              {{ swap_molecule_decoy.exists }}, size: {{ swap_molecule_decoy.size | default('-') }}).
+              It is a swap file in every respect except that `system_swap_path` does not name it,
+              and the role removed it anyway.
+            success_msg: >-
+              {{ swap_molecule_decoy_path }} is untouched - the role removed the file it was given
+              and not the one next to it
+
+        ########################################################################
+        #                                                                      #
+        # the role asked the kernel to disable exactly this file, once          #
+        #                                                                      #
+        ########################################################################
+
+        - name: Read what the role passed to swapoff
+          ansible.builtin.slurp:
+            src: "{{ swap_molecule_swapoff_log }}"
+          register: swap_molecule_swapoff_raw
+
+        # Exactly one call across two converges. The second converge ran against
+        # a host where the swap file was already gone, and `tasks/uninstall.yml`
+        # has to skip the whole block rather than call swapoff on a path that no
+        # longer exists - which on a real host is an error, and with
+        # `system_swap_ignore_errors` at its default of false is a failed
+        # playbook run.
+        - name: Assert that the role disabled the configured swap file exactly once
+          vars:
+            swap_molecule_swapoff_calls: >-
+              {{ (swap_molecule_swapoff_raw.content | b64decode).splitlines() | select() | list }}
+          ansible.builtin.assert:
+            that:
+              - swap_molecule_swapoff_calls | length == 1
+              - swap_molecule_swapoff_calls[0] == system_swap_path
+            fail_msg: >-
+              swapoff was called {{ swap_molecule_swapoff_calls | length }} time(s), with
+              {{ swap_molecule_swapoff_calls }}. Expected exactly one call, for
+              {{ system_swap_path }}: a second call means the role tried to disable a swap file it
+              had already removed.
+            success_msg: >-
+              The role called `swapoff {{ system_swap_path }}` once across two converges, and left
+              the second run alone
+
+        ########################################################################
+        #                                                                      #
+        # /etc/fstab                                                           #
+        #                                                                      #
+        ########################################################################
+
+        - name: Read /etc/fstab
+          ansible.builtin.slurp:
+            src: /etc/fstab
+          register: swap_molecule_fstab
+
+        # The regression this scenario exists for. `tasks/uninstall.yml` used to
+        # call `ansible.posix.mount` with `state: present` where it meant
+        # `absent`, which left the entry in /etc/fstab pointing at a file the
+        # role had just deleted - a host that then boots with a stale swap entry.
+        # Both lines were seeded identically; exactly one of them must be left.
+        - name: Assert that /etc/fstab lost the configured entry and kept the other one
+          vars:
+            swap_molecule_fstab_lines: >-
+              {{ (swap_molecule_fstab.content | b64decode).splitlines()
+                 | reject('match', '^\s*#')
+                 | select('search', 'swap')
+                 | list }}
+          ansible.builtin.assert:
+            that:
+              - swap_molecule_fstab_lines | length == 1
+              - swap_molecule_fstab_lines[0].split() == [swap_molecule_decoy_path, 'none', 'swap', 'sw,nofail', '0', '0']
+            fail_msg: >-
+              /etc/fstab holds {{ swap_molecule_fstab_lines | length }} swap line(s):
+              {{ swap_molecule_fstab_lines }}. Expected exactly one, for
+              {{ swap_molecule_decoy_path }} - the entry for {{ system_swap_path }} should be gone
+              and no other entry should have been disturbed.
+            success_msg: >-
+              /etc/fstab kept `{{ swap_molecule_fstab_lines[0] }}` and lost the entry for
+              {{ system_swap_path }}
+
+        - name: Ask findmnt to parse /etc/fstab
+          ansible.builtin.command:
+            cmd: findmnt --verify --fstab
+          register: swap_molecule_findmnt
+          changed_when: false
+          failed_when: false
+
+        # findmnt prints its findings on stdout and the summary line on stderr,
+        # and it warns - harmlessly - that the source of a swap entry is a
+        # regular file rather than a block device. Only the error counts matter.
+        - name: Assert that the system's own parser still accepts /etc/fstab
+          vars:
+            swap_molecule_findmnt_output: "{{ swap_molecule_findmnt.stdout }}\n{{ swap_molecule_findmnt.stderr }}"
+          ansible.builtin.assert:
+            that:
+              - swap_molecule_findmnt.rc == 0
+              - "'0 parse errors, 0 errors' in swap_molecule_findmnt_output"
+            fail_msg: >-
+              findmnt --verify --fstab exited {{ swap_molecule_findmnt.rc }} and said:
+              {{ swap_molecule_findmnt_output }}. Removing an entry left /etc/fstab in a state the
+              system cannot parse, which is a host that does not come back from a reboot.
+            success_msg: "findmnt still parses /etc/fstab without errors"
+
+        ########################################################################
+        #                                                                      #
+        # what turning swap off does not undo                                  #
+        #                                                                      #
+        ########################################################################
+
+        - name: Look for the sysctl file a previous install would have written
+          ansible.builtin.slurp:
+            src: "{{ swap_molecule_sysctl_file }}"
+          register: swap_molecule_sysctl_conf
+
+        # Stated as behavior, not as an accident. `tasks/uninstall.yml` removes
+        # the swap file and the /etc/fstab entry and stops there, so a host that
+        # sets `system_swap_enabled: false` keeps whatever `system_swap_sysctl`
+        # last persisted - by default vm.swappiness=10 - for the rest of its
+        # life. Anyone who makes the uninstall clean that up has to change this
+        # assertion, and gets to think about what value they are restoring it to.
+        - name: Assert that the sysctl file is left behind
+          vars:
+            swap_molecule_sysctl_content: "{{ swap_molecule_sysctl_conf.content | b64decode }}"
+          ansible.builtin.assert:
+            that: "'vm.swappiness' in swap_molecule_sysctl_content"
+            fail_msg: >-
+              {{ swap_molecule_sysctl_file }} no longer sets vm.swappiness. The role's uninstall
+              tasks do not touch this file, so something changed - and if it changed on purpose,
+              note that every host which turns swap off now also has its swappiness reset to
+              whatever the kernel's built-in default happens to be.
+            success_msg: >-
+              {{ swap_molecule_sysctl_file }} is still in place: turning swap off does not undo
+              `system_swap_sysctl`
+
+        - name: Report what was verified
+          ansible.builtin.debug:
+            msg:
+              - "removed: {{ system_swap_path }}, and its /etc/fstab entry"
+              - "kept: {{ swap_molecule_decoy_path }}, its /etc/fstab entry, and {{ swap_molecule_sysctl_file }}"
+              - "swapoff: called once, for {{ system_swap_path }}"
+              - "fstab: findmnt parses what is left"
+              - "SWAP UNINSTALLATION VERIFICATION COMPLETE"
+      rescue:
+        - name: Retrieve the state of the host
+          ansible.builtin.command:
+            cmd: "{{ item }}"
+          register: swap_molecule_diagnostics
+          changed_when: false
+          failed_when: false
+          loop:
+            - "ls -la {{ system_swap_path | dirname }}"
+            - cat /etc/fstab
+            - cat /proc/swaps
+            - "cat {{ swap_molecule_swapoff_log }}"
+
+        - name: Show the state of the host
+          ansible.builtin.debug:
+            msg: "{{ item.cmd }} -> {{ item.stdout_lines | default([]) }}"
+          loop: "{{ swap_molecule_diagnostics.results }}"
+          loop_control:
+            label: "{{ item.item }}"
+
+        - name: Fail because verification did not pass
+          ansible.builtin.fail:
+            msg: "Swap uninstallation verification failed. The state of the host is printed above."

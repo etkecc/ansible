@@ -1,0 +1,305 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify PeerTube
+  hosts: all
+  become: true
+  gather_facts: false
+
+  vars:
+    # The port and the hostname come from the scenario's group_vars, not from here,
+    # so that what gets asserted is the configuration the role was actually given.
+    peertube_molecule_url: "http://127.0.0.1:{{ peertube_container_http_port }}"
+    peertube_molecule_channel_name: molecule_channel
+    peertube_molecule_channel_display_name: Molecule Channel
+
+  tasks:
+    - name: Read the PeerTube role's own defaults
+      # Read into a namespace of their own: these are only consulted for values which
+      # describe the role (the version Renovate bumps, the image it composes), and must
+      # not be allowed to outrank the scenario's own group_vars.
+      ansible.builtin.include_vars:
+        file: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+        name: peertube_role_defaults
+
+    - name: Wait for the PeerTube service to become active
+      ansible.builtin.systemd_service:
+        name: peertube.service
+      register: peertube_service
+      until: peertube_service.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    # `Restart=always` makes a crash-looping container look active, so this only rules
+    # out the unit having given up entirely. The assertions below are what decide.
+    - name: Assert the PeerTube service is active
+      ansible.builtin.assert:
+        that: peertube_service.status.ActiveState == 'active'
+        fail_msg: "peertube.service is {{ peertube_service.status.ActiveState }}, not active"
+        success_msg: "peertube.service is active"
+
+    - name: Retrieve the PeerTube service log for debugging
+      when: peertube_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu peertube.service
+      changed_when: false
+
+    - name: Determine which image the PeerTube container runs
+      ansible.builtin.command:
+        argv:
+          - docker
+          - container
+          - inspect
+          - peertube
+          - --format
+          - "{{ '{{' }} .Config.Image {{ '}}' }}"
+      register: peertube_container_image_result
+      changed_when: false
+
+    - name: Assert the PeerTube container runs the image the role composes
+      ansible.builtin.assert:
+        that: >-
+          peertube_container_image_result.stdout ==
+          peertube_role_defaults.peertube_container_image_registry_prefix_upstream_default
+          ~ 'chocobozzz/peertube:'
+          ~ peertube_role_defaults.peertube_version
+          ~ '-'
+          ~ peertube_role_defaults.peertube_distro_variant
+        fail_msg: >-
+          The container runs {{ peertube_container_image_result.stdout }}, not the image composed
+          from peertube_version ({{ peertube_role_defaults.peertube_version }}) and
+          peertube_distro_variant ({{ peertube_role_defaults.peertube_distro_variant }})
+        success_msg: "The container runs {{ peertube_container_image_result.stdout }}"
+
+    # PeerTube's `listen.port` has no dedicated environment variable in the container
+    # image and reaches it through NODE_CONFIG. The scenario configures a port that is
+    # not PeerTube's own default, so nothing answers here unless that actually worked.
+    - name: Wait for PeerTube to answer on the configured HTTP port
+      ansible.builtin.uri:
+        url: "{{ peertube_molecule_url }}/api/v1/config"
+        method: GET
+        headers:
+          Host: "{{ peertube_hostname }}"
+        follow_redirects: none
+        status_code: [200]
+      register: peertube_config_endpoint
+      until: peertube_config_endpoint.status == 200
+      retries: 120
+      delay: 5
+
+    - name: Assert PeerTube reports the version the role pins
+      ansible.builtin.assert:
+        that: >-
+          peertube_config_endpoint.json.serverVersion ==
+          peertube_role_defaults.peertube_version | regex_replace('^v', '')
+        fail_msg: >-
+          PeerTube reports version {{ peertube_config_endpoint.json.serverVersion }}, but
+          peertube_version is {{ peertube_role_defaults.peertube_version }}
+        success_msg: "PeerTube reports version {{ peertube_config_endpoint.json.serverVersion }}"
+
+    # PeerTube hands out OAuth client credentials only to requests whose Host header
+    # matches the hostname it was configured with. A PeerTube which never received
+    # `peertube_hostname` would answer this one instead of refusing it.
+    - name: Ask PeerTube for OAuth client credentials under a hostname it was not configured with
+      ansible.builtin.uri:
+        url: "{{ peertube_molecule_url }}/api/v1/oauth-clients/local"
+        method: GET
+        headers:
+          Host: not.the.configured.hostname
+        follow_redirects: none
+        status_code: [200, 403]
+      register: peertube_oauth_client_wrong_host
+
+    - name: Assert PeerTube refuses OAuth client credentials under the wrong hostname
+      ansible.builtin.assert:
+        that: peertube_oauth_client_wrong_host.status == 403
+        fail_msg: >-
+          PeerTube handed out OAuth client credentials to a request for
+          `not.the.configured.hostname`, so it is not serving `{{ peertube_hostname }}`
+        success_msg: "PeerTube refuses OAuth client credentials under a foreign hostname"
+
+    - name: Ask PeerTube for OAuth client credentials under the configured hostname
+      ansible.builtin.uri:
+        url: "{{ peertube_molecule_url }}/api/v1/oauth-clients/local"
+        method: GET
+        headers:
+          Host: "{{ peertube_hostname }}"
+        follow_redirects: none
+        status_code: [200]
+      register: peertube_oauth_client
+
+    # PT_INITIAL_ROOT_PASSWORD is what the role passes. Had it not reached PeerTube,
+    # PeerTube would have generated a password of its own and this would fail.
+    - name: Log in to PeerTube as the root user the role created
+      ansible.builtin.uri:
+        url: "{{ peertube_molecule_url }}/api/v1/users/token"
+        method: POST
+        headers:
+          Host: "{{ peertube_hostname }}"
+        body_format: form-urlencoded
+        body:
+          client_id: "{{ peertube_oauth_client.json.client_id }}"
+          client_secret: "{{ peertube_oauth_client.json.client_secret }}"
+          grant_type: password
+          response_type: code
+          username: root
+          password: "{{ peertube_config_root_user_initial_password }}"
+        follow_redirects: none
+        status_code: [200]
+      register: peertube_token
+
+    - name: Assert PeerTube issued an access token for the root user
+      ansible.builtin.assert:
+        that: peertube_token.json.access_token | default('') | length > 0
+        fail_msg: "PeerTube did not issue an access token for the root user"
+        success_msg: "PeerTube issued an access token for the root user"
+
+    - name: Read the root user back from PeerTube
+      ansible.builtin.uri:
+        url: "{{ peertube_molecule_url }}/api/v1/users/me"
+        method: GET
+        headers:
+          Host: "{{ peertube_hostname }}"
+          Authorization: "Bearer {{ peertube_token.json.access_token }}"
+        follow_redirects: none
+        status_code: [200]
+      register: peertube_me
+
+    - name: Assert the root user carries the administrator e-mail address the role configured
+      ansible.builtin.assert:
+        that:
+          - peertube_me.json.username == 'root'
+          - peertube_me.json.email == peertube_config_admin_email
+          - peertube_me.json.role.id == 0
+        fail_msg: >-
+          PeerTube's root user is {{ peertube_me.json.username }} <{{ peertube_me.json.email }}>,
+          not an administrator with {{ peertube_config_admin_email }}
+        success_msg: "PeerTube's root user is an administrator with {{ peertube_config_admin_email }}"
+
+    - name: Create a video channel over the PeerTube API
+      ansible.builtin.uri:
+        url: "{{ peertube_molecule_url }}/api/v1/video-channels"
+        method: POST
+        headers:
+          Host: "{{ peertube_hostname }}"
+          Authorization: "Bearer {{ peertube_token.json.access_token }}"
+        body_format: json
+        body:
+          name: "{{ peertube_molecule_channel_name }}"
+          displayName: "{{ peertube_molecule_channel_display_name }}"
+        follow_redirects: none
+        # 409 is what PeerTube answers when the channel is already there, which is
+        # what a second run of this play finds. The read-back below is what decides.
+        status_code: [200, 409]
+      register: peertube_channel_creation
+      changed_when: peertube_channel_creation.status == 200
+
+    - name: Read the video channel back over the PeerTube API
+      ansible.builtin.uri:
+        url: "{{ peertube_molecule_url }}/api/v1/video-channels/{{ peertube_molecule_channel_name }}"
+        method: GET
+        headers:
+          Host: "{{ peertube_hostname }}"
+        follow_redirects: none
+        status_code: [200]
+      register: peertube_channel
+
+    - name: Assert PeerTube serves the video channel back under the configured hostname
+      ansible.builtin.assert:
+        that:
+          - peertube_channel.json.displayName == peertube_molecule_channel_display_name
+          - peertube_channel.json.host == peertube_hostname
+          - peertube_channel.json.isLocal | bool
+        fail_msg: >-
+          PeerTube returned `{{ peertube_channel.json.displayName }}` on
+          {{ peertube_channel.json.host }}, not `{{ peertube_molecule_channel_display_name }}`
+          on {{ peertube_hostname }}
+        success_msg: "PeerTube serves the video channel on {{ peertube_channel.json.host }}"
+
+    # The channel has to be in the Postgres database the role pointed PeerTube at,
+    # rather than in storage PeerTube picked for itself.
+    - name: Look the video channel up in Postgres
+      ansible.builtin.command:
+        argv:
+          - docker
+          - exec
+          - --env
+          - "PGPASSWORD={{ peertube_database_password }}"
+          - postgres
+          - psql
+          - "--username={{ peertube_database_username }}"
+          - "--dbname={{ peertube_database_name }}"
+          - --no-align
+          - --tuples-only
+          - --command
+          - >-
+            SELECT actor."preferredUsername" || '=' || "videoChannel"."name"
+            FROM "videoChannel"
+            JOIN actor ON actor.id = "videoChannel"."actorId"
+            WHERE actor."preferredUsername" = '{{ peertube_molecule_channel_name }}'
+      register: peertube_database_lookup
+      changed_when: false
+
+    - name: Assert the video channel is stored in the Postgres database the role configured
+      ansible.builtin.assert:
+        that: >-
+          peertube_database_lookup.stdout_lines
+          == [peertube_molecule_channel_name ~ '=' ~ peertube_molecule_channel_display_name]
+        fail_msg: >-
+          The `{{ peertube_database_name }}` database does not hold the video channel
+          (psql returned `{{ peertube_database_lookup.stdout }}`)
+        success_msg: "The video channel is stored in the `{{ peertube_database_name }}` database"
+
+    # PeerTube keeps serving HTTP with its data-store unreachable - it only logs
+    # `Redis failed to connect` and retries - so the endpoints answering above say
+    # nothing about Valkey. Its job queues do, and they are keyed by the hostname the
+    # role configured, in the logical database the role configured.
+    - name: Count PeerTube's job queue keys in the configured Valkey database
+      ansible.builtin.command:
+        argv:
+          - docker
+          - exec
+          - valkey
+          - valkey-cli
+          - "-n"
+          - "{{ peertube_redis_db }}"
+          - --scan
+          - --pattern
+          - "bull-{{ peertube_hostname }}:*"
+      register: peertube_valkey_keys
+      changed_when: false
+
+    - name: Count the keys in Valkey's default database
+      ansible.builtin.command:
+        argv: [docker, exec, valkey, valkey-cli, "-n", "0", DBSIZE]
+      register: peertube_valkey_default_database_size
+      changed_when: false
+
+    - name: Assert PeerTube drives its job queues through the configured Valkey database
+      ansible.builtin.assert:
+        that:
+          - peertube_valkey_keys.stdout_lines | length > 0
+          - peertube_valkey_default_database_size.stdout | trim | int == 0
+        fail_msg: >-
+          Valkey database {{ peertube_redis_db }} holds
+          {{ peertube_valkey_keys.stdout_lines | length }} `bull-{{ peertube_hostname }}:*` keys
+          and database 0 holds {{ peertube_valkey_default_database_size.stdout | trim }} keys -
+          PeerTube is not using the data-store the way the role configured it
+        success_msg: >-
+          Valkey database {{ peertube_redis_db }} holds
+          {{ peertube_valkey_keys.stdout_lines | length }} of PeerTube's job queue keys
+
+    - name: Show what PeerTube was verified to be doing
+      ansible.builtin.debug:
+        msg:
+          - "systemd: {{ peertube_service.status.ActiveState }}"
+          - "image: {{ peertube_container_image_result.stdout }}"
+          - "version: {{ peertube_config_endpoint.json.serverVersion }}"
+          - "listening on: {{ peertube_molecule_url }} as {{ peertube_hostname }}"
+          - "administrator: {{ peertube_me.json.username }} <{{ peertube_me.json.email }}>"
+          - "channel in Postgres: {{ peertube_database_lookup.stdout }}"
+          - "job queue keys in Valkey database {{ peertube_redis_db }}: {{ peertube_valkey_keys.stdout_lines | length }}"

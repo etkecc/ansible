@@ -1,0 +1,127 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+dependency:
+  name: galaxy
+  options:
+    requirements-file: requirements.yml
+    force: true
+driver:
+  name: docker
+platforms:
+  # The container is deliberately NOT privileged, and runs no systemd because
+  # this role installs no units.
+  #
+  # This is the role in the fleet where a test container is dangerous. Two of
+  # the three things it does reach past the container into the kernel, and the
+  # kernel is the one the machine running this suite is using:
+  #
+  # - `swapon` would attach a file inside the container's overlay filesystem to
+  #   that machine as swap space, and `molecule destroy` would then delete the
+  #   file out from under it.
+  # - `vm.swappiness` and `vm.vfs_cache_pressure` are global kernel parameters,
+  #   not namespaced ones, so setting them would retune that machine and leave
+  #   it that way.
+  #
+  # A container without CAP_SYS_ADMIN cannot call swapon (the kernel answers
+  # `Operation not permitted`) and gets /proc/sys mounted read-only, so neither
+  # is possible here - and prepare.yml asserts both of those properties before
+  # anything else runs, so that a later edit which made this platform privileged
+  # fails loudly instead of quietly swapping onto somebody's laptop.
+  #
+  # That leaves the role unable to complete, so prepare.yml puts a recording
+  # shim in front of `swapon` and `sysctl`, which is what lets the rest of
+  # `tasks/install.yml` be reached at all. verify.yml then asserts what the role
+  # asked those two tools to do, alongside the parts that are entirely real: the
+  # file on disk, its size, mode and swap signature, /etc/fstab, and the content
+  # of /etc/sysctl.d/99-swap.conf.
+  - name: swap-${MOLECULE_DISTRO:-ubuntu2604}-default
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2604}-ansible:latest"
+    pre_build_image: true
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callback_result_format: yaml
+  inventory:
+    group_vars:
+      all:
+        # Every value below is deliberately different from the role's own
+        # default, so that verify.yml can tell a value the role rendered from
+        # this scenario's variables apart from one that merely looks right.
+
+        # The role's default, stated because this scenario is about what
+        # happens when it is on.
+        system_swap_enabled: true
+
+        # Also the role's default. Left off on purpose: with the swapon shim in
+        # place there is nothing in tasks/install.yml that is expected to fail,
+        # so a failure has to fail the converge rather than be swallowed.
+        system_swap_ignore_errors: false
+
+        # Megabytes. The role's default is 1024. Small because this is a real
+        # file being written to a real disk on whatever machine runs the suite,
+        # and because 48 MiB is still comfortably above mkswap's minimum.
+        # prepare.yml refuses to run if this ever grows past 128.
+        system_swap_size: 48
+
+        # The role's default is /var/swap. verify.yml asserts the file is here
+        # and that /var/swap was not written to, which is what proves the
+        # variable is honored rather than merely present.
+        system_swap_path: /var/swap-molecule
+
+        # The same two parameters the role sets by default, at different values,
+        # so that verify.yml can tell what the scenario asked for apart from
+        # what the role would have done on its own. They never reach the kernel:
+        # /proc/sys is read-only in this container and the `sysctl` shim
+        # prepare.yml installs answers in its place.
+        system_swap_sysctl:
+          - name: vm.swappiness
+            value: 33
+          - name: vm.vfs_cache_pressure
+            value: 77
+
+        # Variables for the verification suite
+        # Where prepare.yml's shims record what the role asked them to do.
+        swap_molecule_swapon_log: /var/log/molecule-swapon.log
+        swap_molecule_sysctl_log: /var/log/molecule-sysctl.log
+        swap_molecule_sysctl_store: /var/lib/molecule-sysctl
+        # Seeded by prepare.yml, named nowhere in the role's variables, and
+        # expected to be untouched afterwards.
+        swap_molecule_decoy_path: /var/swap-molecule-decoy
+        swap_molecule_decoy_content: "seeded by the swap Molecule suite\n"
+        # The sysctl.d file tasks/install.yml hardcodes.
+        swap_molecule_sysctl_file: /etc/sysctl.d/99-swap.conf
+        # What prepare.yml seeds as the "current" value of each parameter before
+        # the role runs. Deliberately neither the scenario's value nor the
+        # role's default, so that a parameter the role failed to touch is
+        # recognisable as such.
+        swap_molecule_sysctl_baseline:
+          - name: vm.swappiness
+            value: 11
+          - name: vm.vfs_cache_pressure
+            value: 22
+  env:
+    # Workaround for https://github.com/ansible/molecule/issues/4391
+    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles
+scenario:
+  # The stock sequence without `idempotence`. The role is idempotent in the
+  # sense that matters - `tasks/install.yml` skips the whole initialization
+  # block once the swap file exists - but its sysctl tasks report a change
+  # whenever `sysctl -p` runs, so Molecule's own idempotence step would fail on
+  # something harmless. What a second run must not do is rewrite, resize or
+  # re-enable the swap file, so converge.yml runs the role twice and verify.yml
+  # asserts the file came through the second run untouched.
+  test_sequence:
+    - dependency
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    - verify
+    - destroy
+verifier:
+  name: ansible

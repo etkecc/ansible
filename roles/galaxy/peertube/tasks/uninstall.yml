@@ -78,7 +78,7 @@
   register: peertube_config_path_stat
 
 # We just want to notify the user. Deleting data is too destructive.
-- name: Notify if PeerTube config remains
+- name: Inject the message about the remaining PeerTube config path
   when: peertube_config_path_stat.stat.exists | bool
   ansible.builtin.set_fact:
     devture_playbook_runtime_messages_list: |
@@ -96,7 +96,7 @@
   register: peertube_data_path_stat
 
 # We just want to notify the user. Deleting data is too destructive.
-- name: Notify if PeerTube local data remains
+- name: Inject the message about the remaining PeerTube local data path
   when: peertube_data_path_stat.stat.exists | bool
   ansible.builtin.set_fact:
     devture_playbook_runtime_messages_list: |

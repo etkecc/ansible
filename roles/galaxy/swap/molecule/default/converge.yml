@@ -1,0 +1,64 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Runs the role twice.
+#
+# A swap file is expensive to create and destructive to recreate: rewriting it
+# would blank a live swap area, and resizing it on a host whose fstab already
+# points at it is how a machine ends up unable to swap after a reboot. The role
+# guards against that with a `stat` and a `creates:`, and the cheapest honest way
+# to test a guard is to run into it. The state recorded between the two runs is
+# what verify.yml compares against.
+
+---
+- name: Include the swap role for the Molecule tests
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Include the swap role
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+
+    - name: Record the state of the swap file after the first run
+      ansible.builtin.stat:
+        path: "{{ system_swap_path }}"
+        checksum_algorithm: sha256
+      register: swap_molecule_after_first_run
+
+    - name: Assert that the first run created the swap file
+      ansible.builtin.assert:
+        that: swap_molecule_after_first_run.stat.exists
+        fail_msg: "{{ system_swap_path }} does not exist after the role's first run"
+        success_msg: "{{ system_swap_path }} was created by the role's first run"
+
+    # Handed to verify.yml through the filesystem, since the two run as separate
+    # playbooks and share no facts.
+    - name: Save the state of the swap file for the verification play
+      ansible.builtin.copy:
+        dest: /var/lib/molecule-swap-first-run.json
+        mode: "0644"
+        content: >-
+          {{
+            {
+              'inode': swap_molecule_after_first_run.stat.inode,
+              'size': swap_molecule_after_first_run.stat.size,
+              'checksum': swap_molecule_after_first_run.stat.checksum,
+              'mtime': swap_molecule_after_first_run.stat.mtime,
+            } | to_nice_json
+          }}
+
+
+# A second play rather than a second `include_role` in the first one: Ansible
+# keeps a per-play cache of the roles it has already run and would skip a repeat
+# with identical parameters, which would turn the whole point of this file into
+# a no-op that nothing notices.
+- name: Include the swap role a second time
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Include the swap role again
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"

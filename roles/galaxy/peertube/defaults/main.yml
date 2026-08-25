@@ -14,6 +14,11 @@ peertube_base_path: "/{{ peertube_identifier }}"
 peertube_config_path: "{{ peertube_base_path }}/config"
 peertube_data_path: "{{ peertube_base_path }}/data"
 
+# PeerTube publishes its 6.x/7.x images only under Debian-flavoured tags (`v7.2.3-bookworm`),
+# so `.github/renovate.json` carries an `extractVersion` rule reading the version out of those.
+# The tags of 8.x and later drop the (upstream-deprecated) Debian suffix, so moving to those
+# means changing `peertube_distro_variant` and that rule together.
+#
 # renovate: datasource=docker depName=chocobozzz/peertube versioning=semver
 peertube_version: v7.2.3
 
@@ -35,7 +40,6 @@ peertube_container_image_tag: "{{ peertube_version }}-{{ peertube_distro_variant
 peertube_container_image_registry_prefix: "{{ peertube_container_image_registry_prefix_upstream }}"
 peertube_container_image_registry_prefix_upstream: "{{ peertube_container_image_registry_prefix_upstream_default }}"
 peertube_container_image_registry_prefix_upstream_default: docker.io/
-peertube_container_image_force_pull: "{{ peertube_container_image.endswith(':latest') }}"
 
 peertube_distro_variant: bookworm
 
@@ -55,10 +59,16 @@ peertube_container_http_host_bind_port: ""
 # Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
 peertube_container_rtmp_host_bind_port: ""
 
-# The HTTP port number in the container
+# The HTTP port number in the container.
+#
+# PeerTube takes this from its `listen.port` configuration setting, for which its container image
+# defines no dedicated environment variable, so it is passed along via `NODE_CONFIG`.
+# See `peertube_environment_variables_node_config`.
 peertube_container_http_port: 9000
 
-# The RTMP port number in the container
+# The RTMP port number in the container.
+#
+# Reaches PeerTube via the `PEERTUBE_LIVE_RTMP_PORT` environment variable.
 peertube_container_rtmp_port: 1935
 
 # A list of additional container networks that the container would be connected to.
@@ -317,7 +327,11 @@ peertube_config_admin_email: ""
 # Controls the PEERTUBE_REDIS_HOSTNAME environment variable
 peertube_redis_hostname: ""
 
-# Control the PEERTUBE_REDIS_DB environment variable
+# Controls which Redis/Valkey logical database PeerTube uses.
+#
+# PeerTube takes this from its `redis.db` configuration setting, for which its container image
+# defines no dedicated environment variable, so it is passed along via `NODE_CONFIG`.
+# See `peertube_environment_variables_node_config`.
 peertube_redis_db: 0
 
 # Controls the PT_INITIAL_ROOT_PASSWORD environment variable, which configures the initial password of the automatically created `root` user.
@@ -369,6 +383,30 @@ peertube_config_log_level: info
 
 # Specify the timezone
 peertube_environment_variables_tz: UTC
+
+# Controls the NODE_CONFIG environment variable, which node-config (the configuration library
+# PeerTube uses) merges over the configuration files shipped in the container image.
+#
+# PeerTube maps most of its configuration file to dedicated `PEERTUBE_*` environment variables
+# (see `/app/support/docker/production/config/custom-environment-variables.yaml` in the container image),
+# but not all of it. NODE_CONFIG is how the rest is reached. Settings which do have a dedicated
+# environment variable are applied after NODE_CONFIG and thus still win over it,
+# so listing them here has no effect.
+#
+# To pass additional settings, use `peertube_environment_variables_node_config_custom`, e.g.:
+# peertube_environment_variables_node_config_custom:
+#   log:
+#     rotation:
+#       enabled: false
+peertube_environment_variables_node_config: "{{ peertube_environment_variables_node_config_auto | combine(peertube_environment_variables_node_config_custom, recursive=True) }}"
+peertube_environment_variables_node_config_auto: |-
+  {{
+    {
+      'listen': {'port': peertube_container_http_port | int},
+      'redis': {'db': peertube_redis_db | int},
+    }
+  }}
+peertube_environment_variables_node_config_custom: {}
 
 # peertube_environment_variables_additional_variables contains a multiline string with additional environment variables to pass to the container.
 #

@@ -27,6 +27,7 @@
     - { "old": "peertube_config_redis_db", "new": "peertube_redis_db" }
     - { "old": "peertube_container_additional_environment_variables", "new": "peertube_environment_variables_additional_variables" }
     - { "old": "peertube_http_header_content_permission_policy", "new": "peertube_http_header_permissions_policy" }
+    - { "old": "peertube_container_image_force_pull", "new": "<removed> (the new community.docker.docker_image_pull module handles this natively)" }
 
 - name: Fail if required PeerTube settings not defined
   ansible.builtin.fail:

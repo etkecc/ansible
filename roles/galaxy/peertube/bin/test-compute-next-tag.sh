@@ -1,0 +1,168 @@
+#!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Exercises bin/compute-next-tag.sh against throwaway git repositories.
+#
+# Usage: bin/test-compute-next-tag.sh
+#
+# Every scenario creates a repository in a temporary directory, gives it role
+# files and a release history, and then replays a series of merges through the
+# real script, tagging as it goes just like the autotag workflow does. This
+# repository is never touched and no network access is needed.
+
+set -euo pipefail
+
+script_under_test="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/compute-next-tag.sh"
+
+failures=0
+workdir=''
+
+cleanup() {
+	cd /
+	if [ -n "$workdir" ]; then
+		rm -rf "$workdir"
+		workdir=''
+	fi
+}
+
+trap cleanup EXIT
+
+# Starts a scenario with a repository at PeerTube v7.2.3 which has already seen
+# two releases of it (v7.2.3-0 and v7.2.3-1).
+#
+# The defaults file carries the traps this role's real one has: the version is
+# preceded by a `# renovate:` annotation naming the same software, it carries
+# its own leading `v`, and the image tag is derived from it and from a second
+# variable. None of those may be picked up as the version.
+scenario() {
+	echo "$1"
+
+	cleanup
+	workdir="$(mktemp -d)"
+
+	mkdir -p "$workdir/bin" "$workdir/defaults" "$workdir/tasks" "$workdir/templates" "$workdir/vars"
+	cp "$script_under_test" "$workdir/bin/"
+	cd "$workdir"
+
+	cat > defaults/main.yml <<-'YAML'
+		# renovate: datasource=docker depName=chocobozzz/peertube versioning=semver
+		peertube_version: v7.2.3
+
+		peertube_container_image: "{{ peertube_container_image_registry_prefix }}chocobozzz/peertube:{{ peertube_container_image_tag }}"
+		peertube_container_image_tag: "{{ peertube_version }}-{{ peertube_distro_variant }}"
+		peertube_distro_variant: bookworm
+	YAML
+	printf 'placeholder\n' > tasks/main.yml
+	printf 'placeholder\n' > templates/env.j2
+	printf 'placeholder\n' > vars/main.yml
+	printf 'placeholder\n' > README.md
+
+	git init -q -b main .
+	git config user.email 'test@example.com'
+	git config user.name 'Test'
+	git config commit.gpgsign false
+
+	git add -A
+	git commit -qm 'Initial commit'
+
+	local tag
+	for tag in v7.2.3-0 v7.2.3-1; do
+		git tag "$tag"
+	done
+}
+
+# Applies a change, commits it, and tags whatever the script says it should be.
+# Prints the tag, or nothing when the script decided against a release.
+merge() {
+	local change="$1" tag
+
+	eval "$change"
+	git add -A
+	git commit -qm 'Merge'
+
+	tag="$(bin/compute-next-tag.sh 2>/dev/null)"
+
+	if [ -n "$tag" ]; then
+		git tag "$tag"
+	fi
+
+	printf '%s' "$tag"
+}
+
+expect() {
+	local description="$1" expected="$2" actual="$3"
+
+	if [ "$actual" = "$expected" ]; then
+		printf '  ok   | %s -> %s\n' "$description" "${actual:-no release}"
+	else
+		printf '  FAIL | %s -> expected %s, got %s\n' "$description" "${expected:-no release}" "${actual:-no release}"
+		failures=$((failures + 1))
+	fi
+}
+
+bump_version="sed -i 's|^peertube_version: v7.2.3|peertube_version: v7.3.0|' defaults/main.yml"
+revert_version="sed -i 's|^peertube_version: v7.3.0|peertube_version: v7.2.3|' defaults/main.yml"
+bump_distro_variant="sed -i 's|^peertube_distro_variant: bookworm|peertube_distro_variant: trixie|' defaults/main.yml"
+edit_task="printf 'a task\n' >> tasks/main.yml"
+edit_template="printf 'a line\n' >> templates/env.j2"
+edit_vars="printf 'a fact\n' >> vars/main.yml"
+edit_readme="printf 'documentation\n' >> README.md"
+edit_script="printf '# a comment\n' >> bin/compute-next-tag.sh"
+
+# The two merge orders below apply the same updates and must each end up with
+# every update released exactly once, whichever order they arrive in.
+
+scenario 'A version bump merged before other role changes'
+expect 'version bump' v7.3.0-0 "$(merge "$bump_version")"
+expect 'task edit'    v7.3.0-1 "$(merge "$edit_task")"
+expect 'template'     v7.3.0-2 "$(merge "$edit_template")"
+
+scenario 'A version bump merged after other role changes'
+expect 'task edit'    v7.2.3-2 "$(merge "$edit_task")"
+expect 'version bump' v7.3.0-0 "$(merge "$bump_version")"
+
+# The version this role carries already begins with a `v`, unlike most of the
+# fleet. Reading it without accounting for that would publish `vv7.3.0-0`.
+scenario 'The version already carries its own v prefix'
+expect 'version bump' v7.3.0-0 "$(merge "$bump_version")"
+
+# The image tag is composed out of the version and the Debian flavour. Neither
+# the composition nor the flavour is the version, but both change the image the
+# role installs, so the flavour still deserves a release of its own.
+scenario 'The Debian flavour of the image tag'
+expect 'flavour change' v7.2.3-2 "$(merge "$bump_distro_variant")"
+
+scenario 'Commits that do not affect the role'
+expect 'README'   ''        "$(merge "$edit_readme")"
+expect 'a script' ''        "$(merge "$edit_script")"
+expect 'a task'   v7.2.3-2  "$(merge "$edit_task")"
+
+# vars/main.yml holds the path of the INSTALLED_VERSION marker file, which the
+# upgrade detection in tasks/ reads. A change there changes the role.
+scenario 'A change under vars/'
+expect 'a fact' v7.2.3-2 "$(merge "$edit_vars")"
+
+scenario 'Release numbers past 9'
+for release_number in 2 3 4 5 6 7 8 9 10; do
+	git tag "v7.2.3-$release_number"
+done
+expect 'a task' v7.2.3-11 "$(merge "$edit_task")"
+
+scenario 'Reverting to an already released version'
+merge "$bump_version" > /dev/null
+# The role is now identical to what v7.2.3-1 already published, so there is
+# nothing new to release.
+expect 'a revert' ''        "$(merge "$revert_version")"
+
+scenario 'Reverting to an already released version, with a change'
+merge "$bump_version" > /dev/null
+expect 'a revert' v7.2.3-2 "$(merge "$revert_version && $edit_task")"
+
+if [ "$failures" -gt 0 ]; then
+	echo >&2 "$failures scenario(s) behaved unexpectedly"
+	exit 1
+fi
+
+echo 'All scenarios behaved as expected'

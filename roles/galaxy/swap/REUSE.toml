@@ -1,0 +1,38 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+version = 1
+
+# The role's own files. Their copyright is recorded here rather than in headers
+# inside the files themselves, because `defaults/`, `meta/` and `tasks/` are the
+# paths bin/compute-next-tag.sh watches: adding a comment to one of them would
+# cut a release of this role to every playbook that consumes it, for no change
+# at all.
+[[annotations]]
+path = [
+    "defaults/main.yml",
+]
+SPDX-FileCopyrightText = "2022 - 2024 etke.cc"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+[[annotations]]
+path = [
+    "tasks/**",
+]
+SPDX-FileCopyrightText = ["2022 - 2026 etke.cc", "2022 - 2023 Slavi Pantaleev"]
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+# Computer-generated files and other files which cannot be copyrighted
+[[annotations]]
+path = [
+    ".github/renovate.json",
+    ".gitignore",
+    ".pre-commit-config.yaml",
+    ".python-version",
+    "meta/main.yml",
+    "molecule/**/requirements.yml",
+    "molecule/requirements.txt"
+]
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "CC0-1.0"
