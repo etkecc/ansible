@@ -3,19 +3,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: Fail if required postgres-backup settings not defined
-  ansible.builtin.fail:
-    msg: >-
-      You need to define a required configuration setting (`{{ item }}`).
-  when: "lookup('vars', item, default='') | string | length == 0"
-  with_items:
-    - postgres_backup_uid
-    - postgres_backup_gid
-    - postgres_backup_container_network
-    - postgres_backup_connection_hostname
-    - postgres_backup_connection_username
-    - postgres_backup_connection_password
-
 - name: (Deprecation) Catch and report renamed settings
   ansible.builtin.fail:
     msg: >-
@@ -27,3 +14,16 @@
     - { "old": "postgres_backup_path", "new": "postgres_backup_base_path" }
     - { "old": "postgres_backup_docker_image_to_use", "new": "postgres_backup_container_image_to_use" }
     - { "old": "postgres_backup_container_image_force_pull", "new": "<removed> (the new community.docker.docker_image_pull module handles this natively)" }
+
+- name: Fail if required postgres-backup-local settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`).
+  when: "lookup('vars', item, default='') | string | length == 0"
+  with_items:
+    - postgres_backup_uid
+    - postgres_backup_gid
+    - postgres_backup_container_network
+    - postgres_backup_connection_hostname
+    - postgres_backup_connection_username
+    - postgres_backup_connection_password

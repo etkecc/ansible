@@ -1,5 +1,6 @@
-# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -12,7 +13,7 @@ dependency:
 driver:
   name: docker
 platforms:
-  - name: cinny-${MOLECULE_DISTRO:-ubuntu2604}-default
+  - name: cinny-${MOLECULE_DISTRO:-ubuntu2604}-default-selfbuild
     image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2604}-ansible:latest"
     command: ${MOLECULE_DOCKER_COMMAND:-""}
     volumes:
@@ -31,14 +32,53 @@ provisioner:
         # Helper variables
         cinny_debug_service_enabled: false
 
+        # The port on the host that Cinny is published on. In a real
+        # deployment, Cinny sits behind a reverse-proxy and is not published
+        # at all, so the scenario picks a port itself.
+        cinny_molecule_http_bind_port: 8080
+
+        # Status codes that the verification requests accept without failing
+        # the request task itself. `uri` fails on anything outside this list
+        # before an assertion gets to look at the response, which would report
+        # a bare status-code error instead of naming the check that went wrong.
+        cinny_molecule_http_status_codes: [200, 301, 302, 304, 400, 401, 403, 404, 405, 500, 502, 503]
+
+        # Cinny's Dockerfile sets no OCI labels - the version label on the
+        # published image is added by Cinny's release workflow. An image built
+        # from the sources therefore has no version to read off its metadata,
+        # and the version assertion in `verify.yml` falls to the application
+        # bundle alone, which carries the version either way.
+        cinny_molecule_image_carries_version_label: false
+
         # Variables for Cinny
         cinny_uid: 1000
         cinny_gid: 1000
         cinny_scheme: http
         cinny_hostname: localhost
         cinny_container_labels_traefik_enabled: false
-        cinny_container_http_host_bind_port: 8080
-        cinny_default_hs_url: https://matrix.org
+        cinny_container_http_host_bind_port: "127.0.0.1:{{ cinny_molecule_http_bind_port }}"
+
+        # A bare Cinny image ships a `config.json` of its own and serves it
+        # from the very same path, so a request for it succeeds whether or not
+        # this role did anything. That file lists five homeservers and defaults
+        # to the second of them; a hostname that appears nowhere in it is what
+        # lets the assertions in `verify.yml` tell the two files apart.
+        cinny_default_hs_url: https://matrix.molecule.example.com
+
+        # The extension is combined into the rendered configuration, which is
+        # how a deployment sets keys the role has no variable for. Overriding
+        # `allowCustomHomeservers` (which both the image's own `config.json`
+        # and this role's default leave at `true`) and adding `hashRouter`
+        # (which the role's template never emits) leaves marks in the served
+        # file that neither the image nor the role's defaults can produce.
+        cinny_configuration_extension_json: |
+          {
+            "allowCustomHomeservers": false,
+            "hashRouter": {
+              "enabled": true,
+              "basename": "/molecule"
+            }
+          }
 
         # Test self-building
         cinny_container_image_self_build: true

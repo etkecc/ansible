@@ -1,14 +1,31 @@
-# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: Verify Cinny systemd service
+- name: Verify Cinny
   hosts: all
   become: true
   gather_facts: false
+
+  vars:
+    cinny_molecule_base_url: "http://127.0.0.1:{{ cinny_molecule_http_bind_port }}"
+    cinny_molecule_bundle_path: /tmp/cinny-molecule-bundle.js
+
   tasks:
+    # Role defaults are not in scope in a verification playbook, but the Cinny
+    # version that Renovate bumps lives in them and is what the running
+    # application is checked against below. `include_vars` does not template,
+    # so only values that are literals in the file can be read this way -
+    # `cinny_version` is one, `cinny_container_image` (which is built out of
+    # it with Jinja) is not.
+    - name: Load the Cinny role defaults
+      ansible.builtin.include_vars:
+        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+        name: cinny_defaults
+
     - name: Wait for Cinny service to become active (up to 180s)
       ansible.builtin.systemd:
         name: cinny.service
@@ -29,25 +46,250 @@
         cmd: journalctl -xeu cinny.service
       changed_when: false
 
-    - name: Wait for Cinny HTTP endpoint to respond (up to 10m)
+    # ------------------------------------------------------------------
+    # The container the role actually started
+    # ------------------------------------------------------------------
+
+    - name: Inspect the running Cinny container
+      ansible.builtin.command:
+        argv:
+          - docker
+          - inspect
+          - cinny
+      register: cinny_container_inspect
+      changed_when: false
+
+    - name: Parse the Cinny container inspection
+      ansible.builtin.set_fact:
+        cinny_container: "{{ (cinny_container_inspect.stdout | from_json)[0] }}"
+
+    # The systemd unit is what turns the role's variables into `docker create`
+    # arguments. Reading them back off the running container is what proves
+    # the values in the inventory reached the process, rather than merely
+    # having been written into a file somewhere.
+    - name: Assert the Cinny container runs as the configured user
+      ansible.builtin.assert:
+        that: cinny_container.Config.User == (cinny_uid | string) ~ ':' ~ (cinny_gid | string)
+        fail_msg: "The Cinny container runs as {{ cinny_container.Config.User | default('(unset)') }}, expected {{ cinny_uid }}:{{ cinny_gid }}"
+        success_msg: "The Cinny container runs as {{ cinny_container.Config.User }}"
+
+    - name: Assert the Cinny container is hardened as the systemd unit asks
+      ansible.builtin.assert:
+        that:
+          - cinny_container.State.Running
+          - cinny_container.HostConfig.ReadonlyRootfs
+          - cinny_container.HostConfig.CapDrop == ['ALL']
+        fail_msg: >-
+          The Cinny container is not running with a read-only root filesystem and all capabilities dropped
+          (running={{ cinny_container.State.Running }},
+          read-only={{ cinny_container.HostConfig.ReadonlyRootfs }},
+          dropped={{ cinny_container.HostConfig.CapDrop }})
+        success_msg: "The Cinny container runs read-only with all capabilities dropped"
+
+    # A pulled image carries the version in an OCI label, which is the
+    # cheapest statement of what is running. The label comes from Cinny's
+    # release workflow rather than from the Dockerfile, so a self-built image
+    # does not have it and the scenario says so.
+    - name: Assert the Cinny image is the version the role pins
+      when: cinny_molecule_image_carries_version_label | bool
+      ansible.builtin.assert:
+        that: cinny_container.Config.Labels['org.opencontainers.image.version'] == cinny_defaults.cinny_version
+        fail_msg: >-
+          The running image is labelled
+          {{ cinny_container.Config.Labels['org.opencontainers.image.version'] | default('(no version label)') }},
+          expected {{ cinny_defaults.cinny_version }}
+        success_msg: "The running image is labelled {{ cinny_defaults.cinny_version }}"
+
+    # ------------------------------------------------------------------
+    # What the role's nginx configuration serves
+    # ------------------------------------------------------------------
+
+    # The image's own vhost listens on port 80 and this role's `nginx.conf`
+    # listens on 8080 so that it can run as a non-root user, and the role's
+    # file does not include `conf.d`, so the image's vhost is never loaded.
+    # Anything answering here at all is therefore the role's configuration.
+    - name: Wait for the Cinny page to be served (up to 180s)
       ansible.builtin.uri:
-        url: "http://localhost:8080/"
+        url: "{{ cinny_molecule_base_url }}/"
         method: GET
-        status_code: [200, 302]
+        # Nothing about a working Cinny involves a redirect, so following one
+        # could only turn some other response into a misleading 200.
         follow_redirects: none
-      register: cinny_endpoint
-      until: cinny_endpoint.status in [200, 302]
-      retries: 120
+        status_code: "{{ cinny_molecule_http_status_codes }}"
+        return_content: true
+      register: cinny_index
+      until: cinny_index.status == 200
+      retries: 36
       delay: 5
 
-    - name: Assert Cinny HTTP endpoint responds
+    - name: Assert the Cinny page is served
       ansible.builtin.assert:
-        that: cinny_endpoint.status in [200, 302]
-        fail_msg: "Cinny did not respond as expected ({{ cinny_endpoint.status | default('no response') }})"
-        success_msg: "Cinny responded with {{ cinny_endpoint.status }}"
+        that:
+          - cinny_index.status == 200
+          - "'<title>Cinny</title>' in cinny_index.content"
+        fail_msg: "The Cinny page was not served ({{ cinny_index.status }})"
+        success_msg: "The Cinny page is served ({{ cinny_index.content | length }} bytes)"
 
-    - name: Show Cinny systemd service status summary
+    # Cinny is a single-page application: every route that is not a real file
+    # has to come back as `index.html`. That fallback is a rewrite rule in the
+    # `nginx.conf` this role renders, so a deep route answering with the page
+    # is this role's routing working, not a static file happening to exist.
+    - name: Request a Cinny route that is not a file on disk
+      ansible.builtin.uri:
+        url: "{{ cinny_molecule_base_url }}/room/!molecule:example.com"
+        method: GET
+        follow_redirects: none
+        status_code: "{{ cinny_molecule_http_status_codes }}"
+        return_content: true
+      register: cinny_spa_route
+      changed_when: false
+
+    - name: Assert Cinny routes unknown paths to the application
+      ansible.builtin.assert:
+        that:
+          - cinny_spa_route.status == 200
+          - "'<title>Cinny</title>' in cinny_spa_route.content"
+        fail_msg: "A Cinny route was not rewritten to the application ({{ cinny_spa_route.status }})"
+        success_msg: "Cinny routes unknown paths to the application"
+
+    - name: Request the Cinny web application manifest
+      ansible.builtin.uri:
+        url: "{{ cinny_molecule_base_url }}/manifest.json"
+        method: GET
+        follow_redirects: none
+        status_code: "{{ cinny_molecule_http_status_codes }}"
+      register: cinny_manifest
+      changed_when: false
+
+    - name: Assert the Cinny web application manifest is served
+      ansible.builtin.assert:
+        that:
+          - cinny_manifest.status == 200
+          - cinny_manifest.json.name == 'Cinny'
+        fail_msg: "The Cinny manifest was not served ({{ cinny_manifest.status }})"
+        success_msg: "The Cinny manifest is served"
+
+    # ------------------------------------------------------------------
+    # The configuration this role rendered, as the browser receives it
+    # ------------------------------------------------------------------
+
+    # A bare Cinny image ships its own `config.json` at this very path, so the
+    # request succeeding says nothing about the role. The assertions below are
+    # what separate the two: the file can only carry these values if the role
+    # rendered it and the systemd unit mounted it over the image's copy.
+    - name: Request the Cinny configuration
+      ansible.builtin.uri:
+        url: "{{ cinny_molecule_base_url }}/config.json"
+        method: GET
+        follow_redirects: none
+        status_code: "{{ cinny_molecule_http_status_codes }}"
+      register: cinny_served_config
+      changed_when: false
+
+    - name: Assert the Cinny configuration is served
+      ansible.builtin.assert:
+        that: cinny_served_config.status == 200
+        fail_msg: "The Cinny configuration was not served ({{ cinny_served_config.status }})"
+        success_msg: "The Cinny configuration is served"
+
+    - name: Assert the served Cinny configuration carries the configured homeserver
+      ansible.builtin.assert:
+        that:
+          - cinny_served_config.json.homeserverList == [cinny_default_hs_url]
+          - cinny_served_config.json.defaultHomeserver == 0
+        fail_msg: >-
+          The served configuration lists {{ cinny_served_config.json.homeserverList }} defaulting to
+          index {{ cinny_served_config.json.defaultHomeserver }}, expected {{ [cinny_default_hs_url] }} at index 0
+        success_msg: "The served configuration lists only the configured homeserver"
+
+    - name: Assert the served Cinny configuration carries the configuration extension
+      ansible.builtin.assert:
+        that:
+          - not cinny_served_config.json.allowCustomHomeservers
+          - cinny_served_config.json.hashRouter.enabled
+          - cinny_served_config.json.hashRouter.basename == '/molecule'
+        fail_msg: "The served configuration does not carry the extension: {{ cinny_served_config.json }}"
+        success_msg: "The served configuration carries the extension, combined into the role's own keys"
+
+    - name: Assert the served Cinny configuration carries the role's featured communities
+      ansible.builtin.assert:
+        that:
+          - cinny_served_config.json.featuredCommunities.spaces == []
+          - cinny_served_config.json.featuredCommunities.rooms == []
+          - cinny_served_config.json.featuredCommunities.servers == ['matrix.org']
+          - not cinny_served_config.json.featuredCommunities.openAsDefault
+        fail_msg: "The served configuration does not carry the role's featured communities: {{ cinny_served_config.json.featuredCommunities }}"
+        success_msg: "The served configuration carries the role's featured communities"
+
+    # ------------------------------------------------------------------
+    # The version of the application that is actually running
+    # ------------------------------------------------------------------
+
+    # Cinny builds its own version into its JavaScript bundle, and renders it
+    # in its about screen. The bundle's filename carries a content hash that
+    # changes with every release, so the only way to reach it is to read it
+    # off the page that references it. Unlike the image label, this holds for
+    # a self-built image too, because the value comes from the sources.
+    - name: Determine the Cinny application bundle that the page loads
+      ansible.builtin.set_fact:
+        # `regex_search` with a capture group hands back a list of groups, or
+        # nothing at all when the page does not match. Joining covers both.
+        cinny_bundle_url: "{{ (cinny_index.content | regex_search('src=\"(/assets/index-[^\"]+\\.js)\"', '\\1') | default([], true)) | join('') }}"
+
+    - name: Assert the Cinny page references an application bundle
+      ansible.builtin.assert:
+        that: cinny_bundle_url | length > 0
+        fail_msg: "The served page references no application bundle: {{ cinny_index.content }}"
+        success_msg: "The served page loads its application bundle from {{ cinny_bundle_url }}"
+
+    - name: Download the Cinny application bundle
+      ansible.builtin.get_url:
+        url: "{{ cinny_molecule_base_url }}{{ cinny_bundle_url }}"
+        dest: "{{ cinny_molecule_bundle_path }}"
+        mode: "0640"
+      register: cinny_bundle_download
+
+    # The bundle is several megabytes, so it is searched on the host rather
+    # than pulled into a variable. Cinny renders its version as the text of a
+    # link to its releases page, which is what this pattern picks up.
+    - name: Read the version out of the Cinny application bundle
+      ansible.builtin.command:
+        argv:
+          - python3
+          - -c
+          - |
+            import re
+            import sys
+
+            with open(sys.argv[1], encoding='utf-8', errors='replace') as handle:
+                bundle = handle.read()
+
+            print(' '.join(sorted(set(re.findall(r'children:"(v[0-9][^"]*)"', bundle)))))
+          - "{{ cinny_molecule_bundle_path }}"
+      register: cinny_bundle_version
+      changed_when: false
+
+    - name: Assert the running Cinny is the version the role pins
+      ansible.builtin.assert:
+        that:
+          - cinny_bundle_version.stdout_lines | length > 0
+          - cinny_defaults.cinny_version in cinny_bundle_version.stdout.split()
+        fail_msg: >-
+          The running Cinny reports version(s) {{ cinny_bundle_version.stdout | default('(none found)') }},
+          expected {{ cinny_defaults.cinny_version }} from defaults/main.yml
+        success_msg: "The running Cinny reports {{ cinny_defaults.cinny_version }}, the version defaults/main.yml pins"
+
+    - name: Remove the downloaded Cinny application bundle
+      ansible.builtin.file:
+        path: "{{ cinny_molecule_bundle_path }}"
+        state: absent
+
+    - name: Show Cinny verification summary
       ansible.builtin.debug:
         msg:
           - "Cinny systemd: {{ cinny_service.status.ActiveState }}"
-          - "Cinny HTTP: {{ cinny_endpoint.status }}"
+          - "Cinny container user: {{ cinny_container.Config.User }}"
+          - "Cinny running version: {{ cinny_bundle_version.stdout }}"
+          - "Cinny page size: {{ cinny_index.content | length }} bytes"
+          - "Cinny bundle: {{ cinny_bundle_url }} ({{ cinny_bundle_download.size | default('unknown') }} bytes)"
+          - "Cinny homeservers served: {{ cinny_served_config.json.homeserverList }}"

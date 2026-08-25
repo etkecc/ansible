@@ -1,0 +1,97 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+# Both roles are included in a single play, so that the variables which
+# ansible-role-postgres exports (`postgres_container_network`,
+# `postgres_data_path`, `postgres_connection_username`, ...) are in scope when
+# this role runs and consumes them - the same way mash-playbook wires them.
+- name: Include roles for postgres-backup-local Molecule tests
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Include roles for postgres-backup-local Molecule tests
+      ansible.builtin.include_role:
+        name: "{{ role_name }}"
+        public: true
+      loop:
+        - com.devture.ansible.role.playbook_help
+        - com.devture.ansible.role.systemd_docker_base
+        - ansible-role-postgres
+        - "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+      loop_control:
+        loop_var: role_name
+
+# A backup role can only be proven by a backup that actually contains
+# something, so the database is given a distinctive row to carry before the
+# backup service is ever started.
+- name: Ensure Postgres holds data worth backing up
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Ensure systemd daemon is reloaded
+      ansible.builtin.systemd_service:
+        daemon_reload: true
+
+    - name: Ensure Postgres systemd service is started
+      ansible.builtin.systemd_service:
+        name: postgres.service
+        state: started
+
+    - name: Wait for Postgres to accept connections (up to 120s)
+      ansible.builtin.command:
+        argv:
+          - docker
+          - exec
+          - "{{ postgres_identifier }}"
+          - pg_isready
+          - -h
+          - 127.0.0.1
+          - -d
+          - "{{ postgres_backup_molecule_database_name }}"
+      register: postgres_backup_molecule_pg_isready
+      changed_when: false
+      until: postgres_backup_molecule_pg_isready.rc == 0
+      retries: 24
+      delay: 5
+
+    # Connected as the database's own user (the one ansible-role-postgres
+    # created it for), rather than as the superuser that the backup itself
+    # connects as, so that the row is written through a different account than
+    # the one being tested.
+    - name: Ensure the Molecule probe table is seeded into the database
+      ansible.builtin.command:
+        argv:
+          - docker
+          - exec
+          - -e
+          - "PGPASSWORD={{ postgres_backup_molecule_database_password }}"
+          - "{{ postgres_identifier }}"
+          - psql
+          - -h
+          - 127.0.0.1
+          - -U
+          - "{{ postgres_backup_molecule_database_username }}"
+          - -d
+          - "{{ postgres_backup_molecule_database_name }}"
+          - -v
+          - ON_ERROR_STOP=1
+          - -c
+          - >-
+            CREATE TABLE IF NOT EXISTS {{ postgres_backup_molecule_table_name }} (id serial PRIMARY KEY, note text);
+            TRUNCATE {{ postgres_backup_molecule_table_name }};
+            INSERT INTO {{ postgres_backup_molecule_table_name }} (note) VALUES ('{{ postgres_backup_molecule_canary }}');
+      changed_when: true
+
+- name: Ensure postgres-backup-local service is started
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Ensure postgres-backup-local systemd service is started
+      ansible.builtin.systemd_service:
+        name: postgres-backup.service
+        state: started

@@ -1,0 +1,259 @@
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+# SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify coturn
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    # The role is not included in this playbook, so its defaults are not in
+    # scope. Reading defaults/main.yml directly keeps the version assertion
+    # below tied to the value that Renovate bumps, with nothing to keep in
+    # sync in this scenario. include_vars reads from the controller.
+    #
+    # Only literal values describing the role itself may be read from this
+    # namespace - a Jinja-derived default would arrive here as its unrendered
+    # template text. Anything this scenario tunes (the hostname, the relay port
+    # range) comes from the scenario's group_vars instead.
+    - name: Load the coturn role defaults
+      ansible.builtin.include_vars:
+        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+        name: coturn_defaults
+
+    - name: Wait for coturn service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: coturn.service
+      register: coturn_service
+      until: coturn_service.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert coturn service is active
+      ansible.builtin.assert:
+        that: coturn_service.status.ActiveState == 'active'
+        fail_msg: "coturn.service not active ({{ coturn_service.status.ActiveState }})"
+        success_msg: "coturn.service is active"
+
+    - name: Retrieve coturn service log for debugging
+      when: coturn_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu coturn.service
+      changed_when: false
+
+    # A systemd unit reaching "active" only means that `docker start` has not
+    # exited yet. Answering a STUN Binding request is the cheapest thing the
+    # TURN/STUN server itself can do, so it is the first probe here that proves
+    # a serving coturn rather than a merely running container.
+    #
+    # The request is a hand-built 20-byte STUN packet, because the test
+    # container ships no STUN client (and no curl). A UDP port that nothing
+    # listens on swallows the packet and this times out, so a pass here cannot
+    # come from anything but coturn.
+    #
+    # community.docker is deliberately avoided throughout this playbook: the
+    # linting environment in CI has no collections installed.
+    - name: Send a STUN Binding request to coturn over UDP (up to 120s)
+      ansible.builtin.command:
+        argv:
+          - python3
+          - -c
+          - |
+            import socket
+
+            # A Binding request is a bare 20-byte STUN header: message type
+            # 0x0001, a zero-length body, the RFC 5389 magic cookie, and a
+            # 12-byte transaction ID that the response must echo back.
+            request = (
+                b"\x00\x01\x00\x00"
+                b"\x21\x12\xa4\x42"
+                b"MOLECULESTUN"
+            )
+
+            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            sock.settimeout(5)
+            sock.sendto(request, ("127.0.0.1", 3478))
+            response, _ = sock.recvfrom(2048)
+
+            attributes = {}
+            offset = 20
+            end = 20 + int.from_bytes(response[2:4], "big")
+            while offset + 4 <= end:
+                attribute_type = int.from_bytes(response[offset:offset + 2], "big")
+                length = int.from_bytes(response[offset + 2:offset + 4], "big")
+                attributes[attribute_type] = response[offset + 4:offset + 4 + length]
+                # Attribute values are padded to a multiple of four bytes.
+                offset += 4 + length + (-length % 4)
+
+            # XOR-MAPPED-ADDRESS (0x0020) carries the address coturn saw the
+            # request come from, obfuscated by XOR-ing it with the cookie.
+            mapped = attributes.get(0x0020, b"")
+            address = "none"
+            if len(mapped) == 8 and mapped[1] == 0x01:
+                address = "%s:%d" % (
+                    socket.inet_ntoa(bytes(a ^ b for a, b in zip(mapped[4:8], b"\x21\x12\xa4\x42"))),
+                    int.from_bytes(mapped[2:4], "big") ^ 0x2112,
+                )
+
+            print("type=0x%04x cookie=%s txid=%s xor_mapped_address=%s" % (
+                int.from_bytes(response[0:2], "big"),
+                "ok" if response[4:8] == b"\x21\x12\xa4\x42" else "bad",
+                "ok" if response[8:20] == request[8:20] else "bad",
+                address,
+            ))
+      register: coturn_stun_udp
+      changed_when: false
+      until: coturn_stun_udp.rc == 0 and 'type=0x0101' in coturn_stun_udp.stdout
+      retries: 24
+      delay: 5
+
+    - name: Assert coturn answered the STUN Binding request over UDP
+      ansible.builtin.assert:
+        that:
+          # 0x0101 is a Binding success response; an error would be 0x0111.
+          - "'type=0x0101' in coturn_stun_udp.stdout"
+          - "'cookie=ok' in coturn_stun_udp.stdout"
+          - "'txid=ok' in coturn_stun_udp.stdout"
+          - coturn_stun_udp.stdout is search('xor_mapped_address=[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+:[0-9]+')
+        fail_msg: "coturn did not answer the STUN Binding request over UDP ({{ coturn_stun_udp.stdout | default('no output') }})"
+        success_msg: "coturn answered the STUN Binding request over UDP ({{ coturn_stun_udp.stdout }})"
+
+    # The plain STUN port is published over TCP as well as UDP, by two separate
+    # port bindings in the systemd unit. Probing both is what keeps either of
+    # them from silently stopping being rendered.
+    - name: Send a STUN Binding request to coturn over TCP
+      ansible.builtin.command:
+        argv:
+          - python3
+          - -c
+          - |
+            import socket
+
+            # Over TCP a STUN message goes on the wire exactly as it does over
+            # UDP, with no extra framing (RFC 5389, section 7.2.2).
+            request = (
+                b"\x00\x01\x00\x00"
+                b"\x21\x12\xa4\x42"
+                b"MOLECULETCPS"
+            )
+
+            sock = socket.create_connection(("127.0.0.1", 3478), timeout=5)
+            sock.sendall(request)
+            response = sock.recv(2048)
+
+            print("type=0x%04x txid=%s" % (
+                int.from_bytes(response[0:2], "big"),
+                "ok" if response[8:20] == request[8:20] else "bad",
+            ))
+      register: coturn_stun_tcp
+      changed_when: false
+
+    - name: Assert coturn answered the STUN Binding request over TCP
+      ansible.builtin.assert:
+        that:
+          - "'type=0x0101' in coturn_stun_tcp.stdout"
+          - "'txid=ok' in coturn_stun_tcp.stdout"
+        fail_msg: "coturn did not answer the STUN Binding request over TCP ({{ coturn_stun_tcp.stdout | default('no output') }})"
+        success_msg: "coturn answered the STUN Binding request over TCP ({{ coturn_stun_tcp.stdout }})"
+
+    # STUN Binding is answered by any coturn that is listening at all, and says
+    # nothing about the authentication that turnserver.conf configures. A TURN
+    # Allocate carrying no credentials must be turned away with a 401 and a
+    # fresh nonce to authenticate against - the long-term-credential handshake
+    # proving itself, without this scenario having to complete an allocation
+    # and hold a relay open.
+    #
+    # The realm in that challenge is rendered from `coturn_realm`, which the
+    # role derives as `turn.<coturn_hostname>`, so asserting on it ties the
+    # challenge back to the configuration this scenario asked for.
+    - name: Send a TURN Allocate request to coturn without credentials
+      ansible.builtin.command:
+        argv:
+          - python3
+          - -c
+          - |
+            import socket
+
+            # An Allocate request (message type 0x0003) whose only attribute is
+            # REQUESTED-TRANSPORT (0x0019) asking for UDP (protocol number 17),
+            # hence the 8-byte body length.
+            request = (
+                b"\x00\x03\x00\x08"
+                b"\x21\x12\xa4\x42"
+                b"MOLECULEALLO"
+                b"\x00\x19\x00\x04\x11\x00\x00\x00"
+            )
+
+            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            sock.settimeout(5)
+            sock.sendto(request, ("127.0.0.1", 3478))
+            response, _ = sock.recvfrom(2048)
+
+            attributes = {}
+            offset = 20
+            end = 20 + int.from_bytes(response[2:4], "big")
+            while offset + 4 <= end:
+                attribute_type = int.from_bytes(response[offset:offset + 2], "big")
+                length = int.from_bytes(response[offset + 2:offset + 4], "big")
+                attributes[attribute_type] = response[offset + 4:offset + 4 + length]
+                offset += 4 + length + (-length % 4)
+
+            # ERROR-CODE (0x0009) keeps the class in byte 2 and the number in
+            # byte 3, so a 401 arrives as 4 and 1.
+            error = attributes.get(0x0009, b"\x00\x00\x00\x00")
+
+            print("type=0x%04x error_code=%d%02d realm=%s nonce_length=%d" % (
+                int.from_bytes(response[0:2], "big"),
+                error[2],
+                error[3],
+                attributes.get(0x0014, b"none").decode("utf-8", "replace"),
+                len(attributes.get(0x0015, b"")),
+            ))
+      register: coturn_turn_allocate
+      changed_when: false
+
+    - name: Assert coturn challenges an unauthenticated TURN Allocate
+      ansible.builtin.assert:
+        that:
+          # 0x0113 is an Allocate error response.
+          - "'type=0x0113' in coturn_turn_allocate.stdout"
+          - "'error_code=401' in coturn_turn_allocate.stdout"
+          - "'realm=turn.' ~ coturn_hostname ~ ' ' in coturn_turn_allocate.stdout"
+          - coturn_turn_allocate.stdout is search('nonce_length=[1-9][0-9]*')
+        fail_msg: >-
+          coturn did not challenge an unauthenticated TURN Allocate as configured
+          ({{ coturn_turn_allocate.stdout | default('no output') }})
+        success_msg: "coturn challenges an unauthenticated TURN Allocate ({{ coturn_turn_allocate.stdout }})"
+
+    # Tying the running version to `coturn_version` is what makes this scenario
+    # a real test of the version that Renovate bumps: a bump that produces an
+    # unusable image cannot pass here.
+    #
+    # The version has to be asked of the binary, because turnserver.conf enables
+    # `prod`, which is what stops coturn from advertising its version in the
+    # SOFTWARE attribute of the STUN responses probed above.
+    - name: Query the version reported by the running coturn
+      ansible.builtin.command:
+        cmd: "docker exec {{ coturn_defaults.coturn_identifier }} turnserver --version"
+      register: coturn_version_reported
+      changed_when: false
+
+    - name: Assert the running coturn is the version the role asks for
+      ansible.builtin.assert:
+        that: (coturn_version_reported.stdout | trim).startswith(coturn_defaults.coturn_version | string)
+        fail_msg: >-
+          coturn reports version {{ coturn_version_reported.stdout | trim | default('none') }},
+          but the role asks for {{ coturn_defaults.coturn_version }}
+        success_msg: "coturn reports version {{ coturn_version_reported.stdout | trim }}"
+
+    - name: Show coturn verification summary
+      ansible.builtin.debug:
+        msg:
+          - "coturn systemd: {{ coturn_service.status.ActiveState }}"
+          - "STUN over UDP: {{ coturn_stun_udp.stdout }}"
+          - "STUN over TCP: {{ coturn_stun_tcp.stdout }}"
+          - "TURN Allocate without credentials: {{ coturn_turn_allocate.stdout }}"
+          - "Version: {{ coturn_version_reported.stdout | trim }}"

@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: Perform postgres-backup installation tasks
+- name: Perform postgres-backup-local installation tasks
   when: postgres_backup_enabled | bool
   tags:
     - setup-all
@@ -11,14 +11,14 @@
     - install-all
     - install-postgres-backup
   block:
-    - name: Validate postgres-backup configuration
+    - name: Validate postgres-backup-local configuration
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
     - name: Install postgres-backup
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
     - name: Migrate old postgres-backup
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/install_migrate_old_data.yml"
 
-- name: Perform postgres-backup uninstallation tasks
+- name: Perform postgres-backup-local uninstallation tasks
   when: not postgres_backup_enabled | bool
   tags:
     - setup-all

@@ -1,0 +1,315 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify Hydrogen
+  hosts: all
+  become: true
+  gather_facts: false
+
+  vars:
+    hydrogen_molecule_base_url: "http://127.0.0.1:{{ hydrogen_molecule_http_bind_port }}"
+    hydrogen_molecule_bundle_path: /tmp/hydrogen-molecule-bundle.js
+
+  tasks:
+    # Role defaults are not in scope in a verification playbook, but the
+    # Hydrogen version that Renovate bumps lives in them and is what the
+    # running application is checked against below. `include_vars` does not
+    # template, so only values that are literals in the file can be read this
+    # way - `hydrogen_version` is one, `hydrogen_container_image` (which is
+    # built out of it with Jinja) is not.
+    - name: Load the Hydrogen role defaults
+      ansible.builtin.include_vars:
+        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+        name: hydrogen_defaults
+
+    - name: Wait for Hydrogen service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: hydrogen.service
+      register: hydrogen_service
+      until: hydrogen_service.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert Hydrogen service is active
+      ansible.builtin.assert:
+        that: hydrogen_service.status.ActiveState == 'active'
+        fail_msg: "hydrogen.service not active ({{ hydrogen_service.status.ActiveState }})"
+        success_msg: "hydrogen.service is active"
+
+    - name: Retrieve Hydrogen service log for debugging
+      when: hydrogen_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu hydrogen.service
+      changed_when: false
+
+    # ------------------------------------------------------------------
+    # The container the role actually started
+    # ------------------------------------------------------------------
+
+    - name: Inspect the running Hydrogen container
+      ansible.builtin.command:
+        argv:
+          - docker
+          - inspect
+          - hydrogen
+      register: hydrogen_container_inspect
+      changed_when: false
+
+    - name: Parse the Hydrogen container inspection
+      ansible.builtin.set_fact:
+        hydrogen_container: "{{ (hydrogen_container_inspect.stdout | from_json)[0] }}"
+
+    # The systemd unit is what turns the role's variables into `docker create`
+    # arguments. Reading them back off the running container is what proves the
+    # values in the inventory reached the process, rather than merely having
+    # been written into a file somewhere. The image itself defaults to user
+    # `101`, so the identity below can only come from this role.
+    - name: Assert the Hydrogen container runs as the configured user
+      ansible.builtin.assert:
+        that: hydrogen_container.Config.User == (hydrogen_uid | string) ~ ':' ~ (hydrogen_gid | string)
+        fail_msg: "The Hydrogen container runs as {{ hydrogen_container.Config.User | default('(unset)') }}, expected {{ hydrogen_uid }}:{{ hydrogen_gid }}"
+        success_msg: "The Hydrogen container runs as {{ hydrogen_container.Config.User }}"
+
+    # Reaching this point at all also says the systemd unit's pre-start cleanup
+    # command ran to completion, since the container would never have been
+    # created otherwise.
+    - name: Assert the Hydrogen container is hardened as the systemd unit asks
+      ansible.builtin.assert:
+        that:
+          - hydrogen_container.State.Running
+          - hydrogen_container.HostConfig.ReadonlyRootfs
+          - hydrogen_container.HostConfig.CapDrop == ['ALL']
+        fail_msg: >-
+          The Hydrogen container is not running with a read-only root filesystem and all capabilities dropped
+          (running={{ hydrogen_container.State.Running }},
+          read-only={{ hydrogen_container.HostConfig.ReadonlyRootfs }},
+          dropped={{ hydrogen_container.HostConfig.CapDrop }})
+        success_msg: "The Hydrogen container runs read-only with all capabilities dropped"
+
+    # A pulled image carries the version in an OCI label, which is the cheapest
+    # statement of what is running. The label is attached by Hydrogen's
+    # `docker-publish` workflow rather than by the Dockerfile, so it holds for
+    # the published image this scenario uses but would not for a self-built
+    # one. The bundle check further below does not have that limitation.
+    - name: Assert the Hydrogen image is the version the role pins
+      ansible.builtin.assert:
+        that: hydrogen_container.Config.Labels['org.opencontainers.image.version'] == hydrogen_defaults.hydrogen_version
+        fail_msg: >-
+          The running image is labelled
+          {{ hydrogen_container.Config.Labels['org.opencontainers.image.version'] | default('(no version label)') }},
+          expected {{ hydrogen_defaults.hydrogen_version }}
+        success_msg: "The running image is labelled {{ hydrogen_defaults.hydrogen_version }}"
+
+    # ------------------------------------------------------------------
+    # What the role's nginx configuration serves
+    # ------------------------------------------------------------------
+
+    # The image ships its own vhost in `/etc/nginx/conf.d/default.conf`, which
+    # listens on the very same port. This role's `nginx.conf` replaces the main
+    # configuration file and does not include `conf.d`, so the image's vhost is
+    # never loaded and whatever answers here is the role's server block.
+    #
+    # The `Server` header cannot be used to tell the two apart: nginx is
+    # bundled into the Hydrogen image either way, so it reports the same
+    # version whether or not this role configured it.
+    - name: Wait for the Hydrogen page to be served (up to 180s)
+      ansible.builtin.uri:
+        url: "{{ hydrogen_molecule_base_url }}/"
+        method: GET
+        # Nothing about a working Hydrogen involves a redirect, so following
+        # one could only turn some other response into a misleading 200.
+        follow_redirects: none
+        status_code: "{{ hydrogen_molecule_http_status_codes }}"
+        return_content: true
+      register: hydrogen_index
+      until: hydrogen_index.status == 200
+      retries: 36
+      delay: 5
+
+    - name: Assert the Hydrogen page is served
+      ansible.builtin.assert:
+        that:
+          - hydrogen_index.status == 200
+          - "'<title>Hydrogen Chat</title>' in hydrogen_index.content"
+        fail_msg: "The Hydrogen page was not served ({{ hydrogen_index.status }})"
+        success_msg: "The Hydrogen page is served ({{ hydrogen_index.content | length }} bytes)"
+
+    # This role's `nginx.conf` is the only one of the two that asks for
+    # `expires -1` on HTML and on `config.json`, so a no-cache response to the
+    # page is that file having been rendered, mounted and loaded by nginx.
+    - name: Assert the Hydrogen page is served with the role's caching policy
+      ansible.builtin.assert:
+        that: "'no-cache' in (hydrogen_index.cache_control | default(''))"
+        fail_msg: "The Hydrogen page was served with Cache-Control: {{ hydrogen_index.cache_control | default('(none)') }}, expected no-cache"
+        success_msg: "The Hydrogen page is served with the role's no-cache policy"
+
+    # ------------------------------------------------------------------
+    # The configuration this role rendered, as the browser receives it
+    # ------------------------------------------------------------------
+
+    # A bare Hydrogen image ships its own `config.json` and serves it from this
+    # very path, so the request succeeding says nothing about the role. The
+    # assertions below are what separate the two: the file can only carry these
+    # values if the role rendered it, the systemd unit mounted it over the
+    # image's `/config.json.bundled`, and the image's entrypoint copied it into
+    # place on the tmpfs the unit provides.
+    - name: Request the Hydrogen configuration
+      ansible.builtin.uri:
+        url: "{{ hydrogen_molecule_base_url }}/config.json"
+        method: GET
+        follow_redirects: none
+        status_code: "{{ hydrogen_molecule_http_status_codes }}"
+      register: hydrogen_served_config
+      changed_when: false
+
+    - name: Assert the Hydrogen configuration is served
+      ansible.builtin.assert:
+        that:
+          - hydrogen_served_config.status == 200
+          - "'no-cache' in (hydrogen_served_config.cache_control | default(''))"
+        fail_msg: >-
+          The Hydrogen configuration was not served as expected ({{ hydrogen_served_config.status }},
+          Cache-Control: {{ hydrogen_served_config.cache_control | default('(none)') }})
+        success_msg: "The Hydrogen configuration is served with the role's no-cache policy"
+
+    - name: Assert the served Hydrogen configuration carries the configured homeserver
+      ansible.builtin.assert:
+        that: hydrogen_served_config.json.defaultHomeServer == hydrogen_default_hs_url
+        fail_msg: >-
+          The served configuration names {{ hydrogen_served_config.json.defaultHomeServer | default('(nothing)') }}
+          as the default homeserver, expected {{ hydrogen_default_hs_url }}
+        success_msg: "The served configuration names the configured homeserver"
+
+    # The image's own file points at `assets/theme-element.json` relatively.
+    # The role's template builds the value out of `hydrogen_path_prefix`, which
+    # makes it absolute, so the leading slash is this template's work. The
+    # scenario leaves that variable at its default, which is why the expected
+    # value is derived from the defaults file rather than from the inventory.
+    - name: Assert the served Hydrogen configuration points at the theme manifest the role computed
+      ansible.builtin.assert:
+        that: hydrogen_served_config.json.themeManifests == [(hydrogen_defaults.hydrogen_path_prefix | regex_replace('^/$', '')) ~ '/assets/theme-element.json']
+        fail_msg: "The served configuration lists theme manifests {{ hydrogen_served_config.json.themeManifests | default('(none)') }}"
+        success_msg: "The served configuration lists {{ hydrogen_served_config.json.themeManifests }}"
+
+    - name: Assert the served Hydrogen configuration carries the configuration extension
+      ansible.builtin.assert:
+        that:
+          - hydrogen_served_config.json.push.gatewayUrl == 'https://push.molecule.example.com'
+          - hydrogen_served_config.json.bugReportEndpointUrl == 'https://bugs.molecule.example.com/submit'
+        fail_msg: "The served configuration does not carry the extension: {{ hydrogen_served_config.json }}"
+        success_msg: "The served configuration carries the extension"
+
+    # The extension replaced one key of `push` and the other two are the role's
+    # own defaults, which is only possible if the two documents were merged
+    # recursively rather than one replacing the other.
+    - name: Assert the Hydrogen configuration extension was merged into the role's own keys
+      ansible.builtin.assert:
+        that:
+          - hydrogen_served_config.json.push.appId == hydrogen_defaults.hydrogen_push.appId
+          - hydrogen_served_config.json.push.applicationServerKey == hydrogen_defaults.hydrogen_push.applicationServerKey
+        fail_msg: "The extension replaced the role's `push` object wholesale: {{ hydrogen_served_config.json.push }}"
+        success_msg: "The extension was merged into the role's own `push` keys"
+
+    # The manifest the configuration points at has to be reachable at that
+    # exact path for Hydrogen to be able to theme itself. Its response also
+    # shows that the `expires -1` seen above comes from the role's location
+    # block for configuration and HTML rather than from a blanket directive.
+    - name: Request the Hydrogen theme manifest the configuration points at
+      ansible.builtin.uri:
+        url: "{{ hydrogen_molecule_base_url }}{{ hydrogen_served_config.json.themeManifests[0] }}"
+        method: GET
+        follow_redirects: none
+        status_code: "{{ hydrogen_molecule_http_status_codes }}"
+      register: hydrogen_theme_manifest
+      changed_when: false
+
+    - name: Assert the Hydrogen theme manifest is served
+      ansible.builtin.assert:
+        that:
+          - hydrogen_theme_manifest.status == 200
+          - hydrogen_theme_manifest.json.id == 'element'
+          - "'no-cache' not in (hydrogen_theme_manifest.cache_control | default(''))"
+        fail_msg: >-
+          The theme manifest at {{ hydrogen_served_config.json.themeManifests[0] }} was not served as expected
+          ({{ hydrogen_theme_manifest.status }}, Cache-Control: {{ hydrogen_theme_manifest.cache_control | default('(none)') }})
+        success_msg: "The theme manifest is served, and outside the role's no-cache location"
+
+    # ------------------------------------------------------------------
+    # The version of the application that is actually running
+    # ------------------------------------------------------------------
+
+    # Hydrogen builds its own version into its JavaScript bundle, and renders
+    # it in its settings screen as a link to the matching release. The bundle's
+    # filename carries a content hash that changes with every release, so the
+    # only way to reach it is to read it off the page that references it.
+    # Unlike the image label, this holds for a self-built image too, because
+    # the value comes from the sources.
+    - name: Determine the Hydrogen application bundle that the page loads
+      ansible.builtin.set_fact:
+        # `regex_search` with a capture group hands back a list of groups, or
+        # nothing at all when the page does not match. Joining covers both.
+        # The page references its assets relatively, hence the leading `./`.
+        hydrogen_bundle_path: "{{ (hydrogen_index.content | regex_search('src=\"\\./(assets/index\\.[^\"]+\\.js)\"', '\\1') | default([], true)) | join('') }}"
+
+    - name: Assert the Hydrogen page references an application bundle
+      ansible.builtin.assert:
+        that: hydrogen_bundle_path | length > 0
+        fail_msg: "The served page references no application bundle: {{ hydrogen_index.content }}"
+        success_msg: "The served page loads its application bundle from {{ hydrogen_bundle_path }}"
+
+    - name: Download the Hydrogen application bundle
+      ansible.builtin.get_url:
+        url: "{{ hydrogen_molecule_base_url }}/{{ hydrogen_bundle_path }}"
+        dest: "{{ hydrogen_molecule_bundle_path }}"
+        mode: "0640"
+      register: hydrogen_bundle_download
+
+    # The bundle is several hundred kilobytes, so it is searched on the host
+    # rather than pulled into a variable. Hydrogen links to the release it was
+    # built from, which is what this pattern picks up, and that link carries
+    # the same leading `v` as the version value in `defaults/main.yml`.
+    - name: Read the version out of the Hydrogen application bundle
+      ansible.builtin.command:
+        argv:
+          - python3
+          - -c
+          - |
+            import re
+            import sys
+
+            with open(sys.argv[1], encoding='utf-8', errors='replace') as handle:
+                bundle = handle.read()
+
+            print(' '.join(sorted(set(re.findall(r'/releases/tag/(v[0-9][A-Za-z0-9._-]*)', bundle)))))
+          - "{{ hydrogen_molecule_bundle_path }}"
+      register: hydrogen_bundle_version
+      changed_when: false
+
+    - name: Assert the running Hydrogen is the version the role pins
+      ansible.builtin.assert:
+        that:
+          - hydrogen_bundle_version.stdout_lines | length > 0
+          - hydrogen_defaults.hydrogen_version in hydrogen_bundle_version.stdout.split()
+        fail_msg: >-
+          The running Hydrogen reports version(s) {{ hydrogen_bundle_version.stdout | default('(none found)') }},
+          expected {{ hydrogen_defaults.hydrogen_version }} from defaults/main.yml
+        success_msg: "The running Hydrogen reports {{ hydrogen_defaults.hydrogen_version }}, the version defaults/main.yml pins"
+
+    - name: Remove the downloaded Hydrogen application bundle
+      ansible.builtin.file:
+        path: "{{ hydrogen_molecule_bundle_path }}"
+        state: absent
+
+    - name: Show Hydrogen verification summary
+      ansible.builtin.debug:
+        msg:
+          - "Hydrogen systemd: {{ hydrogen_service.status.ActiveState }}"
+          - "Hydrogen container user: {{ hydrogen_container.Config.User }}"
+          - "Hydrogen running version: {{ hydrogen_bundle_version.stdout }}"
+          - "Hydrogen page size: {{ hydrogen_index.content | length }} bytes"
+          - "Hydrogen bundle: {{ hydrogen_bundle_path }} ({{ hydrogen_bundle_download.size | default('unknown') }} bytes)"
+          - "Hydrogen homeserver served: {{ hydrogen_served_config.json.defaultHomeServer }}"

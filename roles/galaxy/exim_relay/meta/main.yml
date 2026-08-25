@@ -2,7 +2,7 @@ galaxy_info:
   author: Slavi Pantaleev
   company: Devture Ltd
   role_name: exim_relay
-  namespace: devture
+  namespace: mash
   description: exim-relay SMTP server
   platforms:
     - name: Debian

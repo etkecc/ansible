@@ -1,0 +1,58 @@
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+# SPDX-FileCopyrightText: 2026 spatterlight
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+dependency:
+  name: galaxy
+  options:
+    requirements-file: requirements.yml
+    force: true
+driver:
+  name: docker
+platforms:
+  - name: coturn-${MOLECULE_DISTRO:-ubuntu2604}-default
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2604}-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callback_result_format: yaml
+  inventory:
+    group_vars:
+      all:
+        # Helper variables
+        coturn_debug_service_enabled: false
+
+        # Variables for coturn
+        coturn_uid: 1000
+        coturn_gid: 1000
+
+        # The realm that coturn challenges unauthenticated TURN clients with is
+        # derived from this (`turn.localhost`), and verify.yml asserts on it.
+        coturn_hostname: localhost
+
+        coturn_turn_static_auth_secret: secret
+
+        # Docker publishes a relay port range by starting one userland proxy per
+        # port, which is slow and memory-hungry inside the test container. The
+        # scenario never gets as far as allocating a relay (verify.yml stops at
+        # the 401 challenge), so a handful of ports exercises the same rendering
+        # path that the 21-port default takes, much more cheaply.
+        coturn_turn_udp_min_port: 49152
+        coturn_turn_udp_max_port: 49156
+
+        # The host port bindings are deliberately left at their defaults, so
+        # that verify.yml probes the ports a default installation publishes.
+  env:
+    # Workaround for https://github.com/ansible/molecule/issues/4391
+    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles
+verifier:
+  name: ansible

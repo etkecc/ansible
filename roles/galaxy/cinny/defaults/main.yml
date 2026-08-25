@@ -20,7 +20,7 @@ cinny_identifier: cinny
 cinny_base_path: "/{{ cinny_identifier }}"
 cinny_config_path: "{{ cinny_base_path }}/config"
 
-# renovate: datasource=docker depName=ajbura/cinny
+# renovate: datasource=docker depName=ajbura/cinny versioning=semver
 cinny_version: v4.12.6
 
 cinny_uid: ""

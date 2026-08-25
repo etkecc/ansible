@@ -1,0 +1,235 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify postgres-backup-local
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    # Role defaults are not in scope here, but the healthcheck port that the
+    # scenario publishes is defined in terms of one of them.
+    - name: Load the postgres-backup-local role defaults
+      ansible.builtin.include_vars:
+        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+        name: postgres_backup_defaults
+
+    - name: Wait for postgres-backup-local service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: postgres-backup.service
+      register: postgres_backup_service
+      until: postgres_backup_service.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert postgres-backup-local service is active
+      ansible.builtin.assert:
+        that: postgres_backup_service.status.ActiveState == 'active'
+        fail_msg: "postgres-backup.service not active ({{ postgres_backup_service.status.ActiveState }})"
+        success_msg: "postgres-backup.service is active"
+
+    - name: Retrieve postgres-backup-local service log for debugging
+      when: postgres_backup_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu postgres-backup.service
+      changed_when: false
+
+    # ---------------------------------------------------------------------
+    # The systemd unit is wired to the configured paths and container image
+    # ---------------------------------------------------------------------
+
+    - name: Determine the postgres-backup-local systemd unit path
+      ansible.builtin.command:
+        argv:
+          - systemctl
+          - show
+          - --property=FragmentPath
+          - --value
+          - postgres-backup.service
+      register: postgres_backup_unit_path
+      changed_when: false
+
+    - name: Read the postgres-backup-local systemd unit
+      ansible.builtin.slurp:
+        src: "{{ postgres_backup_unit_path.stdout | trim }}"
+      register: postgres_backup_unit
+
+    - name: Make sense of the postgres-backup-local systemd unit
+      ansible.builtin.set_fact:
+        postgres_backup_unit_lines: "{{ (postgres_backup_unit.content | b64decode).splitlines() }}"
+
+    - name: Assert the postgres-backup-local systemd unit is wired to the configured paths
+      ansible.builtin.assert:
+        that:
+          - postgres_backup_unit_lines | select('search', '--env-file=' ~ postgres_backup_config_path ~ '/env') | list | length > 0
+          - postgres_backup_unit_lines | select('search', '--mount type=bind,src=' ~ postgres_backup_data_path ~ ',dst=/backups') | list | length > 0
+          - postgres_backup_unit_lines | select('search', '-p 127.0.0.1:' ~ postgres_backup_molecule_healthcheck_bind_port ~ ':' ~ postgres_backup_defaults.postgres_backup_healthcheck_port) | list | length > 0
+        fail_msg: "postgres-backup.service is not wired as configured: {{ postgres_backup_unit_lines | join('\n') }}"
+        success_msg: "postgres-backup.service references the configured environment file, backup path and healthcheck port"
+
+    # The whole point of this role tracking one container image per Postgres
+    # major is that the `pg_dump` doing the work understands the server it is
+    # dumping. Derived from the running server rather than hardcoded, so that
+    # this keeps holding when a new Postgres major is added.
+    - name: Determine the container image that the postgres-backup-local systemd unit uses
+      ansible.builtin.set_fact:
+        postgres_backup_unit_container_image: >-
+          {{ postgres_backup_unit_lines | select('search', 'prodrigestivill/postgres-backup-local:') | first | trim }}
+
+    - name: Determine the Postgres server major version
+      ansible.builtin.command:
+        argv:
+          - docker
+          - exec
+          - -e
+          - "PGPASSWORD={{ postgres_backup_molecule_database_password }}"
+          - "{{ postgres_identifier }}"
+          - psql
+          - -h
+          - 127.0.0.1
+          - -U
+          - "{{ postgres_backup_molecule_database_username }}"
+          - -d
+          - "{{ postgres_backup_molecule_database_name }}"
+          - -tAc
+          - "SELECT current_setting('server_version_num')::int / 10000"
+      register: postgres_backup_server_version
+      changed_when: false
+
+    - name: Assert the postgres-backup-local container image matches the Postgres server major
+      ansible.builtin.assert:
+        that: postgres_backup_unit_container_image.split(':') | last | split('-') | first == postgres_backup_server_version.stdout | trim
+        fail_msg: >-
+          {{ postgres_backup_unit_container_image }} does not correspond to
+          Postgres {{ postgres_backup_server_version.stdout | trim }}
+        success_msg: >-
+          {{ postgres_backup_unit_container_image }} corresponds to
+          Postgres {{ postgres_backup_server_version.stdout | trim }}
+
+    # ---------------------------------------------------------------------
+    # A backup run completed successfully
+    # ---------------------------------------------------------------------
+
+    # The container is a long-running scheduler rather than a one-shot, so
+    # "the backup succeeded" is not something systemd can report. The
+    # scheduler's own healthcheck endpoint is what knows, and it also reports
+    # the schedule it is actually running on.
+    - name: Wait for the postgres-backup-local scheduler to report a completed run (up to 180s)
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:{{ postgres_backup_molecule_healthcheck_bind_port }}/"
+        method: GET
+        return_content: true
+      register: postgres_backup_healthcheck
+      until: (postgres_backup_healthcheck.content | default('{}') | from_json).Last | default(none) is not none
+      retries: 36
+      delay: 5
+
+    - name: Make sense of the postgres-backup-local healthcheck response
+      ansible.builtin.set_fact:
+        postgres_backup_healthcheck_json: "{{ postgres_backup_healthcheck.content | from_json }}"
+
+    - name: Assert the postgres-backup-local backup run succeeded
+      ansible.builtin.assert:
+        that:
+          - postgres_backup_healthcheck_json.Last.Exit_status == 0
+          - "'SQL backup created successfully' in postgres_backup_healthcheck_json.Last.Stdout"
+          - postgres_backup_healthcheck_json.Schedule == postgres_backup_schedule
+        fail_msg: "The postgres-backup-local run did not succeed: {{ postgres_backup_healthcheck_json }}"
+        success_msg: >-
+          The postgres-backup-local run exited with
+          {{ postgres_backup_healthcheck_json.Last.Exit_status }}, on schedule
+          {{ postgres_backup_healthcheck_json.Schedule }}
+
+    # ---------------------------------------------------------------------
+    # A dump landed on disk, and it holds the data that was seeded
+    # ---------------------------------------------------------------------
+
+    # `file_type: file` skips the `-latest` symlink that the container
+    # maintains alongside the dump, leaving the timestamped dump itself.
+    - name: Find the postgres-backup-local dump
+      ansible.builtin.find:
+        paths: "{{ postgres_backup_data_path }}/last"
+        patterns: "{{ postgres_backup_molecule_database_name }}-*.sql.gz"
+        file_type: file
+      register: postgres_backup_dumps
+
+    - name: Assert a single non-empty postgres-backup-local dump was produced
+      ansible.builtin.assert:
+        that:
+          - postgres_backup_dumps.files | length == 1
+          - postgres_backup_dumps.files[0].size > 0
+        fail_msg: "Expected exactly one non-empty dump in {{ postgres_backup_data_path }}/last, found {{ postgres_backup_dumps.files | map(attribute='path') | list }}"
+        success_msg: "{{ postgres_backup_dumps.files[0].path }} is {{ postgres_backup_dumps.files[0].size }} bytes"
+
+    # The dump is a gzipped plain-SQL dump (`-Z9` without a format flag), so
+    # its contents can simply be read out and looked through. Done with
+    # Python's `gzip` module, because the test container is not guaranteed to
+    # ship a `zcat`.
+    - name: Read the postgres-backup-local dump
+      ansible.builtin.command:
+        argv:
+          - python3
+          - -c
+          - |
+            import gzip
+            import sys
+
+            path, table, canary = sys.argv[1:4]
+
+            with gzip.open(path, "rt") as dump_file:
+                dump = dump_file.read()
+
+            print("bytes=%d" % len(dump))
+            print("table=%d" % dump.count("CREATE TABLE public.%s " % table))
+            print("canary=%d" % dump.count(canary))
+          - "{{ postgres_backup_dumps.files[0].path }}"
+          - "{{ postgres_backup_molecule_table_name }}"
+          - "{{ postgres_backup_molecule_canary }}"
+      register: postgres_backup_dump_contents
+      changed_when: false
+
+    - name: Assert the postgres-backup-local dump holds the seeded data
+      ansible.builtin.assert:
+        that:
+          - "'table=1' in postgres_backup_dump_contents.stdout_lines"
+          - "'canary=1' in postgres_backup_dump_contents.stdout_lines"
+        fail_msg: "The dump does not hold the seeded data ({{ postgres_backup_dump_contents.stdout_lines }})"
+        success_msg: "The dump holds the seeded {{ postgres_backup_molecule_table_name }} table and its row ({{ postgres_backup_dump_contents.stdout_lines }})"
+
+    # ---------------------------------------------------------------------
+    # The role's knobs are what the container is running with
+    # ---------------------------------------------------------------------
+
+    - name: Read the postgres-backup-local environment file
+      ansible.builtin.slurp:
+        src: "{{ postgres_backup_config_path }}/env"
+      register: postgres_backup_env_file
+
+    - name: Make sense of the postgres-backup-local environment file
+      ansible.builtin.set_fact:
+        postgres_backup_env_lines: "{{ (postgres_backup_env_file.content | b64decode).splitlines() }}"
+
+    - name: Assert the configured retention and schedule reached the container
+      ansible.builtin.assert:
+        that:
+          - "'SCHEDULE=' ~ postgres_backup_schedule in postgres_backup_env_lines"
+          - "'BACKUP_KEEP_DAYS=' ~ postgres_backup_keep_days in postgres_backup_env_lines"
+          - "'BACKUP_KEEP_WEEKS=' ~ postgres_backup_keep_weeks in postgres_backup_env_lines"
+          - "'BACKUP_KEEP_MINS=' ~ postgres_backup_keep_mins in postgres_backup_env_lines"
+          - "'BACKUP_KEEP_MONTHS=' ~ postgres_backup_keep_months in postgres_backup_env_lines"
+          - "'POSTGRES_DB=' ~ postgres_backup_molecule_database_name in postgres_backup_env_lines"
+          - "'BACKUP_ON_START=TRUE' in postgres_backup_env_lines"
+        fail_msg: "The configured retention and schedule did not reach the container: {{ postgres_backup_env_lines }}"
+        success_msg: "The configured retention and schedule reached the container"
+
+    - name: Show postgres-backup-local verification summary
+      ansible.builtin.debug:
+        msg:
+          - "postgres-backup-local systemd: {{ postgres_backup_service.status.ActiveState }}"
+          - "postgres-backup-local image: {{ postgres_backup_unit_container_image }}"
+          - "Postgres server major: {{ postgres_backup_server_version.stdout | trim }}"
+          - "postgres-backup-local schedule: {{ postgres_backup_healthcheck_json.Schedule }}"
+          - "postgres-backup-local last run exit status: {{ postgres_backup_healthcheck_json.Last.Exit_status }}"
+          - "postgres-backup-local dump: {{ postgres_backup_dumps.files[0].path }} ({{ postgres_backup_dumps.files[0].size }} bytes)"
+          - "postgres-backup-local dump contents: {{ postgres_backup_dump_contents.stdout_lines }}"

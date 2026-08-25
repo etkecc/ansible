@@ -22,7 +22,10 @@ coturn_identifier: coturn
 coturn_base_path: "/{{ coturn_identifier }}"
 coturn_config_path: "{{ coturn_base_path }}/turnserver.conf"
 
-# renovate: datasource=docker depName=coturn/coturn versioning=loose
+# The versioning Renovate compares coturn/coturn tags with is pinned in
+# .github/renovate.json - the shape needed here cannot be spelled out in this
+# annotation.
+# renovate: datasource=docker depName=coturn/coturn
 coturn_version: 4.9.0
 
 coturn_uid: ""

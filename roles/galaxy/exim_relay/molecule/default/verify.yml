@@ -1,0 +1,120 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify exim-relay
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    # The probe below talks to the container by name on its own container
+    # network and needs to know which image and which version the role just
+    # installed. Reading the role defaults keeps the probe following whatever
+    # Renovate bumps `exim_relay_version` to, instead of a pinned copy here.
+    #
+    # Beware: variables loaded this way outrank the scenario's inventory
+    # group_vars, so anything the scenario configures (`exim_relay_hostname`,
+    # for instance) reads back as its role default from here on. Only use the
+    # variables below that describe the role itself, never the ones the
+    # scenario tunes.
+    - name: Load exim-relay role defaults
+      ansible.builtin.include_vars:
+        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+
+    - name: Wait for exim-relay service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: exim-relay.service
+      register: exim_relay_service
+      until: exim_relay_service.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert exim-relay service is active
+      ansible.builtin.assert:
+        that: exim_relay_service.status.ActiveState == 'active'
+        fail_msg: "exim-relay.service not active ({{ exim_relay_service.status.ActiveState }})"
+        success_msg: "exim-relay.service is active"
+
+    - name: Retrieve exim-relay service log for debugging
+      when: exim_relay_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu exim-relay.service
+      changed_when: false
+
+    # A real ESMTP conversation, held from a throwaway container attached to
+    # exim-relay's own container network - which is how actual consumers of
+    # this role reach it. Using the exim-relay image itself for the probe
+    # avoids pulling anything extra, since it is already present on the host
+    # and ships a BusyBox `nc`.
+    #
+    # Exim runs unprivileged inside the container and therefore listens on
+    # 8025 rather than on 25.
+    #
+    # Run through the docker CLI rather than community.docker.docker_container,
+    # because the ansible-lint environment used by pre-commit does not have the
+    # community.docker collection and would fail the syntax check.
+    - name: Hold an SMTP conversation with exim-relay over its container network
+      ansible.builtin.command:
+        cmd: >-
+          docker run --rm --network={{ exim_relay_container_network }}
+          --entrypoint sh {{ exim_relay_container_image }}
+          -c 'printf "EHLO molecule-probe\r\nMAIL FROM:<probe@example.com>\r\nRCPT TO:<probe@example.com>\r\nQUIT\r\n" | nc -w 10 {{ exim_relay_identifier }} 8025'
+      register: exim_relay_smtp_conversation
+      changed_when: false
+      failed_when: false
+      until: "'ESMTP Exim' in exim_relay_smtp_conversation.stdout"
+      retries: 12
+      delay: 5
+
+    - name: Show the SMTP conversation
+      ansible.builtin.debug:
+        var: exim_relay_smtp_conversation.stdout_lines
+
+    # The greeting banner names the Exim release that is actually running, so
+    # this ties the test to the version the role installs rather than to
+    # "some Exim answered". `exim_relay_version` carries an image revision
+    # suffix (`4.99.1-r0-2`) that Exim itself knows nothing about.
+    # The banner host name is the container's `--hostname`, which the systemd
+    # unit sets from `exim_relay_identifier`.
+    - name: Assert exim-relay greets as the expected host, running the expected Exim version
+      vars:
+        exim_relay_expected_version: "{{ exim_relay_version | regex_replace('-r[0-9]+.*$', '') }}"
+        exim_relay_expected_banner: "220 {{ exim_relay_identifier }} ESMTP Exim {{ exim_relay_expected_version }} "
+      ansible.builtin.assert:
+        that: exim_relay_smtp_conversation.stdout_lines[0] is match('^' ~ (exim_relay_expected_banner | regex_escape))
+        fail_msg: "Expected a banner starting with '{{ exim_relay_expected_banner }}', got '{{ exim_relay_smtp_conversation.stdout_lines[0] | default('nothing') }}'"
+        success_msg: "exim-relay greeted with Exim {{ exim_relay_expected_version }}"
+
+    - name: Assert exim-relay answers EHLO with the expected ESMTP capabilities
+      ansible.builtin.assert:
+        that:
+          - "'250-' ~ exim_relay_identifier ~ ' Hello molecule-probe' in exim_relay_smtp_conversation.stdout"
+          - "'250-SIZE' in exim_relay_smtp_conversation.stdout"
+          - "'250-8BITMIME' in exim_relay_smtp_conversation.stdout"
+          - "'250-PIPELINING' in exim_relay_smtp_conversation.stdout"
+        fail_msg: "EHLO was not answered as expected"
+        success_msg: "EHLO was answered with the expected ESMTP capabilities"
+
+    # Reaching a routing decision (rather than a relay refusal) for a recipient
+    # outside of the configured domains is what proves that
+    # `exim_relay_relay_from_hosts` lets the container network through.
+    # Nothing ever gets delivered: example.com publishes a null MX (RFC 7505),
+    # and the session is closed before DATA anyway.
+    - name: Assert exim-relay accepts the envelope sender and relays for the container network
+      ansible.builtin.assert:
+        that:
+          - "'250 OK' in exim_relay_smtp_conversation.stdout"
+          - "'relay not permitted' not in exim_relay_smtp_conversation.stdout"
+          - "'221' in exim_relay_smtp_conversation.stdout"
+        fail_msg: "exim-relay did not accept the envelope sender, or refused to relay for the container network"
+        success_msg: "exim-relay accepted the envelope sender and relays for the container network"
+
+    - name: Show exim-relay verification summary
+      ansible.builtin.debug:
+        msg:
+          - "exim-relay systemd: {{ exim_relay_service.status.ActiveState }}"
+          - "SMTP banner: {{ exim_relay_smtp_conversation.stdout_lines[0] }}"
+          - "SMTP session lines: {{ exim_relay_smtp_conversation.stdout_lines | length }}"

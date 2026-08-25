@@ -3,7 +3,7 @@ galaxy_info:
   author: Suguru Hirahara
   company: progressiv
   role_name: hydrogen
-  namespace: progressiv
+  namespace: mash
   description: Hydrogen
   platforms:
     - name: Debian

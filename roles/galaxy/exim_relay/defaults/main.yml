@@ -18,7 +18,7 @@ exim_relay_spool_path: "{{ exim_relay_base_path }}/spool"
 exim_relay_uid: ''
 exim_relay_gid: ''
 
-# renovate: datasource=docker depName=ghcr.io/devture/exim-relay versioning=semver
+# renovate: datasource=docker depName=ghcr.io/devture/exim-relay
 exim_relay_version: 4.99.1-r0-2
 
 exim_relay_container_image_self_build: false

@@ -17,16 +17,15 @@
 - name: Fail if required Hydrogen settings not defined
   ansible.builtin.fail:
     msg: >-
-      You need to define a required configuration setting (`{{ item.name }}`).
-  when: "item.when | bool and lookup('vars', item.name, default='') | string | length == 0"
+      You need to define a required configuration setting (`{{ item }}`).
+  when: "lookup('vars', item, default='') | string | length == 0"
   with_items:
-    - { "name": "hydrogen_uid", when: true }
-    - { "name": "hydrogen_gid", when: true }
-    - { "name": "hydrogen_hostname", when: true }
-    - { "name": "hydrogen_path_prefix", when: true }
-    - { "name": "hydrogen_container_network", when: true }
-    - { "name": "hydrogen_default_hs_url", when: true }
-    - { "name": "hydrogen_container_labels_traefik_compression_middleware_name", when: "{{ hydrogen_container_labels_traefik_compression_middleware_enabled }}" }
+    - hydrogen_uid
+    - hydrogen_gid
+    - hydrogen_hostname
+    - hydrogen_path_prefix
+    - hydrogen_container_network
+    - hydrogen_default_hs_url
 
 - name: Run if Traefik is enabled
   when: hydrogen_container_labels_traefik_enabled | bool
@@ -34,11 +33,12 @@
     - name: Fail if Traefik settings required for Hydrogen are not defined
       ansible.builtin.fail:
         msg: >-
-          You need to define a required configuration setting (`{{ item }}`).
-      when: "lookup('vars', item, default='') | string | length == 0"
+          You need to define a required configuration setting (`{{ item.name }}`).
+      when: "item.when | bool and lookup('vars', item.name, default='') | string | length == 0"
       with_items:
-        - hydrogen_container_labels_traefik_hostname
-        - hydrogen_container_labels_traefik_path_prefix
+        - { "name": "hydrogen_container_labels_traefik_hostname", when: true }
+        - { "name": "hydrogen_container_labels_traefik_path_prefix", when: true }
+        - { "name": "hydrogen_container_labels_traefik_compression_middleware_name", when: "{{ hydrogen_container_labels_traefik_compression_middleware_enabled }}" }
 
     # We ensure it doesn't end with a slash, because we handle both (slash and no-slash).
     # Knowing that `hydrogen_container_labels_traefik_path_prefix` does not end with a slash

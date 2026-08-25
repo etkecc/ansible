@@ -20,6 +20,7 @@
 - name: Perform Hydrogen self-check tasks
   when: hydrogen_enabled | bool
   tags:
+    - molecule-notest
     - self-check-hydrogen
   block:
     - name: Run self-check for Hydrogen

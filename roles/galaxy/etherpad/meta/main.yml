@@ -3,7 +3,7 @@ galaxy_info:
   author: etke.cc
   company: etke.cc
   role_name: etherpad
-  namespace: etkecc
+  namespace: mash
   description: Etherpad
   platforms:
     - name: Debian

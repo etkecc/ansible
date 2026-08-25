@@ -1,0 +1,315 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify Etherpad
+  hosts: all
+  become: true
+  gather_facts: false
+
+  vars:
+    etherpad_verify_base_url: "http://localhost:9001"
+
+  tasks:
+    # The role is not included in this playbook, so its defaults are not in
+    # scope. Reading defaults/main.yml directly keeps the version assertion
+    # below tied to the value that Renovate bumps, with nothing to keep in
+    # sync in this scenario. include_vars reads from the controller.
+    - name: Load the Etherpad role defaults
+      ansible.builtin.include_vars:
+        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+        name: etherpad_defaults
+
+    - name: Wait for Etherpad service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: etherpad.service
+      register: etherpad_service
+      until: etherpad_service.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert Etherpad service is active
+      ansible.builtin.assert:
+        that: etherpad_service.status.ActiveState == 'active'
+        fail_msg: "etherpad.service not active ({{ etherpad_service.status.ActiveState }})"
+        success_msg: "etherpad.service is active"
+
+    - name: Retrieve Etherpad service log for debugging
+      when: etherpad_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu etherpad.service
+      changed_when: false
+
+    # Etherpad refuses to run at all when it cannot reach its database: it logs
+    # the connection error, exits with status 1 and never opens its HTTP
+    # listener. A served page therefore already proves that the database this
+    # scenario configured is reachable - though not that pads survive a trip
+    # through it, which is what the round-trip further below covers.
+    - name: Wait for the Etherpad index page to be served (up to 10m)
+      ansible.builtin.uri:
+        url: "{{ etherpad_verify_base_url }}/"
+        method: GET
+        status_code: [200]
+        return_content: true
+      register: etherpad_index_page
+      until: etherpad_index_page.status == 200
+      retries: 120
+      delay: 5
+
+    # `go2Name` and the `padname` input make up the pad-opening form of
+    # Etherpad's own index page, so a stray reverse proxy or error page cannot
+    # satisfy this. The title comes from settings.json, which is how this also
+    # proves that the configuration file the role renders reached the
+    # application. It is compared with `in` rather than with the `search` test,
+    # since the latter takes a regular expression.
+    - name: Assert the index page renders the Etherpad UI
+      ansible.builtin.assert:
+        that:
+          - ('<title>' ~ etherpad_configuration_title ~ '</title>') in etherpad_index_page.content
+          - etherpad_index_page.content is search('id="padname"')
+          - etherpad_index_page.content is search('go2Name')
+        fail_msg: "The Etherpad index page did not render as expected"
+        success_msg: "The Etherpad index page renders the pad-opening UI, titled '{{ etherpad_configuration_title }}'"
+
+    # Reading the key back off the host side of the bind mount is what ties the
+    # API calls below to the file the container was given: Etherpad accepts
+    # this exact string only, as the rejected call right after shows.
+    - name: Read the Etherpad API key from the host side of its bind mount
+      ansible.builtin.slurp:
+        src: "{{ etherpad_molecule_api_key_path }}"
+      register: etherpad_api_key_file
+
+    - name: Assert the Etherpad API key file holds the expected key
+      ansible.builtin.assert:
+        that: (etherpad_api_key_file.content | b64decode) == etherpad_molecule_api_key
+        fail_msg: "{{ etherpad_molecule_api_key_path }} does not hold the expected API key"
+        success_msg: "{{ etherpad_molecule_api_key_path }} holds the API key that Etherpad was given"
+
+    # Without this, an Etherpad that ignored the key file - or an API that let
+    # everyone in - would still pass every call below.
+    - name: Call the Etherpad API with a wrong key
+      ansible.builtin.uri:
+        url: "{{ etherpad_verify_base_url }}/api/1/getText"
+        method: POST
+        body_format: form-urlencoded
+        body:
+          apikey: definitely-not-the-api-key
+          padID: "{{ etherpad_molecule_pad_id }}"
+        status_code: [401]
+      register: etherpad_api_wrong_key
+
+    - name: Assert the Etherpad API rejects a wrong key
+      ansible.builtin.assert:
+        that: etherpad_api_wrong_key.status == 401
+        fail_msg: "The Etherpad API did not reject a wrong key ({{ etherpad_api_wrong_key.status }})"
+        success_msg: "The Etherpad API rejects a wrong key"
+
+    # A `molecule test` always verifies a freshly converged instance, but a
+    # `molecule verify` re-run during development meets the pad that the
+    # previous run created. Clearing it first keeps the creation below a strict
+    # assertion instead of one that has to tolerate "padID does already exist".
+    - name: Remove the probe pad left behind by an earlier verification, if any
+      ansible.builtin.uri:
+        url: "{{ etherpad_verify_base_url }}/api/1/deletePad"
+        method: POST
+        body_format: form-urlencoded
+        body:
+          apikey: "{{ etherpad_molecule_api_key }}"
+          padID: "{{ etherpad_molecule_pad_id }}"
+        status_code: [200]
+      register: etherpad_api_delete_pad
+      changed_when: etherpad_api_delete_pad.json.code == 0
+
+    - name: Create a pad through the Etherpad API
+      ansible.builtin.uri:
+        url: "{{ etherpad_verify_base_url }}/api/1/createPad"
+        method: POST
+        body_format: form-urlencoded
+        body:
+          apikey: "{{ etherpad_molecule_api_key }}"
+          padID: "{{ etherpad_molecule_pad_id }}"
+        status_code: [200]
+      register: etherpad_api_create_pad
+      changed_when: true
+
+    - name: Assert the pad was created
+      ansible.builtin.assert:
+        that: etherpad_api_create_pad.json.code == 0
+        fail_msg: "createPad failed: {{ etherpad_api_create_pad.json | default('no payload') }}"
+        success_msg: "The pad '{{ etherpad_molecule_pad_id }}' was created"
+
+    - name: Write text into the pad through the Etherpad API
+      ansible.builtin.uri:
+        url: "{{ etherpad_verify_base_url }}/api/1/setText"
+        method: POST
+        body_format: form-urlencoded
+        body:
+          apikey: "{{ etherpad_molecule_api_key }}"
+          padID: "{{ etherpad_molecule_pad_id }}"
+          text: "{{ etherpad_molecule_pad_text }}"
+        status_code: [200]
+      register: etherpad_api_set_text
+      changed_when: true
+
+    - name: Assert the text was written
+      ansible.builtin.assert:
+        that: etherpad_api_set_text.json.code == 0
+        fail_msg: "setText failed: {{ etherpad_api_set_text.json | default('no payload') }}"
+        success_msg: "Text was written into the pad"
+
+    # A separate request reading back what the previous one wrote, which is
+    # what makes this a round-trip through whichever database this scenario
+    # configured, rather than just an accepted write.
+    - name: Read the pad text back through the Etherpad API
+      ansible.builtin.uri:
+        url: "{{ etherpad_verify_base_url }}/api/1/getText"
+        method: POST
+        body_format: form-urlencoded
+        body:
+          apikey: "{{ etherpad_molecule_api_key }}"
+          padID: "{{ etherpad_molecule_pad_id }}"
+        status_code: [200]
+      register: etherpad_api_get_text
+
+    # Etherpad stores pad contents line-based and always terminates the last
+    # line, so the text comes back with a trailing newline.
+    - name: Assert the pad text came back unchanged
+      ansible.builtin.assert:
+        that: etherpad_api_get_text.json.data.text == (etherpad_molecule_pad_text ~ '\n')
+        fail_msg: >-
+          The pad holds {{ etherpad_api_get_text.json.data.text | default('nothing') | to_json }},
+          expected {{ (etherpad_molecule_pad_text ~ '\n') | to_json }}
+        success_msg: "The pad text was written to and read back from the database"
+
+    # A second, independent read path: the export pipeline resolves the pad
+    # from storage rather than through the API's own code path, and answers
+    # 404 for a pad that is not in the database.
+    - name: Export the pad as plain text
+      ansible.builtin.uri:
+        url: "{{ etherpad_verify_base_url }}/p/{{ etherpad_molecule_pad_id }}/export/txt"
+        method: GET
+        status_code: [200]
+        return_content: true
+      register: etherpad_pad_export
+
+    - name: Assert the exported pad holds the text that was written
+      ansible.builtin.assert:
+        that: etherpad_molecule_pad_text in etherpad_pad_export.content
+        fail_msg: "The exported pad does not hold the written text: {{ etherpad_pad_export.content | default('no content') | to_json }}"
+        success_msg: "The pad exports the text that was written"
+
+    # ueberdb (Etherpad's storage layer) serves reads from an in-process cache,
+    # so counting reads alone would not prove much. Writes always go through to
+    # the configured backend, and these counters having moved without failures
+    # is what says the backend is genuinely engaged rather than just configured.
+    - name: Query the Etherpad storage statistics
+      ansible.builtin.uri:
+        url: "{{ etherpad_verify_base_url }}/stats"
+        method: GET
+        status_code: [200]
+        return_content: true
+      register: etherpad_stats
+
+    - name: Assert Etherpad wrote to its database backend without failures
+      ansible.builtin.assert:
+        that:
+          - etherpad_stats.json.ueberdb_writesToDbFinished | int > 0
+          - etherpad_stats.json.ueberdb_writesToDbFailed | int == 0
+          - etherpad_stats.json.ueberdb_readsFromDbFailed | int == 0
+        fail_msg: >-
+          Unexpected ueberdb counters
+          (writesToDbFinished={{ etherpad_stats.json.ueberdb_writesToDbFinished | default('?') }},
+          writesToDbFailed={{ etherpad_stats.json.ueberdb_writesToDbFailed | default('?') }},
+          readsFromDbFailed={{ etherpad_stats.json.ueberdb_readsFromDbFailed | default('?') }})
+        success_msg: >-
+          Etherpad completed {{ etherpad_stats.json.ueberdb_writesToDbFinished }} writes
+          to its database backend without failures
+
+    # A scenario named after a backend is no proof that the application ended
+    # up using it, so the pad is looked for in MariaDB itself - which, in this
+    # scenario, Etherpad reaches over the bind-mounted UNIX socket. ueberdb
+    # flushes writes in the background, hence the retries. The docker CLI is
+    # invoked directly, because the lint environment used in CI has no
+    # collections beyond ansible-core available.
+    - name: Count the records of the pad in the MariaDB database
+      ansible.builtin.command:
+        cmd: >-
+          docker exec {{ mariadb_identifier | default('mariadb') }}
+          mariadb -u {{ etherpad_database_mysql_username }} -p{{ etherpad_database_mysql_password }}
+          --batch --skip-column-names {{ etherpad_database_name }}
+          -e "SELECT count(*) FROM store WHERE `key` LIKE 'pad:{{ etherpad_molecule_pad_id }}%'"
+      register: etherpad_database_records
+      changed_when: false
+      failed_when: false
+      until: etherpad_database_records.rc == 0 and (etherpad_database_records.stdout | trim | int) > 0
+      retries: 12
+      delay: 5
+
+    - name: Assert the pad was persisted into the MariaDB database
+      ansible.builtin.assert:
+        that: (etherpad_database_records.stdout | trim | int) > 0
+        fail_msg: >-
+          The MariaDB database '{{ etherpad_database_name }}' holds no record of pad
+          '{{ etherpad_molecule_pad_id }}' - Etherpad is not storing pads in it
+          ({{ etherpad_database_records.stderr | default('no error output') | trim }})
+        success_msg: >-
+          The MariaDB database '{{ etherpad_database_name }}' holds
+          {{ etherpad_database_records.stdout | trim }} record(s) of the pad that was written
+
+    # Tying the running version to `etherpad_version` is what makes this
+    # scenario a real test of the version that Renovate bumps: a bump that
+    # produces an unusable image cannot pass here.
+    #
+    # Etherpad exposes no application version over HTTP: `/api` reports the
+    # version of the API contract (asserted separately below), the `Server`
+    # header carries a git commit hash, and /stats has no version at all. The
+    # application's own package manifest is read instead. The docker CLI is
+    # invoked directly, because the lint environment used in CI has no
+    # collections beyond ansible-core available.
+    - name: Read the version of the running Etherpad
+      ansible.builtin.command:
+        cmd: docker exec {{ etherpad_defaults.etherpad_identifier }} cat /opt/etherpad-lite/src/package.json
+      register: etherpad_package_manifest
+      changed_when: false
+
+    - name: Assert the running Etherpad is the version this role installs
+      ansible.builtin.assert:
+        that: (etherpad_package_manifest.stdout | from_json).version == etherpad_defaults.etherpad_version
+        fail_msg: >-
+          Etherpad reports version {{ (etherpad_package_manifest.stdout | from_json).version | default('none') }},
+          but the role asks for {{ etherpad_defaults.etherpad_version }}
+        success_msg: "Etherpad reports version {{ (etherpad_package_manifest.stdout | from_json).version }}"
+
+    # `currentVersion` here is the version of the HTTP API contract (1.3.0 as
+    # of Etherpad 2.7.2), which is versioned independently of Etherpad itself.
+    # It is asserted because the round-trip above is made against `/api/1/...`,
+    # so the API this scenario exercises has to be one Etherpad announces.
+    - name: Query the Etherpad API version
+      ansible.builtin.uri:
+        url: "{{ etherpad_verify_base_url }}/api"
+        method: GET
+        status_code: [200]
+        return_content: true
+      register: etherpad_api_version
+
+    - name: Assert Etherpad announces an API version covering the calls made above
+      ansible.builtin.assert:
+        that: etherpad_api_version.json.currentVersion is version('1.0.0', '>=')
+        fail_msg: "Unexpected /api payload: {{ etherpad_api_version.json | default('no payload') }}"
+        success_msg: "Etherpad announces API version {{ etherpad_api_version.json.currentVersion }}"
+
+    - name: Show the Etherpad verification summary
+      ansible.builtin.debug:
+        msg:
+          - "systemd: {{ etherpad_service.status.ActiveState }}"
+          - "index page: HTTP {{ etherpad_index_page.status }}, titled '{{ etherpad_configuration_title }}'"
+          - "API key: a wrong key is rejected, the one from {{ etherpad_molecule_api_key_path }} is accepted"
+          - "pad round-trip: {{ etherpad_api_get_text.json.data.text | trim | to_json }}"
+          - "pad export: HTTP {{ etherpad_pad_export.status }}"
+          - "ueberdb writes to the database: {{ etherpad_stats.json.ueberdb_writesToDbFinished }}"
+          - "database backend: MariaDB over a UNIX socket, database '{{ etherpad_database_name }}'"
+          - "Etherpad version: {{ (etherpad_package_manifest.stdout | from_json).version }}"
+          - "Etherpad API version: {{ etherpad_api_version.json.currentVersion }}"

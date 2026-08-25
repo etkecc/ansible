@@ -5,9 +5,9 @@
 
 ---
 # We used to store backups directly in the base path.
-# postgres-backup used to create 'daily', 'last', 'monthly' and 'weekly' subdirectories.
+# postgres-backup-local used to create 'daily', 'last', 'monthly' and 'weekly' subdirectories.
 # We want to move these to the data path now.
-- name: Find old postgres-backup data directories
+- name: Find old postgres-backup-local data directories
   ansible.builtin.find:
     path: "{{ postgres_backup_base_path }}"
     patterns: "(daily|last|monthly|weekly)"
@@ -15,14 +15,14 @@
     use_regex: true
   register: postgres_backup_old_directories_result
 
-- name: Move the old postgres-backup data directories
+- name: Move the old postgres-backup-local data directories
   ansible.builtin.command:
     cmd: "mv {{ item.path }} {{ postgres_backup_data_path }}/{{ item.path | basename }}"
   with_items: "{{ postgres_backup_old_directories_result.files }}"
   register: result
   changed_when: result.rc == 0
 
-- name: Verify that the old postgres-backup data directories have been moved
+- name: Verify that the old postgres-backup-local data directories have been moved
   ansible.builtin.stat:
     path: "{{ postgres_backup_data_path }}/{{ item.path | basename }}"
   with_items: "{{ postgres_backup_old_directories_result.files }}"
@@ -37,7 +37,7 @@
 - name: Run if verification has completed
   when: verified | default(false) | bool
   block:
-    - name: Ensure old env-postgres-backup environment variables file does not exist
+    - name: Ensure old env-postgres-backup-local environment variables file does not exist
       ansible.builtin.file:
         path: "{{ postgres_backup_base_path }}/env-postgres-backup"
         state: absent

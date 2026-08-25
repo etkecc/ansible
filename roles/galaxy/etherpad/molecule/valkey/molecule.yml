@@ -1,0 +1,105 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+dependency:
+  name: galaxy
+  options:
+    requirements-file: requirements.yml
+    force: true
+driver:
+  name: docker
+platforms:
+  - name: etherpad-${MOLECULE_DISTRO:-ubuntu2604}-valkey
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2604}-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callback_result_format: yaml
+  inventory:
+    group_vars:
+      all:
+        # Helper variables
+        etherpad_debug_service_enabled: false
+
+        # Variables shared with converge.yml and verify.yml
+        etherpad_molecule_api_key_path: /etherpad/APIKEY.txt
+        etherpad_molecule_api_key: molecule-etherpad-api-key-c9f4a1b7
+        etherpad_molecule_pad_id: moleculeprobepad
+        etherpad_molecule_pad_text: A pad written by the Molecule valkey scenario
+
+        # Variables for Etherpad
+        etherpad_uid: 1000
+        etherpad_gid: 1000
+        etherpad_scheme: http
+        etherpad_hostname: localhost
+        etherpad_container_labels_traefik_enabled: false
+        etherpad_container_http_host_bind_port: 9001
+
+        # A title of its own, so that verify.yml finding it on the index page
+        # proves that the settings.json rendered by the role reached Etherpad.
+        etherpad_configuration_title: Etherpad Molecule (valkey)
+
+        # Etherpad's HTTP API cannot be reached with the shipped default
+        # (`authenticationMethod: sso`, which wants an OAuth bearer token).
+        # Switching to API key authentication is what makes the pad round-trip
+        # in verify.yml possible. The role exposes no variable for this
+        # setting, so the configuration extension is used.
+        etherpad_configuration_extension_json: |
+          {
+            "authenticationMethod": "apikey"
+          }
+
+        # In API key mode, Etherpad reads its key from
+        # /opt/etherpad-lite/APIKEY.txt and generates a random one when that
+        # file is missing. The role bind-mounts neither that path nor its
+        # parent, and the image owns /opt/etherpad-lite as uid 5001 while the
+        # container runs as `etherpad_uid`, so Etherpad cannot create the file
+        # either. The key is therefore handed to it from the host, through a
+        # bind mount that converge.yml populates before the container starts.
+        etherpad_container_extra_arguments_custom:
+          - "--mount type=bind,src=/etherpad/APIKEY.txt,dst=/opt/etherpad-lite/APIKEY.txt,ro"
+
+        # Variables required for Etherpad to connect to the Valkey data-store
+        etherpad_database_type: redis
+        etherpad_redis_hostname: "{{ valkey_identifier }}"
+        etherpad_container_additional_networks_custom:
+          - "{{ valkey_container_network }}"
+        etherpad_systemd_required_services_list_custom:
+          - "{{ valkey_identifier }}.service"
+
+        # Variables for Valkey
+        valkey_uid: 1000
+        valkey_gid: 1000
+        valkey_arch: amd64
+  env:
+    # Workaround for https://github.com/ansible/molecule/issues/4391
+    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles
+scenario:
+  # See: https://docs.ansible.com/projects/molecule/configuration/?h=test_sequence#scenario
+  test_sequence:
+    - dependency
+    - cleanup
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    # Disable idempotence test for now due to ansible-role-valkey
+    # - idempotence
+    - side_effect
+    - verify
+    - cleanup
+    - destroy
+verifier:
+  name: ansible

@@ -2,7 +2,9 @@
 galaxy_info:
   author: Slavi Pantaleev
   company: Devture Ltd
-  description: Postgres-backup role
+  role_name: postgres_backup
+  namespace: mash
+  description: postgres-backup-local role
   platforms:
     - name: Debian
       versions:

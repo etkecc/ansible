@@ -23,7 +23,7 @@ hydrogen_identifier: hydrogen
 hydrogen_base_path: "/{{ hydrogen_identifier }}"
 hydrogen_config_path: "{{ hydrogen_base_path }}/config"
 
-# renovate: datasource=docker depName=ghcr.io/element-hq/hydrogen-web
+# renovate: datasource=docker depName=ghcr.io/element-hq/hydrogen-web versioning=semver
 hydrogen_version: v0.5.1
 
 hydrogen_uid: ""
