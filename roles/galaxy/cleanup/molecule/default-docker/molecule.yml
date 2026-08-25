@@ -1,0 +1,83 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+dependency:
+  name: galaxy
+  options:
+    requirements-file: requirements.yml
+    force: true
+driver:
+  name: docker
+platforms:
+  - name: cleanup-${MOLECULE_DISTRO:-ubuntu2604}-default-docker
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2604}-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callback_result_format: yaml
+  options:
+    # The role only prunes Docker when 'start' is among the tags the playbook
+    # was run with, which is how mash-playbook invokes it (`setup-all,start`).
+    # 'all' is Ansible's own "run everything" tag, so every task in every
+    # playbook of this scenario still runs; it is only here so that the run tags
+    # this scenario advertises are the ones the role looks for.
+    tags: all,start
+  inventory:
+    group_vars:
+      all:
+        # What this scenario is about. The default scenario covers the same
+        # variable with the tag missing, and proves nothing gets pruned then.
+        system_cleanup_docker: true
+
+        # The default scenario covers these. They are set to values other than
+        # the role's defaults here as well, so that a converge which somehow
+        # picked up the wrong variables would not look the same as this one.
+        system_cleanup_logs_retention: 5d
+        system_cleanup_logs_calendar: "*-*-* 02:11:33"
+
+        # Not this scenario's subject, and both are slow. The empty path list is
+        # the role's own default and is spelled out because a run of the role
+        # with nothing to remove has to be a no-op rather than an error.
+        system_cleanup_paths: []
+        system_cleanup_apt: false
+        system_cleanup_kernels: false
+
+        # Variables for the verification suite
+        cleanup_molecule_docker_image: docker.io/library/busybox:1.37.0
+        cleanup_molecule_state_directory: /var/lib/molecule-cleanup-docker
+        cleanup_molecule_anonymous_volume_file: /var/lib/molecule-cleanup-docker/anonymous-volume
+        cleanup_molecule_running_container: molecule-cleanup-running
+        cleanup_molecule_exited_container: molecule-cleanup-exited
+        cleanup_molecule_seed_container: molecule-cleanup-seed
+        cleanup_molecule_unused_image: molecule-cleanup-unused:latest
+        cleanup_molecule_used_volume: molecule-cleanup-volume-used
+        cleanup_molecule_named_volume: molecule-cleanup-volume-named
+        cleanup_molecule_network: molecule-cleanup-network
+        cleanup_molecule_volume_marker: "seeded by the cleanup Molecule suite"
+  env:
+    # Workaround for https://github.com/ansible/molecule/issues/4391
+    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles
+scenario:
+  # The stock sequence without `idempotence`. `docker container prune` and its
+  # siblings are unconditional commands: they report a change on every run
+  # because running them is the point.
+  test_sequence:
+    - dependency
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    - verify
+    - destroy
+verifier:
+  name: ansible

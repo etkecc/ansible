@@ -1,0 +1,179 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Installs a Docker daemon and fills it with things the role is supposed to
+# prune and things it is supposed to leave behind.
+#
+# Everything here goes through the `docker` CLI rather than `community.docker.*`
+# on purpose: the linting environment this repository runs in CI has no
+# collections beyond the ones Ansible ships with.
+
+---
+- name: Prepare the host for the cleanup Docker Molecule tests
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Ensure apt cache is updated for the cleanup Docker Molecule tests preparation
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 600
+      when: ansible_facts['os_family'] == 'Debian'
+
+    - name: Ensure Docker is installed for the cleanup Docker Molecule tests preparation
+      ansible.builtin.include_role:
+        name: ansible-role-docker
+      vars:
+        docker_daemon_options:
+          storage-driver: vfs
+
+    # A precondition. Everything below is written as "this object was here and
+    # is gone" or "this object was here and still is", which only means anything
+    # if the daemon started out with nothing of its own.
+    - name: Look at what the fresh Docker daemon holds
+      ansible.builtin.command:
+        cmd: "{{ item }}"
+      register: cleanup_molecule_docker_empty
+      changed_when: false
+      loop:
+        - docker ps -aq
+        - docker images -q
+        - docker volume ls -q
+
+    - name: Assert that the Docker daemon starts out empty
+      ansible.builtin.assert:
+        that: item.stdout == ''
+        fail_msg: "`{{ item.item }}` returned {{ item.stdout_lines }} on a freshly installed daemon"
+        success_msg: "`{{ item.item }}` returns nothing, as it should on a freshly installed daemon"
+      loop: "{{ cleanup_molecule_docker_empty.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Ensure the seed image is pulled
+      ansible.builtin.command:
+        cmd: "docker pull {{ cleanup_molecule_docker_image }}"
+      register: cleanup_molecule_docker_pull
+      changed_when: cleanup_molecule_docker_pull.rc == 0
+
+    # This single throwaway container leaves two things behind once it is
+    # removed: an anonymous volume, which nothing references any more, and an
+    # image committed from it, which no container references any more. Both are
+    # what the role is supposed to reap.
+    - name: Ensure the seed container has run and left an anonymous volume behind
+      ansible.builtin.command:
+        cmd: "docker run --name {{ cleanup_molecule_seed_container }} -v /data {{ cleanup_molecule_docker_image }} /bin/true"
+      register: cleanup_molecule_docker_seed_run
+      changed_when: cleanup_molecule_docker_seed_run.rc == 0
+
+    - name: Ensure an image nothing uses exists
+      ansible.builtin.command:
+        cmd: "docker commit {{ cleanup_molecule_seed_container }} {{ cleanup_molecule_unused_image }}"
+      register: cleanup_molecule_docker_commit
+      changed_when: cleanup_molecule_docker_commit.rc == 0
+
+    # Without `-v`, so the anonymous volume outlives the container and becomes
+    # the dangling volume `docker volume prune` is meant to find.
+    - name: Ensure the seed container is removed while its volume is kept
+      ansible.builtin.command:
+        cmd: "docker rm {{ cleanup_molecule_seed_container }}"
+      register: cleanup_molecule_docker_seed_rm
+      changed_when: cleanup_molecule_docker_seed_rm.rc == 0
+
+    - name: Look up the anonymous volume the seed container left behind
+      ansible.builtin.command:
+        cmd: docker volume ls -q
+      register: cleanup_molecule_docker_volumes
+      changed_when: false
+
+    - name: Assert that exactly one anonymous volume was left behind
+      ansible.builtin.assert:
+        that: cleanup_molecule_docker_volumes.stdout_lines | length == 1
+        fail_msg: "Expected exactly one volume at this point, found {{ cleanup_molecule_docker_volumes.stdout_lines }}"
+        success_msg: "The seed container left the anonymous volume {{ cleanup_molecule_docker_volumes.stdout }} behind"
+
+    # verify.yml runs as a separate playbook and cannot see facts registered
+    # here, so the identifier is left on the host for it to read.
+    - name: Ensure the directory holding the state of this scenario exists
+      ansible.builtin.file:
+        path: "{{ cleanup_molecule_state_directory }}"
+        state: directory
+        mode: "0755"
+
+    - name: Ensure the identifier of the anonymous volume is recorded for verify.yml
+      ansible.builtin.copy:
+        content: "{{ cleanup_molecule_docker_volumes.stdout }}"
+        dest: "{{ cleanup_molecule_anonymous_volume_file }}"
+        mode: "0644"
+
+    - name: Ensure the named volumes exist
+      ansible.builtin.command:
+        cmd: "docker volume create {{ item }}"
+      register: cleanup_molecule_docker_volume_create
+      changed_when: cleanup_molecule_docker_volume_create.rc == 0
+      loop:
+        - "{{ cleanup_molecule_used_volume }}"
+        - "{{ cleanup_molecule_named_volume }}"
+
+    # Attached to nothing, on purpose: the role prunes containers, images and
+    # volumes and deliberately leaves networks alone, so the only network here
+    # is one that pruning would remove if the role ever started pruning them.
+    - name: Ensure the unattached network exists
+      ansible.builtin.command:
+        cmd: "docker network create {{ cleanup_molecule_network }}"
+      register: cleanup_molecule_docker_network_create
+      changed_when: cleanup_molecule_docker_network_create.rc == 0
+
+    - name: Ensure the running container exists
+      ansible.builtin.command:
+        cmd: >-
+          docker run -d --name {{ cleanup_molecule_running_container }}
+          -v {{ cleanup_molecule_used_volume }}:/data
+          {{ cleanup_molecule_docker_image }} /bin/sleep 3600
+      register: cleanup_molecule_docker_run
+      changed_when: cleanup_molecule_docker_run.rc == 0
+
+    - name: Ensure the volume in use carries a marker
+      ansible.builtin.command:
+        argv:
+          - docker
+          - exec
+          - "{{ cleanup_molecule_running_container }}"
+          - /bin/sh
+          - -c
+          - "echo '{{ cleanup_molecule_volume_marker }}' > /data/marker"
+      register: cleanup_molecule_docker_marker
+      changed_when: cleanup_molecule_docker_marker.rc == 0
+
+    - name: Ensure a stopped container exists
+      ansible.builtin.command:
+        cmd: "docker run --name {{ cleanup_molecule_exited_container }} {{ cleanup_molecule_docker_image }} /bin/true"
+      register: cleanup_molecule_docker_exited
+      changed_when: cleanup_molecule_docker_exited.rc == 0
+
+    # The second half of the precondition: each object the verification suite
+    # has an opinion about is here before the role runs. Without this, "it is
+    # gone" would also be true of something that was never created.
+    - name: Look for every seeded Docker object
+      ansible.builtin.command:
+        cmd: "{{ item }}"
+      register: cleanup_molecule_docker_seeded
+      changed_when: false
+      loop:
+        - "docker container inspect {{ cleanup_molecule_running_container }}"
+        - "docker container inspect {{ cleanup_molecule_exited_container }}"
+        - "docker image inspect {{ cleanup_molecule_docker_image }}"
+        - "docker image inspect {{ cleanup_molecule_unused_image }}"
+        - "docker volume inspect {{ cleanup_molecule_used_volume }}"
+        - "docker volume inspect {{ cleanup_molecule_named_volume }}"
+        - "docker volume inspect {{ cleanup_molecule_docker_volumes.stdout }}"
+        - "docker network inspect {{ cleanup_molecule_network }}"
+
+    - name: Assert that every seeded Docker object is present before the role runs
+      ansible.builtin.assert:
+        that: item.rc == 0
+        fail_msg: "`{{ item.item }}` failed, so this object is not there for the role to act on"
+        success_msg: "`{{ item.item }}` found it"
+      loop: "{{ cleanup_molecule_docker_seeded.results }}"
+      loop_control:
+        label: "{{ item.item }}"

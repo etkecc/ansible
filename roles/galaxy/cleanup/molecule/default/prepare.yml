@@ -1,0 +1,66 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Puts the host into a state the role is supposed to change, and records the
+# things it is supposed to leave alone.
+
+---
+- name: Prepare the host for the cleanup Molecule tests
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    # Two of these are listed in `system_cleanup_paths` and two are not. Both
+    # kinds are seeded here, next to each other and with the same content, so
+    # that "the role removed the paths it was given" is a statement about the
+    # list rather than about the directory.
+    - name: Ensure the seeded directories exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0755"
+      loop:
+        - "{{ cleanup_molecule_seed_directory }}"
+        - "{{ cleanup_molecule_seed_directory }}/removed-directory"
+        - "{{ cleanup_molecule_seed_directory }}/kept-directory"
+
+    - name: Ensure the seeded files exist
+      ansible.builtin.copy:
+        content: "seeded by the cleanup Molecule suite\n"
+        dest: "{{ item }}"
+        mode: "0644"
+      loop:
+        - "{{ cleanup_molecule_seed_directory }}/removed-file"
+        - "{{ cleanup_molecule_seed_directory }}/removed-directory/marker"
+        - "{{ cleanup_molecule_seed_directory }}/kept-file"
+        - "{{ cleanup_molecule_seed_directory }}/kept-directory/marker"
+
+    # `apt-get clean` empties /var/cache/apt/archives. Nothing else in this
+    # scenario writes to or reads from that directory, so a file placed here
+    # disappears only if tasks/packages.yml ran.
+    - name: Ensure a package file is seeded in the apt archive cache
+      ansible.builtin.copy:
+        content: "not really a package\n"
+        dest: "{{ cleanup_molecule_seeded_deb }}"
+        mode: "0644"
+
+    # A precondition rather than a result: the default scenario asserts that the
+    # role did not prune Docker, and that assertion is only worth something
+    # because there is no Docker here to prune with. If a future change to this
+    # scenario installed Docker, this is what would notice.
+    - name: Look for a Docker CLI on the host
+      ansible.builtin.command:
+        cmd: command -v docker
+      register: cleanup_molecule_prepare_docker
+      changed_when: false
+      failed_when: false
+
+    - name: Assert that no Docker is installed on the host
+      ansible.builtin.assert:
+        that: cleanup_molecule_prepare_docker.rc != 0
+        fail_msg: >-
+          A Docker CLI is installed at {{ cleanup_molecule_prepare_docker.stdout }}. This scenario
+          runs with `system_cleanup_docker` on and without the `start` tag, and relies on Docker
+          being absent so that a broken tag gate fails the converge instead of quietly pruning.
+        success_msg: "No Docker CLI is installed, so the role has nothing it could prune with"

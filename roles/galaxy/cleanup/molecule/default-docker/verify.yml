@@ -1,0 +1,227 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Verifies what `system_cleanup_docker` does to a Docker daemon.
+#
+# This is the destructive half of the role, so the suite is written around the
+# line between what it removes and what it must not touch. prepare.yml seeded
+# both sides of that line into an empty daemon; each assertion below names which
+# side its object is on and why.
+#
+# Everything goes through the `docker` CLI rather than `community.docker.*`,
+# and through `docker ... inspect` rather than `--format`, so that neither the
+# linting environment nor Jinja has to be argued with.
+
+---
+- name: Verify the Docker pruning of the cleanup role
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Verify that the cleanup role pruned what it should have
+      block:
+        - name: Read the identifier of the anonymous volume prepare.yml left behind
+          ansible.builtin.slurp:
+            src: "{{ cleanup_molecule_anonymous_volume_file }}"
+          register: cleanup_molecule_anonymous_volume_slurp
+
+        - name: Look for every Docker object the role had an opinion about
+          ansible.builtin.command:
+            cmd: "{{ item }}"
+          register: cleanup_molecule_docker_after
+          changed_when: false
+          failed_when: false
+          vars:
+            cleanup_molecule_anonymous_volume: "{{ cleanup_molecule_anonymous_volume_slurp.content | b64decode | trim }}"
+          loop:
+            - "docker container inspect {{ cleanup_molecule_running_container }}"
+            - "docker container inspect {{ cleanup_molecule_exited_container }}"
+            - "docker image inspect {{ cleanup_molecule_docker_image }}"
+            - "docker image inspect {{ cleanup_molecule_unused_image }}"
+            - "docker volume inspect {{ cleanup_molecule_used_volume }}"
+            - "docker volume inspect {{ cleanup_molecule_named_volume }}"
+            - "docker volume inspect {{ cleanup_molecule_anonymous_volume }}"
+            - "docker network inspect {{ cleanup_molecule_network }}"
+
+        # The list of `docker ... inspect` invocations that found their object.
+        # Membership in it is what every assertion below is phrased in terms of.
+        - name: Index which of those commands found their object
+          ansible.builtin.set_fact:
+            cleanup_molecule_found: "{{ cleanup_molecule_docker_after.results | selectattr('rc', 'equalto', 0) | map(attribute='item') | list }}"
+
+        ########################################################################
+        #                                                                      #
+        # what `docker container prune -f` removed                             #
+        #                                                                      #
+        ########################################################################
+
+        - name: Assert that the stopped container was pruned and the running one was not
+          vars:
+            cleanup_molecule_running_key: "docker container inspect {{ cleanup_molecule_running_container }}"
+            cleanup_molecule_exited_key: "docker container inspect {{ cleanup_molecule_exited_container }}"
+          ansible.builtin.assert:
+            that:
+              - cleanup_molecule_exited_key not in cleanup_molecule_found
+              - cleanup_molecule_running_key in cleanup_molecule_found
+            fail_msg: >-
+              The stopped container {{ cleanup_molecule_exited_container }} is
+              {{ 'still there' if cleanup_molecule_exited_key in cleanup_molecule_found else 'gone' }}
+              and the running container {{ cleanup_molecule_running_container }} is
+              {{ 'still there' if cleanup_molecule_running_key in cleanup_molecule_found else 'gone' }}.
+              `docker container prune -f` must remove the first and keep the second.
+            success_msg: >-
+              {{ cleanup_molecule_exited_container }} was pruned and
+              {{ cleanup_molecule_running_container }} was left alone
+
+        # The container is not merely still listed - it is still running, and
+        # `docker exec` is the cheapest thing that can only succeed if it is.
+        - name: Run a command inside the container that survived
+          ansible.builtin.command:
+            cmd: "docker exec {{ cleanup_molecule_running_container }} /bin/true"
+          register: cleanup_molecule_docker_exec
+          changed_when: false
+          failed_when: false
+
+        - name: Assert that the container that survived is still running
+          ansible.builtin.assert:
+            that: cleanup_molecule_docker_exec.rc == 0
+            fail_msg: >-
+              `docker exec` into {{ cleanup_molecule_running_container }} failed with
+              {{ cleanup_molecule_docker_exec.rc }}: {{ cleanup_molecule_docker_exec.stderr }}
+            success_msg: "{{ cleanup_molecule_running_container }} is still running"
+
+        ########################################################################
+        #                                                                      #
+        # what `docker image prune -a -f` removed                              #
+        #                                                                      #
+        ########################################################################
+
+        # `-a` means every image no container references, tagged ones included.
+        # The image the surviving container runs is referenced and stays; the one
+        # prepare.yml committed and then orphaned goes. Both halves matter: an
+        # image prune that took the running container's image with it would break
+        # every host this role runs on.
+        - name: Assert that the unused image was pruned and the one in use was not
+          vars:
+            cleanup_molecule_used_image_key: "docker image inspect {{ cleanup_molecule_docker_image }}"
+            cleanup_molecule_unused_image_key: "docker image inspect {{ cleanup_molecule_unused_image }}"
+          ansible.builtin.assert:
+            that:
+              - cleanup_molecule_unused_image_key not in cleanup_molecule_found
+              - cleanup_molecule_used_image_key in cleanup_molecule_found
+            fail_msg: >-
+              The unused image {{ cleanup_molecule_unused_image }} is
+              {{ 'still there' if cleanup_molecule_unused_image_key in cleanup_molecule_found else 'gone' }}
+              and the image in use {{ cleanup_molecule_docker_image }} is
+              {{ 'still there' if cleanup_molecule_used_image_key in cleanup_molecule_found else 'gone' }}
+            success_msg: >-
+              {{ cleanup_molecule_unused_image }} was pruned and {{ cleanup_molecule_docker_image }},
+              which the surviving container runs, was left alone
+
+        ########################################################################
+        #                                                                      #
+        # what `docker volume prune -f` removed                                #
+        #                                                                      #
+        ########################################################################
+
+        # Since Docker 23, `docker volume prune` without `--all` removes only
+        # anonymous volumes; a named volume that nothing uses is left where it
+        # is. The role passes no `--all`, so that is the behavior asserted here -
+        # deliberately, because a named volume is where a self-hosted service
+        # keeps its data, and reaping those on a housekeeping run would be
+        # catastrophic. Should a future Docker change this, or should the role
+        # ever grow an `-a`, this is the assertion that fails.
+        - name: Assert that only the anonymous volume was pruned
+          vars:
+            cleanup_molecule_anonymous_volume: "{{ cleanup_molecule_anonymous_volume_slurp.content | b64decode | trim }}"
+            cleanup_molecule_anonymous_key: "docker volume inspect {{ cleanup_molecule_anonymous_volume }}"
+            cleanup_molecule_named_key: "docker volume inspect {{ cleanup_molecule_named_volume }}"
+            cleanup_molecule_used_key: "docker volume inspect {{ cleanup_molecule_used_volume }}"
+          ansible.builtin.assert:
+            that:
+              - cleanup_molecule_anonymous_key not in cleanup_molecule_found
+              - cleanup_molecule_named_key in cleanup_molecule_found
+              - cleanup_molecule_used_key in cleanup_molecule_found
+            fail_msg: >-
+              The dangling anonymous volume {{ cleanup_molecule_anonymous_volume }} is
+              {{ 'still there' if cleanup_molecule_anonymous_key in cleanup_molecule_found else 'gone' }},
+              the unused named volume {{ cleanup_molecule_named_volume }} is
+              {{ 'still there' if cleanup_molecule_named_key in cleanup_molecule_found else 'gone' }}
+              and the named volume in use {{ cleanup_molecule_used_volume }} is
+              {{ 'still there' if cleanup_molecule_used_key in cleanup_molecule_found else 'gone' }}.
+              `docker volume prune -f` removes anonymous volumes only.
+            success_msg: >-
+              The anonymous volume was pruned; the named volumes
+              {{ cleanup_molecule_named_volume }} and {{ cleanup_molecule_used_volume }} were left
+              alone, as `docker volume prune` without `--all` should
+
+        - name: Read the marker out of the volume that is in use
+          ansible.builtin.command:
+            cmd: "docker exec {{ cleanup_molecule_running_container }} /bin/cat /data/marker"
+          register: cleanup_molecule_docker_volume_marker
+          changed_when: false
+
+        # Surviving as an object is not the same as surviving with its contents.
+        - name: Assert that the data in the volume in use survived
+          ansible.builtin.assert:
+            that: cleanup_molecule_docker_volume_marker.stdout == cleanup_molecule_volume_marker
+            fail_msg: >-
+              /data/marker in {{ cleanup_molecule_used_volume }} reads
+              '{{ cleanup_molecule_docker_volume_marker.stdout }}' rather than
+              '{{ cleanup_molecule_volume_marker }}'
+            success_msg: "{{ cleanup_molecule_used_volume }} still holds what was written to it"
+
+        ########################################################################
+        #                                                                      #
+        # what the role does not prune at all                                  #
+        #                                                                      #
+        ########################################################################
+
+        # defaults/main.yml promises that networks are preserved, and the role
+        # keeps that promise by not running `docker network prune`. The network
+        # seeded here is attached to nothing, so a prune would take it.
+        - name: Assert that the unattached network was preserved
+          vars:
+            cleanup_molecule_network_key: "docker network inspect {{ cleanup_molecule_network }}"
+          ansible.builtin.assert:
+            that: cleanup_molecule_network_key in cleanup_molecule_found
+            fail_msg: >-
+              The network {{ cleanup_molecule_network }} is gone. Nothing was attached to it, so a
+              `docker network prune` would have removed it - and defaults/main.yml promises networks
+              are preserved.
+            success_msg: "{{ cleanup_molecule_network }} is still there, as promised"
+
+        - name: Report what was verified
+          vars:
+            cleanup_molecule_anonymous_volume: "{{ cleanup_molecule_anonymous_volume_slurp.content | b64decode | trim }}"
+          ansible.builtin.debug:
+            msg:
+              - "pruned: container {{ cleanup_molecule_exited_container }}, image {{ cleanup_molecule_unused_image }}, anonymous volume {{ cleanup_molecule_anonymous_volume }}"
+              - "kept: container {{ cleanup_molecule_running_container }} (running), image {{ cleanup_molecule_docker_image }}"
+              - "kept: volumes {{ cleanup_molecule_used_volume }} (with its contents) and {{ cleanup_molecule_named_volume }}"
+              - "kept: network {{ cleanup_molecule_network }}"
+              - "CLEANUP DOCKER VERIFICATION COMPLETE"
+      rescue:
+        - name: Retrieve what the Docker daemon holds
+          ansible.builtin.command:
+            cmd: "{{ item }}"
+          register: cleanup_molecule_docker_dump
+          changed_when: false
+          failed_when: false
+          loop:
+            - docker ps -a
+            - docker images -a
+            - docker volume ls
+            - docker network ls
+
+        - name: Show what the Docker daemon holds
+          ansible.builtin.debug:
+            msg: "{{ item.item }}: {{ item.stdout_lines }}"
+          loop: "{{ cleanup_molecule_docker_dump.results }}"
+          loop_control:
+            label: "{{ item.item }}"
+
+        - name: Fail because verification did not pass
+          ansible.builtin.fail:
+            msg: "Cleanup Docker verification failed. The state of the daemon is printed above."

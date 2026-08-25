@@ -1,0 +1,351 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Verifies everything this role does to a host except Docker pruning, which
+# needs a Docker daemon and lives in the default-docker scenario.
+#
+# The role installs no software and runs no service, so there is nothing to
+# probe over the network here. What can be proven is that the host changed in
+# the ways the role promises and did not change in the ways it does not: the
+# journald autovacuum units carry values only this scenario could have produced
+# and systemd actually parsed and ran them, the paths named in
+# `system_cleanup_paths` are gone while their identically seeded neighbours are
+# untouched, the apt archive cache was emptied, and the purge-old-kernels script
+# landed at the path the scenario asked for and nowhere else.
+
+---
+- name: Verify the cleanup role
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Verify that the cleanup role did its work
+      block:
+        - name: Include the role's default variables under a separate name
+          ansible.builtin.include_vars:
+            # Only leaf values may be read out of this. Loading it under a name
+            # of its own keeps it from outranking the values this scenario
+            # deliberately tuned - which is the whole point, since several
+            # assertions below compare the two.
+            file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+            name: cleanup_role_defaults
+
+        ########################################################################
+        #                                                                      #
+        # the journald autovacuum units                                        #
+        #                                                                      #
+        ########################################################################
+
+        - name: Look for the journald autovacuum unit files
+          ansible.builtin.stat:
+            path: "/etc/systemd/system/{{ item }}"
+          register: cleanup_molecule_units
+          loop:
+            - systemd-journald-autovacuum.service
+            - systemd-journald-autovacuum.timer
+
+        # `system_cleanup_logs` is off (the role's own default), and the units
+        # are here anyway: nothing in tasks/ or templates/ reads that variable.
+        # This assertion states the behavior as it is. Should the variable ever
+        # be wired up, this is what fails, and whoever wired it up gets to think
+        # about the hosts that would stop vacuuming their journals.
+        - name: Assert that the journald autovacuum units are installed regardless of system_cleanup_logs
+          ansible.builtin.assert:
+            that: item.stat.exists
+            fail_msg: >-
+              /etc/systemd/system/{{ item.item }} is missing. The role installs the journald
+              autovacuum units unconditionally - `system_cleanup_logs` ({{ system_cleanup_logs }})
+              is not referenced anywhere in the role. If that changed on purpose, note that every
+              consumer which never set the variable would stop getting these units.
+            success_msg: "/etc/systemd/system/{{ item.item }} is installed"
+          loop: "{{ cleanup_molecule_units.results }}"
+          loop_control:
+            label: "{{ item.item }}"
+
+        # Reading the units back out of systemd rather than off the disk. What
+        # `ansible.builtin.systemd_service` reports in `status` is systemd's own
+        # parse of what the role rendered, so it proves the values reached the
+        # thing that will act on them and that the unit is loadable at all.
+        - name: Read the journald autovacuum service back out of systemd
+          ansible.builtin.systemd_service:
+            name: systemd-journald-autovacuum.service
+          register: cleanup_molecule_service_show
+
+        - name: Assert that systemd runs journalctl with the retention this scenario configured
+          vars:
+            cleanup_molecule_service_properties: "{{ cleanup_molecule_service_show.status }}"
+          ansible.builtin.assert:
+            that:
+              - cleanup_molecule_service_properties.LoadState == 'loaded'
+              - "'argv[]=/bin/journalctl --vacuum-time=' ~ system_cleanup_logs_retention ~ ' ;' in cleanup_molecule_service_properties.ExecStart"
+              - "'--vacuum-time=' ~ cleanup_role_defaults.system_cleanup_logs_retention not in cleanup_molecule_service_properties.ExecStart"
+            fail_msg: >-
+              systemd parsed ExecStart as {{ cleanup_molecule_service_properties.ExecStart }}, which
+              is not `journalctl --vacuum-time={{ system_cleanup_logs_retention }}`. The role either
+              did not render `system_cleanup_logs_retention` into the unit, or rendered its own
+              default of {{ cleanup_role_defaults.system_cleanup_logs_retention }} instead.
+            success_msg: >-
+              systemd runs `journalctl --vacuum-time={{ system_cleanup_logs_retention }}`, this
+              scenario's value and not the role's default of
+              {{ cleanup_role_defaults.system_cleanup_logs_retention }}
+
+        # The unit is Type=oneshot without RemainAfterExit, so by the time this
+        # runs it is inactive again and `systemctl is-active` says nothing worth
+        # having. What it did while it was active is in Result and in the journal.
+        - name: Assert that the vacuum ran and succeeded
+          vars:
+            cleanup_molecule_service_properties: "{{ cleanup_molecule_service_show.status }}"
+          ansible.builtin.assert:
+            that:
+              - cleanup_molecule_service_properties.Result == 'success'
+              - cleanup_molecule_service_properties.ExecMainStatus == '0'
+            fail_msg: >-
+              systemd-journald-autovacuum.service finished with Result
+              {{ cleanup_molecule_service_properties.Result }} and exit status
+              {{ cleanup_molecule_service_properties.ExecMainStatus }}
+            success_msg: "systemd-journald-autovacuum.service ran to completion and exited 0"
+
+        - name: Read the journal of the journald autovacuum service
+          ansible.builtin.command:
+            cmd: journalctl --no-pager --unit=systemd-journald-autovacuum.service
+          register: cleanup_molecule_service_journal
+          changed_when: false
+
+        # An exit status of 0 is also what a unit that did nothing would report.
+        # journalctl announces every journal it vacuumed, so this is the evidence
+        # that the process actually ran and touched the journals.
+        - name: Assert that journalctl reported vacuuming the journals
+          ansible.builtin.assert:
+            that: "'Vacuuming done' in cleanup_molecule_service_journal.stdout"
+            fail_msg: >-
+              The journal of systemd-journald-autovacuum.service does not mention vacuuming:
+              {{ cleanup_molecule_service_journal.stdout }}
+            success_msg: "journalctl reported vacuuming the journals from inside the unit"
+
+        - name: Read the journald autovacuum timer back out of systemd
+          ansible.builtin.systemd_service:
+            name: systemd-journald-autovacuum.timer
+          register: cleanup_molecule_timer_show
+
+        - name: Assert that the timer is enabled, running and set to this scenario's schedule
+          vars:
+            cleanup_molecule_timer_properties: "{{ cleanup_molecule_timer_show.status }}"
+          ansible.builtin.assert:
+            that:
+              - cleanup_molecule_timer_properties.LoadState == 'loaded'
+              - cleanup_molecule_timer_properties.UnitFileState == 'enabled'
+              - cleanup_molecule_timer_properties.ActiveState == 'active'
+              - "'OnCalendar=' ~ system_cleanup_logs_calendar ~ ' ;' in cleanup_molecule_timer_properties.TimersCalendar"
+              - "'OnCalendar=' ~ cleanup_role_defaults.system_cleanup_logs_calendar ~ ' ;' not in cleanup_molecule_timer_properties.TimersCalendar"
+            fail_msg: >-
+              The timer is {{ cleanup_molecule_timer_properties.ActiveState }},
+              {{ cleanup_molecule_timer_properties.UnitFileState }}, with
+              {{ cleanup_molecule_timer_properties.TimersCalendar }}
+            success_msg: >-
+              The timer is enabled and active, and systemd scheduled it for
+              `{{ system_cleanup_logs_calendar }}` - this scenario's value, not the role's default
+              of `{{ cleanup_role_defaults.system_cleanup_logs_calendar }}`
+
+        ########################################################################
+        #                                                                      #
+        # the paths the role was told to remove, and the ones it was not       #
+        #                                                                      #
+        ########################################################################
+
+        - name: Look for the paths the role was told to remove
+          ansible.builtin.stat:
+            path: "{{ item }}"
+          register: cleanup_molecule_removed
+          loop: "{{ cleanup_molecule_removed_paths }}"
+
+        - name: Assert that the paths named in system_cleanup_paths are gone
+          ansible.builtin.assert:
+            that: not item.stat.exists
+            fail_msg: "{{ item.item }} is still there, although it is listed in system_cleanup_paths"
+            success_msg: "{{ item.item }} was removed"
+          loop: "{{ cleanup_molecule_removed.results }}"
+          loop_control:
+            label: "{{ item.item }}"
+
+        - name: Look for the paths the role was not told to remove
+          ansible.builtin.stat:
+            path: "{{ item }}"
+          register: cleanup_molecule_kept
+          loop: "{{ cleanup_molecule_kept_paths }}"
+
+        # The negative control for the assertion above. These were seeded next to
+        # the removed ones, with the same content, and differ only in not being
+        # listed. A role that emptied the directory, or an assertion that would
+        # pass against a host where nothing was ever seeded, fails here.
+        - name: Assert that the paths not named in system_cleanup_paths survived
+          ansible.builtin.assert:
+            that: item.stat.exists
+            fail_msg: >-
+              {{ item.item }} is gone, although it is not listed in system_cleanup_paths
+              ({{ system_cleanup_paths }}). The role removed more than it was asked to.
+            success_msg: "{{ item.item }} is untouched, as it should be"
+          loop: "{{ cleanup_molecule_kept.results }}"
+          loop_control:
+            label: "{{ item.item }}"
+
+        ########################################################################
+        #                                                                      #
+        # the package manager                                                  #
+        #                                                                      #
+        ########################################################################
+
+        # tasks/packages.yml and tasks/kernels.yml are gated on the Debian
+        # family, so everything from here down only holds on a Debian-family
+        # host. Saying so here keeps the reason legible for anyone who points
+        # this scenario at another distribution.
+        - name: Assert that this is a host where the Debian-only tasks ran
+          ansible.builtin.assert:
+            that: ansible_facts['os_family'] == 'Debian'
+            fail_msg: >-
+              This host is {{ ansible_facts['os_family'] }}. tasks/packages.yml and
+              tasks/kernels.yml only run on the Debian family, so the assertions below say nothing
+              here - run this scenario with MOLECULE_DISTRO set to a Debian or Ubuntu image.
+            success_msg: "This host is Debian-family, so the package-manager and kernel tasks ran"
+
+        - name: Look for the package file seeded in the apt archive cache
+          ansible.builtin.stat:
+            path: "{{ cleanup_molecule_seeded_deb }}"
+          register: cleanup_molecule_seeded_deb_stat
+
+        - name: Assert that the apt archive cache was emptied
+          ansible.builtin.assert:
+            that: not cleanup_molecule_seeded_deb_stat.stat.exists
+            fail_msg: >-
+              {{ cleanup_molecule_seeded_deb }} is still there. tasks/packages.yml did not run, or
+              its `clean` did not take effect. Nothing else in this scenario writes to or reads from
+              /var/cache/apt/archives.
+            success_msg: "{{ cleanup_molecule_seeded_deb }} is gone, so the package manager was cleaned"
+
+        ########################################################################
+        #                                                                      #
+        # the purge-old-kernels script                                         #
+        #                                                                      #
+        ########################################################################
+
+        # Why running this in a container is safe: purge-old-kernels builds its
+        # candidate list from /boot/vmlinuz-*, and there are none here, so it
+        # prints "No kernels are eligible for removal" and exits before it ever
+        # reaches an apt-get remove. Asserting that keeps the safety of this
+        # scenario from resting on an assumption about the test image.
+        - name: Look for kernels in /boot
+          ansible.builtin.find:
+            paths: /boot
+            patterns: "vmlinuz-*"
+          register: cleanup_molecule_boot_kernels
+
+        - name: Assert that the test host has no kernels for purge-old-kernels to remove
+          ansible.builtin.assert:
+            that: cleanup_molecule_boot_kernels.matched == 0
+            fail_msg: >-
+              /boot holds {{ cleanup_molecule_boot_kernels.matched }} kernel image(s). This scenario
+              runs purge-old-kernels for real and only does so because a container has none.
+            success_msg: "/boot holds no kernel images, so purge-old-kernels had nothing to remove"
+
+        - name: Look for the purge-old-kernels script at the path this scenario configured
+          ansible.builtin.stat:
+            path: "{{ system_cleanup_kernels_script }}"
+            checksum_algorithm: sha256
+          register: cleanup_molecule_kernels_script
+
+        - name: Look for the purge-old-kernels script at the role's default path
+          ansible.builtin.stat:
+            path: "{{ cleanup_role_defaults.system_cleanup_kernels_script }}"
+          register: cleanup_molecule_kernels_script_default_path
+
+        - name: Assert that the script was installed where the scenario asked for it, and nowhere else
+          vars:
+            cleanup_molecule_kernels_source: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/files/purge-old-kernels"
+          ansible.builtin.assert:
+            that:
+              - cleanup_molecule_kernels_script.stat.exists
+              - cleanup_molecule_kernels_script.stat.mode == '0775'
+              - cleanup_molecule_kernels_script.stat.checksum == lookup('ansible.builtin.file', cleanup_molecule_kernels_source, rstrip=False) | hash('sha256')
+              - not cleanup_molecule_kernels_script_default_path.stat.exists
+            fail_msg: >-
+              {{ system_cleanup_kernels_script }} is not this repository's files/purge-old-kernels
+              at mode 0775, or the role also wrote to its default path of
+              {{ cleanup_role_defaults.system_cleanup_kernels_script }}
+            success_msg: >-
+              files/purge-old-kernels is installed at {{ system_cleanup_kernels_script }} at mode
+              0775, and the role's default path
+              ({{ cleanup_role_defaults.system_cleanup_kernels_script }}) was left alone
+
+        - name: Ask the installed script for its version
+          ansible.builtin.command:
+            cmd: "{{ system_cleanup_kernels_script }} --version"
+          register: cleanup_molecule_kernels_version
+          changed_when: false
+
+        - name: Assert that the installed script runs
+          ansible.builtin.assert:
+            that: cleanup_molecule_kernels_version.stdout is match(system_cleanup_kernels_script | basename ~ ' [0-9]+[.][0-9]+')
+            fail_msg: >-
+              {{ system_cleanup_kernels_script }} --version printed
+              '{{ cleanup_molecule_kernels_version.stdout }}'
+            success_msg: "{{ system_cleanup_kernels_script }} runs and reports '{{ cleanup_molecule_kernels_version.stdout }}'"
+
+        ########################################################################
+        #                                                                      #
+        # Docker pruning stayed behind its tag gate                            #
+        #                                                                      #
+        ########################################################################
+
+        # `system_cleanup_docker` is on for this scenario and no Docker is
+        # installed. The role's pruning tasks also require 'start' among the run
+        # tags, which this scenario does not pass, so they were skipped - had
+        # they not been, the converge would already have failed on
+        # "docker: command not found" and this play would never have run.
+        # Restating it here so that the reason a green run means something is
+        # written down next to the run.
+        - name: Look for a Docker CLI on the host
+          ansible.builtin.command:
+            cmd: command -v docker
+          register: cleanup_molecule_docker
+          changed_when: false
+          failed_when: false
+
+        - name: Assert that the role's Docker pruning stayed behind its tag gate
+          ansible.builtin.assert:
+            that:
+              - cleanup_molecule_docker.rc != 0
+              - system_cleanup_docker | bool
+              - "'start' not in ansible_run_tags"
+            fail_msg: >-
+              This scenario proves the `start` tag gate by turning `system_cleanup_docker` on
+              ({{ system_cleanup_docker }}) on a host with no Docker and running without the tag
+              (run tags: {{ ansible_run_tags }}). One of those is no longer true, so a green run
+              here no longer says anything about the gate.
+            success_msg: >-
+              `system_cleanup_docker` is on, the run tags are {{ ansible_run_tags }} and there is no
+              Docker on this host - the pruning tasks were skipped rather than failing
+
+        - name: Report what was verified
+          ansible.builtin.debug:
+            msg:
+              - "journald autovacuum: --vacuum-time={{ system_cleanup_logs_retention }}, OnCalendar={{ system_cleanup_logs_calendar }}, timer active"
+              - "paths: {{ cleanup_molecule_removed_paths | length }} removed, {{ cleanup_molecule_kept_paths | length }} untouched"
+              - "apt: the archive cache was emptied"
+              - "kernels: {{ cleanup_molecule_kernels_version.stdout }} at {{ system_cleanup_kernels_script }}"
+              - "docker: pruning skipped, as the run carried no 'start' tag"
+              - "CLEANUP VERIFICATION COMPLETE"
+      rescue:
+        - name: Retrieve the state of the journald autovacuum units
+          ansible.builtin.command:
+            cmd: systemctl status --no-pager --full systemd-journald-autovacuum.service systemd-journald-autovacuum.timer
+          register: cleanup_molecule_units_status
+          changed_when: false
+          failed_when: false
+
+        - name: Show the state of the journald autovacuum units
+          ansible.builtin.debug:
+            var: cleanup_molecule_units_status.stdout_lines
+
+        - name: Fail because verification did not pass
+          ansible.builtin.fail:
+            msg: "Cleanup verification failed. The state of the units is printed above."

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": [
+    "This role deploys no software: no container image, no upstream project, nothing in defaults/main.yml that names a version. The shared preset's custom.regex manager - the one that reads `# renovate:` annotations out of defaults/main.yml - therefore matches nothing here, and `//patch-automerge`, which only widens that manager, would be inert. It is deliberately not extended.",
+    "What Renovate does track here is repository housekeeping: GitHub Actions, the prek pin in mise.toml, the pre-commit hook revisions, .python-version, molecule/requirements.txt and the Ansible roles the Molecule scenarios pull in. The shared preset already branch-automerges all of those, so there is nothing left for a local rule to add."
+  ],
+  "extends": [
+    "github>mother-of-all-self-hosting/renovate-config#v1.0.0"
+  ]
+}

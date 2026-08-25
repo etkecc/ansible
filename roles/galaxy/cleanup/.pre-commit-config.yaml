@@ -1,0 +1,55 @@
+---
+default_install_hook_types: [pre-push]
+
+exclude: ^(LICENSES/|var/)
+
+# See: https://pre-commit.com/hooks.html
+repos:
+  - repo: local
+    hooks:
+      - id: reject-orig-files
+        name: reject .orig files
+        entry: Do not commit files with the .orig extension
+        language: fail
+        files: '[.]orig$'
+      - id: test-compute-next-tag
+        name: test the next-tag computation
+        entry: bash bin/test-compute-next-tag.sh
+        language: system
+        pass_filenames: false
+        files: '^(bin/compute-next-tag[.]sh|bin/test-compute-next-tag[.]sh|defaults/main[.]yml)$'
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-executables-have-shebangs
+      - id: check-added-large-files
+      - id: check-case-conflict
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-toml
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args: [--fix=lf]
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.49.0
+    hooks:
+      - id: markdownlint
+        args: [--disable=MD013] # https://github.com/DavidAnson/markdownlint/blob/main/doc/md013.md
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.2
+    hooks:
+      - id: codespell
+  - repo: https://codeberg.org/fsfe/reuse-tool  # https://reuse.software/dev/#pre-commit-hook
+    rev: v6.2.0
+    hooks:
+      - id: reuse
+  #  - repo: https://github.com/ansible/ansible-lint
+  #    rev: v26.1.1
+  #    hooks:
+  #      - id: ansible-lint
+  #        language_version: python3
+  - repo: https://github.com/renovatebot/pre-commit-hooks
+    rev: 43.251.3
+    hooks:
+      - id: renovate-config-validator

@@ -1,0 +1,12 @@
+---
+collections:
+  # What Molecule's own Docker driver needs in order to create and destroy the
+  # test container.
+  - name: community.docker
+    version: 5.2.2
+
+roles:
+  - name: ansible-role-docker
+    src: https://github.com/geerlingguy/ansible-role-docker
+    scm: git
+    version: 8.0.0

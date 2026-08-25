@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 etke.cc
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 ---
 # Debian only
 
@@ -5,7 +9,7 @@
   ansible.builtin.copy:
     src: "{{ role_path }}/files/purge-old-kernels"
     dest: "{{ system_cleanup_kernels_script }}"
-    mode: 0775
+    mode: "0775"
 
 - name: Ensure old kernels are purged
   ansible.builtin.command:

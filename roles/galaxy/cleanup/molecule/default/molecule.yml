@@ -1,0 +1,110 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+dependency:
+  name: galaxy
+  options:
+    requirements-file: requirements.yml
+    force: true
+driver:
+  name: docker
+platforms:
+  - name: cleanup-${MOLECULE_DISTRO:-ubuntu2604}-default
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2604}-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callback_result_format: yaml
+  inventory:
+    group_vars:
+      all:
+        # Every value below is deliberately different from the role's own
+        # default, so that verify.yml can tell a value the role rendered from
+        # this scenario's variables apart from one that merely looks right.
+
+        # Left off, which is also the role's default, and stated here because it
+        # makes no difference: `system_cleanup_logs` is not referenced anywhere
+        # in tasks/ or templates/, and the journald autovacuum units are
+        # installed, enabled and started unconditionally. verify.yml asserts
+        # that, so that this is documented behavior rather than a surprise -
+        # and so that anyone who makes the variable do what its name says has
+        # to notice they are changing what every existing host gets.
+        system_cleanup_logs: false
+
+        # The role's default is 7d.
+        system_cleanup_logs_retention: 3d
+        # The role's default is "*-*-* 04:15:00".
+        system_cleanup_logs_calendar: "*-*-* 03:17:42"
+
+        # Two of the four paths prepare.yml seeds. The other two are not listed
+        # here and have to survive; they are what makes the removal assertion
+        # mean something.
+        system_cleanup_paths:
+          - /var/lib/molecule-cleanup/removed-file
+          - /var/lib/molecule-cleanup/removed-directory
+
+        # Turned on although no Docker is installed on this host. The role only
+        # prunes when 'start' is among the tags the playbook was run with, and
+        # this scenario runs without it. If that gate ever stopped working,
+        # `docker container prune` would run and the converge would fail with
+        # "docker: command not found" - which is the point of leaving it on.
+        # The default-docker scenario covers the pruning itself.
+        system_cleanup_docker: true
+
+        system_cleanup_apt: true
+        # An apt "safe" upgrade would download whatever the distribution has
+        # published since the test image was built, which is slow, variable and
+        # tells us nothing about the role. "no" keeps the first task of
+        # tasks/packages.yml cheap while the second one - clean, autoclean,
+        # autoremove - still does its work, which is what verify.yml checks.
+        system_cleanup_apt_upgrade_type: "no"
+
+        system_cleanup_kernels: true
+        # The role's default is /usr/local/bin/purge-old-kernels. verify.yml
+        # asserts the script is at the path named here and that nothing was
+        # written to the default path.
+        system_cleanup_kernels_script: /usr/local/bin/molecule-purge-old-kernels
+        # The role's default is 1.
+        system_cleanup_kernels_keep: 3
+
+        # Variables for the verification suite
+        cleanup_molecule_seed_directory: /var/lib/molecule-cleanup
+        cleanup_molecule_removed_paths:
+          - /var/lib/molecule-cleanup/removed-file
+          - /var/lib/molecule-cleanup/removed-directory
+          - /var/lib/molecule-cleanup/removed-directory/marker
+        cleanup_molecule_kept_paths:
+          - /var/lib/molecule-cleanup/kept-file
+          - /var/lib/molecule-cleanup/kept-directory
+          - /var/lib/molecule-cleanup/kept-directory/marker
+        cleanup_molecule_seeded_deb: /var/cache/apt/archives/molecule-cleanup-seeded_1.0_all.deb
+  env:
+    # Workaround for https://github.com/ansible/molecule/issues/4391
+    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles
+scenario:
+  # The stock sequence without `idempotence`. This role is not idempotent and is
+  # not meant to be: `tasks/logs.yml` starts a `Type=oneshot` unit, which has
+  # gone back to inactive by the time the next run looks at it and so is started
+  # again, and the pruning and package-manager tasks are unconditional commands.
+  # Running housekeeping is the point; reporting no change would mean it had not
+  # run.
+  test_sequence:
+    - dependency
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    - verify
+    - destroy
+verifier:
+  name: ansible

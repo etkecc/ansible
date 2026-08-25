@@ -1,0 +1,27 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Include the cleanup role for the Docker Molecule tests
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    # A precondition of this scenario rather than of the role: `tasks/docker.yml`
+    # is gated on 'start' being among the run tags, which molecule.yml arranges
+    # by passing `--tags all,start`. If that ever stopped working the pruning
+    # tasks would be skipped and every assertion in verify.yml would still pass,
+    # because nothing would have been removed and everything would still be
+    # there. This is the one place that can tell the difference.
+    - name: Assert that this run carries the tag the role's Docker pruning needs
+      ansible.builtin.assert:
+        that: "'start' in ansible_run_tags"
+        fail_msg: >-
+          The run tags are {{ ansible_run_tags }}, which do not include 'start'. The role would skip
+          its Docker pruning and this scenario would verify nothing.
+        success_msg: "The run tags are {{ ansible_run_tags }}, so the role's Docker pruning will run"
+
+    - name: Include the cleanup role
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
