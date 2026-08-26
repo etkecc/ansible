@@ -5,6 +5,6 @@
     "What Renovate does track here is repository housekeeping: GitHub Actions, the prek pin in mise.toml, the pre-commit hook revisions, .python-version, molecule/requirements.txt and the Ansible collections the Molecule scenarios pull in. The shared preset already branch-automerges all of those, so there is nothing left for a local rule to add."
   ],
   "extends": [
-    "github>mother-of-all-self-hosting/renovate-config#v1.0.0"
+    "github>mother-of-all-self-hosting/renovate-config#v1.1.0"
   ]
 }
