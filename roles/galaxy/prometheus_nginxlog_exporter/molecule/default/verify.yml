@@ -1,0 +1,315 @@
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+# SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify prometheus-nginxlog-exporter
+  hosts: all
+  become: true
+  gather_facts: false
+
+  vars:
+    prometheus_nginxlog_exporter_molecule_metrics_url: "http://127.0.0.1:{{ prometheus_nginxlog_exporter_molecule_http_bind_port }}/metrics"
+    prometheus_nginxlog_exporter_molecule_seeded_count_total: >-
+      {{
+        (prometheus_nginxlog_exporter_molecule_seeded_count_initial | int)
+        + (prometheus_nginxlog_exporter_molecule_seeded_count_additional | int)
+      }}
+    # The series the seeded lines produce, picked out by the marks that only
+    # they carry. Both are free of regular expression metacharacters, which
+    # matters because `search` is a regex test and not a substring one.
+    prometheus_nginxlog_exporter_molecule_seeded_series_pattern: >-
+      http_response_count_total[{][^}]*namespace="{{ prometheus_nginxlog_exporter_molecule_namespace_name }}"[^}]*status="{{ prometheus_nginxlog_exporter_molecule_seeded_status }}"
+
+  tasks:
+    # The role is not included in this playbook, so its defaults are not in
+    # scope. Reading defaults/main.yml directly keeps the version assertion
+    # below tied to the value that Renovate bumps, with nothing to keep in
+    # sync in this scenario. include_vars reads from the controller.
+    #
+    # Only values describing the role itself may be read from this namespace,
+    # and only leaf literals: everything else in that file is a Jinja
+    # expression referring to variables that are not defined here. Anything
+    # this scenario tunes (the namespace name, the syslog tag, the published
+    # ports) comes from the scenario's group_vars instead.
+    - name: Load the prometheus-nginxlog-exporter role defaults
+      ansible.builtin.include_vars:
+        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+        name: prometheus_nginxlog_exporter_defaults
+
+    - name: Wait for prometheus-nginxlog-exporter service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: prometheus-nginxlog-exporter.service
+      register: prometheus_nginxlog_exporter_service
+      until: prometheus_nginxlog_exporter_service.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert prometheus-nginxlog-exporter service is active
+      ansible.builtin.assert:
+        that: prometheus_nginxlog_exporter_service.status.ActiveState == 'active'
+        fail_msg: "prometheus-nginxlog-exporter.service not active ({{ prometheus_nginxlog_exporter_service.status.ActiveState }})"
+        success_msg: "prometheus-nginxlog-exporter.service is active"
+
+    - name: Retrieve prometheus-nginxlog-exporter service log for debugging
+      when: prometheus_nginxlog_exporter_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu prometheus-nginxlog-exporter.service
+      changed_when: false
+
+    # A systemd unit reaching "active" only means that `docker start` has not
+    # exited yet. Scraping /metrics is the cheapest answer the exporter process
+    # itself can give, so it is the first thing here that proves a serving
+    # exporter rather than merely a running container.
+    #
+    # It is also, deliberately, the weakest probe in this file. The upstream
+    # image ships a working fallback configuration: started with no arguments
+    # at all, the exporter serves /metrics on 4040 under a namespace it calls
+    # `nginx`. A container that received none of this role's configuration
+    # passes this probe unchanged. Everything below exists to tell those two
+    # apart.
+    - name: Wait for prometheus-nginxlog-exporter to serve metrics (up to 180s)
+      ansible.builtin.uri:
+        url: "{{ prometheus_nginxlog_exporter_molecule_metrics_url }}"
+        method: GET
+        return_content: true
+      register: prometheus_nginxlog_exporter_metrics
+      until: >-
+        prometheus_nginxlog_exporter_metrics.status == 200
+        and 'prometheus_nginxlog_exporter_build_info' in prometheus_nginxlog_exporter_metrics.content
+      retries: 36
+      delay: 5
+
+    - name: Assert prometheus-nginxlog-exporter serves metrics
+      ansible.builtin.assert:
+        that:
+          - prometheus_nginxlog_exporter_metrics.status == 200
+          - "'prometheus_nginxlog_exporter_build_info' in prometheus_nginxlog_exporter_metrics.content"
+        fail_msg: "prometheus-nginxlog-exporter did not serve exporter metrics ({{ prometheus_nginxlog_exporter_metrics.status | default('no response') }})"
+        success_msg: "prometheus-nginxlog-exporter serves metrics"
+
+    # Whether the configuration the role rendered reached the process, read
+    # back out of the running exporter rather than off disk. Two things here
+    # are impossible for the fallback configuration to produce:
+    #
+    # - the namespace name, which this scenario chose, carried as a label
+    #   because the role's template sets `namespace_label`. The fallback names
+    #   its namespace `nginx` and attaches no namespace label at all.
+    # - unprefixed metric names. The role's template sets
+    #   `metrics_override.prefix` to an empty string, which is what the bundled
+    #   Grafana dashboard expects; without that override the exporter prefixes
+    #   every metric with the namespace name, which is how the fallback comes
+    #   out as `nginx_parse_errors_total`.
+    - name: Assert the role's configuration reached the running exporter
+      ansible.builtin.assert:
+        that:
+          - >-
+            ('parse_errors_total{namespace="' ~ prometheus_nginxlog_exporter_molecule_namespace_name ~ '"}')
+            in prometheus_nginxlog_exporter_metrics.content
+          - "'nginx_parse_errors_total' not in prometheus_nginxlog_exporter_metrics.content"
+        fail_msg: "The role's configuration did not reach the running prometheus-nginxlog-exporter"
+        success_msg: >-
+          The role's configuration reached prometheus-nginxlog-exporter
+          (namespace {{ prometheus_nginxlog_exporter_molecule_namespace_name }}, unprefixed metric names)
+
+    # Nothing above proves the exporter does its job. It exports metrics about
+    # nginx access logs, and until a log line has been through it there is not
+    # a single request series to look at - the probe above found only the parse
+    # error counter, sitting at zero.
+    #
+    # The role's default source is a syslog listener, so this is how a real
+    # deployment feeds it: nginx sends its access log to the exporter as syslog
+    # datagrams. The seeding happens only now, after the probe above confirmed
+    # the namespace listener is up, so that the datagrams have something to
+    # arrive at.
+    - name: Install the syslog seeder
+      ansible.builtin.copy:
+        src: seed-syslog-lines.py
+        dest: /root/seed-syslog-lines.py
+        mode: "0644"
+
+    - name: Seed the first batch of access-log lines
+      ansible.builtin.command:
+        argv:
+          - python3
+          - /root/seed-syslog-lines.py
+          - --port
+          - "{{ prometheus_nginxlog_exporter_molecule_syslog_bind_port }}"
+          - --tag
+          - "{{ prometheus_nginxlog_exporter_molecule_syslog_tag }}"
+          - --count
+          - "{{ prometheus_nginxlog_exporter_molecule_seeded_count_initial }}"
+          - --status
+          - "{{ prometheus_nginxlog_exporter_molecule_seeded_status }}"
+          - --request-uri
+          - "{{ prometheus_nginxlog_exporter_molecule_seeded_request_uri }}"
+          - --server-name
+          - "{{ prometheus_nginxlog_exporter_molecule_seeded_server_name }}"
+          - --remote-addr
+          - "{{ prometheus_nginxlog_exporter_molecule_seeded_remote_addr }}"
+      changed_when: false
+
+    - name: Wait for the seeded lines to be counted (up to 2m)
+      ansible.builtin.uri:
+        url: "{{ prometheus_nginxlog_exporter_molecule_metrics_url }}"
+        method: GET
+        return_content: true
+      register: prometheus_nginxlog_exporter_metrics_seeded
+      until: prometheus_nginxlog_exporter_metrics_seeded.content is search(prometheus_nginxlog_exporter_molecule_seeded_series_pattern)
+      retries: 24
+      delay: 5
+
+    - name: Find the series the seeded lines should have produced
+      ansible.builtin.set_fact:
+        prometheus_nginxlog_exporter_seeded_series: >-
+          {{
+            prometheus_nginxlog_exporter_metrics_seeded.content.splitlines()
+            | select('search', prometheus_nginxlog_exporter_molecule_seeded_series_pattern)
+            | select('search', 'request_uri="' ~ prometheus_nginxlog_exporter_molecule_seeded_request_uri ~ '"')
+            | list
+          }}
+
+    # The counter has to equal the number of lines seeded, not merely be
+    # non-zero: that is what makes it evidence of these lines rather than of
+    # traffic from somewhere else. The remaining labels are checked as literals
+    # on the matched series, since they contain dots that a regex would treat
+    # as wildcards.
+    #
+    # The parse error counter staying at zero is what says the lines were
+    # understood rather than rejected: a line that does not match the format
+    # the role templates increments that counter and produces no request series
+    # at all.
+    - name: Assert the seeded access-log lines were parsed into request metrics
+      ansible.builtin.assert:
+        that:
+          - prometheus_nginxlog_exporter_seeded_series | length == 1
+          - >-
+            (prometheus_nginxlog_exporter_seeded_series[0].split('} ') | last | float | int)
+            == (prometheus_nginxlog_exporter_molecule_seeded_count_initial | int)
+          - "('server_name=\"' ~ prometheus_nginxlog_exporter_molecule_seeded_server_name ~ '\"') in prometheus_nginxlog_exporter_seeded_series[0]"
+          - "('remote_addr=\"' ~ prometheus_nginxlog_exporter_molecule_seeded_remote_addr ~ '\"') in prometheus_nginxlog_exporter_seeded_series[0]"
+          - >-
+            ('parse_errors_total{namespace="' ~ prometheus_nginxlog_exporter_molecule_namespace_name ~ '"} 0')
+            in prometheus_nginxlog_exporter_metrics_seeded.content
+        fail_msg: >-
+          prometheus-nginxlog-exporter did not count {{ prometheus_nginxlog_exporter_molecule_seeded_count_initial }}
+          seeded requests (matching series: {{ prometheus_nginxlog_exporter_seeded_series }})
+        success_msg: >-
+          prometheus-nginxlog-exporter parsed the {{ prometheus_nginxlog_exporter_molecule_seeded_count_initial }}
+          seeded access-log lines into {{ prometheus_nginxlog_exporter_seeded_series[0] }}
+
+    # The exporter follows its source rather than having read it once at
+    # startup. Without this, an exporter that consumed whatever was waiting on
+    # the first pass and then stopped listening would pass everything above.
+    - name: Seed a second batch of access-log lines
+      ansible.builtin.command:
+        argv:
+          - python3
+          - /root/seed-syslog-lines.py
+          - --port
+          - "{{ prometheus_nginxlog_exporter_molecule_syslog_bind_port }}"
+          - --tag
+          - "{{ prometheus_nginxlog_exporter_molecule_syslog_tag }}"
+          - --count
+          - "{{ prometheus_nginxlog_exporter_molecule_seeded_count_additional }}"
+          - --status
+          - "{{ prometheus_nginxlog_exporter_molecule_seeded_status }}"
+          - --request-uri
+          - "{{ prometheus_nginxlog_exporter_molecule_seeded_request_uri }}"
+          - --server-name
+          - "{{ prometheus_nginxlog_exporter_molecule_seeded_server_name }}"
+          - --remote-addr
+          - "{{ prometheus_nginxlog_exporter_molecule_seeded_remote_addr }}"
+      changed_when: false
+
+    - name: Wait for the request counter to advance (up to 2m)
+      ansible.builtin.uri:
+        url: "{{ prometheus_nginxlog_exporter_molecule_metrics_url }}"
+        method: GET
+        return_content: true
+      register: prometheus_nginxlog_exporter_metrics_advanced
+      until: >-
+        (
+          (
+            prometheus_nginxlog_exporter_metrics_advanced.content.splitlines()
+            | select('search', prometheus_nginxlog_exporter_molecule_seeded_series_pattern)
+            | first | default('} 0')
+          ).split('} ') | last | float | int
+        ) >= (prometheus_nginxlog_exporter_molecule_seeded_count_total | int)
+      retries: 24
+      delay: 5
+
+    - name: Find the series the second batch should have advanced
+      ansible.builtin.set_fact:
+        prometheus_nginxlog_exporter_advanced_series: >-
+          {{
+            prometheus_nginxlog_exporter_metrics_advanced.content.splitlines()
+            | select('search', prometheus_nginxlog_exporter_molecule_seeded_series_pattern)
+            | select('search', 'request_uri="' ~ prometheus_nginxlog_exporter_molecule_seeded_request_uri ~ '"')
+            | list
+          }}
+
+    - name: Assert the request counter advanced by the second batch
+      ansible.builtin.assert:
+        that:
+          - prometheus_nginxlog_exporter_advanced_series | length == 1
+          - >-
+            (prometheus_nginxlog_exporter_advanced_series[0].split('} ') | last | float | int)
+            == (prometheus_nginxlog_exporter_molecule_seeded_count_total | int)
+          - >-
+            ('parse_errors_total{namespace="' ~ prometheus_nginxlog_exporter_molecule_namespace_name ~ '"} 0')
+            in prometheus_nginxlog_exporter_metrics_advanced.content
+        fail_msg: >-
+          prometheus-nginxlog-exporter did not advance the request counter to
+          {{ prometheus_nginxlog_exporter_molecule_seeded_count_total }}
+          (matching series: {{ prometheus_nginxlog_exporter_advanced_series }})
+        success_msg: >-
+          prometheus-nginxlog-exporter kept following its source: the request counter advanced
+          from {{ prometheus_nginxlog_exporter_molecule_seeded_count_initial }}
+          to {{ prometheus_nginxlog_exporter_molecule_seeded_count_total }}
+
+    # Tying the running version to `prometheus_nginxlog_exporter_version` is
+    # what makes this scenario a real test of the version that Renovate bumps:
+    # a bump that produces an unusable image cannot pass here.
+    #
+    # The exporter reports its version without a leading `v` (`1.10.0`), while
+    # the role's version variable carries one. Any leading `v` is normalized
+    # away on both sides, so that this keeps holding if either side ever stops
+    # carrying one.
+    #
+    # The label is matched with a leading `{` or `,` so that `goversion`, which
+    # sits on the same series and ends in the same eight characters, cannot be
+    # picked up instead.
+    - name: Determine the version that the running exporter reports
+      ansible.builtin.set_fact:
+        prometheus_nginxlog_exporter_reported_version: >-
+          {{
+            (
+              prometheus_nginxlog_exporter_metrics_advanced.content.splitlines()
+              | select('match', 'prometheus_nginxlog_exporter_build_info[{]')
+              | map('regex_findall', '[{,]version="([^"]+)"')
+              | flatten
+              | first
+              | default('')
+            )
+          }}
+
+    - name: Assert the running exporter is the version the role asks for
+      ansible.builtin.assert:
+        that: >-
+          (prometheus_nginxlog_exporter_reported_version | regex_replace('^v', ''))
+          == (prometheus_nginxlog_exporter_defaults.prometheus_nginxlog_exporter_version | regex_replace('^v', ''))
+        fail_msg: >-
+          prometheus-nginxlog-exporter reports version {{ prometheus_nginxlog_exporter_reported_version | default('none') }},
+          but the role asks for {{ prometheus_nginxlog_exporter_defaults.prometheus_nginxlog_exporter_version }}
+        success_msg: "prometheus-nginxlog-exporter reports version {{ prometheus_nginxlog_exporter_reported_version }}"
+
+    - name: Show prometheus-nginxlog-exporter verification summary
+      ansible.builtin.debug:
+        msg:
+          - "prometheus-nginxlog-exporter systemd: {{ prometheus_nginxlog_exporter_service.status.ActiveState }}"
+          - "prometheus-nginxlog-exporter version: {{ prometheus_nginxlog_exporter_reported_version }}"
+          - "prometheus-nginxlog-exporter namespace: {{ prometheus_nginxlog_exporter_molecule_namespace_name }}"
+          - "prometheus-nginxlog-exporter seeded request series: {{ prometheus_nginxlog_exporter_advanced_series[0] }}"

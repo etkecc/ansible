@@ -17,8 +17,8 @@ prometheus_nginxlog_exporter_identifier: prometheus-nginxlog-exporter
 prometheus_nginxlog_exporter_base_path: "/{{ prometheus_nginxlog_exporter_identifier }}"
 prometheus_nginxlog_exporter_config_path: "{{ prometheus_nginxlog_exporter_base_path }}/config"
 
-# renovate: datasource=docker depName=ghcr.io/martin-helmich/prometheus-nginxlog-exporter/exporter
-prometheus_nginxlog_exporter_version: v1.10.0
+# renovate: datasource=docker depName=ghcr.io/martin-helmich/prometheus-nginxlog-exporter/exporter versioning=semver
+prometheus_nginxlog_exporter_version: v1.11.0
 
 prometheus_nginxlog_exporter_uid: ""
 prometheus_nginxlog_exporter_gid: ""

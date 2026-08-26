@@ -1,0 +1,95 @@
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+# SPDX-FileCopyrightText: 2026 spatterlight
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+dependency:
+  name: galaxy
+  options:
+    requirements-file: requirements.yml
+    force: true
+driver:
+  name: docker
+platforms:
+  - name: prometheus-nginxlog-exporter-${MOLECULE_DISTRO:-ubuntu2604}-default
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2604}-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callback_result_format: yaml
+  inventory:
+    group_vars:
+      all:
+        # Helper variables
+        prometheus_nginxlog_exporter_debug_service_enabled: false
+
+        # The exporter image carries a working fallback configuration of its
+        # own. Started with no arguments at all it still parses a default nginx
+        # log format under a namespace it calls `nginx`, listens on 4040 and
+        # serves /metrics - so a container that received none of this role's
+        # configuration answers a liveness probe exactly like a configured one.
+        #
+        # Every value below is chosen so that verify.yml can tell those two
+        # apart. The namespace name is nothing the fallback would produce, and
+        # it is emitted as a label on every metric because the role's template
+        # sets namespace_label.
+        prometheus_nginxlog_exporter_molecule_namespace_name: molecule-nginxlog-seeded
+
+        # The role's default configuration reads its input from a syslog
+        # listener, not from a log file. That listener drops every message
+        # whose syslog tag is not one it was told to follow - and the role
+        # defaults to following none, so an exporter deployed with stock
+        # settings parses nothing at all. Naming a tag here is what turns the
+        # listener on, and it is also what the seeded datagrams carry.
+        #
+        # Alphanumeric only: RFC 3164 ends the tag at the first character that
+        # is not, so a hyphen here would leave the exporter matching against a
+        # truncated tag.
+        prometheus_nginxlog_exporter_molecule_syslog_tag: moleculenginx
+
+        # The distinctive marks on the seeded access-log lines. 418 is not a
+        # status any real traffic to this container would carry, and the
+        # request path is likewise nothing the fallback configuration or the
+        # exporter's own HTTP endpoint could produce, so a request counter
+        # bearing both is attributable to the seeding and nothing else.
+        prometheus_nginxlog_exporter_molecule_seeded_status: 418
+        prometheus_nginxlog_exporter_molecule_seeded_request_uri: /molecule-probe/teapot
+        prometheus_nginxlog_exporter_molecule_seeded_server_name: molecule-probe.example.com
+        prometheus_nginxlog_exporter_molecule_seeded_remote_addr: 203.0.113.7
+
+        # Seeded in two batches: the first proves that lines are parsed at all,
+        # the second that the exporter keeps following the source afterwards
+        # rather than having read it once at startup.
+        prometheus_nginxlog_exporter_molecule_seeded_count_initial: 4
+        prometheus_nginxlog_exporter_molecule_seeded_count_additional: 3
+
+        # Published on the test container's loopback, for verify.yml to scrape
+        # and to seed through.
+        prometheus_nginxlog_exporter_molecule_http_bind_port: 4040
+        prometheus_nginxlog_exporter_molecule_syslog_bind_port: 6514
+
+        # Variables for prometheus-nginxlog-exporter
+        prometheus_nginxlog_exporter_uid: 1000
+        prometheus_nginxlog_exporter_gid: 1000
+        prometheus_nginxlog_exporter_hostname: localhost
+        prometheus_nginxlog_exporter_container_labels_metrics_enabled: false
+        prometheus_nginxlog_exporter_container_http_host_bind_port: "127.0.0.1:{{ prometheus_nginxlog_exporter_molecule_http_bind_port }}"
+        prometheus_nginxlog_exporter_container_syslog_host_bind_port: "127.0.0.1:{{ prometheus_nginxlog_exporter_molecule_syslog_bind_port }}"
+        prometheus_nginxlog_exporter_architecture: amd64
+
+        prometheus_nginxlog_exporter_config_namespace_name: "{{ prometheus_nginxlog_exporter_molecule_namespace_name }}"
+        prometheus_nginxlog_exporter_config_namespaces_source_tags_custom:
+          - "{{ prometheus_nginxlog_exporter_molecule_syslog_tag }}"
+  env:
+    # Workaround for https://github.com/ansible/molecule/issues/4391
+    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles
+verifier:
+  name: ansible

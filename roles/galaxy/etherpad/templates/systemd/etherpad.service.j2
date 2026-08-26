@@ -28,6 +28,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --log-driver=none \
       --user={{ etherpad_uid }}:{{ etherpad_gid }} \
       --cap-drop=ALL \
+      --read-only \
       --network={{ etherpad_container_network }} \
       {% if etherpad_container_http_host_bind_port %}
       -p {{ etherpad_container_http_host_bind_port }}:{{ etherpad_container_http_port }} \
@@ -38,6 +39,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --env-file={{ etherpad_base_path }}/env \
       --label-file={{ etherpad_base_path }}/labels \
       --health-interval={{ etherpad_container_health_interval }} \
+      --workdir={{ etherpad_container_process_workdir }} \
       --mount type=bind,src={{ etherpad_config_path }},dst=/config,ro \
       --mount type=bind,src={{ etherpad_data_path }},dst=/data \
       --mount type=bind,src={{ etherpad_plugins_path }},dst=/opt/etherpad-lite/src/plugin_packages \
@@ -45,12 +47,12 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% if etherpad_database_type == 'mysql' and etherpad_database_mysql_socket_enabled and etherpad_database_mysql_socket_path_host != '' %}
       --mount type=bind,src={{ etherpad_database_mysql_socket_path_host }},dst={{ etherpad_database_mysql_socket_path_container }} \
       {% endif %}
+      --tmpfs=/tmp:rw,noexec,nosuid,size={{ etherpad_container_tmpfs_tmp_size }} \
       {% for arg in etherpad_container_extra_arguments %}
       {{ arg }} \
       {% endfor %}
       {{ etherpad_container_image_self_build_name if etherpad_container_image_self_build else etherpad_container_image }} \
-      pnpm run prod \
-        --settings /config/settings.json
+      {{ etherpad_container_process_command }}
 
 {% for network in etherpad_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ etherpad_identifier }}

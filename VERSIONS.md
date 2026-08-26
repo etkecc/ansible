@@ -11,7 +11,7 @@
 * Discord Bridge: v0.7.7
 * Draupnir: v3.1.0
 * Element: v1.12.26
-* Etherpad: 2.7.2
+* Etherpad: 3.3.3
 * Exim Relay: 4.99.1-r0-2
 * Firezone: 0.7.36
 * Fluffychat: v2.9.1
@@ -54,7 +54,7 @@
 * Postgres Container Image V9: 9.6.24
 * Postmoogle Bridge: v0.9.31
 * Prometheus: v3.14.0
-* Prometheus Nginxlog Exporter: v1.10.0
+* Prometheus Nginxlog Exporter: v1.11.0
 * Prometheus Node Exporter: v1.12.1
 * Prometheus Postgres Exporter: v0.20.1
 * Radicale: 3.7.6.0

@@ -38,6 +38,22 @@
       group: root
       when: "{{ etherpad_container_image_self_build }}"
 
+# Without this file, Etherpad (v3+) tries to migrate plugins from node_modules on startup,
+# by shelling out to `pnpm ls`. That fails under the custom user this role runs the container with
+# (pnpm attempts to write to a read-only database in the application directory), taking
+# the whole server down with it. When the file exists, the migration is skipped entirely.
+#
+# Etherpad maintains this file by itself (recording plugins installed at runtime),
+# so an existing file is intentionally left untouched (`force: false`).
+- name: Ensure Etherpad installed plugins manifest exists
+  ansible.builtin.copy:
+    content: '{"plugins": []}'
+    dest: "{{ etherpad_var_path }}/installed_plugins.json"
+    mode: "0660"
+    owner: "{{ etherpad_uid }}"
+    group: "{{ etherpad_gid }}"
+    force: false
+
 - name: Ensure Etherpad support files installed
   ansible.builtin.template:
     src: "{{ role_path }}/templates/{{ item }}.j2"

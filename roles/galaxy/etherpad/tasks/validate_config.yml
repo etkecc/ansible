@@ -23,7 +23,8 @@
     - { "old": "etherpad_database_username", "new": "etherpad_database_postgres_username" }
     - { "old": "etherpad_database_password", "new": "etherpad_database_postgres_password" }
     - { "old": "etherpad_title", "new": "etherpad_configuration_title" }
-    - { "old": "etherpad_abiword", "new": "etherpad_configuration_abiword" }
+    - { "old": "etherpad_abiword", "new": "<removed> (Abiword support was removed in Etherpad v3)" }
+    - { "old": "etherpad_configuration_abiword", "new": "<removed> (Abiword support was removed in Etherpad v3)" }
     - { "old": "etherpad_soffice", "new": "etherpad_configuration_soffice" }
     - { "old": "etherpad_default_pad_text", "new": "etherpad_configuration_defaultpadtext" }
     - { "old": "etherpad_http_header_content_permission_policy", "new": "etherpad_http_header_permissions_policy" }
@@ -46,6 +47,19 @@
     msg: >-
       etherpad_configuration_loglevel must be 'DEBUG', 'INFO', 'WARN', or 'ERROR'
   when: "etherpad_configuration_loglevel not in ['DEBUG', 'INFO', 'WARN', 'ERROR']"
+
+- name: Fail if Etherpad IP logging mode is invalid
+  ansible.builtin.fail:
+    msg: >-
+      etherpad_configuration_iplogging must be 'anonymous', 'truncated', or 'full'
+  when: "etherpad_configuration_iplogging not in ['anonymous', 'truncated', 'full']"
+
+- name: Fail if Etherpad updates tier is invalid
+  ansible.builtin.fail:
+    msg: >-
+      etherpad_configuration_updates_tier must be 'off', 'notify', 'manual', 'auto', or 'autonomous'.
+      Note that `off` must be quoted ('off'), because unquoted `off` means `false` in YAML.
+  when: "etherpad_configuration_updates_tier not in ['off', 'notify', 'manual', 'auto', 'autonomous']"
 
 - name: Run if Etherpad + MySQL integration is enabled
   when: etherpad_database_type == 'mysql'

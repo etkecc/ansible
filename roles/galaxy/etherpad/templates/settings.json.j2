@@ -80,7 +80,6 @@ SPDX-License-Identifier: AGPL-3.0-or-later
   "editOnly": false,
   "minify": {{ etherpad_configuration_minify | to_json }},
   "maxAge": 21600,
-  "abiword": {{ etherpad_configuration_abiword|to_json }},
   "soffice": {{ etherpad_configuration_soffice|to_json }},
   "allowUnknownFileEnds": true,
   "requireAuthentication": false,
@@ -91,7 +90,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
     "keyRotationInterval": 86400000,
     "sessionLifetime": 86400000
   },
-  "disableIPlogging": true,
+  "ipLogging": {{ etherpad_configuration_iplogging | to_json }},
   "automaticReconnectionTimeout": 0,
   "scrollWhenFocusLineIsOutOfViewport": {
     "percentage": {
@@ -102,7 +101,6 @@ SPDX-License-Identifier: AGPL-3.0-or-later
     "scrollWhenCaretIsInTheLastLineOfViewport": false,
     "percentageToScrollWhenUserPressesArrowUp": 0
   },
-  "socketTransportProtocols" : ["xhr-polling", "jsonp-polling", "htmlfile"],
   "socketIo": {
     "maxHttpBufferSize": 10000
   },
@@ -125,8 +123,8 @@ SPDX-License-Identifier: AGPL-3.0-or-later
     "showChat": false,
     "showLineNumbers": true,
     "useMonospaceFont": false,
-    "userName": false,
-    "userColor": false,
+    "userName": null,
+    "userColor": null,
     "rtl": false,
     "alwaysShowChat": false,
     "chatAndUsers": false,
@@ -169,6 +167,13 @@ SPDX-License-Identifier: AGPL-3.0-or-later
     "pageDown": true
   },
   "socketTransportProtocols" : ["websocket", "polling"],
+  "updates": {
+    "tier": {{ etherpad_configuration_updates_tier | to_json }}
+  },
+  "privacy": {
+    "updateCheck": {{ etherpad_configuration_privacy_updatecheck | to_json }},
+    "pluginCatalog": {{ etherpad_configuration_privacy_plugincatalog | to_json }}
+  },
   "loglevel": {{ etherpad_configuration_loglevel | to_json }},
   "customLocaleStrings": {},
   "enableAdminUITests": false
