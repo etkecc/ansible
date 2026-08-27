@@ -537,6 +537,10 @@ peertube_systemd_wanted_services_list_auto: |
     ([(exim_relay_identifier | default('matrix-exim-relay')) ~ '.service'] if (exim_relay_enabled | default(false) and peertube_config_smtp_hostname == exim_relay_identifier | default('matrix-exim-relay')) else [])
   }}
 
+# Status broadcast rooms are too noisy, so we keep them disabled by default.
+matrix_bridge_mautrix_whatsapp_bridge_enable_status_broadcast: false
+
+
 ########################################################################
 #                                                                      #
 # matrix/synapse-auto-compressor                                       #
