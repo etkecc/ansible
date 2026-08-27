@@ -7,6 +7,7 @@ dependency:
   name: galaxy
   options:
     requirements-file: requirements.yml
+    force: true
 driver:
   name: docker
 platforms:
@@ -26,9 +27,13 @@ provisioner:
   inventory:
     group_vars:
       all:
+        # Helper variables
+        grafana_debug_service_enabled: false
+
+        # Variables for Grafana
         grafana_uid: 1000
         grafana_gid: 1000
-        grafana_hostname: grafana
+        grafana_hostname: localhost
         grafana_container_labels_traefik_enabled: false
         grafana_container_http_host_bind_port: 3000
   env:

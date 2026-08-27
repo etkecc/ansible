@@ -1,0 +1,444 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify LiveKit Server
+  hosts: all
+  become: true
+  gather_facts: false
+
+  vars:
+    # Minting an access token is the only way to reach anything but LiveKit
+    # Server's health endpoint, and the test container ships no LiveKit SDK
+    # (and no curl). A LiveKit access token is an ordinary JWT signed with
+    # HS256, so hmac and base64 from the standard library are enough.
+    #
+    # Every probe below shares this preamble. It reads the key name, the
+    # secret and the port from argv, so that the same code can sign with the
+    # right secret and with a wrong one without this playbook having several
+    # copies of it to keep in sync.
+    livekit_server_token_preamble: |
+      import base64, hashlib, hmac, json, sys, time, urllib.error, urllib.request
+
+      key_name, secret, port = sys.argv[1], sys.argv[2], sys.argv[3]
+      base_url = "http://127.0.0.1:%s" % port
+
+      def b64(raw):
+          # JWT uses base64url with the padding stripped.
+          return base64.urlsafe_b64encode(raw).rstrip(b"=").decode()
+
+      def mint(issuer, signing_secret, grants):
+          now = int(time.time())
+          header = b64(json.dumps({"alg": "HS256", "typ": "JWT"}, separators=(",", ":")).encode())
+          payload = b64(json.dumps({
+              "iss": issuer,
+              "sub": "molecule",
+              "nbf": now - 10,
+              "exp": now + 600,
+              "video": grants,
+          }, separators=(",", ":")).encode())
+          signing_input = ("%s.%s" % (header, payload)).encode()
+          signature = b64(hmac.new(signing_secret.encode(), signing_input, hashlib.sha256).digest())
+          return "%s.%s.%s" % (header, payload, signature)
+
+      def call(path, token=None, body=None):
+          request = urllib.request.Request(base_url + path, method="POST" if body is not None else "GET", data=body)
+          if token is not None:
+              request.add_header("Authorization", "Bearer " + token)
+          if body is not None:
+              request.add_header("Content-Type", "application/json")
+          try:
+              with urllib.request.urlopen(request, timeout=10) as response:
+                  return response.status, response.read().decode("utf-8", "replace")
+          except urllib.error.HTTPError as error:
+              return error.code, error.read().decode("utf-8", "replace")
+
+      def summarize(body):
+          # A rejection echoes the whole offending token back, so bodies are
+          # cut to their first line and 60 characters - enough to tell the
+          # refusals apart, not enough to fill the log with a JWT.
+          lines = body.strip().splitlines()
+          return (lines[0][:60] if lines else "") or "empty"
+
+      # Grants that let a token administer rooms over the RoomService API.
+      admin_grants = {"roomCreate": True, "roomList": True, "roomAdmin": True}
+
+      # A secret that is emphatically not the configured one, for the probes
+      # that must be refused.
+      wrong_secret = secret[::-1] + "-wrong"
+
+  tasks:
+    # The role is not included in this playbook, so its defaults are not in
+    # scope. Reading defaults/main.yml directly keeps the version assertion
+    # below tied to the value that Renovate bumps, with nothing to keep in
+    # sync in this scenario. include_vars reads from the controller.
+    #
+    # Only literal values describing the role itself may be read from this
+    # namespace - a Jinja-derived default (livekit_server_container_image,
+    # for one) would arrive here as its unrendered template text. Anything
+    # this scenario tunes (the ports, the API key) comes from the scenario's
+    # group_vars instead.
+    - name: Load the LiveKit Server role defaults
+      ansible.builtin.include_vars:
+        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+        name: livekit_server_defaults
+
+    - name: Wait for LiveKit Server service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: livekit-server.service
+      register: livekit_server_service
+      until: livekit_server_service.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert LiveKit Server service is active
+      ansible.builtin.assert:
+        that: livekit_server_service.status.ActiveState == 'active'
+        fail_msg: "livekit-server.service not active ({{ livekit_server_service.status.ActiveState }})"
+        success_msg: "livekit-server.service is active"
+
+    - name: Retrieve LiveKit Server service log for debugging
+      when: livekit_server_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu livekit-server.service
+      changed_when: false
+
+    # community.docker is deliberately avoided throughout this playbook: the
+    # linting environment in CI has no collections installed.
+    #
+    # `docker inspect` is asked for whole rather than through `--format`, so
+    # that the structure arrives here as data instead of as a string that a
+    # template would have to be trusted to have flattened correctly.
+    - name: Inspect the LiveKit Server container
+      ansible.builtin.command:
+        cmd: "docker inspect {{ livekit_server_defaults.livekit_server_identifier }}"
+      register: livekit_server_container_inspect
+      changed_when: false
+
+    - name: Read the LiveKit Server container definition
+      ansible.builtin.set_fact:
+        livekit_server_container: "{{ (livekit_server_container_inspect.stdout | from_json) | first }}"
+
+    # The negative control for everything that follows. The same image the
+    # role runs, started with no configuration at all, refuses to serve: it
+    # says it wants keys and exits without ever opening a port. So a LiveKit
+    # Server answering the probes below cannot be a stock container that
+    # happens to work on its own - it can only be one the role configured.
+    #
+    # The image reference comes from the running container rather than from
+    # defaults/main.yml, where it is assembled by Jinja out of four other
+    # variables and so cannot be read literally.
+    #
+    # Note the exit status: LiveKit Server leaves with 0 on this refusal, not
+    # with a failure code, which is why this asserts on the message rather
+    # than on the command failing.
+    - name: Run the LiveKit Server image standalone, without any configuration
+      ansible.builtin.command:
+        argv:
+          - docker
+          - run
+          - --rm
+          - --name
+          - livekit-server-molecule-default-negative-control
+          - "{{ livekit_server_container.Config.Image }}"
+      register: livekit_server_negative_control
+      changed_when: false
+      failed_when: false
+
+    - name: Assert the LiveKit Server image serves nothing without configuration
+      ansible.builtin.assert:
+        that:
+          - "'one of key-file or keys must be provided' in (livekit_server_negative_control.stdout + livekit_server_negative_control.stderr)"
+          - "'starting LiveKit server' not in (livekit_server_negative_control.stdout + livekit_server_negative_control.stderr)"
+        fail_msg: >-
+          An unconfigured LiveKit Server image did not refuse to start as expected
+          (rc={{ livekit_server_negative_control.rc }},
+          output={{ (livekit_server_negative_control.stdout + livekit_server_negative_control.stderr) | trim | default('none', true) }})
+        success_msg: >-
+          An unconfigured LiveKit Server image refuses to start, so the probes below
+          can only be answered by the instance this role configured
+
+    # A systemd unit reaching "active" only means that `docker start` has not
+    # exited yet. This is the first probe that proves a serving LiveKit
+    # Server, and it proves it on `livekit_server_config_port`, which this
+    # scenario deliberately moved off every default.
+    - name: Wait for the LiveKit Server signaling port to answer (up to 120s)
+      ansible.builtin.command:
+        argv:
+          - python3
+          - -c
+          - |
+            {{ livekit_server_token_preamble }}
+
+            status, body = call("/")
+            print("status=%d body=%s" % (status, summarize(body)))
+          - "{{ livekit_server_config_keys_custom.keys() | first }}"
+          - "{{ livekit_server_config_keys_custom.values() | first }}"
+          - "{{ livekit_server_config_port }}"
+      register: livekit_server_health
+      changed_when: false
+      until: livekit_server_health.rc == 0 and 'status=200' in livekit_server_health.stdout
+      retries: 24
+      delay: 5
+
+    - name: Assert LiveKit Server answers on the port the role configured
+      ansible.builtin.assert:
+        that:
+          - "'status=200' in livekit_server_health.stdout"
+          - "'body=OK' in livekit_server_health.stdout"
+        fail_msg: >-
+          LiveKit Server did not answer on port {{ livekit_server_config_port }}
+          ({{ livekit_server_health.stdout | default('no output') }})
+        success_msg: >-
+          LiveKit Server answers on port {{ livekit_server_config_port }}
+          ({{ livekit_server_health.stdout }})
+
+    # The health endpoint answers anyone, and says nothing about the API keys
+    # that config.yaml carries. Creating a room and then finding it listed is
+    # the smallest complete exercise of the RoomService API: it is
+    # token-authenticated in both directions, it changes server state, and it
+    # reads that state back, so neither call can be satisfied by a server that
+    # merely accepted the token and did nothing.
+    #
+    # The token is signed with the very secret this scenario put in
+    # `livekit_server_config_keys_custom`, and issued by that key's name, so a
+    # pass ties the running process back to the configuration the role wrote.
+    - name: Exercise the LiveKit Server RoomService API with a minted access token
+      ansible.builtin.command:
+        argv:
+          - python3
+          - -c
+          - |
+            {{ livekit_server_token_preamble }}
+
+            token = mint(key_name, secret, admin_grants)
+
+            create_status, create_body = call(
+                "/twirp/livekit.RoomService/CreateRoom",
+                token,
+                json.dumps({"name": "molecule-room"}).encode(),
+            )
+            list_status, list_body = call(
+                "/twirp/livekit.RoomService/ListRooms",
+                token,
+                b"{}",
+            )
+
+            created = json.loads(create_body) if create_status == 200 else {}
+            listed = json.loads(list_body).get("rooms", []) if list_status == 200 else []
+
+            print("create_status=%d create_sid=%s list_status=%d listed_names=%s listed_sids=%s" % (
+                create_status,
+                created.get("sid", "none"),
+                list_status,
+                ",".join(room.get("name", "?") for room in listed) or "none",
+                ",".join(room.get("sid", "?") for room in listed) or "none",
+            ))
+          - "{{ livekit_server_config_keys_custom.keys() | first }}"
+          - "{{ livekit_server_config_keys_custom.values() | first }}"
+          - "{{ livekit_server_config_port }}"
+      register: livekit_server_roomservice
+      changed_when: false
+
+    - name: Assert LiveKit Server accepted the minted token and served the round trip
+      ansible.builtin.assert:
+        that:
+          - "'create_status=200' in livekit_server_roomservice.stdout"
+          - "'list_status=200' in livekit_server_roomservice.stdout"
+          - "'listed_names=molecule-room' in livekit_server_roomservice.stdout"
+          # The room read back must be the very one just created, and not some
+          # other room that a retry or a default left behind.
+          - livekit_server_roomservice.stdout is search('create_sid=(RM_[A-Za-z0-9]+) .*listed_sids=\\1')
+        fail_msg: >-
+          LiveKit Server did not serve the authenticated RoomService round trip
+          ({{ livekit_server_roomservice.stdout | default('no output') }})
+        success_msg: >-
+          LiveKit Server served the authenticated RoomService round trip
+          ({{ livekit_server_roomservice.stdout }})
+
+    # An API that accepts a correctly signed token proves half of the
+    # arrangement; it would prove nothing if it accepted everything. These
+    # three refusals are the other half, and they are distinguishable from one
+    # another on purpose: a server that stopped checking signatures would
+    # answer the wrong-secret call with a 200, and one that never read `keys`
+    # out of config.yaml would not know that "no-such-key" is not one of them.
+    - name: Present LiveKit Server with tokens it must refuse
+      ansible.builtin.command:
+        argv:
+          - python3
+          - -c
+          - |
+            {{ livekit_server_token_preamble }}
+
+            probes = [
+                ("no_token", call("/twirp/livekit.RoomService/ListRooms", None, b"{}")),
+                ("wrong_secret", call("/twirp/livekit.RoomService/ListRooms", mint(key_name, wrong_secret, admin_grants), b"{}")),
+                ("unknown_key", call("/twirp/livekit.RoomService/ListRooms", mint("no-such-key", secret, admin_grants), b"{}")),
+            ]
+
+            for label, (status, body) in probes:
+                print("%s_status=%d %s_body=%s" % (
+                    label, status, label, summarize(body),
+                ))
+          - "{{ livekit_server_config_keys_custom.keys() | first }}"
+          - "{{ livekit_server_config_keys_custom.values() | first }}"
+          - "{{ livekit_server_config_port }}"
+      register: livekit_server_refusals
+      changed_when: false
+
+    - name: Assert LiveKit Server refuses a request carrying no token
+      ansible.builtin.assert:
+        that:
+          - "'no_token_status=401' in livekit_server_refusals.stdout"
+        fail_msg: >-
+          LiveKit Server did not refuse an unauthenticated RoomService call
+          ({{ livekit_server_refusals.stdout | default('no output') }})
+        success_msg: "LiveKit Server refuses an unauthenticated RoomService call"
+
+    # Only the status is asserted, not the wording of the rejection. LiveKit
+    # Server rephrases these messages between releases - v1.13.6 turned
+    # "invalid token: ..." into "invalid authorization token: token signature is
+    # invalid: ..." - and matching the prose turned a cosmetic upstream change
+    # into a failed patch bump. Each probe carries its own label, so the
+    # per-probe status still says which of the three refusals happened.
+    - name: Assert LiveKit Server refuses a token signed with the wrong secret
+      ansible.builtin.assert:
+        that:
+          - "'wrong_secret_status=401' in livekit_server_refusals.stdout"
+        fail_msg: >-
+          LiveKit Server did not refuse a token signed with the wrong secret
+          ({{ livekit_server_refusals.stdout | default('no output') }})
+        success_msg: "LiveKit Server refuses a token signed with the wrong secret"
+
+    - name: Assert LiveKit Server refuses a token issued by an unknown API key
+      ansible.builtin.assert:
+        that:
+          - "'unknown_key_status=401' in livekit_server_refusals.stdout"
+        fail_msg: >-
+          LiveKit Server did not refuse a token issued by an unknown API key
+          ({{ livekit_server_refusals.stdout | default('no output') }})
+        success_msg: "LiveKit Server refuses a token issued by an unknown API key"
+
+    # RoomService is the management API; `/rtc/validate` is what a real client
+    # hits before opening the signaling WebSocket. Probing it too keeps a
+    # regression in the client-facing half of LiveKit Server from hiding
+    # behind a healthy management API.
+    - name: Ask LiveKit Server to validate a room-join token
+      ansible.builtin.command:
+        argv:
+          - python3
+          - -c
+          - |
+            {{ livekit_server_token_preamble }}
+
+            join_grants = {"roomJoin": True, "room": "molecule-room", "canPublish": True, "canSubscribe": True}
+
+            good_status, good_body = call("/rtc/validate?access_token=" + mint(key_name, secret, join_grants))
+            bad_status, bad_body = call("/rtc/validate?access_token=" + mint(key_name, wrong_secret, join_grants))
+
+            # The rejected body is printed last, since it carries the spaces.
+            print("good_status=%d good_body=%s bad_status=%d bad_body=%s" % (
+                good_status, summarize(good_body),
+                bad_status, summarize(bad_body),
+            ))
+          - "{{ livekit_server_config_keys_custom.keys() | first }}"
+          - "{{ livekit_server_config_keys_custom.values() | first }}"
+          - "{{ livekit_server_config_port }}"
+      register: livekit_server_validate
+      changed_when: false
+
+    - name: Assert LiveKit Server validates a room-join token and rejects a forged one
+      ansible.builtin.assert:
+        that:
+          - "'good_status=200' in livekit_server_validate.stdout"
+          # `good_body=success` is LiveKit Server's own word for a validated
+          # token rather than a description of the failure, so it is kept - it
+          # is what distinguishes a validated token from any other 200.
+          - "'good_body=success' in livekit_server_validate.stdout"
+          # The rejection is asserted by status only. LiveKit Server rephrases
+          # its error messages between releases - v1.13.6 turned "invalid
+          # token: ..." into "invalid authorization token: ..." - and matching
+          # the prose turns a cosmetic upstream change into a failed bump.
+          - "'bad_status=401' in livekit_server_validate.stdout"
+        fail_msg: >-
+          LiveKit Server did not validate room-join tokens as expected
+          ({{ livekit_server_validate.stdout | default('no output') }})
+        success_msg: >-
+          LiveKit Server validates a room-join token and rejects a forged one
+          ({{ livekit_server_validate.stdout }})
+
+    # The `prometheus` block of config.yaml is rendered only when
+    # `livekit_server_config_prometheus_enabled` is on, and on a port this
+    # scenario moved off the role's default, so metrics arriving here prove
+    # that block reached the process as well.
+    - name: Fetch the LiveKit Server metrics endpoint
+      ansible.builtin.command:
+        argv:
+          - python3
+          - -c
+          - |
+            {{ livekit_server_token_preamble }}
+
+            status, body = call("/metrics")
+            print("status=%d livekit_metrics=%d" % (
+                status,
+                sum(1 for line in body.splitlines() if line.startswith("livekit_")),
+            ))
+          - "{{ livekit_server_config_keys_custom.keys() | first }}"
+          - "{{ livekit_server_config_keys_custom.values() | first }}"
+          - "{{ livekit_server_config_prometheus_port }}"
+      register: livekit_server_metrics
+      changed_when: false
+
+    - name: Assert LiveKit Server serves metrics on the port the role configured
+      ansible.builtin.assert:
+        that:
+          - "'status=200' in livekit_server_metrics.stdout"
+          - livekit_server_metrics.stdout is search('livekit_metrics=[1-9][0-9]*')
+        fail_msg: >-
+          LiveKit Server did not serve metrics on port {{ livekit_server_config_prometheus_port }}
+          ({{ livekit_server_metrics.stdout | default('no output') }})
+        success_msg: >-
+          LiveKit Server serves metrics on port {{ livekit_server_config_prometheus_port }}
+          ({{ livekit_server_metrics.stdout }})
+
+    # Tying the running version to `livekit_server_version` is what makes this
+    # scenario a real test of the version that Renovate bumps: a bump that
+    # produces an unusable image cannot pass here.
+    #
+    # The version has to be asked of the binary. LiveKit Server logs it at
+    # startup, but the role runs the container with `--log-driver=none`, and
+    # it is not exposed over HTTP - neither `/` nor `/rtc/validate` carries it
+    # in a body or a header.
+    - name: Query the version reported by the running LiveKit Server
+      ansible.builtin.command:
+        cmd: "docker exec {{ livekit_server_defaults.livekit_server_identifier }} /livekit-server --version"
+      register: livekit_server_version_reported
+      changed_when: false
+
+    - name: Assert the running LiveKit Server is the version the role asks for
+      ansible.builtin.assert:
+        # `--version` reports a bare `1.13.5`, while the role pins `v1.13.5`.
+        that:
+          - (livekit_server_version_reported.stdout | trim | split(' ') | last) == (livekit_server_defaults.livekit_server_version | regex_replace('^v', ''))
+        fail_msg: >-
+          LiveKit Server reports {{ livekit_server_version_reported.stdout | trim | default('nothing', true) }},
+          but the role asks for {{ livekit_server_defaults.livekit_server_version }}
+        success_msg: >-
+          LiveKit Server reports {{ livekit_server_version_reported.stdout | trim }},
+          matching the {{ livekit_server_defaults.livekit_server_version }} the role asks for
+
+    - name: Show LiveKit Server verification summary
+      ansible.builtin.debug:
+        msg:
+          - "systemd: {{ livekit_server_service.status.ActiveState }}"
+          - "Unconfigured image: {{ (livekit_server_negative_control.stdout + livekit_server_negative_control.stderr) | trim }}"
+          - "Signaling port {{ livekit_server_config_port }}: {{ livekit_server_health.stdout }}"
+          - "RoomService round trip: {{ livekit_server_roomservice.stdout }}"
+          - "Refused tokens: {{ livekit_server_refusals.stdout | replace('\n', ' ') }}"
+          - "Token validation: {{ livekit_server_validate.stdout }}"
+          - "Metrics port {{ livekit_server_config_prometheus_port }}: {{ livekit_server_metrics.stdout }}"
+          - "Version: {{ livekit_server_version_reported.stdout | trim }}"

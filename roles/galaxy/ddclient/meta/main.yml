@@ -3,7 +3,7 @@ galaxy_info:
   author: Suguru Hirahara
   company: progressiv
   role_name: ddclient
-  namespace: progressiv
+  namespace: mash
   description: ddclient
   platforms:
     - name: Debian

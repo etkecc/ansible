@@ -47,7 +47,17 @@ Currently there is one testing scenario available.
 
 ### `default`
 
-Tests a standard ntfy installation.
+Tests a standard ntfy installation, with access control turned on: the scenario declares one administrator account, which leaves anonymous visitors with the role's default `deny-all` plus its UnifiedPush exception.
+
+Verification walks up from the systemd unit to ntfy actually doing its job:
+
+1. the unit reaches `active`, and `/v1/health` answers
+1. the version the running binary reports matches `ntfy_version` in [`defaults/main.yml`](../defaults/main.yml)
+1. the configuration the role rendered reaches the running process, read back from the server's own `/config.js`
+1. an anonymous publish to a topic no access-control entry covers is refused, while one to a UnifiedPush (`up*`) topic is accepted but cannot be read back anonymously
+1. the published message is polled back through the authenticated account, completing a round-trip
+
+An ntfy that never received this role's configuration would still pass the first two steps — the stock image ships no configuration file at all and simply runs on ntfy's own defaults — so the later ones are what distinguish a configured ntfy from a merely running one.
 
 ## Running
 

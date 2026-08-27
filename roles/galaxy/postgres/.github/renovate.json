@@ -1,44 +1,22 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended",
-    ":semanticCommitsDisabled"
-  ],
-  "labels": [
-    "dependencies"
+    "github>mother-of-all-self-hosting/renovate-config#v1.0.0"
   ],
   "separateMajorMinor": true,
   "packageRules": [
     {
+      "description": "A new Postgres major becomes a new variable, never a bump of an old one; Postgres has no patch releases in its versioning",
       "matchPackageNames": ["/postgres/"],
       "matchUpdateTypes": ["major", "patch"],
       "enabled": false
     },
     {
-      "matchFileNames": [
-        ".github/workflows/close-stale-issues.yml",
-        ".github/workflows/molecule.yml",
-        ".github/workflows/pre-commit.yml",
-        ".pre-commit-config.yaml",
-        ".python-version",
-        "mise.toml",
-        "molecule/requirements.txt"
-      ],
-      "enabled": true,
+      "description": "Postgres minor releases (17.11 -> 17.12) are upstream bugfix-only: automerge via branch push once Molecule is green",
+      "matchManagers": ["custom.regex"],
+      "matchUpdateTypes": ["minor"],
       "automerge": true,
-      "automergeType": "branch",
-      "schedule": ["* * 1 */6 *"],
-      "automergeSchedule": ["* * 1-14 */6 *"]
-    },
-    {
-      "matchFileNames": [
-        "molecule/**/requirements.yml"
-      ],
-      "enabled": true,
-      "automerge": true,
-      "automergeType": "branch",
-      "ignoreUnstable": false,
-      "versioning": "loose"
+      "automergeType": "branch"
     }
   ],
   "customManagers": [
@@ -54,11 +32,5 @@
       "datasourceTemplate": "docker",
       "versioningTemplate": "semver-coerced"
     }
-  ],
-  "pre-commit": {
-    "enabled": true
-  },
-  "pyenv": {
-    "enabled": true
-  }
+  ]
 }

@@ -35,10 +35,7 @@ jobs:
           key: arch-prek-v1-${{ hashFiles('.pre-commit-config.yaml') }}
 
       - name: Install dependencies
-        run: pacman -S --noconfirm --needed just mise python ansible-core
-
-      - name: Install Ansible collections
-        run: ansible-galaxy collection install -r molecule/default/requirements.yml
+        run: pacman -S --noconfirm --needed just mise python
 
       - name: Run prek hooks
         run: |

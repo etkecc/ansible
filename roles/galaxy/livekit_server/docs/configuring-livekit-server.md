@@ -82,7 +82,10 @@ livekit_server_config_keys_custom:
   key2: secret2
 ```
 
-**Note**: on the MDAD playbook, the key value is specified with `livekit_server_config_keys_auto` by default, so you do not need to add them. See its [`matrix_servers`](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/group_vars/matrix_servers) for details.
+>[!NOTE]
+>
+> - The value should be at least 32 characters long.
+> - On the MDAD playbook, the key value is specified with `livekit_server_config_keys_auto` by default, so you do not need to add them. See its [`matrix_servers`](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/group_vars/matrix_servers) for details.
 
 ### TURN TLS modes
 

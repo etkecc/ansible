@@ -1,4 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -10,6 +12,15 @@
   vars:
     grafana_url: "http://localhost:3000"
   tasks:
+    # The role is not included in this playbook, so its defaults are not in
+    # scope. Reading defaults/main.yml directly keeps the version assertion
+    # below tied to the value that Renovate bumps, with nothing to keep in sync
+    # in this scenario. include_vars reads from the controller.
+    - name: Load the Grafana role defaults
+      ansible.builtin.include_vars:
+        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+        name: grafana_defaults
+
     - name: Wait for Grafana to become active (up to 180s)
       ansible.builtin.systemd:
         name: grafana.service
@@ -23,6 +34,12 @@
         that: grafana_service.status.ActiveState == 'active'
         fail_msg: "grafana.service not active ({{ grafana_service.status.ActiveState }})"
         success_msg: "grafana.service is active"
+
+    - name: Retrieve Grafana service log for debugging
+      when: grafana_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu grafana.service
+      changed_when: false
 
     - name: Wait for Grafana HTTP API to respond (up to 120s)
       ansible.builtin.uri:
@@ -39,6 +56,46 @@
         that: grafana_health.json.database == 'ok'
         fail_msg: "Grafana database health: {{ grafana_health.json.database | default('no response') }}"
         success_msg: "Grafana database is ok"
+
+    # Compared as a prefix, so that a version reported with a build suffix
+    # keeps matching. Grafana sends no version response header, so this payload
+    # is the honest surface for it.
+    - name: Assert the running Grafana is the version this role installs
+      ansible.builtin.assert:
+        that: grafana_health.json.version.startswith(grafana_defaults.grafana_version)
+        fail_msg: "Grafana reports {{ grafana_health.json.version }}, expected {{ grafana_defaults.grafana_version }}"
+        success_msg: "Grafana reports {{ grafana_health.json.version }}"
+
+    # Reports the configuration the Grafana process actually parsed. The
+    # settings asserted below are all ones this scenario overrides away from
+    # both the role defaults and the image defaults, so observing them here
+    # proves the templated grafana.ini reached the process rather than merely
+    # having been written to disk.
+    - name: Query the settings the Grafana process is running with
+      ansible.builtin.uri:
+        url: "{{ grafana_url }}/api/admin/settings"
+        method: GET
+        url_username: "{{ grafana_default_admin_user }}"
+        url_password: "{{ grafana_default_admin_password }}"
+        force_basic_auth: true
+        follow_redirects: none
+        status_code: 200
+      register: grafana_settings
+
+    - name: Assert Grafana runs with the configuration this scenario generated
+      ansible.builtin.assert:
+        that:
+          - grafana_settings.json.security.admin_user == grafana_default_admin_user
+          - grafana_settings.json.server.root_url == 'https://' ~ grafana_hostname ~ grafana_defaults.grafana_path_prefix
+          - grafana_settings.json.security.allow_embedding | bool
+          - grafana_settings.json.metrics.enabled | bool
+        fail_msg: >-
+          Grafana is not running with the configuration this scenario generated:
+          admin_user={{ grafana_settings.json.security.admin_user }},
+          root_url={{ grafana_settings.json.server.root_url }},
+          allow_embedding={{ grafana_settings.json.security.allow_embedding }},
+          metrics.enabled={{ grafana_settings.json.metrics.enabled }}
+        success_msg: "Grafana runs with the configuration this scenario generated"
 
     - name: Query provisioned datasources via the Grafana API
       ansible.builtin.uri:
@@ -235,7 +292,10 @@
         msg:
           - "Grafana systemd: {{ grafana_service.status.ActiveState }}"
           - "Grafana HTTP: {{ grafana_health.status }}"
+          - "Grafana version: {{ grafana_health.json.version }} (role installs {{ grafana_defaults.grafana_version }})"
           - "Grafana database: {{ grafana_health.json.database }}"
+          - "root_url: {{ grafana_settings.json.server.root_url }}"
+          - "admin_user: {{ grafana_settings.json.security.admin_user }}"
           - "datasources: {{ grafana_datasources.json | map(attribute='name') | list }}"
           - "metrics HTTP: {{ grafana_metrics.status }}"
           - "alert rules: {{ grafana_alert_rules.json | map(attribute='title') | list }}"

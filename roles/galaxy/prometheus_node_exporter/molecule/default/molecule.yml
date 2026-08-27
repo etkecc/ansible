@@ -1,0 +1,90 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+dependency:
+  name: galaxy
+  options:
+    requirements-file: requirements.yml
+    force: true
+driver:
+  name: docker
+platforms:
+  - name: prometheus-node-exporter-${MOLECULE_DISTRO:-ubuntu2604}-default
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2604}-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callback_result_format: yaml
+  inventory:
+    group_vars:
+      all:
+        # Helper variables
+        prometheus_node_exporter_debug_service_enabled: false
+
+        # The port on the test container that the exporter is published on, so
+        # that the verifier can scrape it over HTTP.
+        prometheus_node_exporter_molecule_http_bind_port: 9100
+
+        # A filesystem that exists only in the test container's mount
+        # namespace, mounted by prepare.yml. The role gives the exporter
+        # container the host root at /host and points the exporter at it with
+        # `--path.rootfs=/host`, so this filesystem shows up in the metrics
+        # only when both of those actually took effect - and it shows up under
+        # its host path rather than under /host, which is what proves that the
+        # rootfs prefix is being stripped rather than merely mounted.
+        prometheus_node_exporter_molecule_hostfs_mount_point: /mnt/prometheus-node-exporter-molecule-hostfs
+
+        # The device name given to that filesystem. It is arbitrary for tmpfs,
+        # which is exactly why it makes an unmistakable marker in the metrics.
+        prometheus_node_exporter_molecule_hostfs_device: prometheus-node-exporter-molecule-hostfs
+
+        # The size of that filesystem, in bytes (64 MiB). A multiple of every
+        # plausible page size, so that what the exporter reports for it is this
+        # number exactly rather than something rounded.
+        prometheus_node_exporter_molecule_hostfs_size_bytes: 67108864
+
+        # A directory on the test container that prepare.yml seeds a textfile
+        # collector file into. It is handed to the exporter through the role's
+        # own process-arguments knob below, prefixed with /host because the
+        # textfile directory is read inside the container and is not subject to
+        # the rootfs prefix.
+        prometheus_node_exporter_molecule_textfile_directory: /var/lib/prometheus-node-exporter-molecule-textfile
+        prometheus_node_exporter_molecule_textfile_metric_name: mash_molecule_textfile_probe
+        prometheus_node_exporter_molecule_textfile_metric_value: 42
+
+        # Variables for Prometheus node exporter
+        prometheus_node_exporter_uid: 1000
+        prometheus_node_exporter_gid: 1000
+        prometheus_node_exporter_hostname: localhost
+        prometheus_node_exporter_container_labels_metrics_enabled: false
+        prometheus_node_exporter_container_http_host_bind_port: "127.0.0.1:{{ prometheus_node_exporter_molecule_http_bind_port }}"
+
+        # Both of these are off unless somebody asks for them, which is what
+        # makes them useful here:
+        #
+        # - the textfile collector is compiled in and enabled by default, but
+        #   collects nothing at all until it is given a directory
+        # - the processes collector is disabled by default
+        #
+        # Seeing either of them in the metrics therefore means this list
+        # reached the exporter process, rather than the role having merely
+        # started a container with its own defaults.
+        prometheus_node_exporter_process_extra_arguments_custom:
+          - "--collector.textfile.directory=/host{{ prometheus_node_exporter_molecule_textfile_directory }}"
+          - "--collector.processes"
+  env:
+    # Workaround for https://github.com/ansible/molecule/issues/4391
+    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles
+verifier:
+  name: ansible

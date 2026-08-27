@@ -1,0 +1,281 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify ddclient
+  hosts: all
+  become: true
+  gather_facts: false
+
+  vars:
+    # ddclient normally works out the address to publish by asking a discovery
+    # service. The dry runs below hand it a fixed address instead, so that they
+    # neither depend on nor perform such a lookup. This is TEST-NET-3, reserved
+    # by RFC 5737 for documentation.
+    ddclient_verify_probe_address: 203.0.113.5
+
+    # A configuration that is deliberately not the one the role rendered, used
+    # to show that the dry run reports what it reads rather than something
+    # canned. Both names are in ranges that cannot resolve.
+    ddclient_verify_decoy_provider: molecule-decoy-provider.invalid
+    ddclient_verify_decoy_domain: molecule-decoy-host.example.org
+
+  tasks:
+    # The role is not included in this playbook, so its defaults are not in
+    # scope. Reading defaults/main.yml directly keeps the version assertion
+    # below tied to the value that Renovate bumps, with nothing to keep in sync
+    # in this scenario. include_vars reads from the controller.
+    #
+    # Only plain literal values may be read out of this namespace: the defaults
+    # that are Jinja expressions would be evaluated against variables that do
+    # not exist here. That is why the configuration path is spelled out from
+    # the identifier below rather than read from ddclient_config_path.
+    - name: Load the ddclient role defaults
+      ansible.builtin.include_vars:
+        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+        name: ddclient_defaults
+
+    - name: Wait for ddclient service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: ddclient.service
+      register: ddclient_service
+      until: ddclient_service.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert ddclient service is active
+      ansible.builtin.assert:
+        that: ddclient_service.status.ActiveState == 'active'
+        fail_msg: "ddclient.service not active ({{ ddclient_service.status.ActiveState }})"
+        success_msg: "ddclient.service is active"
+
+    - name: Retrieve ddclient service log for debugging
+      when: ddclient_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu ddclient.service
+      changed_when: false
+
+    # An active unit says very little on its own here. A ddclient container
+    # given no usable configuration at all still starts, still reports itself
+    # healthy and still sits there running, because ddclient treats a missing,
+    # empty or syntactically broken configuration file as "nothing to do" and
+    # exits 0. Everything below therefore checks what the daemon is configured
+    # with, not merely that it is up.
+    - name: Read the ddclient configuration file this role rendered
+      ansible.builtin.slurp:
+        src: "/{{ ddclient_defaults.ddclient_identifier }}/config/ddclient.conf"
+      register: ddclient_config_file
+
+    - name: Assert the rendered configuration carries what this scenario asked for
+      ansible.builtin.assert:
+        that:
+          - "'server=' ~ ddclient_verify_provider in ddclient_config_file.content | b64decode"
+          - "'protocol=' ~ ddclient_verify_protocol in ddclient_config_file.content | b64decode"
+          - "ddclient_verify_domain in ddclient_config_file.content | b64decode"
+          - "'daemon=' ~ ddclient_daemon_interval in ddclient_config_file.content | b64decode"
+        fail_msg: "The rendered ddclient.conf does not describe {{ ddclient_verify_domain }} at {{ ddclient_verify_provider }}"
+        success_msg: "The rendered ddclient.conf describes {{ ddclient_verify_domain }} at {{ ddclient_verify_provider }}"
+
+    # Queried via the docker CLI rather than community.docker.docker_container_info,
+    # because the ansible-lint environment used by pre-commit does not have the
+    # community.docker collection and would fail the syntax check. The full JSON
+    # is parsed here rather than using `--format`, whose Go templating would
+    # collide with Jinja.
+    - name: Inspect the running ddclient container
+      ansible.builtin.command:
+        cmd: "docker inspect {{ ddclient_defaults.ddclient_identifier }}"
+      register: ddclient_container_inspect
+      changed_when: false
+
+    - name: Assert the ddclient container is running the image this role installs
+      ansible.builtin.assert:
+        that:
+          - (ddclient_container_inspect.stdout | from_json | first).State.Running
+          - "':' ~ ddclient_defaults.ddclient_version in (ddclient_container_inspect.stdout | from_json | first).Config.Image"
+        fail_msg: "The ddclient container is not running linuxserver/ddclient:{{ ddclient_defaults.ddclient_version }}"
+        success_msg: "The ddclient container is running linuxserver/ddclient:{{ ddclient_defaults.ddclient_version }}"
+
+    # The first of two independent ways of showing that the rendered file is
+    # what the live daemon read, and the one that looks at the daemon itself.
+    #
+    # ddclient rewrites its own process title while it waits between passes, to
+    # "ddclient - sleeping for N seconds", where N counts down from the
+    # `daemon=` value of the configuration it loaded. The container image
+    # installs its own fallback configuration whenever the role's file is not
+    # there, and that fallback says `daemon=300`. A daemon sleeping on this
+    # scenario's far longer interval is therefore one that read the role's
+    # file, and could not be one that fell back.
+    - name: Wait for the ddclient daemon to settle between passes (up to 120s)
+      ansible.builtin.command:
+        cmd: "docker exec {{ ddclient_defaults.ddclient_identifier }} ps -eo args"
+      register: ddclient_process_list
+      changed_when: false
+      until: "'ddclient - sleeping for' in ddclient_process_list.stdout"
+      retries: 24
+      delay: 5
+
+    - name: Determine the interval the running ddclient daemon is sleeping on
+      ansible.builtin.set_fact:
+        ddclient_sleep_seconds: >-
+          {{
+            ddclient_process_list.stdout
+            | regex_search('ddclient - sleeping for ([0-9]+) seconds', '\1')
+            | first | int
+          }}
+
+    - name: Assert the running daemon sleeps on the interval this role configured
+      ansible.builtin.assert:
+        that:
+          - ddclient_sleep_seconds | int <= ddclient_daemon_interval | int
+          - ddclient_sleep_seconds | int > 300
+        fail_msg: >-
+          The daemon sleeps {{ ddclient_sleep_seconds }}s, which does not belong to the configured
+          {{ ddclient_daemon_interval }}s interval - it looks like the image's own fallback configuration
+        success_msg: >-
+          The daemon sleeps {{ ddclient_sleep_seconds }}s, which belongs to the configured
+          {{ ddclient_daemon_interval }}s interval
+
+    # The second way, and the one that shows what the configuration actually
+    # means to ddclient rather than only that it arrived.
+    #
+    # `--noexec` makes ddclient parse the configuration, work out every request
+    # it would send and print each one prefixed with "would request:", without
+    # sending any of them - not the update, and not even the address lookup. So
+    # this reports the provider, protocol and hostname the daemon is set up to
+    # publish to while leaving the outside world untouched, which is the whole
+    # of what can honestly be checked about a dynamic DNS updater.
+    #
+    # It reads /config/ddclient.conf, the very path the image's service script
+    # passes to the daemon it supervises, so a run that reports this scenario's
+    # provider is reading the same bytes the daemon did.
+    #
+    # ddclient writes all of this to stderr, and it does not exit on its own:
+    # `daemon=` in the configuration file outranks `--daemon=0` on the command
+    # line, so after one pass it goes to sleep. `timeout` inside the container
+    # ends it once it has said what it would do, and the non-zero status that
+    # produces is expected rather than a failure.
+    - name: Ask ddclient what it would send, without letting it send anything
+      ansible.builtin.command:
+        cmd: >-
+          docker exec {{ ddclient_defaults.ddclient_identifier }}
+          timeout 30 ddclient
+          --file /config/ddclient.conf
+          --daemon=0 --foreground --noexec --force --verbose --noquiet
+          --usev4=ipv4 --ipv4={{ ddclient_verify_probe_address }}
+      register: ddclient_dry_run
+      changed_when: false
+      failed_when: false
+
+    - name: Assert the dry run describes the update this scenario configured
+      ansible.builtin.assert:
+        that:
+          - >-
+            'would request: https://' ~ ddclient_verify_provider ~ '/nic/update?hostname=' ~ ddclient_verify_domain
+            in ddclient_dry_run.stderr
+          - "'[' ~ ddclient_verify_protocol ~ '][' ~ ddclient_verify_domain ~ ']' in ddclient_dry_run.stderr"
+          - ddclient_verify_decoy_provider not in ddclient_dry_run.stderr
+        fail_msg: >-
+          The running daemon's configuration does not describe a {{ ddclient_verify_protocol }} update
+          of {{ ddclient_verify_domain }} at {{ ddclient_verify_provider }}
+        success_msg: >-
+          The running daemon would send a {{ ddclient_verify_protocol }} update
+          of {{ ddclient_verify_domain }} to {{ ddclient_verify_provider }}
+
+    # The check above is only worth something if the same probe would report
+    # something else when given something else. Pointing it at a configuration
+    # naming a different provider and a different host, and seeing both of them
+    # come back, rules out an assertion that passes on canned output.
+    #
+    # The file is written into the directory the role bind-mounts, so it shows
+    # up inside the container without any need to shell text in. It gets its
+    # own cache file, so that it cannot disturb the daemon's.
+    - name: Install a decoy configuration for the falsification check
+      ansible.builtin.copy:
+        dest: "/{{ ddclient_defaults.ddclient_identifier }}/config/molecule-decoy.conf"
+        mode: "0600"
+        owner: "{{ ddclient_uid }}"
+        group: "{{ ddclient_gid }}"
+        content: |
+          syslog=no
+          protocol={{ ddclient_verify_protocol }}
+          server={{ ddclient_verify_decoy_provider }}
+          login='decoy'
+          password='decoy'
+          {{ ddclient_verify_decoy_domain }}
+
+    - name: Ask ddclient what it would send for the decoy configuration
+      ansible.builtin.command:
+        cmd: >-
+          docker exec {{ ddclient_defaults.ddclient_identifier }}
+          timeout 30 ddclient
+          --file /config/molecule-decoy.conf
+          --cache /tmp/molecule-decoy.cache
+          --daemon=0 --foreground --noexec --force --verbose --noquiet
+          --usev4=ipv4 --ipv4={{ ddclient_verify_probe_address }}
+      register: ddclient_decoy_dry_run
+      changed_when: false
+      failed_when: false
+
+    - name: Remove the decoy configuration
+      ansible.builtin.file:
+        path: "/{{ ddclient_defaults.ddclient_identifier }}/config/molecule-decoy.conf"
+        state: absent
+
+    - name: Assert the dry run follows the configuration it is given
+      ansible.builtin.assert:
+        that: >-
+          'would request: https://' ~ ddclient_verify_decoy_provider ~ '/nic/update?hostname=' ~ ddclient_verify_decoy_domain
+          in ddclient_decoy_dry_run.stderr
+        fail_msg: >-
+          The dry run did not report the decoy provider, so the assertion above does not
+          demonstrate that it reads the configuration it is pointed at
+        success_msg: >-
+          The dry run reports the decoy provider when given the decoy configuration,
+          so it does read the configuration it is pointed at
+
+    # ddclient reports the upstream version, which is what ddclient_version
+    # names and what Renovate bumps.
+    - name: Ask the running container which ddclient it carries
+      ansible.builtin.command:
+        cmd: "docker exec {{ ddclient_defaults.ddclient_identifier }} ddclient --version"
+      register: ddclient_version_output
+      changed_when: false
+
+    - name: Assert the running ddclient is the version this role installs
+      ansible.builtin.assert:
+        that: ddclient_version_output.stdout_lines | first == 'ddclient version ' ~ ddclient_defaults.ddclient_version
+        fail_msg: >-
+          The container reports "{{ ddclient_version_output.stdout_lines | first }}"
+          instead of ddclient version {{ ddclient_defaults.ddclient_version }}
+        success_msg: "The running ddclient reports version {{ ddclient_defaults.ddclient_version }}"
+
+    # A second, independent surface for the same thing, on the LinuxServer side
+    # of the image rather than ddclient's own. This one is matched by prefix:
+    # LinuxServer appends its own build counter to the upstream version, so the
+    # value reads "v4.0.0-ls230" for a role installing 4.0.0, and the build
+    # counter moves without the ddclient version moving.
+    - name: Read the LinuxServer build version from the running container
+      ansible.builtin.command:
+        cmd: "docker exec {{ ddclient_defaults.ddclient_identifier }} cat /build_version"
+      register: ddclient_build_version
+      changed_when: false
+
+    - name: Assert the image was built for the version this role installs
+      ansible.builtin.assert:
+        that: "'Linuxserver.io version: v' ~ ddclient_defaults.ddclient_version in ddclient_build_version.stdout"
+        fail_msg: >-
+          The image reports "{{ ddclient_build_version.stdout_lines | first }}",
+          which was not built for ddclient {{ ddclient_defaults.ddclient_version }}
+        success_msg: "The image was built for ddclient {{ ddclient_defaults.ddclient_version }}"
+
+    - name: Show ddclient verification summary
+      ansible.builtin.debug:
+        msg:
+          - "ddclient systemd: {{ ddclient_service.status.ActiveState }}"
+          - "ddclient version: {{ ddclient_version_output.stdout_lines | first }}"
+          - "image build: {{ ddclient_build_version.stdout_lines | first }}"
+          - "daemon sleeping on: {{ ddclient_sleep_seconds }}s of {{ ddclient_daemon_interval }}s"
+          - "would update: {{ ddclient_verify_domain }} at {{ ddclient_verify_provider }} via {{ ddclient_verify_protocol }}"

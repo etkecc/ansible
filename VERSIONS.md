@@ -27,14 +27,14 @@
 * Hydrogen: v0.5.1
 * Jitsi: stable-11146-2
 * Jitsi LDAP: 3
-* Jitsi User Verification: 2839499cb03894d8cfc3e5b2219441427cb133d8
+* Jitsi User Verification: 19b69e543cdb99b16a939eeed921d7ed1da57d44
 * Ketesa: v1.4.0
 * Languagetool: 6.8
 * Line Bridge: 412eda7f028f0ee946d6fe584c64c7e97f27c7a7
 * Linkding: 1.46.2
 * LinkedIn Bridge: v0.2608.0
 * Livekit JWT Service: 0.6.0
-* Livekit Server: v1.13.5
+* Livekit Server: v1.13.6
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.6.0
 * Meta Instagram Bridge: v0.2608.0
@@ -74,7 +74,7 @@
 * Synapse Reverse Proxy Companion: 1.31.4-alpine
 * Synapse S3 Storage Provider: 1.7.0
 * Telegram Bridge: v0.2608.0
-* Traefik: v3.7.11
+* Traefik: v3.7.12
 * Traefik Certs Dumper: v2.11.4
 * Traefik Proxy Protocol: 1
 * Twitter Bridge: v0.2608.0

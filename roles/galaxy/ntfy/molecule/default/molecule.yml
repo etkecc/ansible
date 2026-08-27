@@ -1,5 +1,6 @@
-# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -31,6 +32,19 @@ provisioner:
         # Helper variables
         ntfy_debug_service_enabled: false
 
+        # The topics, message and account used by verify.yml.
+        #
+        # The round-trip topic name starts with `up`, because that is the one
+        # thing this role's default access-control entry lets an anonymous
+        # visitor publish to (the UnifiedPush case). The denied topic is
+        # deliberately named so that it does not, and so falls through to
+        # `ntfy_auth_default_access`.
+        ntfy_verify_topic: upmoleculentfy
+        ntfy_verify_denied_topic: molecule-ntfy-denied
+        ntfy_verify_message: molecule-ntfy-round-trip-marker
+        ntfy_verify_username: molecule-admin
+        ntfy_verify_password: molecule-ntfy-password
+
         # Variables for ntfy
         ntfy_uid: 1000
         ntfy_gid: 1000
@@ -38,7 +52,35 @@ provisioner:
         ntfy_hostname: localhost
         ntfy_container_labels_traefik_enabled: false
         ntfy_container_http_host_bind_port: 8080
+
+        # `/config.js` - the only way to read the running server's own view of
+        # its configuration back out of it - is served only when the web app
+        # is. With the role's default of `disable`, both `/` and `/config.js`
+        # answer 404.
         ntfy_web_root: app
+
+        # Declaring a user turns `ntfy_auth_enabled` on, which is what gives
+        # this scenario an `auth-default-access: deny-all` server to verify
+        # against, and provisions the account that reads the round-trip
+        # message back (anonymous visitors may only write to `up*`).
+        #
+        # The hash is bcrypt for `ntfy_verify_password`, with every dollar
+        # sign doubled. Molecule interpolates this file before Ansible sees
+        # it, so a single dollar sign opens a variable reference and the file
+        # is rejected outright; the doubling is undone again before the value
+        # reaches Ansible.
+        ntfy_auth_users_custom:
+          - username: "{{ ntfy_verify_username }}"
+            password_hash: "$$2b$$10$$GqaPo6rnXXhEAWHwHO06uuRUakh8WO4EJ5SsgOsl5RUX/yaFkDXOS"
+            role: admin
+
+        # Deliberately unlike both this role's default and the value a
+        # configuration-less ntfy would use (both `false`), so that
+        # verification fails loudly when the rendered server.yml does not
+        # reach the running process. ntfy refuses to start with this set
+        # unless an auth file is configured, so it also witnesses that the
+        # auth half of the template was rendered.
+        ntfy_enable_reservations: true
   env:
     # Workaround for https://github.com/ansible/molecule/issues/4391
     ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles

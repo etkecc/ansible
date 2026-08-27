@@ -1,13 +1,26 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2026 spatterlight
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: Verify Grafana systemd service
+- name: Verify Grafana
   hosts: all
   become: true
   gather_facts: false
+  vars:
+    grafana_verify_base_url: "http://127.0.0.1:{{ grafana_container_http_host_bind_port }}"
   tasks:
+    # The role is not included in this playbook, so its defaults are not in
+    # scope. Reading defaults/main.yml directly keeps the assertions below tied
+    # to the values that Renovate bumps and that the role templates, with
+    # nothing to keep in sync in this scenario. include_vars reads from the
+    # controller.
+    - name: Load the Grafana role defaults
+      ansible.builtin.include_vars:
+        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+        name: grafana_defaults
+
     - name: Wait for Grafana to become active (up to 180s)
       ansible.builtin.systemd:
         name: grafana.service
@@ -22,25 +35,143 @@
         fail_msg: "grafana.service not active ({{ grafana_service.status.ActiveState }})"
         success_msg: "grafana.service is active"
 
-    - name: Wait for Grafana HTTP API to respond (up to 120s)
+    - name: Retrieve Grafana service log for debugging
+      when: grafana_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu grafana.service
+      changed_when: false
+
+    # A Grafana that ignored every file this role wrote still answers here with
+    # a 200 and a healthy database - the image ships defaults that work, and it
+    # serves a login page either way. This endpoint therefore only establishes
+    # that something is serving, and which version it is. The assertions that
+    # tell a role-configured Grafana apart from a bare container come after it.
+    - name: Wait for the Grafana API to report its health (up to 120s)
       ansible.builtin.uri:
-        url: "http://localhost:3000/api/health"
+        url: "{{ grafana_verify_base_url }}/api/health"
         method: GET
-        status_code: 200
+        follow_redirects: none
       register: grafana_health
       until: grafana_health.status == 200
       retries: 24
       delay: 5
 
-    - name: Assert Grafana API reports a healthy database
+    - name: Assert Grafana reports a healthy database
       ansible.builtin.assert:
         that: grafana_health.json.database == 'ok'
         fail_msg: "Grafana database health: {{ grafana_health.json.database | default('no response') }}"
         success_msg: "Grafana database is ok"
 
-    - name: Show Grafana status summary
+    # Compared as a prefix, so that a version reported with a build suffix
+    # keeps matching. Grafana sends no version response header, so this payload
+    # is the honest surface for it.
+    - name: Assert the running Grafana is the version this role installs
+      ansible.builtin.assert:
+        that: grafana_health.json.version.startswith(grafana_defaults.grafana_version)
+        fail_msg: "Grafana reports {{ grafana_health.json.version }}, expected {{ grafana_defaults.grafana_version }}"
+        success_msg: "Grafana reports {{ grafana_health.json.version }}"
+
+    - name: Query the Grafana organization with the configured admin credentials
+      ansible.builtin.uri:
+        url: "{{ grafana_verify_base_url }}/api/org"
+        method: GET
+        url_username: "{{ grafana_defaults.grafana_default_admin_user }}"
+        url_password: "{{ grafana_defaults.grafana_default_admin_password }}"
+        force_basic_auth: true
+        follow_redirects: none
+      register: grafana_org
+
+    - name: Assert the configured admin credentials authenticate
+      ansible.builtin.assert:
+        that:
+          - grafana_org.status == 200
+          - grafana_org.json.name | length > 0
+        fail_msg: "Grafana did not accept the configured admin credentials: {{ grafana_org.status }}"
+        success_msg: "Grafana accepted the configured admin credentials for org '{{ grafana_org.json.name }}'"
+
+    # Negative control for the round-trip above: without it, a Grafana that
+    # waved every request through would pass it just as happily. This scenario
+    # runs the role's default credentials, so what is established here is that
+    # the API is genuinely authenticated - the `features` scenario is the one
+    # that proves custom credentials reach the process.
+    - name: Attempt to query the Grafana organization with a wrong password
+      ansible.builtin.uri:
+        url: "{{ grafana_verify_base_url }}/api/org"
+        method: GET
+        url_username: "{{ grafana_defaults.grafana_default_admin_user }}"
+        url_password: "{{ grafana_defaults.grafana_default_admin_password }}-wrong"
+        force_basic_auth: true
+        follow_redirects: none
+        status_code: 401
+      register: grafana_org_rejected
+
+    - name: Assert Grafana rejected the wrong password
+      ansible.builtin.assert:
+        that: grafana_org_rejected.status == 401
+        fail_msg: "Grafana answered {{ grafana_org_rejected.status }} to a wrong password rather than 401"
+        success_msg: "Grafana rejected the wrong password"
+
+    # Reports the configuration the Grafana process actually parsed, which is
+    # what ties the served instance back to the grafana.ini this role rendered.
+    - name: Query the settings the Grafana process is running with
+      ansible.builtin.uri:
+        url: "{{ grafana_verify_base_url }}/api/admin/settings"
+        method: GET
+        url_username: "{{ grafana_defaults.grafana_default_admin_user }}"
+        url_password: "{{ grafana_defaults.grafana_default_admin_password }}"
+        force_basic_auth: true
+        follow_redirects: none
+      register: grafana_settings
+
+    # `root_url` is assembled by this role out of the hostname and the path
+    # prefix, and exists nowhere in the image: a Grafana running on its own
+    # defaults reports the uninterpolated
+    # `%(protocol)s://%(domain)s:%(http_port)s/`. A match therefore proves that
+    # the templated grafana.ini reached the process, rather than merely having
+    # been written to disk.
+    #
+    # `metrics.enabled` proves the same from the other direction: the image
+    # enables metrics, this role disables them by default, so the value
+    # observed here can only have come from the role's configuration.
+    - name: Assert Grafana runs with the configuration this role generated
+      ansible.builtin.assert:
+        that:
+          - grafana_settings.json.server.root_url == 'https://' ~ grafana_hostname ~ grafana_defaults.grafana_path_prefix
+          - grafana_settings.json['auth.anonymous'].enabled == 'false'
+          - grafana_settings.json.metrics.enabled == 'false'
+        fail_msg: >-
+          Grafana is not running with the configuration this role generated:
+          root_url={{ grafana_settings.json.server.root_url }},
+          auth.anonymous.enabled={{ grafana_settings.json['auth.anonymous'].enabled }},
+          metrics.enabled={{ grafana_settings.json.metrics.enabled }}
+        success_msg: "Grafana runs with the configuration this role generated"
+
+    # The functional consequence of the `metrics.enabled` setting above. With
+    # metrics on, this endpoint answers 200 with a Prometheus exposition; with
+    # them off, Grafana stops serving it and redirects to the login page.
+    - name: Retrieve the Grafana metrics endpoint
+      ansible.builtin.uri:
+        url: "{{ grafana_verify_base_url }}/metrics"
+        method: GET
+        follow_redirects: none
+        return_content: true
+        status_code: [200, 302, 404]
+      register: grafana_metrics
+
+    - name: Assert Grafana serves no metrics while they are disabled
+      ansible.builtin.assert:
+        that:
+          - grafana_metrics.status != 200
+          - "'grafana_build_info' not in (grafana_metrics.content | default(''))"
+        fail_msg: "Grafana serves metrics ({{ grafana_metrics.status }}) even though they are disabled"
+        success_msg: "Grafana serves no metrics while they are disabled ({{ grafana_metrics.status }})"
+
+    - name: Show Grafana verification summary
       ansible.builtin.debug:
         msg:
-          - "Grafana systemd: {{ grafana_service.status.ActiveState }}"
-          - "Grafana HTTP: {{ grafana_health.status }}"
-          - "Grafana database: {{ grafana_health.json.database }}"
+          - "systemd: {{ grafana_service.status.ActiveState }}"
+          - "version: {{ grafana_health.json.version }} (role installs {{ grafana_defaults.grafana_version }})"
+          - "database: {{ grafana_health.json.database }}"
+          - "org: {{ grafana_org.json.name }}"
+          - "root_url: {{ grafana_settings.json.server.root_url }}"
+          - "metrics: {{ grafana_settings.json.metrics.enabled }} (endpoint {{ grafana_metrics.status }})"

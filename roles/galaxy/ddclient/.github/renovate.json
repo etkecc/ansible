@@ -1,40 +1,15 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended",
-    ":semanticCommitsDisabled"
-  ],
-  "labels": [
-    "dependencies"
+    "github>mother-of-all-self-hosting/renovate-config#v1.0.0",
+    "github>mother-of-all-self-hosting/renovate-config//patch-automerge#v1.0.0"
   ],
   "packageRules": [
     {
-      "matchFileNames": [
-        ".pre-commit-config.yaml",
-        ".github/workflows/autotag.yml",
-        ".github/workflows/close-stale-issues.yml",
-        ".github/workflows/pre-commit.yml",
-        "mise.toml"
-      ],
-      "enabled": true,
-      "automerge": true,
-      "automergeType": "branch",
-      "schedule": ["* * 1 */6 *"],
-      "automergeSchedule": ["* * 1-14 */6 *"]
+      "description": "linuxserver/ddclient publishes several tag families side by side, and only the plain `X.Y.Z` one names a version of ddclient itself. Alongside it there are bare LinuxServer build numbers (`19` through `150`, pointing at unrelated images), per-build tags (`v4.0.0-ls230`), architecture-prefixed tags (`amd64-4.0.0`) and `version-vX.Y.Z` tags. Restricting the allowed versions keeps a bump confined to the family this role tracks, whatever a future edit to the `# renovate:` annotation in defaults/main.yml might do.",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["linuxserver/ddclient"],
+      "allowedVersions": "/^\\d+\\.\\d+\\.\\d+$/"
     }
-  ],
-  "customManagers": [
-    {
-      "customType": "regex",
-      "managerFilePatterns": [
-        "/defaults/main.yml$/"
-      ],
-      "matchStrings": [
-        "# renovate: datasource=(?<datasource>[a-z-.]+?) depName=(?<depName>[^\\s]+?)(?: (?:lookupName|packageName)=(?<packageName>[^\\s]+?))?(?: versioning=(?<versioning>[a-z-0-9]+?))?\\s+[A-Za-z0-9_]+?(?:_version|_tag)\\s*:\\s*[\"']?(?<currentValue>.+?)[\"']?\\s"
-      ]
-    }
-  ],
-  "pre-commit": {
-    "enabled": true
-  }
+  ]
 }

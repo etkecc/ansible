@@ -1,0 +1,224 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify Prometheus node exporter
+  hosts: all
+  become: true
+  gather_facts: false
+
+  tasks:
+    # The role is not included in this playbook, so its defaults are not in
+    # scope. Reading defaults/main.yml directly keeps the version assertion
+    # below tied to the value that Renovate bumps, with nothing to keep in
+    # sync in this scenario. include_vars reads from the controller.
+    #
+    # Only values describing the role itself may be read from this namespace,
+    # and only leaf literals: everything else in that file is a Jinja
+    # expression referring to variables that are not defined here. Anything
+    # this scenario tunes (the published port, for example) comes from the
+    # scenario's group_vars instead.
+    - name: Load the Prometheus node exporter role defaults
+      ansible.builtin.include_vars:
+        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+        name: prometheus_node_exporter_defaults
+
+    - name: Wait for Prometheus node exporter service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: prometheus-node-exporter.service
+      register: prometheus_node_exporter_service
+      until: prometheus_node_exporter_service.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert Prometheus node exporter service is active
+      ansible.builtin.assert:
+        that: prometheus_node_exporter_service.status.ActiveState == 'active'
+        fail_msg: "prometheus-node-exporter.service not active ({{ prometheus_node_exporter_service.status.ActiveState }})"
+        success_msg: "prometheus-node-exporter.service is active"
+
+    - name: Retrieve Prometheus node exporter service log for debugging
+      when: prometheus_node_exporter_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu prometheus-node-exporter.service
+      changed_when: false
+
+    # A systemd unit reaching "active" only means that `docker start` has not
+    # exited yet. Scraping /metrics is the cheapest answer the exporter process
+    # itself can give, so it is the first thing here that proves a serving
+    # exporter rather than merely a running container.
+    #
+    # It is also, deliberately, the weakest probe in this file: an exporter
+    # that has been given none of the host access this role arranges serves
+    # /metrics just as cheerfully, describing its own container instead of the
+    # machine. Everything below exists to tell those two apart.
+    - name: Wait for Prometheus node exporter to serve metrics (up to 180s)
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:{{ prometheus_node_exporter_molecule_http_bind_port }}/metrics"
+        method: GET
+        return_content: true
+      register: prometheus_node_exporter_metrics
+      until: >-
+        prometheus_node_exporter_metrics.status == 200
+        and 'node_exporter_build_info' in prometheus_node_exporter_metrics.content
+      retries: 36
+      delay: 5
+
+    - name: Assert Prometheus node exporter serves metrics
+      ansible.builtin.assert:
+        that:
+          - prometheus_node_exporter_metrics.status == 200
+          - "'node_exporter_build_info' in prometheus_node_exporter_metrics.content"
+        fail_msg: "Prometheus node exporter did not serve node exporter metrics ({{ prometheus_node_exporter_metrics.status | default('no response') }})"
+        success_msg: "Prometheus node exporter serves metrics"
+
+    - name: Split the scraped metrics into lines
+      ansible.builtin.set_fact:
+        prometheus_node_exporter_metrics_lines: "{{ prometheus_node_exporter_metrics.content.splitlines() }}"
+
+    # The point of the role. The exporter runs in a container of its own, and
+    # what it can see of the machine is decided entirely by the host root the
+    # role bind-mounts at /host and the `--path.rootfs=/host` it passes.
+    #
+    # The filesystem prepare.yml mounted exists only in this machine's mount
+    # namespace, so an exporter reporting on its own container cannot know
+    # about it. Three separate things have to be true for the series below to
+    # be found:
+    #
+    # - the host root is mounted, or the filesystem is unknown entirely
+    # - the mount is readable, or the size is reported as 0 alongside a
+    #   non-empty `device_error` (which is how an exporter that inherited the
+    #   mount table through --pid=host, but cannot reach the filesystems in it,
+    #   gives itself away)
+    # - the rootfs prefix is being stripped, or the mount point would be
+    #   reported with a /host prefix rather than as the host path itself
+    - name: Find the series that the host-only filesystem should have produced
+      ansible.builtin.set_fact:
+        prometheus_node_exporter_hostfs_series: >-
+          {{
+            prometheus_node_exporter_metrics_lines
+            | select('match', 'node_filesystem_size_bytes[{]')
+            | select('search', 'mountpoint="' ~ prometheus_node_exporter_molecule_hostfs_mount_point ~ '"[}]')
+            | list
+          }}
+
+    - name: Assert Prometheus node exporter reports on a filesystem only the host can see
+      ansible.builtin.assert:
+        that:
+          - prometheus_node_exporter_hostfs_series | length == 1
+          - prometheus_node_exporter_hostfs_series[0] is search('device="' ~ prometheus_node_exporter_molecule_hostfs_device ~ '"')
+          - prometheus_node_exporter_hostfs_series[0] is search('device_error=""')
+          - >-
+            (prometheus_node_exporter_hostfs_series[0].split('} ') | last | float | int)
+            == (prometheus_node_exporter_molecule_hostfs_size_bytes | int)
+        fail_msg: >-
+          Prometheus node exporter does not report {{ prometheus_node_exporter_molecule_hostfs_mount_point }}
+          as a {{ prometheus_node_exporter_molecule_hostfs_size_bytes }} byte filesystem
+          (matching series: {{ prometheus_node_exporter_hostfs_series }})
+        success_msg: >-
+          Prometheus node exporter reports {{ prometheus_node_exporter_molecule_hostfs_mount_point }}
+          as {{ prometheus_node_exporter_molecule_hostfs_size_bytes }} bytes, from the host's own mount table
+
+    # Whether what the role is configured with reaches the process. The
+    # textfile collector publishes nothing until it is given a directory, and
+    # the directory it was given here holds a file with a value that nothing
+    # else in this scenario produces. A metric carrying that value can only
+    # have arrived by way of the role's process-arguments knob.
+    - name: Find the series that the seeded textfile should have produced
+      ansible.builtin.set_fact:
+        prometheus_node_exporter_textfile_series: >-
+          {{
+            prometheus_node_exporter_metrics_lines
+            | select('match', prometheus_node_exporter_molecule_textfile_metric_name ~ ' ')
+            | list
+          }}
+
+    - name: Assert Prometheus node exporter republishes the seeded textfile metric
+      ansible.builtin.assert:
+        that:
+          - prometheus_node_exporter_textfile_series | length == 1
+          - >-
+            (prometheus_node_exporter_textfile_series[0].split(' ') | last | float | int)
+            == (prometheus_node_exporter_molecule_textfile_metric_value | int)
+          - "'node_textfile_scrape_error 0' in prometheus_node_exporter_metrics_lines"
+        fail_msg: >-
+          Prometheus node exporter did not republish {{ prometheus_node_exporter_molecule_textfile_metric_name }}
+          with value {{ prometheus_node_exporter_molecule_textfile_metric_value }}
+          (matching series: {{ prometheus_node_exporter_textfile_series }})
+        success_msg: >-
+          Prometheus node exporter republishes {{ prometheus_node_exporter_molecule_textfile_metric_name }}
+          from the textfile directory it was configured with
+
+    # The same knob, checked from the other side. The processes collector is
+    # off unless asked for, and the systemd collector - which this scenario
+    # deliberately does not ask for, since it would additionally need the D-Bus
+    # socket mounted - stays off.
+    #
+    # The absence of the systemd collector is checked through its entry in
+    # `node_scrape_collector_success` rather than through its `node_systemd_`
+    # metrics, because a collector that is enabled but cannot do its job
+    # publishes no metrics of its own either: enabling it here without the
+    # D-Bus socket was observed to produce
+    # `node_scrape_collector_success{collector="systemd"} 0` and not a single
+    # `node_systemd_` series. Only the collector-success entry tells "not
+    # asked for" apart from "asked for and broken".
+    #
+    # Asserting both directions is what makes the metric set evidence of the
+    # configured collector set, rather than of node exporter simply reporting
+    # everything it knows how to.
+    - name: Assert the collector set matches what the role was configured with
+      ansible.builtin.assert:
+        that:
+          - "'node_processes_pids' in prometheus_node_exporter_metrics.content"
+          - "'node_scrape_collector_success{collector=\"processes\"} 1' in prometheus_node_exporter_metrics_lines"
+          - "'node_scrape_collector_success{collector=\"systemd\"}' not in prometheus_node_exporter_metrics.content"
+        fail_msg: >-
+          The collectors that Prometheus node exporter is running do not match the configured set
+          (the enabled-on-request processes collector should be present, the unrequested systemd collector absent)
+        success_msg: "Prometheus node exporter runs the processes collector it was asked for, and not the systemd collector it was not"
+
+    # Tying the running version to `prometheus_node_exporter_version` is what
+    # makes this scenario a real test of the version that Renovate bumps: a
+    # bump that produces an unusable image cannot pass here.
+    #
+    # node exporter reports its version without a leading `v` (`1.12.1`), while
+    # the role's version variable carries one. Any leading `v` is normalized
+    # away on both sides, so that this keeps holding if either side ever stops
+    # carrying one.
+    #
+    # The label is matched with a leading `{` or `,` so that `goversion`, which
+    # sits on the same series, cannot be picked up instead.
+    - name: Determine the version that the running Prometheus node exporter reports
+      ansible.builtin.set_fact:
+        prometheus_node_exporter_reported_version: >-
+          {{
+            (
+              prometheus_node_exporter_metrics_lines
+              | select('match', 'node_exporter_build_info[{]')
+              | map('regex_findall', '[{,]version="([^"]+)"')
+              | flatten
+              | first
+              | default('')
+            )
+          }}
+
+    - name: Assert the running Prometheus node exporter is the version the role asks for
+      ansible.builtin.assert:
+        that: >-
+          (prometheus_node_exporter_reported_version | regex_replace('^v', ''))
+          == (prometheus_node_exporter_defaults.prometheus_node_exporter_version | regex_replace('^v', ''))
+        fail_msg: >-
+          Prometheus node exporter reports version {{ prometheus_node_exporter_reported_version | default('none') }},
+          but the role asks for {{ prometheus_node_exporter_defaults.prometheus_node_exporter_version }}
+        success_msg: "Prometheus node exporter reports version {{ prometheus_node_exporter_reported_version }}"
+
+    - name: Show Prometheus node exporter verification summary
+      ansible.builtin.debug:
+        msg:
+          - "Prometheus node exporter systemd: {{ prometheus_node_exporter_service.status.ActiveState }}"
+          - "Prometheus node exporter version: {{ prometheus_node_exporter_reported_version }}"
+          - "Prometheus node exporter host filesystem series: {{ prometheus_node_exporter_hostfs_series[0] }}"
+          - "Prometheus node exporter textfile series: {{ prometheus_node_exporter_textfile_series[0] }}"

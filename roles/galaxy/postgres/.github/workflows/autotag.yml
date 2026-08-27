@@ -1,0 +1,55 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+name: Autotag releases
+
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write  # required to push tags
+
+jobs:
+  autotag:
+    name: Autotag
+    runs-on: ubuntu-latest
+
+    # Tag numbers are derived from the tags that already exist, so two commits
+    # landing close together must not be looked at simultaneously - they would
+    # both compute the same number. Runs are queued rather than cancelled, so
+    # that every commit deserving a release still gets one.
+    concurrency:
+      group: autotag
+      cancel-in-progress: false
+
+    steps:
+      # The full history and all tags, since we compare against the previous release.
+      - name: Check out
+        uses: actions/checkout@v7.0.0
+        with:
+          fetch-depth: 0
+
+      - name: Determine the next tag
+        id: tag
+        run: |
+          tag="$(bin/compute-next-tag.sh)"
+          if [ -z "$tag" ]; then
+            echo 'No release is needed for this commit'
+            exit 0
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Create and push the tag
+        if: steps.tag.outputs.tag != ''
+        env:
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git tag "$TAG"
+          git push origin "refs/tags/$TAG"

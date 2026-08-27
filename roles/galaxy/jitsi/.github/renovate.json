@@ -1,45 +1,14 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended",
-    ":semanticCommitsDisabled"
-  ],
-  "labels": [
-    "dependencies"
+    "github>mother-of-all-self-hosting/renovate-config#v1.0.0"
   ],
   "packageRules": [
     {
-      "matchFileNames": [
-        ".pre-commit-config.yaml",
-        ".github/workflows/autotag.yml",
-        ".github/workflows/close-stale-issues.yml",
-        ".github/workflows/pre-commit.yml",
-        "mise.toml"
-      ],
-      "enabled": true,
-      "automerge": true,
-      "automergeType": "branch",
-      "schedule": ["* * 1 */6 *"],
-      "automergeSchedule": ["* * 1-14 */6 *"]
-    },
-    {
+      "description": "Upstream's normal releases are plain `stable-NNNNN`; hotfixes append `-1`, `-2`, ... A pattern requiring the suffix silently skips every normal release, and one forbidding it silently skips every hotfix (both happened). The optional group compares as 0 when absent, ordering `stable-11146` < `stable-11146-2` < `stable-11500` correctly. Hotfixes rank as patch updates, so patch-automerge can gate them once a Molecule scenario exists.",
       "matchDatasources": ["docker"],
-      "matchPackageNames": ["jitsi/web"],
-      "versioning": "regex:^stable-(?<major>\\d+)-(?<minor>\\d+)$"
+      "matchPackageNames": ["ghcr.io/jitsi/web"],
+      "versioning": "regex:^stable-(?<major>\\d+)(?:-(?<patch>\\d+))?$"
     }
-  ],
-  "customManagers": [
-    {
-      "customType": "regex",
-      "managerFilePatterns": [
-        "/defaults/main.yml$/"
-      ],
-      "matchStrings": [
-        "# renovate: datasource=(?<datasource>[a-z-.]+?) depName=(?<depName>[^\\s]+?)(?: (?:lookupName|packageName)=(?<packageName>[^\\s]+?))?(?: versioning=(?<versioning>[a-z-0-9]+?))?\\s+[A-Za-z0-9_]+?(?:_version|_tag)\\s*:\\s*[\"']?(?<currentValue>.+?)[\"']?(?:\\s|$)"
-      ]
-    }
-  ],
-  "pre-commit": {
-    "enabled": true
-  }
+  ]
 }

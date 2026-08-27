@@ -1,0 +1,65 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+dependency:
+  name: galaxy
+  options:
+    requirements-file: requirements.yml
+    force: true
+driver:
+  name: docker
+platforms:
+  - name: livekit-server-${MOLECULE_DISTRO:-ubuntu2604}-default
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2604}-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callback_result_format: yaml
+  inventory:
+    group_vars:
+      all:
+        # Helper variables
+        livekit_server_debug_service_enabled: false
+
+        # Variables for LiveKit Server
+        livekit_server_enabled: true  # Because it is disabled by default
+        livekit_server_uid: 1000
+        livekit_server_gid: 1000
+        livekit_server_scheme: http
+        livekit_server_hostname: localhost
+        livekit_server_container_labels_traefik_enabled: false
+
+        # Neither port below is the role's default, and the signaling port is
+        # not the one LiveKit Server falls back to on its own (7880) either.
+        # A LiveKit Server answering on them is therefore only explicable by
+        # the role having rendered these values into config.yaml and into the
+        # container's port publishing - a probe against a port that everything
+        # defaults to would prove nothing.
+        livekit_server_config_port: 7890
+        livekit_server_container_http_listen_interface: 127.0.0.1
+        livekit_server_config_prometheus_enabled: true
+        livekit_server_config_prometheus_port: 8091
+        livekit_server_container_metrics_listen_interface: 127.0.0.1
+
+        # The API key name is asserted on by verify.yml, both as the issuer of
+        # a token that must be accepted and by the error naming it when an
+        # unknown key is presented. The secret is a throwaway test value;
+        # LiveKit Server wants at least 32 characters.
+        livekit_server_config_keys_custom:
+          molecule-api-key: DkR4d1U8sciU30BRxvEHw4UWoZqBtaxzUoiSfAdK8ZJlclWoZaqPmaCNOgFSRGh6
+  env:
+    # Workaround for https://github.com/ansible/molecule/issues/4391
+    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles
+verifier:
+  name: ansible

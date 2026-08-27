@@ -6,6 +6,6 @@
 
 ### Component Updates
 
-* [Etherpad](https://github.com/ether/etherpad-lite): [2.7.2](https://github.com/ether/etherpad-lite/releases/tag/2.7.2) ⇾ [3.3.3](https://github.com/ether/etherpad-lite/releases/tag/3.3.3)
-* [Prometheus Nginxlog Exporter](https://github.com/martin-helmich/prometheus-nginxlog-exporter): [v1.10.0](https://github.com/martin-helmich/prometheus-nginxlog-exporter/releases/tag/v1.10.0) ⇾ [v1.11.0](https://github.com/martin-helmich/prometheus-nginxlog-exporter/releases/tag/v1.11.0)
-* [Vaultwarden](https://github.com/dani-garcia/vaultwarden): [1.37.1](https://github.com/dani-garcia/vaultwarden/releases/tag/1.37.1) ⇾ [1.37.2](https://github.com/dani-garcia/vaultwarden/releases/tag/1.37.2)
+* [Jitsi User Verification](https://github.com/jitsi/docker-jitsi-meet): 2839499cb03894d8cfc3e5b2219441427cb133d8 ⇾ 19b69e543cdb99b16a939eeed921d7ed1da57d44
+* [Livekit Server](https://github.com/livekit/livekit): [v1.13.5](https://github.com/livekit/livekit/releases/tag/v1.13.5) ⇾ [v1.13.6](https://github.com/livekit/livekit/releases/tag/v1.13.6)
+* [Traefik](https://github.com/traefik/traefik): [v3.7.11](https://github.com/traefik/traefik/releases/tag/v3.7.11) ⇾ [v3.7.12](https://github.com/traefik/traefik/releases/tag/v3.7.12)

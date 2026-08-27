@@ -30,11 +30,11 @@ See the project's [documentation](https://docs.ntfy.sh/) to learn what ntfy does
 
 ### UnifiedPush support
 
-⚠️ [UnifiedPush does not work on iOS.](https://unifiedpush.org/users/faq/#will-unifiedpush-ever-work-on-ios)
+⚠️ [UnifiedPush does not work on iOS.](https://unifiedpush.org/users/faq/#q-will-unifiedpush-ever-work-on-ios)
 
 ntfy implements [UnifiedPush](https://unifiedpush.org), the standard which makes it possible to send and receive push notifications without using Google's Firebase Cloud Messaging (FCM) service.
 
-Working as a **Push Server**, a ntfy server can forward messages to a **Distributor** running on Android and other devices (see [definitions on the official documentation of UnifiedPush](https://unifiedpush.org/users/distributors/#definitions) for the definition of the Push Server and the Distributor).
+Working as a **Push Server**, a ntfy server can forward messages to a **Distributor** running on Android and other devices (see [definitions on the official documentation of UnifiedPush](https://unifiedpush.org/developers/spec/definitions/) for the definition of the Push Server and the Distributor).
 
 This role installs and manages a self-hosted ntfy server as the Push Server, which the Distributor (such as the ntfy Android app) on your device listens to.
 
@@ -44,7 +44,7 @@ As the ntfy Android app functions as the Distributor too, you do not have to ins
 
 💡 **Notes**:
 
-- Refer [this official documentation of UnifiedPush](https://unifiedpush.org/users/troubleshooting/#understand-unifiedpush) for a simple explanation about relationship among UnifiedPush-compatible application, Distributor, Push Server, and the application's server.
+- Refer [this official documentation of UnifiedPush](https://unifiedpush.org/users/troubleshooting/setup/#understand-unifiedpush) for a simple explanation about relationship among UnifiedPush-compatible application, Distributor, Push Server, and the application's server.
 - See [this page](https://unifiedpush.org/users/apps/) for a non-exhaustive list of the end-user applications that use UnifiedPush.
 - Unlike push notifications using Google's FCM or Apple's APNs, each end-user can choose the Push Server which one prefer. This means that deploying a ntfy server cannot enforce a UnifiedPush-compatible application (and its users) to use the exact server.
 

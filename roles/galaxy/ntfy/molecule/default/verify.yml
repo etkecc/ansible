@@ -1,17 +1,32 @@
-# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: Verify ntfy systemd service
+- name: Verify ntfy
   hosts: all
   become: true
   gather_facts: false
+
   tasks:
+    # The role is not included in this playbook, so its defaults are not in
+    # scope. Reading defaults/main.yml directly keeps the version assertion
+    # below tied to the value that Renovate bumps, with nothing to keep in
+    # sync in this scenario. include_vars reads from the controller.
+    #
+    # Only values describing the role itself may be read from this namespace.
+    # Anything this scenario tunes (the topics, the account) comes from the
+    # scenario's group_vars instead.
+    - name: Load the ntfy role defaults
+      ansible.builtin.include_vars:
+        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+        name: ntfy_defaults
+
     - name: Wait for ntfy service to become active (up to 180s)
       ansible.builtin.systemd:
-        name: ntfy.service
+        name: "{{ ntfy_defaults.ntfy_identifier }}.service"
       register: ntfy_service
       until: ntfy_service.status.ActiveState == 'active'
       retries: 36
@@ -26,28 +41,223 @@
     - name: Retrieve ntfy service log for debugging
       when: ntfy_debug_service_enabled | bool
       ansible.builtin.command:
-        cmd: journalctl -xeu ntfy.service
+        cmd: journalctl -xeu {{ ntfy_defaults.ntfy_identifier }}.service
       changed_when: false
 
-    - name: Wait for ntfy HTTP endpoint to respond (up to 10m)
+    # A systemd unit reaching "active" only means that `docker start` has not
+    # exited yet. /v1/health is the first thing the ntfy process itself has to
+    # answer, so it is where a container that never got going shows up.
+    #
+    # It also already witnesses one thing about the rendered configuration: an
+    # ntfy that received no configuration listens on :80, and the port
+    # published here maps to :8080, which only the role's `listen-http` puts
+    # anything behind.
+    - name: Wait for ntfy to report itself healthy (up to 10m)
       ansible.builtin.uri:
-        url: "http://localhost:8080/"
+        url: "http://localhost:{{ ntfy_container_http_host_bind_port }}/v1/health"
         method: GET
-        status_code: [200, 302]
-        follow_redirects: none
-      register: ntfy_endpoint
-      until: ntfy_endpoint.status in [200, 302]
+        return_content: true
+      register: ntfy_health
+      until: ntfy_health.status == 200 and ntfy_health.json.healthy | default(false)
       retries: 120
       delay: 5
 
-    - name: Assert ntfy HTTP endpoint responds
+    - name: Assert ntfy reports itself healthy
       ansible.builtin.assert:
-        that: ntfy_endpoint.status in [200, 302]
-        fail_msg: "ntfy did not respond as expected ({{ ntfy_endpoint.status | default('no response') }})"
-        success_msg: "ntfy responded with {{ ntfy_endpoint.status }}"
+        that: ntfy_health.json.healthy
+        fail_msg: "ntfy is not healthy: {{ ntfy_health.content | default('no content') }}"
+        success_msg: "ntfy reports itself healthy"
 
-    - name: Show ntfy systemd service status summary
+    # Tying the running version to `ntfy_version` is what makes this scenario a
+    # real test of the version that Renovate bumps: a bump that produces an
+    # unusable image cannot pass here.
+    #
+    # ntfy serves no version over HTTP - /v1/health carries nothing but
+    # `{"healthy":true}` - so this asks the binary in the running container.
+    #
+    # community.docker is deliberately avoided throughout this playbook: the
+    # linting environment in CI has no collections installed.
+    - name: Query the version reported by the running ntfy
+      ansible.builtin.command:
+        cmd: "docker exec {{ ntfy_defaults.ntfy_identifier }} ntfy --version"
+      register: ntfy_version_output
+      changed_when: false
+
+    # `ntfy --version` prints `ntfy version 2.27.0`, without the leading `v`
+    # that `ntfy_version` carries, so the `v` is stripped from the expectation.
+    # The comparison is a prefix match, so that a build suffix appearing
+    # upstream does not fail the scenario.
+    - name: Determine the version reported by the running ntfy
+      ansible.builtin.set_fact:
+        ntfy_reported_version: "{{ (ntfy_version_output.stdout | regex_search('ntfy version ([^\\s]+)', '\\1') | first) | trim }}"
+
+    - name: Assert the running ntfy is the version the role asks for
+      ansible.builtin.assert:
+        that: >-
+          ntfy_reported_version.startswith(
+            ntfy_defaults.ntfy_version | string | regex_replace('^v', '')
+          )
+        fail_msg: >-
+          ntfy reports version {{ ntfy_reported_version | default('none') }},
+          but the role asks for {{ ntfy_defaults.ntfy_version }}
+        success_msg: "ntfy reports version {{ ntfy_reported_version }}"
+
+    # The configuration the role rendered, read back out of the running
+    # process rather than off disk. The stock image ships no /etc/ntfy at all,
+    # so an ntfy that never received this role's configuration is still a
+    # perfectly working server - it just runs on ntfy's own defaults. The
+    # values below are what distinguishes a configured ntfy from a merely
+    # running one.
+    #
+    # /config.js is JavaScript wrapping a JSON object, so the object is cut
+    # out of it rather than parsed as a whole.
+    - name: Query the configuration the running ntfy serves to its web app
+      ansible.builtin.uri:
+        url: "http://localhost:{{ ntfy_container_http_host_bind_port }}/config.js"
+        method: GET
+        return_content: true
+      register: ntfy_config_js
+
+    - name: Parse the configuration the running ntfy serves to its web app
+      ansible.builtin.set_fact:
+        ntfy_web_config: "{{ ntfy_config_js.content | regex_search('(?s)[{].*[}]') | from_json }}"
+
+    - name: Assert the role's configuration reached the running ntfy
+      ansible.builtin.assert:
+        that:
+          # What this scenario tuned. ntfy's own default is false and so is
+          # the role's, so neither can stand in for it.
+          - ntfy_web_config.enable_reservations
+          # What the role derives from `ntfy_auth_enabled`. An ntfy that
+          # received no configuration reports false here.
+          - ntfy_web_config.enable_login
+          # The role leaves signup off unless asked, and this scenario did not
+          # ask, so a stray `true` would mean something other than this role's
+          # template is being served.
+          - not ntfy_web_config.enable_signup
+        fail_msg: "The role's configuration did not reach ntfy: {{ ntfy_web_config }}"
+        success_msg: "The role's configuration reached ntfy"
+
+    # `auth-default-access: deny-all` is the setting that turns this from a
+    # server anybody may publish to into one this role's operator controls.
+    # ntfy does not report it through /config.js at all, so refusing an
+    # anonymous publish is the only way to observe it - and it is the probe
+    # here that an unconfigured ntfy would answer differently, since it
+    # accepts a publish to any topic from anyone.
+    - name: Publish to ntfy anonymously, on a topic no access-control entry covers
+      ansible.builtin.uri:
+        url: "http://localhost:{{ ntfy_container_http_host_bind_port }}/{{ ntfy_verify_denied_topic }}"
+        method: POST
+        status_code: [403]
+        headers:
+          Content-Type: text/plain
+        body: "{{ ntfy_verify_message }}"
+      register: ntfy_denied_publish
+
+    - name: Assert ntfy refuses an anonymous publish it has no entry for
+      ansible.builtin.assert:
+        that: ntfy_denied_publish.status == 403
+        fail_msg: >-
+          ntfy accepted an anonymous publish to `{{ ntfy_verify_denied_topic }}`
+          ({{ ntfy_denied_publish.status }}), so `auth-default-access` did not reach it
+        success_msg: "ntfy refuses anonymous publishes that no access-control entry covers"
+
+    # Everything above proves that ntfy is running and holds the right
+    # configuration. What follows proves that it does its job: a message
+    # published to a topic comes back out of the polling API.
+    #
+    # This publish is anonymous and must be accepted, which the probe above
+    # establishes is not true of topics in general - so it is also the proof
+    # that the role's default `auth-access` entry (`*:up*:write-only`) reached
+    # the running process, and not merely a deny-all with nothing behind it.
+    - name: Publish a message to ntfy anonymously, on a UnifiedPush topic
+      ansible.builtin.uri:
+        url: "http://localhost:{{ ntfy_container_http_host_bind_port }}/{{ ntfy_verify_topic }}"
+        method: POST
+        status_code: [200]
+        headers:
+          Content-Type: text/plain
+        body: "{{ ntfy_verify_message }}"
+      register: ntfy_publish
+
+    - name: Assert ntfy accepted the message
+      ansible.builtin.assert:
+        that: ntfy_publish.status == 200
+        fail_msg: "ntfy did not accept the message ({{ ntfy_publish.status | default('no response') }})"
+        success_msg: "ntfy accepts an anonymous publish to a UnifiedPush topic"
+
+    # The entry grants `write-only`, so the same anonymous visitor that just
+    # published must not be able to read the topic back. Without this, an
+    # entry that had drifted to `read-write` would look identical to the
+    # intended one.
+    - name: Read the topic back from ntfy anonymously
+      ansible.builtin.uri:
+        url: "http://localhost:{{ ntfy_container_http_host_bind_port }}/{{ ntfy_verify_topic }}/json?poll=1"
+        method: GET
+        status_code: [403]
+      register: ntfy_anonymous_poll
+
+    - name: Assert ntfy refuses an anonymous read of a write-only topic
+      ansible.builtin.assert:
+        that: ntfy_anonymous_poll.status == 403
+        fail_msg: >-
+          ntfy let an anonymous visitor read `{{ ntfy_verify_topic }}`
+          ({{ ntfy_anonymous_poll.status }}), so the access-control entry is not write-only
+        success_msg: "ntfy refuses anonymous reads of a write-only topic"
+
+    # The account declared by this scenario closes the round-trip, and in
+    # doing so witnesses that `auth-users` was provisioned into ntfy's user
+    # database. Publishing is acknowledged before the message is necessarily
+    # visible to a poller, so this keeps asking rather than asking once.
+    #
+    # The polling endpoint answers newline-delimited JSON, which the uri
+    # module does not parse on its own, so the content is split by hand.
+    - name: Wait for the published message to be readable (up to 2m)
+      ansible.builtin.uri:
+        url: "http://localhost:{{ ntfy_container_http_host_bind_port }}/{{ ntfy_verify_topic }}/json?poll=1"
+        method: GET
+        status_code: [200]
+        url_username: "{{ ntfy_verify_username }}"
+        url_password: "{{ ntfy_verify_password }}"
+        force_basic_auth: true
+        return_content: true
+      register: ntfy_poll
+      until: ntfy_verify_message in (ntfy_poll.content | default(''))
+      retries: 24
+      delay: 5
+
+    # Kept as scalars rather than as the whole message, so that nothing
+    # depends on a templated dictionary surviving as a dictionary.
+    - name: Determine what ntfy handed back
+      ansible.builtin.set_fact:
+        ntfy_returned_event: "{{ ntfy_polled_messages | map(attribute='event') | first }}"
+        ntfy_returned_topic: "{{ ntfy_polled_messages | map(attribute='topic') | first }}"
+        ntfy_returned_message: "{{ ntfy_polled_messages | map(attribute='message') | first }}"
+      vars:
+        ntfy_polled_messages: >-
+          {{
+            ntfy_poll.content.strip().split('\n')
+            | reject('equalto', '')
+            | map('from_json')
+            | list
+          }}
+
+    - name: Assert ntfy hands back the message that was published to it
+      ansible.builtin.assert:
+        that:
+          - ntfy_returned_event == 'message'
+          - ntfy_returned_topic == ntfy_verify_topic
+          - ntfy_returned_message == ntfy_verify_message
+        fail_msg: "ntfy did not return the message that was published to it: {{ ntfy_poll.content }}"
+        success_msg: "ntfy stores a published message and hands it back when polled"
+
+    - name: Show ntfy verification summary
       ansible.builtin.debug:
         msg:
           - "ntfy systemd: {{ ntfy_service.status.ActiveState }}"
-          - "ntfy HTTP: {{ ntfy_endpoint.status }}"
+          - "ntfy version: {{ ntfy_reported_version }}"
+          - "ntfy reservations enabled: {{ ntfy_web_config.enable_reservations }}"
+          - "ntfy login enabled: {{ ntfy_web_config.enable_login }}"
+          - "ntfy anonymous publish, uncovered topic: {{ ntfy_denied_publish.status }}"
+          - "ntfy anonymous read, write-only topic: {{ ntfy_anonymous_poll.status }}"
+          - "ntfy round-trip: {{ ntfy_returned_topic }} / {{ ntfy_returned_message }}"

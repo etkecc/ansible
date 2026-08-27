@@ -1,0 +1,106 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Prepare Prometheus node exporter Molecule tests
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Ensure apt cache is updated for Prometheus node exporter Molecule tests preparation
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 600
+      when: ansible_facts["os_family"] == 'Debian'
+
+    - name: Ensure required packages are installed for Prometheus node exporter Molecule tests preparation
+      ansible.builtin.package:
+        name:
+          - python3-requests
+        state: present
+
+    - name: Ensure Docker is installed for Prometheus node exporter Molecule tests preparation
+      ansible.builtin.include_role:
+        name: ansible-role-docker
+      vars:
+        docker_daemon_options:
+          storage-driver: vfs
+
+    # The role bind-mounts the host root into the exporter container with
+    # `bind-propagation=rslave`, which Docker refuses unless the source is a
+    # shared or slave mount. On a real host systemd makes the root shared
+    # during early boot, but this test container's root is private, so
+    # `docker create` fails with "path / is mounted on / but it is not a shared
+    # or slave mount" and the unit restart-loops.
+    #
+    # This affects nothing outside this container: making a private mount
+    # shared starts a new peer group rather than joining the one the host's
+    # root is in.
+    #
+    # There is no module for changing mount propagation, hence the command.
+    - name: Ensure the root filesystem is shared, so that it can be bind-mounted with slave propagation
+      ansible.builtin.command:  # noqa: command-instead-of-module
+        cmd: mount --make-rshared /
+      changed_when: true
+
+    # A filesystem that exists nowhere but in this machine's mount namespace.
+    # The exporter runs in a container of its own and can only ever learn about
+    # it through the host root that the role mounts at /host, so it is the
+    # marker that verify.yml looks for to tell a host-observing exporter apart
+    # from one that is merely describing its own container.
+    #
+    # tmpfs is used because its size is whatever it is told to be, which turns
+    # the reported size into a second, independently checkable fact.
+    #
+    # It is mounted through the command rather than through a module, because
+    # this filesystem is a fixture of this test container and has no business
+    # being recorded in /etc/fstab.
+    - name: Ensure the mount point for the host-only filesystem exists
+      ansible.builtin.file:
+        path: "{{ prometheus_node_exporter_molecule_hostfs_mount_point }}"
+        state: directory
+        mode: "0755"
+
+    - name: Check whether the host-only filesystem is already mounted
+      ansible.builtin.command:
+        cmd: "mountpoint -q {{ prometheus_node_exporter_molecule_hostfs_mount_point }}"
+      register: prometheus_node_exporter_molecule_hostfs_mount_check
+      changed_when: false
+      failed_when: false
+
+    - name: Ensure the host-only filesystem is mounted
+      when: prometheus_node_exporter_molecule_hostfs_mount_check.rc != 0
+      ansible.builtin.command:  # noqa: command-instead-of-module
+        cmd: >-
+          mount -t tmpfs
+          -o size={{ prometheus_node_exporter_molecule_hostfs_size_bytes }}
+          {{ prometheus_node_exporter_molecule_hostfs_device }}
+          {{ prometheus_node_exporter_molecule_hostfs_mount_point }}
+      changed_when: true
+
+    # The textfile collector reads whatever `.prom` files it finds in the
+    # directory it is pointed at and republishes them as its own metrics. The
+    # directory is handed to the exporter through the role's process-arguments
+    # knob, so a metric from this file turning up in the exporter's output is
+    # proof that the knob reaches the running process - there is no other way
+    # for this number to get there.
+    #
+    # Both the directory and the file are world-readable, because the exporter
+    # runs as an unprivileged user inside its container.
+    - name: Ensure the textfile collector directory exists
+      ansible.builtin.file:
+        path: "{{ prometheus_node_exporter_molecule_textfile_directory }}"
+        state: directory
+        mode: "0755"
+
+    - name: Ensure the textfile collector file is seeded
+      ansible.builtin.copy:
+        dest: "{{ prometheus_node_exporter_molecule_textfile_directory }}/molecule.prom"
+        mode: "0644"
+        content: |
+          # HELP {{ prometheus_node_exporter_molecule_textfile_metric_name }} A value that only this scenario could have placed here.
+          # TYPE {{ prometheus_node_exporter_molecule_textfile_metric_name }} gauge
+          {{ prometheus_node_exporter_molecule_textfile_metric_name }} {{ prometheus_node_exporter_molecule_textfile_metric_value }}

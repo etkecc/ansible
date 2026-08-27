@@ -8,12 +8,14 @@ version = 1
 [[annotations]]
 path = [
     ".ansible-lint",
-    ".config/ansible-lint.yml",
     ".github/renovate.json",
     ".gitignore",
     ".pre-commit-config.yaml",
+    ".python-version",
     ".yamllint.yml",
-    "meta/main.yml"
+    "meta/main.yml",
+    "molecule/**/requirements.yml",
+    "molecule/requirements.txt"
 ]
 SPDX-FileCopyrightText = "NONE"
 SPDX-License-Identifier = "CC0-1.0"

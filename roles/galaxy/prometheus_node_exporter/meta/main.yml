@@ -3,7 +3,7 @@ galaxy_info:
   author: etke.cc
   company: etke.cc
   role_name: prometheus_node_exporter
-  namespace: etkecc
+  namespace: mash
   description: Prometheus node exporter role
   platforms:
     - name: Debian

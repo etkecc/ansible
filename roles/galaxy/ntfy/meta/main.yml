@@ -3,7 +3,7 @@ galaxy_info:
   author: etke.cc
   company: etke.cc
   role_name: ntfy
-  namespace: etkecc
+  namespace: mash
   description: ntfy
   platforms:
     - name: Debian

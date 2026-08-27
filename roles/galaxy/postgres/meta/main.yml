@@ -1,7 +1,7 @@
 ---
 galaxy_info:
   role_name: postgres
-  namespace: devture
+  namespace: mash
   author: Slavi Pantaleev
   company: Devture Ltd
   description: Postgres role

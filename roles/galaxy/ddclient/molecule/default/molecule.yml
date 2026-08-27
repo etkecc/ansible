@@ -1,0 +1,96 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+dependency:
+  name: galaxy
+  options:
+    requirements-file: requirements.yml
+    force: true
+driver:
+  name: docker
+platforms:
+  - name: ddclient-${MOLECULE_DISTRO:-ubuntu2604}-default
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2604}-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callback_result_format: yaml
+  inventory:
+    group_vars:
+      all:
+        # Helper variables
+        ddclient_debug_service_enabled: false
+
+        # Variables for ddclient
+        ddclient_uid: 1000
+        ddclient_gid: 1000
+
+        # ddclient is a dynamic DNS updater, so the one thing this scenario
+        # must never do is update a DNS record somewhere. The values below are
+        # chosen so that an update cannot happen even if something goes wrong:
+        # the provider lives under the `.invalid` top-level domain, which
+        # RFC 6761 guarantees will never resolve, and the domain being updated
+        # is under `example.net`, which is reserved for documentation. The
+        # checks in verify.yml then use ddclient's own `--noexec` dry-run mode,
+        # which reports what it would send without sending anything.
+        ddclient_verify_provider: molecule-provider.invalid
+        ddclient_verify_protocol: dyndns2
+        ddclient_verify_domain: molecule-probe.example.net
+
+        # The container image ships a fallback configuration which it installs
+        # whenever the role's file fails to arrive, and that fallback specifies
+        # `daemon=300`. Picking an interval nothing else would produce turns
+        # the running daemon's own sleep interval into evidence of which of the
+        # two configurations it actually read.
+        ddclient_daemon_interval: "1847"
+
+        # Left to itself, ddclient discovers the external IP address by asking
+        # a public service (checkip.dyndns.org and friends). Pointing it at the
+        # local discard port keeps that lookup on the loopback interface, so a
+        # test run reaches no third party at all. Nothing answers there, which
+        # is fine: the dry run in verify.yml supplies an address of its own.
+        ddclient_use: web
+        ddclient_web: "http://127.0.0.1:9/"
+
+        ddclient_domain_configurations:
+          - provider: "{{ ddclient_verify_provider }}"
+            protocol: "{{ ddclient_verify_protocol }}"
+            username: molecule-username
+            password: molecule-password
+            domain: "{{ ddclient_verify_domain }}"
+  env:
+    # Workaround for https://github.com/ansible/molecule/issues/4391
+    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles
+scenario:
+  # See: https://docs.ansible.com/projects/molecule/configuration/?h=test_sequence#scenario
+  test_sequence:
+    - dependency
+    - cleanup
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    # Idempotence is disabled because the role renders ddclient.conf with mode
+    # 0644, while the container image chmods everything under /config to 0600
+    # on every start. The bind mount makes that a change to the file on the
+    # host, which the next converge undoes, so the two keep flipping the mode
+    # back and forth.
+    # - idempotence
+    - side_effect
+    - verify
+    - cleanup
+    - destroy
+verifier:
+  name: ansible
