@@ -1,0 +1,98 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Puts the host into the state the role is supposed to change, and records the
+# preconditions that make the assertions in verify.yml mean something.
+
+---
+- name: Prepare the host for the aux Molecule tests
+  hosts: all
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Ensure the unprivileged group exists
+      ansible.builtin.group:
+        name: "{{ aux_molecule_group }}"
+        state: present
+
+    - name: Ensure the unprivileged user exists
+      ansible.builtin.user:
+        name: "{{ aux_molecule_user }}"
+        group: "{{ aux_molecule_group }}"
+        shell: /bin/sh
+        create_home: false
+        state: present
+
+    # Wide open and root-owned, which is neither what the role's own defaults
+    # say nor what this scenario configures. The role has to correct all three
+    # of owner, group and mode, so a `file` task that only creates missing
+    # directories - or one that dropped its ownership arguments - fails here.
+    - name: Ensure the base directory exists, in the wrong state
+      ansible.builtin.file:
+        path: "{{ aux_molecule_base_path }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0777"
+
+    # Same idea for a file the role is about to render: it already exists, with
+    # content the role did not write and a mode the role did not ask for.
+    - name: Ensure one of the role's files exists, in the wrong state
+      ansible.builtin.copy:
+        dest: "{{ aux_molecule_base_path }}/from-custom.txt"
+        content: "seeded by prepare.yml and never overwritten\n"
+        owner: "{{ aux_molecule_user }}"
+        group: "{{ aux_molecule_group }}"
+        mode: "0666"
+
+    # The negative control for the file task. It sits in the same directory as
+    # everything the role writes, in the same wrong state, and is named in no
+    # definition at all. If it comes out of the converge changed, the role is
+    # doing something to the directory rather than to the list it was given.
+    - name: Ensure a file the role was never told about exists
+      ansible.builtin.copy:
+        dest: "{{ aux_molecule_base_path }}/untouched.txt"
+        content: "seeded by prepare.yml and never mentioned to the role\n"
+        owner: "{{ aux_molecule_user }}"
+        group: "{{ aux_molecule_group }}"
+        mode: "0666"
+
+    # Removed by the deliberately failing command in aux_command_definitions.
+    # Its absence afterwards is what proves that command ran at all, rather than
+    # having been skipped by something that noticed it was going to fail.
+    - name: Ensure the file the failing command removes exists
+      ansible.builtin.copy:
+        dest: "{{ aux_molecule_base_path }}/removed-by-failing-command"
+        content: "removed by a command that then exits non-zero\n"
+        owner: root
+        group: root
+        mode: "0644"
+
+    # A precondition rather than a result. `hello` being on the host afterwards
+    # only says something about the role if it was not on the host before, and
+    # the base images are not contractually free of it.
+    - name: Look for the package the role is about to install
+      ansible.builtin.command:
+        cmd: "dpkg-query --show --showformat=${Status} hello"
+      register: aux_molecule_prepare_hello
+      changed_when: false
+      failed_when: false
+
+    - name: Assert that the package the role installs is not installed yet
+      ansible.builtin.assert:
+        that: "'install ok installed' not in aux_molecule_prepare_hello.stdout"
+        fail_msg: >-
+          The `hello` package is already installed on this host, so finding it after the converge
+          would say nothing about `aux_package_definitions`. Pick a package the base image does
+          not ship.
+        success_msg: "The `hello` package is not installed, so the role has to be the one to install it"
+
+    # The role installs packages through ansible.builtin.package, which on these
+    # hosts is apt, and apt cannot install from an index it has never read. The
+    # base images ship a cache from whenever they were built.
+    - name: Ensure the package index is up to date
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600

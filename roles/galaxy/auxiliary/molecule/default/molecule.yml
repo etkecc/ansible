@@ -1,0 +1,190 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+dependency:
+  name: galaxy
+  options:
+    requirements-file: requirements.yml
+    force: true
+driver:
+  name: docker
+platforms:
+  - name: aux-${MOLECULE_DISTRO:-ubuntu2604}-default
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2604}-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callback_result_format: yaml
+  inventory:
+    group_vars:
+      all:
+        # Where everything this scenario creates lives. Nothing outside this
+        # directory is written to, except the package the role installs.
+        aux_molecule_base_path: /var/lib/molecule-aux
+
+        # An unprivileged user and group, created by prepare.yml. Ownership is
+        # the only way to tell "the role applied what it was given" apart from
+        # "the role ran as root and everything came out root-owned", so every
+        # ownership assertion in verify.yml is against these rather than root.
+        aux_molecule_user: aux-molecule-user
+        aux_molecule_group: aux-molecule-group
+
+        # Appears in the content of every file the role renders here. verify.yml
+        # asserts the content byte for byte, so a role that created the files
+        # but left them empty - or left prepare.yml's seeded content in place -
+        # could not pass.
+        aux_molecule_marker: rendered-by-the-aux-role
+
+        # ------------------------------------------------------------------
+        # Directories
+        #
+        # The role's own defaults are 0750, root and root. All three are
+        # deliberately different here, so that a task which ignored
+        # `aux_directory_default_mode` and friends could not look correct.
+        # ------------------------------------------------------------------
+        aux_directory_default_mode: "0710"
+        aux_directory_default_owner: aux-molecule-user
+        aux_directory_default_group: aux-molecule-group
+
+        # Split across the two lists that `aux_directory_definitions` is the sum
+        # of. Roles and playbooks fill in the `_auto` half and the operator's
+        # vars.yml fills in the `_custom` half; if the sum ever stopped being a
+        # sum, one of these two directories would go missing.
+        aux_directory_definitions_auto:
+          - dest: /var/lib/molecule-aux
+
+        aux_directory_definitions_custom:
+          - dest: /var/lib/molecule-aux/from-custom
+
+          # Every default overridden per item, and all three differ from both
+          # the role's defaults and this scenario's defaults above.
+          - dest: /var/lib/molecule-aux/explicit
+            mode: "0705"
+            owner: root
+            group: root
+
+        # ------------------------------------------------------------------
+        # Files
+        #
+        # `aux_file_default_mode`, `aux_file_default_owner` and
+        # `aux_file_default_group` are deliberately NOT set here. The directory
+        # side above proves those variables reach the task; this side is left
+        # alone so that verify.yml asserts the values this role actually ships -
+        # 0640, root and root. Changing a shipped default is visible to every
+        # consumer of this role, and this is what makes such a change fail CI
+        # rather than land quietly.
+        # ------------------------------------------------------------------
+        aux_file_definitions_auto:
+          - dest: /var/lib/molecule-aux/from-auto.txt
+            content: "rendered-by-the-aux-role from-auto\n"
+
+        aux_file_definitions_custom:
+          # prepare.yml seeds this one with different content and a different
+          # mode, so passing means the role corrected an existing file rather
+          # than merely created a missing one.
+          - dest: /var/lib/molecule-aux/from-custom.txt
+            content: "rendered-by-the-aux-role from-custom\n"
+
+          - dest: /var/lib/molecule-aux/explicit.txt
+            content: "rendered-by-the-aux-role explicit\n"
+            mode: "0604"
+            owner: aux-molecule-user
+            group: aux-molecule-group
+
+          # The other half of the file task: content taken from a file on the
+          # Ansible controller rather than from a string. `defaults/main.yml`
+          # documents this as the way to place binary content, which `content`
+          # cannot carry, so the fixture is deliberately binary - it opens with
+          # a NUL byte. verify.yml compares its checksum on the host against the
+          # checksum of the fixture on the controller.
+          - dest: /var/lib/molecule-aux/binary.dat
+            src: "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}/files/binary.dat"
+            mode: "0600"
+
+        # ------------------------------------------------------------------
+        # Packages
+        #
+        # `hello` is in Debian and Ubuntu main, is a few tens of kilobytes and
+        # has no dependencies beyond libc. prepare.yml asserts it is absent
+        # before the role runs, which is what makes finding it afterwards mean
+        # something.
+        #
+        # `aux_package_state` is left at the role's default of `present`.
+        # ------------------------------------------------------------------
+        aux_package_definitions_custom:
+          - hello
+
+        # ------------------------------------------------------------------
+        # Commands
+        #
+        # Set directly rather than through `_auto` and `_custom`, because that
+        # is the shape mash-playbook's own documentation shows operators using
+        # (assigning to `aux_directory_definitions` in vars.yml). Both shapes
+        # are therefore exercised by this one scenario.
+        #
+        # `aux_command_default_become`, `aux_command_default_become_user`,
+        # `aux_command_default_ignore_errors` and
+        # `aux_command_default_show_output` are left at the role's defaults of
+        # false, root, false and true.
+        # ------------------------------------------------------------------
+        aux_command_definitions:
+          # No `become`, so this runs as the connection user and the marker
+          # comes out root-owned.
+          - command: >-
+              /bin/sh -c 'printf aux-default-visible-stdout;
+              touch /var/lib/molecule-aux/command-as-root.marker'
+
+          # With `become`, so the marker comes out owned by the unprivileged
+          # user. This is the assertion that distinguishes a role which honors
+          # the per-item become settings from one which runs everything as root.
+          - command: >-
+              /bin/sh -c 'printf aux-explicitly-hidden-stdout;
+              touch /var/lib/molecule-aux/command-as-user.marker'
+            become: true
+            become_user: aux-molecule-user
+            show_output: false
+
+          # Removes a file that exists and one that does not, so it does its
+          # work and still exits non-zero. The converge only survives it because
+          # `ignore_errors` is honored per item, and verify.yml checks the file
+          # it removed is really gone - a command whose failure was ignored but
+          # which never ran would leave it behind.
+          - command: >-
+              /usr/bin/rm /var/lib/molecule-aux/removed-by-failing-command
+              /var/lib/molecule-aux/never-existed
+            ignore_errors: true
+
+          # After the failing one, to show the loop carried on. Its stdout and
+          # stderr exercise the default output display while the marker gives
+          # verify something persistent to inspect.
+          - command: >-
+              /bin/sh -c 'printf aux-visible-stdout; printf aux-visible-stderr >&2;
+              touch /var/lib/molecule-aux/command-last.marker'
+  env:
+    # Workaround for https://github.com/ansible/molecule/issues/4391
+    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles
+scenario:
+  # The stock sequence without `idempotence`. `aux_command_definitions` is a
+  # list of unconditional commands - one of which is expected to fail every time
+  # - so the role reports changes on every run by design. That is the point of
+  # the mechanism, not a defect in it.
+  test_sequence:
+    - dependency
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    - verify
+    - destroy
+verifier:
+  name: ansible

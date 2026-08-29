@@ -141,12 +141,17 @@ aux_command_default_become_user: root
 # The default ignore_errors when running commands using `aux_command_definitions`
 aux_command_default_ignore_errors: false
 
+# The default for displaying stdout and stderr from successful commands using `aux_command_definitions`.
+# Disable this globally, or per command with `show_output: false`, when output may contain sensitive data.
+aux_command_default_show_output: true
+
 # Holds a list of commands to call on the server, using the
 # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/command_module.html
 #
 # By default, commands are are:
 # - run with become specified in `aux_command_default_become`
 # - using user specified in `aux_command_default_become_user`
+# - displaying non-empty stdout/stderr, as specified in `aux_command_default_show_output`
 #
 # You can define the command with all its args inline (in your `vars.yml` file) or as an external file (see the example below).
 #
@@ -159,6 +164,7 @@ aux_command_default_ignore_errors: false
 #
 #   - command: "/usr/bin/just-run" # Run command no matter what, ignore errors
 #     ignore_errors: true
+#     show_output: false # Hide output from this command if it may contain sensitive data
 aux_command_definitions_custom: []
 # this var is for playbook- or group-level definitions, and should not be used in specific host's `vars.yml`
 aux_command_definitions_auto: []

@@ -38,6 +38,32 @@
   become: "{{ item.become | default(aux_command_default_become) | bool }}"
   become_user: "{{ item.become_user | default(aux_command_default_become_user) }}"
   ignore_errors: "{{ item.ignore_errors | default(aux_command_default_ignore_errors) | bool }}"
+  register: aux_command_results
   with_items: "{{ aux_command_definitions }}"
   loop_control:
     label: "{{ item.command }}"
+
+- name: Show AUX command output
+  ansible.builtin.debug:
+    msg:
+      stdout: "{{ aux_command_result.stdout | default('') }}"
+      stderr: "{{ aux_command_result.stderr | default('') }}"
+  when: aux_command_result.item.show_output | default(aux_command_default_show_output) | bool
+  loop: >-
+    {{
+      aux_command_results_with_output
+      if aux_command_default_show_output | bool
+      else aux_command_results_with_output | selectattr('item.show_output', 'defined') | list
+    }}
+  loop_control:
+    loop_var: aux_command_result
+    label: "{{ aux_command_result.item.command }}"
+  vars:
+    aux_command_results_with_output: >-
+      {{
+        aux_command_results.results | rejectattr('failed')
+        | selectattr('stdout', 'defined') | selectattr('stdout') | list
+        + aux_command_results.results | rejectattr('failed')
+        | selectattr('stdout', 'defined') | rejectattr('stdout')
+        | selectattr('stderr', 'defined') | selectattr('stderr') | list
+      }}

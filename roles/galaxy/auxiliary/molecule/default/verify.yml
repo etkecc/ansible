@@ -1,0 +1,312 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify aux
+  hosts: all
+  become: true
+  gather_facts: false
+
+  vars:
+    # The state the role is supposed to have produced, spelled out here rather
+    # than read out of the role's own defaults. Reading `aux_file_default_mode`
+    # out of defaults/main.yml would make the assertion move together with the
+    # value it is checking, and these are values every consumer of this role
+    # depends on: they decide who can read the files a playbook drops on a
+    # server.
+    aux_verify_shipped_file_mode: "0640"
+    aux_verify_shipped_file_owner: root
+    aux_verify_shipped_file_group: root
+
+    # Paths named in no definition of any kind. They are what separates "the
+    # role applied the lists it was given" from "the role did something to that
+    # directory".
+    aux_verify_absent_paths:
+      - "{{ aux_molecule_base_path }}/never-defined"
+      - "{{ aux_molecule_base_path }}/never-defined.txt"
+      - "{{ aux_molecule_base_path }}/command-never-defined.marker"
+      # Removed by the failing command in aux_command_definitions.
+      - "{{ aux_molecule_base_path }}/removed-by-failing-command"
+
+    aux_verify_paths:
+      - "{{ aux_molecule_base_path }}"
+      - "{{ aux_molecule_base_path }}/from-custom"
+      - "{{ aux_molecule_base_path }}/explicit"
+      - "{{ aux_molecule_base_path }}/from-auto.txt"
+      - "{{ aux_molecule_base_path }}/from-custom.txt"
+      - "{{ aux_molecule_base_path }}/explicit.txt"
+      - "{{ aux_molecule_base_path }}/binary.dat"
+      - "{{ aux_molecule_base_path }}/untouched.txt"
+      - "{{ aux_molecule_base_path }}/command-as-root.marker"
+      - "{{ aux_molecule_base_path }}/command-as-user.marker"
+      - "{{ aux_molecule_base_path }}/command-last.marker"
+
+  tasks:
+    - name: Read the state of everything the role should have produced
+      ansible.builtin.stat:
+        path: "{{ item }}"
+        get_checksum: true
+      register: aux_verify_stat_results
+      loop: "{{ aux_verify_paths + aux_verify_absent_paths }}"
+
+    - name: Index the state by path
+      ansible.builtin.set_fact:
+        aux_verify: "{{ dict(aux_verify_stat_results.results | map(attribute='item') | zip(aux_verify_stat_results.results | map(attribute='stat'))) }}"
+
+    # ------------------------------------------------------------------
+    # Directories
+    # ------------------------------------------------------------------
+
+    # prepare.yml left this directory root-owned and mode 0777. Everything
+    # asserted here is a correction the role had to make, so a role that only
+    # creates directories it finds missing cannot pass.
+    - name: Assert the base directory was brought to the configured state
+      ansible.builtin.assert:
+        that:
+          - aux_verify[aux_molecule_base_path].exists
+          - aux_verify[aux_molecule_base_path].isdir
+          - aux_verify[aux_molecule_base_path].mode == aux_directory_default_mode
+          - aux_verify[aux_molecule_base_path].pw_name == aux_directory_default_owner
+          - aux_verify[aux_molecule_base_path].gr_name == aux_directory_default_group
+        fail_msg: >-
+          {{ aux_molecule_base_path }} should be a directory owned by
+          {{ aux_directory_default_owner }}:{{ aux_directory_default_group }} at mode
+          {{ aux_directory_default_mode }}, but it is
+          {{ aux_verify[aux_molecule_base_path].pw_name | default('missing') }}:{{
+          aux_verify[aux_molecule_base_path].gr_name | default('missing') }} at mode
+          {{ aux_verify[aux_molecule_base_path].mode | default('missing') }}. prepare.yml left it
+          root:root at 0777, so the role had to correct all three.
+        success_msg: >-
+          The directory defaults reached the task: the base directory is
+          {{ aux_directory_default_owner }}:{{ aux_directory_default_group }} at mode
+          {{ aux_directory_default_mode }}
+
+    # `aux_directory_definitions` is the sum of the `_auto` list a playbook
+    # fills in and the `_custom` list an operator writes. The base directory
+    # above comes from the first, this one from the second.
+    - name: Assert the directory from the custom list was created with the defaults
+      ansible.builtin.assert:
+        that:
+          - aux_verify[aux_molecule_base_path + '/from-custom'].isdir
+          - aux_verify[aux_molecule_base_path + '/from-custom'].mode == aux_directory_default_mode
+          - aux_verify[aux_molecule_base_path + '/from-custom'].pw_name == aux_directory_default_owner
+          - aux_verify[aux_molecule_base_path + '/from-custom'].gr_name == aux_directory_default_group
+        fail_msg: >-
+          The directory named in aux_directory_definitions_custom is missing or in the wrong state,
+          which means aux_directory_definitions is no longer the sum of its _auto and _custom halves
+        success_msg: "Both halves of aux_directory_definitions were applied"
+
+    - name: Assert the per-item directory overrides beat the defaults
+      ansible.builtin.assert:
+        that:
+          - aux_verify[aux_molecule_base_path + '/explicit'].isdir
+          - aux_verify[aux_molecule_base_path + '/explicit'].mode == '0705'
+          - aux_verify[aux_molecule_base_path + '/explicit'].pw_name == 'root'
+          - aux_verify[aux_molecule_base_path + '/explicit'].gr_name == 'root'
+        fail_msg: >-
+          The directory that names its own mode, owner and group came out at mode
+          {{ aux_verify[aux_molecule_base_path + '/explicit'].mode | default('missing') }} owned by
+          {{ aux_verify[aux_molecule_base_path + '/explicit'].pw_name | default('missing') }}:{{
+          aux_verify[aux_molecule_base_path + '/explicit'].gr_name | default('missing') }}, so the
+          per-item keys lost to the defaults
+        success_msg: "Per-item mode, owner and group override the directory defaults"
+
+    # ------------------------------------------------------------------
+    # Files
+    # ------------------------------------------------------------------
+
+    - name: Read the content of the files the role rendered
+      ansible.builtin.slurp:
+        src: "{{ item }}"
+      register: aux_verify_slurped
+      loop:
+        - "{{ aux_molecule_base_path }}/from-auto.txt"
+        - "{{ aux_molecule_base_path }}/from-custom.txt"
+        - "{{ aux_molecule_base_path }}/explicit.txt"
+        - "{{ aux_molecule_base_path }}/untouched.txt"
+
+    - name: Index the content by path
+      ansible.builtin.set_fact:
+        aux_verify_content: "{{ dict(aux_verify_slurped.results | map(attribute='item') | zip(aux_verify_slurped.results | map(attribute='content') | map('b64decode'))) }}"
+
+    # The content is asserted byte for byte, so an empty file - which is what a
+    # `copy` task that lost its `content` argument would leave behind - fails
+    # here rather than passing on the strength of the file existing.
+    - name: Assert the file from the auto list carries the role's content and the shipped defaults
+      ansible.builtin.assert:
+        that:
+          - aux_verify_content[aux_molecule_base_path + '/from-auto.txt'] == aux_molecule_marker + ' from-auto' + '\n'
+          - aux_verify[aux_molecule_base_path + '/from-auto.txt'].mode == aux_verify_shipped_file_mode
+          - aux_verify[aux_molecule_base_path + '/from-auto.txt'].pw_name == aux_verify_shipped_file_owner
+          - aux_verify[aux_molecule_base_path + '/from-auto.txt'].gr_name == aux_verify_shipped_file_group
+        fail_msg: >-
+          The file from aux_file_definitions_auto is not what the role was told to write, or the
+          file defaults this role ships are no longer {{ aux_verify_shipped_file_mode }} owned by
+          {{ aux_verify_shipped_file_owner }}:{{ aux_verify_shipped_file_group }}. This scenario
+          sets none of aux_file_default_mode, aux_file_default_owner or aux_file_default_group, so
+          what is asserted here is the value every consumer of this role gets by default.
+        success_msg: >-
+          The file from aux_file_definitions_auto carries the role's content at the shipped
+          defaults of {{ aux_verify_shipped_file_mode }}
+          {{ aux_verify_shipped_file_owner }}:{{ aux_verify_shipped_file_group }}
+
+    # prepare.yml seeded this file with its own content, mode 0666 and an
+    # unprivileged owner. All four assertions below are corrections.
+    - name: Assert the seeded file was overwritten and its permissions corrected
+      ansible.builtin.assert:
+        that:
+          - aux_verify_content[aux_molecule_base_path + '/from-custom.txt'] == aux_molecule_marker + ' from-custom' + '\n'
+          - aux_verify[aux_molecule_base_path + '/from-custom.txt'].mode == aux_verify_shipped_file_mode
+          - aux_verify[aux_molecule_base_path + '/from-custom.txt'].pw_name == aux_verify_shipped_file_owner
+          - aux_verify[aux_molecule_base_path + '/from-custom.txt'].gr_name == aux_verify_shipped_file_group
+        fail_msg: >-
+          The file prepare.yml seeded still carries prepare.yml's content or prepare.yml's
+          permissions, so the role does not converge files that already exist
+        success_msg: "An existing file with the wrong content and the wrong permissions was corrected"
+
+    - name: Assert the per-item file overrides beat the shipped defaults
+      ansible.builtin.assert:
+        that:
+          - aux_verify_content[aux_molecule_base_path + '/explicit.txt'] == aux_molecule_marker + ' explicit' + '\n'
+          - aux_verify[aux_molecule_base_path + '/explicit.txt'].mode == '0604'
+          - aux_verify[aux_molecule_base_path + '/explicit.txt'].pw_name == aux_molecule_user
+          - aux_verify[aux_molecule_base_path + '/explicit.txt'].gr_name == aux_molecule_group
+        fail_msg: >-
+          The file that names its own mode, owner and group came out at mode
+          {{ aux_verify[aux_molecule_base_path + '/explicit.txt'].mode | default('missing') }} owned by
+          {{ aux_verify[aux_molecule_base_path + '/explicit.txt'].pw_name | default('missing') }}:{{
+          aux_verify[aux_molecule_base_path + '/explicit.txt'].gr_name | default('missing') }}
+        success_msg: "Per-item mode, owner and group override the file defaults"
+
+    # The `src` half of the file task. The checksum is taken from the fixture on
+    # the controller rather than written down here, so the assertion keeps
+    # meaning something if the fixture is ever regenerated.
+    - name: Read the binary fixture on the controller
+      ansible.builtin.stat:
+        path: "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}/files/binary.dat"
+        get_checksum: true
+      register: aux_verify_fixture
+      become: false
+      delegate_to: localhost
+
+    - name: Assert the binary file was copied from the controller byte for byte
+      ansible.builtin.assert:
+        that:
+          - aux_verify_fixture.stat.checksum | length > 0
+          - aux_verify[aux_molecule_base_path + '/binary.dat'].checksum == aux_verify_fixture.stat.checksum
+          - aux_verify[aux_molecule_base_path + '/binary.dat'].mode == '0600'
+        fail_msg: >-
+          The file defined with `src` instead of `content` does not match the fixture on the
+          controller. defaults/main.yml documents `src` as the way to place binary content, which
+          `content` cannot carry, and the fixture opens with a NUL byte precisely so that a
+          text-only copy path could not pass this.
+        success_msg: "A binary file defined with `src` arrived intact"
+
+    # The negative control for the whole file task: a file in the same directory,
+    # seeded in the same wrong state, that no definition names.
+    - name: Assert the file the role was never told about was left alone
+      ansible.builtin.assert:
+        that:
+          - aux_verify_content[aux_molecule_base_path + '/untouched.txt'] == 'seeded by prepare.yml and never mentioned to the role' + '\n'
+          - aux_verify[aux_molecule_base_path + '/untouched.txt'].mode == '0666'
+          - aux_verify[aux_molecule_base_path + '/untouched.txt'].pw_name == aux_molecule_user
+        fail_msg: >-
+          A file that appears in no definition was rewritten or had its permissions changed, so the
+          role is acting on the directory rather than on the lists it was given
+        success_msg: "A file in the same directory that no definition names was left untouched"
+
+    # ------------------------------------------------------------------
+    # Packages
+    # ------------------------------------------------------------------
+
+    - name: Read the state of the package the role installs
+      ansible.builtin.command:
+        cmd: "dpkg-query --show --showformat=${Status} hello"
+      register: aux_verify_hello_status
+      changed_when: false
+      failed_when: false
+
+    # prepare.yml asserted this package was absent before the converge, so this
+    # is a change the role made and not something the base image shipped.
+    - name: Assert the package named in aux_package_definitions was installed
+      ansible.builtin.assert:
+        that: aux_verify_hello_status.stdout == 'install ok installed'
+        fail_msg: >-
+          dpkg reports `hello` as "{{ aux_verify_hello_status.stdout }}" rather than
+          "install ok installed", so aux_package_definitions did not reach ansible.builtin.package
+        success_msg: "The package named in aux_package_definitions was installed"
+
+    - name: Run the program the installed package provides
+      ansible.builtin.command:
+        cmd: hello
+      register: aux_verify_hello_run
+      changed_when: false
+
+    - name: Assert the installed package is usable
+      ansible.builtin.assert:
+        that: "'Hello, world!' in aux_verify_hello_run.stdout"
+        fail_msg: "The `hello` package is registered with dpkg but its program does not run"
+        success_msg: "The installed package works, so this was a real installation"
+
+    - name: Read the state of a package nobody asked for
+      ansible.builtin.command:
+        cmd: "dpkg-query --show --showformat=${Status} sl"
+      register: aux_verify_sl_status
+      changed_when: false
+      failed_when: false
+
+    - name: Assert no package outside aux_package_definitions was installed
+      ansible.builtin.assert:
+        that: aux_verify_sl_status.stdout != 'install ok installed'
+        fail_msg: "A package that appears in no definition is installed"
+        success_msg: "Only the package named in aux_package_definitions was installed"
+
+    # ------------------------------------------------------------------
+    # Commands
+    # ------------------------------------------------------------------
+
+    - name: Assert the command without become ran as the connection user
+      ansible.builtin.assert:
+        that:
+          - aux_verify[aux_molecule_base_path + '/command-as-root.marker'].exists
+          - aux_verify[aux_molecule_base_path + '/command-as-root.marker'].pw_name == 'root'
+        fail_msg: >-
+          The command that names no `become` did not run, or did not run as the connection user
+        success_msg: "The command that names no `become` ran under aux_command_default_become"
+
+    # The only assertion here that can tell a role which honors the per-item
+    # become settings apart from one that runs every command as root.
+    - name: Assert the command with become ran as the user it named
+      ansible.builtin.assert:
+        that:
+          - aux_verify[aux_molecule_base_path + '/command-as-user.marker'].exists
+          - aux_verify[aux_molecule_base_path + '/command-as-user.marker'].pw_name == aux_molecule_user
+        fail_msg: >-
+          The marker the command with `become_user: {{ aux_molecule_user }}` created is owned by
+          {{ aux_verify[aux_molecule_base_path + '/command-as-user.marker'].pw_name | default('nobody, because it does not exist') }},
+          so the per-item become settings did not reach the task
+        success_msg: "A command ran as the unprivileged user its definition named"
+
+    - name: Assert the loop carried on past the command that failed
+      ansible.builtin.assert:
+        that: aux_verify[aux_molecule_base_path + '/command-last.marker'].exists
+        fail_msg: >-
+          The command defined after the failing one never ran. The converge surviving at all is
+          what proves `ignore_errors` was honored; this proves the rest of the list still ran.
+        success_msg: "A failing command with `ignore_errors` did not stop the definitions after it"
+
+    # ------------------------------------------------------------------
+    # Negative controls
+    # ------------------------------------------------------------------
+
+    # `removed-by-failing-command` is in this list. prepare.yml created it and
+    # the only thing that could have removed it is the command that then exited
+    # non-zero - so this is what says that command really ran, rather than
+    # having been skipped by something that saw it was going to fail.
+    - name: Assert nothing exists that no definition asked for
+      ansible.builtin.assert:
+        that: not aux_verify[item].exists
+        fail_msg: "{{ item }} exists, although no definition given to the role names it"
+        success_msg: "{{ item }} does not exist, as no definition names it"
+      loop: "{{ aux_verify_absent_paths }}"

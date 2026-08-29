@@ -1,5 +1,4 @@
 # SPDX-FileCopyrightText: 2026 Slavi Pantaleev
-# SPDX-FileCopyrightText: 2026 spatterlight
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -40,6 +39,7 @@ jobs:
       matrix:
         distro:
           - ubuntu2604
+          - debian13
         scenario:
           - default
       fail-fast: false
@@ -50,28 +50,30 @@ jobs:
       ANSIBLE_FORCE_COLOR: "1"
 
     steps:
+      # The checkout directory is the name the role is included under, because
+      # converge.yml derives it from MOLECULE_PROJECT_DIRECTORY.
       - name: Checkout repository
         uses: actions/checkout@v7.0.0
         with:
-          path: ntfy
+          path: aux
 
       - name: Set up Python
         uses: actions/setup-python@v6.3.0
         with:
-          python-version-file: ntfy/.python-version
+          python-version-file: aux/.python-version
           cache: pip
-          cache-dependency-path: ntfy/molecule/requirements.txt
+          cache-dependency-path: aux/molecule/requirements.txt
 
       - name: Install Python dependencies
-        working-directory: ntfy
+        working-directory: aux
         run: pip install -r molecule/requirements.txt
 
       - name: Cache Ansible collections
         uses: actions/cache@v6.1.0
         with:
           path: ~/.ansible/collections
-          key: ansible-collections-${{ hashFiles('ntfy/molecule/default/requirements.yml') }}
+          key: ansible-collections-${{ hashFiles('aux/molecule/*/requirements.yml') }}
 
       - name: Run Molecule
-        working-directory: ntfy
+        working-directory: aux
         run: molecule test --scenario-name ${{ matrix.scenario }}

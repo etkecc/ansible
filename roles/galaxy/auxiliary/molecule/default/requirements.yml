@@ -1,0 +1,6 @@
+---
+# The role itself pulls in nothing. This is what Molecule's own Docker driver
+# needs in order to create and destroy the test container.
+collections:
+  - name: community.docker
+    version: 5.2.2
