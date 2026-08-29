@@ -7,7 +7,7 @@ galaxy_info:
   author: etke.cc
   company: etke.cc
   role_name: prometheus_postgres_exporter
-  namespace: etkecc
+  namespace: mash
   description: Prometheus Postgres Exporter role
   platforms:
     - name: Debian

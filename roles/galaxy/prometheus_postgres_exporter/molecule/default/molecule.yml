@@ -1,0 +1,150 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+dependency:
+  name: galaxy
+  options:
+    requirements-file: requirements.yml
+    force: true
+driver:
+  name: docker
+platforms:
+  - name: prometheus-postgres-exporter-${MOLECULE_DISTRO:-ubuntu2604}-default
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2604}-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callback_result_format: yaml
+  inventory:
+    group_vars:
+      all:
+        # Helper variables
+        prometheus_postgres_exporter_debug_service_enabled: false
+
+        # The port on the test host that the exporter's web server is published
+        # on. The role does not publish it by default (it is meant to be scraped
+        # from another container on the same network), so the scenario publishes
+        # it in order to reach it from the test host.
+        prometheus_postgres_exporter_molecule_http_bind_port: 9187
+
+        # The port on the test host that `verify.yml` publishes its own
+        # throwaway exporter on, as the negative control described there.
+        prometheus_postgres_exporter_molecule_starved_bind_port: 9188
+
+        # A port on the Postgres container where nothing listens, used as the
+        # negative half of the `pg_up` round-trip. 9 is the discard port, which
+        # the Postgres image does not serve.
+        prometheus_postgres_exporter_molecule_dead_port: 9
+
+        # The path that the exporter is asked to serve its metrics under,
+        # through the role's own additional-environment-variables knob below.
+        #
+        # The exporter serves /metrics out of the box and answers it just as
+        # cheerfully when it has never reached a database, so a 200 there says
+        # very little. Moving the endpoint turns that around: with a telemetry
+        # path in effect, the stock /metrics answers 404, and `verify.yml`
+        # asserts both halves. That makes it a direct statement that the env
+        # file the role rendered is what the running process read.
+        prometheus_postgres_exporter_molecule_telemetry_path: /molecule/metrics
+
+        # The name of the container that `verify.yml` starts as its negative
+        # control. It embeds the role and the scenario, so that it cannot
+        # collide with anything else on the test host.
+        prometheus_postgres_exporter_molecule_starved_container_name: prometheus-postgres-exporter-molecule-default-starved
+
+        # Where the Postgres that this scenario stands up answers, pinned to
+        # literals rather than taken from ansible-role-postgres's own defaults:
+        # `verify.yml` does not include that role, so nothing of it is in scope
+        # there, and these values have to be readable from both places.
+        #
+        # `postgres_identifier` is what ansible-role-postgres derives both its
+        # container name and its default connection hostname from, so pinning
+        # the two together below keeps them from drifting apart.
+        prometheus_postgres_exporter_molecule_postgres_hostname: postgres
+        prometheus_postgres_exporter_molecule_postgres_port: 5432
+
+        # A database name that nothing but this scenario would ever create.
+        # It is the marker that tells an exporter reading a real database apart
+        # from one serving its own static metrics: this name can only appear in
+        # the labels because the exporter queried the Postgres that this
+        # scenario stood up.
+        prometheus_postgres_exporter_molecule_database_name: prometheus_postgres_exporter_molecule_default
+
+        # Variables for Prometheus Postgres exporter
+        prometheus_postgres_exporter_uid: 1000
+        prometheus_postgres_exporter_gid: 1000
+        prometheus_postgres_exporter_hostname: localhost
+        prometheus_postgres_exporter_container_labels_metrics_enabled: false
+        prometheus_postgres_exporter_container_http_host_bind_port: "127.0.0.1:{{ prometheus_postgres_exporter_molecule_http_bind_port }}"
+
+        # Both of these are pinned to literal values, because `verify.yml` has
+        # to name them and the role derives them from other variables, which
+        # cannot be resolved out of the role's defaults file on its own.
+        prometheus_postgres_exporter_base_path: /prometheus-postgres-exporter
+        prometheus_postgres_exporter_container_network: prometheus-postgres-exporter-molecule-default
+
+        # Variables required for Prometheus Postgres exporter to connect to the Postgres database
+        prometheus_postgres_exporter_database_hostname: "{{ prometheus_postgres_exporter_molecule_postgres_hostname }}"
+        prometheus_postgres_exporter_database_port: "{{ prometheus_postgres_exporter_molecule_postgres_port }}"
+        prometheus_postgres_exporter_database_username: prometheus_postgres_exporter_molecule
+        prometheus_postgres_exporter_database_password: prometheus_postgres_exporter_molecule_password
+        prometheus_postgres_exporter_database_sslmode: disable
+        prometheus_postgres_exporter_database_name: "{{ prometheus_postgres_exporter_molecule_database_name }}"
+        prometheus_postgres_exporter_systemd_required_services_list_auto: |
+          {{
+            ([prometheus_postgres_exporter_molecule_postgres_hostname ~ '.service'])
+          }}
+
+        # The role's own extension point for the env file it renders. Nothing
+        # else in this scenario can put this variable in front of the exporter
+        # process, which is what makes the pair of assertions about the
+        # telemetry path in `verify.yml` evidence that the env file was read.
+        prometheus_postgres_exporter_environment_variables_additional_variables: |
+          PG_EXPORTER_WEB_TELEMETRY_PATH={{ prometheus_postgres_exporter_molecule_telemetry_path }}
+
+        # Variables for Postgres
+        postgres_uid: 1000
+        postgres_gid: 1000
+        postgres_identifier: "{{ prometheus_postgres_exporter_molecule_postgres_hostname }}"
+        postgres_connection_password: postgres_password
+        postgres_container_network: "{{ prometheus_postgres_exporter_container_network }}"
+        postgres_managed_databases: |
+          {{
+            [{
+              'name': prometheus_postgres_exporter_database_name,
+              'username': prometheus_postgres_exporter_database_username,
+              'password': prometheus_postgres_exporter_database_password
+            }]
+          }}
+  env:
+    # Workaround for https://github.com/ansible/molecule/issues/4391
+    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles
+scenario:
+  # See: https://docs.ansible.com/projects/molecule/configuration/?h=test_sequence#scenario
+  test_sequence:
+    - dependency
+    - cleanup
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    # Disable idempotence test for now due to ansible-role-postgres
+    # - idempotence
+    - side_effect
+    - verify
+    - cleanup
+    - destroy
+verifier:
+  name: ansible

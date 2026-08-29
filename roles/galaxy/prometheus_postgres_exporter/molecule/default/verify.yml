@@ -1,0 +1,348 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify Prometheus Postgres exporter
+  hosts: all
+  become: true
+  gather_facts: false
+
+  vars:
+    # Where the exporter answers on the test host, under the telemetry path
+    # that the scenario asked the process to serve its metrics from.
+    prometheus_postgres_exporter_molecule_metrics_url: "http://127.0.0.1:{{ prometheus_postgres_exporter_molecule_http_bind_port }}{{ prometheus_postgres_exporter_molecule_telemetry_path }}"
+
+    # The same path on the throwaway exporter that the negative control below
+    # starts. It reads the very same env file, so it serves from the same path.
+    prometheus_postgres_exporter_molecule_starved_metrics_url: "http://127.0.0.1:{{ prometheus_postgres_exporter_molecule_starved_bind_port }}{{ prometheus_postgres_exporter_molecule_telemetry_path }}"
+
+    # How the exporter names the server it is scraping: the DSN's host and
+    # port, verbatim. This is what the `server` label has to carry if the
+    # role's DSN reached the process.
+    prometheus_postgres_exporter_molecule_server_label: "{{ prometheus_postgres_exporter_molecule_postgres_hostname }}:{{ prometheus_postgres_exporter_molecule_postgres_port }}"
+
+  tasks:
+    # The role is not included in this playbook, so its defaults are not in
+    # scope. Reading defaults/main.yml directly keeps the assertions below tied
+    # to the values that this role ships, with nothing to keep in sync in this
+    # scenario. include_vars reads from the controller.
+    #
+    # Only literal values may be read out of this namespace - anything the role
+    # derives from another variable comes back as an unrendered template here.
+    # Anything this scenario tunes comes from the scenario's group_vars instead.
+    - name: Load the Prometheus Postgres exporter role defaults
+      ansible.builtin.include_vars:
+        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+        name: prometheus_postgres_exporter_defaults
+
+    - name: Wait for Prometheus Postgres exporter service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: prometheus-postgres-exporter.service
+      register: prometheus_postgres_exporter_service
+      until: prometheus_postgres_exporter_service.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert Prometheus Postgres exporter service is active
+      ansible.builtin.assert:
+        that: prometheus_postgres_exporter_service.status.ActiveState == 'active'
+        fail_msg: "prometheus-postgres-exporter.service not active ({{ prometheus_postgres_exporter_service.status.ActiveState }})"
+        success_msg: "prometheus-postgres-exporter.service is active"
+
+    - name: Retrieve Prometheus Postgres exporter service log for debugging
+      when: prometheus_postgres_exporter_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu prometheus-postgres-exporter.service
+      changed_when: false
+
+    # A systemd unit reaching "active" only means that `docker start` has not
+    # exited yet, and an HTTP 200 from this exporter means even less than it
+    # usually does: postgres_exporter serves its metrics endpoint from the
+    # moment it binds, with `postgres_exporter_build_info` and some fifty other
+    # series on it, whether or not it has ever reached a database. The negative
+    # control at the bottom of this file demonstrates exactly that.
+    #
+    # `pg_up 1` is therefore part of what is waited for rather than only
+    # asserted afterwards: the database has to finish starting before the
+    # exporter's first successful scrape, and the wait is what absorbs that.
+    - name: Wait for Prometheus Postgres exporter to scrape the database (up to 180s)
+      ansible.builtin.uri:
+        url: "{{ prometheus_postgres_exporter_molecule_metrics_url }}"
+        method: GET
+        return_content: true
+      register: prometheus_postgres_exporter_metrics
+      until: >-
+        prometheus_postgres_exporter_metrics.status == 200
+        and 'pg_up 1' in prometheus_postgres_exporter_metrics.content.splitlines()
+      retries: 36
+      delay: 5
+
+    - name: Split the scraped Prometheus Postgres exporter metrics into lines
+      ansible.builtin.set_fact:
+        prometheus_postgres_exporter_metrics_lines: "{{ prometheus_postgres_exporter_metrics.content.splitlines() }}"
+
+    - name: Assert Prometheus Postgres exporter serves metrics
+      ansible.builtin.assert:
+        that:
+          - prometheus_postgres_exporter_metrics.status == 200
+          - "'postgres_exporter_build_info' in prometheus_postgres_exporter_metrics.content"
+        fail_msg: "Prometheus Postgres exporter did not serve exporter metrics ({{ prometheus_postgres_exporter_metrics.status | default('no response') }})"
+        success_msg: "Prometheus Postgres exporter serves metrics"
+
+    # The other half of the check above, and the reason the scenario moves the
+    # telemetry path at all. The exporter serves /metrics by default, so finding
+    # metrics there would say nothing about this role. A 404 there can only
+    # happen because `PG_EXPORTER_WEB_TELEMETRY_PATH`, contributed through
+    # `prometheus_postgres_exporter_environment_variables_additional_variables`,
+    # was rendered into the env file and read by the running process.
+    - name: Retrieve the Prometheus Postgres exporter stock metrics path
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:{{ prometheus_postgres_exporter_molecule_http_bind_port }}/metrics"
+        method: GET
+        status_code: [404]
+      register: prometheus_postgres_exporter_stock_metrics_path
+
+    - name: Assert the role's env file reached the running Prometheus Postgres exporter
+      ansible.builtin.assert:
+        that: prometheus_postgres_exporter_stock_metrics_path.status == 404
+        fail_msg: "The exporter still serves /metrics, so PG_EXPORTER_WEB_TELEMETRY_PATH did not reach it from the role's env file"
+        success_msg: "The exporter serves only under {{ prometheus_postgres_exporter_molecule_telemetry_path }}, as the role's env file asked"
+
+    # The point of the role: a connection to a real Postgres. `pg_up` is
+    # recomputed on every scrape from an actual connection attempt, so this is
+    # the first line in this file that a database-less exporter cannot produce.
+    - name: Assert Prometheus Postgres exporter reports the database as up
+      ansible.builtin.assert:
+        that: "'pg_up 1' in prometheus_postgres_exporter_metrics_lines"
+        fail_msg: "Prometheus Postgres exporter does not report the database as up ({{ prometheus_postgres_exporter_metrics_lines | select('match', 'pg_up ') | list }})"
+        success_msg: "Prometheus Postgres exporter reports the database as up"
+
+    # Which server it connected to, read back out of the running process. The
+    # `server` label is the DSN's host and port verbatim, and `short_version`
+    # is something only a completed query against a live server can produce, so
+    # together they say that the DSN the role's env template built out of
+    # `prometheus_postgres_exporter_database_hostname` and `_port` is the one
+    # the process dialed.
+    - name: Find the series describing the server that Prometheus Postgres exporter scraped
+      ansible.builtin.set_fact:
+        prometheus_postgres_exporter_static_series: >-
+          {{
+            prometheus_postgres_exporter_metrics_lines
+            | select('match', 'pg_static[{]')
+            | list
+          }}
+
+    - name: Assert Prometheus Postgres exporter scraped the server the role's DSN points at
+      ansible.builtin.assert:
+        that:
+          - prometheus_postgres_exporter_static_series | length == 1
+          - "'server=\"' ~ prometheus_postgres_exporter_molecule_server_label ~ '\"' in prometheus_postgres_exporter_static_series[0]"
+          - "'short_version=\"' in prometheus_postgres_exporter_static_series[0]"
+        fail_msg: >-
+          Prometheus Postgres exporter does not report {{ prometheus_postgres_exporter_molecule_server_label }}
+          as the server it scraped (matching series: {{ prometheus_postgres_exporter_static_series }})
+        success_msg: >-
+          Prometheus Postgres exporter scraped {{ prometheus_postgres_exporter_molecule_server_label }},
+          which is where the role's DSN points
+
+    # Metrics derived from the database's own catalog, for a database that only
+    # this scenario creates. An exporter serving its built-in metric set cannot
+    # invent this name: it is here because `postgres_managed_databases` created
+    # the database and the exporter read `pg_stat_database` off the server.
+    #
+    # `numbackends` is asserted to be non-zero on this particular database
+    # because the exporter's own connection is opened against the DSN's
+    # database, which is a second, independent statement that the DSN's dbname
+    # is the one in use.
+    - name: Find the series that the scenario's own database should have produced
+      ansible.builtin.set_fact:
+        prometheus_postgres_exporter_database_series: >-
+          {{
+            prometheus_postgres_exporter_metrics_lines
+            | select('match', 'pg_stat_database_numbackends[{]')
+            | select('search', 'datname="' ~ prometheus_postgres_exporter_molecule_database_name ~ '"')
+            | list
+          }}
+        prometheus_postgres_exporter_database_size_series: >-
+          {{
+            prometheus_postgres_exporter_metrics_lines
+            | select('match', 'pg_database_size_bytes[{]')
+            | select('search', 'datname="' ~ prometheus_postgres_exporter_molecule_database_name ~ '"')
+            | list
+          }}
+
+    - name: Assert Prometheus Postgres exporter publishes metrics derived from the scenario's database
+      ansible.builtin.assert:
+        that:
+          - prometheus_postgres_exporter_database_series | length == 1
+          - (prometheus_postgres_exporter_database_series[0].split('} ') | last | float) > 0
+          - prometheus_postgres_exporter_database_size_series | length == 1
+          - (prometheus_postgres_exporter_database_size_series[0].split('} ') | last | float) > 0
+          - "'pg_scrape_collector_success{collector=\"stat_database\"} 1' in prometheus_postgres_exporter_metrics_lines"
+        fail_msg: >-
+          Prometheus Postgres exporter does not publish metrics for {{ prometheus_postgres_exporter_molecule_database_name }}
+          (backends: {{ prometheus_postgres_exporter_database_series }}, size: {{ prometheus_postgres_exporter_database_size_series }})
+        success_msg: >-
+          Prometheus Postgres exporter publishes catalog-derived metrics for {{ prometheus_postgres_exporter_molecule_database_name }},
+          with its own connection accounted for among that database's backends
+
+    # Tying the running version to `prometheus_postgres_exporter_version` is
+    # what makes this scenario a real test of the version that Renovate bumps:
+    # a bump that produces an unusable image cannot pass here.
+    #
+    # The label is matched with a leading `{` or `,` so that `goversion`, which
+    # sits on the same series and would otherwise be picked up by a bare
+    # `version="` match, cannot be mistaken for it. The lines are narrowed to
+    # `postgres_exporter_build_info` first for the same reason: `pg_static`
+    # carries a `version="PostgreSQL 18.6 on ..."` label of its own.
+    - name: Determine the version that the running Prometheus Postgres exporter reports
+      ansible.builtin.set_fact:
+        prometheus_postgres_exporter_reported_version: >-
+          {{
+            (
+              prometheus_postgres_exporter_metrics_lines
+              | select('match', 'postgres_exporter_build_info[{]')
+              | map('regex_findall', '[{,]version="([^"]+)"')
+              | flatten
+              | first
+              | default('')
+            )
+          }}
+
+    # The exporter reports its version without a leading `v` (`0.20.1`), while
+    # the role's version variable carries one. Any leading `v` is normalized
+    # away on both sides, so that this keeps holding if either side ever stops
+    # carrying one.
+    - name: Assert the running Prometheus Postgres exporter is the version the role asks for
+      ansible.builtin.assert:
+        that: >-
+          (prometheus_postgres_exporter_reported_version | regex_replace('^v', ''))
+          == (prometheus_postgres_exporter_defaults.prometheus_postgres_exporter_version | regex_replace('^v', ''))
+        fail_msg: >-
+          Prometheus Postgres exporter reports version {{ prometheus_postgres_exporter_reported_version | default('none') }},
+          but the role asks for {{ prometheus_postgres_exporter_defaults.prometheus_postgres_exporter_version }}
+        success_msg: "Prometheus Postgres exporter reports version {{ prometheus_postgres_exporter_reported_version }}"
+
+    # Everything above talks to the exporter over its published port. This looks
+    # at the container itself, and is what says that the network the role was
+    # told to use is the network the container actually joined - the same
+    # network that its DSN resolves the Postgres hostname on.
+    #
+    # The image reference is read back out of the same output, so that the
+    # negative control below is provably the image the role pulled rather than
+    # one this file names for itself.
+    - name: Query the running Prometheus Postgres exporter container
+      ansible.builtin.command:
+        argv:
+          - docker
+          - inspect
+          - "{{ prometheus_postgres_exporter_defaults.prometheus_postgres_exporter_identifier }}"
+      register: prometheus_postgres_exporter_inspect
+      changed_when: false
+
+    - name: Determine how the Prometheus Postgres exporter container is attached
+      ansible.builtin.set_fact:
+        prometheus_postgres_exporter_container_networks: "{{ (prometheus_postgres_exporter_inspect.stdout | from_json | first).NetworkSettings.Networks.keys() | list | sort }}"
+        prometheus_postgres_exporter_container_running: "{{ (prometheus_postgres_exporter_inspect.stdout | from_json | first).State.Running }}"
+        prometheus_postgres_exporter_container_image_running: "{{ (prometheus_postgres_exporter_inspect.stdout | from_json | first).Config.Image }}"
+
+    - name: Assert the container runs on the network the role configured
+      ansible.builtin.assert:
+        that:
+          - prometheus_postgres_exporter_container_running | bool
+          - prometheus_postgres_exporter_container_network in prometheus_postgres_exporter_container_networks
+        fail_msg: "The container is not running on {{ prometheus_postgres_exporter_container_network }}: {{ prometheus_postgres_exporter_container_networks }}"
+        success_msg: "The container runs on {{ prometheus_postgres_exporter_container_network }}, as the role configured"
+
+    # The negative control, and the reason everything above is worth asserting.
+    #
+    # This is the same image, on the same network, reading the very same env
+    # file the role rendered - with nothing changed but the DSN, which is aimed
+    # at a port on the Postgres container where nothing listens. It comes up,
+    # binds, and serves a perfectly well-formed metrics endpoint under the
+    # telemetry path from that env file, `postgres_exporter_build_info` and all.
+    #
+    # In other words: a 200, the build information and the right version would
+    # all have been satisfied by an exporter that never spoke to a database.
+    # `pg_up`, the `server` label and the per-database series are what separate
+    # the two, which is why they are asserted present above and asserted absent
+    # here.
+    - name: Run the negative control against the Prometheus Postgres exporter
+      block:
+        - name: Start a Prometheus Postgres exporter pointed at a dead database
+          ansible.builtin.command:
+            argv:
+              - docker
+              - run
+              - --detach
+              - --name={{ prometheus_postgres_exporter_molecule_starved_container_name }}
+              - --network={{ prometheus_postgres_exporter_container_network }}
+              - --env-file={{ prometheus_postgres_exporter_base_path }}/env
+              - --env=DATA_SOURCE_NAME=postgresql://{{ prometheus_postgres_exporter_database_username }}:{{ prometheus_postgres_exporter_database_password }}@{{ prometheus_postgres_exporter_molecule_postgres_hostname }}:{{ prometheus_postgres_exporter_molecule_dead_port }}/{{ prometheus_postgres_exporter_molecule_database_name }}?sslmode=disable
+              - --publish=127.0.0.1:{{ prometheus_postgres_exporter_molecule_starved_bind_port }}:{{ prometheus_postgres_exporter_defaults.prometheus_postgres_exporter_container_http_port }}
+              - "{{ prometheus_postgres_exporter_container_image_running }}"
+          changed_when: true
+
+        - name: Wait for the dead-database Prometheus Postgres exporter to serve metrics (up to 60s)
+          ansible.builtin.uri:
+            url: "{{ prometheus_postgres_exporter_molecule_starved_metrics_url }}"
+            method: GET
+            return_content: true
+          register: prometheus_postgres_exporter_starved_metrics
+          until: prometheus_postgres_exporter_starved_metrics.status == 200
+          retries: 12
+          delay: 5
+
+        - name: Split the dead-database Prometheus Postgres exporter metrics into lines
+          ansible.builtin.set_fact:
+            prometheus_postgres_exporter_starved_metrics_lines: "{{ prometheus_postgres_exporter_starved_metrics.content.splitlines() }}"
+
+        - name: Assert an exporter with no reachable database still serves metrics, but reports nothing about one
+          ansible.builtin.assert:
+            that:
+              # Serving happily, with the same build information and the same
+              # version as the connected one - none of which is evidence of a
+              # working exporter.
+              - prometheus_postgres_exporter_starved_metrics.status == 200
+              - "'postgres_exporter_build_info' in prometheus_postgres_exporter_starved_metrics.content"
+              # ... and yet nothing at all about a database.
+              - "'pg_up 0' in prometheus_postgres_exporter_starved_metrics_lines"
+              - "'pg_static' not in prometheus_postgres_exporter_starved_metrics.content"
+              - prometheus_postgres_exporter_molecule_database_name not in prometheus_postgres_exporter_starved_metrics.content
+            fail_msg: >-
+              The dead-database exporter did not behave as the negative control requires
+              (status: {{ prometheus_postgres_exporter_starved_metrics.status | default('no response') }},
+              pg_up: {{ prometheus_postgres_exporter_starved_metrics_lines | default([]) | select('match', 'pg_up ') | list }})
+            success_msg: >-
+              An exporter reading the same env file but pointed at a dead database serves metrics just as happily
+              and reports pg_up 0 with no database series, so the assertions above are about a real connection
+
+      always:
+        # Tolerant of the container not being there, because this also runs
+        # when the task that was supposed to start it is what failed. `docker
+        # rm` exits non-zero on an unknown container, and a failure here would
+        # then be the last thing in the log rather than the one worth reading.
+        - name: Ensure the dead-database Prometheus Postgres exporter is removed
+          ansible.builtin.command:
+            argv:
+              - docker
+              - rm
+              - --force
+              - "{{ prometheus_postgres_exporter_molecule_starved_container_name }}"
+          changed_when: true
+          failed_when: false
+
+    - name: Show Prometheus Postgres exporter verification summary
+      ansible.builtin.debug:
+        msg:
+          - "Prometheus Postgres exporter systemd: {{ prometheus_postgres_exporter_service.status.ActiveState }}"
+          - "Prometheus Postgres exporter version: {{ prometheus_postgres_exporter_reported_version }}"
+          - "Prometheus Postgres exporter stock /metrics path: {{ prometheus_postgres_exporter_stock_metrics_path.status }}"
+          - "Prometheus Postgres exporter server: {{ prometheus_postgres_exporter_static_series[0] }}"
+          - "Prometheus Postgres exporter database backends: {{ prometheus_postgres_exporter_database_series[0] }}"
+          - "Prometheus Postgres exporter database size: {{ prometheus_postgres_exporter_database_size_series[0] }}"
+          - "Prometheus Postgres exporter container networks: {{ prometheus_postgres_exporter_container_networks | join(', ') }}"
+          - "Prometheus Postgres exporter negative control: {{ prometheus_postgres_exporter_starved_metrics_lines | select('match', 'pg_up ') | list | join(', ') }}"
