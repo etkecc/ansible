@@ -2,6 +2,8 @@
 galaxy_info:
   author: Slavi Pantaleev
   company: Devture Ltd
+  role_name: traefik_certs_dumper
+  namespace: mash
   description: Traefik certs dumper role
   platforms:
     - name: Debian

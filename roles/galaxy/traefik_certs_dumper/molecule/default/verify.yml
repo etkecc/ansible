@@ -1,0 +1,490 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify Traefik certs dumper
+  hosts: all
+  become: true
+  gather_facts: false
+  vars:
+    traefik_certs_dumper_molecule_dumped_certificate_path: >-
+      {{ traefik_certs_dumper_dumped_certificates_path }}/{{ traefik_certs_dumper_molecule_domain }}/certificate.crt
+    traefik_certs_dumper_molecule_dumped_key_path: >-
+      {{ traefik_certs_dumper_dumped_certificates_path }}/{{ traefik_certs_dumper_molecule_domain }}/privatekey.key
+    traefik_certs_dumper_molecule_dumped_account_key_path: >-
+      {{ traefik_certs_dumper_dumped_certificates_path }}/private/letsencrypt.key
+    traefik_certs_dumper_molecule_appended_certificate_path: >-
+      {{ traefik_certs_dumper_dumped_certificates_path }}/{{ traefik_certs_dumper_molecule_appended_domain }}/certificate.crt
+  tasks:
+    # Role defaults are not in scope here, but the version that Renovate bumps
+    # lives in them and is what the running container is checked against below.
+    - name: Load the Traefik certs dumper role defaults
+      ansible.builtin.include_vars:
+        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+        name: traefik_certs_dumper_defaults
+
+    - name: Wait for Traefik certs dumper service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: traefik-certs-dumper.service
+      register: traefik_certs_dumper_service
+      until: traefik_certs_dumper_service.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert Traefik certs dumper service is active
+      ansible.builtin.assert:
+        that: traefik_certs_dumper_service.status.ActiveState == 'active'
+        fail_msg: "traefik-certs-dumper.service not active ({{ traefik_certs_dumper_service.status.ActiveState }})"
+        success_msg: "traefik-certs-dumper.service is active"
+
+    - name: Retrieve Traefik certs dumper service log for debugging
+      when: traefik_certs_dumper_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu traefik-certs-dumper.service
+      changed_when: false
+
+    # ---------------------------------------------------------------------
+    # The scripts the role installs are something the kernel will execute
+    # ---------------------------------------------------------------------
+
+    # The container's entrypoint is `/bin/sh`, which would fall back to
+    # interpreting a script whose first line is not a shebang. The waiter unit
+    # instead runs `wait-for-domain.sh` through `sh -c`, and that script runs
+    # `wait-for-file.sh` directly - so at least one of these is exec'd rather
+    # than sourced, and a comment above its shebang would break it.
+    - name: Stat the Traefik certs dumper scripts
+      ansible.builtin.stat:
+        path: "{{ traefik_certs_dumper_bin_path }}/{{ item }}"
+      register: traefik_certs_dumper_script_stats
+      loop:
+        - entrypoint.sh
+        - copy-certificates.sh
+        - wait-for-file.sh
+        - wait-for-domain.sh
+
+    - name: Read the Traefik certs dumper scripts
+      ansible.builtin.slurp:
+        src: "{{ traefik_certs_dumper_bin_path }}/{{ item }}"
+      register: traefik_certs_dumper_scripts
+      loop:
+        - entrypoint.sh
+        - copy-certificates.sh
+        - wait-for-file.sh
+        - wait-for-domain.sh
+
+    - name: Assert the Traefik certs dumper scripts are installed as executables
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.mode == '0750'
+        fail_msg: "{{ item.item }} is not installed as a mode 0750 executable"
+        success_msg: "{{ item.item }} is installed as a mode 0750 executable"
+      loop: "{{ traefik_certs_dumper_script_stats.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Assert the Traefik certs dumper scripts start with a shebang
+      ansible.builtin.assert:
+        that: (item.content | b64decode).splitlines()[0] == '#!/bin/sh'
+        fail_msg: "{{ item.item }} starts with {{ (item.content | b64decode).splitlines()[0] }} rather than a shebang"
+        success_msg: "{{ item.item }} starts with a shebang"
+      loop: "{{ traefik_certs_dumper_scripts.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    # ---------------------------------------------------------------------
+    # The systemd unit is wired to the configured paths and container image
+    # ---------------------------------------------------------------------
+
+    - name: Determine the Traefik certs dumper systemd unit path
+      ansible.builtin.command:
+        argv:
+          - systemctl
+          - show
+          - --property=FragmentPath
+          - --value
+          - traefik-certs-dumper.service
+      register: traefik_certs_dumper_unit_path
+      changed_when: false
+
+    - name: Read the Traefik certs dumper systemd unit
+      ansible.builtin.slurp:
+        src: "{{ traefik_certs_dumper_unit_path.stdout | trim }}"
+      register: traefik_certs_dumper_unit
+
+    - name: Make sense of the Traefik certs dumper systemd unit
+      ansible.builtin.set_fact:
+        traefik_certs_dumper_unit_text: "{{ traefik_certs_dumper_unit.content | b64decode }}"
+
+    - name: Assert the Traefik certs dumper systemd unit is wired as configured
+      ansible.builtin.assert:
+        that:
+          - "'--mount type=bind,src=' ~ traefik_certs_dumper_ssl_path ~ ',dst=/in,ro' in traefik_certs_dumper_unit_text"
+          - "'--mount type=bind,src=' ~ traefik_certs_dumper_dumped_certificates_path ~ ',dst=/out' in traefik_certs_dumper_unit_text"
+          - "'--mount type=bind,src=' ~ traefik_certs_dumper_bin_path ~ ',dst=/certs-dumper-bin,ro' in traefik_certs_dumper_unit_text"
+          - "'ldez/traefik-certs-dumper:' ~ traefik_certs_dumper_defaults.traefik_certs_dumper_version in traefik_certs_dumper_unit_text"
+          - "'/certs-dumper-bin/entrypoint.sh' in traefik_certs_dumper_unit_text"
+        fail_msg: "traefik-certs-dumper.service is not wired as configured: {{ traefik_certs_dumper_unit_text }}"
+        success_msg: >-
+          traefik-certs-dumper.service dumps {{ traefik_certs_dumper_ssl_path }} into
+          {{ traefik_certs_dumper_dumped_certificates_path }} using the role's entrypoint
+
+    # ---------------------------------------------------------------------
+    # The container which is running is the version the role installs
+    # ---------------------------------------------------------------------
+
+    # `traefik-certs-dumper version` reports `dev` in the published images, so
+    # it cannot answer this. The image's OCI version label can, and reading it
+    # off the image the running container was created from ties it to what is
+    # actually dumping, rather than to whatever happens to be pulled.
+    - name: Determine the image the running Traefik certs dumper container uses
+      ansible.builtin.command:
+        argv:
+          - docker
+          - container
+          - inspect
+          - traefik-certs-dumper
+      register: traefik_certs_dumper_container_inspect
+      changed_when: false
+
+    - name: Make sense of the running Traefik certs dumper container
+      ansible.builtin.set_fact:
+        traefik_certs_dumper_running_image: >-
+          {{ (traefik_certs_dumper_container_inspect.stdout | from_json)[0].Config.Image }}
+
+    - name: Inspect the image the running Traefik certs dumper container uses
+      ansible.builtin.command:
+        argv:
+          - docker
+          - image
+          - inspect
+          - "{{ traefik_certs_dumper_running_image }}"
+      register: traefik_certs_dumper_image_inspect
+      changed_when: false
+
+    - name: Make sense of the Traefik certs dumper image
+      ansible.builtin.set_fact:
+        traefik_certs_dumper_image_version: >-
+          {{ (traefik_certs_dumper_image_inspect.stdout | from_json)[0].Config.Labels['org.opencontainers.image.version'] }}
+
+    # The role's version variable carries a leading `v` (`v2.11.4`), the label
+    # does not (`2.11.4`). Any leading `v` is normalized away on both sides, so
+    # that this keeps holding if either side ever changes its mind.
+    - name: Assert the running Traefik certs dumper is the version this role installs
+      ansible.builtin.assert:
+        that: >-
+          (traefik_certs_dumper_image_version | trim | regex_replace('^v', ''))
+          == (traefik_certs_dumper_defaults.traefik_certs_dumper_version | regex_replace('^v', ''))
+        fail_msg: >-
+          The running container is {{ traefik_certs_dumper_running_image }}, whose image reports
+          version {{ traefik_certs_dumper_image_version | trim }}, expected
+          {{ traefik_certs_dumper_defaults.traefik_certs_dumper_version }}
+        success_msg: >-
+          The running container is {{ traefik_certs_dumper_running_image }}, whose image reports
+          version {{ traefik_certs_dumper_image_version | trim }}
+
+    # ---------------------------------------------------------------------
+    # The seeded certificate got dumped
+    # ---------------------------------------------------------------------
+
+    - name: Wait for the seeded certificate to be dumped (up to 180s)
+      ansible.builtin.stat:
+        path: "{{ traefik_certs_dumper_molecule_dumped_certificate_path }}"
+      register: traefik_certs_dumper_dumped_certificate
+      until: traefik_certs_dumper_dumped_certificate.stat.exists
+      retries: 36
+      delay: 5
+
+    - name: Stat the rest of what the Traefik certs dumper dumped
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      register: traefik_certs_dumper_dumped_stats
+      loop:
+        - "{{ traefik_certs_dumper_dumped_certificates_path }}"
+        - "{{ traefik_certs_dumper_molecule_dumped_key_path }}"
+        - "{{ traefik_certs_dumper_molecule_dumped_account_key_path }}"
+
+    # The dumper itself writes everything as root. Reaching the configured
+    # ownership takes the role's post-hook, which stages the dump and chowns it
+    # before moving it into place - so this is what tells a dump that went
+    # through the role apart from a bare container run.
+    - name: Assert the dumped material is owned as configured
+      ansible.builtin.assert:
+        that:
+          - traefik_certs_dumper_dumped_stats.results | map(attribute='stat.exists') | select | list | length == 3
+          - >-
+            traefik_certs_dumper_dumped_stats.results[0].stat.mode
+            == traefik_certs_dumper_defaults.traefik_certs_dumper_dumped_certificates_dir_mode
+          - >-
+            traefik_certs_dumper_dumped_stats.results
+            | map(attribute='stat.uid') | unique == [traefik_certs_dumper_uid | int]
+          - >-
+            traefik_certs_dumper_dumped_stats.results
+            | map(attribute='stat.gid') | unique == [traefik_certs_dumper_gid | int]
+          - traefik_certs_dumper_dumped_certificate.stat.uid == traefik_certs_dumper_uid | int
+          - traefik_certs_dumper_dumped_certificate.stat.gid == traefik_certs_dumper_gid | int
+        fail_msg: >-
+          The dumped material is not owned by {{ traefik_certs_dumper_uid }}:{{ traefik_certs_dumper_gid }}:
+          {{ traefik_certs_dumper_dumped_stats.results | map(attribute='stat') | list }}
+        success_msg: >-
+          The certificate, its key and the ACME account key were dumped and are owned by
+          {{ traefik_certs_dumper_uid }}:{{ traefik_certs_dumper_gid }}
+
+    # ---------------------------------------------------------------------
+    # What got dumped is the certificate that was seeded
+    # ---------------------------------------------------------------------
+
+    - name: Read the subject of the dumped certificate
+      ansible.builtin.command:
+        argv:
+          - openssl
+          - x509
+          - -in
+          - "{{ traefik_certs_dumper_molecule_dumped_certificate_path }}"
+          - -noout
+          - -subject
+          - -nameopt
+          - RFC2253
+      register: traefik_certs_dumper_dumped_subject
+      changed_when: false
+
+    # `-checkhost` answers the question the subject alone cannot: whether the
+    # certificate would actually be accepted for the name. Asked three times -
+    # for the common name, for a name that exists only as a subject alternative
+    # name, and for a name the certificate must not cover, which is what shows
+    # that a match means something.
+    - name: Check which hosts the dumped certificate covers
+      ansible.builtin.command:
+        argv:
+          - openssl
+          - x509
+          - -in
+          - "{{ traefik_certs_dumper_molecule_dumped_certificate_path }}"
+          - -noout
+          - -checkhost
+          - "{{ item }}"
+      register: traefik_certs_dumper_dumped_checkhost
+      changed_when: false
+      failed_when: false
+      loop:
+        - "{{ traefik_certs_dumper_molecule_domain }}"
+        - "www.{{ traefik_certs_dumper_molecule_domain }}"
+        - "{{ traefik_certs_dumper_molecule_absent_domain }}"
+
+    - name: Assert the dumped certificate is the one that was seeded
+      ansible.builtin.assert:
+        that:
+          - "'subject=CN=' ~ traefik_certs_dumper_molecule_domain in traefik_certs_dumper_dumped_subject.stdout"
+          - traefik_certs_dumper_dumped_checkhost.results[0].rc == 0
+          - traefik_certs_dumper_dumped_checkhost.results[1].rc == 0
+          - traefik_certs_dumper_dumped_checkhost.results[2].rc != 0
+        fail_msg: >-
+          The dumped certificate is not the seeded one
+          ({{ traefik_certs_dumper_dumped_subject.stdout | trim }};
+          {{ traefik_certs_dumper_dumped_checkhost.results | map(attribute='stdout') | map('trim') | list }})
+        success_msg: >-
+          The dumped certificate is {{ traefik_certs_dumper_dumped_subject.stdout | trim }}, covers
+          {{ traefik_certs_dumper_molecule_domain }} and www.{{ traefik_certs_dumper_molecule_domain }},
+          and does not cover {{ traefik_certs_dumper_molecule_absent_domain }}
+
+    # A certificate is useless to whatever consumes the dump without the
+    # matching private key next to it, and the dumper writes the two out
+    # separately.
+    - name: Read the public key of the dumped certificate
+      ansible.builtin.command:
+        argv:
+          - openssl
+          - x509
+          - -in
+          - "{{ traefik_certs_dumper_molecule_dumped_certificate_path }}"
+          - -noout
+          - -pubkey
+      register: traefik_certs_dumper_certificate_public_key
+      changed_when: false
+
+    - name: Read the public key of the dumped private key
+      ansible.builtin.command:
+        argv:
+          - openssl
+          - pkey
+          - -in
+          - "{{ traefik_certs_dumper_molecule_dumped_key_path }}"
+          - -pubout
+      register: traefik_certs_dumper_key_public_key
+      changed_when: false
+
+    - name: Check the dumped ACME account key
+      ansible.builtin.command:
+        argv:
+          - openssl
+          - rsa
+          - -in
+          - "{{ traefik_certs_dumper_molecule_dumped_account_key_path }}"
+          - -noout
+          - -check
+      register: traefik_certs_dumper_account_key_check
+      changed_when: false
+
+    - name: Assert the dumped private keys are usable
+      ansible.builtin.assert:
+        that:
+          - traefik_certs_dumper_certificate_public_key.stdout == traefik_certs_dumper_key_public_key.stdout
+          - traefik_certs_dumper_account_key_check.rc == 0
+        fail_msg: "The dumped private key does not belong to the dumped certificate, or the ACME account key is unusable"
+        success_msg: "The dumped private key belongs to the dumped certificate, and the ACME account key is a valid RSA key"
+
+    # ---------------------------------------------------------------------
+    # The dumper keeps watching acme.json rather than reading it once
+    # ---------------------------------------------------------------------
+
+    # Traefik rewrites `acme.json` whenever it obtains or renews a certificate,
+    # long after this service was started. The role runs the dumper with
+    # `--watch` for exactly that reason, and nothing so far distinguishes a
+    # watching dumper from one that dumped at startup and exited into a loop.
+    # The unit restarts on failure, and a dumper that crashed and came back
+    # would read the changed file at startup - which would look exactly like a
+    # watch that worked. Recorded before and after, so that it does not.
+    - name: Read the Traefik certs dumper main process before acme.json changes
+      ansible.builtin.command:
+        argv:
+          - systemctl
+          - show
+          - --property=ExecMainPID
+          - --property=NRestarts
+          - traefik-certs-dumper.service
+      register: traefik_certs_dumper_main_process_before
+      changed_when: false
+
+    - name: Append a second certificate to the Traefik certs dumper acme.json
+      ansible.builtin.command:
+        argv:
+          - python3
+          - "{{ traefik_certs_dumper_molecule_material_path }}/build-acme-json.py"
+          - "{{ traefik_certs_dumper_molecule_material_path }}"
+          - "{{ traefik_certs_dumper_ssl_path }}/acme.json"
+          - "{{ traefik_certs_dumper_molecule_domain }}"
+          - "{{ traefik_certs_dumper_molecule_appended_domain }}"
+      changed_when: true
+
+    - name: Wait for the appended certificate to be dumped (up to 120s)
+      ansible.builtin.stat:
+        path: "{{ traefik_certs_dumper_molecule_appended_certificate_path }}"
+      register: traefik_certs_dumper_appended_certificate
+      until: traefik_certs_dumper_appended_certificate.stat.exists
+      retries: 24
+      delay: 5
+
+    - name: Check which hosts the appended certificate covers
+      ansible.builtin.command:
+        argv:
+          - openssl
+          - x509
+          - -in
+          - "{{ traefik_certs_dumper_molecule_appended_certificate_path }}"
+          - -noout
+          - -checkhost
+          - "{{ traefik_certs_dumper_molecule_appended_domain }}"
+      register: traefik_certs_dumper_appended_checkhost
+      changed_when: false
+
+    # The post-hook empties the output directory before moving the new dump in,
+    # so a re-dump which dropped the certificates that were already there would
+    # be worse than no re-dump at all.
+    - name: Stat the first certificate after the re-dump
+      ansible.builtin.stat:
+        path: "{{ traefik_certs_dumper_molecule_dumped_certificate_path }}"
+      register: traefik_certs_dumper_certificate_after_redump
+
+    - name: Read the Traefik certs dumper main process after acme.json changed
+      ansible.builtin.command:
+        argv:
+          - systemctl
+          - show
+          - --property=ExecMainPID
+          - --property=NRestarts
+          - traefik-certs-dumper.service
+      register: traefik_certs_dumper_main_process_after
+      changed_when: false
+
+    - name: Assert the dumper reacted to acme.json changing
+      ansible.builtin.assert:
+        that:
+          - traefik_certs_dumper_appended_certificate.stat.exists
+          - traefik_certs_dumper_appended_certificate.stat.uid == traefik_certs_dumper_uid | int
+          - traefik_certs_dumper_appended_checkhost.rc == 0
+          - traefik_certs_dumper_certificate_after_redump.stat.exists
+          - >-
+            traefik_certs_dumper_main_process_after.stdout_lines
+            == traefik_certs_dumper_main_process_before.stdout_lines
+        fail_msg: >-
+          The dumper did not dump {{ traefik_certs_dumper_molecule_appended_domain }} after acme.json
+          changed, or only did so because it restarted
+          ({{ traefik_certs_dumper_main_process_before.stdout_lines }} ->
+          {{ traefik_certs_dumper_main_process_after.stdout_lines }})
+        success_msg: >-
+          The same dumper process noticed acme.json changing and dumped
+          {{ traefik_certs_dumper_molecule_appended_domain }} while keeping
+          {{ traefik_certs_dumper_molecule_domain }}
+
+    # ---------------------------------------------------------------------
+    # The waiter service other units depend on reports the truth
+    # ---------------------------------------------------------------------
+
+    - name: Start the Traefik certs dumper waiter for a dumped domain
+      ansible.builtin.command:
+        argv:
+          - systemctl
+          - start
+          - "traefik-certs-dumper-wait-for-domain@{{ traefik_certs_dumper_molecule_domain }}.service"
+      changed_when: true
+
+    - name: Start the Traefik certs dumper waiter for a domain that was never dumped
+      ansible.builtin.command:
+        argv:
+          - systemctl
+          - start
+          - "traefik-certs-dumper-wait-for-domain@{{ traefik_certs_dumper_molecule_absent_domain }}.service"
+      register: traefik_certs_dumper_absent_waiter_start
+      changed_when: true
+      failed_when: false
+
+    # A one-shot is inactive once it is done, whether it succeeded or failed,
+    # so its ActiveState says nothing. Result and ExecMainStatus do.
+    - name: Read the Traefik certs dumper waiter results
+      ansible.builtin.command:
+        argv:
+          - systemctl
+          - show
+          - --property=Result
+          - --property=ExecMainStatus
+          - "traefik-certs-dumper-wait-for-domain@{{ item }}.service"
+      register: traefik_certs_dumper_waiter_results
+      changed_when: false
+      loop:
+        - "{{ traefik_certs_dumper_molecule_domain }}"
+        - "{{ traefik_certs_dumper_molecule_absent_domain }}"
+
+    - name: Assert the Traefik certs dumper waiter reports the truth
+      ansible.builtin.assert:
+        that:
+          - "'Result=success' in traefik_certs_dumper_waiter_results.results[0].stdout_lines"
+          - "'ExecMainStatus=0' in traefik_certs_dumper_waiter_results.results[0].stdout_lines"
+          - traefik_certs_dumper_absent_waiter_start.rc != 0
+          - "'Result=success' not in traefik_certs_dumper_waiter_results.results[1].stdout_lines"
+          - "'ExecMainStatus=0' not in traefik_certs_dumper_waiter_results.results[1].stdout_lines"
+        fail_msg: >-
+          The waiter did not report the truth:
+          {{ traefik_certs_dumper_waiter_results.results | map(attribute='stdout_lines') | list }}
+        success_msg: >-
+          The waiter succeeded for {{ traefik_certs_dumper_molecule_domain }} and failed for
+          {{ traefik_certs_dumper_molecule_absent_domain }}
+
+    - name: Show Traefik certs dumper verification summary
+      ansible.builtin.debug:
+        msg:
+          - "Traefik certs dumper systemd: {{ traefik_certs_dumper_service.status.ActiveState }}"
+          - "Traefik certs dumper image: {{ traefik_certs_dumper_running_image }} ({{ traefik_certs_dumper_image_version | trim }})"
+          - "Dumped certificate: {{ traefik_certs_dumper_dumped_subject.stdout | trim }}"
+          - "Re-dumped after acme.json changed: {{ traefik_certs_dumper_molecule_appended_domain }}"
+          - "Waiter results: {{ traefik_certs_dumper_waiter_results.results | map(attribute='stdout_lines') | list }}"

@@ -1,0 +1,73 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+dependency:
+  name: galaxy
+  options:
+    requirements-file: requirements.yml
+    force: true
+driver:
+  name: docker
+platforms:
+  - name: traefik-certs-dumper-${MOLECULE_DISTRO:-ubuntu2604}-default
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2604}-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callback_result_format: yaml
+  inventory:
+    group_vars:
+      all:
+        # Helper variables
+        traefik_certs_dumper_debug_service_enabled: false
+
+        # Where the scenario keeps the certificate material it generates, and
+        # the helper script which assembles Traefik's `acme.json` out of it.
+        traefik_certs_dumper_molecule_material_path: /traefik-certs-dumper-molecule
+
+        # The domain whose certificate is seeded into `acme.json` before the
+        # role runs.
+        traefik_certs_dumper_molecule_domain: molecule.test
+
+        # A second domain, appended to `acme.json` only after the role has
+        # already dumped the first one. Dumping it proves that the dumper is
+        # watching the file rather than having read it once at startup.
+        traefik_certs_dumper_molecule_appended_domain: second.molecule.test
+
+        # A domain which is never dumped, used to check that the waiter service
+        # fails instead of reporting success for a certificate that is missing.
+        traefik_certs_dumper_molecule_absent_domain: absent.molecule.test
+
+        # Variables for Traefik certs dumper
+        traefik_certs_dumper_uid: 1000
+        traefik_certs_dumper_gid: 1000
+
+        # Stands in for Traefik's SSL directory: `prepare.yml` seeds an
+        # `acme.json` here, and `verify.yml` rewrites it.
+        traefik_certs_dumper_ssl_path: "{{ traefik_certs_dumper_molecule_material_path }}/traefik-ssl"
+
+        # Pinned to literal values, because `prepare.yml` and `verify.yml` work
+        # with these paths and cannot resolve the role's own defaults (which are
+        # derived from other variables).
+        traefik_certs_dumper_base_path: /traefik-certs-dumper
+        traefik_certs_dumper_bin_path: /traefik-certs-dumper/bin
+        traefik_certs_dumper_dumped_certificates_path: /traefik-certs-dumper/dumped-certificates
+
+        # The waiter gives up after this many iterations (one second apart).
+        # Kept short, so that asserting that it fails for a domain which was
+        # never dumped does not take the default three minutes.
+        traefik_certs_dumper_waiter_max_iterations: 5
+  env:
+    # Workaround for https://github.com/ansible/molecule/issues/4391
+    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles
+verifier:
+  name: ansible

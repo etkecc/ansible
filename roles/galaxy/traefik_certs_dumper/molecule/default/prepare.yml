@@ -1,0 +1,190 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Prepare Traefik certs dumper Molecule tests
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Ensure apt cache is updated for Traefik certs dumper Molecule tests preparation
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 600
+      when: ansible_facts["os_family"] == 'Debian'
+
+    - name: Ensure required packages are installed for Traefik certs dumper Molecule tests preparation
+      ansible.builtin.package:
+        name:
+          - python3-requests
+          - openssl
+        state: present
+
+    - name: Ensure Docker is installed for Traefik certs dumper Molecule tests preparation
+      ansible.builtin.include_role:
+        name: ansible-role-docker
+      vars:
+        docker_daemon_options:
+          storage-driver: vfs
+
+    # This role dumps certificates out of the `acme.json` file that Traefik
+    # maintains. Without such a file there is nothing to dump: the role's
+    # entrypoint waits for it to appear and the service never gets past that,
+    # so the scenario has to bring its own.
+    #
+    # Rather than running Traefik and waiting for it to complete an ACME
+    # challenge (which needs a reachable domain and a real ACME server), the
+    # certificates are self-signed here and packed into the same structure
+    # Traefik stores. The dumper does not validate the chain - it decodes what
+    # the file holds - so a self-signed certificate exercises it exactly like a
+    # Let's Encrypt one would, while letting `verify.yml` compare the dumped
+    # material against a certificate whose contents it knows.
+    - name: Ensure Traefik certs dumper Molecule material directory exists
+      ansible.builtin.file:
+        path: "{{ traefik_certs_dumper_molecule_material_path }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0700"
+
+    - name: Ensure Traefik certs dumper Molecule SSL directory exists
+      ansible.builtin.file:
+        path: "{{ traefik_certs_dumper_ssl_path }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0700"
+
+    # The common name is the domain and the only subject alternative name is
+    # `www.` in front of it, which lets `verify.yml` tell the two apart: a
+    # dumped certificate matching the `www.` name can only have come from the
+    # subject alternative name.
+    - name: Ensure Traefik certs dumper Molecule certificates are generated
+      ansible.builtin.command:
+        argv:
+          - openssl
+          - req
+          - -x509
+          - -newkey
+          - rsa:2048
+          - -nodes
+          - -days
+          - "3650"
+          - -subj
+          - "/CN={{ item }}"
+          - -addext
+          - "subjectAltName=DNS:{{ item }},DNS:www.{{ item }}"
+          - -keyout
+          - "{{ traefik_certs_dumper_molecule_material_path }}/{{ item }}.key"
+          - -out
+          - "{{ traefik_certs_dumper_molecule_material_path }}/{{ item }}.crt"
+        creates: "{{ traefik_certs_dumper_molecule_material_path }}/{{ item }}.crt"
+      loop:
+        - "{{ traefik_certs_dumper_molecule_domain }}"
+        - "{{ traefik_certs_dumper_molecule_appended_domain }}"
+
+    # Traefik keeps the ACME account key in `acme.json` too, and the dumper
+    # writes it out separately (as `private/letsencrypt.key`), so the scenario
+    # needs one of those as well.
+    - name: Ensure Traefik certs dumper Molecule ACME account key is generated
+      ansible.builtin.command:
+        argv:
+          - openssl
+          - genrsa
+          - -out
+          - "{{ traefik_certs_dumper_molecule_material_path }}/account.key"
+          - "2048"
+        creates: "{{ traefik_certs_dumper_molecule_material_path }}/account.key"
+
+    # Traefik stores the account key as DER rather than PEM, so that is what
+    # gets packed into `acme.json`.
+    - name: Ensure Traefik certs dumper Molecule ACME account key is converted to DER
+      ansible.builtin.command:
+        argv:
+          - openssl
+          - rsa
+          - -in
+          - "{{ traefik_certs_dumper_molecule_material_path }}/account.key"
+          - -outform
+          - DER
+          - -out
+          - "{{ traefik_certs_dumper_molecule_material_path }}/account.key.der"
+        creates: "{{ traefik_certs_dumper_molecule_material_path }}/account.key.der"
+
+    - name: Ensure Traefik certs dumper Molecule acme.json builder is installed
+      ansible.builtin.copy:
+        dest: "{{ traefik_certs_dumper_molecule_material_path }}/build-acme-json.py"
+        owner: root
+        group: root
+        mode: "0600"
+        content: |
+          # SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+          #
+          # SPDX-License-Identifier: AGPL-3.0-or-later
+
+          """Assembles a Traefik v2 acme.json out of PEM material on disk.
+
+          Usage: build-acme-json.py <material_dir> <output_path> <domain>...
+          """
+
+          import base64
+          import json
+          import os
+          import sys
+
+          material_dir, output_path = sys.argv[1], sys.argv[2]
+          domains = sys.argv[3:]
+
+          # Only one blank line between these, rather than the two PEP 8 would
+          # ask for, because yamllint counts the blank lines inside this block
+          # scalar as blank lines in the YAML file.
+          def encoded(path):
+              with open(os.path.join(material_dir, path), "rb") as handle:
+                  return base64.b64encode(handle.read()).decode("ascii")
+
+          data = {
+              "mash": {
+                  "Account": {
+                      "Email": "molecule@" + domains[0],
+                      "Registration": {
+                          "body": {"status": "valid"},
+                          "uri": "https://acme.invalid/acct/1",
+                      },
+                      "PrivateKey": encoded("account.key.der"),
+                      "KeyType": "2048",
+                  },
+                  "Certificates": [
+                      {
+                          "domain": {"main": domain, "sans": ["www." + domain]},
+                          "certificate": encoded(domain + ".crt"),
+                          "key": encoded(domain + ".key"),
+                          "Store": "default",
+                      }
+                      for domain in domains
+                  ],
+              }
+          }
+
+          # Replacing the file rather than rewriting it in place is the harsher
+          # of the two cases for the dumper's watcher, because the path ends up
+          # pointing at a different inode.
+          temporary_path = output_path + ".tmp"
+
+          with open(temporary_path, "w") as handle:
+              json.dump(data, handle, indent=2)
+
+          os.chmod(temporary_path, 0o600)
+          os.replace(temporary_path, output_path)
+
+    # Only the first domain, so that `verify.yml` can append the second one
+    # later and watch the dumper react to it.
+    - name: Ensure Traefik certs dumper Molecule acme.json is seeded
+      ansible.builtin.command:
+        argv:
+          - python3
+          - "{{ traefik_certs_dumper_molecule_material_path }}/build-acme-json.py"
+          - "{{ traefik_certs_dumper_molecule_material_path }}"
+          - "{{ traefik_certs_dumper_ssl_path }}/acme.json"
+          - "{{ traefik_certs_dumper_molecule_domain }}"
+        creates: "{{ traefik_certs_dumper_ssl_path }}/acme.json"
