@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2026 spatterlight
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -5,12 +6,35 @@
 ---
 name: molecule
 
-on: [push, pull_request]  # yamllint disable-line rule:truthy
+on:  # yamllint disable-line rule:truthy
+  push:
+    paths-ignore:
+      - "docs/**"
+      - "README.md"
+      - "CHANGELOG.md"
+      - "LICENSE"
+      - "LICENSES/**"
+      - "REUSE.toml"
+  pull_request:
+    paths-ignore:
+      - "docs/**"
+      - "README.md"
+      - "CHANGELOG.md"
+      - "LICENSE"
+      - "LICENSES/**"
+      - "REUSE.toml"
+  workflow_dispatch:
 
 jobs:
   molecule:
     name: Run Molecule scenario '${{ matrix.scenario }}' on ${{ matrix.distro }}
     runs-on: ubuntu-latest
+
+    # Same-repository pull requests already run via the push event;
+    # run pull_request jobs only for pull requests from forks.
+    if: >-
+      github.event_name != 'pull_request'
+      || github.event.pull_request.head.repo.full_name != github.repository
 
     strategy:
       matrix:
@@ -19,7 +43,6 @@ jobs:
           - debian13
         scenario:
           - default
-          - default-selfbuild
       fail-fast: false
 
     env:
@@ -53,3 +76,106 @@ jobs:
       - name: Run Molecule
         working-directory: sable
         run: molecule test --scenario-name ${{ matrix.scenario }}
+
+  # Self-building only changes behavior when the Sable version changes, so
+  # branches are gated on a version bump in defaults/main.yml. There is no
+  # main-branch run at all: automerge only merges branches that are already
+  # green, so a main-side rerun would be redundant.
+  selfbuild-gate:
+    name: Check whether the self-build scenario needs to run
+    runs-on: ubuntu-latest
+
+    if: >-
+      github.event_name == 'workflow_dispatch'
+      || (github.event_name == 'push' && github.ref != 'refs/heads/main')
+      || (
+        github.event_name == 'pull_request'
+        && github.event.pull_request.head.repo.full_name != github.repository
+      )
+
+    outputs:
+      run: ${{ steps.gate.outputs.run }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7.0.0
+        with:
+          fetch-depth: 0
+
+      - name: Check for a version bump against main
+        id: gate
+        run: |
+          if [ "${{ github.event_name }}" = 'workflow_dispatch' ]; then
+            echo 'run=true' >> "$GITHUB_OUTPUT"
+            echo 'Manually dispatched - running the self-build scenario'
+            exit 0
+          fi
+          if git diff origin/main...HEAD -- defaults/main.yml | grep -qE '^[+-][^+-]*_version:'; then
+            echo 'run=true' >> "$GITHUB_OUTPUT"
+            echo 'A version changed relative to main - running the self-build scenario'
+          else
+            echo 'run=false' >> "$GITHUB_OUTPUT"
+            echo 'No version changed relative to main - skipping the self-build scenario'
+          fi
+
+  molecule-selfbuild:
+    name: Run Molecule scenario 'default-selfbuild' on ${{ matrix.distro }}
+    runs-on: ubuntu-latest
+
+    needs: selfbuild-gate
+    if: needs.selfbuild-gate.outputs.run == 'true'
+
+    strategy:
+      matrix:
+        distro:
+          - ubuntu2604
+          - debian13
+      fail-fast: false
+
+    env:
+      MOLECULE_DISTRO: ${{ matrix.distro }}
+      PY_COLORS: "1"
+      ANSIBLE_FORCE_COLOR: "1"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7.0.0
+        with:
+          path: sable
+
+      - name: Set up Python
+        uses: actions/setup-python@v6.3.0
+        with:
+          python-version-file: sable/.python-version
+          cache: pip
+          cache-dependency-path: sable/molecule/requirements.txt
+
+      - name: Install Python dependencies
+        working-directory: sable
+        run: pip install -r molecule/requirements.txt
+
+      - name: Cache Ansible collections
+        uses: actions/cache@v6.1.0
+        with:
+          path: ~/.ansible/collections
+          key: ansible-collections-${{ hashFiles('sable/molecule/default-selfbuild/requirements.yml') }}
+
+      # Upstream's Dockerfile does not copy package.json before `RUN pnpm fetch`,
+      # so corepack cannot see the pinned pnpm version and self-building fails
+      # (upstream's own CI does not exercise this Dockerfile stage). Until that
+      # is fixed upstream, a self-build failure only warns instead of failing
+      # the job, so that it cannot block automerge - which is why
+      # continue-on-error sits on the step and not on the job (a failing job
+      # would still produce a failed check run).
+      - name: Run Molecule
+        id: molecule
+        continue-on-error: true
+        working-directory: sable
+        run: molecule test --scenario-name default-selfbuild
+
+      - name: Warn when self-building failed
+        if: steps.molecule.outcome == 'failure'
+        run: >-
+          echo "::warning title=Self-build failed::The default-selfbuild
+          scenario failed. This is non-blocking (known upstream Dockerfile
+          bit-rot), but worth a look."

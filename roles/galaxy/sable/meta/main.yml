@@ -3,7 +3,7 @@ galaxy_info:
   author: Suguru Hirahara
   company: progressiv
   role_name: sable
-  namespace: progressiv
+  namespace: mash
   description: Sable
   platforms:
     - name: Debian
