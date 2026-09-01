@@ -10,7 +10,7 @@
 * Coturn: 4.9.0
 * Discord Bridge: v0.7.7
 * Draupnir: v3.1.0
-* Element: v1.12.26
+* Element: v1.12.27
 * Etherpad: 3.3.3
 * Exim Relay: 4.99.1-r0-2
 * Firezone: 0.7.36
@@ -79,7 +79,7 @@
 * Traefik Proxy Protocol: 1
 * Twitter Bridge: v0.2608.0
 * Uptime Kuma: 1.23.17
-* Valkey: 9.1.1
+* Valkey: 9.1.2
 * Vaultwarden: 1.37.2
 * Wg Easy: 15.4.0
 * WhatsApp Bridge: v0.2608.0

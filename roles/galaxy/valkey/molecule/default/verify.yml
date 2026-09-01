@@ -1,0 +1,168 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify Valkey
+  hosts: all
+  become: true
+  gather_facts: false
+
+  tasks:
+    # The role is not included in this playbook, so its defaults are not in
+    # scope. Reading defaults/main.yml directly keeps the version assertion
+    # below tied to the value that Renovate bumps, with nothing to keep in
+    # sync in this scenario. include_vars reads from the controller.
+    #
+    # Only values describing the role itself may be read from this namespace.
+    # Anything this scenario tunes (the connection password, for example)
+    # comes from the scenario's group_vars instead.
+    - name: Load the Valkey role defaults
+      ansible.builtin.include_vars:
+        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+        name: valkey_defaults
+
+    - name: Wait for Valkey service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: valkey.service
+      register: valkey_service
+      until: valkey_service.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert Valkey service is active
+      ansible.builtin.assert:
+        that: valkey_service.status.ActiveState == 'active'
+        fail_msg: "valkey.service not active ({{ valkey_service.status.ActiveState }})"
+        success_msg: "valkey.service is active"
+
+    - name: Retrieve Valkey service log for debugging
+      when: valkey_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu valkey.service
+      changed_when: false
+
+    # A systemd unit reaching "active" only means that `docker start` has not
+    # exited yet. PING is the cheapest answer the server itself can give, so it
+    # is the first thing here that proves a usable Valkey rather than merely a
+    # running process.
+    #
+    # community.docker is deliberately avoided throughout this playbook: the
+    # linting environment in CI has no collections installed.
+    - name: Wait for Valkey to answer PING over TCP (up to 120s)
+      ansible.builtin.command:
+        cmd: >-
+          docker exec {{ valkey_defaults.valkey_identifier }}
+          valkey-cli -a {{ valkey_connection_password }} --no-auth-warning PING
+      register: valkey_ping_tcp
+      changed_when: false
+      until: valkey_ping_tcp.rc == 0 and valkey_ping_tcp.stdout is search('PONG')
+      retries: 24
+      delay: 5
+
+    - name: Assert Valkey answers PING over TCP
+      ansible.builtin.assert:
+        that: valkey_ping_tcp.stdout is search('PONG')
+        fail_msg: "Valkey did not answer PING over TCP: {{ valkey_ping_tcp.stdout | default('no output') }}"
+        success_msg: "Valkey answers PING over TCP"
+
+    # Consumers of this role talk to Valkey over the UNIX socket that the role
+    # asks for in valkey.conf, not over TCP, so the socket listener is the path
+    # that actually matters and is worth probing separately.
+    - name: Ping Valkey over its UNIX socket
+      ansible.builtin.command:
+        cmd: >-
+          docker exec {{ valkey_defaults.valkey_identifier }}
+          valkey-cli -s /run/valkey/valkey.sock
+          -a {{ valkey_connection_password }} --no-auth-warning PING
+      register: valkey_ping_socket
+      changed_when: false
+
+    - name: Assert Valkey answers PING over its UNIX socket
+      ansible.builtin.assert:
+        that: valkey_ping_socket.stdout is search('PONG')
+        fail_msg: "Valkey did not answer PING over its UNIX socket: {{ valkey_ping_socket.stdout | default('no output') }}"
+        success_msg: "Valkey answers PING over its UNIX socket"
+
+    # This scenario sets a connection password, so an unauthenticated client
+    # must be turned away. Without this probe, the `requirepass` branch of
+    # valkey.conf.j2 could stop being rendered and everything else here would
+    # still pass.
+    - name: Ping Valkey without authenticating
+      ansible.builtin.command:
+        cmd: "docker exec {{ valkey_defaults.valkey_identifier }} valkey-cli PING"
+      register: valkey_ping_unauthenticated
+      changed_when: false
+      failed_when: false
+
+    - name: Assert Valkey rejects unauthenticated clients
+      ansible.builtin.assert:
+        that: (valkey_ping_unauthenticated.stdout + valkey_ping_unauthenticated.stderr) is search('NOAUTH')
+        fail_msg: >-
+          Valkey did not reject an unauthenticated client:
+          {{ valkey_ping_unauthenticated.stdout | default('no output') }}
+        success_msg: "Valkey rejects unauthenticated clients"
+
+    # A write and a read back through a separate connection, which covers the
+    # whole path (client -> server -> keyspace) in both directions rather than
+    # just the fact that the server accepts connections.
+    - name: Write a key to Valkey
+      ansible.builtin.command:
+        cmd: >-
+          docker exec {{ valkey_defaults.valkey_identifier }}
+          valkey-cli -a {{ valkey_connection_password }} --no-auth-warning
+          SET molecule-key molecule-value
+      register: valkey_set
+      changed_when: true
+
+    - name: Read the key back from Valkey
+      ansible.builtin.command:
+        cmd: >-
+          docker exec {{ valkey_defaults.valkey_identifier }}
+          valkey-cli -a {{ valkey_connection_password }} --no-auth-warning
+          GET molecule-key
+      register: valkey_get
+      changed_when: false
+
+    - name: Assert the key was stored and read back
+      ansible.builtin.assert:
+        that:
+          - valkey_set.stdout is search('OK')
+          - valkey_get.stdout is search('molecule-value')
+        fail_msg: "A SET/GET round-trip failed (SET: {{ valkey_set.stdout }}, GET: {{ valkey_get.stdout }})"
+        success_msg: "A SET/GET round-trip works"
+
+    # Tying the running version to `valkey_version` is what makes this scenario
+    # a real test of the version that Renovate bumps: a bump that produces an
+    # unusable image cannot pass here.
+    - name: Query the version reported by the running Valkey
+      ansible.builtin.command:
+        cmd: >-
+          docker exec {{ valkey_defaults.valkey_identifier }}
+          valkey-cli -a {{ valkey_connection_password }} --no-auth-warning
+          INFO server
+      register: valkey_info_server
+      changed_when: false
+
+    - name: Determine the version reported by the running Valkey
+      ansible.builtin.set_fact:
+        valkey_reported_version: "{{ (valkey_info_server.stdout | regex_search('valkey_version:([^\\r\\n]+)', '\\1') | first) | trim }}"
+
+    - name: Assert the running Valkey is the version the role asks for
+      ansible.builtin.assert:
+        that: valkey_reported_version.startswith(valkey_defaults.valkey_version | string)
+        fail_msg: >-
+          Valkey reports version {{ valkey_reported_version | default('none') }},
+          but the role asks for {{ valkey_defaults.valkey_version }}
+        success_msg: "Valkey reports version {{ valkey_reported_version }}"
+
+    - name: Show Valkey verification summary
+      ansible.builtin.debug:
+        msg:
+          - "Valkey systemd: {{ valkey_service.status.ActiveState }}"
+          - "PING over TCP: {{ valkey_ping_tcp.stdout }}"
+          - "PING over UNIX socket: {{ valkey_ping_socket.stdout }}"
+          - "SET/GET round-trip: {{ valkey_get.stdout }}"
+          - "Version: {{ valkey_reported_version }}"
