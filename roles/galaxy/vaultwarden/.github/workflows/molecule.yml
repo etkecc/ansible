@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2026 spatterlight
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -5,21 +6,42 @@
 ---
 name: molecule
 
-on: [push, pull_request]  # yamllint disable-line rule:truthy
+on:  # yamllint disable-line rule:truthy
+  push:
+    paths-ignore:
+      - "docs/**"
+      - "README.md"
+      - "CHANGELOG.md"
+      - "LICENSE"
+      - "LICENSES/**"
+      - "REUSE.toml"
+  pull_request:
+    paths-ignore:
+      - "docs/**"
+      - "README.md"
+      - "CHANGELOG.md"
+      - "LICENSE"
+      - "LICENSES/**"
+      - "REUSE.toml"
+  workflow_dispatch:
 
 jobs:
   molecule:
     name: Run Molecule scenario '${{ matrix.scenario }}' on ${{ matrix.distro }}
     runs-on: ubuntu-latest
 
+    # Same-repository pull requests already run via the push event;
+    # run pull_request jobs only for pull requests from forks.
+    if: >-
+      github.event_name != 'pull_request'
+      || github.event.pull_request.head.repo.full_name != github.repository
+
     strategy:
       matrix:
         distro:
           - ubuntu2604
-          - debian13
         scenario:
           - default
-          - default-selfbuild
           - mariadb
           - postgres
       fail-fast: false
@@ -50,8 +72,95 @@ jobs:
         uses: actions/cache@v6.1.0
         with:
           path: ~/.ansible/collections
-          key: ansible-collections-${{ hashFiles('vaultwarden/molecule/default/requirements.yml') }}
+          key: ansible-collections-${{ hashFiles('vaultwarden/molecule/*/requirements.yml') }}
 
       - name: Run Molecule
         working-directory: vaultwarden
         run: molecule test --scenario-name ${{ matrix.scenario }}
+
+  # Self-building compiles Vaultwarden from the tag that `vaultwarden_version`
+  # points at, so it only changes behavior when that version changes. Branches
+  # are therefore gated on a version bump in defaults/main.yml. There is no
+  # main-branch run at all: automerge only merges branches that are already
+  # green, so a main-side rerun would be redundant.
+  selfbuild-gate:
+    name: Check whether the self-build scenario needs to run
+    runs-on: ubuntu-latest
+
+    if: >-
+      github.event_name == 'workflow_dispatch'
+      || (github.event_name == 'push' && github.ref != 'refs/heads/main')
+      || (
+        github.event_name == 'pull_request'
+        && github.event.pull_request.head.repo.full_name != github.repository
+      )
+
+    outputs:
+      run: ${{ steps.gate.outputs.run }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7.0.0
+        with:
+          fetch-depth: 0
+
+      - name: Check for a version bump against main
+        id: gate
+        run: |
+          if [ "${{ github.event_name }}" = 'workflow_dispatch' ]; then
+            echo 'run=true' >> "$GITHUB_OUTPUT"
+            echo 'Manually dispatched - running the self-build scenario'
+            exit 0
+          fi
+          if git diff origin/main...HEAD -- defaults/main.yml | grep -qE '^[+-][^+-]*_version:'; then
+            echo 'run=true' >> "$GITHUB_OUTPUT"
+            echo 'A version changed relative to main - running the self-build scenario'
+          else
+            echo 'run=false' >> "$GITHUB_OUTPUT"
+            echo 'No version changed relative to main - skipping the self-build scenario'
+          fi
+
+  molecule-selfbuild:
+    name: Run Molecule scenario 'default-selfbuild' on ${{ matrix.distro }}
+    runs-on: ubuntu-latest
+
+    needs: selfbuild-gate
+    if: needs.selfbuild-gate.outputs.run == 'true'
+
+    strategy:
+      matrix:
+        distro:
+          - ubuntu2604
+      fail-fast: false
+
+    env:
+      MOLECULE_DISTRO: ${{ matrix.distro }}
+      PY_COLORS: "1"
+      ANSIBLE_FORCE_COLOR: "1"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7.0.0
+        with:
+          path: vaultwarden
+
+      - name: Set up Python
+        uses: actions/setup-python@v6.3.0
+        with:
+          python-version-file: vaultwarden/.python-version
+          cache: pip
+          cache-dependency-path: vaultwarden/molecule/requirements.txt
+
+      - name: Install Python dependencies
+        working-directory: vaultwarden
+        run: pip install -r molecule/requirements.txt
+
+      - name: Cache Ansible collections
+        uses: actions/cache@v6.1.0
+        with:
+          path: ~/.ansible/collections
+          key: ansible-collections-${{ hashFiles('vaultwarden/molecule/default-selfbuild/requirements.yml') }}
+
+      - name: Run Molecule
+        working-directory: vaultwarden
+        run: molecule test --scenario-name default-selfbuild

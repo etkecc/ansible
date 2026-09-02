@@ -1,5 +1,5 @@
-# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 # SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -12,7 +12,7 @@ dependency:
 driver:
   name: docker
 platforms:
-  - name: vaultwarden-${MOLECULE_DISTRO:-ubuntu2604}-default
+  - name: vaultwarden-${MOLECULE_DISTRO:-ubuntu2604}-postgres
     image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2604}-ansible:latest"
     command: ${MOLECULE_DOCKER_COMMAND:-""}
     volumes:
@@ -31,6 +31,12 @@ provisioner:
         # Helper variables
         vaultwarden_debug_service_enabled: false
 
+        # The self-build scenario's converge outlasts the 10-minute apt cache
+        # validity window, so the idempotence pass re-updates the cache and
+        # would report the run as changed. Updating the cache is not a change
+        # to the system this scenario cares about.
+        devture_playbook_help_apt_cache_prewarming_changed_when: false
+
         # Variables for Vaultwarden
         vaultwarden_uid: 1000
         vaultwarden_gid: 1000
@@ -38,9 +44,9 @@ provisioner:
         vaultwarden_hostname: localhost
         vaultwarden_container_labels_traefik_enabled: false
         vaultwarden_container_http_host_bind_port: 8080
-        vaultwarden_database_type: postgres
 
         # Variables required for Vaultwarden to connect to the Postgres database (via Unix socket)
+        vaultwarden_database_type: postgres
         vaultwarden_database_postgres_username: my_database_username
         vaultwarden_database_postgres_password: my_database_password
         vaultwarden_database_postgres_sslmode: disable
