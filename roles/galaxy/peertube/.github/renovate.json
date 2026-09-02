@@ -5,7 +5,7 @@
     "The extractVersion rule below is what makes those pull requests appear at all: the 6.x/7.x line is published only as Debian-flavoured tags (`v7.3.0-bookworm`, never a plain `v7.3.0`), which strict semver could not read, so this role saw no update for a year. The rule is tied to `peertube_distro_variant`, and a move to 8.x - whose plain tags replace the deprecated Debian suffix - has to change both."
   ],
   "extends": [
-    "github>mother-of-all-self-hosting/renovate-config#v1.0.0"
+    "github>mother-of-all-self-hosting/renovate-config#v1.1.0"
   ],
   "packageRules": [
     {
