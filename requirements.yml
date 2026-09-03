@@ -47,5 +47,5 @@
   version: v1.37.2-1
   name: vaultwarden
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-wg-easy.git
-  version: v15.4.0-1
+  version: v15.4.0-2
   name: wg_easy

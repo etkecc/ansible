@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2026 Slavi Pantaleev
-# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 # SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -64,17 +64,11 @@
       retries: 120
       delay: 5
 
-    # wg-easy reports its release with a leading `v` (`v15.4.0`), while the
-    # role variable does not carry one. A prefix match tolerates any build
-    # metadata that a release may append.
     - name: Assert the running WireGuard Easy is the version this role installs
       ansible.builtin.assert:
-        that:
-          - wg_easy_information.json.currentRelease | regex_replace('^v', '') is match(wg_easy_defaults.wg_easy_version | string | regex_escape)
-        fail_msg: >-
-          wg-easy reports {{ wg_easy_information.json.currentRelease | default('nothing') }},
-          but the role asks for {{ wg_easy_defaults.wg_easy_version }}
-        success_msg: "wg-easy reports version {{ wg_easy_information.json.currentRelease }}"
+        that: wg_easy_information.json.currentRelease | regex_replace('^v', '') is match(wg_easy_defaults.wg_easy_version | string | regex_escape)
+        fail_msg: "WireGuard Easy reports {{ wg_easy_information.json.currentRelease | default('none') }}, expected {{ wg_easy_defaults.wg_easy_version }}"
+        success_msg: "WireGuard Easy reports {{ wg_easy_information.json.currentRelease }}"
 
     # A wg-easy whose unattended setup did not complete redirects every request
     # to its `/setup/1` wizard, serves no VPN and routes no API - yet still
@@ -272,12 +266,12 @@
         fail_msg: "Unexpected client configuration: {{ wg_easy_client_configuration.content }}"
         success_msg: "wg-easy hands out a client configuration built out of the role's settings"
 
-    - name: Show WireGuard Easy verification summary
+    - name: Show the WireGuard Easy verification summary
       ansible.builtin.debug:
         msg:
           - "WireGuard Easy systemd: {{ wg_easy_service.status.ActiveState }}"
-          - "Version: {{ wg_easy_information.json.currentRelease }}"
-          - "Web interface: {{ wg_easy_endpoint.status }} -> {{ wg_easy_endpoint.location }}"
-          - "Session: {{ wg_easy_session.json.username }}"
-          - "Client: {{ wg_easy_verify_client.name }} ({{ wg_easy_verify_client.ipv4Address }})"
-          - "Peer public key: {{ wg_easy_verify_client.publicKey }}"
+          - "WireGuard Easy version: {{ wg_easy_information.json.currentRelease }}"
+          - "WireGuard Easy web interface: {{ wg_easy_endpoint.status }} -> {{ wg_easy_endpoint.location }}"
+          - "WireGuard Easy session: {{ wg_easy_session.json.username }}"
+          - "WireGuard Easy client: {{ wg_easy_verify_client.name }} ({{ wg_easy_verify_client.ipv4Address }})"
+          - "WireGuard Easy peer public key: {{ wg_easy_verify_client.publicKey }}"

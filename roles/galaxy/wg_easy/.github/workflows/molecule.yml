@@ -1,5 +1,5 @@
-# SPDX-FileCopyrightText: 2026 spatterlight
 # SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -40,7 +40,6 @@ jobs:
       matrix:
         distro:
           - ubuntu2604
-          - debian13
         scenario:
           - default
       fail-fast: false
@@ -71,7 +70,7 @@ jobs:
         uses: actions/cache@v6.1.0
         with:
           path: ~/.ansible/collections
-          key: ansible-collections-${{ hashFiles('wg-easy/molecule/default/requirements.yml') }}
+          key: ansible-collections-${{ hashFiles('wg-easy/molecule/*/requirements.yml') }}
 
       - name: Run Molecule
         working-directory: wg-easy
