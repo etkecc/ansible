@@ -6,6 +6,7 @@
 
 ### Component Updates
 
+* [Authentication Service](https://github.com/element-hq/matrix-authentication-service): [1.23.0](https://github.com/element-hq/matrix-authentication-service/releases/tag/v1.23.0) ⇾ [1.24.0](https://github.com/element-hq/matrix-authentication-service/releases/tag/v1.24.0)
 * [Element](https://github.com/element-hq/element-web): [v1.12.26](https://github.com/element-hq/element-web/releases/tag/v1.12.26) ⇾ [v1.12.27](https://github.com/element-hq/element-web/releases/tag/v1.12.27)
 * [Jitsi User Verification](https://github.com/jitsi/docker-jitsi-meet): 2839499cb03894d8cfc3e5b2219441427cb133d8 ⇾ 19b69e543cdb99b16a939eeed921d7ed1da57d44
 * [Livekit Server](https://github.com/livekit/livekit): [v1.13.5](https://github.com/livekit/livekit/releases/tag/v1.13.5) ⇾ [v1.13.6](https://github.com/livekit/livekit/releases/tag/v1.13.6)
