@@ -374,9 +374,9 @@
     - name: Show the fail2ban verification summary
       ansible.builtin.debug:
         msg:
-          - "fail2ban.service: {{ fail2ban_service.status.ActiveState }} ({{ fail2ban_service.status.UnitFileState }})"
-          - "Jails running: {{ fail2ban_started_jails | join(', ') }}"
-          - "sshd jail bans on port {{ fail2ban_sshd_port_output.stdout | trim }} via {{ fail2ban_sshd_actions | join(', ') }}"
-          - "Ignored: {{ fail2ban_ignored_addresses | join(', ') }}"
+          - "fail2ban systemd: {{ fail2ban_service.status.ActiveState }} ({{ fail2ban_service.status.UnitFileState }})"
+          - "fail2ban jails running: {{ fail2ban_started_jails | join(', ') }}"
+          - "fail2ban sshd jail bans on port {{ fail2ban_sshd_port_output.stdout | trim }} via {{ fail2ban_sshd_actions | join(', ') }}"
+          - "fail2ban ignored: {{ fail2ban_ignored_addresses | join(', ') }}"
           - "Banned by fail2ban: {{ fail2ban_reported_bans | join(', ') }}"
           - "Rejected by the kernel: {{ fail2ban_nft_enforced_addresses | join(', ') }}"

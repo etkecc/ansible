@@ -7,6 +7,6 @@
     "What Renovate does manage here - GitHub Actions, the mise and pre-commit tool versions, molecule/requirements.txt and the Molecule Galaxy collections - is already automerged on a branch by the shared configuration."
   ],
   "extends": [
-    "github>mother-of-all-self-hosting/renovate-config#v1.0.0"
+    "github>mother-of-all-self-hosting/renovate-config#v1.1.0"
   ]
 }

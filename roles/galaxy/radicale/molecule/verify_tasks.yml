@@ -1,0 +1,304 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+# The role is not included in this playbook, so its defaults are not in
+# scope. Reading defaults/main.yml directly keeps the version assertion
+# below tied to the value that Renovate bumps, with nothing to keep in sync
+# in this scenario. Only `radicale_version` is read out of it, and it is a
+# literal - the variables derived from it would not resolve here.
+- name: Load the Radicale role defaults
+  ansible.builtin.include_vars:
+    file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+    name: radicale_defaults
+
+- name: Load the Radicale Molecule test credentials
+  ansible.builtin.include_vars:
+    file: "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}/vars/credentials.yml"
+
+- name: Determine the Radicale URLs and storage path to probe
+  ansible.builtin.set_fact:
+    radicale_molecule_user_url: "{{ radicale_molecule_base_url }}/{{ radicale_molecule_username }}/"
+    radicale_molecule_collection_url: "{{ radicale_molecule_base_url }}/{{ radicale_molecule_username }}/{{ radicale_molecule_calendar_name }}/"
+    radicale_molecule_event_url: "{{ radicale_molecule_base_url }}/{{ radicale_molecule_username }}/{{ radicale_molecule_calendar_name }}/{{ radicale_molecule_event_uid }}.ics"
+    radicale_molecule_event_storage_path: "{{ radicale_molecule_collections_path }}/{{ radicale_molecule_collection_root_subdir }}/{{ radicale_molecule_username }}/{{ radicale_molecule_calendar_name }}/{{ radicale_molecule_event_uid }}.ics"
+
+- name: Wait for Radicale service to become active (up to 180s)
+  ansible.builtin.systemd:
+    name: radicale.service
+  register: radicale_service
+  until: radicale_service.status.ActiveState == 'active'
+  retries: 36
+  delay: 5
+
+- name: Assert Radicale service is active
+  ansible.builtin.assert:
+    that: radicale_service.status.ActiveState == 'active'
+    fail_msg: "radicale.service not active ({{ radicale_service.status.ActiveState }})"
+    success_msg: "radicale.service is active"
+
+- name: Retrieve Radicale service log for debugging
+  when: radicale_debug_service_enabled | bool
+  ansible.builtin.command:
+    cmd: journalctl -xeu radicale.service
+  changed_when: false
+
+# Liveness only. Radicale redirects `/` to its web interface whatever its
+# configuration says - an image started with no configuration file at all
+# answers this identically - so this establishes that something is
+# listening, and nothing more. The probes further down are what tie the
+# serving instance to the configuration this role wrote.
+- name: Wait for Radicale to start answering HTTP (up to 10m)
+  ansible.builtin.uri:
+    url: "{{ radicale_molecule_base_url }}/"
+    method: GET
+    follow_redirects: none
+    status_code: [302]
+  register: radicale_endpoint
+  until: radicale_endpoint.status == 302
+  retries: 120
+  delay: 5
+
+# The `uri` module resolves the `Location` header against the requested
+# URL, so what Radicale sends as `/.web` arrives here as an absolute URL.
+- name: Assert Radicale redirects to its web interface
+  ansible.builtin.assert:
+    that: radicale_endpoint.location | urlsplit('path') == '/.web'
+    fail_msg: "Radicale did not redirect to its web interface ({{ radicale_endpoint.location | default('no Location header') }})"
+    success_msg: "Radicale redirects to its web interface"
+
+# Asking for real content, rather than just a status code, is what tells a
+# Radicale that serves its interface apart from one answering with an error
+# page. Like the redirect above, this holds for an unconfigured Radicale too.
+- name: Fetch the Radicale web interface
+  ansible.builtin.uri:
+    url: "{{ radicale_molecule_base_url }}/.web/"
+    method: GET
+    follow_redirects: none
+    return_content: true
+  register: radicale_web_interface
+
+- name: Assert the Radicale web interface renders
+  ansible.builtin.assert:
+    that: "'<title>Radicale Web Interface</title>' in radicale_web_interface.content"
+    fail_msg: "The Radicale web interface did not render as expected"
+    success_msg: "The Radicale web interface renders"
+
+# The first probe that can only pass because of this role: the realm is a
+# value out of the configuration file the role generated. An unconfigured
+# Radicale challenges with its built-in `Radicale - Password Required`.
+- name: Request a Radicale collection without credentials
+  ansible.builtin.uri:
+    url: "{{ radicale_molecule_user_url }}"
+    method: PROPFIND
+    headers:
+      Depth: "0"
+    follow_redirects: none
+    status_code: [401]
+  register: radicale_anonymous
+
+- name: Assert Radicale challenges anonymous callers with the configured realm
+  ansible.builtin.assert:
+    that: "'Basic realm=\"protected\"' in radicale_anonymous.www_authenticate"
+    fail_msg: "Radicale did not challenge with the configured realm ({{ radicale_anonymous.www_authenticate | default('no WWW-Authenticate header') }})"
+    success_msg: "Radicale challenges anonymous callers with the configured realm"
+
+# Negative control for the authenticated probes below: without it, a
+# Radicale that waved everyone through would satisfy all of them.
+- name: Request a Radicale collection with a wrong password
+  ansible.builtin.uri:
+    url: "{{ radicale_molecule_user_url }}"
+    method: PROPFIND
+    headers:
+      Depth: "0"
+    url_username: "{{ radicale_molecule_username }}"
+    url_password: "{{ radicale_molecule_password }}-wrong"
+    force_basic_auth: true
+    follow_redirects: none
+    status_code: [401]
+  register: radicale_wrong_password
+
+- name: Assert Radicale rejected the wrong password
+  ansible.builtin.assert:
+    that: radicale_wrong_password.status == 401
+    fail_msg: "Radicale did not reject the wrong password ({{ radicale_wrong_password.status }})"
+    success_msg: "Radicale rejected the wrong password"
+
+# Proves the htpasswd file the role templated is really the one Radicale
+# authenticates against, and that the configuration it generated points at
+# it: the very same request against an unconfigured Radicale is a 401.
+# The principal reported back is the user out of that file.
+- name: Discover the Radicale principal of the test user
+  ansible.builtin.uri:
+    url: "{{ radicale_molecule_base_url }}/"
+    method: PROPFIND
+    headers:
+      Depth: "0"
+      Content-Type: application/xml
+    body: |
+      <?xml version="1.0" encoding="utf-8"?>
+      <D:propfind xmlns:D="DAV:"><D:prop><D:current-user-principal/></D:prop></D:propfind>
+    url_username: "{{ radicale_molecule_username }}"
+    url_password: "{{ radicale_molecule_password }}"
+    force_basic_auth: true
+    follow_redirects: none
+    status_code: [207]
+    return_content: true
+  register: radicale_principal
+
+- name: Assert Radicale authenticated the test user out of the role's htpasswd file
+  ansible.builtin.assert:
+    that: "'<href>/' ~ radicale_molecule_username ~ '/</href>' in radicale_principal.content"
+    fail_msg: "Radicale did not report the expected principal: {{ radicale_principal.content }}"
+    success_msg: "Radicale authenticated the test user and reported their principal"
+
+# The point of this role: a real CalDAV round-trip. Creating a calendar
+# collection, storing an event in it and reading that event back exercises
+# the authentication backend, the storage backend and the collection
+# handling in one go.
+#
+# A repeated run finds the collection already there, which Radicale answers
+# with a 409.
+- name: Create a calendar collection in Radicale
+  ansible.builtin.uri:
+    url: "{{ radicale_molecule_collection_url }}"
+    method: MKCALENDAR
+    url_username: "{{ radicale_molecule_username }}"
+    url_password: "{{ radicale_molecule_password }}"
+    force_basic_auth: true
+    follow_redirects: none
+    status_code: [201, 409]
+  register: radicale_mkcalendar
+
+- name: Assert the Radicale calendar collection exists
+  ansible.builtin.assert:
+    that: radicale_mkcalendar.status in [201, 409]
+    fail_msg: "Radicale did not create the calendar collection ({{ radicale_mkcalendar.status }})"
+    success_msg: "The Radicale calendar collection exists ({{ radicale_mkcalendar.status }})"
+
+# 201 the first time, 204 when an earlier run already stored the event.
+- name: Store an event in the Radicale calendar collection
+  ansible.builtin.uri:
+    url: "{{ radicale_molecule_event_url }}"
+    method: PUT
+    headers:
+      Content-Type: text/calendar; charset=utf-8
+    body: "{{ radicale_molecule_event_body }}"
+    url_username: "{{ radicale_molecule_username }}"
+    url_password: "{{ radicale_molecule_password }}"
+    force_basic_auth: true
+    follow_redirects: none
+    status_code: [201, 204]
+  register: radicale_put
+
+- name: Assert Radicale accepted the event
+  ansible.builtin.assert:
+    that:
+      - radicale_put.status in [201, 204]
+      - radicale_put.etag | default('') | length > 0
+    fail_msg: "Radicale did not accept the event ({{ radicale_put.status }})"
+    success_msg: "Radicale accepted the event and issued an ETag"
+
+- name: Read the event back out of Radicale
+  ansible.builtin.uri:
+    url: "{{ radicale_molecule_event_url }}"
+    method: GET
+    url_username: "{{ radicale_molecule_username }}"
+    url_password: "{{ radicale_molecule_password }}"
+    force_basic_auth: true
+    follow_redirects: none
+    status_code: [200]
+    return_content: true
+  register: radicale_get
+
+- name: Assert the event read back out of Radicale is the one that was stored
+  ansible.builtin.assert:
+    that:
+      - "'UID:' ~ radicale_molecule_event_uid in radicale_get.content"
+      - "'SUMMARY:Molecule round-trip event' in radicale_get.content"
+    fail_msg: "Radicale did not return the stored event: {{ radicale_get.content }}"
+    success_msg: "Radicale returned the stored event"
+
+# Reading the event back by its URL only proves Radicale can hand a file
+# back. A calendar-query REPORT goes through Radicale's CalDAV engine
+# instead, which has to have parsed and indexed the event to answer it -
+# this is the request a real CalDAV client makes to synchronize.
+- name: Query the Radicale calendar collection for its events
+  ansible.builtin.uri:
+    url: "{{ radicale_molecule_collection_url }}"
+    method: REPORT
+    headers:
+      Depth: "1"
+      Content-Type: application/xml
+    body: |
+      <?xml version="1.0" encoding="utf-8"?>
+      <C:calendar-query xmlns:D="DAV:" xmlns:C="urn:ietf:params:xml:ns:caldav">
+        <D:prop><D:getetag/><C:calendar-data/></D:prop>
+        <C:filter><C:comp-filter name="VCALENDAR"><C:comp-filter name="VEVENT"/></C:comp-filter></C:filter>
+      </C:calendar-query>
+    url_username: "{{ radicale_molecule_username }}"
+    url_password: "{{ radicale_molecule_password }}"
+    force_basic_auth: true
+    follow_redirects: none
+    status_code: [207]
+    return_content: true
+  register: radicale_report
+
+- name: Assert the Radicale calendar query returns the stored event
+  ansible.builtin.assert:
+    that:
+      - "'UID:' ~ radicale_molecule_event_uid in radicale_report.content"
+      - "radicale_molecule_event_uid ~ '.ics</href>' in radicale_report.content"
+    fail_msg: "The Radicale calendar query did not return the stored event: {{ radicale_report.content }}"
+    success_msg: "The Radicale calendar query returns the stored event"
+
+# Everything above went through Radicale's own HTTP listener, which would
+# look the same whatever storage it kept the event in. This checks the host
+# side of the role's `/data` bind mount instead: the event has to be a file
+# under the collections directory that the role's generated configuration
+# names, or the role is not keeping anybody's calendars where it says it does.
+- name: Look for the stored event on the Radicale storage path
+  ansible.builtin.slurp:
+    src: "{{ radicale_molecule_event_storage_path }}"
+  register: radicale_stored_event
+
+- name: Assert the event is stored on the Radicale storage path
+  ansible.builtin.assert:
+    that: "'UID:' ~ radicale_molecule_event_uid in (radicale_stored_event.content | b64decode)"
+    fail_msg: "{{ radicale_molecule_event_storage_path }} does not hold the stored event"
+    success_msg: "The event is stored at {{ radicale_molecule_event_storage_path }}"
+
+# Radicale does not report its version over HTTP - not even in a `Server`
+# header, which comes from the WSGI server it runs on - so it is asked
+# directly. The docker CLI is used rather than community.docker, which is
+# not available to playbooks running against the Molecule container.
+- name: Query the version of the running Radicale
+  ansible.builtin.command:
+    cmd: docker exec {{ radicale_molecule_container_name }} {{ radicale_molecule_version_command }}
+  register: radicale_version_command
+  changed_when: false
+
+- name: Assert the running Radicale is the version this role installs
+  ansible.builtin.assert:
+    that: >-
+      radicale_version_command.stdout | trim
+      == radicale_defaults.radicale_version.split('.')[0:radicale_molecule_version_components | int] | join('.')
+    fail_msg: >-
+      Radicale reports {{ radicale_version_command.stdout | trim }}, expected
+      {{ radicale_defaults.radicale_version.split('.')[0:radicale_molecule_version_components | int] | join('.') }}
+      (out of radicale_version {{ radicale_defaults.radicale_version }})
+    success_msg: "Radicale reports {{ radicale_version_command.stdout | trim }}"
+
+- name: Show the Radicale verification summary
+  ansible.builtin.debug:
+    msg:
+      - "Radicale systemd: {{ radicale_service.status.ActiveState }}"
+      - "Radicale version: {{ radicale_version_command.stdout | trim }} (radicale_version {{ radicale_defaults.radicale_version }})"
+      - "Radicale anonymous challenge: {{ radicale_anonymous.www_authenticate }}"
+      - "Radicale wrong-password response: {{ radicale_wrong_password.status }}"
+      - "Radicale calendar collection: {{ radicale_mkcalendar.status }}"
+      - "Radicale event stored: {{ radicale_put.status }}, read back: {{ radicale_get.status }}, queried: {{ radicale_report.status }}"
+      - "Radicale storage path: {{ radicale_molecule_event_storage_path }}"
