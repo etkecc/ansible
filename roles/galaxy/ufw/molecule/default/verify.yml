@@ -135,6 +135,6 @@
     - name: Show the ufw verification summary
       ansible.builtin.debug:
         msg:
-          - "ufw.service: {{ ufw_service.status.ActiveState }} ({{ ufw_service.status.UnitFileState }})"
+          - "ufw systemd: {{ ufw_service.status.ActiveState }} ({{ ufw_service.status.UnitFileState }})"
           - "Rules recorded by ufw: {{ ufw_status.stdout_lines | length }} line(s)"
           - "Rules in the kernel's ufw-user-input chain: {{ ufw_netfilter_rules.stdout_lines | select('match', '^-A ufw-user-input ') | list | length }}"
