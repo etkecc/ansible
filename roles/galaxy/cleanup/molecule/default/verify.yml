@@ -22,14 +22,13 @@
   tasks:
     - name: Verify that the cleanup role did its work
       block:
-        - name: Include the role's default variables under a separate name
+        # The role is not included in this playbook, so its defaults are not in
+        # scope. Reading defaults/main.yml directly ties the version assertion
+        # below.
+        - name: Load the role defaults
           ansible.builtin.include_vars:
-            # Only leaf values may be read out of this. Loading it under a name
-            # of its own keeps it from outranking the values this scenario
-            # deliberately tuned - which is the whole point, since several
-            # assertions below compare the two.
             file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
-            name: cleanup_role_defaults
+            name: cleanup_defaults
 
         ########################################################################
         #                                                                      #
@@ -79,16 +78,16 @@
             that:
               - cleanup_molecule_service_properties.LoadState == 'loaded'
               - "'argv[]=/bin/journalctl --vacuum-time=' ~ system_cleanup_logs_retention ~ ' ;' in cleanup_molecule_service_properties.ExecStart"
-              - "'--vacuum-time=' ~ cleanup_role_defaults.system_cleanup_logs_retention not in cleanup_molecule_service_properties.ExecStart"
+              - "'--vacuum-time=' ~ cleanup_defaults.system_cleanup_logs_retention not in cleanup_molecule_service_properties.ExecStart"
             fail_msg: >-
               systemd parsed ExecStart as {{ cleanup_molecule_service_properties.ExecStart }}, which
               is not `journalctl --vacuum-time={{ system_cleanup_logs_retention }}`. The role either
               did not render `system_cleanup_logs_retention` into the unit, or rendered its own
-              default of {{ cleanup_role_defaults.system_cleanup_logs_retention }} instead.
+              default of {{ cleanup_defaults.system_cleanup_logs_retention }} instead.
             success_msg: >-
               systemd runs `journalctl --vacuum-time={{ system_cleanup_logs_retention }}`, this
               scenario's value and not the role's default of
-              {{ cleanup_role_defaults.system_cleanup_logs_retention }}
+              {{ cleanup_defaults.system_cleanup_logs_retention }}
 
         # The unit is Type=oneshot without RemainAfterExit, so by the time this
         # runs it is inactive again and `systemctl is-active` says nothing worth
@@ -108,7 +107,7 @@
 
         - name: Read the journal of the journald autovacuum service
           ansible.builtin.command:
-            cmd: journalctl --no-pager --unit=systemd-journald-autovacuum.service
+            cmd: journalctl --no-pager --output=cat --unit=systemd-journald-autovacuum.service
           register: cleanup_molecule_service_journal
           changed_when: false
 
@@ -137,7 +136,7 @@
               - cleanup_molecule_timer_properties.UnitFileState == 'enabled'
               - cleanup_molecule_timer_properties.ActiveState == 'active'
               - "'OnCalendar=' ~ system_cleanup_logs_calendar ~ ' ;' in cleanup_molecule_timer_properties.TimersCalendar"
-              - "'OnCalendar=' ~ cleanup_role_defaults.system_cleanup_logs_calendar ~ ' ;' not in cleanup_molecule_timer_properties.TimersCalendar"
+              - "'OnCalendar=' ~ cleanup_defaults.system_cleanup_logs_calendar ~ ' ;' not in cleanup_molecule_timer_properties.TimersCalendar"
             fail_msg: >-
               The timer is {{ cleanup_molecule_timer_properties.ActiveState }},
               {{ cleanup_molecule_timer_properties.UnitFileState }}, with
@@ -145,7 +144,7 @@
             success_msg: >-
               The timer is enabled and active, and systemd scheduled it for
               `{{ system_cleanup_logs_calendar }}` - this scenario's value, not the role's default
-              of `{{ cleanup_role_defaults.system_cleanup_logs_calendar }}`
+              of `{{ cleanup_defaults.system_cleanup_logs_calendar }}`
 
         ########################################################################
         #                                                                      #
@@ -255,7 +254,7 @@
 
         - name: Look for the purge-old-kernels script at the role's default path
           ansible.builtin.stat:
-            path: "{{ cleanup_role_defaults.system_cleanup_kernels_script }}"
+            path: "{{ cleanup_defaults.system_cleanup_kernels_script }}"
           register: cleanup_molecule_kernels_script_default_path
 
         - name: Assert that the script was installed where the scenario asked for it, and nowhere else
@@ -270,13 +269,13 @@
             fail_msg: >-
               {{ system_cleanup_kernels_script }} is not this repository's files/purge-old-kernels
               at mode 0775, or the role also wrote to its default path of
-              {{ cleanup_role_defaults.system_cleanup_kernels_script }}
+              {{ cleanup_defaults.system_cleanup_kernels_script }}
             success_msg: >-
               files/purge-old-kernels is installed at {{ system_cleanup_kernels_script }} at mode
               0775, and the role's default path
-              ({{ cleanup_role_defaults.system_cleanup_kernels_script }}) was left alone
+              ({{ cleanup_defaults.system_cleanup_kernels_script }}) was left alone
 
-        - name: Ask the installed script for its version
+        - name: Query the version of the installed script
           ansible.builtin.command:
             cmd: "{{ system_cleanup_kernels_script }} --version"
           register: cleanup_molecule_kernels_version
@@ -325,7 +324,7 @@
               `system_cleanup_docker` is on, the run tags are {{ ansible_run_tags }} and there is no
               Docker on this host - the pruning tasks were skipped rather than failing
 
-        - name: Report what was verified
+        - name: Show the Cleanup verification summary
           ansible.builtin.debug:
             msg:
               - "journald autovacuum: --vacuum-time={{ system_cleanup_logs_retention }}, OnCalendar={{ system_cleanup_logs_calendar }}, timer active"
@@ -333,7 +332,6 @@
               - "apt: the archive cache was emptied"
               - "kernels: {{ cleanup_molecule_kernels_version.stdout }} at {{ system_cleanup_kernels_script }}"
               - "docker: pruning skipped, as the run carried no 'start' tag"
-              - "CLEANUP VERIFICATION COMPLETE"
       rescue:
         - name: Retrieve the state of the journald autovacuum units
           ansible.builtin.command:

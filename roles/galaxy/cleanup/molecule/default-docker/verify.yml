@@ -192,7 +192,7 @@
               are preserved.
             success_msg: "{{ cleanup_molecule_network }} is still there, as promised"
 
-        - name: Report what was verified
+        - name: Show the Cleanup verification summary
           vars:
             cleanup_molecule_anonymous_volume: "{{ cleanup_molecule_anonymous_volume_slurp.content | b64decode | trim }}"
           ansible.builtin.debug:
@@ -201,7 +201,6 @@
               - "kept: container {{ cleanup_molecule_running_container }} (running), image {{ cleanup_molecule_docker_image }}"
               - "kept: volumes {{ cleanup_molecule_used_volume }} (with its contents) and {{ cleanup_molecule_named_volume }}"
               - "kept: network {{ cleanup_molecule_network }}"
-              - "CLEANUP DOCKER VERIFICATION COMPLETE"
       rescue:
         - name: Retrieve what the Docker daemon holds
           ansible.builtin.command:

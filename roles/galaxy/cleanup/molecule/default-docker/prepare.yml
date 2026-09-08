@@ -135,13 +135,9 @@
 
     - name: Ensure the volume in use carries a marker
       ansible.builtin.command:
-        argv:
-          - docker
-          - exec
-          - "{{ cleanup_molecule_running_container }}"
-          - /bin/sh
-          - -c
-          - "echo '{{ cleanup_molecule_volume_marker }}' > /data/marker"
+        cmd: >-
+          docker exec {{ cleanup_molecule_running_container }}
+          /bin/sh -c "echo '{{ cleanup_molecule_volume_marker }}' > /data/marker"
       register: cleanup_molecule_docker_marker
       changed_when: cleanup_molecule_docker_marker.rc == 0
 

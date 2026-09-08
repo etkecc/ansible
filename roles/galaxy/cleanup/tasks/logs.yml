@@ -13,7 +13,7 @@
     - systemd-journald-autovacuum.service
 
 - name: Esure systemd-journald-autovacuum units are enabled and started
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: "{{ item }}"
     enabled: true
     daemon_reload: true
