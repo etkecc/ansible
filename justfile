@@ -30,11 +30,28 @@ run +extra_args:
     export SSH_ASKPASS_DEBUG=1
     _tmpdir=$(mktemp -d)
     trap 'rm -rf "$_tmpdir"' EXIT INT TERM HUP
+    _limit=""
+    set -- {{ extra_args }}
+    while [ $# -gt 0 ]; do
+        case "$1" in
+            -l|--limit) _limit="${2:-}" ;;
+            -l=*|--limit=*) _limit="${1#*=}" ;;
+            -l?*) _limit="${1#-l}" ;;
+        esac
+        shift
+    done
     for inv_dir in inventory ../inventory; do
         [ -d "$inv_dir/host_vars" ] || continue
-        (cd "$inv_dir" && etkepass --decrypt-inv-to "$_tmpdir")
+        _dhosts=""
+        _oldifs=$IFS; IFS=,
+        for _h in $_limit; do
+            [ -e "$inv_dir/host_vars/$_h" ] && _dhosts="${_dhosts:+$_dhosts,}$_h"
+        done
+        IFS=$_oldifs
+        [ -n "$_dhosts" ] || continue
+        (cd "$inv_dir" && etkepass -l "$_dhosts" --decrypt-inv-to "$_tmpdir")
     done
-    time ansible-playbook play/all.yml -i inventory/hosts -i ../inventory/hosts -i "$_tmpdir" {{ extra_args }}
+    echo "time ansible-playbook play/all.yml -i inventory/hosts -i ../inventory/hosts -i "$_tmpdir" {{ extra_args }}"
 
 # Runs the playbook with the given list of comma-separated tags and optional arguments
 run-tags tags *extra_args:
