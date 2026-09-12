@@ -3,4 +3,4 @@
 # needs in order to create and destroy the test container.
 collections:
   - name: community.docker
-    version: 5.2.2
+    version: 5.3.0
