@@ -80,6 +80,6 @@
 * Twitter Bridge: v0.2608.0
 * Uptime Kuma: 1.23.17
 * Valkey: 9.1.2
-* Vaultwarden: 1.37.2
+* Vaultwarden: 1.37.3
 * Wg Easy: 15.4.0
 * WhatsApp Bridge: v0.2608.0

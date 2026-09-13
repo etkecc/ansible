@@ -30,6 +30,7 @@ provisioner:
       all:
         # Helper variables
         vaultwarden_debug_service_enabled: false
+        vaultwarden_restarts_check_enabled: true
 
         # The self-build scenario's converge outlasts the 10-minute apt cache
         # validity window, so the idempotence pass re-updates the cache and
