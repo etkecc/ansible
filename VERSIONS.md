@@ -31,7 +31,7 @@
 * Ketesa: v1.5.0
 * Languagetool: 6.8
 * Line Bridge: 412eda7f028f0ee946d6fe584c64c7e97f27c7a7
-* Linkding: 1.46.2
+* Linkding: 1.47.0
 * LinkedIn Bridge: v0.2608.0
 * Livekit JWT Service: 0.6.0
 * Livekit Server: v1.13.6

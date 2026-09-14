@@ -30,6 +30,7 @@ provisioner:
       all:
         # Helper variables
         linkding_debug_service_enabled: false
+        linkding_restarts_check_enabled: true
 
         # Variables for linkding
         linkding_uid: 1000
