@@ -10,7 +10,7 @@
 * Coturn: 4.9.0
 * Discord Bridge: v0.7.7
 * Draupnir: v3.1.0
-* Element: v1.12.27
+* Element: v1.12.28
 * Etherpad: 3.3.3
 * Exim Relay: 4.99.1-r0-2
 * Firezone: 0.7.36
