@@ -30,6 +30,7 @@ provisioner:
       all:
         # Helper variables
         cinny_debug_service_enabled: false
+        cinny_restarts_check_enabled: true
 
         # The port on the host that Cinny is published on. In a real
         # deployment, Cinny sits behind a reverse-proxy and is not published
@@ -76,6 +77,8 @@ provisioner:
               "basename": "/molecule"
             }
           }
+
+        cinny_container_image_self_build: false
   env:
     # Workaround for https://github.com/ansible/molecule/issues/4391
     ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles

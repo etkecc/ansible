@@ -31,6 +31,7 @@ provisioner:
       all:
         # Helper variables
         livekit_server_debug_service_enabled: false
+        livekit_server_restarts_check_enabled: true
 
         # Variables for LiveKit Server
         livekit_server_enabled: true  # Because it is disabled by default

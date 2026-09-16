@@ -5,7 +5,7 @@
 * Borg: 1.4.5
 * Borgmatic: 2.1.7
 * Buscarron: v1.5.0
-* Cinny: v4.12.6
+* Cinny: v4.12.7
 * Container Socket Proxy: v0.5.0
 * Coturn: 4.9.0
 * Discord Bridge: v0.7.7
@@ -34,7 +34,7 @@
 * Linkding: 1.47.0
 * LinkedIn Bridge: v0.2608.0
 * Livekit JWT Service: 0.6.0
-* Livekit Server: v1.13.6
+* Livekit Server: v1.13.7
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.6.0
 * Meta Instagram Bridge: v0.2608.0
@@ -74,7 +74,7 @@
 * Synapse Reverse Proxy Companion: 1.31.5-alpine
 * Synapse S3 Storage Provider: 1.7.0
 * Telegram Bridge: v0.2608.0
-* Traefik: v3.7.12
+* Traefik: v3.7.13
 * Traefik Certs Dumper: v2.11.4
 * Traefik Proxy Protocol: 1
 * Twitter Bridge: v0.2608.0

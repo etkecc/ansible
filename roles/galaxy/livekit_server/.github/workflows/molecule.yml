@@ -70,7 +70,7 @@ jobs:
         uses: actions/cache@v6.1.0
         with:
           path: ~/.ansible/collections
-          key: ansible-collections-${{ hashFiles('livekit-server/molecule/default/requirements.yml') }}
+          key: ansible-collections-${{ hashFiles('livekit-server/molecule/*/requirements.yml') }}
 
       - name: Run Molecule
         working-directory: livekit-server

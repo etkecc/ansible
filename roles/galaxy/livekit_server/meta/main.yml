@@ -1,7 +1,7 @@
 ---
 galaxy_info:
-  author: MASH
-  company: MASH
+  author: Slavi Pantaleev
+  company: mash
   role_name: livekit_server
   namespace: mash
   description: LiveKit Server
