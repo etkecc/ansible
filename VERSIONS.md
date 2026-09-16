@@ -7,7 +7,7 @@
 * Buscarron: v1.5.0
 * Cinny: v4.12.7
 * Container Socket Proxy: v0.5.0
-* Coturn: 4.9.0
+* Coturn: 4.18.0
 * Discord Bridge: v0.7.7
 * Draupnir: v3.1.0
 * Element: v1.12.28
@@ -17,7 +17,7 @@
 * Fluffychat: v2.9.1
 * Funkwhale: 1.4.1
 * Google Chat Bridge: v0.5.2
-* Google Messages Bridge: v0.2608.0
+* Google Messages Bridge: v0.2609.0
 * Google Voice Bridge: v0.2605.0
 * Gotosocial: 0.22.1
 * Grafana: 13.0.2
@@ -32,7 +32,7 @@
 * Languagetool: 6.8
 * Line Bridge: 412eda7f028f0ee946d6fe584c64c7e97f27c7a7
 * Linkding: 1.47.0
-* LinkedIn Bridge: v0.2608.0
+* LinkedIn Bridge: v0.2609.0
 * Livekit JWT Service: 0.6.0
 * Livekit Server: v1.13.7
 * Matrix Reminder Bot: v0.4.0
@@ -61,7 +61,7 @@
 * Sable: 1.21.0
 * Schildichat: 1.11.109-sc.0.test.0
 * Signal Bridge: v0.2608.0
-* Slack Bridge: v0.2608.0
+* Slack Bridge: v0.2609.0
 * Spam Checker Mjolnir Antispam: v1.12.1
 * Spam Checker Synapse Simple Antispam: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.44.0
@@ -71,13 +71,13 @@
 * Synapse Auto Compressor: v0.0.3
 * Synapse Compress State: v0.0.3
 * Synapse HTTP Antispam: v0.5.1
-* Synapse Reverse Proxy Companion: 1.31.5-alpine
+* Synapse Reverse Proxy Companion: 1.31.6-alpine
 * Synapse S3 Storage Provider: 1.7.0
 * Telegram Bridge: v0.2608.0
 * Traefik: v3.7.13
 * Traefik Certs Dumper: v2.11.4
 * Traefik Proxy Protocol: 1
-* Twitter Bridge: v0.2608.0
+* Twitter Bridge: v0.2609.0
 * Uptime Kuma: 1.23.17
 * Valkey: 9.1.2
 * Vaultwarden: 1.37.3

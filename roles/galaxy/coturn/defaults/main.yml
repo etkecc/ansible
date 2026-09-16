@@ -26,7 +26,7 @@ coturn_config_path: "{{ coturn_base_path }}/turnserver.conf"
 # .github/renovate.json - the shape needed here cannot be spelled out in this
 # annotation.
 # renovate: datasource=docker depName=coturn/coturn
-coturn_version: 4.9.0
+coturn_version: 4.18.0
 
 coturn_uid: ""
 coturn_gid: ""
