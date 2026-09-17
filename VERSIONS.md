@@ -37,8 +37,8 @@
 * Livekit Server: v1.13.7
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.6.0
-* Meta Instagram Bridge: v0.2608.0
-* Meta Messenger Bridge: v0.2608.0
+* Meta Instagram Bridge: v0.2609.0
+* Meta Messenger Bridge: v0.2609.0
 * Miniflux: 2.3.3
 * Ntfy: v2.28.0
 * Peertube: v7.2.3
@@ -60,7 +60,7 @@
 * Radicale: 3.8.0.0
 * Sable: 1.21.0
 * Schildichat: 1.11.109-sc.0.test.0
-* Signal Bridge: v0.2608.0
+* Signal Bridge: v0.2609.0
 * Slack Bridge: v0.2609.0
 * Spam Checker Mjolnir Antispam: v1.12.1
 * Spam Checker Synapse Simple Antispam: 5ab711971e3a4541a7a40310ff85e17f8262cc05
@@ -73,7 +73,7 @@
 * Synapse HTTP Antispam: v0.5.1
 * Synapse Reverse Proxy Companion: 1.31.6-alpine
 * Synapse S3 Storage Provider: 1.7.0
-* Telegram Bridge: v0.2608.0
+* Telegram Bridge: v0.2609.0
 * Traefik: v3.7.13
 * Traefik Certs Dumper: v2.11.4
 * Traefik Proxy Protocol: 1
@@ -82,4 +82,4 @@
 * Valkey: 9.1.2
 * Vaultwarden: 1.37.3
 * Wg Easy: 15.4.0
-* WhatsApp Bridge: v0.2608.0
+* WhatsApp Bridge: v0.2609.0
