@@ -1,0 +1,32 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Include the ssh role for the Molecule tests
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    # This role rewrites /etc/ssh/sshd_config and reloads the SSH daemon. Run
+    # against the wrong machine that is how an operator locks themselves out of
+    # their own server, so the suite refuses to touch anything that is not a
+    # throwaway container. prepare.yml carries the same guard; this one is here
+    # because `molecule converge` is what a person runs by hand.
+    - name: Assert that the target is a throwaway container
+      ansible.builtin.stat:
+        path: /.dockerenv
+      register: ssh_molecule_dockerenv
+
+    - name: Refuse to configure sshd outside a container
+      ansible.builtin.assert:
+        that: ssh_molecule_dockerenv.stat.exists
+        fail_msg: >-
+          /.dockerenv is missing, so this does not look like a Docker container. This scenario
+          rewrites /etc/ssh/sshd_config and reloads the SSH daemon; it must never be pointed at a
+          real host.
+        success_msg: "The target is a Docker container, so sshd here is disposable"
+
+    - name: Include the ssh role
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"

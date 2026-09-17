@@ -1,0 +1,134 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Puts the container into the arrangement Ubuntu 24.04 and newer ship by
+# default: ssh.socket enabled and owning port 22, ssh.service disabled and
+# started on demand by the socket. That is a genuinely different host for this
+# role than the one the `default` scenario builds - the port sshd listens on
+# comes from the socket unit rather than from sshd_config, which makes
+# `system_security_ssh_port` inert.
+
+---
+- name: Prepare the host for the socket-activated ssh Molecule tests
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    # This role rewrites /etc/ssh/sshd_config and reloads the SSH daemon. Run
+    # against the wrong machine that is how an operator locks themselves out of
+    # their own server, so the suite refuses to touch anything that is not a
+    # throwaway container.
+    - name: Assert that the target is a throwaway container
+      ansible.builtin.stat:
+        path: /.dockerenv
+      register: ssh_molecule_dockerenv
+
+    - name: Refuse to configure sshd outside a container
+      ansible.builtin.assert:
+        that: ssh_molecule_dockerenv.stat.exists
+        fail_msg: >-
+          /.dockerenv is missing, so this does not look like a Docker container. This scenario
+          rewrites /etc/ssh/sshd_config and reloads the SSH daemon; it must never be pointed at a
+          real host.
+        success_msg: "The target is a Docker container, so sshd here is disposable"
+
+    - name: Ensure openssh-server is installed
+      ansible.builtin.apt:
+        name: openssh-server
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Ensure host keys exist
+      ansible.builtin.command:
+        cmd: ssh-keygen -A
+      args:
+        creates: /etc/ssh/ssh_host_ed25519_key
+
+    - name: Ensure ssh.service is not started at boot
+      ansible.builtin.systemd_service:
+        name: ssh.service
+        state: stopped
+        enabled: false
+
+    - name: Ensure ssh.socket owns the listening port
+      ansible.builtin.systemd_service:
+        name: ssh.socket
+        state: started
+        enabled: true
+        daemon_reload: true
+
+    # With `Accept=no` a single connection is enough to make systemd start
+    # ssh.service and hand it the listening socket - which is also what creates
+    # the /run/sshd privilege separation directory that `sshd -t` needs. This is
+    # the state a real host is in by the time Ansible has connected to it.
+    - name: Trigger socket activation by connecting once
+      ansible.builtin.wait_for:
+        host: 127.0.0.1
+        port: 22
+        search_regex: '^SSH-2\.0-'
+        timeout: 30
+
+    - name: Wait for the activated daemon to settle
+      ansible.builtin.wait_for:
+        timeout: 3
+
+    ############################################################################
+    #                                                                          #
+    # negative controls                                                        #
+    #                                                                          #
+    ############################################################################
+
+    - name: Read the stock configuration back out of sshd
+      ansible.builtin.command:
+        cmd: /usr/sbin/sshd -T
+      register: ssh_molecule_stock_config
+      changed_when: false
+
+    - name: Assert that none of the values this scenario configures is in effect yet
+      vars:
+        ssh_molecule_stock_lines: "{{ ssh_molecule_stock_config.stdout_lines }}"
+      ansible.builtin.assert:
+        that:
+          - "'maxauthtries ' ~ system_security_ssh_max_auth_tries not in ssh_molecule_stock_lines"
+          - "'permitrootlogin no' not in ssh_molecule_stock_lines"
+        fail_msg: >-
+          The distribution's own sshd_config already puts one of this scenario's values into effect,
+          so asserting it afterwards would say nothing about the role.
+        success_msg: >-
+          Neither MaxAuthTries {{ system_security_ssh_max_auth_tries }} nor PermitRootLogin no is in
+          the stock configuration
+
+    # The role sets `system_security_ssh_port` to 2022 and verify.yml asserts
+    # that sshd stays on 22 regardless. That claim is only about socket
+    # activation if the socket really is what is holding port 22 right now.
+    - name: Read ssh.socket back out of systemd
+      ansible.builtin.systemd_service:
+        name: ssh.socket
+      register: ssh_molecule_socket
+
+    - name: Assert that systemd is listening on port 22 on sshd's behalf
+      vars:
+        ssh_molecule_socket_properties: "{{ ssh_molecule_socket.status }}"
+      ansible.builtin.assert:
+        that:
+          - ssh_molecule_socket_properties.ActiveState == 'active'
+          - "'22' in ssh_molecule_socket_properties.Listen"
+        fail_msg: >-
+          ssh.socket is {{ ssh_molecule_socket_properties.ActiveState }} and listens on
+          {{ ssh_molecule_socket_properties.Listen }}. This scenario is about the port coming from
+          the socket unit rather than from sshd_config, and that is not the case here.
+        success_msg: "ssh.socket is active and holds port 22"
+
+    - name: Mark the stock sshd_config
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        line: "{{ ssh_molecule_stock_marker }}"
+        insertafter: EOF
+
+    - name: Report the state the role is about to be run against
+      ansible.builtin.debug:
+        msg:
+          - "ssh.socket is active and holds port 22; ssh.service is socket-activated and disabled"
+          - "sshd_config is the distribution's, marked with {{ ssh_molecule_stock_marker }}"

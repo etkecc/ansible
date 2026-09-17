@@ -1,0 +1,137 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+dependency:
+  name: galaxy
+  options:
+    requirements-file: requirements.yml
+    force: true
+driver:
+  name: docker
+platforms:
+  - name: ssh-${MOLECULE_DISTRO:-ubuntu2604}-default
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2604}-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callback_result_format: yaml
+  inventory:
+    group_vars:
+      all:
+        # The role writes the authorized keys of `ansible_user`. Molecule's
+        # Docker driver does not put that variable in the inventory, and an
+        # undefined one would take the role down before it configured anything.
+        ansible_user: root
+
+        # Every value below is deliberately different from BOTH the role's own
+        # default AND the value the distribution ships in its stock
+        # sshd_config, so that verify.yml can tell a directive the role
+        # rendered from this scenario's variables apart from one that merely
+        # looks right. prepare.yml asserts the "before" side of that: it reads
+        # the stock configuration back out of sshd and refuses to continue if
+        # any of these values is already in effect.
+
+        # The role's default is 22, which is also what every stock
+        # sshd_config listens on. Nothing in this scenario is reachable from
+        # outside the test container, so the number is free.
+        system_security_ssh_port: 2022
+
+        # The role's default is 3; Debian and Ubuntu ship 6.
+        system_security_ssh_max_auth_tries: 5
+        # The role's default is 30; the stock configuration leaves it at 120.
+        system_security_ssh_login_grace_time: 47
+        # The role's default is 120; the stock configuration leaves it at 0.
+        system_security_ssh_client_alive_interval: 97
+        # The role's default is 4; the stock configuration emits nothing, which
+        # sshd reports as "none".
+        system_security_ssh_per_source_max_startups: 7
+
+        # The role's default is 'LANG LC_*'. The stock configuration also
+        # accepts COLORTERM and NO_COLOR, and their absence afterwards is what
+        # proves the stock file was replaced rather than merely appended to.
+        system_security_ssh_accept_env: 'LANG LC_MOLECULE_*'
+
+        # The role's default is '.ssh/authorized_keys /var/ssh/%u'.
+        system_security_ssh_authorized_keys_file: '.ssh/authorized_keys /etc/ssh/molecule-keys/%u'
+
+        # Both default to false in the role and to yes in the stock
+        # configuration. Turned on here so that a template which hardcoded "no"
+        # instead of consulting the variable would be caught - asserting only
+        # the safe direction would not notice.
+        system_security_ssh_x11_forwarding: true
+        system_security_ssh_allow_tcp_forwarding: true
+
+        # The backward-compatibility chain. `system_security_ssh_password_authentication`
+        # is not set here on purpose: the role derives it from this old variable
+        # name, and asserting that sshd ends up with password authentication on
+        # is what proves that derivation still works for inventories which have
+        # never been updated.
+        system_security_ssh_passwordauth: true
+
+        # `system_security_ssh_permit_root_login_raw` is documented to override
+        # the boolean. Both are set, and to answers that contradict each other,
+        # so that the assertion can only pass if the raw value wins. The boolean
+        # path is covered by the socket-activated scenario instead.
+        #
+        # `forced-commands-only` rather than the more obvious `prohibit-password`
+        # because sshd rewrites the latter: OpenSSH 10.0 on Debian reports it
+        # back as its older synonym `without-password`, while OpenSSH 10.2 on
+        # Ubuntu reports it verbatim. `forced-commands-only` has no synonym and
+        # so reads back the same everywhere.
+        system_security_ssh_rootlogin: false
+        system_security_ssh_permit_root_login_raw: 'forced-commands-only'
+
+        # Free-form configuration appended at the end of the file. Two
+        # directives, so that a template which rendered only the first line of a
+        # multi-line value would be caught.
+        system_security_ssh_extension: |
+          Banner /etc/ssh/molecule-banner
+          AllowAgentForwarding no
+
+        # Keys the role is told to add and to revoke. The third one is never
+        # mentioned to the role: it is seeded by prepare.yml and has to survive,
+        # which is what makes "the role revoked a key" a statement about the
+        # revocation list rather than about the file.
+        system_security_ssh_authorizedkeys_host:
+          - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINBpyDGN/NWQ9D1rWD9FIyS6sPqiZZhiNyyW+6/s8egv molecule-ssh-1@example.com"
+        system_security_ssh_unauthorizedkeys_host:
+          - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBJoKyWcLe7ARhUsTvHtk2P2xcP+uKos36uT2KriHsgX molecule-ssh-2@example.com"
+
+        # Variables for the test suite itself
+        ssh_molecule_key_added: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINBpyDGN/NWQ9D1rWD9FIyS6sPqiZZhiNyyW+6/s8egv molecule-ssh-1@example.com"
+        ssh_molecule_key_revoked: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBJoKyWcLe7ARhUsTvHtk2P2xcP+uKos36uT2KriHsgX molecule-ssh-2@example.com"
+        ssh_molecule_key_untouched: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHweQLF40ms9vb9TziHdQNAXOnjumlGsUCjDOCZykXh4 molecule-ssh-3@example.com"
+        ssh_molecule_authorized_keys_path: /root/.ssh/authorized_keys
+        # Appended to the stock sshd_config by prepare.yml. The role replaces
+        # the whole file, so this line must not be there afterwards.
+        ssh_molecule_stock_marker: "# molecule-marker-from-the-stock-configuration"
+        # Set up by prepare.yml so that the Banner directive the extension adds
+        # points at a file that exists.
+        ssh_molecule_banner_path: /etc/ssh/molecule-banner
+  env:
+    # Workaround for https://github.com/ansible/molecule/issues/4391
+    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles
+scenario:
+  # The stock sequence with `idempotence` left out. The role is not idempotent
+  # by construction: its last task reloads the SSH daemon unconditionally, so a
+  # second run always reports a change.
+  test_sequence:
+    - dependency
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    - verify
+    - destroy
+verifier:
+  name: ansible

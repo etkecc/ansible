@@ -33,6 +33,7 @@ When enabled, this role:
 * `system_security_ssh_port` (int, default: `22`)
 
   * SSH daemon listening port.
+  * ⚠️ **Has no effect on hosts where `sshd` is socket-activated**, which is the default on Ubuntu 24.04 and newer. There the listening port comes from `ssh.socket`'s `ListenStream=` and `sshd` is handed that socket, so the `Port` directive this role writes is ignored. Change the port on the socket unit instead (a `systemd` drop-in for `ssh.socket`), or disable `ssh.socket` and enable `ssh.service`. On Debian 13 with `ssh.socket` enabled by hand, the reload at the end of this role fails outright; see [`molecule/README.md`](./molecule/README.md) for the details.
 
 ---
 
@@ -334,6 +335,32 @@ system_security_ssh_extension: |
 * Security-sensitive features (forwarding, tunnels, X11) are **disabled by default**.
 * Always validate changes using `sshd -t` after applying custom extensions.
 * Useful references:
-  * sshd_config manual: https://man.openbsd.org/sshd_config
-  * Mozilla OpenSSH guidelines: https://infosec.mozilla.org/guidelines/openssh
-  * openSUSE SSH guide: https://doc.opensuse.org/documentation/leap/security/html/book-security/cha-ssh.html#ex-sshd-conf
+  * [sshd_config manual](https://man.openbsd.org/sshd_config)
+  * [Mozilla OpenSSH guidelines](https://infosec.mozilla.org/guidelines/openssh)
+  * [openSUSE SSH guide](https://doc.opensuse.org/documentation/leap/security/html/book-security/cha-ssh.html#ex-sshd-conf)
+
+---
+
+## Testing
+
+The role has a [Molecule](https://ansible.readthedocs.io/projects/molecule/) test suite. See [`molecule/README.md`](./molecule/README.md) for what it covers, what it deliberately does not, and how to run it.
+
+---
+
+## Releases
+
+Tags are computed from the state of the repository rather than from commit messages: [`bin/compute-next-tag.sh`](./bin/compute-next-tag.sh) continues the release series of the newest existing tag whenever a commit touches `defaults/`, `meta/`, `tasks/` or `templates/`, and the [autotag workflow](./.github/workflows/autotag.yml) pushes the result. Commits which only touch documentation, CI configuration or the test suite are not released.
+
+This role deploys no software of its own and so has no version to name a release after; the version component of the tags is a number chosen by hand. To open a new series — for a breaking change to the role's variables, say — tag one commit as `v2.0.0-0` by hand, and everything after it continues from there.
+
+---
+
+## Development
+
+You can optionally install a Git pre-commit hook (via [mise](https://mise.jdx.dev/) + [prek](https://prek.j178.dev/)) that runs formatting and linting checks before each commit. See [`.pre-commit-config.yaml`](./.pre-commit-config.yaml) for which hooks are to be executed.
+
+To install the hook, run the [`just`](https://github.com/casey/just) command below:
+
+```sh
+just prek-install-git-pre-commit-hook
+```

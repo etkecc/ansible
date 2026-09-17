@@ -22,6 +22,24 @@
         key: "{{ item }}"
       loop: "{{ system_security_ssh_unauthorizedkeys }}"
 
+- name: Ensure sshd privilege separation directory exists
+  tags:
+    - setup-all
+    - setup-ssh
+    - install-all
+    - install-ssh
+  when: system_security_ssh_enabled | bool
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+    owner: root
+    group: root
+  loop:
+    - /var/run/sshd
+    - /run/sshd
+  ignore_errors: true
+
 - name: Enforce sshd config
   tags:
     - setup-all

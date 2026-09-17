@@ -1,0 +1,333 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Verifies what the role does to a host: it renders /etc/ssh/sshd_config from
+# its template, and it adds and revokes keys in the authorized_keys file of the
+# connecting user.
+#
+# There is no service of the role's own to probe, so the evidence comes in three
+# layers, each one closer to reality than the last:
+#
+#   * the file on disk is the role's and not the distribution's;
+#   * sshd's own parse of it (`sshd -T`) carries this scenario's values, and not
+#     the role's defaults - which are also asserted to be absent, so that a
+#     template that ignored its variables could not pass;
+#   * a real SSH daemon answers the SSH protocol on the port this scenario asked
+#     for, and no longer on the one it was started on. That last one is the only
+#     assertion here that the role's reload step has to have run for; `sshd -T`
+#     reads the file and would be just as happy if the running daemon had never
+#     heard of it.
+
+---
+- name: Verify the ssh role
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Verify that the ssh role did its work
+      block:
+        - name: Include the role's default variables under a separate name
+          ansible.builtin.include_vars:
+            # Only leaf values may be read out of this. Loading it under a name
+            # of its own keeps it from outranking the values this scenario
+            # deliberately tuned - which is the whole point, since every
+            # assertion below compares the two.
+            file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+            name: ssh_role_defaults
+
+        ########################################################################
+        #                                                                      #
+        # the file on disk                                                     #
+        #                                                                      #
+        ########################################################################
+
+        - name: Read the sshd configuration file
+          ansible.builtin.slurp:
+            src: /etc/ssh/sshd_config
+          register: ssh_molecule_config_file
+
+        - name: Assert that the role replaced the distribution's sshd_config
+          vars:
+            ssh_molecule_config_text: "{{ ssh_molecule_config_file.content | b64decode }}"
+          ansible.builtin.assert:
+            that:
+              - "'Ansible managed' in ssh_molecule_config_text"
+              - ssh_molecule_stock_marker not in ssh_molecule_config_text
+            fail_msg: >-
+              /etc/ssh/sshd_config is not the file this role renders. Either the `ansible_managed`
+              header is missing, or prepare.yml's marker ({{ ssh_molecule_stock_marker }}) is still
+              there, which would mean the distribution's own file was left in place.
+            success_msg: >-
+              /etc/ssh/sshd_config carries the `ansible_managed` header and no longer carries the
+              marker prepare.yml appended to the distribution's file
+
+        ########################################################################
+        #                                                                      #
+        # sshd's parse of it                                                   #
+        #                                                                      #
+        ########################################################################
+
+        # `sshd -T` prints the effective configuration, one lowercase directive
+        # per line, after sshd itself has parsed the file. Comparing against it
+        # rather than against the text of the file means a directive that sshd
+        # silently ignores, or that a later line overrides, cannot pass.
+        - name: Read the configuration back out of sshd
+          ansible.builtin.command:
+            cmd: /usr/sbin/sshd -T
+          register: ssh_molecule_effective_config
+          changed_when: false
+
+        - name: Assert that sshd runs with this scenario's values and not the role's defaults
+          vars:
+            ssh_molecule_effective: "{{ ssh_molecule_effective_config.stdout_lines }}"
+          ansible.builtin.assert:
+            that:
+              - "'port ' ~ system_security_ssh_port in ssh_molecule_effective"
+              - "'port ' ~ ssh_role_defaults.system_security_ssh_port not in ssh_molecule_effective"
+              - "'maxauthtries ' ~ system_security_ssh_max_auth_tries in ssh_molecule_effective"
+              - "'maxauthtries ' ~ ssh_role_defaults.system_security_ssh_max_auth_tries not in ssh_molecule_effective"
+              - "'logingracetime ' ~ system_security_ssh_login_grace_time in ssh_molecule_effective"
+              - "'logingracetime ' ~ ssh_role_defaults.system_security_ssh_login_grace_time not in ssh_molecule_effective"
+              - "'clientaliveinterval ' ~ system_security_ssh_client_alive_interval in ssh_molecule_effective"
+              - "'clientaliveinterval ' ~ ssh_role_defaults.system_security_ssh_client_alive_interval not in ssh_molecule_effective"
+              - "'authorizedkeysfile ' ~ system_security_ssh_authorized_keys_file in ssh_molecule_effective"
+              - "'authorizedkeysfile ' ~ ssh_role_defaults.system_security_ssh_authorized_keys_file not in ssh_molecule_effective"
+            fail_msg: >-
+              sshd's effective configuration does not match what this scenario asked for. Either the
+              template does not render one of these variables, or it rendered the role's own default
+              instead of the value the inventory set.
+            success_msg: >-
+              sshd runs on port {{ system_security_ssh_port }} (not the role's default of
+              {{ ssh_role_defaults.system_security_ssh_port }}) with MaxAuthTries
+              {{ system_security_ssh_max_auth_tries }}, LoginGraceTime
+              {{ system_security_ssh_login_grace_time }}, ClientAliveInterval
+              {{ system_security_ssh_client_alive_interval }} and AuthorizedKeysFile
+              {{ system_security_ssh_authorized_keys_file }}
+
+        # `PerSourceMaxStartups` is emitted only when the variable is above 0,
+        # and sshd reports its absence as "none". Both halves of that gate are
+        # covered: this scenario's non-zero value has to be in effect, and the
+        # socket-activated scenario turns it off and asserts "none".
+        - name: Assert that PerSourceMaxStartups was emitted with this scenario's value
+          vars:
+            ssh_molecule_effective: "{{ ssh_molecule_effective_config.stdout_lines }}"
+          ansible.builtin.assert:
+            that:
+              - "'persourcemaxstartups ' ~ system_security_ssh_per_source_max_startups in ssh_molecule_effective"
+              - "'persourcemaxstartups none' not in ssh_molecule_effective"
+            fail_msg: >-
+              sshd does not cap unauthenticated connections at {{ system_security_ssh_per_source_max_startups }}
+              per source. The template only emits PerSourceMaxStartups when the variable is above 0
+              ({{ system_security_ssh_per_source_max_startups }} here), so either that condition or the
+              directive itself is broken.
+            success_msg: "sshd caps unauthenticated connections at {{ system_security_ssh_per_source_max_startups }} per source"
+
+        # AcceptEnv is a list rather than a scalar, and sshd prints one line per
+        # pattern. The stock configuration of both distributions accepts
+        # COLORTERM and NO_COLOR; their absence is a second, independent way of
+        # saying the distribution's file is gone.
+        - name: Assert that AcceptEnv is exactly what this scenario configured
+          vars:
+            ssh_molecule_accepted: "{{ ssh_molecule_effective_config.stdout_lines | select('match', '^acceptenv ') | map('regex_replace', '^acceptenv ', '') | list }}"
+          ansible.builtin.assert:
+            that:
+              - ssh_molecule_accepted == system_security_ssh_accept_env.split()
+            fail_msg: >-
+              sshd accepts the environment variables {{ ssh_molecule_accepted | join(', ') }}, rather
+              than the {{ system_security_ssh_accept_env }} this scenario configured. Anything left
+              over from the distribution's own file (COLORTERM, NO_COLOR) means the role appended to
+              it instead of replacing it.
+            success_msg: "sshd accepts exactly {{ ssh_molecule_accepted | join(', ') }}"
+
+        # Both of these default to false in the role and to yes in the stock
+        # configuration, and this scenario turns them on. A template that
+        # hardcoded the hardened answer would pass an assertion that only ever
+        # checked for "no".
+        - name: Assert that the forwarding toggles follow the variables in both directions
+          vars:
+            ssh_molecule_effective: "{{ ssh_molecule_effective_config.stdout_lines }}"
+          ansible.builtin.assert:
+            that:
+              - "'x11forwarding yes' in ssh_molecule_effective"
+              - "'allowtcpforwarding yes' in ssh_molecule_effective"
+              - not ssh_role_defaults.system_security_ssh_x11_forwarding | bool
+              - not ssh_role_defaults.system_security_ssh_allow_tcp_forwarding | bool
+            fail_msg: >-
+              X11Forwarding and AllowTcpForwarding are meant to follow their variables, which this
+              scenario sets to true against role defaults of
+              {{ ssh_role_defaults.system_security_ssh_x11_forwarding }} and
+              {{ ssh_role_defaults.system_security_ssh_allow_tcp_forwarding }}. sshd disagrees.
+            success_msg: >-
+              X11Forwarding and AllowTcpForwarding are on, which is the opposite of the role's
+              defaults - the template consults the variables rather than hardcoding the hardened answer
+
+        # `system_security_ssh_password_authentication` is derived from the older
+        # `system_security_ssh_passwordauth`, and only the old name is set in this
+        # scenario. Inventories that were written before the rename depend on
+        # that derivation still working.
+        - name: Assert that the deprecated password-authentication variable still reaches sshd
+          vars:
+            ssh_molecule_effective: "{{ ssh_molecule_effective_config.stdout_lines }}"
+          ansible.builtin.assert:
+            that:
+              - "'passwordauthentication yes' in ssh_molecule_effective"
+              - system_security_ssh_passwordauth | bool
+              - not ssh_role_defaults.system_security_ssh_passwordauth | bool
+            fail_msg: >-
+              This scenario sets only the old `system_security_ssh_passwordauth` variable, and sshd
+              did not end up with password authentication on. The compatibility alias
+              `system_security_ssh_password_authentication` no longer derives from it, which would
+              silently re-enable password logins for every inventory still using the old name.
+            success_msg: >-
+              Setting the old `system_security_ssh_passwordauth` name still reaches sshd, against a
+              role default of {{ ssh_role_defaults.system_security_ssh_passwordauth }}
+
+        # The raw override and the boolean are set to answers that contradict
+        # each other, so this can only pass if the raw value wins.
+        - name: Assert that the raw PermitRootLogin override beats the boolean
+          vars:
+            ssh_molecule_effective: "{{ ssh_molecule_effective_config.stdout_lines }}"
+          ansible.builtin.assert:
+            that:
+              - "'permitrootlogin ' ~ system_security_ssh_permit_root_login_raw in ssh_molecule_effective"
+              - "'permitrootlogin no' not in ssh_molecule_effective"
+              - "'permitrootlogin yes' not in ssh_molecule_effective"
+              - not system_security_ssh_rootlogin | bool
+            fail_msg: >-
+              PermitRootLogin is not {{ system_security_ssh_permit_root_login_raw }}. This scenario
+              sets the raw override to that while setting the boolean to
+              {{ system_security_ssh_rootlogin }}, so anything else means the documented precedence
+              between the two has changed.
+            success_msg: >-
+              PermitRootLogin is {{ system_security_ssh_permit_root_login_raw }}: the raw override
+              won over the boolean, which said {{ system_security_ssh_rootlogin }}
+
+        # The extension is a multi-line block appended verbatim at the end of the
+        # file. Both of its lines have to arrive, so that a template rendering
+        # only the first one would be caught.
+        - name: Assert that both lines of the free-form extension reached sshd
+          vars:
+            ssh_molecule_effective: "{{ ssh_molecule_effective_config.stdout_lines }}"
+          ansible.builtin.assert:
+            that:
+              - "'banner ' ~ ssh_molecule_banner_path in ssh_molecule_effective"
+              - "'allowagentforwarding no' in ssh_molecule_effective"
+            fail_msg: >-
+              sshd did not pick up both directives from `system_security_ssh_extension`. It reports
+              banner {{ ssh_molecule_effective | select('match', '^banner ') | join(', ') }} and
+              {{ ssh_molecule_effective | select('match', '^allowagentforwarding ') | join(', ') }}.
+            success_msg: "Both directives from `system_security_ssh_extension` are in effect"
+
+        ########################################################################
+        #                                                                      #
+        # the running daemon                                                   #
+        #                                                                      #
+        ########################################################################
+
+        # Everything above would also hold if the role had written the file and
+        # never told sshd about it. This is the part that the reload step has to
+        # have run for: the daemon that was started on port 22 by prepare.yml is
+        # now serving the SSH protocol on the port the role configured, and has
+        # let go of the old one.
+        - name: Assert that a real SSH daemon answers on the configured port
+          ansible.builtin.wait_for:
+            host: 127.0.0.1
+            port: "{{ system_security_ssh_port }}"
+            search_regex: '^SSH-2\.0-'
+            timeout: 30
+
+        - name: Assert that the daemon let go of the port it was started on
+          ansible.builtin.wait_for:
+            host: 127.0.0.1
+            port: "{{ ssh_role_defaults.system_security_ssh_port }}"
+            state: stopped
+            timeout: 15
+
+        # Reading the unit back out of systemd rather than off the disk. The role
+        # discovers the service name at run time by trying each of
+        # `system_security_ssh_services` in turn, so this is also what says that
+        # discovery landed on something real.
+        - name: Read the SSH daemon unit back out of systemd
+          ansible.builtin.systemd_service:
+            name: ssh.service
+          register: ssh_molecule_unit
+
+        - name: Assert that the SSH daemon is running under systemd
+          vars:
+            ssh_molecule_unit_properties: "{{ ssh_molecule_unit.status }}"
+          ansible.builtin.assert:
+            that:
+              - ssh_molecule_unit_properties.LoadState == 'loaded'
+              - ssh_molecule_unit_properties.ActiveState == 'active'
+              - ssh_molecule_unit_properties.SubState == 'running'
+            fail_msg: >-
+              ssh.service is {{ ssh_molecule_unit_properties.ActiveState }}
+              ({{ ssh_molecule_unit_properties.SubState }}). The role reloads whichever of
+              {{ ssh_role_defaults.system_security_ssh_services | join(', ') }} it finds, and a reload that took the
+              daemon down is exactly the outcome that locks an operator out.
+            success_msg: "ssh.service is active and running"
+
+        ########################################################################
+        #                                                                      #
+        # authorized keys                                                      #
+        #                                                                      #
+        ########################################################################
+
+        - name: Read the authorized keys of the connecting user
+          ansible.builtin.slurp:
+            src: "{{ ssh_molecule_authorized_keys_path }}"
+          register: ssh_molecule_authorized_keys
+
+        - name: Assert that the role added, revoked and preserved the right keys
+          vars:
+            ssh_molecule_keys_text: "{{ ssh_molecule_authorized_keys.content | b64decode }}"
+          ansible.builtin.assert:
+            that:
+              - ssh_molecule_key_added in ssh_molecule_keys_text
+              - ssh_molecule_key_revoked not in ssh_molecule_keys_text
+              - ssh_molecule_key_untouched in ssh_molecule_keys_text
+            fail_msg: >-
+              {{ ssh_molecule_authorized_keys_path }} is wrong. It must hold the key the role was
+              asked to add and the key prepare.yml seeded without telling the role about it, and it
+              must no longer hold the key the role was asked to revoke.
+            success_msg: >-
+              {{ ssh_molecule_authorized_keys_path }} holds the added key and the key the role knows
+              nothing about, and no longer holds the revoked one
+
+        - name: Report what was verified
+          ansible.builtin.debug:
+            msg:
+              - "sshd_config: rendered by the role, the distribution's file is gone"
+              - "sshd -T: port {{ system_security_ssh_port }}, MaxAuthTries {{ system_security_ssh_max_auth_tries }}, LoginGraceTime {{ system_security_ssh_login_grace_time }}, PerSourceMaxStartups {{ system_security_ssh_per_source_max_startups }}"
+              - "compatibility: the old passwordauth name still reaches sshd; the raw PermitRootLogin override beats the boolean"
+              - "extension: Banner and AllowAgentForwarding are in effect"
+              - "running daemon: answers SSH on {{ system_security_ssh_port }}, no longer on {{ ssh_role_defaults.system_security_ssh_port }}"
+              - "authorized_keys: one added, one revoked, one left alone"
+              - "SSH VERIFICATION COMPLETE"
+      rescue:
+        - name: Retrieve the rendered sshd configuration
+          ansible.builtin.command:
+            cmd: cat /etc/ssh/sshd_config
+          register: ssh_molecule_rendered_config
+          changed_when: false
+          failed_when: false
+
+        - name: Show the rendered sshd configuration
+          ansible.builtin.debug:
+            var: ssh_molecule_rendered_config.stdout_lines
+
+        - name: Retrieve the state of the SSH daemon
+          ansible.builtin.command:
+            cmd: systemctl status --no-pager --full ssh.service ssh.socket
+          register: ssh_molecule_unit_status
+          changed_when: false
+          failed_when: false
+
+        - name: Show the state of the SSH daemon
+          ansible.builtin.debug:
+            var: ssh_molecule_unit_status.stdout_lines
+
+        - name: Fail because verification did not pass
+          ansible.builtin.fail:
+            msg: "SSH verification failed. The rendered configuration and the state of the daemon are printed above."

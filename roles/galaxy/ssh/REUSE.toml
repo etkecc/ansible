@@ -1,0 +1,42 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+version = 1
+
+# The files that make up the role itself.
+#
+# These are annotated here rather than carrying an SPDX header of their own, so
+# that becoming REUSE-compliant did not have to touch `defaults/`, `meta/`,
+# `tasks/` or `templates/`. Those paths are what the release tagger watches and
+# what consumers of this role actually get; a licensing comment inside them
+# would have cut a release that changed nothing for anybody.
+[[annotations]]
+path = [
+    "defaults/main.yml",
+    "meta/main.yml",
+    "README.md",
+    "tasks/main.yml",
+    "templates/**",
+]
+SPDX-FileCopyrightText = [
+    "2023 - 2026 Aine <aine@etke.cc>",
+    "2025 QEDeD",
+]
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+# Computer-generated files and other files which cannot be copyrighted
+[[annotations]]
+path = [
+    ".ansible-lint",
+    ".config/ansible-lint.yml",
+    ".github/renovate.json",
+    ".gitignore",
+    ".pre-commit-config.yaml",
+    ".python-version",
+    ".yamllint.yml",
+    "molecule/**/requirements.yml",
+    "molecule/requirements.txt",
+]
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "CC0-1.0"

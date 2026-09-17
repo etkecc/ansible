@@ -1,0 +1,82 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+dependency:
+  name: galaxy
+  options:
+    requirements-file: requirements.yml
+    force: true
+driver:
+  name: docker
+platforms:
+  - name: ssh-${MOLECULE_DISTRO:-ubuntu2604}-socket-activated
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2604}-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callback_result_format: yaml
+  inventory:
+    group_vars:
+      all:
+        # The role writes the authorized keys of `ansible_user`. Molecule's
+        # Docker driver does not put that variable in the inventory, and an
+        # undefined one would take the role down before it configured anything.
+        ansible_user: root
+
+        # This scenario covers the arrangement Ubuntu 24.04 and newer ship by
+        # default: systemd owns the listening socket (ssh.socket) and hands it
+        # to sshd. Everything below is chosen to cover the branches the
+        # `default` scenario does not.
+
+        # Set, and expected NOT to take effect. Under socket activation the
+        # port comes from ssh.socket's ListenStream and sshd never binds a
+        # socket of its own, so the `Port` directive is inert. verify.yml
+        # asserts that, because it is a real and surprising limitation of this
+        # role on a modern Ubuntu host rather than something the suite should
+        # quietly paper over.
+        system_security_ssh_port: 2022
+
+        # The role's default is 3; the stock configuration of both
+        # distributions says 6. This is what carries the weight here: it proves
+        # the role's configuration did reach sshd, so that "the port did not
+        # change" cannot be explained by the role having done nothing.
+        system_security_ssh_max_auth_tries: 2
+
+        # 0 means "do not emit PerSourceMaxStartups at all", which sshd reports
+        # back as "none". The `default` scenario covers the other side of that
+        # gate with a non-zero value.
+        system_security_ssh_per_source_max_startups: 0
+
+        # The boolean path to PermitRootLogin, with the raw override left at its
+        # empty default. The `default` scenario covers the raw override winning.
+        system_security_ssh_rootlogin: false
+
+        # Variables for the test suite itself
+        ssh_molecule_stock_marker: "# molecule-marker-from-the-stock-configuration"
+  env:
+    # Workaround for https://github.com/ansible/molecule/issues/4391
+    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles
+scenario:
+  # The stock sequence with `idempotence` left out. The role is not idempotent
+  # by construction: its last task reloads the SSH daemon unconditionally, so a
+  # second run always reports a change.
+  test_sequence:
+    - dependency
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    - verify
+    - destroy
+verifier:
+  name: ansible

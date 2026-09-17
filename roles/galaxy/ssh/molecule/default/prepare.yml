@@ -1,0 +1,180 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Puts the container into the state a freshly installed Debian or Ubuntu host is
+# in - an OpenSSH server listening on port 22 with the distribution's own
+# sshd_config - and then proves that none of what verify.yml is going to assert
+# is true yet. Without that second half, an assertion like "sshd accepts
+# connections on port 2022" could pass against a role that did nothing.
+
+---
+- name: Prepare the host for the ssh Molecule tests
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    # This role rewrites /etc/ssh/sshd_config and reloads the SSH daemon. Run
+    # against the wrong machine that is how an operator locks themselves out of
+    # their own server, so the suite refuses to touch anything that is not a
+    # throwaway container.
+    - name: Assert that the target is a throwaway container
+      ansible.builtin.stat:
+        path: /.dockerenv
+      register: ssh_molecule_dockerenv
+
+    - name: Refuse to configure sshd outside a container
+      ansible.builtin.assert:
+        that: ssh_molecule_dockerenv.stat.exists
+        fail_msg: >-
+          /.dockerenv is missing, so this does not look like a Docker container. This scenario
+          rewrites /etc/ssh/sshd_config and reloads the SSH daemon; it must never be pointed at a
+          real host.
+        success_msg: "The target is a Docker container, so sshd here is disposable"
+
+    ############################################################################
+    #                                                                          #
+    # a stock OpenSSH server                                                   #
+    #                                                                          #
+    ############################################################################
+
+    # The geerlingguy test images carry no SSH server at all; Molecule reaches
+    # the container through `docker exec`. Both distributions tested here are
+    # Debian-derived, which is what lets this use apt directly.
+    - name: Ensure openssh-server is installed
+      ansible.builtin.apt:
+        name: openssh-server
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Ensure host keys exist
+      ansible.builtin.command:
+        cmd: ssh-keygen -A
+      args:
+        creates: /etc/ssh/ssh_host_ed25519_key
+
+    # Recent Debian and Ubuntu releases can hand port 22 to systemd instead,
+    # through ssh.socket. When they do, the port sshd listens on comes from the
+    # socket unit and the `Port` directive in sshd_config is ignored - so the
+    # port assertion in verify.yml would prove nothing. This scenario therefore
+    # pins the classic arrangement, where sshd owns its own listening socket.
+    # The socket-activated arrangement gets a scenario of its own.
+    - name: Ensure ssh.socket is not in charge of port 22
+      ansible.builtin.systemd_service:
+        name: ssh.socket
+        state: stopped
+        enabled: false
+      failed_when: false
+
+    - name: Ensure the SSH daemon is enabled and running
+      ansible.builtin.systemd_service:
+        name: ssh.service
+        state: started
+        enabled: true
+        daemon_reload: true
+
+    ############################################################################
+    #                                                                          #
+    # things the role is supposed to change, seeded beforehand                 #
+    #                                                                          #
+    ############################################################################
+
+    # The extension this scenario passes to the role adds a `Banner` directive.
+    # sshd is content with a banner file that does not exist, but pointing it at
+    # a real one keeps the configuration honest.
+    - name: Ensure the banner file exists
+      ansible.builtin.copy:
+        content: "This host is managed by the ssh role's Molecule suite.\n"
+        dest: "{{ ssh_molecule_banner_path }}"
+        mode: "0644"
+
+    - name: Ensure the SSH directory of the connecting user exists
+      ansible.builtin.file:
+        path: "{{ ssh_molecule_authorized_keys_path | dirname }}"
+        state: directory
+        mode: "0700"
+
+    # One key the role is told to revoke and one it is told nothing about. They
+    # are seeded together, in the same file, so that "the role revoked a key" is
+    # a statement about the revocation list rather than about the file.
+    - name: Seed the authorized keys
+      ansible.builtin.copy:
+        content: |
+          {{ ssh_molecule_key_revoked }}
+          {{ ssh_molecule_key_untouched }}
+        dest: "{{ ssh_molecule_authorized_keys_path }}"
+        mode: "0600"
+
+    # The role renders the whole of sshd_config from its template. A line
+    # appended to the distribution's file here can therefore only survive if the
+    # role did not write the file at all.
+    - name: Mark the stock sshd_config
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        line: "{{ ssh_molecule_stock_marker }}"
+        insertafter: EOF
+
+    ############################################################################
+    #                                                                          #
+    # negative controls                                                        #
+    #                                                                          #
+    ############################################################################
+
+    # sshd's own parse of the configuration that is in place right now. Reading
+    # it back through sshd rather than off the disk means the "before" and the
+    # "after" in verify.yml are measured the same way.
+    - name: Read the stock configuration back out of sshd
+      ansible.builtin.command:
+        cmd: /usr/sbin/sshd -T
+      register: ssh_molecule_stock_config
+      changed_when: false
+
+    - name: Assert that none of the values this scenario configures is in effect yet
+      vars:
+        ssh_molecule_stock_lines: "{{ ssh_molecule_stock_config.stdout_lines }}"
+      ansible.builtin.assert:
+        that:
+          - "'port ' ~ system_security_ssh_port not in ssh_molecule_stock_lines"
+          - "'maxauthtries ' ~ system_security_ssh_max_auth_tries not in ssh_molecule_stock_lines"
+          - "'logingracetime ' ~ system_security_ssh_login_grace_time not in ssh_molecule_stock_lines"
+          - "'clientaliveinterval ' ~ system_security_ssh_client_alive_interval not in ssh_molecule_stock_lines"
+          - "'persourcemaxstartups ' ~ system_security_ssh_per_source_max_startups not in ssh_molecule_stock_lines"
+          - "'acceptenv LC_MOLECULE_*' not in ssh_molecule_stock_lines"
+          - "'authorizedkeysfile ' ~ system_security_ssh_authorized_keys_file not in ssh_molecule_stock_lines"
+          - "'permitrootlogin ' ~ system_security_ssh_permit_root_login_raw not in ssh_molecule_stock_lines"
+          - "'banner ' ~ ssh_molecule_banner_path not in ssh_molecule_stock_lines"
+          - "'allowagentforwarding no' not in ssh_molecule_stock_lines"
+        fail_msg: >-
+          The distribution's own sshd_config already puts one of this scenario's values into effect.
+          Every assertion verify.yml makes about that value would then pass without the role having
+          done anything. Pick a different value for it.
+        success_msg: >-
+          None of the {{ system_security_ssh_port }}/{{ system_security_ssh_max_auth_tries }}/{{
+          system_security_ssh_login_grace_time }}-style values this scenario configures is in the
+          stock configuration, so asserting them afterwards means something
+
+    # The strongest assertion in verify.yml is that a real SSH daemon answers on
+    # the port the role configured. It is only worth something because right now
+    # nothing answers there and the daemon is on 22 instead.
+    - name: Assert that a stock SSH daemon answers on port 22
+      ansible.builtin.wait_for:
+        host: 127.0.0.1
+        port: 22
+        search_regex: '^SSH-2\.0-'
+        timeout: 30
+
+    - name: Assert that nothing answers on the port this scenario configures
+      ansible.builtin.wait_for:
+        host: 127.0.0.1
+        port: "{{ system_security_ssh_port }}"
+        state: stopped
+        timeout: 10
+
+    - name: Report the state the role is about to be run against
+      ansible.builtin.debug:
+        msg:
+          - "sshd is installed and answering on port 22, not on {{ system_security_ssh_port }}"
+          - "ssh.socket is stopped and disabled, so sshd owns its own listening socket"
+          - "authorized_keys holds the key to be revoked and one the role knows nothing about"
+          - "sshd_config is the distribution's, marked with {{ ssh_molecule_stock_marker }}"

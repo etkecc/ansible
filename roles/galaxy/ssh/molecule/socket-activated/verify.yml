@@ -1,0 +1,243 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Verifies the role against a socket-activated SSH daemon - the arrangement
+# Ubuntu 24.04 and newer ship by default.
+#
+# The thing asserted here that the `default` scenario cannot see is that
+# `system_security_ssh_port` does NOT take effect. Under socket activation the
+# listening socket belongs to ssh.socket and sshd is handed it, so the `Port`
+# directive in sshd_config is ignored. That is a real limitation of this role on
+# a modern Ubuntu host, and it is asserted rather than worked around so that
+# whoever eventually teaches the role about ssh.socket has to come here and
+# change this file on purpose.
+#
+# The other half of what this scenario is for is that the role's reload has to
+# leave a working daemon behind on such a host, which is asserted below too.
+#
+# It is not vacuous: the same run proves the role's configuration did reach
+# sshd (MaxAuthTries, PermitRootLogin, the missing PerSourceMaxStartups), so
+# "the port did not change" cannot be explained away by the role having done
+# nothing at all.
+
+---
+- name: Verify the ssh role against a socket-activated daemon
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Verify that the ssh role did its work
+      block:
+        - name: Include the role's default variables under a separate name
+          ansible.builtin.include_vars:
+            # Only leaf values may be read out of this. Loading it under a name
+            # of its own keeps it from outranking the values this scenario
+            # deliberately tuned.
+            file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+            name: ssh_role_defaults
+
+        - name: Read the sshd configuration file
+          ansible.builtin.slurp:
+            src: /etc/ssh/sshd_config
+          register: ssh_molecule_config_file
+
+        - name: Assert that the role replaced the distribution's sshd_config
+          vars:
+            ssh_molecule_config_text: "{{ ssh_molecule_config_file.content | b64decode }}"
+          ansible.builtin.assert:
+            that:
+              - "'Ansible managed' in ssh_molecule_config_text"
+              - ssh_molecule_stock_marker not in ssh_molecule_config_text
+            fail_msg: >-
+              /etc/ssh/sshd_config is not the file this role renders. Everything below is about what
+              the role did or did not achieve with it, so none of it would mean anything.
+            success_msg: "/etc/ssh/sshd_config was rendered by the role"
+
+        - name: Read the configuration back out of sshd
+          ansible.builtin.command:
+            cmd: /usr/sbin/sshd -T
+          register: ssh_molecule_effective_config
+          changed_when: false
+
+        # This is what makes the port assertion further down meaningful: the
+        # role's configuration demonstrably reached sshd on this host.
+        - name: Assert that the role's configuration reached sshd
+          vars:
+            ssh_molecule_effective: "{{ ssh_molecule_effective_config.stdout_lines }}"
+          ansible.builtin.assert:
+            that:
+              - "'maxauthtries ' ~ system_security_ssh_max_auth_tries in ssh_molecule_effective"
+              - "'maxauthtries ' ~ ssh_role_defaults.system_security_ssh_max_auth_tries not in ssh_molecule_effective"
+            fail_msg: >-
+              sshd does not report MaxAuthTries {{ system_security_ssh_max_auth_tries }}, so the
+              role's configuration did not reach it and nothing else in this scenario can be
+              concluded.
+            success_msg: >-
+              sshd runs with MaxAuthTries {{ system_security_ssh_max_auth_tries }}, this scenario's
+              value rather than the role's default of
+              {{ ssh_role_defaults.system_security_ssh_max_auth_tries }}
+
+        # The other side of the `PerSourceMaxStartups` gate in the template: at
+        # 0 the directive is left out entirely, which is what hosts running
+        # OpenSSH older than 8.5 need, and sshd reports its absence as "none".
+        - name: Assert that PerSourceMaxStartups was left out entirely
+          vars:
+            ssh_molecule_effective: "{{ ssh_molecule_effective_config.stdout_lines }}"
+          ansible.builtin.assert:
+            that:
+              - "'persourcemaxstartups none' in ssh_molecule_effective"
+              - system_security_ssh_per_source_max_startups | int == 0
+              - ssh_role_defaults.system_security_ssh_per_source_max_startups | int > 0
+            fail_msg: >-
+              sshd reports {{ ssh_molecule_effective | select('match', '^persourcemaxstartups ') | join(', ') }}.
+              At {{ system_security_ssh_per_source_max_startups }} the template must not emit the
+              directive at all - hosts on OpenSSH older than 8.5 reject it and their sshd would fail
+              to start.
+            success_msg: >-
+              PerSourceMaxStartups is absent, as it must be at
+              {{ system_security_ssh_per_source_max_startups }} (the role's default is
+              {{ ssh_role_defaults.system_security_ssh_per_source_max_startups }})
+
+        # The boolean path to PermitRootLogin, with the raw override left empty.
+        - name: Assert that the PermitRootLogin boolean reached sshd
+          vars:
+            ssh_molecule_effective: "{{ ssh_molecule_effective_config.stdout_lines }}"
+          ansible.builtin.assert:
+            that:
+              - "'permitrootlogin no' in ssh_molecule_effective"
+              - not system_security_ssh_rootlogin | bool
+              - ssh_role_defaults.system_security_ssh_rootlogin | bool
+              - ssh_role_defaults.system_security_ssh_permit_root_login_raw | length == 0
+            fail_msg: >-
+              PermitRootLogin is not no. This scenario sets the old `system_security_ssh_rootlogin`
+              boolean to false and leaves the raw override empty, against a role default of
+              {{ ssh_role_defaults.system_security_ssh_rootlogin }}.
+            success_msg: >-
+              PermitRootLogin is no, derived from the boolean rather than from the raw override
+
+        ########################################################################
+        #                                                                      #
+        # what socket activation does to system_security_ssh_port              #
+        #                                                                      #
+        ########################################################################
+
+        - name: Assert that sshd_config asks for the port this scenario configured
+          vars:
+            ssh_molecule_effective: "{{ ssh_molecule_effective_config.stdout_lines }}"
+          ansible.builtin.assert:
+            that:
+              - "'port ' ~ system_security_ssh_port in ssh_molecule_effective"
+            fail_msg: >-
+              sshd_config does not name port {{ system_security_ssh_port }}, so the assertion below
+              - that the directive is ignored under socket activation - would not be testing
+              anything.
+            success_msg: "sshd_config asks for port {{ system_security_ssh_port }}"
+
+        # DOCUMENTED LIMITATION. sshd is listening on the socket systemd gave
+        # it, and there is nothing in sshd_config that can change that. An
+        # operator who sets `system_security_ssh_port` on an Ubuntu 24.04 or
+        # newer host gets a configuration file that says one thing and a daemon
+        # that does another; the port has to be changed on ssh.socket instead.
+        - name: Assert that the daemon still answers on the socket unit's port and not the configured one
+          ansible.builtin.wait_for:
+            host: 127.0.0.1
+            port: 22
+            search_regex: '^SSH-2\.0-'
+            timeout: 30
+
+        - name: Assert that nothing came up on the port sshd_config names
+          ansible.builtin.wait_for:
+            host: 127.0.0.1
+            port: "{{ system_security_ssh_port }}"
+            state: stopped
+            timeout: 15
+
+        ########################################################################
+        #                                                                      #
+        # service discovery and the reload                                     #
+        #                                                                      #
+        ########################################################################
+
+        - name: Read the SSH daemon unit back out of systemd
+          ansible.builtin.systemd_service:
+            name: ssh.service
+          register: ssh_molecule_unit
+
+        # The daemon on this host was started by systemd's socket rather than at
+        # boot, and the role's last act is to reload it. A ReloadResult of
+        # success means systemd ran ExecReload (`sshd -t` followed by SIGHUP)
+        # and it returned cleanly; ActiveState says the daemon survived it.
+        # A reload that takes sshd down is what locks an operator out, so this
+        # is the assertion that matters most in this scenario.
+        - name: Assert that the reload left a working daemon behind
+          vars:
+            ssh_molecule_unit_properties: "{{ ssh_molecule_unit.status }}"
+          ansible.builtin.assert:
+            that:
+              - ssh_molecule_unit_properties.LoadState == 'loaded'
+              - ssh_molecule_unit_properties.ActiveState == 'active'
+              - ssh_molecule_unit_properties.SubState == 'running'
+              - ssh_molecule_unit_properties.ReloadResult == 'success'
+            fail_msg: >-
+              ssh.service is {{ ssh_molecule_unit_properties.ActiveState }}
+              ({{ ssh_molecule_unit_properties.SubState }}) with ReloadResult
+              {{ ssh_molecule_unit_properties.ReloadResult }}. The role reloads whichever of
+              {{ ssh_role_defaults.system_security_ssh_services | join(', ') }} it finds, and on a
+              socket-activated host that reload is delicate: sshd re-executes and re-binds, and a
+              re-exec that cannot bind exits 255, which RestartPreventExitStatus keeps systemd from
+              recovering from.
+            success_msg: >-
+              ssh.service is active, running and was reloaded successfully on a socket-activated host
+
+        - name: Read ssh.socket back out of systemd
+          ansible.builtin.systemd_service:
+            name: ssh.socket
+          register: ssh_molecule_socket
+
+        - name: Assert that the role left the socket unit alone
+          vars:
+            ssh_molecule_socket_properties: "{{ ssh_molecule_socket.status }}"
+          ansible.builtin.assert:
+            that:
+              - ssh_molecule_socket_properties.ActiveState == 'active'
+              - "'22' in ssh_molecule_socket_properties.Listen"
+            fail_msg: >-
+              ssh.socket is {{ ssh_molecule_socket_properties.ActiveState }} listening on
+              {{ ssh_molecule_socket_properties.Listen }}. The role does not manage socket units, so
+              it must not have disturbed this one.
+            success_msg: "ssh.socket is still active and still holds port 22"
+
+        - name: Report what was verified
+          ansible.builtin.debug:
+            msg:
+              - "sshd_config: rendered by the role, MaxAuthTries {{ system_security_ssh_max_auth_tries }}, PermitRootLogin no, no PerSourceMaxStartups"
+              - "the reload left ssh.service active and running, and ssh.socket untouched"
+              - "documented limitation: sshd_config asks for port {{ system_security_ssh_port }} and the daemon still answers on 22, because ssh.socket owns the listening socket"
+              - "SSH SOCKET-ACTIVATED VERIFICATION COMPLETE"
+      rescue:
+        - name: Retrieve the rendered sshd configuration
+          ansible.builtin.command:
+            cmd: cat /etc/ssh/sshd_config
+          register: ssh_molecule_rendered_config
+          changed_when: false
+          failed_when: false
+
+        - name: Show the rendered sshd configuration
+          ansible.builtin.debug:
+            var: ssh_molecule_rendered_config.stdout_lines
+
+        - name: Retrieve the state of the SSH daemon
+          ansible.builtin.command:
+            cmd: systemctl status --no-pager --full ssh.service ssh.socket
+          register: ssh_molecule_unit_status
+          changed_when: false
+          failed_when: false
+
+        - name: Show the state of the SSH daemon
+          ansible.builtin.debug:
+            var: ssh_molecule_unit_status.stdout_lines
+
+        - name: Fail because verification did not pass
+          ansible.builtin.fail:
+            msg: "SSH verification failed. The rendered configuration and the state of the daemon are printed above."
