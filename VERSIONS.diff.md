@@ -10,6 +10,7 @@
 * [Coturn](https://github.com/coturn/coturn): 4.9.0 ⇾ 4.18.0
 * [Element](https://github.com/element-hq/element-web): [v1.12.27](https://github.com/element-hq/element-web/releases/tag/v1.12.27) ⇾ [v1.12.28](https://github.com/element-hq/element-web/releases/tag/v1.12.28)
 * [Google Messages Bridge](https://github.com/mautrix/gmessages): [v0.2608.0](https://github.com/mautrix/gmessages/releases/tag/v0.2608.0) ⇾ [v0.2609.0](https://github.com/mautrix/gmessages/releases/tag/v0.2609.0)
+* [Jitsi](https://github.com/jitsi/docker-jitsi-meet): [stable-11146-2](https://github.com/jitsi/docker-jitsi-meet/releases/tag/stable-11146-2) ⇾ [stable-11248](https://github.com/jitsi/docker-jitsi-meet/releases/tag/stable-11248)
 * [Linkding](https://github.com/sissbruecker/linkding): [1.46.2](https://github.com/sissbruecker/linkding/releases/tag/v1.46.2) ⇾ [1.47.0](https://github.com/sissbruecker/linkding/releases/tag/v1.47.0)
 * [LinkedIn Bridge](https://github.com/mautrix/linkedin): [v0.2608.0](https://github.com/mautrix/linkedin/releases/tag/v0.2608.0) ⇾ [v0.2609.0](https://github.com/mautrix/linkedin/releases/tag/v0.2609.0)
 * [Livekit Server](https://github.com/livekit/livekit): [v1.13.6](https://github.com/livekit/livekit/releases/tag/v1.13.6) ⇾ [v1.13.7](https://github.com/livekit/livekit/releases/tag/v1.13.7)
