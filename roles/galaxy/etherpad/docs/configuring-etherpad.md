@@ -310,7 +310,7 @@ Once the plugin is installed, you should have a "Manage pads" section in the UI.
 
 Even if you change the Etherpad admin user's password (`etherpad_admin_password` in your `vars.yml` file) subsequently, the admin user's credentials on the homeserver won't be updated automatically.
 
-If you'd like to change the admin user's password, use a tool to change it before updating `etherpad_admin_password` to let the admin user know its new password. For MDAD project, you can use [synapse-admin](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/docs/configuring-playbook-synapse-admin.md) to change the password.
+If you'd like to change the admin user's password, use a tool to change it before updating `etherpad_admin_password` to let the admin user know its new password. For MDAD project, you can use [Ketesa](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/docs/configuring-playbook-ketesa.md) to change the password.
 
 ## Troubleshooting
 

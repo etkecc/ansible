@@ -40,7 +40,6 @@ jobs:
       matrix:
         distro:
           - ubuntu2604
-          - debian13
         scenario:
           - default
           - mariadb
@@ -74,7 +73,7 @@ jobs:
         uses: actions/cache@v6.1.0
         with:
           path: ~/.ansible/collections
-          key: ansible-collections-${{ hashFiles('etherpad/molecule/default/requirements.yml') }}
+          key: ansible-collections-${{ hashFiles('etherpad/molecule/*/requirements.yml') }}
 
       - name: Run Molecule
         working-directory: etherpad

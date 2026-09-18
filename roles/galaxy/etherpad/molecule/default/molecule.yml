@@ -31,6 +31,7 @@ provisioner:
       all:
         # Helper variables
         etherpad_debug_service_enabled: false
+        etherpad_restarts_check_enabled: true
 
         # Variables shared with converge.yml and verify.yml
         #
