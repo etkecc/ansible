@@ -31,6 +31,7 @@ provisioner:
       all:
         # Helper variables
         languagetool_debug_service_enabled: false
+        languagetool_restarts_check_enabled: true
 
         # The port on the host that LanguageTool is published on, and which
         # `verify.yml` sends its API requests to.

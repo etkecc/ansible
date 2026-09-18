@@ -127,7 +127,7 @@ Take a look at:
 
 - [`defaults/main.yml`](../defaults/main.yml) for some variables that you can customize via your `vars.yml` file. You can override settings (even those that don't have dedicated playbook variables) using the `linkding_environment_variables_additional_variables` variable
 
-See the [documentation](https://linkding.link/options/) for a complete list of linkding's config options that you could put in `linkding_environment_variables_additional_variables`.
+See the [documentation](https://linkding.link/options/) for a complete list of linkding's config options that you can put in `linkding_environment_variables_additional_variables`.
 
 ## Installing
 
