@@ -9,6 +9,7 @@
   hosts: all
   become: true
   gather_facts: false
+
   vars:
     radicale_molecule_base_url: "http://127.0.0.1:{{ radicale_molecule_bind_port }}"
 
@@ -26,7 +27,29 @@
       SUMMARY:Molecule round-trip event
       END:VEVENT
       END:VCALENDAR
+
+    radicale_verify_units:
+      - radicale.service
+
   tasks:
-    - name: Run the checks shared by all Radicale scenarios
-      ansible.builtin.include_tasks:
-        file: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}/molecule/verify_tasks.yml"
+    - name: Verify that Radicale works
+      block:
+        - name: Run the checks shared by all Radicale scenarios
+          ansible.builtin.include_tasks:
+            file: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}/molecule/verify_tasks.yml"
+
+      rescue:
+        # Whatever went wrong, the reason is almost always in the systemd service log.
+        - name: Retrieve the Radicale systemd service log
+          ansible.builtin.command:
+            cmd: journalctl --no-pager --output=cat --unit=radicale.service
+          register: radicale_service_log
+          changed_when: false
+
+        - name: Show the Radicale systemd service log
+          ansible.builtin.debug:
+            var: radicale_service_log.stdout_lines
+
+        - name: Fail because verification did not pass
+          ansible.builtin.fail:
+            msg: "Radicale verification failed. The systemd service log is printed above."

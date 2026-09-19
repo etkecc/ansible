@@ -30,6 +30,7 @@ provisioner:
       all:
         # Helper variables
         uptime_kuma_debug_service_enabled: false
+        uptime_kuma_restarts_check_enabled: true
 
         # The admin that `verify.yml` creates by completing the setup wizard.
         # Uptime Kuma refuses passwords shorter than 6 characters.

@@ -49,6 +49,12 @@ exim_relay_container_additional_networks_custom: []
 # A list of extra arguments to pass to the container
 exim_relay_container_extra_arguments: []
 
+# A list of extra arguments to pass to the process inside the container
+# Example: ['--SOME_ARGUMENT']
+exim_relay_process_extra_arguments: "{{ exim_relay_process_extra_arguments_auto + exim_relay_process_extra_arguments_custom }}"
+exim_relay_process_extra_arguments_auto: []
+exim_relay_process_extra_arguments_custom: []
+
 # Additional environment variables.
 exim_relay_environment_variables_additional_variables: ''
 

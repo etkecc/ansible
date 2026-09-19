@@ -31,6 +31,7 @@ provisioner:
       all:
         # Helper variables
         radicale_debug_service_enabled: false
+        radicale_restarts_check_enabled: true
 
         # The port on the host that Radicale is published on.
         radicale_molecule_bind_port: 5232
@@ -47,7 +48,7 @@ provisioner:
         # a fourth component (image 3.7.6.0 packages Radicale 3.7.6), so only the
         # first three belong to Radicale itself. The role derives the self-build
         # branch name from the same three.
-        radicale_molecule_version_command: /venv/bin/radicale --version
+        radicale_molecule_version_reported: /venv/bin/radicale --version
         radicale_molecule_version_components: 3
 
         # Where the `[storage] filesystem_folder` setting in the configuration

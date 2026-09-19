@@ -123,6 +123,13 @@ uptime_kuma_container_extra_arguments: "{{ uptime_kuma_container_extra_arguments
 uptime_kuma_container_extra_arguments_auto: []
 uptime_kuma_container_extra_arguments_custom: []
 
+# A list of extra arguments to pass to the process inside the container
+# Example: ['--SOME_ARGUMENT']
+uptime_kuma_process_extra_arguments: "{{ uptime_kuma_process_extra_arguments_auto + uptime_kuma_process_extra_arguments_custom }}"
+uptime_kuma_process_extra_arguments_auto:
+  - node server/server.js
+uptime_kuma_process_extra_arguments_custom: []
+
 # Specifies the value of the `X-XSS-Protection` header
 # Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
 #

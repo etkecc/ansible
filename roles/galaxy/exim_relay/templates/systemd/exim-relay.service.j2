@@ -42,7 +42,10 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
 			{% for arg in exim_relay_container_extra_arguments %}
 			{{ arg }} \
 			{% endfor %}
-			{{ exim_relay_container_image }}
+			{{ exim_relay_container_image }} \
+			{% for arg in exim_relay_process_extra_arguments %}
+			{{ arg }} \
+			{% endfor %}
 
 {% for network in exim_relay_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ exim_relay_identifier }}

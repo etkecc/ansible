@@ -31,6 +31,7 @@ provisioner:
       all:
         # Helper variables
         ddclient_debug_service_enabled: false
+        ddclient_restarts_check_enabled: true
 
         # Variables for ddclient
         ddclient_uid: 1000

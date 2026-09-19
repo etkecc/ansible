@@ -31,6 +31,7 @@ provisioner:
       all:
         # Helper variables
         radicale_debug_service_enabled: false
+        radicale_restarts_check_enabled: true
 
         # The port on the host that Radicale is published on.
         radicale_molecule_bind_port: 5232
@@ -51,7 +52,7 @@ provisioner:
         # The role builds it from the first three components of `radicale_version`
         # (image 3.7.6.0 packages Radicale 3.7.6), so the same three are what the
         # running version is compared against.
-        radicale_molecule_version_command: /app/bin/python /app/bin/radicale --version
+        radicale_molecule_version_reported: /app/bin/python /app/bin/radicale --version
         radicale_molecule_version_components: 3
 
         # Where the `[storage] filesystem_folder` setting in the configuration

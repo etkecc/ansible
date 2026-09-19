@@ -38,7 +38,9 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {{ arg }} \
       {% endfor %}
       {{ uptime_kuma_container_image }} \
-      node server/server.js
+      {% for arg in uptime_kuma_process_extra_arguments %}
+      {{ arg }} \
+      {% endfor %}
 
 {% for network in uptime_kuma_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ uptime_kuma_identifier }}

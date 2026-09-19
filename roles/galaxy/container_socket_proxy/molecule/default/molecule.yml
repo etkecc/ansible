@@ -31,6 +31,7 @@ provisioner:
       all:
         # Helper variables
         container_socket_proxy_debug_service_enabled: false
+        container_socket_proxy_restarts_check_enabled: true
 
         # The port on the test host that the proxy is probed on in verify.yml.
         # The role does not publish a port of its own (consumers reach the

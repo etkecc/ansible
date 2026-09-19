@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: (Deprecation) Catch and report renamed exim-relay variables
+- name: (Deprecation) Catch and report renamed settings
   ansible.builtin.fail:
     msg: >-
       The variable `{{ item.old }}` is deprecated. Please use `{{ item.new }}` instead.

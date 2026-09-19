@@ -30,6 +30,7 @@ provisioner:
       all:
         # Helper variables
         exim_relay_debug_service_enabled: false
+        exim_relay_restarts_check_enabled: true
 
         # Variables for exim-relay
         exim_relay_uid: 100

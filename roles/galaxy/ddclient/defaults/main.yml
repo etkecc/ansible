@@ -65,7 +65,7 @@ ddclient_container_extra_arguments: "{{ ddclient_container_extra_arguments_auto 
 ddclient_container_extra_arguments_auto: []
 ddclient_container_extra_arguments_custom: []
 
-# A list of extra arguments to pass to the ddclient process
+# A list of extra arguments to pass to the process inside the container
 # Example: ['--SOME_ARGUMENT']
 ddclient_process_extra_arguments: "{{ ddclient_process_extra_arguments_auto + ddclient_process_extra_arguments_custom }}"
 ddclient_process_extra_arguments_auto: []

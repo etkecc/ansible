@@ -273,7 +273,7 @@ funkwhale_api_container_extra_arguments: "{{ funkwhale_api_container_extra_argum
 funkwhale_api_container_extra_arguments_auto: []
 funkwhale_api_container_extra_arguments_custom: []
 
-# A list of extra arguments to pass to the Funkwhale API process
+# A list of extra arguments to pass to the process inside the container
 # Example: ['--SOME_ARGUMENT']
 funkwhale_api_process_extra_arguments: "{{ funkwhale_api_process_extra_arguments_auto + funkwhale_api_process_extra_arguments_custom }}"
 funkwhale_api_process_extra_arguments_auto: []
@@ -485,7 +485,7 @@ funkwhale_frontend_container_extra_arguments: "{{ funkwhale_frontend_container_e
 funkwhale_frontend_container_extra_arguments_auto: []
 funkwhale_frontend_container_extra_arguments_custom: []
 
-# A list of extra arguments to pass to the Funkwhale frontend process
+# A list of extra arguments to pass to the process inside the container
 # Example: ['--SOME_ARGUMENT']
 funkwhale_frontend_process_extra_arguments: "{{ funkwhale_frontend_process_extra_arguments_auto + funkwhale_frontend_process_extra_arguments_custom }}"
 funkwhale_frontend_process_extra_arguments_auto: []
@@ -625,7 +625,7 @@ funkwhale_celery_beat_container_network: "{{ funkwhale_container_network }}"
 # Use this to expose this container to a reverse proxy, which runs in a different container network.
 funkwhale_celery_beat_container_additional_networks: []
 
-# A list of extra arguments to pass to the Funkwhale celery beat process
+# A list of extra arguments to pass to the process inside the container
 # Example: ['--SOME_ARGUMENT']
 funkwhale_celery_beat_process_extra_arguments: "{{ funkwhale_celery_beat_process_extra_arguments_auto + funkwhale_celery_beat_process_extra_arguments_custom }}"
 funkwhale_celery_beat_process_extra_arguments_auto: []
@@ -670,7 +670,7 @@ funkwhale_celery_worker_container_network: "{{ funkwhale_container_network }}"
 # Use this to expose this container to a reverse proxy, which runs in a different container network.
 funkwhale_celery_worker_container_additional_networks: []
 
-# A list of extra arguments to pass to the Funkwhale celery worker process
+# A list of extra arguments to pass to the process inside the container
 # Example: ['--SOME_ARGUMENT']
 funkwhale_celery_worker_process_extra_arguments: "{{ funkwhale_celery_worker_process_extra_arguments_auto + funkwhale_celery_worker_process_extra_arguments_custom }}"
 funkwhale_celery_worker_process_extra_arguments_auto: []
@@ -719,7 +719,7 @@ funkwhale_watch_imports_container_additional_networks: "{{ funkwhale_watch_impor
 funkwhale_watch_imports_container_additional_networks_auto: []
 funkwhale_watch_imports_container_additional_networks_custom: []
 
-# A list of extra arguments to pass to the Funkwhale watch imports process
+# A list of extra arguments to pass to the process inside the container
 # Example: ['--prune', '--replace']
 funkwhale_watch_imports_process_extra_arguments: "{{ funkwhale_watch_imports_process_extra_arguments_auto + funkwhale_watch_imports_process_extra_arguments_custom }}"
 funkwhale_watch_imports_process_extra_arguments_auto: []

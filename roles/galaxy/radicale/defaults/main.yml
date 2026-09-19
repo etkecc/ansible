@@ -139,6 +139,12 @@ radicale_container_extra_arguments: "{{ radicale_container_extra_arguments_auto 
 radicale_container_extra_arguments_auto: []
 radicale_container_extra_arguments_custom: []
 
+# A list of extra arguments to pass to the process inside the container
+# Example: ['--SOME_ARGUMENT']
+radicale_process_extra_arguments: "{{ radicale_process_extra_arguments_auto + radicale_process_extra_arguments_custom }}"
+radicale_process_extra_arguments_auto: "{{ ['--config /config/config'] if radicale_container_image_self_build else [] }}"
+radicale_process_extra_arguments_custom: []
+
 # Specifies the value of the `X-XSS-Protection` header
 # Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
 #

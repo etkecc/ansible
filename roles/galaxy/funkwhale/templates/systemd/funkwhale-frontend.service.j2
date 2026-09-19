@@ -45,7 +45,10 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% if funkwhale_frontend_container_extra_arguments | length > 0 %}
       {{ funkwhale_frontend_container_extra_arguments | join(' ') }} \
       {% endif %}
-      {{ funkwhale_frontend_container_image }} {{ funkwhale_frontend_process_extra_arguments | join(' ') }}
+      {{ funkwhale_frontend_container_image }} \
+      {% for arg in funkwhale_frontend_process_extra_arguments %}
+      {{ arg }} \
+      {% endfor %}
 
 {% for network in funkwhale_frontend_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ funkwhale_frontend_identifier }}

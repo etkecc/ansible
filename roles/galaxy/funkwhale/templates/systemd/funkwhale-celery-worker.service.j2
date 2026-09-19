@@ -16,7 +16,10 @@ ExecStart={{ devture_systemd_docker_base_host_command_docker }} exec {{ funkwhal
     celery \
     --app=funkwhale_api.taskapp worker \
     --loglevel={{ funkwhale_environment_variables_loglevel }} \
-    --concurrency={{ funkwhale_celery_worker_concurrency }} {{ funkwhale_celery_worker_process_extra_arguments | join(' ') }}
+    --concurrency={{ funkwhale_celery_worker_concurrency }} \
+    {% for arg in funkwhale_celery_worker_process_extra_arguments %}
+    {{ arg }} \
+    {% endfor %}
 
 Restart=always
 RestartSec=30
