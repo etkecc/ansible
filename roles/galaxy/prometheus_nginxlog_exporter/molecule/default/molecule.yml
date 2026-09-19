@@ -31,6 +31,7 @@ provisioner:
       all:
         # Helper variables
         prometheus_nginxlog_exporter_debug_service_enabled: false
+        prometheus_nginxlog_exporter_restarts_check_enabled: true
 
         # The exporter image carries a working fallback configuration of its
         # own. Started with no arguments at all it still parses a default nginx

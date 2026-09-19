@@ -31,6 +31,7 @@ provisioner:
       all:
         # Helper variables
         ntfy_debug_service_enabled: false
+        ntfy_restarts_check_enabled: true
 
         # The topics, message and account used by verify.yml.
         #

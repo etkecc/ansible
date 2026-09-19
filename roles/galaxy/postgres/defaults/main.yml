@@ -298,7 +298,10 @@ postgres_container_extra_arguments: "{{ postgres_container_extra_arguments_auto 
 postgres_container_extra_arguments_auto: []
 postgres_container_extra_arguments_custom: []
 
-postgres_postgres_process_extra_arguments_default: [
+# A list of extra arguments to pass to the process inside the container
+# Example: ['--SOME_ARGUMENT']
+postgres_process_extra_arguments: "{{ postgres_process_extra_arguments_default + postgres_process_extra_arguments_unix_socket + postgres_process_extra_arguments_auto + postgres_process_extra_arguments_custom }}"
+postgres_process_extra_arguments_default: [
   "-c 'max_connections={{ postgres_max_connections|int }}'",
   "-c 'shared_buffers={{ (postgres_shared_buffers|int/1024)|int }}MB'",
   "-c 'effective_cache_size={{ (postgres_effective_cache_size|int/1024)|int }}MB'",
@@ -317,15 +320,11 @@ postgres_postgres_process_extra_arguments_default: [
   "-c 'max_parallel_workers_per_gather={{ postgres_max_parallel_workers_per_gather|int }}'",
   "-c 'max_parallel_maintenance_workers={{ postgres_max_parallel_maintenance_workers|int }}'"
 ]
-postgres_postgres_process_extra_arguments_unix_socket: "{{ [\"-c 'unix_socket_directories=\" ~ postgres_run_path_in_container ~ \"'\"] if postgres_container_unix_socket_enabled else [] }}"
-# postgres_postgres_process_extra_arguments_auto is for use by the playbook that wraps this role.
-# For your own custom definitions, see postgres_postgres_process_extra_arguments_custom.
-postgres_postgres_process_extra_arguments_auto: []
-postgres_postgres_process_extra_arguments_custom: []
-
-# A list of extra arguments to pass to the postgres process
-# e.g. "-c 'max_connections=200'"
-postgres_process_extra_arguments: "{{ postgres_postgres_process_extra_arguments_default + postgres_postgres_process_extra_arguments_unix_socket + postgres_postgres_process_extra_arguments_auto + postgres_postgres_process_extra_arguments_custom }}"
+postgres_process_extra_arguments_unix_socket: "{{ [\"-c 'unix_socket_directories=\" ~ postgres_run_path_in_container ~ \"'\"] if postgres_container_unix_socket_enabled else [] }}"
+# postgres_process_extra_arguments_auto is for use by the playbook that wraps this role.
+# For your own custom definitions, see postgres_process_extra_arguments_custom.
+postgres_process_extra_arguments_auto: []
+postgres_process_extra_arguments_custom: []
 
 # Controls whether the Postgres container exposes a port (tcp/5432 in the
 # container) that can be used to access the database from outside the container (e.g. with psql)

@@ -60,7 +60,9 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% endfor %}
       --entrypoint=turnserver \
       {{ coturn_container_image_self_build_name if coturn_container_image_self_build else coturn_container_image }} \
-      -c /turnserver.conf
+      {% for arg in coturn_process_extra_arguments %}
+      {{ arg }} \
+      {% endfor %}
 
 {% for network in coturn_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ coturn_identifier }}

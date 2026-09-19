@@ -31,6 +31,7 @@ provisioner:
       all:
         # Helper variables
         prometheus_postgres_exporter_debug_service_enabled: false
+        prometheus_postgres_exporter_restarts_check_enabled: true
 
         # The port on the test host that the exporter's web server is published
         # on. The role does not publish it by default (it is meant to be scraped

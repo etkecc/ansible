@@ -52,7 +52,9 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {{ arg }} \
       {% endfor %}
       {{ etherpad_container_image_self_build_name if etherpad_container_image_self_build else etherpad_container_image }} \
-      {{ etherpad_container_process_command }}
+      {% for arg in etherpad_process_extra_arguments %}
+      {{ arg }} \
+      {% endfor %}
 
 {% for network in etherpad_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ etherpad_identifier }}

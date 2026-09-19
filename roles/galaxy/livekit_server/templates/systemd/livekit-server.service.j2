@@ -72,7 +72,9 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {{ arg }} \
       {% endfor %}
       {{ livekit_server_container_image_self_build_name if livekit_server_container_image_self_build else livekit_server_container_image }} \
-      --config /livekit-config.yaml
+      {% for arg in livekit_server_process_extra_arguments %}
+      {{ arg }} \
+      {% endfor %}
 
 {% if livekit_server_container_network != 'host' %}
 {% for network in livekit_server_container_additional_networks %}

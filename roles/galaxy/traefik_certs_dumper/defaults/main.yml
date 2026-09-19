@@ -39,10 +39,30 @@ traefik_certs_dumper_container_tmpfs_intermediate_size: 128m
 traefik_certs_dumper_container_tmpfs_staging_size: 128m
 
 # A list of extra arguments to pass to the container (`docker run` command)
-traefik_certs_dumper_container_process_extra_arguments: "{{ traefik_certs_dumper_container_process_extra_arguments_default + traefik_certs_dumper_container_process_extra_arguments_auto + traefik_certs_dumper_container_process_extra_arguments_custom }}"
-traefik_certs_dumper_container_process_extra_arguments_default: []
-traefik_certs_dumper_container_process_extra_arguments_auto: []
-traefik_certs_dumper_container_process_extra_arguments_custom: []
+traefik_certs_dumper_container_extra_arguments: "{{ traefik_certs_dumper_container_extra_arguments_default + traefik_certs_dumper_container_extra_arguments_auto + traefik_certs_dumper_container_extra_arguments_custom }}"
+traefik_certs_dumper_container_extra_arguments_default: []
+traefik_certs_dumper_container_extra_arguments_auto: []
+traefik_certs_dumper_container_extra_arguments_custom: []
+
+# A list of extra arguments to pass to the process inside the container
+# Example: ['--SOME_ARGUMENT']
+traefik_certs_dumper_process_extra_arguments: "{{ traefik_certs_dumper_process_extra_arguments_auto + traefik_certs_dumper_process_extra_arguments_custom }}"
+traefik_certs_dumper_process_extra_arguments_auto:
+  - /certs-dumper-bin/entrypoint.sh
+traefik_certs_dumper_process_extra_arguments_custom: []
+
+# A list of extra arguments to pass to the container (`docker run` command)
+traefik_certs_dumper_waiter_container_extra_arguments: "{{ traefik_certs_dumper_waiter_container_extra_arguments_default + traefik_certs_dumper_waiter_container_extra_arguments_auto + traefik_certs_dumper_waiter_container_extra_arguments_custom }}"
+traefik_certs_dumper_waiter_container_extra_arguments_default: []
+traefik_certs_dumper_waiter_container_extra_arguments_auto: []
+traefik_certs_dumper_waiter_container_extra_arguments_custom: []
+
+# A list of extra arguments to pass to the process inside the container
+# Example: ['--SOME_ARGUMENT']
+traefik_certs_dumper_waiter_process_extra_arguments: "{{ traefik_certs_dumper_waiter_process_extra_arguments_auto + traefik_certs_dumper_waiter_process_extra_arguments_custom }}"
+traefik_certs_dumper_waiter_process_extra_arguments_auto:
+  - "-c '/certs-dumper-bin/wait-for-domain.sh %i'"
+traefik_certs_dumper_waiter_process_extra_arguments_custom: []
 
 # List of systemd services that the Traefik certs dumper systemd service depends on
 traefik_certs_dumper_systemd_required_services_list: "{{ traefik_certs_dumper_systemd_required_services_list_default + traefik_certs_dumper_systemd_required_services_list_auto + traefik_certs_dumper_systemd_required_services_list_custom }}"

@@ -103,7 +103,8 @@ prometheus_nginxlog_exporter_container_extra_arguments: "{{ prometheus_nginxlog_
 prometheus_nginxlog_exporter_container_extra_arguments_auto: []
 prometheus_nginxlog_exporter_container_extra_arguments_custom: []
 
-# A list of extra arguments to pass to the prometheus-nginxlog-exporter process
+# A list of extra arguments to pass to the process inside the container
+# Example: ['--SOME_ARGUMENT']
 prometheus_nginxlog_exporter_process_extra_arguments: "{{ prometheus_nginxlog_exporter_process_extra_arguments_auto + prometheus_nginxlog_exporter_process_extra_arguments_custom }}"
 prometheus_nginxlog_exporter_process_extra_arguments_auto:
   - -config-file /etc/prometheus-nginxlog-exporter/prometheus-nginxlog-exporter.yaml

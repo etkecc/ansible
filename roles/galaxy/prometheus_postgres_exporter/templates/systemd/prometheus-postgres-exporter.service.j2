@@ -36,7 +36,10 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% for arg in prometheus_postgres_exporter_container_extra_arguments %}
       {{ arg }} \
       {% endfor %}
-      {{ prometheus_postgres_exporter_container_image }}
+      {{ prometheus_postgres_exporter_container_image }} \
+      {% for arg in prometheus_postgres_exporter_process_extra_arguments %}
+      {{ arg }} \
+      {% endfor %}
 
 {% for network in prometheus_postgres_exporter_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ prometheus_postgres_exporter_identifier }}

@@ -54,6 +54,33 @@ valkey_container_additional_networks_default: []
 valkey_container_additional_networks_auto: []
 valkey_container_additional_networks_custom: []
 
+# Specify the size of the container's tmpfs volume
+valkey_container_tmpfs_tmp_size: 128m
+
+# A list of extra arguments to pass to the container (`docker create` command)
+valkey_container_extra_arguments: "{{ valkey_container_extra_arguments_auto + valkey_container_extra_arguments_custom }}"
+valkey_container_extra_arguments_auto: []
+valkey_container_extra_arguments_custom: []
+
+# A list of extra arguments to pass to the process inside the container
+# Example: ['--SOME_ARGUMENT']
+valkey_process_extra_arguments: "{{ valkey_process_extra_arguments_auto + valkey_process_extra_arguments_custom }}"
+valkey_process_extra_arguments_auto:
+  - valkey-server /usr/local/etc/valkey/valkey.conf
+valkey_process_extra_arguments_custom: []
+
+# List of systemd services that the Valkey systemd service depends on
+valkey_systemd_required_services_list: "{{ (valkey_systemd_required_services_list_default + valkey_systemd_required_services_list_auto + valkey_systemd_required_services_list_custom) | unique }}"
+valkey_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+valkey_systemd_required_services_list_auto: []
+valkey_systemd_required_services_list_custom: []
+
+# List of systemd services that the Valkey systemd service wants
+valkey_systemd_wanted_services_list: "{{ (valkey_systemd_wanted_services_list_default + valkey_systemd_wanted_services_list_auto + valkey_systemd_wanted_services_list_custom) | unique }}"
+valkey_systemd_wanted_services_list_default: []
+valkey_systemd_wanted_services_list_auto: []
+valkey_systemd_wanted_services_list_custom: []
+
 # Controls how long to wait for the container to stop gracefully before killing it.
 # Because `devture_systemd_docker_base_container_stop_grace_time_seconds` may be quite short and databases are more important to stop gracefully,
 # we default to at least 30 seconds.
@@ -87,26 +114,6 @@ valkey_container_cleanup_command: |
   done;
   echo "Failed to remove stale container {{ valkey_identifier }} after {{ valkey_container_cleanup_timeout_seconds }} attempts" >&2;
   exit 1
-
-# Specify the size of the container's tmpfs volume
-valkey_container_tmpfs_tmp_size: 128m
-
-# A list of extra arguments to pass to the container (`docker create` command)
-valkey_container_extra_arguments: "{{ valkey_container_extra_arguments_auto + valkey_container_extra_arguments_custom }}"
-valkey_container_extra_arguments_auto: []
-valkey_container_extra_arguments_custom: []
-
-# List of systemd services that the Valkey systemd service depends on
-valkey_systemd_required_services_list: "{{ (valkey_systemd_required_services_list_default + valkey_systemd_required_services_list_auto + valkey_systemd_required_services_list_custom) | unique }}"
-valkey_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
-valkey_systemd_required_services_list_auto: []
-valkey_systemd_required_services_list_custom: []
-
-# List of systemd services that the Valkey systemd service wants
-valkey_systemd_wanted_services_list: "{{ (valkey_systemd_wanted_services_list_default + valkey_systemd_wanted_services_list_auto + valkey_systemd_wanted_services_list_custom) | unique }}"
-valkey_systemd_wanted_services_list_default: []
-valkey_systemd_wanted_services_list_auto: []
-valkey_systemd_wanted_services_list_custom: []
 
 valkey_connection_password: ""
 

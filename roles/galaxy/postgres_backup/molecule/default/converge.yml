@@ -1,4 +1,6 @@
 # SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -52,6 +54,14 @@
           - 127.0.0.1
           - -d
           - "{{ postgres_backup_molecule_database_name }}"
+          # Without an explicit user, pg_isready derives one from the OS user via
+          # getpwuid() and returns "no attempt" (rc=3) when that lookup fails,
+          # never contacting the server at all. The lookup fails here because the
+          # role runs the container as `--user=1000:1000` with the host's
+          # /etc/passwd bind-mounted in, and the debian13 image has no uid 1000 -
+          # the ubuntu2604 one does, which is why this only ever broke on debian13.
+          - -U
+          - "{{ postgres_connection_username }}"
       register: postgres_backup_molecule_pg_isready
       changed_when: false
       until: postgres_backup_molecule_pg_isready.rc == 0

@@ -31,6 +31,7 @@ provisioner:
       all:
         # Helper variables
         prometheus_node_exporter_debug_service_enabled: false
+        prometheus_node_exporter_restarts_check_enabled: true
 
         # The port on the test container that the exporter is published on, so
         # that the verifier can scrape it over HTTP.

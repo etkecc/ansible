@@ -102,7 +102,8 @@ prometheus_node_exporter_container_extra_arguments: "{{ prometheus_node_exporter
 prometheus_node_exporter_container_extra_arguments_auto: []
 prometheus_node_exporter_container_extra_arguments_custom: []
 
-# A list of extra arguments to pass to the Prometheus node exporter process
+# A list of extra arguments to pass to the process inside the container
+# Example: ['--SOME_ARGUMENT']
 #
 # Example:
 # prometheus_node_exporter_process_extra_arguments:
@@ -114,7 +115,8 @@ prometheus_node_exporter_container_extra_arguments_custom: []
 # - the socket to be mounted as well (`--mount type=bind,src=/var/run/dbus/system_bus_socket,dst=/var/run/dbus/system_bus_socket,ro,bind-propagation=rslave`)
 # - (on AppArmor-based distros) disabling AppArmor protection (`--security-opt apparmor=unconfined`)
 prometheus_node_exporter_process_extra_arguments: "{{ prometheus_node_exporter_process_extra_arguments_auto + prometheus_node_exporter_process_extra_arguments_custom }}"
-prometheus_node_exporter_process_extra_arguments_auto: []
+prometheus_node_exporter_process_extra_arguments_auto:
+  - --path.rootfs=/host
 prometheus_node_exporter_process_extra_arguments_custom: []
 
 # List of systemd services that the Prometheus node exporter systemd service depends on

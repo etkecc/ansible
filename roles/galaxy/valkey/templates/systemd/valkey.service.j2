@@ -40,7 +40,9 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {{ arg }} \
       {% endfor %}
       {{ valkey_container_image_self_build_name if valkey_container_image_self_build else valkey_container_image }} \
-      valkey-server /usr/local/etc/valkey/valkey.conf
+      {% for arg in valkey_process_extra_arguments %}
+      {{ arg }} \
+      {% endfor %}
 
 {% for network in valkey_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ valkey_identifier }}

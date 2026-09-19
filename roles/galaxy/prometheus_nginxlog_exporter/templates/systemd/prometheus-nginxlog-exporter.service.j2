@@ -43,7 +43,9 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {{ arg }} \
       {% endfor %}
       {{ prometheus_nginxlog_exporter_container_image }} \
-      {{ prometheus_nginxlog_exporter_process_extra_arguments | join(' ') }}
+      {% for arg in prometheus_nginxlog_exporter_process_extra_arguments %}
+      {{ arg }} \
+      {% endfor %}
 
 {% for network in prometheus_nginxlog_exporter_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ prometheus_nginxlog_exporter_identifier }}

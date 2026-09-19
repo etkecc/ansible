@@ -22,6 +22,7 @@
     - { "old": "etherpad_database_port", "new": "etherpad_database_postgres_port" }
     - { "old": "etherpad_database_username", "new": "etherpad_database_postgres_username" }
     - { "old": "etherpad_database_password", "new": "etherpad_database_postgres_password" }
+    - { "old": "etherpad_container_process_command", "new": "etherpad_process_extra_arguments_auto" }
     - { "old": "etherpad_title", "new": "etherpad_configuration_title" }
     - { "old": "etherpad_abiword", "new": "<removed> (Abiword support was removed in Etherpad v3)" }
     - { "old": "etherpad_configuration_abiword", "new": "<removed> (Abiword support was removed in Etherpad v3)" }

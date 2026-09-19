@@ -1,4 +1,6 @@
 # SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -29,6 +31,7 @@ provisioner:
       all:
         # Helper variables
         postgres_backup_debug_service_enabled: false
+        postgres_backup_restarts_check_enabled: true
 
         # The database that this scenario creates, fills with a distinctive row
         # and then expects to find inside a dump.
@@ -92,10 +95,12 @@ provisioner:
 
         # Variables for Postgres
         #
-        # `postgres_identifier` is pinned to its own default value so that later
-        # plays and `verify.yml`, where the Postgres role's defaults are out of
-        # scope, can still address the container and the service by name.
+        # `postgres_identifier` and `postgres_connection_username` are pinned to
+        # their own default values so that later plays and `verify.yml`, where the
+        # Postgres role's defaults are out of scope, can still address the
+        # container and the service by name and connect to them.
         postgres_identifier: postgres
+        postgres_connection_username: root
         postgres_uid: 1000
         postgres_gid: 1000
         postgres_connection_password: postgres_password

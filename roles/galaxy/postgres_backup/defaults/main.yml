@@ -112,6 +112,12 @@ postgres_backup_container_extra_arguments: "{{ postgres_backup_container_extra_a
 postgres_backup_container_extra_arguments_auto: []
 postgres_backup_container_extra_arguments_custom: []
 
+# A list of extra arguments to pass to the process inside the container
+# Example: ['--SOME_ARGUMENT']
+postgres_backup_process_extra_arguments: "{{ postgres_backup_process_extra_arguments_auto + postgres_backup_process_extra_arguments_custom }}"
+postgres_backup_process_extra_arguments_auto: []
+postgres_backup_process_extra_arguments_custom: []
+
 # List of systemd services that the postgres-backup-local systemd service depends on
 postgres_backup_systemd_required_services_list: "{{ postgres_backup_systemd_required_services_list_default + postgres_backup_systemd_required_services_list_auto + postgres_backup_systemd_required_services_list_custom }}"
 postgres_backup_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"

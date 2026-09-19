@@ -30,6 +30,7 @@ provisioner:
       all:
         # Helper variables
         postgres_debug_service_enabled: false
+        postgres_restarts_check_enabled: true
 
         # Variables for Postgres
         postgres_uid: 1000

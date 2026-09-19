@@ -95,6 +95,12 @@ prometheus_postgres_exporter_container_extra_arguments: "{{ prometheus_postgres_
 prometheus_postgres_exporter_container_extra_arguments_auto: []
 prometheus_postgres_exporter_container_extra_arguments_custom: []
 
+# A list of extra arguments to pass to the process inside the container
+# Example: ['--SOME_ARGUMENT']
+prometheus_postgres_exporter_process_extra_arguments: "{{ prometheus_postgres_exporter_process_extra_arguments_auto + prometheus_postgres_exporter_process_extra_arguments_custom }}"
+prometheus_postgres_exporter_process_extra_arguments_auto: []
+prometheus_postgres_exporter_process_extra_arguments_custom: []
+
 # List of systemd services that the Prometheus Postgres Exporter systemd service depends on
 prometheus_postgres_exporter_systemd_required_services_list: "{{ prometheus_postgres_exporter_systemd_required_services_list_default + prometheus_postgres_exporter_systemd_required_services_list_auto + prometheus_postgres_exporter_systemd_required_services_list_custom }}"
 prometheus_postgres_exporter_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"

@@ -31,6 +31,7 @@ provisioner:
       all:
         # Helper variables
         valkey_debug_service_enabled: false
+        valkey_restarts_check_enabled: true
 
         # Variables for Valkey
         valkey_uid: 1000

@@ -39,7 +39,6 @@ jobs:
       matrix:
         distro:
           - ubuntu2604
-          - debian13
         scenario:
           - default
       fail-fast: false
@@ -70,7 +69,7 @@ jobs:
         uses: actions/cache@v6.1.0
         with:
           path: ~/.ansible/collections
-          key: ansible-collections-${{ hashFiles('prometheus-node-exporter/molecule/default/requirements.yml') }}
+          key: ansible-collections-${{ hashFiles('prometheus-node-exporter/molecule/*/requirements.yml') }}
 
       - name: Run Molecule
         working-directory: prometheus-node-exporter

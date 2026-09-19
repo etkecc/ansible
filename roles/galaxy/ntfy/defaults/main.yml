@@ -156,6 +156,13 @@ ntfy_container_extra_arguments: "{{ ntfy_container_extra_arguments_auto + ntfy_c
 ntfy_container_extra_arguments_auto: []
 ntfy_container_extra_arguments_custom: []
 
+# A list of extra arguments to pass to the process inside the container
+# Example: ['--SOME_ARGUMENT']
+ntfy_process_extra_arguments: "{{ ntfy_process_extra_arguments_auto + ntfy_process_extra_arguments_custom }}"
+ntfy_process_extra_arguments_auto:
+  - serve'
+ntfy_process_extra_arguments_custom: []
+
 # Specifies the value of the `X-XSS-Protection` header
 # Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
 #
