@@ -1,5 +1,5 @@
-# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 # SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -8,6 +8,7 @@ dependency:
   name: galaxy
   options:
     requirements-file: requirements.yml
+    force: true
 driver:
   name: docker
 platforms:
@@ -29,6 +30,7 @@ provisioner:
       all:
         # Helper variables
         gotosocial_debug_service_enabled: false
+        gotosocial_restarts_check_enabled: true
 
         # Variables for GoToSocial
         gotosocial_uid: 1000

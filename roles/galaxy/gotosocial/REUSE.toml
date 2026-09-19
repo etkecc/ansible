@@ -12,7 +12,6 @@ path = [
     ".gitignore",
     ".pre-commit-config.yaml",
     ".python-version",
-    ".woodpecker.yml",
     ".yamllint.yml",
     "meta/main.yml",
     "molecule/**/requirements.yml",

@@ -1,5 +1,5 @@
-# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 # SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -8,10 +8,11 @@ dependency:
   name: galaxy
   options:
     requirements-file: requirements.yml
+    force: true
 driver:
   name: docker
 platforms:
-  - name: gotosocial-${MOLECULE_DISTRO:-ubuntu2604}-default
+  - name: gotosocial-${MOLECULE_DISTRO:-ubuntu2604}-postgres
     image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2604}-ansible:latest"
     command: ${MOLECULE_DOCKER_COMMAND:-""}
     volumes:
@@ -29,6 +30,7 @@ provisioner:
       all:
         # Helper variables
         gotosocial_debug_service_enabled: false
+        gotosocial_restarts_check_enabled: true
 
         # Variables for GoToSocial
         gotosocial_uid: 1000
@@ -38,6 +40,7 @@ provisioner:
         gotosocial_container_http_host_bind_port: 8080
 
         # Variables required for GoToSocial to connect to the Postgres database (via Unix socket)
+        gotosocial_database_type: postgres
         gotosocial_database_username: my_database_username
         gotosocial_database_password: my_database_password
         gotosocial_database_sslmode: disable

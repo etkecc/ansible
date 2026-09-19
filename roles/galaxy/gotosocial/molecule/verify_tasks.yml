@@ -1,0 +1,129 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+# The role is not included in this playbook, so its defaults are not in
+# scope. Reading defaults/main.yml directly ties the version assertion
+# below.
+- name: Load the role defaults
+  ansible.builtin.include_vars:
+    file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+    name: gotosocial_defaults
+
+- name: Wait for the GoToSocial systemd services to become active (up to 180s each)
+  ansible.builtin.systemd_service:
+    name: "{{ item }}"
+  register: gotosocial_services
+  until: gotosocial_services.status.ActiveState == 'active'
+  retries: 36
+  delay: 5
+  loop: "{{ gotosocial_verify_units }}"
+  # So that giving up is reported by the assertion below rather than as a
+  # wall of systemd unit properties.
+  failed_when: false
+
+# `Restart=always` in the systemd unit means that even a container which crashes
+# and gets restarted reads as active here, so this is a precondition rather than
+# a result.
+- name: Assert the GoToSocial systemd services are active
+  ansible.builtin.assert:
+    that: gotosocial_services.results | map(attribute='status.ActiveState') | unique | list == ['active']
+    fail_msg: >-
+      Not every service is active:
+      {{ dict(gotosocial_verify_units | zip(gotosocial_services.results | map(attribute='status.ActiveState'))) }}
+    success_msg: "Every systemd service is active"
+
+- name: Retrieve the GoToSocial systemd services log for debugging
+  when: gotosocial_debug_service_enabled | bool
+  ansible.builtin.command:
+    cmd: "journalctl --no-pager --output=cat --unit={{ item }}"
+  changed_when: false
+  loop: "{{ gotosocial_verify_units }}"
+
+# The web frontend is served by the same process that serves the API, so a
+# successful response here means GoToSocial got as far as listening.
+- name: Wait for the GoToSocial web frontend to respond (up to 5m)
+  ansible.builtin.uri:
+    url: "http://localhost:{{ gotosocial_container_http_host_bind_port }}/"
+    method: GET
+    status_code: [200]
+    follow_redirects: none
+    return_content: true
+  register: gotosocial_frontend
+  until: gotosocial_frontend.status in [200]
+  retries: 60
+  delay: 5
+
+# The NodeInfo schema document names the software that is actually running,
+# which is what ties this test to the container image the role points at.
+- name: Retrieve the GoToSocial NodeInfo schema document
+  ansible.builtin.uri:
+    url: "http://localhost:{{ gotosocial_container_http_host_bind_port }}/nodeinfo/2.0"
+    method: GET
+    status_code: 200
+    return_content: true
+  register: gotosocial_nodeinfo
+
+- name: Assert the running GoToSocial is the version this role installs
+  ansible.builtin.assert:
+    that: "gotosocial_nodeinfo.json.software.version | regex_replace('\\+git-.*?$', '') == gotosocial_defaults.gotosocial_version"
+    fail_msg: "GoToSocial reports {{ gotosocial_nodeinfo.json.software.version | default('none') }}, expected {{ gotosocial_defaults.gotosocial_version }}"
+    success_msg: "GoToSocial reports {{ gotosocial_nodeinfo.json.software.version }}"
+
+- name: Assert the GoToSocial NodeInfo schema document reports GoToSocial
+  ansible.builtin.assert:
+    that: gotosocial_nodeinfo.json.software.name | default('') | lower == 'gotosocial'
+    fail_msg: "The GoToSocial NodeInfo schema document did not report GoToSocial: {{ gotosocial_nodeinfo.content | default('no response') }}"
+    success_msg: "The GoToSocial NodeInfo schema document reports GoToSocial {{ gotosocial_nodeinfo.json.software.version | default('(no version)') }}"
+
+# NodeInfo discovery is a federation-facing endpoint. Serving it correctly
+# means the instance is configured well enough to describe itself to peers,
+# which a merely-running process would not manage.
+- name: Retrieve the GoToSocial NodeInfo discovery document
+  ansible.builtin.uri:
+    url: "http://localhost:{{ gotosocial_container_http_host_bind_port }}/.well-known/nodeinfo"
+    method: GET
+    status_code: 200
+    return_content: true
+  register: gotosocial_nodeinfo_discovery
+  until: gotosocial_nodeinfo_discovery.status == 200
+  retries: 12
+  delay: 5
+
+- name: Assert the GoToSocial NodeInfo discovery document advertises a schema
+  ansible.builtin.assert:
+    that:
+      - gotosocial_nodeinfo_discovery.json.links | default([]) | length > 0
+      - gotosocial_nodeinfo_discovery.json.links | map(attribute='href') | select('search', '/nodeinfo/2\\.') | list | length > 0
+    fail_msg: "The GoToSocial NodeInfo discovery document did not advertise a NodeInfo 2.x schema: {{ gotosocial_nodeinfo_discovery.content | default('no response') }}"
+    success_msg: "The GoToSocial NodeInfo discovery document advertises a NodeInfo 2.x schema"
+
+# The Mastodon-compatible instance API is what clients talk to first.
+- name: Retrieve the GoToSocial instance API document
+  ansible.builtin.uri:
+    url: "http://localhost:{{ gotosocial_container_http_host_bind_port }}/api/v1/instance"
+    method: GET
+    status_code: 200
+    return_content: true
+  register: gotosocial_instance_api
+
+- name: Assert the GoToSocial instance API describes this instance
+  ansible.builtin.assert:
+    that:
+      - gotosocial_instance_api.json.uri | default('') | length > 0
+      - gotosocial_hostname in gotosocial_instance_api.json.uri
+      - gotosocial_instance_api.json.version | default('') | length > 0
+    fail_msg: "The GoToSocial instance API did not describe this instance: {{ gotosocial_instance_api.content | default('no response') }}"
+    success_msg: "The GoToSocial instance API describes '{{ gotosocial_instance_api.json.uri }}'"
+
+- name: Assert the GoToSocial web frontend does not render the pride flags by default
+  when: "gotosocial_defaults.gotosocial_container_image_customization_pride_flags_removal_enabled | bool"
+  ansible.builtin.assert:
+    that:
+      - "'🏳️‍🌈' not in gotosocial_frontend.content"
+      - "'🏳️‍⚧️' not in gotosocial_frontend.content"
+    fail_msg: "GoToSocial web frontend renders pride flags"
+    success_msg: "GoToSocial web frontend does not render pride flags"

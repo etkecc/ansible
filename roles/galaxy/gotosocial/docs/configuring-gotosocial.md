@@ -143,7 +143,7 @@ Take a look at:
 
 - [`defaults/main.yml`](../defaults/main.yml) for some variables that you can customize via your `vars.yml` file. You can override settings (even those that don't have dedicated playbook variables) using the `gotosocial_environment_variables_additional_variables` variable
 
-See [this page](https://docs.gotosocial.org/en/latest/configuration/#environment-variables) of the official documentation for GoToSocial's config options that you could put in `gotosocial_environment_variables_additional_variables`.
+See [this page](https://docs.gotosocial.org/en/latest/configuration/#environment-variables) of the official documentation for GoToSocial's config options that you can put in `gotosocial_environment_variables_additional_variables`.
 
 ## Installing
 
