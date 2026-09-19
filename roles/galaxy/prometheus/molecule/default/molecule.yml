@@ -1,5 +1,6 @@
-# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -37,6 +38,39 @@ provisioner:
         prometheus_hostname: localhost
         prometheus_container_labels_traefik_enabled: false
         prometheus_container_http_host_bind_port: 9090
+
+        # The stock prom/prometheus image ships a fallback
+        # /etc/prometheus/prometheus.yml whose scrape job is also named
+        # `prometheus` and also targets localhost:9090 - identical to this
+        # role's own defaults. A Prometheus that never received this role's
+        # configuration therefore answers /-/healthy, /-/ready, buildinfo and
+        # even `up` exactly like a correctly configured one does.
+        #
+        # The values below are deliberately unlike anything that fallback
+        # configuration can produce, so that verification fails loudly when the
+        # role's rendered prometheus.yml does not reach the running process.
+        prometheus_self_process_scraper_job_name: molecule-prometheus-self
+        prometheus_self_process_scraper_scrape_interval: 3s
+        prometheus_self_process_scraper_scrape_timeout: 3s
+
+        # The fallback configuration uses 15s for both of these.
+        #
+        # /api/v1/status/config reports durations re-serialized in their
+        # canonical form, so the role's own default of `60s` would come back as
+        # `1m`. Values below the next unit boundary are reported as they were
+        # given, which keeps verification able to assert these literals.
+        prometheus_config_global_scrape_interval: 23s
+        prometheus_config_global_evaluation_interval: 29s
+
+        # Proves that `prometheus_process_extra_arguments` reaches the process
+        # command line. Prometheus defaults this flag to 15d.
+        #
+        # /api/v1/status/flags reports durations re-serialized in their
+        # canonical form, largest unit first, so a value of `42d` would come
+        # back as `6w` and `90d` as `12w6d`. Anything below a week is reported
+        # as it was given, which keeps verification able to assert this literal.
+        prometheus_process_extra_arguments_custom:
+          - "--storage.tsdb.retention.time=5d"
   env:
     # Workaround for https://github.com/ansible/molecule/issues/4391
     ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles

@@ -49,6 +49,8 @@ Currently there is one testing scenario available.
 
 Tests a standard Container Socket Proxy installation.
 
+The proxy's port is published onto the test host, so that both halves of what the role promises can be probed over it: the APIs it enables answer with real Docker data, and the ones it leaves disabled — along with every write, whatever the path — are refused with a 403.
+
 ## Running
 
 By default it is configured to run the scenarios on Ubuntu 26.04.

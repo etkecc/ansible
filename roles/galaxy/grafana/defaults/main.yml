@@ -119,6 +119,12 @@ grafana_container_extra_arguments: "{{ grafana_container_extra_arguments_auto + 
 grafana_container_extra_arguments_auto: []
 grafana_container_extra_arguments_custom: []
 
+# A list of extra arguments to pass to the process inside the container
+# Example: ['--SOME_ARGUMENT']
+grafana_process_extra_arguments: "{{ grafana_process_extra_arguments_auto + grafana_process_extra_arguments_custom }}"
+grafana_process_extra_arguments_auto: []
+grafana_process_extra_arguments_custom: []
+
 # Specify the value of the `Permission-Policy` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy
 grafana_http_header_permissions_policy: "{{ 'interest-cohort=()' if grafana_floc_optout_enabled else '' }}"

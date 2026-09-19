@@ -31,6 +31,7 @@ provisioner:
       all:
         # Helper variables
         hydrogen_debug_service_enabled: false
+        hydrogen_restarts_check_enabled: true
 
         # The port on the host that Hydrogen is published on. In a real
         # deployment, Hydrogen sits behind a reverse-proxy and is not published

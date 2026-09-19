@@ -14,7 +14,7 @@
   when: container_socket_proxy_service_stat.stat.exists | bool
   block:
     - name: Ensure container-socket-proxy systemd service is stopped
-      ansible.builtin.systemd:
+      ansible.builtin.systemd_service:
         name: "{{ container_socket_proxy_identifier }}"
         state: stopped
         daemon_reload: true

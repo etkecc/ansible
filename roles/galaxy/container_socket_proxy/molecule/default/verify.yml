@@ -1,35 +1,208 @@
-# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: Verify Container Socket Proxy systemd service
+- name: Verify Container Socket Proxy
   hosts: all
   become: true
   gather_facts: false
   tasks:
-    - name: Wait for Container Socket Proxy service to become active (up to 180s)
-      ansible.builtin.systemd:
+    # The role is not included in this playbook, so its defaults are not in
+    # scope. Reading defaults/main.yml directly ties the version assertion
+    # below.
+    - name: Load the role defaults
+      ansible.builtin.include_vars:
+        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+        name: container_socket_proxy_defaults
+
+    - name: Wait for the Container Socket Proxy systemd service to become active (up to 180s)
+      ansible.builtin.systemd_service:
         name: container-socket-proxy.service
       register: container_socket_proxy_service
       until: container_socket_proxy_service.status.ActiveState == 'active'
       retries: 36
       delay: 5
+      # So that giving up is reported by the assertion below rather than as a
+      # wall of systemd unit properties.
+      failed_when: false
 
-    - name: Assert Container Socket Proxy service is active
+    # `Restart=always` in the systemd unit means that even a container which crashes
+    # and gets restarted reads as active here, so this is a precondition rather than
+    # a result.
+    - name: Assert the Container Socket Proxy systemd service is active
       ansible.builtin.assert:
         that: container_socket_proxy_service.status.ActiveState == 'active'
-        fail_msg: "container-socket-proxy.service not active ({{ container_socket_proxy_service.status.ActiveState }})"
+        fail_msg: "container-socket-proxy.service is not active ({{ container_socket_proxy_service.status.ActiveState }})"
         success_msg: "container-socket-proxy.service is active"
 
-    - name: Retrieve Container Socket Proxy service log for debugging
+    - name: Retrieve the Container Socket Proxy systemd service log for debugging
       when: container_socket_proxy_debug_service_enabled | bool
       ansible.builtin.command:
-        cmd: journalctl -xeu container-socket-proxy.service
+        cmd: journalctl --no-pager --output=cat --unit=container-socket-proxy.service
       changed_when: false
 
-    - name: Show Container Socket Proxy systemd service status summary
+    # A systemd unit reaching "active" only means that `docker start` has not
+    # exited yet. The whole point of this role is a listener that speaks the
+    # Docker API on behalf of the socket it has bind-mounted, so the first
+    # thing worth proving is that a request placed on that listener comes back
+    # answered by the Docker daemon rather than by haproxy alone.
+    #
+    # `VERSION` is on in the role's defaults, so this path is allowed.
+    #
+    # community.docker is deliberately avoided throughout this playbook: the
+    # linting environment in CI has no collections installed.
+    - name: Wait for the Container Socket Proxy to answer GET /version (up to 120s)
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:{{ container_socket_proxy_molecule_bind_port }}/version"
+        method: GET
+        # A proxy answering with a redirect to something that returns a 200
+        # would otherwise be mistaken for a working Docker API.
+        follow_redirects: none
+        return_content: true
+      register: container_socket_proxy_version_reported
+      until: container_socket_proxy_version_reported.status == 200
+      retries: 24
+      delay: 5
+
+    # Tying the running proxy to `container_socket_proxy_version` is what makes
+    # this scenario a real test of the version that Renovate bumps: a bump that
+    # produces an unusable image cannot pass here.
+    #
+    # The Docker API cannot be asked for this - what it reports is the daemon
+    # behind the proxy. The image carries its own version as an OCI label
+    # instead, which the container inherits.
+    - name: Inspect the running Container Socket Proxy container
+      ansible.builtin.command:
+        cmd: docker inspect {{ container_socket_proxy_defaults.container_socket_proxy_identifier }}
+      register: container_socket_proxy_inspect
+      changed_when: false
+
+    - name: Determine the version of the running Container Socket Proxy
+      ansible.builtin.set_fact:
+        container_socket_proxy_reported_version: >-
+          {{ (container_socket_proxy_inspect.stdout | from_json | first).Config.Labels['org.opencontainers.image.version'] | default('') }}
+
+    - name: Assert the running Container Socket Proxy is the version this role installs
+      ansible.builtin.assert:
+        that: >-
+          (container_socket_proxy_reported_version | trim | regex_replace('^v', '')) ==
+          (container_socket_proxy_defaults.container_socket_proxy_version | regex_replace('^v', ''))
+        fail_msg: "Container Socket Proxy reports {{ container_socket_proxy_reported_version | trim | default('none') }}, expected {{ container_socket_proxy_defaults.container_socket_proxy_version }}"
+        success_msg: "Container Socket Proxy reports {{ container_socket_proxy_reported_version | trim }}"
+
+    # `ApiVersion` and `MinAPIVersion` are Docker's own, so their presence is
+    # what separates a real daemon answer from any body haproxy could produce
+    # by itself.
+    #
+    # Note that `Version` here is the version of the Docker daemon BEHIND the
+    # proxy, not of the proxy. The proxy's own version is asserted separately,
+    # at the bottom of this playbook.
+    - name: Assert the Docker API answers through the Container Socket Proxy
+      ansible.builtin.assert:
+        that:
+          - container_socket_proxy_version_reported.json.ApiVersion is defined
+          - container_socket_proxy_version_reported.json.MinAPIVersion is defined
+          - container_socket_proxy_version_reported.json.Version is defined
+        fail_msg: >-
+          GET /version did not come back as a Docker API payload:
+          {{ container_socket_proxy_version_reported.content | default('no content') }}
+        success_msg: >-
+          The Docker API answers through the proxy (daemon
+          {{ container_socket_proxy_version_reported.json.Version | default('?') }},
+          API {{ container_socket_proxy_version_reported.json.ApiVersion | default('?') }})
+
+    # `CONTAINERS` is off in the role's defaults, and the image denies this
+    # path when nothing tells it otherwise, so an answer here can only come
+    # from the env file that this role rendered out of the scenario's
+    # `container_socket_proxy_api_containers_enabled: true`. Without this
+    # probe, `templates/env.j2` could stop mapping the role's API variables
+    # onto the container's environment and everything else here would still
+    # pass.
+    - name: Query the container list through the Container Socket Proxy
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:{{ container_socket_proxy_molecule_bind_port }}/containers/json"
+        method: GET
+        follow_redirects: none
+        return_content: true
+      register: container_socket_proxy_containers_response
+
+    # The proxy's own container is the one thing the daemon is guaranteed to be
+    # able to report on, which makes this a payload assertion rather than a
+    # "some JSON came back" assertion.
+    - name: Assert an enabled API answers with real Docker data
+      ansible.builtin.assert:
+        that:
+          - container_socket_proxy_containers_response.status == 200
+          - container_socket_proxy_containers_response.json | type_debug == 'list'
+          - >-
+            ('/' + container_socket_proxy_defaults.container_socket_proxy_identifier)
+            in (container_socket_proxy_containers_response.json | map(attribute='Names') | flatten | list)
+        fail_msg: >-
+          GET /containers/json did not list the proxy's own container:
+          {{ container_socket_proxy_containers_response.content | default('no content') }}
+        success_msg: >-
+          GET /containers/json is allowed and lists
+          {{ container_socket_proxy_containers_response.json | length }} container(s)
+
+    # Path-based denial. `INFO` is off in the role's defaults and this scenario
+    # leaves it that way, so the proxy must refuse the path outright. A 200
+    # here would mean the role had opened up an API it promises to keep shut,
+    # which is the failure mode this role exists to prevent. `status_code`
+    # makes anything other than a 403 fail the task rather than be recorded.
+    - name: Request a disabled API through the Container Socket Proxy
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:{{ container_socket_proxy_molecule_bind_port }}/info"
+        method: GET
+        follow_redirects: none
+        return_content: true
+        status_code: [403]
+      register: container_socket_proxy_info_response
+
+    - name: Assert a disabled API is refused
+      ansible.builtin.assert:
+        that:
+          - container_socket_proxy_info_response.status == 403
+          - "'Request forbidden by administrative rules' in container_socket_proxy_info_response.content"
+        fail_msg: >-
+          GET /info was not refused ({{ container_socket_proxy_info_response.status }}):
+          {{ container_socket_proxy_info_response.content | default('no content') }}
+        success_msg: "GET /info is refused with 403, as INFO is disabled"
+
+    # Method-based denial, on a path that the probe above proved is allowed for
+    # GET. `POST` is off in the role's defaults
+    # (`container_socket_proxy_write_access_enabled: false`), so the very URL
+    # that just answered must be refused when it is written to. Isolating the
+    # method this way is what tells "writes are blocked" apart from "this path
+    # is blocked".
+    - name: Write to an enabled API through the Container Socket Proxy
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:{{ container_socket_proxy_molecule_bind_port }}/version"
+        method: POST
+        follow_redirects: none
+        return_content: true
+        status_code: [403]
+      register: container_socket_proxy_post_response
+
+    - name: Assert write access is refused
+      ansible.builtin.assert:
+        that:
+          - container_socket_proxy_post_response.status == 403
+          - "'Request forbidden by administrative rules' in container_socket_proxy_post_response.content"
+        fail_msg: >-
+          POST /version was not refused ({{ container_socket_proxy_post_response.status }}):
+          {{ container_socket_proxy_post_response.content | default('no content') }}
+        success_msg: "POST /version is refused with 403, as write access is disabled"
+
+    - name: Show the Container Socket Proxy verification summary
       ansible.builtin.debug:
         msg:
           - "Container Socket Proxy systemd: {{ container_socket_proxy_service.status.ActiveState }}"
+          - "Container Socket Proxy version: {{ container_socket_proxy_reported_version | trim }}"
+          - "Container Socket Proxy allowed GET /version: {{ container_socket_proxy_version_reported.status }}"
+          - "Container Socket Proxy allowed GET /containers/json: {{ container_socket_proxy_containers_response.status }}"
+          - "Container Socket Proxy denied GET /info: {{ container_socket_proxy_info_response.status }}"
+          - "Container Socket Proxy denied POST /version: {{ container_socket_proxy_post_response.status }}"
+          - "Docker daemon behind the proxy: {{ container_socket_proxy_version_reported.json.Version }}"

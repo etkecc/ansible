@@ -83,11 +83,10 @@
     success_msg: "The Cinny container runs read-only with all capabilities dropped"
 
 - name: Assert the running Cinny is the version this role installs
-  when: "not cinny_container_image_self_build | bool"
   ansible.builtin.assert:
-    that: cinny_container.Config.Labels['org.opencontainers.image.version'] == cinny_defaults.cinny_version
-    fail_msg: "Cinny reports {{ cinny_container.Config.Labels['org.opencontainers.image.version'] | default('none') }}, expected {{ cinny_defaults.cinny_version }}"
-    success_msg: "Cinny reports {{ cinny_container.Config.Labels['org.opencontainers.image.version'] }}"
+    that: cinny_container.Config.Image | split(':') | last == cinny_defaults.cinny_version
+    fail_msg: "Cinny reports {{ cinny_container.Config.Image | split(':') | last | default('none') }}, expected {{ cinny_defaults.cinny_version }}"
+    success_msg: "Cinny reports {{ cinny_container.Config.Image | split(':') | last }}"
 
 # ------------------------------------------------------------------
 # What the role's nginx configuration serves

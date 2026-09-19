@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2026 Suguru Hirahara
-# SPDX-FileCopyrightText: 2026 spatterlight
 # SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -25,16 +25,9 @@
 
   tasks:
     # The role is not included in this playbook, so its defaults are not in
-    # scope. Reading defaults/main.yml directly keeps the version assertion
-    # below tied to the value that Renovate bumps, with nothing to keep in
-    # sync in this scenario. include_vars reads from the controller.
-    #
-    # Only values describing the role itself may be read from this namespace,
-    # and only leaf literals: everything else in that file is a Jinja
-    # expression referring to variables that are not defined here. Anything
-    # this scenario tunes (the namespace name, the syslog tag, the published
-    # ports) comes from the scenario's group_vars instead.
-    - name: Load the prometheus-nginxlog-exporter role defaults
+    # scope. Reading defaults/main.yml directly ties the version assertion
+    # below.
+    - name: Load the role defaults
       ansible.builtin.include_vars:
         file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
         name: prometheus_nginxlog_exporter_defaults
@@ -296,17 +289,15 @@
             )
           }}
 
-    - name: Assert the running exporter is the version the role asks for
+    - name: Assert the running exporter is the version this role installs
       ansible.builtin.assert:
         that: >-
           (prometheus_nginxlog_exporter_reported_version | regex_replace('^v', ''))
           == (prometheus_nginxlog_exporter_defaults.prometheus_nginxlog_exporter_version | regex_replace('^v', ''))
-        fail_msg: >-
-          prometheus-nginxlog-exporter reports version {{ prometheus_nginxlog_exporter_reported_version | default('none') }},
-          but the role asks for {{ prometheus_nginxlog_exporter_defaults.prometheus_nginxlog_exporter_version }}
-        success_msg: "prometheus-nginxlog-exporter reports version {{ prometheus_nginxlog_exporter_reported_version }}"
+        fail_msg: "prometheus-nginxlog-exporter reports {{ prometheus_nginxlog_exporter_reported_version | default('none') }}, expected {{ prometheus_nginxlog_exporter_defaults.prometheus_nginxlog_exporter_version }}"
+        success_msg: "prometheus-nginxlog-exporter reports {{ prometheus_nginxlog_exporter_reported_version }}"
 
-    - name: Show prometheus-nginxlog-exporter verification summary
+    - name: Show the prometheus-nginxlog-exporter verification summary
       ansible.builtin.debug:
         msg:
           - "prometheus-nginxlog-exporter systemd: {{ prometheus_nginxlog_exporter_service.status.ActiveState }}"

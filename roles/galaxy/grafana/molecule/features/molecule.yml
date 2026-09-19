@@ -29,6 +29,7 @@ provisioner:
       all:
         # Helper variables
         grafana_debug_service_enabled: false
+        grafana_restarts_check_enabled: true
 
         # Variables for Grafana
         grafana_uid: 1000

@@ -39,7 +39,10 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% for arg in grafana_container_extra_arguments %}
       {{ arg }} \
       {% endfor %}
-      {{ grafana_container_image }}
+      {{ grafana_container_image }} \
+      {% for arg in grafana_process_extra_arguments %}
+      {{ arg }} \
+      {% endfor %}
 
 {% if grafana_container_network != 'host' %}
 {% for network in grafana_container_additional_networks %}
