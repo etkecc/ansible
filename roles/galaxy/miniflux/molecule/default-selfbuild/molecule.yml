@@ -30,6 +30,7 @@ provisioner:
       all:
         # Helper variables
         miniflux_debug_service_enabled: false
+        miniflux_restarts_check_enabled: true
 
         # Variables for Miniflux
         miniflux_uid: 1000

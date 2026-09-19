@@ -62,7 +62,10 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% for arg in wg_easy_container_extra_arguments %}
       {{ arg }} \
       {% endfor %}
-      {{ wg_easy_container_image }}
+      {{ wg_easy_container_image }} \
+      {% for arg in wg_easy_process_extra_arguments %}
+      {{ arg }} \
+      {% endfor %}
 
 ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ wg_easy_identifier }}
 

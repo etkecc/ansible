@@ -40,7 +40,6 @@ jobs:
       matrix:
         distro:
           - ubuntu2604
-          - debian13
         scenario:
           - default
       fail-fast: false
@@ -71,14 +70,15 @@ jobs:
         uses: actions/cache@v6.1.0
         with:
           path: ~/.ansible/collections
-          key: ansible-collections-${{ hashFiles('miniflux/molecule/default/requirements.yml') }}
+          key: ansible-collections-${{ hashFiles('miniflux/molecule/*/requirements.yml') }}
 
       - name: Run Molecule
         working-directory: miniflux
         run: molecule test --scenario-name ${{ matrix.scenario }}
 
-  # Self-building only changes behavior when the Miniflux version changes, so
-  # branches are gated on a version bump in defaults/main.yml. There is no
+  # Self-building compiles Miniflux from the tag that `miniflux_version`
+  # points at, so it only changes behavior when that version changes. Branches
+  # are therefore gated on a version bump in defaults/main.yml. There is no
   # main-branch run at all: automerge only merges branches that are already
   # green, so a main-side rerun would be redundant.
   selfbuild-gate:
@@ -129,7 +129,6 @@ jobs:
       matrix:
         distro:
           - ubuntu2604
-          - debian13
       fail-fast: false
 
     env:

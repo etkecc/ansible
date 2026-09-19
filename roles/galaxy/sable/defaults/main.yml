@@ -21,7 +21,7 @@ sable_base_path: "/{{ sable_identifier }}"
 sable_config_path: "{{ sable_base_path }}/config"
 
 # renovate: datasource=docker depName=ghcr.io/sableclient/sable versioning=semver
-sable_version: 1.22.1
+sable_version: 1.22.4
 
 sable_uid: ""
 sable_gid: ""
@@ -146,6 +146,12 @@ sable_container_labels_additional_labels_custom: []
 sable_container_extra_arguments: "{{ sable_container_extra_arguments_auto + sable_container_extra_arguments_custom }}"
 sable_container_extra_arguments_auto: []
 sable_container_extra_arguments_custom: []
+
+# A list of extra arguments to pass to the process inside the container
+# Example: ['--SOME_ARGUMENT']
+sable_process_extra_arguments: "{{ sable_process_extra_arguments_auto + sable_process_extra_arguments_custom }}"
+sable_process_extra_arguments_auto: []
+sable_process_extra_arguments_custom: []
 
 # Specifies the value of the `X-XSS-Protection` header
 # Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.

@@ -31,6 +31,7 @@ provisioner:
       all:
         # Helper variables
         peertube_debug_service_enabled: false
+        peertube_restarts_check_enabled: true
 
         # Variables for PeerTube
         peertube_uid: 1000

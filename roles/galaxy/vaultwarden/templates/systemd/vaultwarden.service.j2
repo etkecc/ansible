@@ -59,7 +59,10 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% for arg in vaultwarden_container_extra_arguments %}
       {{ arg }} \
       {% endfor %}
-      {{ vaultwarden_container_image_self_build_name if vaultwarden_container_image_self_build else vaultwarden_container_image }}
+      {{ vaultwarden_container_image_self_build_name if vaultwarden_container_image_self_build else vaultwarden_container_image }} \
+      {% for arg in vaultwarden_process_extra_arguments %}
+      {{ arg }} \
+      {% endfor %}
 
 {% for network in vaultwarden_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ vaultwarden_identifier }}

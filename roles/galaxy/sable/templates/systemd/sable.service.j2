@@ -46,7 +46,10 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% for arg in sable_container_extra_arguments %}
       {{ arg }} \
       {% endfor %}
-      {{ sable_container_image_self_build_name if sable_container_image_self_build else sable_container_image }}
+      {{ sable_container_image_self_build_name if sable_container_image_self_build else sable_container_image }} \
+      {% for arg in sable_process_extra_arguments %}
+      {{ arg }} \
+      {% endfor %}
 
 {% for network in sable_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ sable_identifier }}

@@ -158,6 +158,12 @@ wg_easy_container_extra_arguments: "{{ wg_easy_container_extra_arguments_auto + 
 wg_easy_container_extra_arguments_auto: []
 wg_easy_container_extra_arguments_custom: []
 
+# A list of extra arguments to pass to the process inside the container
+# Example: ['--SOME_ARGUMENT']
+wg_easy_process_extra_arguments: "{{ wg_easy_process_extra_arguments_auto + wg_easy_process_extra_arguments_custom }}"
+wg_easy_process_extra_arguments_auto: []
+wg_easy_process_extra_arguments_custom: []
+
 # Specifies the value of the `X-XSS-Protection` header
 # Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
 #

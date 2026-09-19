@@ -133,6 +133,12 @@ vaultwarden_container_extra_arguments: "{{ vaultwarden_container_extra_arguments
 vaultwarden_container_extra_arguments_auto: []
 vaultwarden_container_extra_arguments_custom: []
 
+# A list of extra arguments to pass to the process inside the container
+# Example: ['--SOME_ARGUMENT']
+vaultwarden_process_extra_arguments: "{{ vaultwarden_process_extra_arguments_auto + vaultwarden_process_extra_arguments_custom }}"
+vaultwarden_process_extra_arguments_auto: []
+vaultwarden_process_extra_arguments_custom: []
+
 # Intentionally leaving this blank, instead of defaulting it to `vaultwarden_hostname`, to avoid specifying a hostname
 # which could render other services on that hostname potentially unreachable.
 # See: https://github.com/mother-of-all-self-hosting/mash-playbook/issues/391

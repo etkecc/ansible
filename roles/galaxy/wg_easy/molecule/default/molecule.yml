@@ -38,6 +38,7 @@ provisioner:
       all:
         # Helper variables
         wg_easy_debug_service_enabled: false
+        wg_easy_restarts_check_enabled: true
 
         # Variables for WireGuard Easy
         wg_easy_uid: 1000
