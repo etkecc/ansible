@@ -6,6 +6,7 @@
 
 ### Component Updates
 
+* [Authentication Service](https://github.com/element-hq/matrix-authentication-service): [1.24.0](https://github.com/element-hq/matrix-authentication-service/releases/tag/v1.24.0) ⇾ [1.25.0](https://github.com/element-hq/matrix-authentication-service/releases/tag/v1.25.0)
 * [Baibot](https://github.com/etkecc/baibot): [v1.26.0](https://github.com/etkecc/baibot/releases/tag/v1.26.0) ⇾ [v1.27.0](https://github.com/etkecc/baibot/releases/tag/v1.27.0)
 * [Borgmatic](https://github.com/etkecc/borgmatic): 2.1.7 ⇾ 2.1.8
 * [Etherpad](https://github.com/ether/etherpad-lite): [3.3.3](https://github.com/ether/etherpad-lite/releases/tag/3.3.3) ⇾ [3.3.5](https://github.com/ether/etherpad-lite/releases/tag/3.3.5)
