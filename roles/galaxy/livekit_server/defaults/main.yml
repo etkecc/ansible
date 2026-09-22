@@ -124,6 +124,8 @@ livekit_server_container_labels_turn_traefik_priority: 0
 livekit_server_container_labels_turn_traefik_entrypoints: ""
 livekit_server_container_labels_turn_traefik_tls: true
 livekit_server_container_labels_turn_traefik_tls_certResolver: "{{ livekit_server_container_labels_traefik_tls_certResolver }}"  # noqa var-naming
+# Name of a Traefik TLS option to attach to the TURN/TLS router (see `tls.options`), defined in Traefik itself.
+livekit_server_container_labels_turn_traefik_tls_options: ""
 
 # Controls whether labels will be added that expose metrics (see `livekit_server_metrics_proxying_enabled`)
 livekit_server_container_labels_public_metrics_enabled: "{{ livekit_server_config_prometheus_enabled and livekit_server_metrics_proxying_enabled }}"

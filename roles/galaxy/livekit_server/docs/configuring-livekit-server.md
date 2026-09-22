@@ -98,6 +98,18 @@ The default in this role is `false`.
 
 When external TLS mode is enabled, the role expects Traefik TCP labels to be set (`livekit_server_container_labels_turn_traefik_enabled: true` and a non-empty `livekit_server_container_labels_turn_traefik_entrypoints`) and does not configure cert files for TURN.
 
+### TURN/TLS and ALPN
+
+Traefik's default TLS options advertise `h2, http/1.1, acme-tls/1` as ALPN protocols, and Traefik fails the TLS handshake when the client's advertised protocols don't intersect with that list. TURN clients advertising `stun.turn` (see [RFC 7443](https://datatracker.ietf.org/doc/html/rfc7443)) cannot complete the handshake and cannot use TURN over TLS.
+
+To let them through, define a Traefik TLS option that also allows `stun.turn` (in Traefik's file provider, for example) and point the role at it:
+
+```yaml
+livekit_server_container_labels_turn_traefik_tls_options: "livekit-turn@file"
+```
+
+TLS options cannot be defined through container labels, so the role can only reference an option that the Traefik instance defines itself. The MDAD playbook defines a `livekit-turn` option by default.
+
 ### TURN access controls and credential TTL
 
 The TURN server enforces a credential TTL and restricts which peer CIDRs it will relay to. The defaults are secure and suitable for typical deployments where TURN peers live on the public Internet, so most setups do not need to configure these.

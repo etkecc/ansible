@@ -67,6 +67,9 @@ traefik.tcp.routers.{{ livekit_server_identifier }}-turn.entrypoints={{ livekit_
 traefik.tcp.routers.{{ livekit_server_identifier }}-turn.tls={{ livekit_server_container_labels_turn_traefik_tls | to_json }}
 {% if livekit_server_container_labels_turn_traefik_tls %}
 traefik.tcp.routers.{{ livekit_server_identifier }}-turn.tls.certResolver={{ livekit_server_container_labels_turn_traefik_tls_certResolver }}
+{% if livekit_server_container_labels_turn_traefik_tls_options %}
+traefik.tcp.routers.{{ livekit_server_identifier }}-turn.tls.options={{ livekit_server_container_labels_turn_traefik_tls_options }}
+{% endif %}
 {% endif %}
 
 ########################################################################
