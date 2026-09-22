@@ -23,7 +23,7 @@
 * Grafana: 13.0.2
 * Heisenbridge: 1.15.4
 * Honoroit: v0.9.30
-* Hookshot Bridge: 7.3.2
+* Hookshot Bridge: 7.5.0
 * Hydrogen: v0.5.1
 * Jitsi: stable-11248
 * Jitsi LDAP: 3
@@ -67,7 +67,7 @@
 * Static Files: 2.44.0
 * Steam Bridge: 1.3.1
 * Sygnal: v0.17.0
-* Synapse: v1.160.0
+* Synapse: v1.161.0
 * Synapse Auto Compressor: v0.0.3
 * Synapse Compress State: v0.0.3
 * Synapse HTTP Antispam: v0.5.1
