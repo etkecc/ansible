@@ -83,14 +83,14 @@ pull-roles:
     #!/usr/bin/env sh
     set -eu pipefail
     if [ -x "$(command -v agru)" ]; then
-        agru ${AGRU_CLEANUP:-}
+        agru -p roles/galaxy/ ${AGRU_CLEANUP:-}
     else
         ansible-galaxy install -r requirements.yml -p roles/galaxy/ --force
     fi
 
 # pull all updates
 update *flags: update-self update-upstream && update-opml update-versions
-    @agru {{ flags }}
+    @agru -p roles/galaxy/ {{ flags }}
 
 # dumps an OPML file with extracted git feeds for roles
 update-opml:
