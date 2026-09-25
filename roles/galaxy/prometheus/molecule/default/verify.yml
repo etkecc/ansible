@@ -10,209 +10,287 @@
   become: true
   gather_facts: false
 
+  vars:
+    prometheus_verify_units:
+      - prometheus.service
+
   tasks:
-    # The role is not included in this playbook, so its defaults are not in
-    # scope. Reading defaults/main.yml directly ties the version assertion
-    # below.
-    - name: Load the role defaults
-      ansible.builtin.include_vars:
-        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
-        name: prometheus_defaults
+    - name: Verify that Prometheus works
+      block:
+        # The role is not included in this playbook, so its defaults are not in
+        # scope. Reading defaults/main.yml directly ties the version assertion
+        # below.
+        - name: Load the role defaults
+          ansible.builtin.include_vars:
+            file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+            name: prometheus_defaults
 
-    - name: Wait for Prometheus service to become active (up to 180s)
-      ansible.builtin.systemd:
-        name: prometheus.service
-      register: prometheus_service
-      until: prometheus_service.status.ActiveState == 'active'
-      retries: 36
-      delay: 5
+        - name: Wait for the Prometheus systemd services to become active (up to 180s each)
+          ansible.builtin.systemd_service:
+            name: "{{ item }}"
+          register: prometheus_services
+          until: prometheus_services.status.ActiveState == 'active'
+          retries: 36
+          delay: 5
+          loop: "{{ prometheus_verify_units }}"
+          # So that giving up is reported by the assertion below rather than as a
+          # wall of systemd unit properties.
+          failed_when: false
 
-    - name: Assert Prometheus service is active
-      ansible.builtin.assert:
-        that: prometheus_service.status.ActiveState == 'active'
-        fail_msg: "prometheus.service not active ({{ prometheus_service.status.ActiveState }})"
-        success_msg: "prometheus.service is active"
+        # `Restart=always` in the systemd unit means that even a container which crashes
+        # and gets restarted reads as active here, so this is a precondition rather than
+        # a result.
+        - name: Assert the Prometheus systemd services are active
+          ansible.builtin.assert:
+            that: prometheus_services.results | map(attribute='status.ActiveState') | unique | list == ['active']
+            fail_msg: >-
+              Not every service is active:
+              {{ dict(prometheus_verify_units | zip(prometheus_services.results | map(attribute='status.ActiveState'))) }}
+            success_msg: "Every systemd service is active"
 
-    - name: Retrieve Prometheus service log for debugging
-      when: prometheus_debug_service_enabled | bool
-      ansible.builtin.command:
-        cmd: journalctl -xeu prometheus.service
-      changed_when: false
+        - name: Retrieve the Prometheus systemd services log for debugging
+          when: prometheus_debug_service_enabled | bool
+          ansible.builtin.command:
+            cmd: "journalctl --no-pager --output=cat --unit={{ item }}"
+          changed_when: false
+          loop: "{{ prometheus_verify_units }}"
 
-    # A systemd unit reaching "active" only means that `docker start` has not
-    # exited yet. This is the first thing that the Prometheus process itself
-    # has to answer, so it is where a container that never got going shows up.
-    - name: Wait for Prometheus to report itself healthy (up to 10m)
-      ansible.builtin.uri:
-        url: "http://localhost:9090/-/healthy"
-        method: GET
-        return_content: true
-      register: prometheus_healthy
-      until: prometheus_healthy.status == 200
-      retries: 120
-      delay: 5
+        # A systemd unit reaching "active" only means that `docker start` has not
+        # exited yet. This is the first thing that the Prometheus process itself
+        # has to answer, so it is where a container that never got going shows up.
+        - name: Wait for Prometheus to report itself healthy (up to 180s)
+          ansible.builtin.uri:
+            url: "http://localhost:9090/-/healthy"
+            method: GET
+            return_content: true
+          register: prometheus_health
+          until: "prometheus_health.status == 200 and 'Healthy' in prometheus_health.content"
+          retries: 36
+          delay: 5
+          # So that giving up is reported by the assertion below rather than as a
+          # wall of systemd unit properties.
+          failed_when: false
 
-    - name: Assert Prometheus reports itself healthy
-      ansible.builtin.assert:
-        that: "'Healthy' in prometheus_healthy.content"
-        fail_msg: "Prometheus is not healthy: {{ prometheus_healthy.content | default('no content') }}"
-        success_msg: "Prometheus reports itself healthy"
+        - name: Assert Prometheus reports itself healthy
+          ansible.builtin.assert:
+            that: "'Healthy' in prometheus_health.content"
+            fail_msg: "Prometheus did not report itself healthy: {{ prometheus_health.content | default('no response') }}"
+            success_msg: "Prometheus reports itself healthy"
 
-    # Readiness is a stronger statement than health: it only turns 200 once the
-    # TSDB has finished replaying its write-ahead log and the web endpoints are
-    # prepared to serve queries. The data directory that the role bind-mounts
-    # has to be writable for this to ever happen.
-    - name: Wait for Prometheus to report itself ready (up to 5m)
-      ansible.builtin.uri:
-        url: "http://localhost:9090/-/ready"
-        method: GET
-        return_content: true
-      register: prometheus_ready
-      until: prometheus_ready.status == 200
-      retries: 60
-      delay: 5
+        # Readiness is a stronger statement than health: it only turns 200 once the
+        # TSDB has finished replaying its write-ahead log and the web endpoints are
+        # prepared to serve queries. The data directory that the role bind-mounts
+        # has to be writable for this to ever happen.
+        - name: Wait for Prometheus to report itself ready (up to 5m)
+          ansible.builtin.uri:
+            url: "http://localhost:9090/-/ready"
+            method: GET
+            return_content: true
+          register: prometheus_ready
+          until: prometheus_ready.status == 200
+          retries: 60
+          delay: 5
+          # So that giving up is reported by the assertion below rather than as a
+          # wall of systemd unit properties.
+          failed_when: false
 
-    - name: Assert Prometheus reports itself ready
-      ansible.builtin.assert:
-        that: "'Ready' in prometheus_ready.content"
-        fail_msg: "Prometheus is not ready: {{ prometheus_ready.content | default('no content') }}"
-        success_msg: "Prometheus reports itself ready"
+        - name: Assert Prometheus reports itself ready
+          ansible.builtin.assert:
+            that: "'Ready' in prometheus_ready.content"
+            fail_msg: "Prometheus did not report it was ready: {{ prometheus_ready.content | default('no response') }}"
+            success_msg: "Prometheus reports itself ready"
 
-    # Tying the running version to `prometheus_version` is what makes this
-    # scenario a real test of the version that Renovate bumps: a bump that
-    # produces an unusable image cannot pass here.
-    - name: Query the version reported by the running Prometheus
-      ansible.builtin.uri:
-        url: "http://localhost:9090/api/v1/status/buildinfo"
-        method: GET
-        return_content: true
-      register: prometheus_buildinfo
+        # Tying the running version to `prometheus_version` is what makes this
+        # scenario a real test of the version that Renovate bumps: a bump that
+        # produces an unusable image cannot pass here.
+        - name: Query the version of the running Prometheus
+          ansible.builtin.uri:
+            url: "http://localhost:9090/api/v1/status/buildinfo"
+            method: GET
+            return_content: true
+          register: prometheus_buildinfo
 
-    # `prometheus_version` carries a leading `v` (`v3.14.0`) but the API
-    # reports the bare version (`3.14.0`). The comparison is a prefix match, so
-    # that a build suffix appearing upstream does not fail the scenario.
-    - name: Assert the running Prometheus is the version this role installs
-      ansible.builtin.assert:
-        that: >-
-          prometheus_buildinfo.json.data.version.startswith(
-            prometheus_defaults.prometheus_version | string | regex_replace('^v', '')
-          )
-        fail_msg: "Prometheus reports {{ prometheus_buildinfo.json.data.version | default('none') }}, expected {{ prometheus_defaults.prometheus_version }}"
-        success_msg: "Prometheus reports {{ prometheus_buildinfo.json.data.version }}"
+        # `prometheus_version` carries a leading `v` (`v3.14.0`) but the binary
+        # reports the bare version (`3.14.0`). The comparison is a prefix match, so
+        # that a build suffix appearing upstream does not fail the scenario.
+        - name: Assert the running Prometheus is the version this role installs
+          ansible.builtin.assert:
+            that: >-
+              prometheus_buildinfo.json.data.version.startswith(
+                prometheus_defaults.prometheus_version | string | regex_replace('^v', '')
+              )
+            fail_msg: "Prometheus reports {{ prometheus_buildinfo.json.data.version | default('none') }}, expected {{ prometheus_defaults.prometheus_version }}"
+            success_msg: "Prometheus reports {{ prometheus_buildinfo.json.data.version }}"
 
-    # The command line that the systemd unit builds from
-    # `prometheus_process_extra_arguments`, read back out of the running
-    # process. The console paths are what the role's defaults contribute (the
-    # image's own entrypoint passes bare relative paths instead), and the
-    # retention time is what this scenario contributes on top of them.
-    - name: Query the flags the running Prometheus was started with
-      ansible.builtin.uri:
-        url: "http://localhost:9090/api/v1/status/flags"
-        method: GET
-        return_content: true
-      register: prometheus_flags
+        # The command line that the systemd unit builds from
+        # `prometheus_process_extra_arguments`, read back out of the running
+        # process. The console paths are what the role's defaults contribute (the
+        # image's own entrypoint passes bare relative paths instead), and the
+        # retention time is what this scenario contributes on top of them.
+        - name: Query the flags the running Prometheus was started with
+          ansible.builtin.uri:
+            url: "http://localhost:9090/api/v1/status/flags"
+            method: GET
+            return_content: true
+          register: prometheus_flags
 
-    - name: Assert the role's process arguments reached the running Prometheus
-      ansible.builtin.assert:
-        that:
-          - prometheus_flags.json.data['config.file'] == '/etc/prometheus/prometheus.yml'
-          - prometheus_flags.json.data['storage.tsdb.path'] == '/prometheus'
-          - prometheus_flags.json.data['web.console.libraries'] == '/usr/share/prometheus/console_libraries'
-          - prometheus_flags.json.data['web.console.templates'] == '/usr/share/prometheus/consoles'
-          - prometheus_flags.json.data['storage.tsdb.retention.time'] == '5d'
-        fail_msg: "Prometheus was not started with the role's arguments: {{ prometheus_flags.json.data }}"
-        success_msg: "Prometheus was started with the role's arguments"
+        - name: Assert the role's process arguments reached the running Prometheus
+          ansible.builtin.assert:
+            that:
+              - prometheus_flags.json.data['config.file'] == '/etc/prometheus/prometheus.yml'
+              - prometheus_flags.json.data['storage.tsdb.path'] == '/prometheus'
+              - prometheus_flags.json.data['web.console.libraries'] == '/usr/share/prometheus/console_libraries'
+              - prometheus_flags.json.data['web.console.templates'] == '/usr/share/prometheus/consoles'
+              - prometheus_flags.json.data['storage.tsdb.retention.time'] == '5d'
+            fail_msg: "Prometheus was not started with the role's arguments: {{ prometheus_flags.json.data }}"
+            success_msg: "Prometheus was started with the role's arguments"
 
-    # The configuration file the role rendered, read back out of the running
-    # process rather than off disk. The stock image ships a fallback
-    # prometheus.yml that would satisfy every probe above, so these values -
-    # which only this role's template can produce - are what distinguishes a
-    # configured Prometheus from a merely running one.
-    - name: Query the configuration the running Prometheus loaded
-      ansible.builtin.uri:
-        url: "http://localhost:9090/api/v1/status/config"
-        method: GET
-        return_content: true
-      register: prometheus_config
+        # The configuration file the role rendered, read back out of the running
+        # process rather than off disk. The stock image ships a fallback
+        # prometheus.yml that would satisfy every probe above, so these values -
+        # which only this role's template can produce - are what distinguishes a
+        # configured Prometheus from a merely running one.
+        - name: Query the configuration the running Prometheus loaded
+          ansible.builtin.uri:
+            url: "http://localhost:9090/api/v1/status/config"
+            method: GET
+            return_content: true
+          register: prometheus_config
 
-    - name: Assert the role's configuration reached the running Prometheus
-      ansible.builtin.assert:
-        that:
-          - "('scrape_interval: ' ~ prometheus_config_global_scrape_interval) in prometheus_config.json.data.yaml"
-          - "('evaluation_interval: ' ~ prometheus_config_global_evaluation_interval) in prometheus_config.json.data.yaml"
-          - "('job_name: ' ~ prometheus_self_process_scraper_job_name) in prometheus_config.json.data.yaml"
-          # The fallback configuration labels everything it scrapes with
-          # `app: prometheus`, and this role's template attaches no labels at
-          # all, so its absence is a direct statement that the fallback is not
-          # what is loaded.
-          - "'app: prometheus' not in prometheus_config.json.data.yaml"
-        fail_msg: "The role's configuration did not reach Prometheus: {{ prometheus_config.json.data.yaml }}"
-        success_msg: "The role's configuration reached Prometheus"
+        - name: Assert the role's configuration reached the running Prometheus
+          ansible.builtin.assert:
+            that:
+              - "('scrape_interval: ' ~ prometheus_config_global_scrape_interval) in prometheus_config.json.data.yaml"
+              - "('evaluation_interval: ' ~ prometheus_config_global_evaluation_interval) in prometheus_config.json.data.yaml"
+              - "('job_name: ' ~ prometheus_self_process_scraper_job_name) in prometheus_config.json.data.yaml"
+              # The fallback configuration labels everything it scrapes with
+              # `app: prometheus`, and this role's template attaches no labels at
+              # all, so its absence is a direct statement that the fallback is not
+              # what is loaded.
+              - "'app: prometheus' not in prometheus_config.json.data.yaml"
+            fail_msg: "The role's configuration did not reach Prometheus: {{ prometheus_config.json.data.yaml }}"
+            success_msg: "The role's configuration reached Prometheus"
 
-    # Everything above proves that Prometheus is running and holds the right
-    # configuration. This proves that it does its job: the scrape loop has
-    # actually collected a sample from the target the role pointed it at, and
-    # the query engine can hand it back. The job label is the one this scenario
-    # named, so a self-scrape from the fallback configuration cannot stand in.
-    - name: Wait for Prometheus to have scraped itself (up to 2m)
-      ansible.builtin.uri:
-        url: "http://localhost:9090/api/v1/query?query=up"
-        method: GET
-        return_content: true
-      register: prometheus_query
-      until: >-
-        prometheus_query.json.status == 'success'
-        and prometheus_query.json.data.result
-        | selectattr('metric.job', 'equalto', prometheus_self_process_scraper_job_name)
-        | list | length > 0
-      retries: 24
-      delay: 5
-
-    # Kept as scalars rather than as the whole sample, so that nothing depends
-    # on a templated dictionary surviving as a dictionary.
-    - name: Determine the sample Prometheus scraped from itself
-      ansible.builtin.set_fact:
-        prometheus_self_instance: >-
-          {{
-            prometheus_query.json.data.result
+        # Everything above proves that Prometheus is running and holds the right
+        # configuration. This proves that it does its job: the scrape loop has
+        # actually collected a sample from the target the role pointed it at, and
+        # the query engine can hand it back. The job label is the one this scenario
+        # named, so a self-scrape from the fallback configuration cannot stand in.
+        - name: Wait for Prometheus to have scraped itself (up to 2m)
+          ansible.builtin.uri:
+            url: "http://localhost:9090/api/v1/query?query=up"
+            method: GET
+            return_content: true
+          register: prometheus_query
+          until: >-
+            prometheus_query.json.status == 'success'
+            and prometheus_query.json.data.result
             | selectattr('metric.job', 'equalto', prometheus_self_process_scraper_job_name)
-            | map(attribute='metric.instance') | first
-          }}
-        prometheus_self_value: >-
-          {{
-            prometheus_query.json.data.result
-            | selectattr('metric.job', 'equalto', prometheus_self_process_scraper_job_name)
-            | map(attribute='value') | first | last
-          }}
+            | list | length > 0
+          retries: 24
+          delay: 5
 
-    - name: Assert Prometheus scrapes the target the role configured
-      ansible.builtin.assert:
-        that:
-          - prometheus_query.json.status == 'success'
-          - prometheus_self_instance == prometheus_defaults.prometheus_self_process_scraper_static_configs_target
-          - prometheus_self_value == '1'
-        fail_msg: "Prometheus did not scrape its configured target: {{ prometheus_query.json.data.result }}"
-        success_msg: "Prometheus scrapes the target the role configured and answers queries about it"
+        # Kept as scalars rather than as the whole sample, so that nothing depends
+        # on a templated dictionary surviving as a dictionary.
+        - name: Determine the sample Prometheus scraped from itself
+          ansible.builtin.set_fact:
+            prometheus_self_instance: >-
+              {{
+                prometheus_query.json.data.result
+                | selectattr('metric.job', 'equalto', prometheus_self_process_scraper_job_name)
+                | map(attribute='metric.instance') | first
+              }}
+            prometheus_self_value: >-
+              {{
+                prometheus_query.json.data.result
+                | selectattr('metric.job', 'equalto', prometheus_self_process_scraper_job_name)
+                | map(attribute='value') | first | last
+              }}
 
-    - name: Retrieve the Prometheus web interface
-      ansible.builtin.uri:
-        url: "http://localhost:9090/"
-        method: GET
-        status_code: [200]
-        return_content: true
-      register: prometheus_endpoint
+        - name: Assert Prometheus scrapes the target the role configured
+          ansible.builtin.assert:
+            that:
+              - prometheus_query.json.status == 'success'
+              - prometheus_self_instance == prometheus_defaults.prometheus_self_process_scraper_static_configs_target
+              - prometheus_self_value == '1'
+            fail_msg: "Prometheus did not scrape its configured target: {{ prometheus_query.json.data.result }}"
+            success_msg: "Prometheus scrapes the target the role configured and answers queries about it"
 
-    - name: Assert the Prometheus web interface is served
-      ansible.builtin.assert:
-        that: "'Prometheus' in prometheus_endpoint.content"
-        fail_msg: "The Prometheus web interface did not render as expected"
-        success_msg: "The Prometheus web interface is served"
+        - name: Retrieve the Prometheus web interface
+          ansible.builtin.uri:
+            url: "http://localhost:9090/"
+            method: GET
+            status_code: [200]
+            return_content: true
+          register: prometheus_endpoint
 
-    - name: Show the Prometheus verification summary
-      ansible.builtin.debug:
-        msg:
-          - "Prometheus systemd: {{ prometheus_service.status.ActiveState }}"
-          - "Prometheus version: {{ prometheus_buildinfo.json.data.version }}"
-          - "Prometheus retention: {{ prometheus_flags.json.data['storage.tsdb.retention.time'] }}"
-          - "Prometheus scrape job: {{ prometheus_self_process_scraper_job_name }} on {{ prometheus_self_instance }}"
-          - "Prometheus web interface: {{ prometheus_endpoint.status }}"
+        - name: Assert the Prometheus web interface is served
+          ansible.builtin.assert:
+            that: "'Prometheus' in prometheus_endpoint.content"
+            fail_msg: "The Prometheus web interface did not render as expected"
+            success_msg: "The Prometheus web interface is served"
+
+        - name: Verify nothing was quietly restarting while all of that was being checked
+          when: "prometheus_restarts_check_enabled | bool"
+          block:
+            # `Restart=always` means the unit reads `active` while it is crash-looping,
+            # so `active` on its own says very little. The window has to be watched with
+            # everything already answering.
+            - name: Sample the restart counters
+              ansible.builtin.systemd_service:
+                name: "{{ item }}"
+              register: prometheus_restarts_before
+              loop: "{{ prometheus_verify_units }}"
+
+            # Comfortably longer than the unit's `RestartSec=30`, so a crash loop has to
+            # tick at least once inside the window.
+            - name: Watch the services for 45 seconds
+              ansible.builtin.pause:
+                seconds: 45
+
+            - name: Sample the restart counters again
+              ansible.builtin.systemd_service:
+                name: "{{ item }}"
+              register: prometheus_restarts_after
+              loop: "{{ prometheus_verify_units }}"
+
+            - name: Assert no service restarted while it was up
+              ansible.builtin.assert:
+                that:
+                  - prometheus_restarts_after.results | map(attribute='status.NRestarts') | list == prometheus_restarts_before.results | map(attribute='status.NRestarts') | list
+                  - prometheus_restarts_after.results | map(attribute='status.ActiveState') | unique | list == ['active']
+                fail_msg: >-
+                  A service restarted while it was supposedly up, so `active` was hiding a crash loop.
+                  Before:
+                  {% for unit, restarts in prometheus_verify_units | zip(prometheus_restarts_before.results | map(attribute='status.NRestarts')) %}{{ restarts }} ({{ unit }}){% if not loop.last %}, {% endif %}{% endfor %},
+                  after:
+                  {% for unit, restarts in prometheus_verify_units | zip(prometheus_restarts_after.results | map(attribute='status.NRestarts')) %}{{ restarts }} ({{ unit }}){% if not loop.last %}, {% endif %}{% endfor %}
+                success_msg: >-
+                  None of the services restarted over 45 seconds of watching (restarts so far:
+                  {% for unit, restarts in prometheus_verify_units | zip(prometheus_restarts_after.results | map(attribute='status.NRestarts')) %}{{ restarts }} ({{ unit }}){% if not loop.last %}, {% endif %}{% endfor %})
+
+        - name: Show the Prometheus verification summary
+          ansible.builtin.debug:
+            msg:
+              - "Prometheus systemd: {% for unit, state in prometheus_verify_units | zip(prometheus_services.results | map(attribute='status.ActiveState')) %}{{ unit }} ({{ state }}){% if not loop.last %}, {% endif %}{% endfor %}"
+              - "Prometheus restarts: {% for unit, restarts in prometheus_verify_units | zip(prometheus_restarts_after.results | map(attribute='status.NRestarts')) %}{{ restarts }} ({{ unit }}){% if not loop.last %}, {% endif %}{% endfor %}"
+              - "Prometheus version: {{ prometheus_buildinfo.json.data.version }}"
+              - "Prometheus retention: {{ prometheus_flags.json.data['storage.tsdb.retention.time'] }}"
+              - "Prometheus scrape job: {{ prometheus_self_process_scraper_job_name }} on {{ prometheus_self_instance }}"
+              - "Prometheus web interface: {{ prometheus_endpoint.status }}"
+
+      rescue:
+        # Whatever went wrong, the reason is almost always in the systemd service log.
+        - name: Retrieve the Prometheus systemd service log
+          ansible.builtin.command:
+            cmd: journalctl --no-pager --output=cat --unit=prometheus.service
+          register: prometheus_service_log
+          changed_when: false
+
+        - name: Show the Prometheus systemd service log
+          ansible.builtin.debug:
+            var: prometheus_service_log.stdout_lines
+
+        - name: Fail because verification did not pass
+          ansible.builtin.fail:
+            msg: "Prometheus verification failed. The systemd service log is printed above."

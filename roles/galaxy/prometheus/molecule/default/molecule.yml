@@ -31,6 +31,7 @@ provisioner:
       all:
         # Helper variables
         prometheus_debug_service_enabled: false
+        prometheus_restarts_check_enabled: true
 
         # Variables for Prometheus
         prometheus_uid: 1000

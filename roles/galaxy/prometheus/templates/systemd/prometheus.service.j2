@@ -39,7 +39,10 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% for arg in prometheus_container_extra_arguments %}
       {{ arg }} \
       {% endfor %}
-      {{ prometheus_container_image }} {{ prometheus_process_extra_arguments | join(' ') }}
+      {{ prometheus_container_image }} \
+      {% for arg in prometheus_process_extra_arguments %}
+      {{ arg }} \
+      {% endfor %}
 
 {% for network in prometheus_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ prometheus_identifier }}

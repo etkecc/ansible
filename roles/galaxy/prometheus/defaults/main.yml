@@ -19,7 +19,7 @@ prometheus_config_path: "{{ prometheus_base_path }}/config"
 prometheus_data_path: "{{ prometheus_base_path }}/data"
 
 # renovate: datasource=docker depName=prom/prometheus versioning=semver
-prometheus_version: v3.14.0
+prometheus_version: v3.15.0
 
 prometheus_uid: ""
 prometheus_gid: ""
@@ -113,6 +113,17 @@ prometheus_container_extra_arguments: "{{ prometheus_container_extra_arguments_a
 prometheus_container_extra_arguments_auto: []
 prometheus_container_extra_arguments_custom: []
 
+# A list of extra arguments to pass to the process inside the container
+# Example: ['--SOME_ARGUMENT']
+prometheus_process_extra_arguments: "{{ prometheus_process_extra_arguments_default + prometheus_process_extra_arguments_auto + prometheus_process_extra_arguments_custom }}"
+prometheus_process_extra_arguments_default:
+  - "--config.file=/etc/prometheus/prometheus.yml"
+  - "--storage.tsdb.path=/prometheus"
+  - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+  - "--web.console.templates=/usr/share/prometheus/consoles"
+prometheus_process_extra_arguments_auto: []
+prometheus_process_extra_arguments_custom: []
+
 # Specifies the value of the `X-XSS-Protection` header
 # Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
 #
@@ -159,17 +170,6 @@ prometheus_floc_optout_enabled: true
 # - https://hstspreload.org/#opt-in
 # See: `prometheus_http_header_strict_transport_security`
 prometheus_hsts_preload_enabled: false
-
-# A list of extra arguments to pass to the Prometheus process
-# Example: ['--SOME_ARGUMENT']
-prometheus_process_extra_arguments: "{{ prometheus_process_extra_arguments_default + prometheus_process_extra_arguments_auto + prometheus_process_extra_arguments_custom }}"
-prometheus_process_extra_arguments_default:
-  - "--config.file=/etc/prometheus/prometheus.yml"
-  - "--storage.tsdb.path=/prometheus"
-  - "--web.console.libraries=/usr/share/prometheus/console_libraries"
-  - "--web.console.templates=/usr/share/prometheus/consoles"
-prometheus_process_extra_arguments_auto: []
-prometheus_process_extra_arguments_custom: []
 
 # List of systemd services that the Prometheus systemd service depends on
 prometheus_systemd_required_services_list: "{{ prometheus_systemd_required_services_list_default + prometheus_systemd_required_services_list_auto + prometheus_systemd_required_services_list_custom }}"
