@@ -6,4 +6,5 @@
 
 ### Component Updates
 
+* [Baibot](https://github.com/etkecc/baibot): [v1.27.0](https://github.com/etkecc/baibot/releases/tag/v1.27.0) ⇾ [v1.27.1](https://github.com/etkecc/baibot/releases/tag/v1.27.1)
 * [Slack Bridge](https://github.com/mautrix/slack): [v0.2609.0](https://github.com/mautrix/slack/releases/tag/v0.2609.0) ⇾ [v0.2609.1](https://github.com/mautrix/slack/releases/tag/v0.2609.1)
