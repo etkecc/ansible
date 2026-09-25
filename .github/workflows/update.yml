@@ -69,7 +69,7 @@ jobs:
           git -C upstream fetch origin master
           git -C upstream checkout master
           git -C upstream pull --ff-only origin master
-          agru -u
+          agru -u -p roles/galaxy/
           python3 bin/feeds.py . dump
           python3 bin/versions.py
           python3 bin/versions.diff.py
