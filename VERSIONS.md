@@ -2,8 +2,6 @@
 * Authentication Service: 1.25.1
 * Baibot: v1.27.1
 * Bluesky Bridge: v0.2510.0
-* Borg: 1.4.5
-* Borgmatic: 2.1.8
 * Buscarron: v1.5.0
 * Cinny: v4.12.7
 * Container Socket Proxy: v0.5.0
@@ -25,6 +23,7 @@
 * Honoroit: v0.9.30
 * Hookshot Bridge: 7.5.0
 * Hydrogen: v0.5.1
+* Image: 1.4.5-2.1.9
 * Jitsi: stable-11248
 * Jitsi LDAP: 3
 * Jitsi User Verification: 19b69e543cdb99b16a939eeed921d7ed1da57d44
