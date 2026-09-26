@@ -58,7 +58,7 @@
 * Prometheus Node Exporter: v1.12.1
 * Prometheus Postgres Exporter: v0.20.1
 * Radicale: 3.8.1.0
-* Sable: 1.22.6
+* Sable: 1.22.8
 * Schildichat: 1.11.109-sc.0.test.0
 * Signal Bridge: v0.2609.0
 * Slack Bridge: v0.2609.1
