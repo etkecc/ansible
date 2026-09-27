@@ -28,6 +28,8 @@
     - { "old": "peertube_container_additional_environment_variables", "new": "peertube_environment_variables_additional_variables" }
     - { "old": "peertube_http_header_content_permission_policy", "new": "peertube_http_header_permissions_policy" }
     - { "old": "peertube_container_image_force_pull", "new": "<removed> (the new community.docker.docker_image_pull module handles this natively)" }
+    - { "old": "peertube_distro_variant", "new": "<removed> (PeerTube v8+ container images are published without a Debian suffix in their tag)" }
+    - { "old": "peertube_start_wait_time", "new": "<removed> (the role now waits for PeerTube to start serving HTTP requests, see `peertube_migration_wait_time`)" }
 
 - name: Fail if required PeerTube settings not defined
   ansible.builtin.fail:

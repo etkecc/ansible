@@ -40,7 +40,7 @@
 * Meta Messenger Bridge: v0.2609.0
 * Miniflux: 2.3.3
 * Ntfy: v2.28.0
-* Peertube: v7.2.3
+* Peertube: v8.3.0
 * Postgres Container Image V10: 10.23
 * Postgres Container Image V11: 11.22
 * Postgres Container Image V12: 12.22

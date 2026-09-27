@@ -20,9 +20,9 @@ Check [`defaults/main.yml`](defaults/main.yml) for the full list of supported op
 
 ## Upgrading PeerTube
 
-`peertube_version` names a PeerTube release (`v7.2.3`), and `peertube_container_image_tag` composes the container image tag out of it and `peertube_distro_variant`.
+`peertube_version` names a PeerTube release (`v8.3.0`), which is also the container image tag (see `peertube_container_image_tag`). Since 8.0.0, PeerTube publishes plain version tags; the Debian-flavoured ones (`v8.3.0-trixie`) are deprecated upstream, and Renovate (see [`.github/renovate.json`](.github/renovate.json)) ignores them.
 
-PeerTube published its 6.x and 7.x images only under Debian-flavoured tags (`v7.2.3-bookworm`, with no plain `v7.2.3` alongside them), and deprecated that suffix in 8.0.0, where `v8.2.4` is the tag to use and `v8.2.4-trixie` merely still exists. Renovate is configured (in [`.github/renovate.json`](.github/renovate.json)) to read versions out of the `-bookworm` tags, which is the namespace this role installs from, so **moving to 8.x means changing `peertube_distro_variant` and that rule together**. 8.0.0 additionally asks for a migration script to be run by hand once the upgrade is done — see PeerTube's [8.0.0 release notes](https://github.com/Chocobozzz/PeerTube/releases/tag/v8.0.0).
+Some PeerTube releases require a migration script to be run by hand once PeerTube has finished its own database migrations (see the *IMPORTANT NOTES* in PeerTube's [CHANGELOG](https://github.com/Chocobozzz/PeerTube/blob/develop/CHANGELOG.md)). When upgrading an existing installation, this role runs these automatically. The scripts it knows about are listed in `peertube_manual_migration_scripts` (in [`vars/main.yml`](vars/main.yml)), which needs to be extended whenever a new PeerTube release introduces one.
 
 Version bumps are never automerged here: PeerTube runs its database migrations unattended on startup, and its patch releases do carry them.
 

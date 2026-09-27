@@ -13,14 +13,11 @@ peertube_identifier: peertube
 peertube_base_path: "/{{ peertube_identifier }}"
 peertube_config_path: "{{ peertube_base_path }}/config"
 peertube_data_path: "{{ peertube_base_path }}/data"
+# See `peertube_container_tmpfs_tmp_enabled`
+peertube_tmp_path: "{{ peertube_base_path }}/tmp"
 
-# PeerTube publishes its 6.x/7.x images only under Debian-flavoured tags (`v7.2.3-bookworm`),
-# so `.github/renovate.json` carries an `extractVersion` rule reading the version out of those.
-# The tags of 8.x and later drop the (upstream-deprecated) Debian suffix, so moving to those
-# means changing `peertube_distro_variant` and that rule together.
-#
 # renovate: datasource=docker depName=chocobozzz/peertube versioning=semver
-peertube_version: v7.2.3
+peertube_version: v8.3.0
 
 peertube_uid: ""
 peertube_gid: ""
@@ -36,12 +33,10 @@ peertube_hostname: ""
 peertube_path_prefix: /
 
 peertube_container_image: "{{ peertube_container_image_registry_prefix }}chocobozzz/peertube:{{ peertube_container_image_tag }}"
-peertube_container_image_tag: "{{ peertube_version }}-{{ peertube_distro_variant }}"
+peertube_container_image_tag: "{{ peertube_version }}"
 peertube_container_image_registry_prefix: "{{ peertube_container_image_registry_prefix_upstream }}"
 peertube_container_image_registry_prefix_upstream: "{{ peertube_container_image_registry_prefix_upstream_default }}"
 peertube_container_image_registry_prefix_upstream_default: docker.io/
-
-peertube_distro_variant: bookworm
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 peertube_container_network: "{{ peertube_identifier }}"
@@ -61,9 +56,7 @@ peertube_container_rtmp_host_bind_port: ""
 
 # The HTTP port number in the container.
 #
-# PeerTube takes this from its `listen.port` configuration setting, for which its container image
-# defines no dedicated environment variable, so it is passed along via `NODE_CONFIG`.
-# See `peertube_environment_variables_node_config`.
+# Reaches PeerTube via the `PEERTUBE_LISTEN_PORT` environment variable.
 peertube_container_http_port: 9000
 
 # The RTMP port number in the container.
@@ -135,8 +128,16 @@ peertube_container_labels_additional_labels: "{{ peertube_container_labels_addit
 peertube_container_labels_additional_labels_auto: []
 peertube_container_labels_additional_labels_custom: []
 
-# Specify the size of the container's tmpfs volume
-peertube_container_tmpfs_tmp_size: 512m
+# Controls whether /tmp should be a tmpfs.
+# If not enabled, /tmp will be persisted to disk (see `peertube_tmp_path`).
+peertube_container_tmpfs_tmp_enabled: true
+
+# Specify the size of the container's tmpfs volume (see `peertube_container_tmpfs_tmp_enabled`).
+#
+# This is only an upper limit - memory is only used for what is actually stored in /tmp.
+# The default is generous, because some operations need a lot of temporary space
+# (e.g. PeerTube installing the Python packages used for local video transcription needs 500MB+).
+peertube_container_tmpfs_tmp_size: "{{ (ansible_facts['memtotal_mb'] / 2) | round | int }}m"
 
 # A list of extra arguments to pass to the container (`docker create` command)
 peertube_container_extra_arguments: "{{ peertube_container_extra_arguments_auto + peertube_container_extra_arguments_custom }}"
@@ -298,7 +299,9 @@ peertube_trusted_proxies_values_auto_trust_container_networks_list: ['172.16.0.0
 
 peertube_trusted_proxies_values_custom: []
 
-peertube_start_wait_time: 15
+# Controls how long (in seconds) to wait when upgrading an existing installation,
+# for PeerTube to finish its database migrations and for each of its manual migration scripts to complete.
+# See `peertube_manual_migration_scripts` in `../vars/main.yml`.
 peertube_migration_wait_time: 1800
 
 peertube_config_smtp_hostname: ""
@@ -333,11 +336,7 @@ peertube_config_admin_email: ""
 # Controls the PEERTUBE_REDIS_HOSTNAME environment variable
 peertube_redis_hostname: ""
 
-# Controls which Redis/Valkey logical database PeerTube uses.
-#
-# PeerTube takes this from its `redis.db` configuration setting, for which its container image
-# defines no dedicated environment variable, so it is passed along via `NODE_CONFIG`.
-# See `peertube_environment_variables_node_config`.
+# Controls the PEERTUBE_REDIS_DB environment variable, which selects the Redis/Valkey logical database PeerTube uses.
 peertube_redis_db: 0
 
 # Controls the PT_INITIAL_ROOT_PASSWORD environment variable, which configures the initial password of the automatically created `root` user.
@@ -390,12 +389,20 @@ peertube_config_log_level: info
 # Specify the timezone
 peertube_environment_variables_tz: UTC
 
+# Controls the HF_HOME environment variable, which is where the Hugging Face libraries
+# used by local video transcription (e.g. `whisper-ctranslate2`) store the models they download.
+#
+# Without it, these libraries default to `$HOME/.cache/huggingface`, which is not writable,
+# as the container runs with a read-only root filesystem.
+# The default is a path in the data directory, so downloaded models persist across container restarts.
+peertube_environment_variable_hf_home: /data/huggingface
+
 # Controls the NODE_CONFIG environment variable, which node-config (the configuration library
 # PeerTube uses) merges over the configuration files shipped in the container image.
 #
 # PeerTube maps most of its configuration file to dedicated `PEERTUBE_*` environment variables
 # (see `/app/support/docker/production/config/custom-environment-variables.yaml` in the container image),
-# but not all of it. NODE_CONFIG is how the rest is reached. Settings which do have a dedicated
+# and NODE_CONFIG can be used to reach the rest. Settings which do have a dedicated
 # environment variable are applied after NODE_CONFIG and thus still win over it,
 # so listing them here has no effect.
 #
@@ -405,13 +412,7 @@ peertube_environment_variables_tz: UTC
 #     rotation:
 #       enabled: false
 peertube_environment_variables_node_config: "{{ peertube_environment_variables_node_config_auto | combine(peertube_environment_variables_node_config_custom, recursive=True) }}"
-peertube_environment_variables_node_config_auto: |-
-  {{
-    {
-      'listen': {'port': peertube_container_http_port | int},
-      'redis': {'db': peertube_redis_db | int},
-    }
-  }}
+peertube_environment_variables_node_config_auto: {}
 peertube_environment_variables_node_config_custom: {}
 
 # peertube_environment_variables_additional_variables contains a multiline string with additional environment variables to pass to the container.

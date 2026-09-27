@@ -5,3 +5,20 @@
 ---
 
 peertube_version_marker_file_path: "{{ peertube_base_path }}/INSTALLED_VERSION"
+
+# Migration scripts which PeerTube requires to be run manually (after its own database migrations have finished)
+# when upgrading to (or past) a given version. See PeerTube's CHANGELOG ("IMPORTANT NOTES") for each version.
+#
+# Each script is run once, when upgrading an existing installation from a version older than `version`.
+# The scripts are idempotent, so running one again (e.g. when the installed version is unknown) is harmless.
+peertube_manual_migration_scripts:
+  - name: peertube-6.3
+    version: v6.3.0
+  - name: peertube-7.2
+    version: v7.2.0
+  - name: peertube-8.0
+    version: v8.0.0
+  - name: peertube-8.1
+    version: v8.1.0
+  - name: peertube-8.3
+    version: v8.3.0

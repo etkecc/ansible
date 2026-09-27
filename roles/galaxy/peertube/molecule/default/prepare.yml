@@ -21,10 +21,9 @@
         name:
           # Used by the `ansible.builtin.uri` calls in verify.yml
           - python3-requests
-          # The storage driver Docker is configured with below. `overlay2` cannot be
-          # nested inside the container Molecule runs these tests in, and `vfs` (the usual
-          # fallback) has no copy-on-write, so it writes out every layer of PeerTube's
-          # image in full.
+          # The storage driver below. Docker in a container cannot use the
+          # host's overlayfs, and fuse-overlayfs is several times faster than
+          # falling back to vfs.
           - fuse-overlayfs
         state: present
 
@@ -33,4 +32,7 @@
         name: ansible-role-docker
       vars:
         docker_daemon_options:
+          # `vfs` makes a full copy of every layer. The PeerTube image is large
+          # enough for that to dominate the run - `fuse-overlayfs` gives the same
+          # nested-container isolation without the copying.
           storage-driver: fuse-overlayfs

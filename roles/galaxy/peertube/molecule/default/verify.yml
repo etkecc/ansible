@@ -84,14 +84,11 @@
               peertube_defaults.peertube_container_image_registry_prefix_upstream_default
               ~ 'chocobozzz/peertube:'
               ~ peertube_defaults.peertube_version
-              ~ '-'
-              ~ peertube_defaults.peertube_distro_variant
-            fail_msg: "PeerTube reports {{ peertube_container_image_result.stdout | default('none') }}, expected {{ peertube_defaults.peertube_version }} with peertube_distro_variant ({{ peertube_defaults.peertube_distro_variant }})"
+            fail_msg: "PeerTube reports {{ peertube_container_image_result.stdout | default('none') }}, expected {{ peertube_defaults.peertube_version }}"
             success_msg: "PeerTube reports {{ peertube_container_image_result.stdout }}"
 
-        # PeerTube's `listen.port` has no dedicated environment variable in the container
-        # image and reaches it through NODE_CONFIG. The scenario configures a port that is
-        # not PeerTube's own default, so nothing answers here unless that actually worked.
+        # The scenario configures a port (`PEERTUBE_LISTEN_PORT`) that is not PeerTube's
+        # own default, so nothing answers here unless that actually reached PeerTube.
         - name: Wait for PeerTube to answer on the configured HTTP port
           ansible.builtin.uri:
             url: "{{ peertube_molecule_url }}/api/v1/config"
@@ -249,7 +246,7 @@
               - >-
                 SELECT actor."preferredUsername" || '=' || "videoChannel"."name"
                 FROM "videoChannel"
-                JOIN actor ON actor.id = "videoChannel"."actorId"
+                JOIN actor ON actor."videoChannelId" = "videoChannel".id
                 WHERE actor."preferredUsername" = '{{ peertube_molecule_channel_name }}'
           register: peertube_database_lookup
           changed_when: false
