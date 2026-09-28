@@ -96,7 +96,7 @@ exim_relay_relay_auth_username: "another.sender@example.com"
 exim_relay_relay_auth_password: "PASSWORD_FOR_THE_RELAY_HERE"
 ```
 
-By default, STARTTLS on port 587 is used. To use implicit TLS (SMTPS) on port 465 instead, see [the section below](#using-smtps-implicit-tls-on-port-465).
+By default, STARTTLS on port 587 is used. To use implicit TLS (SMTPS) on port 465 instead, refer to [the section below](#using-smtps-implicit-tls-on-port-465).
 
 ### Using SMTPS (implicit TLS on port 465)
 
