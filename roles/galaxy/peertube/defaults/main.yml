@@ -22,8 +22,23 @@ peertube_version: v8.3.0
 peertube_uid: ""
 peertube_gid: ""
 
+# The scheme used for serving PeerTube (`https` or `http`).
+# This describes how users reach PeerTube (e.g. through a reverse-proxy), not how the container listens.
+# See `peertube_environment_variable_webserver_https` and `peertube_environment_variable_webserver_port`.
+peertube_scheme: https
+
 # The hostname at which PeerTube is served.
 peertube_hostname: ""
+
+# Controls the PEERTUBE_WEBSERVER_HTTPS and PEERTUBE_WEBSERVER_PORT environment variables.
+# Together with `peertube_hostname`, these make up PeerTube's public URL, which PeerTube uses to build
+# the links it hands out (e.g. in e-mails and in federation with other instances).
+# Both are derived from `peertube_scheme`. The port only needs adjusting when serving on a non-standard port.
+#
+# Changing PeerTube's public URL for an instance which has already federated is not supported by PeerTube,
+# as other instances will keep referring to it by its old URL.
+peertube_environment_variable_webserver_https: "{{ peertube_scheme == 'https' }}"
+peertube_environment_variable_webserver_port: "{{ 443 if peertube_scheme == 'https' else 80 }}"
 
 # The path at which PeerTube is served.
 # This value must either be `/` or not end with a slash (e.g. `/peertube`).
@@ -115,6 +130,23 @@ peertube_container_labels_traefik_additional_response_headers_auto: |
     | combine ({'Strict-Transport-Security': peertube_http_header_strict_transport_security} if peertube_http_header_strict_transport_security and peertube_container_labels_traefik_tls else {})
   }}
 peertube_container_labels_traefik_additional_response_headers_custom: {}
+
+# Controls if labels are added to expose PeerTube's Prometheus metrics publicly (at `peertube_container_labels_traefik_metrics_path_prefix`).
+# Requires metrics to be enabled (see `peertube_environment_variable_open_telemetry_metrics_enabled`).
+peertube_container_labels_traefik_metrics_enabled: false
+peertube_container_labels_traefik_metrics_hostname: "{{ peertube_container_labels_traefik_hostname }}"
+# The path prefix must either be `/` or not end with a slash (e.g. `/metrics`).
+peertube_container_labels_traefik_metrics_path_prefix: /metrics
+peertube_container_labels_traefik_metrics_rule: "Host(`{{ peertube_container_labels_traefik_metrics_hostname }}`){% if peertube_container_labels_traefik_metrics_path_prefix != '/' %} && PathPrefix(`{{ peertube_container_labels_traefik_metrics_path_prefix }}`){% endif %}"
+peertube_container_labels_traefik_metrics_priority: 0
+peertube_container_labels_traefik_metrics_entrypoints: "{{ peertube_container_labels_traefik_entrypoints }}"
+peertube_container_labels_traefik_metrics_middlewares: []
+peertube_container_labels_traefik_metrics_tls: "{{ peertube_container_labels_traefik_metrics_entrypoints != 'web' }}"
+peertube_container_labels_traefik_metrics_tls_certResolver: "{{ peertube_container_labels_traefik_tls_certResolver }}"  # noqa var-naming
+# Controls whether HTTP Basic authentication protects the metrics.
+peertube_container_labels_traefik_metrics_middleware_basic_auth_enabled: false
+# Uses the htpasswd format (e.g. generated via `htpasswd -nb USERNAME PASSWORD`). Multiple users can be separated by commas.
+peertube_container_labels_traefik_metrics_middleware_basic_auth_users: ""
 
 # peertube_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
 # See `../templates/labels.j2` for details.
@@ -336,6 +368,13 @@ peertube_config_admin_email: ""
 # Controls the PEERTUBE_REDIS_HOSTNAME environment variable
 peertube_redis_hostname: ""
 
+# Controls the PEERTUBE_REDIS_PORT environment variable
+peertube_redis_port: 6379
+
+# Controls the PEERTUBE_REDIS_AUTH environment variable, which is the password to authenticate to Redis/Valkey with.
+# Leave empty if no authentication is required.
+peertube_redis_password: ""
+
 # Controls the PEERTUBE_REDIS_DB environment variable, which selects the Redis/Valkey logical database PeerTube uses.
 peertube_redis_db: 0
 
@@ -356,6 +395,23 @@ peertube_config_object_storage_endpoint: ""
 # Example: us-east-1
 peertube_config_object_storage_region: ""
 
+# Controls the PEERTUBE_OBJECT_STORAGE_FORCE_PATH_STYLE environment variable.
+# Enable this for S3-compatible services which do not support virtual-hosted-style bucket URLs
+# (e.g. some MinIO, Garage or SeaweedFS setups).
+peertube_config_object_storage_force_path_style: false
+
+# Controls the PEERTUBE_OBJECT_STORAGE_PROXY_PROXIFY_PRIVATE_FILES environment variable.
+# Controls whether PeerTube proxies private files (instead of redirecting to the object storage),
+# which is needed for access control on private/internal videos.
+peertube_config_object_storage_proxy_proxify_private_files: true
+
+# Controls the PEERTUBE_OBJECT_STORAGE_MAX_UPLOAD_PART environment variable.
+# Files bigger than this are uploaded to the object storage in multiple parts.
+peertube_config_object_storage_max_upload_part: 100MB
+
+# Controls the PEERTUBE_OBJECT_STORAGE_MAX_REQUEST_ATTEMPTS environment variable.
+peertube_config_object_storage_max_request_attempts: 3
+
 # Controls the PEERTUBE_OBJECT_STORAGE_CREDENTIALS_ACCESS_KEY_ID environment variable.
 peertube_config_object_storage_credentials_access_key_id: ""
 # Controls the PEERTUBE_OBJECT_STORAGE_CREDENTIALS_SECRET_ACCESS_KEY environment variable.
@@ -368,6 +424,8 @@ peertube_config_object_storage_streaming_playlists_bucket_name: ""
 peertube_config_object_storage_streaming_playlists_prefix: ""
 # Controls the PEERTUBE_OBJECT_STORAGE_STREAMING_PLAYLISTS_BASE_URL environment variable
 peertube_config_object_storage_streaming_playlists_base_url: ""
+# Controls the PEERTUBE_OBJECT_STORAGE_STREAMING_PLAYLISTS_STORE_LIVE_STREAMS environment variable
+peertube_config_object_storage_streaming_playlists_store_live_streams: false
 
 # Controls the PEERTUBE_OBJECT_STORAGE_WEB_VIDEOS_BUCKET_NAME environment variable.
 # Example: webtorrent-videos
@@ -377,6 +435,28 @@ peertube_config_object_storage_web_videos_prefix: ""
 # Controls the PEERTUBE_OBJECT_STORAGE_WEB_VIDEOS_BASE_URL environment variable
 peertube_config_object_storage_web_videos_base_url: ""
 
+# Controls the PEERTUBE_OBJECT_STORAGE_ORIGINAL_VIDEO_FILES_BUCKET_NAME environment variable.
+# Only used if PeerTube is configured to keep original video files (`transcoding.original_file.keep`, editable in the web admin).
+peertube_config_object_storage_original_video_files_bucket_name: peertube
+# Controls the PEERTUBE_OBJECT_STORAGE_ORIGINAL_VIDEO_FILES_PREFIX environment variable
+peertube_config_object_storage_original_video_files_prefix: original-video-files/
+# Controls the PEERTUBE_OBJECT_STORAGE_ORIGINAL_VIDEO_FILES_BASE_URL environment variable
+peertube_config_object_storage_original_video_files_base_url: ""
+
+# Controls the PEERTUBE_OBJECT_STORAGE_USER_EXPORTS_BUCKET_NAME environment variable.
+peertube_config_object_storage_user_exports_bucket_name: peertube
+# Controls the PEERTUBE_OBJECT_STORAGE_USER_EXPORTS_PREFIX environment variable
+peertube_config_object_storage_user_exports_prefix: user-exports/
+# Controls the PEERTUBE_OBJECT_STORAGE_USER_EXPORTS_BASE_URL environment variable
+peertube_config_object_storage_user_exports_base_url: ""
+
+# Controls the PEERTUBE_OBJECT_STORAGE_CAPTIONS_BUCKET_NAME environment variable.
+peertube_config_object_storage_captions_bucket_name: peertube
+# Controls the PEERTUBE_OBJECT_STORAGE_CAPTIONS_PREFIX environment variable
+peertube_config_object_storage_captions_prefix: captions/
+# Controls the PEERTUBE_OBJECT_STORAGE_CAPTIONS_BASE_URL environment variable
+peertube_config_object_storage_captions_base_url: ""
+
 # Controls the PEERTUBE_OBJECT_STORAGE_UPLOAD_ACL_PUBLIC environment variable
 peertube_config_object_storage_upload_acl_public: public-read
 # Controls the PEERTUBE_OBJECT_STORAGE_UPLOAD_ACL_PRIVATE environment variable
@@ -385,6 +465,41 @@ peertube_config_object_storage_upload_acl_private: private
 # Controls the PEERTUBE_LOG_LEVEL environment variable.
 # Valid values: debug, info, warn, error
 peertube_config_log_level: info
+
+# Controls the PEERTUBE_VIDEO_TRANSCRIPTION_ENGINE environment variable.
+# The engine used for local video transcription (enabled via the web admin),
+# which PeerTube automatically installs the first time it's needed.
+# Valid values: whisper-ctranslate2, openai-whisper
+peertube_environment_variable_video_transcription_engine: whisper-ctranslate2
+
+# Controls the PEERTUBE_VIDEO_TRANSCRIPTION_MODEL environment variable.
+# The model used for local video transcription, which PeerTube automatically downloads the first time it's needed.
+# Smaller models need less memory and CPU time, at the cost of accuracy.
+# Valid values: tiny, base, small, medium, large-v2, large-v3
+peertube_environment_variable_video_transcription_model: small
+
+# Controls the PEERTUBE_VIDEO_TRANSCRIPTION_TIMEOUT environment variable.
+# The maximum duration of a single video transcription job.
+peertube_environment_variable_video_transcription_timeout: 6 hours
+
+# Controls the PEERTUBE_OPEN_TELEMETRY_METRICS_ENABLED environment variable.
+# When enabled, PeerTube serves metrics for Prometheus to scrape, via a dedicated HTTP server
+# (see `peertube_environment_variable_open_telemetry_metrics_prometheus_exporter_*`).
+# See: https://docs.joinpeertube.org/maintain/observability
+peertube_environment_variable_open_telemetry_metrics_enabled: false
+
+# Controls the PEERTUBE_OPEN_TELEMETRY_METRICS_HTTP_REQUEST_DURATION_ENABLED environment variable.
+# Enables the HTTP request duration metric, which may have a high cardinality.
+peertube_environment_variable_open_telemetry_metrics_http_request_duration_enabled: false
+
+# Controls the PEERTUBE_OPEN_TELEMETRY_METRICS_PROMETHEUS_EXPORTER_HOSTNAME environment variable.
+# PeerTube's own default (`127.0.0.1`) would make the metrics reachable only from within the container,
+# so we listen on all interfaces instead. This only has an effect when metrics are enabled
+# (see `peertube_environment_variable_open_telemetry_metrics_enabled`).
+peertube_environment_variable_open_telemetry_metrics_prometheus_exporter_hostname: 0.0.0.0
+
+# Controls the PEERTUBE_OPEN_TELEMETRY_METRICS_PROMETHEUS_EXPORTER_PORT environment variable.
+peertube_environment_variable_open_telemetry_metrics_prometheus_exporter_port: 9091
 
 # Specify the timezone
 peertube_environment_variables_tz: UTC

@@ -53,6 +53,44 @@ traefik.http.routers.{{ peertube_identifier }}.tls.certResolver={{ peertube_cont
 {% endif %}
 
 traefik.http.services.{{ peertube_identifier }}.loadbalancer.server.port={{ peertube_container_http_port }}
+
+{% if peertube_container_labels_traefik_metrics_enabled %}
+############################################################
+#                                                          #
+# Metrics                                                  #
+#                                                          #
+############################################################
+
+{% set middlewares = peertube_container_labels_traefik_metrics_middlewares %}
+
+{% if peertube_container_labels_traefik_metrics_middleware_basic_auth_enabled %}
+traefik.http.middlewares.{{ peertube_identifier }}-metrics-basic-auth.basicauth.users={{ peertube_container_labels_traefik_metrics_middleware_basic_auth_users }}
+{% set middlewares = middlewares + [peertube_identifier + '-metrics-basic-auth'] %}
+{% endif %}
+
+traefik.http.middlewares.{{ peertube_identifier }}-metrics-replace-path.replacepath.path=/metrics
+{% set middlewares = middlewares + [peertube_identifier + '-metrics-replace-path'] %}
+
+traefik.http.routers.{{ peertube_identifier }}-metrics.rule={{ peertube_container_labels_traefik_metrics_rule }}
+{% if peertube_container_labels_traefik_metrics_priority | int > 0 %}
+traefik.http.routers.{{ peertube_identifier }}-metrics.priority={{ peertube_container_labels_traefik_metrics_priority }}
+{% endif %}
+traefik.http.routers.{{ peertube_identifier }}-metrics.service={{ peertube_identifier }}-metrics
+traefik.http.routers.{{ peertube_identifier }}-metrics.middlewares={{ middlewares | join(',') }}
+traefik.http.routers.{{ peertube_identifier }}-metrics.entrypoints={{ peertube_container_labels_traefik_metrics_entrypoints }}
+traefik.http.routers.{{ peertube_identifier }}-metrics.tls={{ peertube_container_labels_traefik_metrics_tls | to_json }}
+{% if peertube_container_labels_traefik_metrics_tls %}
+traefik.http.routers.{{ peertube_identifier }}-metrics.tls.certResolver={{ peertube_container_labels_traefik_metrics_tls_certResolver }}
+{% endif %}
+
+traefik.http.services.{{ peertube_identifier }}-metrics.loadbalancer.server.port={{ peertube_environment_variable_open_telemetry_metrics_prometheus_exporter_port }}
+
+############################################################
+#                                                          #
+# /Metrics                                                 #
+#                                                          #
+############################################################
+{% endif %}
 {% endif %}
 
 {% for arg in peertube_container_labels_additional_labels %}

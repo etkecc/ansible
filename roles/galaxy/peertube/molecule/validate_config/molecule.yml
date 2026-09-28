@@ -1,0 +1,51 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+dependency:
+  name: galaxy
+  options:
+    requirements-file: requirements.yml
+    force: true
+driver:
+  name: docker
+platforms:
+  - name: peertube-${MOLECULE_DISTRO:-ubuntu2604}-validate-config
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2604}-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    pre_build_image: true
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callback_result_format: yaml
+  inventory:
+    group_vars:
+      all:
+        # The settings which the role requires, so that validation gets far enough
+        # to reach the checks exercised by this scenario.
+        peertube_uid: 1000
+        peertube_gid: 1000
+        peertube_hostname: peertube.local
+        peertube_database_hostname: postgres
+        peertube_database_password: my_database_password
+        peertube_redis_hostname: valkey
+        peertube_config_secret: molecule-secret
+        peertube_config_admin_email: molecule-admin@example.com
+        peertube_config_root_user_initial_password: molecule-root-password
+  env:
+    # Workaround for https://github.com/ansible/molecule/issues/4391
+    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles
+scenario:
+  # Only the role's configuration validation is exercised (see converge.yml),
+  # so nothing gets installed and there is nothing to verify or check for idempotence.
+  test_sequence:
+    - dependency
+    - destroy
+    - syntax
+    - create
+    - converge
+    - destroy
+verifier:
+  name: ansible

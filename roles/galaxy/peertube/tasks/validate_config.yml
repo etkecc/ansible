@@ -31,6 +31,16 @@
     - { "old": "peertube_distro_variant", "new": "<removed> (PeerTube v8+ container images are published without a Debian suffix in their tag)" }
     - { "old": "peertube_start_wait_time", "new": "<removed> (the role now waits for PeerTube to start serving HTTP requests, see `peertube_migration_wait_time`)" }
 
+- name: Fail if PeerTube settings controlled by dedicated variables are passed via NODE_CONFIG
+  ansible.builtin.fail:
+    msg: >-
+      Your configuration passes the `{{ item.path }}` PeerTube setting via NODE_CONFIG
+      (e.g. via `peertube_environment_variables_node_config_custom`), but this setting is controlled by
+      the `{{ item.variable }}` variable (passed as a dedicated environment variable, which takes precedence over NODE_CONFIG).
+      Please remove it from NODE_CONFIG and use `{{ item.variable }}` instead.
+  when: item.path in (peertube_environment_variables_node_config | ansible.utils.to_paths)
+  with_items: "{{ peertube_environment_variables_node_config_forbidden_settings }}"
+
 - name: Fail if required PeerTube settings not defined
   ansible.builtin.fail:
     msg: >-
@@ -72,6 +82,12 @@
   with_items:
     - peertube_config_smtp_from
 
+- name: Fail if peertube_scheme is invalid
+  ansible.builtin.fail:
+    msg: >-
+      peertube_scheme must be 'https' or 'http'
+  when: "peertube_scheme not in ['https', 'http']"
+
 - name: Fail if PeerTube logging level is invalid
   ansible.builtin.fail:
     msg: >-
@@ -98,6 +114,23 @@
         msg: >-
           peertube_container_labels_traefik_path_prefix (`{{ peertube_container_labels_traefik_path_prefix }}`) must either be `/` or not end with a slash (e.g. `/peertube`).
       when: "peertube_container_labels_traefik_path_prefix != '/' and peertube_container_labels_traefik_path_prefix[-1] == '/'"
+
+    - name: Fail if PeerTube metrics are exposed, but not enabled
+      ansible.builtin.fail:
+        msg: >-
+          `peertube_container_labels_traefik_metrics_enabled` requires PeerTube's metrics to be enabled
+          (see `peertube_environment_variable_open_telemetry_metrics_enabled`).
+      when: "peertube_container_labels_traefik_metrics_enabled | bool and not peertube_environment_variable_open_telemetry_metrics_enabled | bool"
+
+    - name: Fail if HTTP Basic authentication for PeerTube metrics is enabled, but no users are defined
+      ansible.builtin.fail:
+        msg: >-
+          `peertube_container_labels_traefik_metrics_middleware_basic_auth_enabled` requires
+          `peertube_container_labels_traefik_metrics_middleware_basic_auth_users` to be defined.
+      when: >-
+        peertube_container_labels_traefik_metrics_enabled | bool
+        and peertube_container_labels_traefik_metrics_middleware_basic_auth_enabled | bool
+        and peertube_container_labels_traefik_metrics_middleware_basic_auth_users == ''
 
     - name: Fail if PeerTube hosted at a subpath
       ansible.builtin.fail:

@@ -22,3 +22,69 @@ peertube_manual_migration_scripts:
     version: v8.1.0
   - name: peertube-8.3
     version: v8.3.0
+
+# Configuration settings which the role passes to PeerTube via dedicated environment variables
+# (controlled by the given role variable), and which must thus not be passed via `NODE_CONFIG`,
+# as dedicated environment variables take precedence over it (so the `NODE_CONFIG` value would be ignored).
+#
+# `../tasks/validate_config.yml` fails if any of these is found in `peertube_environment_variables_node_config`,
+# to guide people into using the dedicated variable instead.
+#
+# This only lists settings which used to be configurable via `NODE_CONFIG` only (before the role introduced a dedicated variable for them).
+# Settings which the role has always passed via dedicated environment variables are not listed,
+# as `NODE_CONFIG` values for them have never had any effect anyway.
+peertube_environment_variables_node_config_forbidden_settings:
+  - path: listen.port
+    variable: peertube_container_http_port
+  - path: webserver.https
+    variable: peertube_environment_variable_webserver_https
+  - path: webserver.port
+    variable: peertube_environment_variable_webserver_port
+  - path: redis.db
+    variable: peertube_redis_db
+  - path: redis.port
+    variable: peertube_redis_port
+  - path: redis.auth
+    variable: peertube_redis_password
+  - path: video_transcription.engine
+    variable: peertube_environment_variable_video_transcription_engine
+  - path: video_transcription.model
+    variable: peertube_environment_variable_video_transcription_model
+  - path: video_transcription.timeout
+    variable: peertube_environment_variable_video_transcription_timeout
+  - path: open_telemetry.metrics.enabled
+    variable: peertube_environment_variable_open_telemetry_metrics_enabled
+  - path: open_telemetry.metrics.http_request_duration.enabled
+    variable: peertube_environment_variable_open_telemetry_metrics_http_request_duration_enabled
+  - path: open_telemetry.metrics.prometheus_exporter.hostname
+    variable: peertube_environment_variable_open_telemetry_metrics_prometheus_exporter_hostname
+  - path: open_telemetry.metrics.prometheus_exporter.port
+    variable: peertube_environment_variable_open_telemetry_metrics_prometheus_exporter_port
+  - path: object_storage.force_path_style
+    variable: peertube_config_object_storage_force_path_style
+  - path: object_storage.proxy.proxify_private_files
+    variable: peertube_config_object_storage_proxy_proxify_private_files
+  - path: object_storage.max_upload_part
+    variable: peertube_config_object_storage_max_upload_part
+  - path: object_storage.max_request_attempts
+    variable: peertube_config_object_storage_max_request_attempts
+  - path: object_storage.streaming_playlists.store_live_streams
+    variable: peertube_config_object_storage_streaming_playlists_store_live_streams
+  - path: object_storage.original_video_files.bucket_name
+    variable: peertube_config_object_storage_original_video_files_bucket_name
+  - path: object_storage.original_video_files.prefix
+    variable: peertube_config_object_storage_original_video_files_prefix
+  - path: object_storage.original_video_files.base_url
+    variable: peertube_config_object_storage_original_video_files_base_url
+  - path: object_storage.user_exports.bucket_name
+    variable: peertube_config_object_storage_user_exports_bucket_name
+  - path: object_storage.user_exports.prefix
+    variable: peertube_config_object_storage_user_exports_prefix
+  - path: object_storage.user_exports.base_url
+    variable: peertube_config_object_storage_user_exports_base_url
+  - path: object_storage.captions.bucket_name
+    variable: peertube_config_object_storage_captions_bucket_name
+  - path: object_storage.captions.prefix
+    variable: peertube_config_object_storage_captions_prefix
+  - path: object_storage.captions.base_url
+    variable: peertube_config_object_storage_captions_base_url

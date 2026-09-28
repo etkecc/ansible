@@ -42,6 +42,7 @@ jobs:
           - ubuntu2604
         scenario:
           - default
+          - validate_config
       fail-fast: false
 
     env:

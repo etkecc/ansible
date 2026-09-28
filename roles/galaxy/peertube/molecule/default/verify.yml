@@ -307,6 +307,38 @@
               Valkey database {{ peertube_redis_db }} holds
               {{ peertube_valkey_keys.stdout_lines | length }} of PeerTube's job queue keys
 
+        # PeerTube's Prometheus exporter listens on its own port. It is scraped via the
+        # container's address on its network (not via localhost from within the container),
+        # the same way a Prometheus server or a reverse-proxy would reach it.
+        - name: Determine the PeerTube container's IP address
+          ansible.builtin.command:
+            argv:
+              - docker
+              - container
+              - inspect
+              - peertube
+              - --format
+              - "{{ '{{' }}range .NetworkSettings.Networks{{ '}}' }}{{ '{{' }}.IPAddress{{ '}}' }} {{ '{{' }}end{{ '}}' }}"
+          register: peertube_container_ip_result
+          changed_when: false
+
+        - name: Scrape PeerTube's Prometheus metrics
+          ansible.builtin.uri:
+            url: "http://{{ peertube_container_ip_result.stdout.split() | first }}:{{ peertube_defaults.peertube_environment_variable_open_telemetry_metrics_prometheus_exporter_port }}/metrics"
+            method: GET
+            return_content: true
+            status_code: [200]
+          register: peertube_metrics
+          until: peertube_metrics.status == 200
+          retries: 12
+          delay: 5
+
+        - name: Assert PeerTube serves its own metrics
+          ansible.builtin.assert:
+            that: peertube_metrics.content is search('^peertube_', multiline=True)
+            fail_msg: "PeerTube's Prometheus exporter answered, but without any `peertube_*` metrics"
+            success_msg: "PeerTube's Prometheus exporter serves {{ peertube_metrics.content | regex_findall('^peertube_\\w+', multiline=True) | unique | length }} `peertube_*` metrics"
+
         - name: Verify nothing was quietly restarting while all of that was being checked
           when: "peertube_restarts_check_enabled | bool"
           block:
@@ -357,6 +389,7 @@
               - "PeerTube administrator: {{ peertube_me.json.username }} <{{ peertube_me.json.email }}>"
               - "PeerTube channel in Postgres: {{ peertube_database_lookup.stdout }}"
               - "PeerTube job queue keys in Valkey database {{ peertube_redis_db }}: {{ peertube_valkey_keys.stdout_lines | length }}"
+              - "PeerTube Prometheus metrics: {{ peertube_metrics.content | regex_findall('^peertube_\\w+', multiline=True) | unique | length }} `peertube_*` metrics"
 
       rescue:
         # Whatever went wrong, the reason is almost always in the systemd service log.

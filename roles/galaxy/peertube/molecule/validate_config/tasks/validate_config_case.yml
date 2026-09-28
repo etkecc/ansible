@@ -1,0 +1,37 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: "Run the configuration validation ({{ peertube_molecule_case.name }})"
+  block:
+    - name: "Run the role's configuration validation ({{ peertube_molecule_case.name }})"
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+        tasks_from: validate_config
+      vars:
+        peertube_environment_variables_node_config_custom: "{{ peertube_molecule_case.node_config }}"
+
+    - name: "Record that the configuration validation passed ({{ peertube_molecule_case.name }})"
+      ansible.builtin.set_fact:
+        peertube_molecule_case_failure: ""
+  rescue:
+    - name: "Record that the configuration validation failed ({{ peertube_molecule_case.name }})"
+      ansible.builtin.set_fact:
+        peertube_molecule_case_failure: "{{ ansible_failed_result | to_json }}"
+
+- name: "Assert the configuration validation passed ({{ peertube_molecule_case.name }})"
+  when: peertube_molecule_case.expected_failure_variable == ''
+  ansible.builtin.assert:
+    that: peertube_molecule_case_failure == ''
+    fail_msg: "Expected the configuration validation to pass, but it failed: {{ peertube_molecule_case_failure }}"
+
+- name: "Assert the configuration validation failed, pointing to the right variable ({{ peertube_molecule_case.name }})"
+  when: peertube_molecule_case.expected_failure_variable != ''
+  ansible.builtin.assert:
+    that:
+      - peertube_molecule_case_failure != ''
+      - ('`' ~ peertube_molecule_case.expected_failure_variable ~ '` instead') in peertube_molecule_case_failure
+    fail_msg: >-
+      Expected the configuration validation to fail with a message pointing to `{{ peertube_molecule_case.expected_failure_variable }}`,
+      but got: {{ peertube_molecule_case_failure if peertube_molecule_case_failure != '' else 'no failure' }}

@@ -49,6 +49,9 @@ provisioner:
         peertube_config_secret: molecule-secret
         peertube_config_admin_email: molecule-admin@example.com
         peertube_config_root_user_initial_password: molecule-root-password
+        # Enables PeerTube's Prometheus exporter, which verify.yml scrapes from outside
+        # the container, so that an exporter reachable only from within it cannot pass.
+        peertube_environment_variable_open_telemetry_metrics_enabled: true
 
         # Variables required for PeerTube to connect to the Postgres database (via Unix socket)
         peertube_database_username: my_database_username

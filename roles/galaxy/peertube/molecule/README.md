@@ -43,13 +43,17 @@ pip3 install -r ./molecule/requirements.txt
 
 ## Scenarios
 
-Currently there is one testing scenario available.
+Currently there are two testing scenarios available.
 
 ### `default`
 
 Installs PeerTube against a Postgres database (reached over a Unix socket) and a Valkey data-store, and then drives PeerTube's own API: it asks for OAuth client credentials, logs in as the `root` account with the password the role passed, reads that account back, creates a video channel and reads it back — then cross-checks the channel in Postgres and PeerTube's job queues in Valkey.
 
 Several of the scenario's variables are deliberately set away from PeerTube's own defaults (`peertube_container_http_port` to 9012, `peertube_redis_db` to 4, `peertube_hostname` to `peertube.local`), so that a setting which never reaches the process cannot pass for one that did.
+
+### `validate_config`
+
+Exercises the role's configuration validation only (nothing gets installed), running it against various `NODE_CONFIG` values: settings which the role passes via dedicated environment variables (see `peertube_environment_variables_node_config_forbidden_settings` in [`vars/main.yml`](../vars/main.yml)) have to be rejected with a message pointing to the role variable to use instead, while others have to be accepted.
 
 ## Running
 

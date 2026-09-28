@@ -1,0 +1,39 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Exercise the PeerTube role's configuration validation
+  hosts: all
+  gather_facts: false
+  vars:
+    # Each case runs the role's configuration validation with the given NODE_CONFIG
+    # (via `peertube_environment_variables_node_config_custom`).
+    # `expected_failure_variable` is the role variable which the failure message is expected
+    # to point to, or an empty string if validation is expected to pass.
+    peertube_molecule_cases:
+      - name: empty NODE_CONFIG (the default)
+        node_config: {}
+        expected_failure_variable: ""
+      - name: setting in a section the role does not control
+        node_config: {log: {rotation: {enabled: false}}}
+        expected_failure_variable: ""
+      - name: uncontrolled setting next to a controlled one
+        node_config: {listen: {hostname: "0.0.0.0"}}
+        expected_failure_variable: ""
+      - name: controlled setting
+        node_config: {listen: {port: 9000}}
+        expected_failure_variable: peertube_container_http_port
+      - name: controlled setting explicitly set to null
+        node_config: {redis: {db: null}}
+        expected_failure_variable: peertube_redis_db
+      - name: deeply nested controlled setting
+        node_config: {object_storage: {proxy: {proxify_private_files: false}}}
+        expected_failure_variable: peertube_config_object_storage_proxy_proxify_private_files
+  tasks:
+    - name: Run the configuration validation cases
+      ansible.builtin.include_tasks: tasks/validate_config_case.yml
+      loop: "{{ peertube_molecule_cases }}"
+      loop_control:
+        loop_var: peertube_molecule_case
+        label: "{{ peertube_molecule_case.name }}"
