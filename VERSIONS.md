@@ -27,7 +27,7 @@
 * Jitsi: stable-11248
 * Jitsi LDAP: 3
 * Jitsi User Verification: 19b69e543cdb99b16a939eeed921d7ed1da57d44
-* Ketesa: v1.5.0
+* Ketesa: v1.5.1
 * Languagetool: 6.8
 * Line Bridge: 412eda7f028f0ee946d6fe584c64c7e97f27c7a7
 * Linkding: 1.47.0
