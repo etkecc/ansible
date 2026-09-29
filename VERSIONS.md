@@ -1,5 +1,5 @@
 * Alpine: edge
-* Authentication Service: 1.25.1
+* Authentication Service: 1.26.0
 * Baibot: v1.27.1
 * Bluesky Bridge: v0.2510.0
 * Buscarron: v1.5.0
@@ -8,7 +8,7 @@
 * Coturn: 4.18.0
 * Discord Bridge: v0.7.7
 * Draupnir: v3.1.0
-* Element: v1.12.29
+* Element: v1.12.30
 * Etherpad: 3.3.6
 * Exim Relay: 4.99.5-r0-1
 * Firezone: 0.7.36
@@ -57,7 +57,7 @@
 * Prometheus Node Exporter: v1.12.1
 * Prometheus Postgres Exporter: v0.20.1
 * Radicale: 3.8.1.1
-* Sable: 1.22.9
+* Sable: 1.22.10
 * Schildichat: 1.11.109-sc.0.test.0
 * Signal Bridge: v0.2609.0
 * Slack Bridge: v0.2609.1
