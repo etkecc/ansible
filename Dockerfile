@@ -1,15 +1,17 @@
-ARG ALPINE
-ARG ANSIBLE
-ARG ANSIBLE_CORE
-FROM ghcr.io/etkecc/ansible/base:${ALPINE}-${ANSIBLE_CORE}-${ANSIBLE}
+FROM fedora:latest
+
+RUN dnf install -y ansible-core python3-passlib python3-resolvelib \
+    ansible-collection-community-general ansible-collection-community-docker \
+    ansible-collection-ansible-posix ansible-collection-ansible-utils \
+    git openssh-clients \
+    && dnf clean all
 
 WORKDIR /playbook
-ENTRYPOINT ["/bin/sh"]
 COPY . /playbook
-# Note the current commit hash into a file, if we ever need it.
-# Then initialize /upstream from submodules, and get rid of the `.git` directory.
-# We don't need to carry that extra weight into the final image.
+
 RUN git rev-parse HEAD > /playbook/source-commit && \
     git submodule update --init --recursive && \
     rm -rf /playbook/.git && \
     rm -rf /playbook/upstream/.git
+
+ENTRYPOINT ["/bin/sh"]

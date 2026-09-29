@@ -1,5 +1,4 @@
-# Hourly component auto-update on `fresh`. Pushes via SSH_DEPLOY_KEY, not the
-# default token, so the push retriggers the pipeline (token pushes don't).
+# Hourly component auto-update on `fresh`. Pushes via SSH_DEPLOY_KEY, so the push retriggers the pipeline.
 name: Update
 on:
   schedule:
