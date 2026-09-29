@@ -10,7 +10,7 @@
 * Draupnir: v3.1.0
 * Element: v1.12.29
 * Etherpad: 3.3.6
-* Exim Relay: 4.99.5-r0-0
+* Exim Relay: 4.99.5-r0-1
 * Firezone: 0.7.36
 * Fluffychat: v2.9.1
 * Funkwhale: 1.4.1
@@ -40,7 +40,7 @@
 * Meta Messenger Bridge: v0.2609.0
 * Miniflux: 2.3.3
 * Ntfy: v2.28.0
-* Peertube: v8.3.0
+* Peertube: v8.3.1
 * Postgres Container Image V10: 10.23
 * Postgres Container Image V11: 11.22
 * Postgres Container Image V12: 12.22
