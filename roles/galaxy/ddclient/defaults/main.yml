@@ -20,7 +20,7 @@ ddclient_identifier: ddclient
 ddclient_base_path: "/{{ ddclient_identifier }}"
 ddclient_config_path: "{{ ddclient_base_path }}/config"
 
-# renovate: datasource=docker depName=linuxserver/ddclient versioning=semver
+# renovate: datasource=docker depname=ghcr.io/linuxserver/ddclient versioning=semver
 ddclient_version: 4.0.0
 
 ddclient_uid: ""
@@ -30,7 +30,7 @@ ddclient_container_image: "{{ ddclient_container_image_registry_prefix }}linuxse
 ddclient_container_image_tag: "{{ ddclient_version }}"
 ddclient_container_image_registry_prefix: "{{ ddclient_container_image_registry_prefix_upstream }}"
 ddclient_container_image_registry_prefix_upstream: "{{ ddclient_container_image_registry_prefix_upstream_default }}"
-ddclient_container_image_registry_prefix_upstream_default: docker.io/
+ddclient_container_image_registry_prefix_upstream_default: ghcr.io/
 
 ddclient_container_image_self_build: false
 ddclient_container_image_self_build_name: "linuxserver/ddclient:{{ ddclient_container_image_self_build_repo_version }}"
@@ -59,6 +59,12 @@ ddclient_container_additional_networks_custom: []
 ddclient_container_additional_volumes: "{{ ddclient_container_additional_volumes_auto + ddclient_container_additional_volumes_custom }}"
 ddclient_container_additional_volumes_auto: []
 ddclient_container_additional_volumes_custom: []
+
+# Specify the size of the container's tmpfs volume (/run)
+ddclient_container_tmpfs_run_size: 128m
+
+# Specify the size of the container's tmpfs volume (/tmp)
+ddclient_container_tmpfs_tmp_size: 128m
 
 # A list of extra arguments to pass to the container (`docker create` command)
 ddclient_container_extra_arguments: "{{ ddclient_container_extra_arguments_auto + ddclient_container_extra_arguments_custom }}"

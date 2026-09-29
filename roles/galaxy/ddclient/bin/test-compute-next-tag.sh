@@ -37,7 +37,7 @@ trap cleanup EXIT
 write_defaults() {
 	cat > defaults/main.yml <<EOF
 ---
-# renovate: datasource=docker depName=linuxserver/ddclient versioning=semver
+# renovate: datasource=docker depname=ghcr.io/linuxserver/ddclient versioning=semver
 ddclient_version: $1
 
 ddclient_container_image_tag: "{{ ddclient_version }}"
@@ -150,7 +150,7 @@ expect 'a revert' v4.0.0-2 "$(merge "$revert_version && $edit_task")"
 scenario 'Derived variables do not influence the computed version'
 cat > defaults/main.yml <<'EOF'
 ---
-# renovate: datasource=docker depName=linuxserver/ddclient versioning=semver
+# renovate: datasource=docker depname=ghcr.io/linuxserver/ddclient versioning=semver
 ddclient_version: 4.1.0
 
 ddclient_container_image_tag: "{{ ddclient_version }}"

@@ -23,6 +23,15 @@
     ddclient_verify_decoy_provider: molecule-decoy-provider.invalid
     ddclient_verify_decoy_domain: molecule-decoy-host.example.org
 
+    # The unusual values the scenario configures the role with. Written down
+    # here rather than read back out of the inventory, so that a verify run
+    # compares the running container against something stated, not against
+    # whatever the scenario happens to say at the time.
+    ddclient_expected_uid: 1717
+    ddclient_expected_gid: 1717
+    ddclient_expected_timezone: Asia/Tokyo
+    ddclient_expected_timezone_abbreviation: JST
+
     ddclient_verify_units:
       - ddclient.service
 
@@ -78,13 +87,164 @@
           register: ddclient_container_raw
           changed_when: false
 
-        - name: Assert the ddclient container is running the image this role installs
+        - name: Parse the ddclient container definition
+          ansible.builtin.set_fact:
+            ddclient_container: "{{ (ddclient_container_raw.stdout | from_json)[0] }}"
+
+        # ------------------------------------------------------------------
+        # What the role told Docker to run
+        # ------------------------------------------------------------------
+
+        - name: Collect the mounts the role asked for
+          ansible.builtin.set_fact:
+            ddclient_config_mount: "{{ ddclient_container.Mounts | selectattr('Destination', 'equalto', '/config') | list }}"
+            ddclient_extra_mount: "{{ ddclient_container.Mounts | selectattr('Destination', 'equalto', ddclient_molecule_extra_volume_dst) | list }}"
+
+        - name: Assert that the role's data path is mounted at /config
           ansible.builtin.assert:
             that:
-              - (ddclient_container_raw.stdout | from_json | first).State.Running
-              - "':' ~ ddclient_defaults.ddclient_version in (ddclient_container_raw.stdout | from_json | first).Config.Image"
-            fail_msg: "The ddclient container is not running linuxserver/ddclient:{{ ddclient_defaults.ddclient_version }}"
-            success_msg: "The ddclient container is running linuxserver/ddclient:{{ ddclient_defaults.ddclient_version }}"
+              - ddclient_config_mount | length == 1
+              - ddclient_config_mount[0].Type == 'bind'
+              - ddclient_config_mount[0].RW
+            fail_msg: "The role's data path is not bind-mounted at /config: {{ ddclient_container.Mounts }}"
+            success_msg: "{{ ddclient_config_mount[0].Source | default('?') }} is bind-mounted at /config"
+
+        # ddclient_container_additional_volumes_custom has been inert in several roles in
+        # this collection - rendered into a comment, or into a `-v` that silently
+        # dropped the options. Both the destination and the readonly option have
+        # to arrive.
+        - name: Assert that ddclient_container_additional_volumes_custom reached the container
+          ansible.builtin.assert:
+            that:
+              - ddclient_extra_mount | length == 1
+              - ddclient_extra_mount[0].Type == 'bind'
+              - ddclient_extra_mount[0].Source == ddclient_molecule_extra_volume_src
+              - not ddclient_extra_mount[0].RW
+            fail_msg: "The additional volume did not reach the container: {{ ddclient_container.Mounts }}"
+            success_msg: "The additional volume is mounted read-only at {{ ddclient_molecule_extra_volume_dst }}"
+
+        # Reading the file back from inside the
+        # container is the difference between the variable existing and it working.
+        - name: Read the marker through the additional volume
+          ansible.builtin.command:
+            cmd: >-
+              docker exec ddclient
+              cat {{ ddclient_molecule_extra_volume_dst }}/{{ ddclient_molecule_marker_filename }}
+          register: ddclient_extra_volume
+          changed_when: false
+
+        - name: Assert the additional volume is mounted into the ddclient container
+          ansible.builtin.assert:
+            that:
+              - ddclient_extra_volume.rc == 0
+              - ddclient_extra_volume.stdout | trim == ddclient_molecule_extra_volume_marker
+            fail_msg: "The additional volume did not carry the marker into the container"
+            success_msg: "The additional volume carries the marker into the container"
+
+        # The `docker create` line in templates/systemd/ddclient.service.j2 has a
+        # comment sitting in the middle of a backslash continuation, right in front
+        # of the tmpfs that linuxserver.io's read-only mode needs. systemd drops
+        # such a comment rather than passing it on to docker, but that is worth
+        # holding onto: if it ever stopped doing so, everything after the comment
+        # would silently become part of the image name.
+        - name: Assert that the read-only container still gets its writable /run
+          ansible.builtin.assert:
+            that:
+              - ddclient_container.HostConfig.ReadonlyRootfs
+              - "'/run' in (ddclient_container.HostConfig.Tmpfs | default({}))"
+              - "'exec' in ddclient_container.HostConfig.Tmpfs['/run']"
+            fail_msg: >-
+              The container's root filesystem is
+              {{ 'read-only' if ddclient_container.HostConfig.ReadonlyRootfs else 'writable' }}
+              and its tmpfs mounts are {{ ddclient_container.HostConfig.Tmpfs | default({}) }}
+            success_msg: "The container is read-only with an exec tmpfs at /run"
+
+        - name: Assert that the role's uid and gid reached the container
+          ansible.builtin.assert:
+            that:
+              - ddclient_container.Config.User == (ddclient_expected_uid | string) ~ ':' ~ (ddclient_expected_gid | string)
+              - ('PUID=' ~ ddclient_expected_uid) in ddclient_container.Config.Env
+              - ('PGID=' ~ ddclient_expected_gid) in ddclient_container.Config.Env
+            fail_msg: >-
+              The container runs as {{ ddclient_container.Config.User }}
+              with {{ ddclient_container.Config.Env | select('match', 'P[UG]ID=') | list }}
+            success_msg: "The container runs as {{ ddclient_container.Config.User }} and carries the matching PUID/PGID"
+
+        - name: Assert that the role's timezone reached the container environment
+          ansible.builtin.assert:
+            that:
+              - ('TZ=' ~ ddclient_expected_timezone) in ddclient_container.Config.Env
+            fail_msg: "templates/env.j2 did not put TZ={{ ddclient_expected_timezone }} on the container"
+            success_msg: "The container environment carries TZ={{ ddclient_expected_timezone }}"
+
+        - name: Assert that the container image is the pinned version
+          ansible.builtin.assert:
+            that:
+              - ddclient_container.Config.Image == 'ghcr.io/linuxserver/ddclient:' ~ ddclient_defaults.ddclient_version
+            fail_msg: >-
+              The container runs {{ ddclient_container.Config.Image }}, not the
+              {{ ddclient_defaults.ddclient_version }} pinned in defaults/main.yml
+            success_msg: "The container runs {{ ddclient_container.Config.Image }}"
+
+        # ddclient reports the upstream version, which is what ddclient_version
+        # names and what Renovate bumps.
+        - name: Query the version of the running ddclient
+          ansible.builtin.command:
+            cmd: docker exec ddclient ddclient --version
+          register: ddclient_version_reported
+          changed_when: false
+
+        - name: Assert the running ddclient is the version this role installs
+          ansible.builtin.assert:
+            that: ddclient_version_reported.stdout_lines | first == 'ddclient version ' ~ ddclient_defaults.ddclient_version
+            fail_msg: "ddclient reports {{ ddclient_version_reported.stdout_lines | first | default('none') }}, expected {{ ddclient_defaults.ddclient_version }}"
+            success_msg: "ddclient reports {{ ddclient_version_reported.stdout_lines | first }}"
+
+        # A second, independent surface for the same thing, on the LinuxServer side
+        # of the image rather than ddclient's own.
+        #
+        # linuxserver.io stamps its own build onto the image as
+        # `<ddclient version>-ls<rebuild counter>`.
+        #
+        # `ddclient_version` pins a three-component linuxserver.io tag (`6.3.0`) while
+        # ddclient's own version has four components (`6.3.0.10514`) and the image
+        # label carries the rebuild counter on top (`6.3.0.10514-ls314`), so the pin
+        # is compared as a prefix - with the trailing dot,
+        - name: Assert the running ddclient is the version this role installs
+          ansible.builtin.assert:
+            that: ddclient_container.Config.Labels['org.opencontainers.image.version'].startswith('v' ~ ddclient_defaults.ddclient_version) # Mind "v"
+            fail_msg: "ddclient reports {{ ddclient_container.Config.Labels['org.opencontainers.image.version'] | default('none') }}, expected {{ ddclient_defaults.ddclient_version }}"
+            success_msg: "ddclient reports {{ ddclient_container.Config.Labels['org.opencontainers.image.version'] }}"
+
+        # ------------------------------------------------------------------
+        # What the process inside the container actually sees
+        # ------------------------------------------------------------------
+
+        - name: Ask the ddclient container which timezone and user it is running in
+          ansible.builtin.command:
+            cmd: docker exec ddclient sh -c 'date +%Z; id -u; id -g'
+          register: ddclient_process_identity
+          changed_when: false
+
+        # Unlike other services whose container image is provided by linuxserver.io,
+        # ddclient's container does not support running as non-root user.
+        - name: Assert that the ddclient process runs in the role's timezone, as the root user
+          ansible.builtin.assert:
+            that:
+              - ddclient_process_identity.stdout_lines[0] == ddclient_expected_timezone_abbreviation
+              - ddclient_process_identity.stdout_lines[1] == ddclient_expected_uid | string
+              - ddclient_process_identity.stdout_lines[2] == ddclient_expected_gid | string
+            fail_msg: >-
+              The container reports zone/uid/gid {{ ddclient_process_identity.stdout_lines }},
+              expected [{{ ddclient_expected_timezone_abbreviation }},
+              {{ ddclient_expected_uid }}, {{ ddclient_expected_gid }}]
+            success_msg: >-
+              The ddclient process runs in {{ ddclient_process_identity.stdout_lines[0] }}
+              as {{ ddclient_process_identity.stdout_lines[1] }}:{{ ddclient_process_identity.stdout_lines[2] }}
+
+        # ------------------------------------------------------------------
+        #
+        # ------------------------------------------------------------------
 
         # An active unit says very little on its own here. A ddclient container
         # given no usable configuration at all still starts, still reports itself
@@ -94,7 +254,7 @@
         # with, not merely that it is up.
         - name: Read the ddclient configuration file this role rendered
           ansible.builtin.slurp:
-            src: "/{{ ddclient_defaults.ddclient_identifier }}/config/ddclient.conf"
+            src: /ddclient/config/ddclient.conf
           register: ddclient_config_file
 
         - name: Assert the rendered configuration carries what this scenario asked for
@@ -119,7 +279,7 @@
         # file, and could not be one that fell back.
         - name: Wait for the ddclient daemon to settle between passes (up to 120s)
           ansible.builtin.command:
-            cmd: "docker exec {{ ddclient_defaults.ddclient_identifier }} ps -eo args"
+            cmd: docker exec ddclient ps -eo args
           register: ddclient_process_list
           changed_when: false
           until: "'ddclient - sleeping for' in ddclient_process_list.stdout"
@@ -169,7 +329,7 @@
         - name: Ask ddclient what it would send, without letting it send anything
           ansible.builtin.command:
             cmd: >-
-              docker exec {{ ddclient_defaults.ddclient_identifier }}
+              docker exec ddclient
               timeout 30 ddclient
               --file /config/ddclient.conf
               --daemon=0 --foreground --noexec --force --verbose --noquiet
@@ -203,7 +363,7 @@
         # own cache file, so that it cannot disturb the daemon's.
         - name: Install a decoy configuration for the falsification check
           ansible.builtin.copy:
-            dest: "/{{ ddclient_defaults.ddclient_identifier }}/config/molecule-decoy.conf"
+            dest: /ddclient/config/molecule-decoy.conf
             mode: "0600"
             owner: "{{ ddclient_uid }}"
             group: "{{ ddclient_gid }}"
@@ -218,7 +378,7 @@
         - name: Ask ddclient what it would send for the decoy configuration
           ansible.builtin.command:
             cmd: >-
-              docker exec {{ ddclient_defaults.ddclient_identifier }}
+              docker exec ddclient
               timeout 30 ddclient
               --file /config/molecule-decoy.conf
               --cache /tmp/molecule-decoy.cache
@@ -230,7 +390,7 @@
 
         - name: Remove the decoy configuration
           ansible.builtin.file:
-            path: "/{{ ddclient_defaults.ddclient_identifier }}/config/molecule-decoy.conf"
+            path: /ddclient/config/molecule-decoy.conf
             state: absent
 
         - name: Assert the dry run follows the configuration it is given
@@ -244,39 +404,6 @@
             success_msg: >-
               The dry run reports the decoy provider when given the decoy configuration,
               so it does read the configuration it is pointed at
-
-        # ddclient reports the upstream version, which is what ddclient_version
-        # names and what Renovate bumps.
-        - name: Query the version of the running ddclient
-          ansible.builtin.command:
-            cmd: "docker exec {{ ddclient_defaults.ddclient_identifier }} ddclient --version"
-          register: ddclient_version_reported
-          changed_when: false
-
-        - name: Assert the running ddclient is the version this role installs
-          ansible.builtin.assert:
-            that: ddclient_version_reported.stdout_lines | first == 'ddclient version ' ~ ddclient_defaults.ddclient_version
-            fail_msg: "ddclient reports {{ ddclient_version_reported.stdout_lines | first | default('none') }}, expected {{ ddclient_defaults.ddclient_version }}"
-            success_msg: "ddclient reports {{ ddclient_version_reported.stdout_lines | first }}"
-
-        # A second, independent surface for the same thing, on the LinuxServer side
-        # of the image rather than ddclient's own. This one is matched by prefix:
-        # LinuxServer appends its own build counter to the upstream version, so the
-        # value reads "v4.0.0-ls230" for a role installing 4.0.0, and the build
-        # counter moves without the ddclient version moving.
-        - name: Read the LinuxServer build version from the running container
-          ansible.builtin.command:
-            cmd: "docker exec {{ ddclient_defaults.ddclient_identifier }} cat /build_version"
-          register: ddclient_build_version
-          changed_when: false
-
-        - name: Assert the image was built for the version this role installs
-          ansible.builtin.assert:
-            that: "'Linuxserver.io version: v' ~ ddclient_defaults.ddclient_version in ddclient_build_version.stdout"
-            fail_msg: >-
-              The image reports "{{ ddclient_build_version.stdout_lines | first }}",
-              which was not built for ddclient {{ ddclient_defaults.ddclient_version }}
-            success_msg: "The image was built for ddclient {{ ddclient_defaults.ddclient_version }}"
 
         - name: Verify nothing was quietly restarting while all of that was being checked
           when: "ddclient_restarts_check_enabled | bool"
@@ -323,7 +450,6 @@
               - "ddclient systemd: {% for unit, state in ddclient_verify_units | zip(ddclient_services.results | map(attribute='status.ActiveState')) %}{{ unit }} ({{ state }}){% if not loop.last %}, {% endif %}{% endfor %}"
               - "ddclient restarts: {% for unit, restarts in ddclient_verify_units | zip(ddclient_restarts_after.results | map(attribute='status.NRestarts')) %}{{ restarts }} ({{ unit }}){% if not loop.last %}, {% endif %}{% endfor %}"
               - "ddclient version: {{ ddclient_version_reported.stdout_lines | first }}"
-              - "ddclient image build: {{ ddclient_build_version.stdout_lines | first }}"
               - "ddclient daemon sleeping on: {{ ddclient_sleep_seconds }}s of {{ ddclient_daemon_interval }}s"
               - "ddclient update: {{ ddclient_verify_domain }} at {{ ddclient_verify_provider }} via {{ ddclient_verify_protocol }}"
 

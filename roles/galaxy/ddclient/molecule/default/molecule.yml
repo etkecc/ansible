@@ -33,9 +33,33 @@ provisioner:
         ddclient_debug_service_enabled: false
         ddclient_restarts_check_enabled: true
 
+        # The host directory mounted into the container through
+        # `ddclient_container_additional_volumes_custom`, and the file placed in it by
+        # prepare.yml. Reading that file from inside the container is what
+        # proves the additional volumes reach the systemd unit rather than
+        # being merely declared in defaults/main.yml.
+        ddclient_molecule_extra_volume_src: /ddclient-molecule-extra
+        ddclient_molecule_extra_volume_dst: /molecule-extra
+        ddclient_molecule_extra_volume_marker: only-a-real-bind-mount-can-read-this
+
+        # Files placed on the host under the paths the role bind-mounts. ddclient
+        # itself is asked to list them back, so a mount that docker accepted but
+        # the process cannot see does not pass.
+        ddclient_molecule_marker_filename: ddclient-molecule-marker.txt
+
         # Variables for ddclient
-        ddclient_uid: 1000
-        ddclient_gid: 1000
+        #
+        # Deliberately not 1000: the linuxserver.io PUID/PGID pattern has left a
+        # needed directory unwritable in other roles of this fleet, and a uid
+        # that exists in the test image by accident would hide that.
+        ddclient_uid: 1717
+        ddclient_gid: 1717
+
+        ddclient_container_additional_volumes_custom:
+          - type: bind
+            src: "{{ ddclient_molecule_extra_volume_src }}"
+            dst: "{{ ddclient_molecule_extra_volume_dst }}"
+            options: readonly
 
         # ddclient is a dynamic DNS updater, so the one thing this scenario
         # must never do is update a DNS record somewhere. The values below are
@@ -70,6 +94,11 @@ provisioner:
             username: molecule-username
             password: molecule-password
             domain: "{{ ddclient_verify_domain }}"
+
+        # Neither the role's default of Etc/UTC nor the test host's zone, so
+        # that the timezone the container ends up in can only have come from
+        # templates/env.j2.
+        ddclient_environment_variables_tz: Asia/Tokyo
   env:
     # Workaround for https://github.com/ansible/molecule/issues/4391
     ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles

@@ -80,7 +80,7 @@ ddclient_web_skip: FIELD_TO_EXTRACT_IP_ADDRESS_HERE
 
 ### Configuring router option (optional)
 
-By default the service is configured to use `web` as the option for a router, from which ddclient is to retrieve an IP address. See [this page](https://ddclient.net/routers.html) on the official documentation for details.
+By default the service is configured to use `web` as the option for a router, from which ddclient is to retrieve an IP address. Refer to [this page](https://ddclient.net/routers.html) on the official documentation for details.
 
 To change the router to `if`, you can add the following configuration to your `vars.yml` file:
 

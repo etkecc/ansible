@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2026 spatterlight
 # SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
@@ -18,7 +19,12 @@
     - name: Ensure required packages are installed for ddclient Molecule tests preparation
       ansible.builtin.package:
         name:
+          # Used by ansible.builtin.uri when it talks to ddclient.
           - python3-requests
+          # The storage driver below. Docker in a container cannot use the
+          # host's overlayfs, and fuse-overlayfs is several times faster than
+          # falling back to vfs.
+          - fuse-overlayfs
         state: present
 
     - name: Ensure Docker is installed for ddclient Molecule tests preparation
@@ -26,4 +32,25 @@
         name: ansible-role-docker
       vars:
         docker_daemon_options:
-          storage-driver: vfs
+          # `vfs` makes a full copy of every layer. The ddclient image is large
+          # enough for that to dominate the run - `fuse-overlayfs` gives the same
+          # nested-container isolation without the copying.
+          storage-driver: fuse-overlayfs
+
+    # Bind-mounted into the ddclient container through
+    # `ddclient_container_additional_volumes_custom`. The role does not create the source
+    # of an additional volume, so it has to exist before the container is
+    # created, or `docker create` refuses the bind. verify.yml reads the marker
+    # file back from inside the container, which only works if the systemd unit
+    # really carries the additional volumes.
+    - name: Ensure the additional volume directory exists for ddclient Molecule tests
+      ansible.builtin.file:
+        path: "{{ ddclient_molecule_extra_volume_src }}"
+        state: directory
+        mode: "0755"
+
+    - name: Ensure a marker file exists in the ddclient Molecule additional volume
+      ansible.builtin.copy:
+        content: "{{ ddclient_molecule_extra_volume_marker }}\n"
+        dest: "{{ ddclient_molecule_extra_volume_src }}/{{ ddclient_molecule_marker_filename }}"
+        mode: "0644"
