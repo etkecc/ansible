@@ -17,3 +17,4 @@
 * [Radicale](https://github.com/tomsquest/docker-radicale): [3.8.0.0](https://github.com/tomsquest/docker-radicale/releases/tag/3.8.0.0) ⇾ [3.8.1.1](https://github.com/tomsquest/docker-radicale/releases/tag/3.8.1.1)
 * [Sable](https://github.com/sableclient/sable): [1.22.6](https://github.com/sableclient/sable/releases/tag/v1.22.6) ⇾ [1.22.10](https://github.com/sableclient/sable/releases/tag/v1.22.10)
 * [Slack Bridge](https://github.com/mautrix/slack): [v0.2609.0](https://github.com/mautrix/slack/releases/tag/v0.2609.0) ⇾ [v0.2609.1](https://github.com/mautrix/slack/releases/tag/v0.2609.1)
+* [Synapse](https://github.com/element-hq/synapse): [v1.161.0](https://github.com/element-hq/synapse/releases/tag/v1.161.0) ⇾ [v1.162.0](https://github.com/element-hq/synapse/releases/tag/v1.162.0)
