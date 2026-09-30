@@ -1,6 +1,6 @@
 * Alpine: edge
 * Authentication Service: 1.26.0
-* Baibot: v1.27.1
+* Baibot: v1.28.0
 * Bluesky Bridge: v0.2510.0
 * Buscarron: v1.5.0
 * Cinny: v4.12.7

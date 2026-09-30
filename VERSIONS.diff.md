@@ -7,7 +7,7 @@
 ### Component Updates
 
 * [Authentication Service](https://github.com/element-hq/matrix-authentication-service): [1.25.1](https://github.com/element-hq/matrix-authentication-service/releases/tag/v1.25.1) ⇾ [1.26.0](https://github.com/element-hq/matrix-authentication-service/releases/tag/v1.26.0)
-* [Baibot](https://github.com/etkecc/baibot): [v1.27.0](https://github.com/etkecc/baibot/releases/tag/v1.27.0) ⇾ [v1.27.1](https://github.com/etkecc/baibot/releases/tag/v1.27.1)
+* [Baibot](https://github.com/etkecc/baibot): [v1.27.0](https://github.com/etkecc/baibot/releases/tag/v1.27.0) ⇾ [v1.28.0](https://github.com/etkecc/baibot/releases/tag/v1.28.0)
 * [Element](https://github.com/element-hq/element-web): [v1.12.29](https://github.com/element-hq/element-web/releases/tag/v1.12.29) ⇾ [v1.12.30](https://github.com/element-hq/element-web/releases/tag/v1.12.30)
 * [Exim Relay](https://github.com/devture/exim-relay): [4.99.1-r0-2](https://github.com/devture/exim-relay/releases/tag/4.99.1-r0-2) ⇾ [4.99.5-r0-1](https://github.com/devture/exim-relay/releases/tag/4.99.5-r0-1)
 * [Image](https://github.com/etkecc/borgmatic): 1.4.5-2.1.9 _new_
