@@ -10,8 +10,8 @@ END
 $$;
 
 -- This is useful for initial user creation (since we don't assign a password above) and for handling subsequent password changes
--- TODO - we should escape quotes in the password.
-ALTER ROLE "{{ managed_db.username }}" PASSWORD '{{ managed_db.password }}';
+-- Quotes are doubled to escape them. Backslashes need no escaping, as `standard_conforming_strings` is on by default.
+ALTER ROLE "{{ managed_db.username }}" PASSWORD '{{ managed_db.password | replace("'", "''") }}';
 
 -- `CREATE DATABASE` cannot run inside a transaction block and does not support `IF NOT EXISTS`.
 -- Use a meta-command to conditionally execute it only when missing, avoiding an ERROR that would fail the task after execution.

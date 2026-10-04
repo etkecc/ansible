@@ -18,9 +18,10 @@
 
 # Defaults
 
+# No waiting is needed with the readiness check (see `postgres_managed_databases_postgres_start_wait_timeout_seconds`).
 - name: Set postgres_start_wait_time, if not provided
   ansible.builtin.set_fact:
-    postgres_start_wait_time: 15
+    postgres_start_wait_time: "{{ 0 if postgres_systemd_readiness_check_enabled | bool else 15 }}"
   when: "postgres_start_wait_time | default('') == ''"
 
 - name: Set postgres_import_wait_time, if not provided
@@ -45,7 +46,7 @@
   register: postgres_ensure_started_result
 
 - name: Wait a bit, so that Postgres can start
-  when: "postgres_ensure_started_result.changed | bool"
+  when: "postgres_ensure_started_result.changed | bool and (postgres_start_wait_time | int) > 0"
   ansible.builtin.wait_for:
     timeout: "{{ postgres_start_wait_time }}"
   delegate_to: 127.0.0.1

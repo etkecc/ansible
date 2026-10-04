@@ -106,3 +106,6 @@
         - name: Fail because verification did not pass
           ansible.builtin.fail:
             msg: "Postgres verification failed. The systemd service log is printed above."
+
+- name: Verify Postgres managed databases
+  ansible.builtin.import_playbook: verify_managed_databases.yml

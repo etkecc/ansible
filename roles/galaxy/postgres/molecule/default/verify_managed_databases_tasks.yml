@@ -1,0 +1,69 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Query the owner of the managed database
+  ansible.builtin.command:
+    cmd: >-
+      /postgres/bin/cli-non-interactive -tAc
+      "SELECT pg_get_userbyid(datdba) FROM pg_database WHERE datname = '{{ postgres_verify_managed_db.name }}'"
+  register: postgres_verify_managed_db_owner
+  changed_when: false
+
+- name: Query the extensions in the managed database
+  ansible.builtin.command:
+    cmd: >-
+      /postgres/bin/cli-non-interactive -d {{ postgres_verify_managed_db.name }} -tAc
+      "SELECT extname FROM pg_extension WHERE extname = 'pg_trgm'"
+  register: postgres_verify_managed_db_extensions
+  changed_when: false
+
+- name: Determine the Postgres container image
+  ansible.builtin.command:
+    cmd: docker container inspect postgres --format '{% raw %}{{.Config.Image}}{% endraw %}'
+  register: postgres_verify_container_image
+  changed_when: false
+
+# Over the container network like a service would, so that password authentication
+# applies (connections from inside the Postgres container itself may be trusted).
+- name: Log in to the managed database as its user
+  ansible.builtin.command:
+    argv:
+      - docker
+      - run
+      - --rm
+      - --network=postgres
+      - --env=PGPASSWORD={{ postgres_verify_managed_db.password }}
+      - "{{ postgres_verify_container_image.stdout }}"
+      - psql
+      - --host=postgres
+      - --username={{ postgres_verify_managed_db.username }}
+      - --dbname={{ postgres_verify_managed_db.name }}
+      - -tAc
+      - SELECT current_user
+  register: postgres_verify_managed_db_login
+  changed_when: false
+  failed_when: false
+
+# Only `additional_sql_queries` create the extension (after switching to their database via `\c`),
+# so it must not show up in a database prepared after one which did that.
+- name: Assert the managed database is prepared
+  vars:
+    postgres_verify_managed_db_expected_extension: "{{ 'pg_trgm' if postgres_verify_managed_db.additional_sql_queries is defined else '' }}"
+  ansible.builtin.assert:
+    that:
+      - postgres_verify_managed_db_owner.stdout == postgres_verify_managed_db.username
+      - postgres_verify_managed_db_extensions.stdout == postgres_verify_managed_db_expected_extension
+      - postgres_verify_managed_db_login.rc == 0
+      - postgres_verify_managed_db_login.stdout == postgres_verify_managed_db.username
+    fail_msg: >-
+      The managed database `{{ postgres_verify_managed_db.name }}` is not prepared as expected.
+      Owner: `{{ postgres_verify_managed_db_owner.stdout }}`,
+      pg_trgm extension: `{{ postgres_verify_managed_db_extensions.stdout }}`,
+      login as `{{ postgres_verify_managed_db.username }}` (rc={{ postgres_verify_managed_db_login.rc }}):
+      `{{ postgres_verify_managed_db_login.stdout }}{{ postgres_verify_managed_db_login.stderr }}`
+    success_msg: >-
+      `{{ postgres_verify_managed_db.name }}` is owned by `{{ postgres_verify_managed_db.username }}`,
+      {{ 'has' if postgres_verify_managed_db_expected_extension else 'does not have' }} the pg_trgm extension,
+      and its user can log in with its password

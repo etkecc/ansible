@@ -70,9 +70,10 @@
 
 # Defaults
 
+# No waiting is needed with the readiness check (see `postgres_managed_databases_postgres_start_wait_timeout_seconds`).
 - name: Set postgres_start_wait_time, if not provided
   ansible.builtin.set_fact:
-    postgres_start_wait_time: 15
+    postgres_start_wait_time: "{{ 0 if postgres_systemd_readiness_check_enabled | bool else 15 }}"
   when: "postgres_start_wait_time | default('') == ''"
 
 # Actual import work
@@ -90,7 +91,7 @@
     timeout: "{{ postgres_start_wait_time }}"
   delegate_to: 127.0.0.1
   become: false
-  when: "postgres_ensure_started_result.changed | bool"
+  when: "postgres_ensure_started_result.changed | bool and (postgres_start_wait_time | int) > 0"
 
 # We only stop services here, leaving it to the caller to start them later.
 #

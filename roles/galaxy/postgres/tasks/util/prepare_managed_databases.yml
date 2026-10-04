@@ -7,7 +7,7 @@
   register: postgres_ensure_started_result
 
 - name: Wait a bit, so that Postgres can start
-  when: postgres_ensure_started_result.changed | bool
+  when: "postgres_ensure_started_result.changed | bool and (postgres_managed_databases_postgres_start_wait_timeout_seconds | int) > 0"
   ansible.builtin.wait_for:
     timeout: "{{ postgres_managed_databases_postgres_start_wait_timeout_seconds }}"
   delegate_to: 127.0.0.1
@@ -75,18 +75,47 @@
           --entrypoint={{ postgres_container_shell_path }}
           {{ postgres_container_image_to_use }}
           -c
-          'psql -v ON_ERROR_STOP=0 -h {{ postgres_connection_hostname }} --file=/{{ postgres_identifier }}-init-managed-dbs-user-and-role.sql'
+          'psql -v ON_ERROR_STOP=1 -v VERBOSITY=terse -h {{ postgres_connection_hostname }} --file=/{{ postgres_identifier }}-init-managed-dbs-user-and-role.sql'
       changed_when: true
       register: postgres_managed_dbs_init_result
-      failed_when: >-
-        (postgres_managed_dbs_init_result.stderr | default('')) is search('(?m)^ERROR:')
-        or
-        (postgres_managed_dbs_init_result.stdout | default('')) is search('(?m)^ERROR:')
+      # Judged below, after the SQL file (which contains passwords) is deleted
+      # and outside of `no_log`, so that the failure can be explained.
+      failed_when: false
+      # psql exits with 2 when it cannot connect to Postgres (or loses the connection).
+      # Running the SQL file again is safe, as it already runs on every installation.
+      until: postgres_managed_dbs_init_result.rc != 2
+      retries: "{{ postgres_managed_databases_connection_retries }}"
+      delay: "{{ postgres_managed_databases_connection_retry_delay_seconds }}"
 
     - name: Delete managed database initialization SQL file
       ansible.builtin.file:
         path: /tmp/{{ postgres_identifier }}-init-managed-dbs-user-and-role.sql
         state: absent
+
+    # psql reports errors (and notices) on stderr. `VERBOSITY=terse` above keeps it from quoting
+    # the failing statement, but error messages may still contain values (e.g. passwords), so these are redacted.
+    - name: Fail if the managed database initialization SQL file could not be executed
+      when: postgres_managed_dbs_init_result.rc != 0
+      no_log: false
+      ansible.builtin.fail:
+        msg: |-
+          Initializing the managed databases failed: psql exited with code {{ postgres_managed_dbs_init_result.rc }}
+          ({{ postgres_managed_dbs_init_psql_exit_codes[postgres_managed_dbs_init_result.rc] | default('see the output below') }}).
+          Output (with passwords redacted):
+          {{ postgres_managed_dbs_init_result.stderr | regex_replace(postgres_managed_dbs_init_passwords_regex, '********') }}
+      vars:
+        postgres_managed_dbs_init_psql_exit_codes:
+          1: fatal psql error
+          2: could not connect to Postgres, or the connection was lost
+          3: an SQL statement failed
+        postgres_managed_dbs_init_passwords: "{{ (postgres_managed_databases | map(attribute='password') | list + [postgres_connection_password]) | map('string') | select | unique | list }}"
+        # Longest first, so that a password which contains another one is redacted whole.
+        postgres_managed_dbs_init_passwords_regex: >-
+          {{
+            postgres_managed_dbs_init_passwords | map('length') | zip(postgres_managed_dbs_init_passwords)
+            | sort(attribute='0', reverse=true) | map(attribute='1')
+            | map('regex_escape') | join('|')
+          }}
 
 - name: Ensure Postgres is stopped, if it originally was and if we are configured to do it
   when: postgres_systemd_service_stop_originally_stopped_after_preparation | bool and postgres_ensure_started_result.changed | bool

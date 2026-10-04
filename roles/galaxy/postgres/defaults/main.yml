@@ -348,6 +348,15 @@ postgres_container_shell_path: "{{ '/bin/sh' if postgres_container_image_suffix 
 
 postgres_systemd_required_services_list: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
 
+# Controls whether the systemd service only counts as started once Postgres accepts connections,
+# so that services ordered after it (`After=`) do not find it still initializing.
+# See the `ExecStartPost` in the systemd service template for how this is checked.
+postgres_systemd_readiness_check_enabled: true
+
+# Controls how long to wait for Postgres to accept connections.
+# If it does not within this time, the service counts as started anyway.
+postgres_systemd_readiness_check_timeout_seconds: 300
+
 # A list of databases (and their credentials) that this role will create and manage on the server.
 #
 # `postgres_managed_databases_auto` is managed by the playbook.
@@ -436,9 +445,19 @@ postgres_import_schemas_ignore_regex: "^CREATE SCHEMA \\\"?({{ postgres_import_s
 #
 # For most (subsequent) runs, Postgres would already be running, so no waiting will be happening at all.
 #
+# With `postgres_systemd_readiness_check_enabled`, no waiting is needed at all: starting the systemd service
+# only completes once Postgres accepts connections (see the `ExecStartPost` in the systemd service template),
+# so any fixed delay on top of that would only slow things down.
+#
+# Otherwise, we wait a fixed amount of time and hope that it's enough.
 # On ARM, we wait some more. ARM32 devices are especially known for being slow.
 # ARM64 likely don't need such a long delay, but it doesn't hurt too much having it.
-postgres_managed_databases_postgres_start_wait_timeout_seconds: "{{ 45 if postgres_architecture in ['arm32', 'arm64'] else 15 }}"
+postgres_managed_databases_postgres_start_wait_timeout_seconds: "{{ 0 if postgres_systemd_readiness_check_enabled | bool else (45 if postgres_architecture in ['arm32', 'arm64'] else 15) }}"
+
+# Controls how many times (and how many seconds apart) initializing managed databases/users is retried,
+# when it fails because Postgres cannot be connected to (e.g. it is still starting up after the wait above).
+postgres_managed_databases_connection_retries: 10
+postgres_managed_databases_connection_retry_delay_seconds: 3
 
 # Defines the `PGDATA` environment variable for the Postgres server.
 #

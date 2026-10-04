@@ -1,0 +1,85 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify Postgres managed databases
+  hosts: all
+  become: true
+  gather_facts: false
+
+  tasks:
+    # A fact rather than a play variable, because the checks below override
+    # `postgres_managed_databases_additional` based on it.
+    - name: Determine the managed databases to verify
+      ansible.builtin.set_fact:
+        postgres_verify_managed_dbs: "{{ postgres_managed_databases_additional }}"
+
+    - name: Verify the managed databases which the role prepared while converging
+      ansible.builtin.include_tasks: verify_managed_databases_tasks.yml
+      loop: "{{ postgres_verify_managed_dbs }}"
+      loop_control:
+        loop_var: postgres_verify_managed_db
+        label: "{{ postgres_verify_managed_db.name }}"
+
+    - name: Include the variables the Postgres role relies on
+      ansible.builtin.include_role:
+        name: com.devture.ansible.role.systemd_docker_base
+        public: true
+
+    # Preparation runs on every installation, against databases which already exist,
+    # so it has to succeed on an already-prepared server and leave it prepared.
+    - name: Prepare the managed databases again
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+        tasks_from: util/prepare_managed_databases
+
+    - name: Verify the managed databases after preparing them again
+      ansible.builtin.include_tasks: verify_managed_databases_tasks.yml
+      loop: "{{ postgres_verify_managed_dbs }}"
+      loop_control:
+        loop_var: postgres_verify_managed_db
+        label: "{{ postgres_verify_managed_db.name }}"
+
+    # Postgres may not accept connections yet when preparation starts (e.g. when it starts up slower
+    # than `postgres_managed_databases_postgres_start_wait_timeout_seconds`). Postgres starts up too fast
+    # here to reproduce that reliably, so it is made unreachable for a while instead, which psql fails on the same way.
+    - name: Make Postgres unreachable for a while
+      ansible.builtin.shell:
+        cmd: >-
+          docker network disconnect postgres postgres
+          && systemd-run --on-active=10 docker network connect postgres postgres
+      changed_when: true
+
+    - name: Prepare the managed databases while Postgres is unreachable for a while
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+        tasks_from: util/prepare_managed_databases
+
+    - name: Verify the managed databases after preparing them while Postgres was unreachable for a while
+      ansible.builtin.include_tasks: verify_managed_databases_tasks.yml
+      loop: "{{ postgres_verify_managed_dbs }}"
+      loop_control:
+        loop_var: postgres_verify_managed_db
+        label: "{{ postgres_verify_managed_db.name }}"
+
+    # The failing statement echoes a password (the one which needs escaping) back in its error,
+    # to check that the error is shown without it.
+    - name: Verify that failing additional SQL fails the preparation
+      ansible.builtin.include_tasks: verify_managed_databases_failure_tasks.yml
+      vars:
+        postgres_verify_failure_case: failing additional SQL
+        postgres_verify_failure_managed_databases_additional:
+          - "{{ postgres_verify_managed_dbs[0] }}"
+          - "{{ postgres_verify_managed_dbs[1] | combine({'additional_sql_queries': [postgres_verify_failure_query]}) }}"
+        postgres_verify_failure_query: "SELECT '{{ postgres_verify_managed_dbs[1].password | replace(\"'\", \"''\") }}'::integer;"
+        postgres_verify_failure_connection_hostname: postgres
+        postgres_verify_failure_expected_output: 'ERROR:  invalid input syntax for type integer'
+
+    - name: Verify that failing to connect fails the preparation
+      ansible.builtin.include_tasks: verify_managed_databases_failure_tasks.yml
+      vars:
+        postgres_verify_failure_case: failing to connect
+        postgres_verify_failure_managed_databases_additional: "{{ postgres_verify_managed_dbs }}"
+        postgres_verify_failure_connection_hostname: molecule-nonexistent-host
+        postgres_verify_failure_expected_output: 'psql: error:'
