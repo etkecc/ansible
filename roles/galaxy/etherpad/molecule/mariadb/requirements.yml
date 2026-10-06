@@ -5,7 +5,7 @@ roles:
     version: 8.0.0
     name: ansible-role-docker
   - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-mariadb.git
-    version: v12.3.3-1
+    version: v12.3.3-3
     name: ansible-role-mariadb
   - src: git+https://github.com/devture/com.devture.ansible.role.playbook_help.git
     version: main
@@ -15,4 +15,4 @@ roles:
     name: com.devture.ansible.role.systemd_docker_base
 collections:
   - name: community.docker
-    version: 5.3.0
+    version: 5.4.0
