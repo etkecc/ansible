@@ -8,4 +8,6 @@
 
 * [Etherpad](https://github.com/ether/etherpad-lite): [3.3.6](https://github.com/ether/etherpad-lite/releases/tag/3.3.6) ⇾ [3.3.7](https://github.com/ether/etherpad-lite/releases/tag/3.3.7)
 * [Fluffychat](https://github.com/krille-chan/fluffychat): [v2.9.1](https://github.com/krille-chan/fluffychat/releases/tag/v2.9.1) ⇾ [v2.10.0](https://github.com/krille-chan/fluffychat/releases/tag/v2.10.0)
+* [Image](https://github.com/etkecc/borgmatic): 1.4.5-2.1.9 ⇾ 1.4.5-2.1.10
 * [Sable](https://github.com/sableclient/sable): [1.22.10](https://github.com/sableclient/sable/releases/tag/v1.22.10) ⇾ [1.22.11](https://github.com/sableclient/sable/releases/tag/v1.22.11)
+* [Vaultwarden](https://github.com/dani-garcia/vaultwarden): [1.37.3](https://github.com/dani-garcia/vaultwarden/releases/tag/1.37.3) ⇾ [1.37.4](https://github.com/dani-garcia/vaultwarden/releases/tag/1.37.4)

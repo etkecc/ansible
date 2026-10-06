@@ -23,7 +23,7 @@
 * Honoroit: v0.9.30
 * Hookshot Bridge: 7.5.0
 * Hydrogen: v0.5.1
-* Image: 1.4.5-2.1.9
+* Image: 1.4.5-2.1.10
 * Jitsi: stable-11248
 * Jitsi LDAP: 3
 * Jitsi User Verification: 19b69e543cdb99b16a939eeed921d7ed1da57d44
@@ -79,6 +79,6 @@
 * Twitter Bridge: v0.2609.0
 * Uptime Kuma: 1.23.17
 * Valkey: 9.1.2
-* Vaultwarden: 1.37.3
+* Vaultwarden: 1.37.4
 * Wg Easy: 15.4.0
 * WhatsApp Bridge: v0.2609.0
