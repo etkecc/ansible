@@ -34,7 +34,7 @@ See the project's [documentation](https://docs.ntfy.sh/) to learn what ntfy does
 
 ntfy implements [UnifiedPush](https://unifiedpush.org), the standard which makes it possible to send and receive push notifications without using Google's Firebase Cloud Messaging (FCM) service.
 
-Working as a **Push Server**, a ntfy server can forward messages to a **Distributor** running on Android and other devices (see [definitions on the official documentation of UnifiedPush](https://unifiedpush.org/developers/spec/definitions/) for the definition of the Push Server and the Distributor).
+Working as a **Push Server**, a ntfy server can forward messages to a **Distributor** running on Android and other devices (refer to [definitions on the official documentation of UnifiedPush](https://unifiedpush.org/developers/spec/definitions/) for the definition of the Push Server and the Distributor).
 
 This role installs and manages a self-hosted ntfy server as the Push Server, which the Distributor (such as the ntfy Android app) on your device listens to.
 
@@ -45,14 +45,14 @@ As the ntfy Android app functions as the Distributor too, you do not have to ins
 💡 **Notes**:
 
 - Refer [this official documentation of UnifiedPush](https://unifiedpush.org/users/troubleshooting/setup/#understand-unifiedpush) for a simple explanation about relationship among UnifiedPush-compatible application, Distributor, Push Server, and the application's server.
-- See [this page](https://unifiedpush.org/users/apps/) for a non-exhaustive list of the end-user applications that use UnifiedPush.
+- Refer to [this page](https://unifiedpush.org/users/apps/) for a non-exhaustive list of the end-user applications that use UnifiedPush.
 - Unlike push notifications using Google's FCM or Apple's APNs, each end-user can choose the Push Server which one prefer. This means that deploying a ntfy server cannot enforce a UnifiedPush-compatible application (and its users) to use the exact server.
 
 ### iOS instant notification
 
 Because iOS heavily restricts background processing, it is impossible to implement instant push notifications without a central server.
 
-To implement instant notification through the self-hosted ntfy server, see [this official documentation](https://docs.ntfy.sh/config/#ios-instant-notifications) for instructions.
+To implement instant notification through the self-hosted ntfy server, refer to [this official documentation](https://docs.ntfy.sh/config/#ios-instant-notifications) for instructions.
 
 ## Adjusting the playbook configuration
 
@@ -149,7 +149,7 @@ ntfy_auth_default_access: read-only
 
 UnifiedPush requires application servers to be provided anonymous write access to the topic which will be used for pushing messages, according to [this ntfy's documentation](https://docs.ntfy.sh/config/#example-unifiedpush). This role takes care of it by declaring such an access-control entry in `ntfy_auth_access_default`, so you do not need to allow it manually by running the `ntfy access` command as described on the documentation.
 
-See [this section](https://docs.ntfy.sh/config/#access-control) on the official documentation about authentication.
+Refer to [this section](https://docs.ntfy.sh/config/#access-control) on the official documentation about authentication.
 
 ### Enable web app (optional)
 
@@ -269,7 +269,7 @@ ntfy_visitor_request_limit_burst: 60
 ntfy_visitor_request_limit_replenish: "5s"
 ```
 
-See [this section](https://docs.ntfy.sh/config/#rate-limiting) on the official documentation for details about them.
+Refer to [this section](https://docs.ntfy.sh/config/#rate-limiting) on the official documentation for details about them.
 
 #### Edit rate limits for email notification
 
@@ -329,7 +329,7 @@ ntfy_metrics_listen_http_port: 9090
 
 **Note**: serving the endpoint on a dedicated port is the safer option of the two and is what we recommend. When the endpoint is served on the regular HTTP port, it also becomes reachable at `https://ntfy.example.com/metrics` (that is, on the hostname that ntfy itself is served at), without any authentication. ntfy does not apply its own [access control](https://docs.ntfy.sh/config/#access-control) rules to the metrics endpoint, so restricting access to your ntfy server does not help here either. Serving the endpoint on a dedicated port avoids this, because ntfy then stops serving `/metrics` on the regular HTTP port.
 
-See [this section](https://docs.ntfy.sh/config/#monitoring) on the official documentation for details.
+Refer to [this section](https://docs.ntfy.sh/config/#monitoring) on the official documentation for details.
 
 Because the exposed endpoint is publicly reachable, you are strongly encouraged to protect it with [HTTP Basic Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication) by adding the following configuration to your `vars.yml` file (adapt to your needs):
 
@@ -340,7 +340,7 @@ ntfy_container_labels_traefik_metrics_middleware_basic_auth_enabled: true
 ntfy_container_labels_traefik_metrics_middleware_basic_auth_users: ''
 ```
 
-If you are looking for an integration, you can check out the MASH playbook. See [this section of the documentation on the playbook](https://github.com/mother-of-all-self-hosting/mash-playbook/blob/main/docs/services/ntfy.md#integrating-with-prometheus-optional) for more information.
+If you are looking for an integration, you can check out the MASH playbook. Refer to [this section of the documentation on the playbook](https://github.com/mother-of-all-self-hosting/mash-playbook/blob/main/docs/services/ntfy.md#integrating-with-prometheus-optional) for more information.
 
 ### Extending the configuration
 
@@ -350,7 +350,7 @@ Take a look at:
 
 - [`defaults/main.yml`](../defaults/main.yml) for some variables that you can customize via your `vars.yml` file. You can override settings (even those that don't have dedicated playbook variables) using the `ntfy_configuration_extension_yaml` variable
 
-See [this section on the official documentation](https://docs.ntfy.sh/config/#config-options) for a complete list of ntfy config options that you can put in `ntfy_configuration_extension_yaml`.
+Refer to [this section on the official documentation](https://docs.ntfy.sh/config/#config-options) for a complete list of ntfy config options that you can put in `ntfy_configuration_extension_yaml`.
 
 ## Installing
 
@@ -402,11 +402,11 @@ If everything works as expected, it will create a notification on your device.
 
 The web app lets you subscribe and publish messages to ntfy topics. To use it, you can do so by going to the hostname specified above (`example.com`) on the browser.
 
-See [this page](https://docs.ntfy.sh/subscribe/web/) of the official documentation for details about how to use the web app.
+Refer to [this page](https://docs.ntfy.sh/subscribe/web/) of the official documentation for details about how to use the web app.
 
 #### Progressive Web App (PWA)
 
-ntfy is built as [progressive web app (PWA)](https://docs.ntfy.sh/subscribe/pwa/), which can be installed **both on desktop and mobile devices**. See [this section](https://docs.ntfy.sh/subscribe/web/#background-notifications) for more information.
+ntfy is built as [progressive web app (PWA)](https://docs.ntfy.sh/subscribe/pwa/), which can be installed **both on desktop and mobile devices**. Refer to [this section](https://docs.ntfy.sh/subscribe/web/#background-notifications) for more information.
 
 ### UnifiedPush-compatible application
 
