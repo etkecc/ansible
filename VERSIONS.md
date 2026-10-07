@@ -33,7 +33,7 @@
 * Linkding: 1.47.0
 * LinkedIn Bridge: v0.2609.0
 * Livekit JWT Service: 0.7.0
-* Livekit Server: v1.13.7
+* Livekit Server: v1.13.8
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.6.0
 * Meta Instagram Bridge: v0.2609.0
@@ -73,7 +73,7 @@
 * Synapse Reverse Proxy Companion: 1.31.6-alpine
 * Synapse S3 Storage Provider: 1.7.0
 * Telegram Bridge: v0.2609.0
-* Traefik: v3.7.13
+* Traefik: v3.7.14
 * Traefik Certs Dumper: v2.11.4
 * Traefik Proxy Protocol: 1
 * Twitter Bridge: v0.2609.0
