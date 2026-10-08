@@ -63,7 +63,7 @@
 * Slack Bridge: v0.2609.1
 * Spam Checker Mjolnir Antispam: v1.12.1
 * Spam Checker Synapse Simple Antispam: 5ab711971e3a4541a7a40310ff85e17f8262cc05
-* Static Files: 2.44.0
+* Static Files: 2.44.1
 * Steam Bridge: 1.4.0
 * Sygnal: v0.17.0
 * Synapse: v1.162.0
