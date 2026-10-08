@@ -32,7 +32,7 @@
 * Line Bridge: 412eda7f028f0ee946d6fe584c64c7e97f27c7a7
 * Linkding: 1.47.0
 * LinkedIn Bridge: v0.2609.0
-* Livekit JWT Service: 0.7.0
+* Livekit JWT Service: 0.8.0
 * Livekit Server: v1.13.9
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.6.0
