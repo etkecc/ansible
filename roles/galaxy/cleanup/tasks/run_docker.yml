@@ -1,0 +1,15 @@
+# SPDX-FileCopyrightText: 2022 etke.cc
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+---
+- name: Ensure Docker is cleaned up
+  ansible.builtin.command:
+    cmd: "{{ system_cleanup_bin_path }}/cleanup-docker"
+  register: system_cleanup_docker_result
+  changed_when: system_cleanup_docker_result.stdout is search('^Removed ', multiline=True)
+
+- name: Show what the Docker cleanup did
+  ansible.builtin.debug:
+    msg: "{{ system_cleanup_docker_result.stdout_lines }}"

@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+---
+- name: Ensure Docker cleanup paths exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0750"
+  with_items:
+    - "{{ system_cleanup_base_path }}"
+    - "{{ system_cleanup_bin_path }}"
+    - "{{ system_cleanup_config_path }}"
+
+- name: Ensure the Docker cleanup script is installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/bin/cleanup-docker.j2"
+    dest: "{{ system_cleanup_bin_path }}/cleanup-docker"
+    mode: "0750"
+
+- name: Ensure the Docker cleanup configuration is installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/config/docker.json.j2"
+    dest: "{{ system_cleanup_config_path }}/docker.json"
+    mode: "0640"

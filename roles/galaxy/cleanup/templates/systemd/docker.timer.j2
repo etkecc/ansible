@@ -1,0 +1,15 @@
+{#
+SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+
+SPDX-License-Identifier: GPL-3.0-or-later
+#}
+
+[Unit]
+Description=Remove superseded Docker images and other Docker leftovers
+
+[Timer]
+Unit={{ system_cleanup_identifier }}-docker.service
+OnCalendar={{ system_cleanup_docker_timer_calendar }}
+
+[Install]
+WantedBy=timers.target

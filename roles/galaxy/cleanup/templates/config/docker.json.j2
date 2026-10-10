@@ -1,0 +1,8 @@
+{
+  "dry_run": {{ system_cleanup_docker_config_dry_run | bool | to_json }},
+  "remove_stopped_containers": {{ system_cleanup_docker_config_remove_stopped_containers | bool | to_json }},
+  "remove_superseded_images": {{ system_cleanup_docker_config_remove_superseded_images | bool | to_json }},
+  "superseded_images_grace_period_days": {{ system_cleanup_docker_config_superseded_images_grace_period_days | int | to_json }},
+  "superseded_images_exclude_patterns": {{ system_cleanup_docker_config_superseded_images_exclude_patterns | to_json }},
+  "remove_anonymous_volumes": {{ system_cleanup_docker_config_remove_anonymous_volumes | bool | to_json }}
+}

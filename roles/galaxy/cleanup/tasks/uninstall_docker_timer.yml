@@ -1,0 +1,30 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+---
+- name: Check existence of the Docker cleanup systemd service
+  ansible.builtin.stat:
+    path: "/etc/systemd/system/{{ system_cleanup_identifier }}-docker.service"
+  register: system_cleanup_docker_service_stat
+
+- name: Uninstall the Docker cleanup systemd units
+  when: system_cleanup_docker_service_stat.stat.exists | bool
+  block:
+    - name: Ensure the Docker cleanup systemd units are stopped and disabled
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: stopped
+        enabled: false
+        daemon_reload: true
+      with_items:
+        - "{{ system_cleanup_identifier }}-docker.timer"
+        - "{{ system_cleanup_identifier }}-docker.service"
+
+    - name: Ensure the Docker cleanup systemd units do not exist
+      ansible.builtin.file:
+        path: "/etc/systemd/system/{{ item }}"
+        state: absent
+      with_items:
+        - "{{ system_cleanup_identifier }}-docker.timer"
+        - "{{ system_cleanup_identifier }}-docker.service"

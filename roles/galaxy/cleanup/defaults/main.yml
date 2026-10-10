@@ -3,10 +3,70 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 ---
-# run docker prune commands to remove unused containers, images, and volumes (networks are preserved)
+# Used for naming the role's systemd units (e.g. `system-cleanup-docker.service`) and its base path.
+system_cleanup_identifier: system-cleanup
+
+# Where the role keeps the files it installs.
+# Playbooks typically override the base path to live next to their other services (e.g. `/mash/system-cleanup`).
+system_cleanup_base_path: "/{{ system_cleanup_identifier }}"
+system_cleanup_bin_path: "{{ system_cleanup_base_path }}/bin"
+system_cleanup_config_path: "{{ system_cleanup_base_path }}/config"
+
+# Clean up Docker: remove superseded images and stopped containers (and optionally anonymous volumes).
+# Networks and named volumes are never removed.
+#
+# This installs a script (`cleanup-docker` in `system_cleanup_bin_path`) and its config (`docker.json` in
+# `system_cleanup_config_path`). The script runs:
+# - during Ansible runs with the `start` tag (e.g. `--tags=setup-all,start`)
+# - on a schedule, if `system_cleanup_docker_timer_enabled` is on
+# - whenever you run it by hand (pass `--dry-run` to only see what it would remove)
 system_cleanup_docker: false
 
-# run `journalctl --vacuum-time=7d` to remove old logs
+# Remove all stopped containers (`docker container prune`).
+system_cleanup_docker_config_remove_stopped_containers: true
+
+# Remove images that no container uses (running or stopped) and that a newer image of the same repository
+# has superseded at least `system_cleanup_docker_config_superseded_images_grace_period_days` ago.
+#
+# Unlike `docker image prune -a`, this keeps unused images which have no newer version on the host:
+# images of stopped services, of containers that only run on a timer and locally built images.
+# Rolling back to a superseded image is possible during the grace period.
+system_cleanup_docker_config_remove_superseded_images: true
+system_cleanup_docker_config_superseded_images_grace_period_days: 3
+
+# Repositories (shell-style patterns, e.g. `localhost/*`, `ghcr.io/mailcow/*` or `postgres`) whose images are never removed.
+system_cleanup_docker_config_superseded_images_exclude_patterns: []
+
+# Remove anonymous volumes that no container uses (`docker volume prune`, which leaves named volumes alone).
+# Off by default, because volumes hold data.
+system_cleanup_docker_config_remove_anonymous_volumes: false
+
+# Only report what would be removed.
+system_cleanup_docker_config_dry_run: false
+
+# Also run the Docker cleanup on a schedule (see `man systemd.time`), via a systemd timer
+# (`<system_cleanup_identifier>-docker.timer`). Useful when images arrive outside of Ansible runs,
+# or for the grace period to run out without a redeploy.
+system_cleanup_docker_timer_enabled: false
+system_cleanup_docker_timer_calendar: "*-*-* 04:45:00"
+
+# systemd services which the Docker cleanup's systemd service requires (and starts after)
+system_cleanup_docker_systemd_required_services_list: "{{ system_cleanup_docker_systemd_required_services_list_default + system_cleanup_docker_systemd_required_services_list_auto + system_cleanup_docker_systemd_required_services_list_custom }}"
+system_cleanup_docker_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+system_cleanup_docker_systemd_required_services_list_auto: []
+system_cleanup_docker_systemd_required_services_list_custom: []
+
+# systemd services which the Docker cleanup's systemd service wants (and starts after)
+system_cleanup_docker_systemd_wanted_services_list: "{{ system_cleanup_docker_systemd_wanted_services_list_default + system_cleanup_docker_systemd_wanted_services_list_auto + system_cleanup_docker_systemd_wanted_services_list_custom }}"
+system_cleanup_docker_systemd_wanted_services_list_default: []
+system_cleanup_docker_systemd_wanted_services_list_auto: []
+system_cleanup_docker_systemd_wanted_services_list_custom: []
+
+# install a systemd timer which runs `journalctl --vacuum-time=7d` to remove old logs
+# (turning this off removes the timer)
+#
+# journald already limits how much space the journal takes up (see `SystemMaxUse` in `man journald.conf`),
+# so this is only needed for keeping logs for a shorter time.
 system_cleanup_logs: false
 system_cleanup_logs_retention: 7d
 system_cleanup_logs_calendar: "*-*-* 04:15:00"
@@ -23,7 +83,8 @@ system_cleanup_apt_upgrade_type: safe
 system_cleanup_kernels: false
 
 # purge-old-kernels script
-system_cleanup_kernels_script: /usr/local/bin/purge-old-kernels
+# (earlier versions of this role installed it at /usr/local/bin/purge-old-kernels, from where it gets removed)
+system_cleanup_kernels_script: "{{ system_cleanup_bin_path }}/purge-old-kernels"
 
 # purge-old-kernels --keep param
 system_cleanup_kernels_keep: 1

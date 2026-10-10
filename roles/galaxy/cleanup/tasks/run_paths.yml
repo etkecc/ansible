@@ -1,0 +1,11 @@
+# SPDX-FileCopyrightText: 2022 etke.cc
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+---
+- name: Ensure paths are removed
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  with_items: "{{ system_cleanup_paths }}"
+  ignore_errors: true # ansible (!) behavior is inconsistent, depending on the target server's distro, so that's a workaround

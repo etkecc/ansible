@@ -1,0 +1,30 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+---
+- name: Check existence of systemd-journald-autovacuum systemd service
+  ansible.builtin.stat:
+    path: /etc/systemd/system/systemd-journald-autovacuum.service
+  register: system_cleanup_logs_service_stat
+
+- name: Uninstall systemd-journald-autovacuum systemd units
+  when: system_cleanup_logs_service_stat.stat.exists | bool
+  block:
+    - name: Ensure systemd-journald-autovacuum systemd units are stopped and disabled
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: stopped
+        enabled: false
+        daemon_reload: true
+      with_items:
+        - systemd-journald-autovacuum.timer
+        - systemd-journald-autovacuum.service
+
+    - name: Ensure systemd-journald-autovacuum systemd units do not exist
+      ansible.builtin.file:
+        path: "/etc/systemd/system/{{ item }}"
+        state: absent
+      with_items:
+        - systemd-journald-autovacuum.timer
+        - systemd-journald-autovacuum.service

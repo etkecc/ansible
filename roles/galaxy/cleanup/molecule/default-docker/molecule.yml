@@ -16,6 +16,13 @@ platforms:
     command: ${MOLECULE_DOCKER_COMMAND:-""}
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
+      # Docker inside the instance stores images via containerd. Its storage
+      # cannot use overlay on top of the instance's own overlay filesystem, so a
+      # volume puts it on a real filesystem.
+      - /var/lib/containerd
+    # Remove volumes along with the instance, so that local runs do not leave
+    # gigabytes behind.
+    keep_volumes: false
     cgroupns_mode: host
     privileged: true
     pre_build_image: true
@@ -25,11 +32,11 @@ provisioner:
     defaults:
       callback_result_format: yaml
   options:
-    # The role only prunes Docker when 'start' is among the tags the playbook
-    # was run with, which is how mash-playbook invokes it (`setup-all,start`).
-    # 'all' is Ansible's own "run everything" tag, so every task in every
-    # playbook of this scenario still runs; it is only here so that the run tags
-    # this scenario advertises are the ones the role looks for.
+    # The role's Docker pruning is tagged 'start', which is how mash-playbook
+    # invokes it (`setup-all,start`). 'all' is Ansible's own "run everything"
+    # tag, so every task in every playbook of this scenario still runs; 'start'
+    # is only here so that the run tags this scenario advertises are the ones
+    # the role is wired to.
     tags: all,start
   inventory:
     group_vars:
@@ -38,17 +45,42 @@ provisioner:
         # variable with the tag missing, and proves nothing gets pruned then.
         system_cleanup_docker: true
 
-        # The default scenario covers these. They are set to values other than
-        # the role's defaults here as well, so that a converge which somehow
-        # picked up the wrong variables would not look the same as this one.
-        system_cleanup_logs_retention: 5d
-        system_cleanup_logs_calendar: "*-*-* 02:11:33"
+        # Not the role's default (/system-cleanup), so that verify.yml can tell
+        # that the script went where this variable says.
+        system_cleanup_base_path: /srv/molecule-cleanup
 
-        # Not this scenario's subject, and both are slow. The empty path list is
-        # the role's own default and is spelled out because a run of the role
-        # with nothing to remove has to be a no-op rather than an error.
+        # The timer, under a non-default identifier and schedule, so that
+        # verify.yml can tell that the units were rendered from these.
+        system_cleanup_identifier: molecule-cleanup
+        system_cleanup_docker_timer_enabled: true
+        system_cleanup_docker_timer_calendar: "*-*-* 03:22:44"
+        # Normally defined by the systemd_docker_base role, which playbooks run
+        # before this one and this scenario does not.
+        devture_systemd_docker_base_docker_service_name: docker.service
+
+        # Off by default; turned on so that the destructive path is covered.
+        system_cleanup_docker_config_remove_anonymous_volumes: true
+
+        # The images prepare.yml creates are all minutes old, and the time an
+        # image arrived (`LastTagTime`) cannot be backdated. With no grace
+        # period, what is asserted is the rule itself: an unused image goes only
+        # if a newer image of its repository exists.
+        system_cleanup_docker_config_superseded_images_grace_period_days: 0
+
+        # The default scenario covers the journald autovacuum units being
+        # installed. Here they are turned off: prepare.yml installs and enables
+        # stand-ins for them, and verify.yml asserts that the role removed them.
+        system_cleanup_logs: false
+
+        # Not this scenario's subject, and slow. The empty path list is the
+        # role's own default and is spelled out because a run of the role with
+        # nothing to remove has to be a no-op rather than an error.
         system_cleanup_paths: []
         system_cleanup_apt: false
+
+        # The default scenario covers purge-old-kernels being installed. Here
+        # it is turned off: prepare.yml installs a stand-in at the role's
+        # default path, and verify.yml asserts that the role removed it.
         system_cleanup_kernels: false
 
         # Variables for the verification suite
@@ -59,6 +91,8 @@ provisioner:
         cleanup_molecule_exited_container: molecule-cleanup-exited
         cleanup_molecule_seed_container: molecule-cleanup-seed
         cleanup_molecule_unused_image: molecule-cleanup-unused:latest
+        cleanup_molecule_superseded_image: molecule-cleanup-app:1
+        cleanup_molecule_superseding_image: molecule-cleanup-app:2
         cleanup_molecule_used_volume: molecule-cleanup-volume-used
         cleanup_molecule_named_volume: molecule-cleanup-volume-named
         cleanup_molecule_network: molecule-cleanup-network

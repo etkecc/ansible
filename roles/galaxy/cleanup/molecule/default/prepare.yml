@@ -38,7 +38,7 @@
 
     # `apt-get clean` empties /var/cache/apt/archives. Nothing else in this
     # scenario writes to or reads from that directory, so a file placed here
-    # disappears only if tasks/packages.yml ran.
+    # disappears only if tasks/run_apt.yml ran.
     - name: Ensure a package file is seeded in the apt archive cache
       ansible.builtin.copy:
         content: "not really a package\n"
@@ -61,6 +61,37 @@
         that: cleanup_molecule_prepare_docker.rc != 0
         fail_msg: >-
           A Docker CLI is installed at {{ cleanup_molecule_prepare_docker.stdout }}. This scenario
-          runs with `system_cleanup_docker` on and without the `start` tag, and relies on Docker
+          runs with `system_cleanup_docker` on and the `start` tag skipped, and relies on Docker
           being absent so that a broken tag gate fails the converge instead of quietly pruning.
         success_msg: "No Docker CLI is installed, so the role has nothing it could prune with"
+
+    # Stand-ins for the Docker cleanup's systemd units, as if the timer had
+    # been on before. This scenario leaves it off, so the role has to remove them.
+    - name: Ensure stand-in Docker cleanup systemd units are installed
+      ansible.builtin.copy:
+        dest: "/etc/systemd/system/{{ item.name }}"
+        content: "{{ item.content }}"
+        mode: "0644"
+      loop:
+        - name: system-cleanup-docker.service
+          content: |
+            [Service]
+            Type=oneshot
+            ExecStart=/bin/true
+        - name: system-cleanup-docker.timer
+          content: |
+            [Timer]
+            Unit=system-cleanup-docker.service
+            OnCalendar=*-*-* 04:45:00
+
+            [Install]
+            WantedBy=timers.target
+      loop_control:
+        label: "{{ item.name }}"
+
+    - name: Ensure the stand-in Docker cleanup timer is enabled and started
+      ansible.builtin.systemd_service:
+        name: system-cleanup-docker.timer
+        enabled: true
+        state: started
+        daemon_reload: true

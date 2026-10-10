@@ -125,5 +125,9 @@
     # CUSTOM
     - custom/skopeo
     - custom/mrs-discovery
-    - galaxy/cleanup
     # END CUSTOM
+
+    # MATRIX
+    # Last, once every service is running, so the Docker cleanup can tell which images are still needed.
+    - galaxy/cleanup
+    # END MATRIX

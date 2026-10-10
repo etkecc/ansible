@@ -19,7 +19,7 @@
   become: true
   gather_facts: false
   tasks:
-    - name: Verify that the cleanup role pruned what it should have
+    - name: Verify that the cleanup role works
       block:
         - name: Read the identifier of the anonymous volume prepare.yml left behind
           ansible.builtin.slurp:
@@ -39,6 +39,8 @@
             - "docker container inspect {{ cleanup_molecule_exited_container }}"
             - "docker image inspect {{ cleanup_molecule_docker_image }}"
             - "docker image inspect {{ cleanup_molecule_unused_image }}"
+            - "docker image inspect {{ cleanup_molecule_superseded_image }}"
+            - "docker image inspect {{ cleanup_molecule_superseding_image }}"
             - "docker volume inspect {{ cleanup_molecule_used_volume }}"
             - "docker volume inspect {{ cleanup_molecule_named_volume }}"
             - "docker volume inspect {{ cleanup_molecule_anonymous_volume }}"
@@ -46,6 +48,48 @@
 
         # The list of `docker ... inspect` invocations that found their object.
         # Membership in it is what every assertion below is phrased in terms of.
+        - name: Look for the Docker cleanup script
+          ansible.builtin.stat:
+            path: /srv/molecule-cleanup/bin/cleanup-docker
+          register: cleanup_molecule_docker_script
+
+        - name: Assert that the Docker cleanup script is installed under the configured base path
+          ansible.builtin.assert:
+            that:
+              - cleanup_molecule_docker_script.stat.exists
+              - cleanup_molecule_docker_script.stat.executable
+            fail_msg: >-
+              /srv/molecule-cleanup/bin/cleanup-docker is missing or not executable, although
+              `system_cleanup_base_path` is /srv/molecule-cleanup
+            success_msg: "/srv/molecule-cleanup/bin/cleanup-docker is installed"
+
+        - name: Read how systemd parsed the Docker cleanup timer and service
+          ansible.builtin.command:
+            cmd: "systemctl show {{ item.unit }} --property={{ item.property }} --value"
+          register: cleanup_molecule_docker_units
+          changed_when: false
+          loop:
+            - {unit: molecule-cleanup-docker.timer, property: UnitFileState}
+            - {unit: molecule-cleanup-docker.timer, property: ActiveState}
+            - {unit: molecule-cleanup-docker.timer, property: TimersCalendar}
+            - {unit: molecule-cleanup-docker.service, property: ExecStart}
+            - {unit: molecule-cleanup-docker.service, property: Requires}
+            - {unit: molecule-cleanup-docker.service, property: After}
+          loop_control:
+            label: "{{ item.unit }} {{ item.property }}"
+
+        - name: Assert that the timer is enabled and active, and that the service runs the script after Docker
+          ansible.builtin.assert:
+            that:
+              - cleanup_molecule_docker_units.results[0].stdout == 'enabled'
+              - cleanup_molecule_docker_units.results[1].stdout == 'active'
+              - "'03:22:44' in cleanup_molecule_docker_units.results[2].stdout"
+              - "'path=/srv/molecule-cleanup/bin/cleanup-docker ' in cleanup_molecule_docker_units.results[3].stdout"
+              - "'docker.service' in cleanup_molecule_docker_units.results[4].stdout.split()"
+              - "'docker.service' in cleanup_molecule_docker_units.results[5].stdout.split()"
+            fail_msg: "systemd reports {{ cleanup_molecule_docker_units.results | map(attribute='stdout') | list }}"
+            success_msg: "The timer is enabled and active, on this scenario's schedule, and the service runs after Docker"
+
         - name: Index which of those commands found their object
           ansible.builtin.set_fact:
             cleanup_molecule_found: "{{ cleanup_molecule_docker_after.results | selectattr('rc', 'equalto', 0) | map(attribute='item') | list }}"
@@ -93,31 +137,40 @@
 
         ########################################################################
         #                                                                      #
-        # what `docker image prune -a -f` removed                              #
+        # which images were removed                                            #
         #                                                                      #
         ########################################################################
 
-        # `-a` means every image no container references, tagged ones included.
-        # The image the surviving container runs is referenced and stays; the one
-        # prepare.yml committed and then orphaned goes. Both halves matter: an
-        # image prune that took the running container's image with it would break
-        # every host this role runs on.
-        - name: Assert that the unused image was pruned and the one in use was not
+        # Only the image which is unused *and* superseded by a newer image of
+        # its repository goes. The unused image with no newer version is what
+        # sets this apart from `docker image prune -a`, which would take it: it
+        # stands for the image of a stopped service or of a container that only
+        # runs on a timer.
+        - name: Assert that only the superseded image was removed
           vars:
             cleanup_molecule_used_image_key: "docker image inspect {{ cleanup_molecule_docker_image }}"
             cleanup_molecule_unused_image_key: "docker image inspect {{ cleanup_molecule_unused_image }}"
+            cleanup_molecule_superseded_image_key: "docker image inspect {{ cleanup_molecule_superseded_image }}"
+            cleanup_molecule_superseding_image_key: "docker image inspect {{ cleanup_molecule_superseding_image }}"
           ansible.builtin.assert:
             that:
-              - cleanup_molecule_unused_image_key not in cleanup_molecule_found
+              - cleanup_molecule_superseded_image_key not in cleanup_molecule_found
+              - cleanup_molecule_superseding_image_key in cleanup_molecule_found
+              - cleanup_molecule_unused_image_key in cleanup_molecule_found
               - cleanup_molecule_used_image_key in cleanup_molecule_found
             fail_msg: >-
-              The unused image {{ cleanup_molecule_unused_image }} is
+              The superseded image {{ cleanup_molecule_superseded_image }} is
+              {{ 'still there' if cleanup_molecule_superseded_image_key in cleanup_molecule_found else 'gone' }},
+              the newer {{ cleanup_molecule_superseding_image }} is
+              {{ 'still there' if cleanup_molecule_superseding_image_key in cleanup_molecule_found else 'gone' }},
+              the unused image without a newer version {{ cleanup_molecule_unused_image }} is
               {{ 'still there' if cleanup_molecule_unused_image_key in cleanup_molecule_found else 'gone' }}
               and the image in use {{ cleanup_molecule_docker_image }} is
-              {{ 'still there' if cleanup_molecule_used_image_key in cleanup_molecule_found else 'gone' }}
+              {{ 'still there' if cleanup_molecule_used_image_key in cleanup_molecule_found else 'gone' }}.
+              Only the first should be gone.
             success_msg: >-
-              {{ cleanup_molecule_unused_image }} was pruned and {{ cleanup_molecule_docker_image }},
-              which the surviving container runs, was left alone
+              {{ cleanup_molecule_superseded_image }} was removed; {{ cleanup_molecule_superseding_image }},
+              {{ cleanup_molecule_unused_image }} and {{ cleanup_molecule_docker_image }} were left alone
 
         ########################################################################
         #                                                                      #
@@ -192,15 +245,71 @@
               are preserved.
             success_msg: "{{ cleanup_molecule_network }} is still there, as promised"
 
+        ########################################################################
+        #                                                                      #
+        # the journald autovacuum units were uninstalled                       #
+        #                                                                      #
+        ########################################################################
+
+        # prepare.yml installed, enabled and started stand-ins for these, and
+        # `system_cleanup_logs` is off in this scenario.
+        - name: Look for the journald autovacuum unit files and the timer's enablement symlink
+          ansible.builtin.stat:
+            path: "{{ item }}"
+          register: cleanup_molecule_logs_files
+          loop:
+            - /etc/systemd/system/systemd-journald-autovacuum.service
+            - /etc/systemd/system/systemd-journald-autovacuum.timer
+            - /etc/systemd/system/timers.target.wants/systemd-journald-autovacuum.timer
+
+        - name: Read the state of the journald autovacuum timer
+          ansible.builtin.command:
+            cmd: systemctl show systemd-journald-autovacuum.timer --property=ActiveState --value
+          register: cleanup_molecule_logs_timer_state
+          changed_when: false
+
+        - name: Assert that the journald autovacuum units were stopped, disabled and removed
+          ansible.builtin.assert:
+            that:
+              - cleanup_molecule_logs_files.results | selectattr('stat.exists') | list | length == 0
+              - cleanup_molecule_logs_timer_state.stdout == 'inactive'
+            fail_msg: >-
+              Still present: {{ cleanup_molecule_logs_files.results | selectattr('stat.exists') | map(attribute='item') | list }};
+              the timer is {{ cleanup_molecule_logs_timer_state.stdout }}. With `system_cleanup_logs` off,
+              the role should have stopped, disabled and removed the units.
+            success_msg: "The journald autovacuum units were stopped, disabled and removed"
+
+        - name: Look for purge-old-kernels
+          ansible.builtin.stat:
+            path: "{{ item }}"
+          register: cleanup_molecule_kernels_scripts
+          loop:
+            - /srv/molecule-cleanup/bin/purge-old-kernels
+            - /usr/local/bin/purge-old-kernels
+
+        # prepare.yml installed stand-ins at the role's default path and where
+        # earlier versions of the role installed it, and `system_cleanup_kernels`
+        # is off in this scenario.
+        - name: Assert that purge-old-kernels was removed from both paths
+          ansible.builtin.assert:
+            that: cleanup_molecule_kernels_scripts.results | selectattr('stat.exists') | list | length == 0
+            fail_msg: >-
+              Still present: {{ cleanup_molecule_kernels_scripts.results | selectattr('stat.exists') | map(attribute='item') | list }}.
+              With `system_cleanup_kernels` off, the role should have removed it from its path, and it always
+              removes it from where earlier versions of the role installed it.
+            success_msg: "purge-old-kernels was removed from both paths"
+
         - name: Show the Cleanup verification summary
           vars:
             cleanup_molecule_anonymous_volume: "{{ cleanup_molecule_anonymous_volume_slurp.content | b64decode | trim }}"
           ansible.builtin.debug:
             msg:
-              - "pruned: container {{ cleanup_molecule_exited_container }}, image {{ cleanup_molecule_unused_image }}, anonymous volume {{ cleanup_molecule_anonymous_volume }}"
-              - "kept: container {{ cleanup_molecule_running_container }} (running), image {{ cleanup_molecule_docker_image }}"
+              - "pruned: container {{ cleanup_molecule_exited_container }}, image {{ cleanup_molecule_superseded_image }}, anonymous volume {{ cleanup_molecule_anonymous_volume }}"
+              - "kept: container {{ cleanup_molecule_running_container }} (running), images {{ cleanup_molecule_docker_image }} (in use), {{ cleanup_molecule_superseding_image }} (newest) and {{ cleanup_molecule_unused_image }} (no newer version)"
               - "kept: volumes {{ cleanup_molecule_used_volume }} (with its contents) and {{ cleanup_molecule_named_volume }}"
               - "kept: network {{ cleanup_molecule_network }}"
+              - "uninstalled: the journald autovacuum units and purge-old-kernels"
+
       rescue:
         - name: Retrieve what the Docker daemon holds
           ansible.builtin.command:

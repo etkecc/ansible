@@ -5,12 +5,6 @@
 ---
 # Debian only
 
-- name: Ensure purge-old-kernels is installed
-  ansible.builtin.copy:
-    src: "{{ role_path }}/files/purge-old-kernels"
-    dest: "{{ system_cleanup_kernels_script }}"
-    mode: "0775"
-
 - name: Ensure old kernels are purged
   ansible.builtin.command:
     argv:

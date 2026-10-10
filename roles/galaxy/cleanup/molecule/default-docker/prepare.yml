@@ -24,9 +24,55 @@
     - name: Ensure Docker is installed for the cleanup Docker Molecule tests preparation
       ansible.builtin.include_role:
         name: ansible-role-docker
-      vars:
-        docker_daemon_options:
-          storage-driver: vfs
+
+    # Stand-ins for the journald autovacuum units of an earlier run of the
+    # role, when it still installed them unconditionally. This scenario turns
+    # `system_cleanup_logs` off, so the role has to remove them.
+    - name: Ensure stand-in journald autovacuum units are installed
+      ansible.builtin.copy:
+        dest: "/etc/systemd/system/{{ item.name }}"
+        content: "{{ item.content }}"
+        mode: "0644"
+      loop:
+        - name: systemd-journald-autovacuum.service
+          content: |
+            [Service]
+            Type=oneshot
+            ExecStart=/bin/true
+        - name: systemd-journald-autovacuum.timer
+          content: |
+            [Timer]
+            Unit=systemd-journald-autovacuum.service
+            OnCalendar=*-*-* 04:15:00
+
+            [Install]
+            WantedBy=timers.target
+      loop_control:
+        label: "{{ item.name }}"
+
+    # One at the role's default path, and one where earlier versions of the
+    # role installed it.
+    - name: Ensure the directory of the role's default purge-old-kernels path exists
+      ansible.builtin.file:
+        path: /srv/molecule-cleanup/bin
+        state: directory
+        mode: "0750"
+
+    - name: Ensure stand-in purge-old-kernels scripts are installed
+      ansible.builtin.copy:
+        dest: "{{ item }}"
+        content: "#!/bin/sh\n"
+        mode: "0775"
+      loop:
+        - /srv/molecule-cleanup/bin/purge-old-kernels
+        - /usr/local/bin/purge-old-kernels
+
+    - name: Ensure the stand-in journald autovacuum timer is enabled and started
+      ansible.builtin.systemd_service:
+        name: systemd-journald-autovacuum.timer
+        enabled: true
+        state: started
+        daemon_reload: true
 
     # A precondition. Everything below is written as "this object was here and
     # is gone" or "this object was here and still is", which only means anything
@@ -66,11 +112,18 @@
       register: cleanup_molecule_docker_seed_run
       changed_when: cleanup_molecule_docker_seed_run.rc == 0
 
-    - name: Ensure an image nothing uses exists
+    # Committed one after another, so that each arrives (and is built) later
+    # than the one before. The first is the only image of its repository; the
+    # second is superseded by the third.
+    - name: Ensure the unused images exist
       ansible.builtin.command:
-        cmd: "docker commit {{ cleanup_molecule_seed_container }} {{ cleanup_molecule_unused_image }}"
+        cmd: "docker commit {{ cleanup_molecule_seed_container }} {{ item }}"
       register: cleanup_molecule_docker_commit
       changed_when: cleanup_molecule_docker_commit.rc == 0
+      loop:
+        - "{{ cleanup_molecule_unused_image }}"
+        - "{{ cleanup_molecule_superseded_image }}"
+        - "{{ cleanup_molecule_superseding_image }}"
 
     # Without `-v`, so the anonymous volume outlives the container and becomes
     # the dangling volume `docker volume prune` is meant to find.
@@ -160,6 +213,8 @@
         - "docker container inspect {{ cleanup_molecule_exited_container }}"
         - "docker image inspect {{ cleanup_molecule_docker_image }}"
         - "docker image inspect {{ cleanup_molecule_unused_image }}"
+        - "docker image inspect {{ cleanup_molecule_superseded_image }}"
+        - "docker image inspect {{ cleanup_molecule_superseding_image }}"
         - "docker volume inspect {{ cleanup_molecule_used_volume }}"
         - "docker volume inspect {{ cleanup_molecule_named_volume }}"
         - "docker volume inspect {{ cleanup_molecule_docker_volumes.stdout }}"

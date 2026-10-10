@@ -1,0 +1,20 @@
+{#
+SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+
+SPDX-License-Identifier: GPL-3.0-or-later
+#}
+
+[Unit]
+Description=Remove superseded Docker images and other Docker leftovers
+{% for service in system_cleanup_docker_systemd_required_services_list %}
+Requires={{ service }}
+After={{ service }}
+{% endfor %}
+{% for service in system_cleanup_docker_systemd_wanted_services_list %}
+Wants={{ service }}
+After={{ service }}
+{% endfor %}
+
+[Service]
+Type=oneshot
+ExecStart={{ system_cleanup_bin_path }}/cleanup-docker

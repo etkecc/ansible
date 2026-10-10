@@ -1,0 +1,21 @@
+# SPDX-FileCopyrightText: 2022 etke.cc
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+---
+# Debian only
+
+- name: Ensure purge-old-kernels paths exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0750"
+  with_items:
+    - "{{ system_cleanup_base_path }}"
+    - "{{ system_cleanup_bin_path }}"
+
+- name: Ensure purge-old-kernels is installed
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/purge-old-kernels"
+    dest: "{{ system_cleanup_kernels_script }}"
+    mode: "0775"

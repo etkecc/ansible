@@ -1,0 +1,9 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+---
+- name: Ensure purge-old-kernels does not exist
+  ansible.builtin.file:
+    path: "{{ system_cleanup_kernels_script }}"
+    state: absent
