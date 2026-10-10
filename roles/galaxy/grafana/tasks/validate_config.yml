@@ -15,7 +15,13 @@
   with_items:
     - { "old": "grafana_container_tmp_size", "new": "grafana_container_tmpfs_tmp_size" }
     - { "old": "grafana_container_additional_networks_additional", "new": "grafana_container_additional_networks_custom" }
-    - { "old": "grafana_smtp_enabled", "new": "grafana_mailer_smtp_enabled" }
+    - { "old": "grafana_smtp_enabled", "new": "grafana_mailer_enabled" }
+    - { "old": "grafana_mailer_smtp_enabled", "new": "grafana_mailer_enabled" }
+    - { "old": "grafana_smtp_host", "new": "grafana_config_smtp_host" }
+    - { "old": "grafana_smtp_port", "new": "grafana_config_smtp_port" }
+    - { "old": "grafana_smtp_user", "new": "grafana_config_smtp_user" }
+    - { "old": "grafana_smtp_password", "new": "grafana_config_smtp_password" }
+    - { "old": "grafana_smtp_from_address", "new": "grafana_config_smtp_from_address" }
     - { "old": "grafana_provisioning_datasources", "new": "grafana_provisioning_datasources_datasources" }
     - { "old": "grafana_provisioning_dashboard_providers", "new": "grafana_provisioning_dashboards_providers" }
     - { "old": "grafana_http_header_content_permission_policy", "new": "grafana_http_header_permissions_policy" }
@@ -38,11 +44,11 @@
   ansible.builtin.fail:
     msg: >-
       You need to define a required configuration setting (`{{ item }}`) to correctly set up email via SMTP.
-  when: "grafana_mailer_smtp_enabled | bool and lookup('vars', item, default='') | string | length == 0"
+  when: "grafana_mailer_enabled | bool and lookup('vars', item, default='') | string | length == 0"
   with_items:
-    - grafana_smtp_host
-    - grafana_smtp_port
-    - grafana_smtp_from_address
+    - grafana_config_smtp_host
+    - grafana_config_smtp_port
+    - grafana_config_smtp_from_address
 
 - name: Run if Traefik is enabled
   when: grafana_container_labels_traefik_enabled | bool

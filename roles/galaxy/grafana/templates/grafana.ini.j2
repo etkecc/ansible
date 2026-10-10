@@ -40,13 +40,13 @@ default_home_dashboard_path = {{ grafana_default_home_dashboard_path }}
 enable = true
 {% endif %}
 
-{% if grafana_mailer_smtp_enabled %}
+{% if grafana_mailer_enabled %}
 [smtp]
-enabled = {{ grafana_mailer_smtp_enabled }}
-host = {{ grafana_smtp_host }}:{{ grafana_smtp_port }}
-user = {{ grafana_smtp_user }}
-password = """{{ grafana_smtp_password }}"""
-from_address = {{ grafana_smtp_from_address }}
+enabled = {{ grafana_mailer_enabled }}
+host = {{ grafana_config_smtp_host }}:{{ grafana_config_smtp_port }}
+user = {{ grafana_config_smtp_user }}
+password = """{{ grafana_config_smtp_password }}"""
+from_address = {{ grafana_config_smtp_from_address }}
 {% endif %}
 
 [metrics]

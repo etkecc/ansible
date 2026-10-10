@@ -257,20 +257,13 @@ grafana_default_home_dashboard_path: ""
 # Leave it empty to not enable any experimental features.
 grafana_feature_toggles_enable: ""
 
-# Configure SMTP settings for sending email notifications.
-#
-# Example:
-# grafana_smtp_host: "smtp.example.com"
-# grafana_smtp_port: "587"
-# grafana_smtp_user: "test@example.com"
-# grafana_smtp_password: "changem3"
-# grafana_smtp_from_address: "test@example.com"
-grafana_mailer_smtp_enabled: false
-grafana_smtp_host: ""
-grafana_smtp_port: ""
-grafana_smtp_user: ""
-grafana_smtp_password: ""
-grafana_smtp_from_address: ""
+# Specify mailer configuration
+grafana_mailer_enabled: false
+grafana_config_smtp_host: ""
+grafana_config_smtp_port: ""
+grafana_config_smtp_user: ""
+grafana_config_smtp_password: ""
+grafana_config_smtp_from_address: ""
 
 # A list of template files on the Ansible controller server to install into the dashboards directory.
 #
