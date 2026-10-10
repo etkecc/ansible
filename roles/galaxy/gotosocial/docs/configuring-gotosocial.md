@@ -119,16 +119,16 @@ Setting it enables to connect to the Postgres server via Unix socket mounted in 
 You can configure a SMTP mailer for functions such as sending notifications. To set it up, add the following configuration to your `vars.yml` file as below (adapt to your needs):
 
 ```yaml
-# Set the hostname of the SMTP server
+# Specify SMTP server hostname
 gotosocial_smtp_host: 'smtp.example.com'
 
-# Set the username for the SMTP server
+# Specify SMTP server username
 gotosocial_smtp_username: gotosocial@example.com
 
-# Set the password for the SMTP server
+# Specify SMTP server password
 gotosocial_smtp_password: yourpassword
 
-# Set the email address that emails will be sent from
+# Specify the email address that emails will be sent from
 gotosocial_smtp_from: gotosocial@example.com
 ```
 
@@ -143,7 +143,7 @@ Take a look at:
 
 - [`defaults/main.yml`](../defaults/main.yml) for some variables that you can customize via your `vars.yml` file. You can override settings (even those that don't have dedicated playbook variables) using the `gotosocial_environment_variables_additional_variables` variable
 
-See [this page](https://docs.gotosocial.org/en/latest/configuration/#environment-variables) of the official documentation for GoToSocial's config options that you can put in `gotosocial_environment_variables_additional_variables`.
+Refer to [this page](https://docs.gotosocial.org/en/latest/configuration/#environment-variables) of the official documentation for GoToSocial's config options that you can put in `gotosocial_environment_variables_additional_variables`.
 
 ## Installing
 

@@ -17,7 +17,7 @@
 * Google Chat Bridge: v0.5.2
 * Google Messages Bridge: v0.2609.0
 * Google Voice Bridge: v0.2605.0
-* Gotosocial: 0.22.1
+* Gotosocial: 0.22.2
 * Grafana: 13.0.2
 * Heisenbridge: 1.15.4
 * Honoroit: v0.9.30
