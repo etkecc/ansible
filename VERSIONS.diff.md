@@ -6,5 +6,6 @@
 
 ### Component Updates
 
+* [Etherpad](https://github.com/ether/etherpad-lite): [3.3.7](https://github.com/ether/etherpad-lite/releases/tag/3.3.7) ⇾ [3.3.8](https://github.com/ether/etherpad-lite/releases/tag/3.3.8)
 * [Gotosocial](https://codeberg.org/superseriousbusiness/gotosocial): 0.22.1 ⇾ 0.22.2
 * [Radicale](https://github.com/tomsquest/docker-radicale): [3.8.1.1](https://github.com/tomsquest/docker-radicale/releases/tag/3.8.1.1) ⇾ [3.8.3.0](https://github.com/tomsquest/docker-radicale/releases/tag/3.8.3.0)
