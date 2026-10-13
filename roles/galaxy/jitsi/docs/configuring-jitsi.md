@@ -144,6 +144,16 @@ By default a token is required for everyone (anonymous access is disallowed). To
 
 Additional settings, such as accepted issuers/audiences and the signature algorithm, are available. Refer to `defaults/main.yml` for the full list.
 
+By default, the first participant joining a conference becomes its moderator. To grant the moderator role only to participants whose token says so (`"moderator": true` in `context.user`), add the following configuration to your `vars.yml` file:
+
+```yaml
+jitsi_jicofo_auto_owner_enabled: false
+jitsi_muc_modules_custom:
+  - token_affiliation
+```
+
+Both settings are needed: without the first one, whoever joins first still becomes a moderator; without the second one, nobody does.
+
 For more information refer to the [docker-jitsi-meet JWT authentication](https://github.com/jitsi/docker-jitsi-meet#authentication-using-jwt) documentation.
 
 #### Authenticate using Matrix OpenID: Auth-Type `matrix`
@@ -259,7 +269,7 @@ By default, Jitsi Meet may only be embedded in a frame on its own origin (`'self
 To also allow embedding on specific websites, add the following configuration to your `vars.yml` file (adapt to your needs):
 
 ```yaml
-jitsi_web_framing_ancestors_custom:
+jitsi_web_http_header_content_security_policy_frame_ancestors_custom:
   - https://example.com
   - https://www.example.com
 ```
@@ -267,7 +277,7 @@ jitsi_web_framing_ancestors_custom:
 To allow embedding from anywhere, add the following configuration to your `vars.yml` file instead:
 
 ```yaml
-jitsi_web_framing_ancestors_default: ['*']
+jitsi_web_http_header_content_security_policy_frame_ancestors_enabled: false
 ```
 
 #### Fine tune Jitsi
