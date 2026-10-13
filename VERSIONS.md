@@ -8,7 +8,7 @@
 * Coturn: 4.18.0
 * Discord Bridge: v0.7.7
 * Draupnir: v3.1.0
-* Element: v1.12.30
+* Element: v1.12.31
 * Etherpad: 3.3.8
 * Exim Relay: 4.99.5-r0-1
 * Firezone: 0.7.36
@@ -32,7 +32,7 @@
 * Line Bridge: 412eda7f028f0ee946d6fe584c64c7e97f27c7a7
 * Linkding: 1.47.0
 * LinkedIn Bridge: v0.2609.0
-* Livekit JWT Service: 0.8.0
+* Livekit JWT Service: 0.9.0
 * Livekit Server: v1.13.9
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.6.0
