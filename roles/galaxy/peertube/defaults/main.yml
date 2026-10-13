@@ -82,7 +82,6 @@ peertube_container_rtmp_port: 1935
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
 # Use this to expose this container to another reverse proxy, which runs in a different container network.
-# Use this to expose the container to another reverse proxy, which runs in a different container network.
 peertube_container_additional_networks: "{{ peertube_container_additional_networks_auto + peertube_container_additional_networks_custom }}"
 peertube_container_additional_networks_auto: []
 peertube_container_additional_networks_custom: []
@@ -110,6 +109,9 @@ peertube_container_labels_traefik_priority: 0
 peertube_container_labels_traefik_entrypoints: web-secure
 peertube_container_labels_traefik_tls: "{{ peertube_container_labels_traefik_entrypoints != 'web' }}"
 peertube_container_labels_traefik_tls_certResolver: default  # noqa var-naming
+peertube_container_labels_traefik_middleware_basic_auth_enabled: false
+# See: https://doc.traefik.io/traefik/reference/routing-configuration/http/middlewares/basicauth/
+peertube_container_labels_traefik_middleware_basic_auth_users: ""
 
 # Controls which additional headers to attach to all HTTP requests.
 # To add your own custom request headers, use `peertube_container_labels_traefik_additional_request_headers_custom`
@@ -143,9 +145,8 @@ peertube_container_labels_traefik_metrics_entrypoints: "{{ peertube_container_la
 peertube_container_labels_traefik_metrics_middlewares: []
 peertube_container_labels_traefik_metrics_tls: "{{ peertube_container_labels_traefik_metrics_entrypoints != 'web' }}"
 peertube_container_labels_traefik_metrics_tls_certResolver: "{{ peertube_container_labels_traefik_tls_certResolver }}"  # noqa var-naming
-# Controls whether HTTP Basic authentication protects the metrics.
 peertube_container_labels_traefik_metrics_middleware_basic_auth_enabled: false
-# Uses the htpasswd format (e.g. generated via `htpasswd -nb USERNAME PASSWORD`). Multiple users can be separated by commas.
+# See: https://doc.traefik.io/traefik/reference/routing-configuration/http/middlewares/basicauth/
 peertube_container_labels_traefik_metrics_middleware_basic_auth_users: ""
 
 # peertube_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
@@ -336,6 +337,7 @@ peertube_trusted_proxies_values_custom: []
 # See `peertube_manual_migration_scripts` in `../vars/main.yml`.
 peertube_migration_wait_time: 1800
 
+# Specify mailer configuration
 peertube_config_smtp_hostname: ""
 peertube_config_smtp_port: 587
 peertube_config_smtp_username: ""

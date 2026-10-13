@@ -14,27 +14,9 @@ This role *implicitly* depends on:
 - [`com.devture.ansible.role.playbook_help`](https://github.com/devture/com.devture.ansible.role.playbook_help)
 - [`com.devture.ansible.role.systemd_docker_base`](https://github.com/devture/com.devture.ansible.role.systemd_docker_base)
 
-Check [`defaults/main.yml`](defaults/main.yml) for the full list of supported options.
+Check [`defaults/main.yml`](defaults/main.yml) for the full list of supported options. Refer to [this page](docs/configuring-peertube.md) for details about setting up the service with this role.
 
 💡 For an Ansible playbook which integrates this role and makes it easier to use, see the [Mother-of-All-Self-Hosting Ansible playbook](https://github.com/mother-of-all-self-hosting/mash-playbook).
-
-## Upgrading PeerTube
-
-`peertube_version` names a PeerTube release (`v8.3.0`), which is also the container image tag (see `peertube_container_image_tag`). Since 8.0.0, PeerTube publishes plain version tags; the Debian-flavoured ones (`v8.3.0-trixie`) are deprecated upstream, and Renovate (see [`.github/renovate.json`](.github/renovate.json)) ignores them.
-
-Some PeerTube releases require a migration script to be run by hand once PeerTube has finished its own database migrations (see the *IMPORTANT NOTES* in PeerTube's [CHANGELOG](https://github.com/Chocobozzz/PeerTube/blob/develop/CHANGELOG.md)). When upgrading an existing installation, this role runs these automatically. The scripts it knows about are listed in `peertube_manual_migration_scripts` (in [`vars/main.yml`](vars/main.yml)), which needs to be extended whenever a new PeerTube release introduces one.
-
-Version bumps are never automerged here: PeerTube runs its database migrations unattended on startup, and its patch releases do carry them.
-
-## Releases
-
-Tags are cut automatically by [`.github/workflows/autotag.yml`](.github/workflows/autotag.yml), from the state of the repository rather than from commit messages. [`bin/compute-next-tag.sh`](bin/compute-next-tag.sh) reads `peertube_version` out of [`defaults/main.yml`](defaults/main.yml) and the tags that already exist:
-
-- a PeerTube version that has never been released starts the release counter at 0 (`v7.3.0-0`)
-- any other change under `defaults/`, `meta/`, `tasks/`, `templates/` or `vars/` increments it (`v7.3.0-1`)
-- changes that do not affect what a playbook run does (README, CI configuration, Molecule tests) release nothing
-
-[`bin/test-compute-next-tag.sh`](bin/test-compute-next-tag.sh) exercises that against throwaway repositories, and runs as a prek hook whenever those scripts or `defaults/main.yml` change.
 
 ## Development
 
@@ -53,3 +35,9 @@ just prek-install-git-pre-commit-hook
 This role supports [Molecule](https://docs.ansible.com/projects/molecule/), an Ansible testing framework designed for developing and testing Ansible collections, playbooks, and roles.
 
 Refer to [this page](./molecule/README.md) for details about how to utilize it.
+
+### Releases
+
+Tags are created on the GitHub workflow by [`.github/workflows/autotag.yml`](.github/workflows/autotag.yml), which asks [`bin/compute-next-tag.sh`](bin/compute-next-tag.sh) what the commit on `main` should be released as. The answer comes from the version pinned in [`defaults/main.yml`](defaults/main.yml) and from the tags that already exist, so a commit that only touches documentation or CI is not released at all, and any change to the role itself is — without waiting for a dependency bump to carry it along.
+
+[`bin/test-compute-next-tag.sh`](bin/test-compute-next-tag.sh) exercises that script against throwaway repositories, and runs as a prek hook.
