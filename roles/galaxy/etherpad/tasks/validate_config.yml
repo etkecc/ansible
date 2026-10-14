@@ -43,6 +43,38 @@
     - etherpad_path_prefix
     - etherpad_container_network
 
+- name: Fail if the Etherpad users variables are not lists
+  ansible.builtin.fail:
+    msg: >-
+      `etherpad_users`, `etherpad_users_auto` and `etherpad_users_custom` must all be lists of dictionaries.
+  when: >-
+    (etherpad_users_auto is not iterable or etherpad_users_auto is string or etherpad_users_auto is mapping) or
+    (etherpad_users_custom is not iterable or etherpad_users_custom is string or etherpad_users_custom is mapping) or
+    (etherpad_users is not iterable or etherpad_users is string or etherpad_users is mapping)
+
+- name: Fail if any Etherpad user entry is invalid
+  vars:
+    etherpad_users_valid: >-
+      {{ etherpad_users | select('mapping')
+      | selectattr('username', 'defined') | selectattr('username', 'string')
+      | selectattr('initial_password', 'defined') | selectattr('initial_password', 'string')
+      | rejectattr('username', 'match', '^\s*$') | rejectattr('initial_password', 'match', '^\s*$') | list }}
+    etherpad_users_invalid: "{{ etherpad_users | difference(etherpad_users_valid) | list }}"
+  when: etherpad_users_invalid | length > 0
+  ansible.builtin.fail:
+    msg: >-
+      Every entry in `etherpad_users` must be a dictionary with non-empty string `username` and `initial_password`.
+      Invalid entry: {{ (etherpad_users_invalid | first | to_json) if (etherpad_users_invalid | first) is not mapping else ((etherpad_users_invalid | first | combine({'initial_password': '<redacted>'})) | to_json) }}
+
+- name: Fail if the Etherpad admin user has neither a password nor a hash
+  ansible.builtin.fail:
+    msg: >-
+      You need to define `etherpad_admin_password` or `etherpad_admin_hash` when `etherpad_admin_username` is set.
+  when: >-
+    etherpad_admin_username | string | length > 0 and
+    etherpad_admin_password | string | length == 0 and
+    lookup('vars', 'etherpad_admin_hash', default='') | string | length == 0
+
 - name: Fail if Etherpad logging level is invalid
   ansible.builtin.fail:
     msg: >-

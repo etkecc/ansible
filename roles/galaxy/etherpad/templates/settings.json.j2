@@ -130,17 +130,20 @@ SPDX-License-Identifier: AGPL-3.0-or-later
     "chatAndUsers": false,
     "lang": "en-gb"
   },
+{% set ns = namespace(users={}) %}
+{% for user in etherpad_users %}
+{% set ns.users = ns.users | combine({user.username: {'password': user.initial_password, 'is_admin': user.initial_type | default('') == 'admin'}}) %}
+{% endfor %}
+{# The legacy admin variables are merged last, so they win over an entry with the same username. #}
 {% if etherpad_admin_username != "" %}
-  "users": {
-    {{ etherpad_admin_username|to_json }}: {
-      {% if etherpad_admin_password != "" %}
-      "password": {{ etherpad_admin_password|to_json }},
-      {% else %}
-      "hash": {{ etherpad_admin_hash|to_json }},
-      {% endif %}
-      "is_admin": true
-    }
-  },
+{% if etherpad_admin_password != "" %}
+{% set ns.users = ns.users | combine({etherpad_admin_username: {'password': etherpad_admin_password, 'is_admin': true}}) %}
+{% else %}
+{% set ns.users = ns.users | combine({etherpad_admin_username: {'hash': etherpad_admin_hash, 'is_admin': true}}) %}
+{% endif %}
+{% endif %}
+{% if ns.users | length > 0 %}
+  "users": {{ ns.users | to_json }},
 {% endif %}
   "padShortcutEnabled" : {
     "altF9": true,

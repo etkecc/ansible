@@ -165,6 +165,25 @@ etherpad_admin_username: YOUR_USERNAME_HERE
 etherpad_admin_password: YOUR_PASSWORD_HERE
 ```
 
+### Create additional users (optional)
+
+To create additional Etherpad user accounts, add them to the `etherpad_users_custom` variable in your `vars.yml` file. Each entry is a dictionary with the following keys:
+
+- `username` (required): the account name
+- `initial_password` (required): the account's password
+- `initial_type` (optional): `admin` (exactly) gives the account access to the `/admin` page; any other value, or omitting the key, creates a regular user
+
+```yaml
+etherpad_users_custom:
+  - username: YOUR_USERNAME_HERE
+    initial_password: YOUR_PASSWORD_HERE
+    initial_type: admin
+```
+
+Playbooks set `etherpad_users_auto`; the role combines both lists into `etherpad_users` (you should not need to set that variable yourself) and renders it into `settings.json`. If the same username appears more than once, later entries win: `etherpad_users_custom` overrides `etherpad_users_auto`, and the admin account created via `etherpad_admin_username` overrides both.
+
+Like the admin user above, these accounts are used by default HTTP Basic authentication if no plugin handles authentication, and by authentication and authorization plugins. With that authentication, the password in `settings.json` is the live credential: changing `initial_password` and re-running the playbook changes the account's login password. Note that passwords are stored in plain text in `settings.json`, and that hashed passwords (`etherpad_admin_hash`) are only supported for the admin user.
+
 ### Enable HSTS preloading (optional)
 
 If you want to enable [HSTS (HTTP Strict-Transport-Security) preloading](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security#preloading_strict_transport_security), add the following configuration to your `vars.yml` file:

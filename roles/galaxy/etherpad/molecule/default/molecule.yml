@@ -64,6 +64,30 @@ provisioner:
         # proves that the settings.json rendered by the role reached Etherpad.
         etherpad_configuration_title: Etherpad Molecule (default)
 
+        # Users rendered into settings.json; `etherpad_molecule_users_expected` below is what verify.yml asserts.
+        etherpad_admin_username: molecule-admin
+        etherpad_admin_password: molecule-admin-password
+        etherpad_users_auto:
+          - username: molecule-auto-user
+            initial_password: molecule-auto-password
+        etherpad_users_custom:
+          - username: molecule-auto-user
+            initial_password: molecule-custom-override-password
+            initial_type: admin
+          - username: molecule-custom-user
+            initial_password: molecule-custom-password
+            initial_type: moderator
+        etherpad_molecule_users_expected:
+          molecule-admin:
+            password: molecule-admin-password
+            is_admin: true
+          molecule-auto-user:
+            password: molecule-custom-override-password
+            is_admin: true
+          molecule-custom-user:
+            password: molecule-custom-password
+            is_admin: false
+
         # Etherpad's HTTP API cannot be reached with the shipped default
         # (`authenticationMethod: sso`, which wants an OAuth bearer token).
         # Switching to API key authentication is what makes the pad round-trip

@@ -261,3 +261,24 @@
     success_msg: >-
       Etherpad completed {{ etherpad_stats.json.ueberdb_writesToDbFinished }} writes
       to its database backend without failures
+
+# The users rendering is only exercised by scenarios that set `etherpad_molecule_users_expected`.
+- name: Check the rendered Etherpad users
+  when: etherpad_molecule_users_expected is defined
+  block:
+    - name: Read the rendered Etherpad settings.json file
+      ansible.builtin.slurp:
+        src: "{{ etherpad_molecule_base_path }}/config/settings.json"
+      register: etherpad_settings_json_file
+
+    - name: Extract the rendered users from settings.json
+      ansible.builtin.set_fact:
+        etherpad_rendered_users: "{{ (etherpad_settings_json_file.content | b64decode | from_json).users | default({}) }}"
+
+    - name: Assert the rendered users match the expected ones
+      ansible.builtin.assert:
+        that: etherpad_rendered_users == etherpad_molecule_users_expected
+        fail_msg: >-
+          settings.json holds {{ etherpad_rendered_users | to_json }},
+          expected {{ etherpad_molecule_users_expected | to_json }}
+        success_msg: "settings.json holds the expected users"

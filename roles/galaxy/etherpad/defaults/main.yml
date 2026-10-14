@@ -330,6 +330,11 @@ etherpad_configuration_dbsettings_socketpath_mysql: "{{ etherpad_database_mysql_
 etherpad_admin_username: ""
 etherpad_admin_password: ""
 
+# Users to render into settings.json, from `etherpad_users_auto` and `etherpad_users_custom`.
+etherpad_users: "{{ etherpad_users_auto + etherpad_users_custom }}"
+etherpad_users_auto: []
+etherpad_users_custom: []
+
 # Specify plugins to install
 etherpad_plugins: []
 
