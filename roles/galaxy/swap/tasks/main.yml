@@ -6,9 +6,12 @@
     - install-all
     - install-system-swap
   block:
+    - name: Validate swap configuration
+      when: system_swap_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+
     - name: Run swap installation tasks
       when: system_swap_enabled | bool
-      ignore_errors: "{{ system_swap_ignore_errors }}"
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
 - tags:
@@ -17,5 +20,4 @@
   block:
     - name: Run swap uninstallation tasks
       when: not system_swap_enabled | bool
-      ignore_errors: "{{ system_swap_ignore_errors }}"
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

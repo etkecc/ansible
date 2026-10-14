@@ -1,44 +1,22 @@
 ---
 
+# Swap files are added before any are removed, so that `swapoff` has somewhere to move pages to.
+- name: Ensure swap files are present
+  when: swap_file.state | default('present') == 'present'
+  ansible.builtin.include_tasks: "{{ role_path }}/tasks/util/ensure_swap_file_present.yml"
+  with_items: "{{ system_swap_files }}"
+  loop_control:
+    loop_var: swap_file
 
-- name: Check existence of swap file
-  ansible.builtin.stat:
-    path: "{{ system_swap_path }}"
-  register: system_swap_file
-
-- when: not system_swap_file.stat.exists | bool
-  name: Initialize swap file
-  block:
-    - name: Allocate space
-      ansible.builtin.command: "dd if=/dev/zero of={{ system_swap_path }} bs=1M count={{ system_swap_size }}"
-      args:
-        creates: "{{ system_swap_path }}"
-
-    - name: Set file permissions
-      ansible.builtin.file:
-        path: "{{ system_swap_path }}"
-        state: file
-        owner: root
-        group: root
-        mode: '0600'
-
-    - name: Create swap
-      ansible.builtin.command: "mkswap {{ system_swap_path }}"
-
-    - name: Enable swap
-      ansible.builtin.command: "swapon {{ system_swap_path }}"
-
-    - name: Persist swap config in /etc/fstab
-      ansible.posix.mount:
-        name: none
-        src: "{{ system_swap_path }}"
-        fstype: swap
-        opts: sw,nofail
-        dump: '0'
-        passno: '0'
-        state: present
+- name: Ensure unwanted swap files are absent
+  when: swap_file.state | default('present') == 'absent'
+  ansible.builtin.include_tasks: "{{ role_path }}/tasks/util/ensure_swap_file_absent.yml"
+  with_items: "{{ system_swap_files }}"
+  loop_control:
+    loop_var: swap_file
 
 - name: Set sysctl params
+  ignore_errors: "{{ system_swap_ignore_errors }}"
   ansible.posix.sysctl:
     name: "{{ item.name }}"
     value: "{{ item.value }}"

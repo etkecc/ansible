@@ -1,4 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -37,23 +38,46 @@ provisioner:
         # converge instead of being swallowed.
         system_swap_ignore_errors: false
 
-        # Megabytes, used by prepare.yml to seed a swap file the size a previous
-        # install would have left behind. The role's default is 1024;
-        # prepare.yml refuses to run if this ever grows past 128.
+        # Megabytes. The uninstall never reads a size; this is what a previous
+        # install would have been given. The role's default is 1024;
+        # prepare.yml refuses to run if the swap files of this scenario ever add
+        # up to more than 128.
         system_swap_size: 48
 
-        # The role's default is /var/swap. prepare.yml seeds a second, identical
+        # The role's default is /var/swap. prepare.yml seeds another, identical
         # swap file that the role was never told about, and verify.yml asserts
         # that one is still there - which is what makes "the role removed the
-        # swap file" a statement about `system_swap_path` rather than about the
-        # directory.
+        # swap files" a statement about `system_swap_files` rather than about
+        # the directory.
         system_swap_path: /var/swap-molecule
 
+        # A second swap file for the role to take away. Turning swap off has to
+        # remove every file the role was told about, not just the one
+        # `system_swap_path` names. This one was installed with a priority, so
+        # its /etc/fstab entry does not read like the one the role removes by
+        # default - it has to go because of its path.
+        system_swap_files_custom:
+          - path: /var/swap-molecule-second
+            size: 32
+            priority: 7
+
         # Variables for the verification suite
+        # The swap files the role is told about, as a previous install would
+        # have left them and in the order the role has to get to them. Spelled
+        # out by hand rather than read back out of `system_swap_files`, so that
+        # prepare.yml still seeds both, and verify.yml still looks for both, the
+        # day that list stops including `system_swap_files_custom`.
+        swap_molecule_configured_files:
+          - path: /var/swap-molecule
+            megabytes: 48
+            fstab_options: "sw,nofail"
+          - path: /var/swap-molecule-second
+            megabytes: 32
+            fstab_options: "sw,nofail,pri=7"
         # Where prepare.yml's shim records what the role asked it to do.
         swap_molecule_swapoff_log: /var/log/molecule-swapoff.log
-        # A second swap file, seeded identically and registered in /etc/fstab
-        # identically, that the role has never heard of.
+        # One more swap file, seeded like the first and registered in /etc/fstab
+        # like the first, that the role has never heard of.
         swap_molecule_decoy_path: /var/swap-molecule-decoy
         # Seeded as if a previous install had written it. The role does not
         # remove it, and verify.yml says so out loud.
@@ -66,7 +90,7 @@ scenario:
   # `sysctl -p` reports a change on every run - but idempotence is exactly what
   # the second half of this scenario is about, so converge.yml runs the role
   # twice and verify.yml asserts the second run found nothing left to do rather
-  # than failing on a swap file that is already gone.
+  # than failing on swap files that are already gone.
   test_sequence:
     - dependency
     - destroy

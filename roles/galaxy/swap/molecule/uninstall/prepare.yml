@@ -1,10 +1,11 @@
 # SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-# Builds a host that looks like one where this role has already installed swap,
-# so that the uninstall half of the role has something real to take away - and
-# puts a second, identical swap file next to it that the role has never been
+# Builds a host that looks like one where this role has already installed two
+# swap files, so that the uninstall half of the role has something real to take
+# away - and puts another swap file next to them that the role has never been
 # told about.
 
 ---
@@ -12,6 +13,14 @@
   hosts: all
   become: true
   gather_facts: true
+  vars:
+    # Every swap file this play seeds: the ones the role is told about, then the
+    # one it is not.
+    swap_molecule_seeded_files: >-
+      {{
+        swap_molecule_configured_files
+        + [{'path': swap_molecule_decoy_path, 'megabytes': system_swap_size, 'fstab_options': 'sw,nofail'}]
+      }}
   tasks:
     ############################################################################
     #                                                                          #
@@ -67,13 +76,18 @@
           CapEff={{ swap_molecule_cap_eff }} carries no CAP_SYS_ADMIN, so the kernel would refuse
           swapoff regardless of what this scenario does
 
-    - name: Assert that this scenario seeds a small swap file
+    - name: Assert that this scenario seeds small swap files
+      vars:
+        swap_molecule_total_size: >-
+          {{ (system_swap_size | int)
+             + (system_swap_files_custom | map(attribute='size') | map('int') | sum) }}
       ansible.builtin.assert:
-        that: system_swap_size | int <= 128
+        that: swap_molecule_total_size | int <= 128
         fail_msg: >-
-          system_swap_size is {{ system_swap_size }} MB, and this scenario writes two files that
-          size to the disk of the machine running the suite. Keep it small.
-        success_msg: "system_swap_size is {{ system_swap_size }} MB, which is cheap to write twice"
+          The swap files this scenario configures add up to {{ swap_molecule_total_size }} MB, and
+          it writes them, and one more the size of the first, to the disk of the machine running
+          the suite. Keep it small.
+        success_msg: "The swap files add up to {{ swap_molecule_total_size }} MB, which is cheap to write"
 
     ############################################################################
     #                                                                          #
@@ -85,8 +99,8 @@
     # fails outright when the file it is given is not currently in use, which is
     # exactly the state this scenario is in. The shim gives the role the answer a
     # host with active swap would give, and records the call so that verify.yml
-    # can assert the role asked to disable the file it was configured with rather
-    # than assert nothing.
+    # can assert the role asked to disable the files it was configured with
+    # rather than assert nothing.
     #
     # It goes into /usr/local/sbin, which precedes /usr/sbin - where the real
     # swapoff lives - in root's PATH on both distributions in the matrix. If it
@@ -114,52 +128,53 @@
     #                                                                          #
     ############################################################################
 
-    # Two swap files, made the same way `tasks/install.yml` makes one, at the
-    # same size and the same mode. Only the first is named in the role's
-    # variables. Everything verify.yml says about what the role removed is a
-    # statement about the pair.
+    # Three swap files, made the same way the role makes one, with the same
+    # mode. Only the first two are named in the role's variables. Everything
+    # verify.yml says about what the role removed is a statement about the
+    # difference between those two and the third.
     - name: Seed the swap files
       ansible.builtin.command:
-        cmd: "dd if=/dev/zero of={{ item }} bs=1M count={{ system_swap_size }}"
-        creates: "{{ item }}"
-      loop:
-        - "{{ system_swap_path }}"
-        - "{{ swap_molecule_decoy_path }}"
+        cmd: "dd if=/dev/zero of={{ item.path }} bs=1M count={{ item.megabytes }}"
+        creates: "{{ item.path }}"
+      loop: "{{ swap_molecule_seeded_files }}"
+      loop_control:
+        label: "{{ item.path }}"
 
     - name: Set the swap files' permissions
       ansible.builtin.file:
-        path: "{{ item }}"
+        path: "{{ item.path }}"
         state: file
         owner: root
         group: root
         mode: "0600"
-      loop:
-        - "{{ system_swap_path }}"
-        - "{{ swap_molecule_decoy_path }}"
+      loop: "{{ swap_molecule_seeded_files }}"
+      loop_control:
+        label: "{{ item.path }}"
 
     - name: Write a swap signature into the swap files
       ansible.builtin.command:
-        cmd: "mkswap {{ item }}"
+        cmd: "mkswap {{ item.path }}"
       changed_when: true
-      loop:
-        - "{{ system_swap_path }}"
-        - "{{ swap_molecule_decoy_path }}"
+      loop: "{{ swap_molecule_seeded_files }}"
+      loop_control:
+        label: "{{ item.path }}"
 
-    # Registered exactly the way tasks/install.yml registers the real one, so
-    # that the line the role has to remove and the line it has to leave alone are
-    # indistinguishable apart from the path.
-    - name: Register both swap files in /etc/fstab
+    # Registered exactly the way the role registers them, so that the lines the
+    # role has to remove and the line it has to leave alone are indistinguishable
+    # apart from the path - and, for the file that was installed with a
+    # priority, the `pri=` the role would have written next to it.
+    - name: Register the swap files in /etc/fstab
       ansible.posix.mount:
         name: none
-        src: "{{ item }}"
+        src: "{{ item.path }}"
         fstype: swap
-        opts: sw,nofail
+        opts: "{{ item.fstab_options }}"
         dump: "0"
         passno: "0"
         state: present
-      loop:
-        - "{{ system_swap_path }}"
-        - "{{ swap_molecule_decoy_path }}"
+      loop: "{{ swap_molecule_seeded_files }}"
+      loop_control:
+        label: "{{ item.path }}"
 
     # As a previous install would have left it. The role does not remove this
     # file when swap is turned off; verify.yml asserts that it is still here, so

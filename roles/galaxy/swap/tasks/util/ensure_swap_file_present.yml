@@ -1,0 +1,46 @@
+---
+
+- name: Check existence of swap file
+  ansible.builtin.stat:
+    path: "{{ swap_file.path }}"
+  register: system_swap_file
+
+# `rescue` rather than `ignore_errors`, so that a failed step also stops the ones after it.
+- when: not system_swap_file.stat.exists | bool
+  name: Initialize swap file
+  vars:
+    system_swap_file_priority: "{{ swap_file.priority | default('') | string }}"
+  block:
+    - name: Allocate space
+      ansible.builtin.command: "dd if=/dev/zero of={{ swap_file.path }} bs=1M count={{ swap_file.size }}"
+      args:
+        creates: "{{ swap_file.path }}"
+
+    - name: Set file permissions
+      ansible.builtin.file:
+        path: "{{ swap_file.path }}"
+        state: file
+        owner: root
+        group: root
+        mode: '0600'
+
+    - name: Create swap
+      ansible.builtin.command: "mkswap {{ swap_file.path }}"
+
+    - name: Enable swap
+      ansible.builtin.command: "swapon {{ ('-p ' ~ system_swap_file_priority ~ ' ') if system_swap_file_priority | string | length > 0 else '' }}{{ swap_file.path }}"
+
+    - name: Persist swap config in /etc/fstab
+      ansible.posix.mount:
+        name: none
+        src: "{{ swap_file.path }}"
+        fstype: swap
+        opts: "sw,nofail{{ (',pri=' ~ system_swap_file_priority) if system_swap_file_priority | string | length > 0 else '' }}"
+        dump: '0'
+        passno: '0'
+        state: present
+  rescue:
+    - name: Fail if errors are not ignored
+      when: not system_swap_ignore_errors | bool
+      ansible.builtin.fail:
+        msg: "Failed to initialize the swap file `{{ swap_file.path }}`. See the failed task above."

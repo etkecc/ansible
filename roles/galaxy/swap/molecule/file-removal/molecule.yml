@@ -1,0 +1,118 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+dependency:
+  name: galaxy
+  options:
+    requirements-file: requirements.yml
+    force: true
+driver:
+  name: docker
+platforms:
+  # Unprivileged and without systemd, for the reasons molecule/default/molecule.yml
+  # spells out: swap belongs to the kernel, and the kernel belongs to whoever is
+  # running this suite. prepare.yml asserts both properties before it seeds
+  # anything.
+  - name: swap-${MOLECULE_DISTRO:-ubuntu2604}-file-removal
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2604}-ansible:latest"
+    pre_build_image: true
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callback_result_format: yaml
+  inventory:
+    group_vars:
+      all:
+        # The role's default, stated because of what this scenario is about:
+        # taking one swap file away while swap as a whole stays on. Turning
+        # `system_swap_enabled` off removes every file the role knows about,
+        # which is the uninstall scenario's business; `state: absent` on a
+        # single entry is the only way to remove one and keep the rest.
+        system_swap_enabled: true
+
+        # Also the role's default. With the shims in place nothing in here is
+        # expected to fail, so a failure has to fail the converge rather than
+        # be swallowed.
+        system_swap_ignore_errors: false
+
+        # The swap file these two describe is already on the host when the role
+        # first runs - prepare.yml seeds it, at this size - and it has to come
+        # through both converges untouched. The role's defaults are 1024 and
+        # /var/swap.
+        system_swap_size: 32
+        system_swap_path: /var/swap-molecule
+
+        # What a host's variables look like while its swap is being moved from
+        # one file to another.
+        system_swap_files_custom:
+          # Seeded by prepare.yml, and to be taken away. It names no size,
+          # because there is nothing to create.
+          #
+          # Listed ahead of the file that replaces it on purpose. `swapoff`
+          # moves whatever the file holds back into memory and into the swap
+          # that is left, so the role has to bring the new file up before it
+          # takes this one away - whichever order the two are listed in.
+          - path: /var/swap-molecule-retired
+            state: absent
+          # Not on the host yet. Zero is a priority like any other - it ranks
+          # the file above every one the kernel numbers by itself, from -1
+          # downwards - and it is the one a role that tested "is a priority
+          # set?" by truthiness would silently drop.
+          - path: /var/swap-molecule-new
+            size: 16
+            priority: 0
+
+        # This scenario is about files. With nothing in this list the role has
+        # no reason to call `sysctl`, which is why prepare.yml installs no shim
+        # for it; the kernel parameters are the default scenario's business.
+        system_swap_sysctl: []
+
+        # Variables for the verification suite
+        # Seeded by prepare.yml the way the role would have installed them, and
+        # registered in /etc/fstab in this order. The role is told to keep the
+        # first and to remove the second, and has never heard of the third.
+        swap_molecule_kept_path: /var/swap-molecule
+        swap_molecule_retired_path: /var/swap-molecule-retired
+        swap_molecule_decoy_path: /var/swap-molecule-decoy
+        swap_molecule_seeded_megabytes: 32
+        # The one the role has to create.
+        swap_molecule_new_path: /var/swap-molecule-new
+        swap_molecule_new_megabytes: 16
+        # Where prepare.yml's shims record what the role asked them to do - both
+        # of them into the same file, so that the order of the calls survives.
+        swap_molecule_calls_log: /var/log/molecule-swap-calls.log
+        # Everything the role may ask the kernel for across two converges, in
+        # the order it has to ask. Spelled out by hand rather than put together
+        # from the variables above, so that the suite does not repeat the role's
+        # own logic back to it.
+        swap_molecule_expected_calls:
+          - "swapon -p 0 /var/swap-molecule-new"
+          - "swapoff /var/swap-molecule-retired"
+        # The sysctl.d file tasks/install.yml hardcodes, which must not appear.
+        swap_molecule_sysctl_file: /etc/sysctl.d/99-swap.conf
+  env:
+    # Workaround for https://github.com/ansible/molecule/issues/4391
+    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles
+scenario:
+  # Unlike the other two scenarios, this one keeps Molecule's own `idempotence`
+  # step. What rules it out there is `sysctl -p` reporting a change on every
+  # run, and with `system_swap_sysctl` empty the role never gets that far. So
+  # the second run is Molecule's rather than converge.yml's, and it has to
+  # report no change at all - on top of which verify.yml asserts that `swapon`
+  # and `swapoff` were each called once across the two.
+  test_sequence:
+    - dependency
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    - idempotence
+    - verify
+    - destroy
+verifier:
+  name: ansible

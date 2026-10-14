@@ -1,4 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -64,13 +65,28 @@ provisioner:
         # Megabytes. The role's default is 1024. Small because this is a real
         # file being written to a real disk on whatever machine runs the suite,
         # and because 48 MiB is still comfortably above mkswap's minimum.
-        # prepare.yml refuses to run if this ever grows past 128.
+        # prepare.yml refuses to run if the swap files of this scenario ever
+        # add up to more than 128.
         system_swap_size: 48
 
         # The role's default is /var/swap. verify.yml asserts the file is here
         # and that /var/swap was not written to, which is what proves the
         # variable is honored rather than merely present.
         system_swap_path: /var/swap-molecule
+
+        # Empty by default, which leaves the choice to the kernel. Set here so
+        # that the swap file the three variables above describe is the one that
+        # asks for a priority, and the one below is the one that does not.
+        system_swap_priority: 5
+
+        # A second swap file, added the way a playbook user adds one. It is a
+        # different size from the first, so that a role which created every
+        # file at `system_swap_size` is caught, and it names no priority, so
+        # that what the role asks `swapon` and /etc/fstab for is exactly what
+        # it asked for before priorities existed.
+        system_swap_files_custom:
+          - path: /var/swap-molecule-second
+            size: 32
 
         # The same two parameters the role sets by default, at different values,
         # so that verify.yml can tell what the scenario asked for apart from
@@ -84,6 +100,20 @@ provisioner:
             value: 77
 
         # Variables for the verification suite
+        # What has to be on the host afterwards, in the order the role has to
+        # get to it. Spelled out by hand rather than read back out of
+        # `system_swap_files`: a suite that looped over the role's own list
+        # would loop over one file, and pass, the day that list stopped
+        # including `system_swap_files_custom`.
+        swap_molecule_expected_files:
+          - path: /var/swap-molecule
+            megabytes: 48
+            swapon_arguments: "-p 5 /var/swap-molecule"
+            fstab_options: "sw,nofail,pri=5"
+          - path: /var/swap-molecule-second
+            megabytes: 32
+            swapon_arguments: "/var/swap-molecule-second"
+            fstab_options: "sw,nofail"
         # Where prepare.yml's shims record what the role asked them to do.
         swap_molecule_swapon_log: /var/log/molecule-swapon.log
         swap_molecule_sysctl_log: /var/log/molecule-sysctl.log
@@ -112,8 +142,8 @@ scenario:
   # block once the swap file exists - but its sysctl tasks report a change
   # whenever `sysctl -p` runs, so Molecule's own idempotence step would fail on
   # something harmless. What a second run must not do is rewrite, resize or
-  # re-enable the swap file, so converge.yml runs the role twice and verify.yml
-  # asserts the file came through the second run untouched.
+  # re-enable a swap file, so converge.yml runs the role twice and verify.yml
+  # asserts each file came through the second run untouched.
   test_sequence:
     - dependency
     - destroy

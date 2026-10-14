@@ -1,0 +1,32 @@
+---
+
+- name: Check existence of swap file
+  ansible.builtin.stat:
+    path: "{{ swap_file.path }}"
+  register: system_swap_file
+
+# `rescue` rather than `ignore_errors`, so that a failed step also stops the ones after it.
+- when: system_swap_file.stat.exists | bool
+  block:
+    - name: Ensure swap is disabled
+      ansible.builtin.command: "swapoff {{ swap_file.path }}"
+
+    - name: Ensure swap is absent in /etc/fstab
+      ansible.posix.mount:
+        name: none
+        src: "{{ swap_file.path }}"
+        fstype: swap
+        opts: sw,nofail
+        dump: '0'
+        passno: '0'
+        state: absent
+
+    - name: Ensure swap file removed
+      ansible.builtin.file:
+        path: "{{ swap_file.path }}"
+        state: absent
+  rescue:
+    - name: Fail if errors are not ignored
+      when: not system_swap_ignore_errors | bool
+      ansible.builtin.fail:
+        msg: "Failed to remove the swap file `{{ swap_file.path }}`. See the failed task above."

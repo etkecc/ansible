@@ -1,0 +1,18 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Runs the role once. The second run, against a host where the retired swap
+# file is already gone and the new one is already there, is Molecule's own
+# `idempotence` step - see the note on the test sequence in molecule.yml.
+
+---
+- name: Include the swap role for the Molecule tests
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Include the swap role
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"

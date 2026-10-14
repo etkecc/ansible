@@ -11,6 +11,34 @@ system_swap_size: 1024
 # swap file path
 system_swap_path: /var/swap
 
+# swap priority (0-32767, the kernel picks one if empty)
+system_swap_priority: ''
+
+# system_swap_files contains the list of swap files to manage.
+# The first one is described by the 3 variables above.
+# To add your own swap files, use `system_swap_files_custom`.
+#
+# Supported keys:
+# - path (required)
+# - size (required unless the state is `absent`): in megabytes
+# - priority (optional): 0-32767, the kernel picks one if not specified
+# - state (optional): `present` (default) or `absent`
+#
+# Example:
+# system_swap_files_custom:
+#   - path: /mnt/data/swap
+#     size: 2048
+#     priority: 10
+#   - path: /var/swap-old
+#     state: absent
+system_swap_files: "{{ system_swap_files_default + system_swap_files_auto + system_swap_files_custom }}"
+system_swap_files_default:
+  - path: "{{ system_swap_path }}"
+    size: "{{ system_swap_size }}"
+    priority: "{{ system_swap_priority }}"
+system_swap_files_auto: []
+system_swap_files_custom: []
+
 # sysctl.conf
 system_swap_sysctl:
   - name: vm.swappiness

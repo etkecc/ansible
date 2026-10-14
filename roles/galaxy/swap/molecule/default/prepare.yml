@@ -1,4 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -51,18 +52,24 @@
           Docker's default system paths.
         success_msg: "/proc/sys is mounted read-only, so nothing here can reach the kernel's parameters"
 
-    # The role writes `system_swap_size` megabytes of zeroes to a real file on
-    # whatever disk backs the container. The default is 1024 and mash-playbook
-    # users routinely set several thousand; neither belongs in a test suite that
-    # runs on every push.
-    - name: Assert that this scenario asks for a small swap file
+    # The role writes each swap file's `size` in megabytes of zeroes to a real
+    # file on whatever disk backs the container. The default is 1024 and
+    # mash-playbook users routinely set several thousand; neither belongs in a
+    # test suite that runs on every push. The sum is what counts: the role writes
+    # the swap file `system_swap_size` describes and every one in
+    # `system_swap_files_custom`.
+    - name: Assert that this scenario asks for small swap files
+      vars:
+        swap_molecule_total_size: >-
+          {{ (system_swap_size | int)
+             + (system_swap_files_custom | map(attribute='size') | map('int') | sum) }}
       ansible.builtin.assert:
-        that: system_swap_size | int <= 128
+        that: swap_molecule_total_size | int <= 128
         fail_msg: >-
-          system_swap_size is {{ system_swap_size }} MB. The role writes that many megabytes of
-          zeroes to the disk of the machine running this suite, on every scenario run and on every
-          distribution in the matrix. Keep it small.
-        success_msg: "system_swap_size is {{ system_swap_size }} MB, which is cheap to write"
+          The swap files this scenario asks for add up to {{ swap_molecule_total_size }} MB. The
+          role writes that many megabytes of zeroes to the disk of the machine running this suite,
+          on every scenario run and on every distribution in the matrix. Keep it small.
+        success_msg: "The swap files add up to {{ swap_molecule_total_size }} MB, which is cheap to write"
 
     # Without CAP_SYS_ADMIN the kernel refuses `swapon` outright, which is what
     # makes it safe to let this role run its real tasks against a shared kernel.
@@ -200,10 +207,10 @@
     #                                                                          #
     ############################################################################
 
-    # Seeded next to the file the role manages, with the same shape, and named
-    # nowhere in the role's variables. "The role created its swap file" is worth
-    # little on its own; "and left this identical neighbour alone" is what makes
-    # it a statement about `system_swap_path`.
+    # Seeded next to the files the role manages, with the same shape, and named
+    # nowhere in the role's variables. "The role created its swap files" is
+    # worth little on its own; "and left this identical neighbour alone" is what
+    # makes it a statement about `system_swap_files`.
     - name: Seed a decoy file the role was never told about
       ansible.builtin.copy:
         dest: "{{ swap_molecule_decoy_path }}"
@@ -214,9 +221,7 @@
       ansible.builtin.stat:
         path: "{{ item }}"
       register: swap_molecule_preexisting
-      loop:
-        - "{{ system_swap_path }}"
-        - "{{ swap_molecule_sysctl_file }}"
+      loop: "{{ swap_molecule_expected_files | map(attribute='path') | list + [swap_molecule_sysctl_file] }}"
 
     - name: Assert that the paths the role writes to are empty to begin with
       ansible.builtin.assert:
@@ -246,13 +251,16 @@
         content: "{{ swap_molecule_proc_swaps_before.content | b64decode }}"
         mode: "0644"
 
-    - name: Assert that the machine running the suite is not already swapping onto this path
+    - name: Assert that the machine running the suite is not already swapping onto these paths
       ansible.builtin.assert:
-        that: system_swap_path not in (swap_molecule_proc_swaps_before.content | b64decode)
+        that: item.path not in (swap_molecule_proc_swaps_before.content | b64decode)
         fail_msg: >-
-          {{ system_swap_path }} is already an active swap area on the machine running this suite:
+          {{ item.path }} is already an active swap area on the machine running this suite:
           {{ swap_molecule_proc_swaps_before.content | b64decode }}
-        success_msg: "The kernel is not swapping onto {{ system_swap_path }}"
+        success_msg: "The kernel is not swapping onto {{ item.path }}"
+      loop: "{{ swap_molecule_expected_files }}"
+      loop_control:
+        label: "{{ item.path }}"
 
     - name: Read /etc/fstab as it is before the role runs
       ansible.builtin.slurp:

@@ -43,6 +43,7 @@ jobs:
         scenario:
           - default
           - uninstall
+          - file-removal
       fail-fast: false
 
     env:

@@ -4,12 +4,11 @@
 
 # Runs the role twice, with `system_swap_enabled` off.
 #
-# The second run is the interesting one: by then the swap file is gone, and
-# `tasks/uninstall.yml` has to notice that and do nothing, rather than call
-# `swapoff` on a path that no longer exists and fail. A playbook run is not a
-# one-off event - mash-playbook users re-run the whole thing on every change -
-# so an uninstall that only works once is an uninstall that breaks every
-# subsequent run.
+# The second run is the interesting one: by then the swap files are gone, and
+# the role has to notice that and do nothing, rather than call `swapoff` on
+# paths that no longer exist and fail. A playbook run is not a one-off event -
+# mash-playbook users re-run the whole thing on every change - so an uninstall
+# that only works once is an uninstall that breaks every subsequent run.
 
 ---
 - name: Include the swap role for the Molecule tests

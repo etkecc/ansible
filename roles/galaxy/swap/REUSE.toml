@@ -13,14 +13,14 @@ version = 1
 path = [
     "defaults/main.yml",
 ]
-SPDX-FileCopyrightText = "2022 - 2024 etke.cc"
+SPDX-FileCopyrightText = ["2022 - 2024 etke.cc", "2026 spatterlight"]
 SPDX-License-Identifier = "GPL-3.0-or-later"
 
 [[annotations]]
 path = [
     "tasks/**",
 ]
-SPDX-FileCopyrightText = ["2022 - 2026 etke.cc", "2022 - 2023 Slavi Pantaleev"]
+SPDX-FileCopyrightText = ["2022 - 2026 etke.cc", "2022 - 2023 Slavi Pantaleev", "2026 spatterlight"]
 SPDX-License-Identifier = "GPL-3.0-or-later"
 
 # Computer-generated files and other files which cannot be copyrighted

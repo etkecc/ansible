@@ -1,0 +1,35 @@
+---
+
+- name: Fail if a swap file has no path
+  ansible.builtin.fail:
+    msg: >-
+      Each entry in `system_swap_files` needs a `path`, but this one has none: `{{ item }}`.
+  when: "item.path | default('') | string | length == 0"
+  with_items: "{{ system_swap_files }}"
+
+- name: Fail if a swap file is listed more than once
+  ansible.builtin.fail:
+    msg: >-
+      Each swap file may only be listed once in `system_swap_files`, but it lists {{ system_swap_files | map(attribute='path') | list }}.
+  when: "system_swap_files | map(attribute='path') | unique | list | length != system_swap_files | length"
+
+- name: Fail if a swap file has an unknown state
+  ansible.builtin.fail:
+    msg: >-
+      The `state` of the swap file `{{ item.path }}` needs to be `present` or `absent`, not `{{ item.state }}`.
+  when: "item.state | default('present') not in ['present', 'absent']"
+  with_items: "{{ system_swap_files }}"
+
+- name: Fail if a swap file has no valid size
+  ansible.builtin.fail:
+    msg: >-
+      The swap file `{{ item.path }}` needs a `size`: a whole number of megabytes, greater than zero.
+  when: "item.state | default('present') == 'present' and item.size | default('') | string is not match('^[1-9][0-9]*$')"
+  with_items: "{{ system_swap_files }}"
+
+- name: Fail if a swap file has no valid priority
+  ansible.builtin.fail:
+    msg: >-
+      The `priority` of the swap file `{{ item.path }}` needs to be a whole number between 0 and 32767, not `{{ item.priority }}`.
+  when: "item.priority | default('') | string | length > 0 and (item.priority | string is not match('^[0-9]+$') or item.priority | int > 32767)"
+  with_items: "{{ system_swap_files }}"

@@ -1,0 +1,231 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Builds a host that looks like one where this role has already installed two
+# swap files and somebody else has installed a third, so that the role has one
+# to keep, one to take away and one to stay out of - and leaves the fourth, the
+# one the role is asked to create, for the role.
+
+---
+- name: Prepare the host for the swap file removal Molecule tests
+  hosts: all
+  become: true
+  gather_facts: true
+  vars:
+    swap_molecule_seeded_paths:
+      - "{{ swap_molecule_kept_path }}"
+      - "{{ swap_molecule_retired_path }}"
+      - "{{ swap_molecule_decoy_path }}"
+  tasks:
+    ############################################################################
+    #                                                                          #
+    # refusals                                                                 #
+    #                                                                          #
+    ############################################################################
+
+    # The same properties molecule/default/prepare.yml insists on, for the same
+    # reason: this container shares its kernel with the machine running the
+    # suite. This scenario calls both `swapon` and `swapoff`, so a privileged
+    # container here could do either to that machine.
+    - name: Read this process's mount table
+      ansible.builtin.slurp:
+        src: /proc/self/mountinfo
+      register: swap_molecule_mountinfo
+
+    - name: Assert that /proc/sys cannot be written to
+      vars:
+        swap_molecule_proc_sys_mounts: >-
+          {{ (swap_molecule_mountinfo.content | b64decode).splitlines()
+             | select('search', ' /proc/sys ') | list }}
+      ansible.builtin.assert:
+        that:
+          - swap_molecule_proc_sys_mounts | length > 0
+          - swap_molecule_proc_sys_mounts | select('search', ' ro,') | list | length == swap_molecule_proc_sys_mounts | length
+        fail_msg: >-
+          /proc/sys is not mounted read-only in this container ({{ swap_molecule_proc_sys_mounts }}),
+          which means this container is privileged or has had Docker's default system paths lifted.
+          Do not do that here.
+        success_msg: "/proc/sys is mounted read-only, so nothing here can reach the kernel's parameters"
+
+    - name: Read this process's effective capabilities
+      ansible.builtin.slurp:
+        src: /proc/self/status
+      register: swap_molecule_self_status
+
+    - name: Assert that the container cannot touch the kernel's swap areas
+      vars:
+        swap_molecule_cap_eff: >-
+          {{ (swap_molecule_self_status.content | b64decode).splitlines()
+             | select('match', '^CapEff:')
+             | first | split() | last }}
+      ansible.builtin.assert:
+        # CAP_SYS_ADMIN is bit 21 of the capability bitmask, which /proc/self/status
+        # reports in hex. Jinja has no bitwise operators, so the bit is picked out
+        # by dividing it down to the bottom and taking it modulo two.
+        that: "((swap_molecule_cap_eff | int(base=16)) // (2 ** 21)) % 2 == 0"
+        fail_msg: >-
+          This container holds CAP_SYS_ADMIN (CapEff={{ swap_molecule_cap_eff }}), so `swapon` and
+          `swapoff` can succeed in here - against the kernel of the machine running this suite,
+          whose swap this scenario has no business touching. Do not make this platform privileged.
+        success_msg: >-
+          CapEff={{ swap_molecule_cap_eff }} carries no CAP_SYS_ADMIN, so the kernel would refuse
+          swapon and swapoff regardless of what this scenario does
+
+    # Everything this scenario puts on the disk of the machine running the suite:
+    # the swap file `system_swap_size` describes, the ones in
+    # `system_swap_files_custom`, and the two that are seeded below without the
+    # role being asked to write them. The swap file that is being retired names
+    # no size, hence the default.
+    - name: Assert that this scenario writes small swap files
+      vars:
+        swap_molecule_total_size: >-
+          {{ (system_swap_size | int)
+             + (system_swap_files_custom | map(attribute='size', default=0) | map('int') | sum)
+             + 2 * (swap_molecule_seeded_megabytes | int) }}
+      ansible.builtin.assert:
+        that: swap_molecule_total_size | int <= 128
+        fail_msg: >-
+          The swap files this scenario seeds and the ones it asks the role for add up to
+          {{ swap_molecule_total_size }} MB of zeroes, written to the disk of the machine running
+          the suite on every distribution in the matrix. Keep it small.
+        success_msg: "The swap files add up to {{ swap_molecule_total_size }} MB, which is cheap to write"
+
+    ############################################################################
+    #                                                                          #
+    # the shims                                                                #
+    #                                                                          #
+    ############################################################################
+
+    # Neither `swapon` nor `swapoff` can do its real work in here, and this
+    # scenario has the role call one of each. The shims give it the answers a
+    # host with working swap would give, and record what they were asked for.
+    #
+    # Both write to the same log, with their own name in front. Which file the
+    # role enabled and which it disabled is half of what verify.yml asserts; the
+    # other half is that the enabling came first, and that is only recoverable
+    # if the two tools share a record.
+    #
+    # They go into /usr/local/sbin, which precedes /usr/sbin - where the real
+    # tools live - in root's PATH on both distributions in the matrix. If a shim
+    # were not found, the real tool would run, fail, and take the converge down
+    # with it.
+    - name: Install the swapon and swapoff shims
+      ansible.builtin.copy:
+        dest: "/usr/local/sbin/{{ item }}"
+        mode: "0755"
+        content: |
+          #!/bin/sh
+          # Installed by this role's Molecule suite. See molecule/file-removal/prepare.yml.
+          printf '%s %s\n' '{{ item }}' "$*" >> {{ swap_molecule_calls_log }}
+          exit 0
+      loop:
+        - swapon
+        - swapoff
+
+    - name: Ensure the shims' log starts out empty
+      ansible.builtin.copy:
+        dest: "{{ swap_molecule_calls_log }}"
+        content: ""
+        mode: "0644"
+
+    ############################################################################
+    #                                                                          #
+    # a host that already has swap installed                                   #
+    #                                                                          #
+    ############################################################################
+
+    # Three swap files, made the same way the role makes one, at the same size
+    # and the same mode. What tells them apart is only what the role's variables
+    # say about each: keep the first, remove the second, and nothing at all
+    # about the third.
+    - name: Seed the swap files
+      ansible.builtin.command:
+        cmd: "dd if=/dev/zero of={{ item }} bs=1M count={{ swap_molecule_seeded_megabytes }}"
+        creates: "{{ item }}"
+      loop: "{{ swap_molecule_seeded_paths }}"
+
+    - name: Set the swap files' permissions
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: file
+        owner: root
+        group: root
+        mode: "0600"
+      loop: "{{ swap_molecule_seeded_paths }}"
+
+    - name: Write a swap signature into the swap files
+      ansible.builtin.command:
+        cmd: "mkswap {{ item }}"
+      changed_when: true
+      loop: "{{ swap_molecule_seeded_paths }}"
+
+    # Registered exactly the way the role registers a swap file that was given
+    # no priority, so that the line the role has to remove and the two it has to
+    # leave alone are indistinguishable apart from the path.
+    - name: Register the swap files in /etc/fstab
+      ansible.posix.mount:
+        name: none
+        src: "{{ item }}"
+        fstype: swap
+        opts: sw,nofail
+        dump: "0"
+        passno: "0"
+        state: present
+      loop: "{{ swap_molecule_seeded_paths }}"
+
+    ############################################################################
+    #                                                                          #
+    # what verify.yml compares against                                         #
+    #                                                                          #
+    ############################################################################
+
+    - name: Look for anything already at the paths the role is supposed to write to
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      register: swap_molecule_preexisting
+      loop:
+        - "{{ swap_molecule_new_path }}"
+        - "{{ swap_molecule_sysctl_file }}"
+
+    - name: Assert that those paths are empty to begin with
+      ansible.builtin.assert:
+        that: not item.stat.exists
+        fail_msg: >-
+          {{ item.item }} already exists before the role has run, so nothing verify.yml says about
+          it afterwards would prove anything.
+        success_msg: "{{ item.item }} does not exist yet"
+      loop: "{{ swap_molecule_preexisting.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    # The swap file the role is told to keep is the one it could most easily
+    # damage: it is named in `system_swap_path`, at a size, exactly as it would
+    # be if the role were about to create it. Handed to verify.yml through the
+    # filesystem, since the two run as separate playbooks and share no facts.
+    - name: Record the state of the swap file the role has to keep
+      ansible.builtin.stat:
+        path: "{{ swap_molecule_kept_path }}"
+        checksum_algorithm: sha256
+      register: swap_molecule_kept
+
+    - name: Save the state of that swap file for the verification play
+      ansible.builtin.copy:
+        dest: /var/lib/molecule-swap-kept.json
+        mode: "0644"
+        content: "{{ swap_molecule_kept.stat | to_nice_json }}"
+
+    # /proc/swaps is the kernel's, and the kernel is shared: what shows up in
+    # here is whatever the machine running the suite has enabled. Recording it
+    # now lets verify.yml assert that the role changed none of it.
+    - name: Record the kernel's swap areas as they are before the role runs
+      ansible.builtin.slurp:
+        src: /proc/swaps
+      register: swap_molecule_proc_swaps_before
+
+    - name: Save the kernel's swap areas for the verification play
+      ansible.builtin.copy:
+        dest: /var/lib/molecule-swap-proc-swaps-before
+        content: "{{ swap_molecule_proc_swaps_before.content | b64decode }}"
+        mode: "0644"

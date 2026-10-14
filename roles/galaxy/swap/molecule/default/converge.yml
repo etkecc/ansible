@@ -1,4 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -21,32 +22,37 @@
       ansible.builtin.include_role:
         name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
 
-    - name: Record the state of the swap file after the first run
+    - name: Record the state of the swap files after the first run
       ansible.builtin.stat:
-        path: "{{ system_swap_path }}"
+        path: "{{ item.path }}"
         checksum_algorithm: sha256
       register: swap_molecule_after_first_run
+      loop: "{{ swap_molecule_expected_files }}"
+      loop_control:
+        label: "{{ item.path }}"
 
-    - name: Assert that the first run created the swap file
+    - name: Assert that the first run created the swap files
       ansible.builtin.assert:
-        that: swap_molecule_after_first_run.stat.exists
-        fail_msg: "{{ system_swap_path }} does not exist after the role's first run"
-        success_msg: "{{ system_swap_path }} was created by the role's first run"
+        that: item.stat.exists
+        fail_msg: "{{ item.item.path }} does not exist after the role's first run"
+        success_msg: "{{ item.item.path }} was created by the role's first run"
+      loop: "{{ swap_molecule_after_first_run.results }}"
+      loop_control:
+        label: "{{ item.item.path }}"
 
     # Handed to verify.yml through the filesystem, since the two run as separate
-    # playbooks and share no facts.
-    - name: Save the state of the swap file for the verification play
+    # playbooks and share no facts. Keyed by path, so that each file is compared
+    # with itself and not with its neighbour.
+    - name: Save the state of the swap files for the verification play
       ansible.builtin.copy:
         dest: /var/lib/molecule-swap-first-run.json
         mode: "0644"
         content: >-
           {{
-            {
-              'inode': swap_molecule_after_first_run.stat.inode,
-              'size': swap_molecule_after_first_run.stat.size,
-              'checksum': swap_molecule_after_first_run.stat.checksum,
-              'mtime': swap_molecule_after_first_run.stat.mtime,
-            } | to_nice_json
+            dict(
+              swap_molecule_after_first_run.results | map(attribute='item.path')
+              | zip(swap_molecule_after_first_run.results | map(attribute='stat'))
+            ) | to_nice_json
           }}
 
 

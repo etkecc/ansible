@@ -1,16 +1,18 @@
 # SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Verifies what the role did to the host when `system_swap_enabled` is on.
 #
 # There is no service to probe here and no version to read back: the role's
-# entire output is a file, a line in /etc/fstab and two kernel parameters. So
-# every one of those is asserted against the value this scenario configured
-# rather than against the role's own default, the swap file is checked for the
-# signature only mkswap could have written, /etc/fstab is handed to findmnt to
-# confirm the role did not leave the host with a file that fails to parse, and a
-# decoy seeded next to the swap file is checked to still be there.
+# entire output is a file and a line in /etc/fstab for each entry in
+# `system_swap_files`, and two kernel parameters. So every one of those is
+# asserted against the value this scenario configured rather than against the
+# role's own default, each swap file is checked for the signature only mkswap
+# could have written, /etc/fstab is handed to findmnt to confirm the role did
+# not leave the host with a file that fails to parse, and a decoy seeded next to
+# the swap files is checked to still be there.
 #
 # What this cannot prove is that the swap is *in use*: `swapon` needs
 # CAP_SYS_ADMIN and a kernel that is not shared with the machine running the
@@ -35,15 +37,18 @@
 
         ########################################################################
         #                                                                      #
-        # the swap file itself                                                 #
+        # the swap files themselves                                            #
         #                                                                      #
         ########################################################################
 
-        - name: Look for the swap file
+        - name: Look for the swap files
           ansible.builtin.stat:
-            path: "{{ system_swap_path }}"
+            path: "{{ item.path }}"
             checksum_algorithm: sha256
-          register: swap_molecule_file
+          register: swap_molecule_files
+          loop: "{{ swap_molecule_expected_files }}"
+          loop_control:
+            label: "{{ item.path }}"
 
         - name: Look for a swap file at the role's default path
           ansible.builtin.stat:
@@ -56,64 +61,83 @@
         # machine, and one that is not 0600 root:root is every process on the box
         # being able to read whatever the kernel paged out of everybody else's
         # memory.
-        - name: Assert that the swap file is where, and what, the scenario asked for
+        #
+        # The two files are different sizes on purpose. Each is held to its own
+        # entry, so a role that gave every file the size of the first one fails
+        # on the second.
+        - name: Assert that each swap file is where, and what, the scenario asked for
           vars:
-            swap_molecule_expected_bytes: "{{ system_swap_size | int * 1024 * 1024 }}"
+            swap_molecule_expected_bytes: "{{ item.item.megabytes | int * 1024 * 1024 }}"
             swap_molecule_default_bytes: "{{ swap_role_defaults.system_swap_size | int * 1024 * 1024 }}"
           ansible.builtin.assert:
             that:
-              - swap_molecule_file.stat.exists
-              - swap_molecule_file.stat.isreg
-              - swap_molecule_file.stat.size | int == swap_molecule_expected_bytes | int
-              - swap_molecule_file.stat.size | int != swap_molecule_default_bytes | int
-              - swap_molecule_file.stat.mode == '0600'
-              - swap_molecule_file.stat.pw_name == 'root'
-              - swap_molecule_file.stat.gr_name == 'root'
-              - not swap_molecule_default_path.stat.exists
+              - item.stat.exists
+              - item.stat.isreg
+              - item.stat.size | int == swap_molecule_expected_bytes | int
+              - item.stat.size | int != swap_molecule_default_bytes | int
+              - item.stat.mode == '0600'
+              - item.stat.pw_name == 'root'
+              - item.stat.gr_name == 'root'
             fail_msg: >-
-              {{ system_swap_path }} is
-              {{ swap_molecule_file.stat.size | default('absent') }} bytes, mode
-              {{ swap_molecule_file.stat.mode | default('-') }},
-              owned by {{ swap_molecule_file.stat.pw_name | default('-') }}:{{ swap_molecule_file.stat.gr_name | default('-') }}.
-              Expected {{ swap_molecule_expected_bytes }} bytes (system_swap_size =
-              {{ system_swap_size }} MB, not the role's default of
-              {{ swap_role_defaults.system_swap_size }} MB), mode 0600, root:root - and nothing at
-              the role's default path of {{ swap_role_defaults.system_swap_path }}
-              (which exists: {{ swap_molecule_default_path.stat.exists }}).
+              {{ item.item.path }} is
+              {{ item.stat.size | default('absent') }} bytes, mode
+              {{ item.stat.mode | default('-') }},
+              owned by {{ item.stat.pw_name | default('-') }}:{{ item.stat.gr_name | default('-') }}.
+              Expected {{ swap_molecule_expected_bytes }} bytes
+              ({{ item.item.megabytes }} MB, not the role's default of
+              {{ swap_role_defaults.system_swap_size }} MB), mode 0600, root:root.
             success_msg: >-
-              {{ system_swap_path }} is {{ swap_molecule_file.stat.size }} bytes
-              ({{ system_swap_size }} MB, not the role's default of
-              {{ swap_role_defaults.system_swap_size }} MB), mode 0600 root:root, and the role's
-              default path {{ swap_role_defaults.system_swap_path }} was left alone
+              {{ item.item.path }} is {{ item.stat.size }} bytes
+              ({{ item.item.megabytes }} MB, not the role's default of
+              {{ swap_role_defaults.system_swap_size }} MB), mode 0600 root:root
+          loop: "{{ swap_molecule_files.results }}"
+          loop_control:
+            label: "{{ item.item.path }}"
+
+        - name: Assert that nothing was written to the role's default path
+          ansible.builtin.assert:
+            that: not swap_molecule_default_path.stat.exists
+            fail_msg: >-
+              {{ swap_role_defaults.system_swap_path }} exists. This scenario points
+              `system_swap_path` somewhere else, so the role wrote to its default path instead of,
+              or as well as, the configured one.
+            success_msg: >-
+              The role's default path {{ swap_role_defaults.system_swap_path }} was left alone
 
         # `dd` produces a file of the right size out of nothing at all; only
         # mkswap makes it usable. The signature is the last ten bytes of the
         # first page, which is where mkswap writes SWAPSPACE2 - so this is read
-        # from the file the role actually left behind rather than from a tool
+        # from the files the role actually left behind rather than from a tool
         # that might be guessing.
-        - name: Read the tail of the swap file's first page
+        - name: Read the tail of each swap file's first page
           ansible.builtin.command:
-            cmd: "dd if={{ system_swap_path }} bs=1 skip=4086 count=10 status=none"
-          register: swap_molecule_signature
+            cmd: "dd if={{ item.path }} bs=1 skip=4086 count=10 status=none"
+          register: swap_molecule_signatures
           changed_when: false
+          loop: "{{ swap_molecule_expected_files }}"
+          loop_control:
+            label: "{{ item.path }}"
 
-        - name: Assert that mkswap wrote a swap signature into the file
+        - name: Assert that mkswap wrote a swap signature into each file
           ansible.builtin.assert:
-            that: swap_molecule_signature.stdout == 'SWAPSPACE2'
+            that: item.stdout == 'SWAPSPACE2'
             fail_msg: >-
-              The first page of {{ system_swap_path }} ends in
-              '{{ swap_molecule_signature.stdout | regex_replace('[^ -~]', '.') }}', not the
+              The first page of {{ item.item.path }} ends in
+              '{{ item.stdout | regex_replace('[^ -~]', '.') }}', not the
               SWAPSPACE2 signature that mkswap writes. The file exists and is the right size, so `dd` ran and `mkswap` did not: this
               is a file of zeroes that no kernel would accept as swap.
-            success_msg: "{{ system_swap_path }} carries mkswap's SWAPSPACE2 signature"
+            success_msg: "{{ item.item.path }} carries mkswap's SWAPSPACE2 signature"
+          loop: "{{ swap_molecule_signatures.results }}"
+          loop_control:
+            label: "{{ item.item.path }}"
 
         ########################################################################
         #                                                                      #
-        # the second converge left the file alone                              #
+        # the second converge left the files alone                             #
         #                                                                      #
         ########################################################################
 
-        - name: Read the state the swap file was in after the first converge
+        - name: Read the state the swap files were in after the first converge
           ansible.builtin.slurp:
             src: /var/lib/molecule-swap-first-run.json
           register: swap_molecule_first_run_raw
@@ -123,28 +147,31 @@
         # area, and doing it on every playbook run would rewrite gigabytes each
         # time. The role guards this with a `stat` and with `creates:`, and both
         # guards are between the two converges that produced these numbers.
-        - name: Assert that the second converge did not touch the swap file
+        - name: Assert that the second converge did not touch the swap files
           vars:
-            swap_molecule_first_run: "{{ swap_molecule_first_run_raw.content | b64decode | from_json }}"
+            swap_molecule_first_run: "{{ (swap_molecule_first_run_raw.content | b64decode | from_json)[item.item.path] }}"
           ansible.builtin.assert:
             that:
-              - swap_molecule_file.stat.inode == swap_molecule_first_run.inode
-              - swap_molecule_file.stat.size == swap_molecule_first_run.size
-              - swap_molecule_file.stat.checksum == swap_molecule_first_run.checksum
-              - swap_molecule_file.stat.mtime == swap_molecule_first_run.mtime
+              - item.stat.inode == swap_molecule_first_run.inode
+              - item.stat.size == swap_molecule_first_run.size
+              - item.stat.checksum == swap_molecule_first_run.checksum
+              - item.stat.mtime == swap_molecule_first_run.mtime
             fail_msg: >-
-              {{ system_swap_path }} changed between the two converges: inode
-              {{ swap_molecule_first_run.inode }} -> {{ swap_molecule_file.stat.inode }}, size
-              {{ swap_molecule_first_run.size }} -> {{ swap_molecule_file.stat.size }}, mtime
-              {{ swap_molecule_first_run.mtime }} -> {{ swap_molecule_file.stat.mtime }}. The role
+              {{ item.item.path }} changed between the two converges: inode
+              {{ swap_molecule_first_run.inode }} -> {{ item.stat.inode }}, size
+              {{ swap_molecule_first_run.size }} -> {{ item.stat.size }}, mtime
+              {{ swap_molecule_first_run.mtime }} -> {{ item.stat.mtime }}. The role
               rewrote a swap file that already existed.
             success_msg: >-
-              {{ system_swap_path }} came through the second converge with the same inode, size,
+              {{ item.item.path }} came through the second converge with the same inode, size,
               checksum and mtime - the role skipped a file that was already there
+          loop: "{{ swap_molecule_files.results }}"
+          loop_control:
+            label: "{{ item.item.path }}"
 
         ########################################################################
         #                                                                      #
-        # the role asked the kernel to enable exactly this file, once           #
+        # the role asked the kernel to enable exactly these files, once each   #
         #                                                                      #
         ########################################################################
 
@@ -153,21 +180,25 @@
             src: "{{ swap_molecule_swapon_log }}"
           register: swap_molecule_swapon_raw
 
-        - name: Assert that the role enabled the configured swap file exactly once
+        # The whole log, compared as a list: one call per swap file, in the
+        # order `system_swap_files` lists them, with a priority for the file
+        # that was given one and nothing but the path for the file that was not.
+        - name: Assert that the role enabled each configured swap file exactly once
           vars:
             swap_molecule_swapon_calls: >-
               {{ (swap_molecule_swapon_raw.content | b64decode).splitlines() | select() | list }}
+            swap_molecule_swapon_expected: >-
+              {{ swap_molecule_expected_files | map(attribute='swapon_arguments') | list }}
           ansible.builtin.assert:
-            that:
-              - swap_molecule_swapon_calls | length == 1
-              - swap_molecule_swapon_calls[0] == system_swap_path
+            that: swap_molecule_swapon_calls == swap_molecule_swapon_expected
             fail_msg: >-
               swapon was called {{ swap_molecule_swapon_calls | length }} time(s), with
-              {{ swap_molecule_swapon_calls }}. Expected exactly one call, for
-              {{ system_swap_path }} - the role ran twice, and the second run must not re-enable a
-              swap file that is already in /etc/fstab.
+              {{ swap_molecule_swapon_calls }}. Expected exactly
+              {{ swap_molecule_swapon_expected }} - the role ran twice, and the second run must not
+              re-enable a swap file that is already in /etc/fstab.
             success_msg: >-
-              The role called `swapon {{ system_swap_path }}` once across two converges
+              The role called swapon with {{ swap_molecule_swapon_calls }} and nothing else across
+              two converges
 
         # The honest half of the assertion above. The shim answered for the
         # kernel, and the kernel really did not enable anything - so a green run
@@ -182,6 +213,13 @@
         # touch that machine's swap subsystem, which is what prepare.yml refuses
         # to allow - and would leave it swapping onto a file `molecule destroy`
         # is about to delete.
+        #
+        # "Exactly" stops short of one column. How much of each swap area is in
+        # use moves whenever the machine running the suite swaps, which on a
+        # machine with swap in use is all the time, and says nothing about what
+        # the role did - so that column is blanked on both sides before they are
+        # compared. The areas themselves, their sizes and their priorities are
+        # not.
         - name: Read the kernel's list of active swap areas
           ansible.builtin.slurp:
             src: /proc/swaps
@@ -194,11 +232,18 @@
 
         - name: Assert that the role activated no swap on the machine running the suite
           vars:
-            swap_molecule_active: "{{ swap_molecule_proc_swaps.content | b64decode }}"
-            swap_molecule_active_before: "{{ swap_molecule_proc_swaps_before.content | b64decode }}"
+            # /proc/swaps reads `Filename Type Size Used Priority`.
+            swap_molecule_used_column: '^(\S+\s+\S+\s+\S+\s+)\S+'
+            swap_molecule_used_blanked: '\1-'
+            swap_molecule_active: >-
+              {{ (swap_molecule_proc_swaps.content | b64decode).splitlines()
+                 | map('regex_replace', swap_molecule_used_column, swap_molecule_used_blanked) | list }}
+            swap_molecule_active_before: >-
+              {{ (swap_molecule_proc_swaps_before.content | b64decode).splitlines()
+                 | map('regex_replace', swap_molecule_used_column, swap_molecule_used_blanked) | list }}
           ansible.builtin.assert:
             that:
-              - system_swap_path not in swap_molecule_active
+              - swap_molecule_expected_files | map(attribute='path') | select('in', swap_molecule_active | join(' ')) | list | length == 0
               - swap_molecule_active == swap_molecule_active_before
             fail_msg: >-
               The kernel's swap areas changed while the role ran. Before:
@@ -206,8 +251,9 @@
               running this suite may now be swapping onto a file that `molecule destroy` is about to
               delete - check `swapon --show` on it.
             success_msg: >-
-              The kernel's swap areas are unchanged and do not include {{ system_swap_path }}: the
-              shim answered for the kernel and nothing was enabled on the machine running this suite
+              The kernel's swap areas are unchanged and include none of this scenario's swap files:
+              the shim answered for the kernel and nothing was enabled on the machine running this
+              suite
 
         ########################################################################
         #                                                                      #
@@ -220,7 +266,12 @@
             src: /etc/fstab
           register: swap_molecule_fstab
 
-        - name: Assert that the swap file is registered in /etc/fstab, with the options the role promises
+        # One line per swap file and no others, in the order the role got to
+        # them. The priority is the only thing that may differ between them: the
+        # file that was given one carries it as `pri=`, which is where
+        # `swapon -a` picks it up from at boot, and the file that was not is
+        # registered exactly as it was before priorities existed.
+        - name: Assert that each swap file is registered in /etc/fstab, with the options the role promises
           vars:
             swap_molecule_fstab_lines: >-
               {{ (swap_molecule_fstab.content | b64decode).splitlines()
@@ -229,15 +280,21 @@
                  | list }}
           ansible.builtin.assert:
             that:
-              - swap_molecule_fstab_lines | length == 1
-              - swap_molecule_fstab_lines[0].split() == [system_swap_path, 'none', 'swap', 'sw,nofail', '0', '0']
+              - swap_molecule_fstab_lines | length == swap_molecule_expected_files | length
+              - swap_molecule_fstab_lines[swap_molecule_index].split() == [item.path, 'none', 'swap', item.fstab_options, '0', '0']
             fail_msg: >-
               /etc/fstab holds {{ swap_molecule_fstab_lines | length }} swap line(s):
-              {{ swap_molecule_fstab_lines }}. Expected exactly one, reading
-              `{{ system_swap_path }} none swap sw,nofail 0 0`. `nofail` is the part that matters
-              most: without it a host whose swap file went missing stops booting.
+              {{ swap_molecule_fstab_lines }}. Expected exactly
+              {{ swap_molecule_expected_files | length }}, with number {{ swap_molecule_index + 1 }}
+              reading `{{ item.path }} none swap {{ item.fstab_options }} 0 0`. `nofail` is the part
+              that matters most: without it a host whose swap file went missing stops booting.
             success_msg: >-
-              /etc/fstab holds exactly one swap entry, `{{ swap_molecule_fstab_lines[0] }}`
+              /etc/fstab holds `{{ swap_molecule_fstab_lines[swap_molecule_index] }}`, as one of
+              exactly {{ swap_molecule_expected_files | length }} swap entries
+          loop: "{{ swap_molecule_expected_files }}"
+          loop_control:
+            index_var: swap_molecule_index
+            label: "{{ item.path }}"
 
         # The failure mode this role can cause that is worse than not working at
         # all is an /etc/fstab the system cannot parse, which is a host that does
@@ -360,9 +417,9 @@
         ########################################################################
 
         # The negative control for everything above. Seeded next to the swap
-        # file, the same 0600 regular file, named nowhere in the role's
+        # files, the same 0600 regular file, named nowhere in the role's
         # variables. A role that operated on the directory rather than on
-        # `system_swap_path`, or a suite that would pass against a host where
+        # `system_swap_files`, or a suite that would pass against a host where
         # nothing was ever seeded, fails here.
         - name: Look for the decoy file
           ansible.builtin.stat:
@@ -385,10 +442,10 @@
         - name: Report what was verified
           ansible.builtin.debug:
             msg:
-              - "swap file: {{ system_swap_path }}, {{ swap_molecule_file.stat.size }} bytes, mode 0600 root:root, SWAPSPACE2 signature"
-              - "second converge: same inode, size, checksum and mtime"
-              - "swapon: called once, for {{ system_swap_path }}; /proc/swaps is empty (see molecule/README.md)"
-              - "fstab: {{ system_swap_path }} none swap sw,nofail 0 0, and findmnt parses it"
+              - "swap files: {{ swap_molecule_expected_files | map(attribute='path') | join(', ') }}, each at its own size, mode 0600 root:root, SWAPSPACE2 signature"
+              - "second converge: same inode, size, checksum and mtime for each"
+              - "swapon: called once per file, with a priority only where one was configured; /proc/swaps is unchanged (see molecule/README.md)"
+              - "fstab: one `none swap` entry per file, with `pri=` only where one was configured, and findmnt parses it"
               - "sysctl: {{ system_swap_sysctl | map(attribute='name') | join(', ') }} persisted and applied"
               - "SWAP VERIFICATION COMPLETE"
       rescue:

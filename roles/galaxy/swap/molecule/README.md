@@ -2,6 +2,7 @@
 SPDX-FileCopyrightText: 2018-2026 Slavi Pantaleev
 SPDX-FileCopyrightText: 2019-2023 MDAD project contributors
 SPDX-FileCopyrightText: 2024-2026 Suguru Hirahara
+SPDX-FileCopyrightText: 2026 spatterlight
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
@@ -37,29 +38,15 @@ pip3 install -r ./molecule/requirements.txt
 
 ## What the suite can and cannot tell you
 
-Read this before changing anything under `molecule/`. This role is unlike the others in this fleet: it manages swap, and swap is a property of the *kernel*, which a container shares with the machine running the tests.
+Read this before changing anything under `molecule/`. Swap is a property of the kernel, and a container shares its kernel with the machine running the tests. A `swapon`, `swapoff` or `sysctl` that succeeded in a container would act on that machine.
 
-Two of the three things the role does cannot be allowed to take effect inside a container:
+- All scenarios run **unprivileged** containers with **no systemd**, where none of the three can work. `prepare.yml` asserts this before it does anything else. Never make a platform privileged.
+- `prepare.yml` puts recording shims in front of the three tools, in `/usr/local/sbin`, so that the role can finish and `verify.yml` can check what it asked for.
+- `prepare.yml` refuses to run if a scenario's swap files add up to more than 128 MB, because they are written to a real disk.
 
-- **`swapon` / `swapoff`.** If they succeeded, the machine running the suite would start swapping onto a file inside a container's overlay filesystem — and `molecule destroy` would then delete that file out from under it.
-- **`vm.swappiness` and `vm.vfs_cache_pressure`.** These are global kernel parameters, not namespaced ones. Setting them from inside a container retunes the machine running the suite, permanently; nothing puts them back.
+A green run proves what the role wrote to disk (the swap files, `/etc/fstab`, `/etc/sysctl.d/99-swap.conf`), what it asked the three tools for, and that a second run changes nothing. It does not prove that the swap is usable or that the kernel accepts the parameter values, as neither reaches the kernel. `verify.yml` asserts instead that the kernel's own list of swap areas came through unchanged.
 
-Both scenarios therefore run **unprivileged** containers with **no systemd** (the role installs no units). Without `CAP_SYS_ADMIN` the kernel refuses `swapon` and `swapoff` outright, and Docker mounts `/proc/sys` read-only, so neither is possible. `prepare.yml` asserts both of those properties before it does anything else, so that an edit which made a platform privileged fails loudly instead of quietly swapping onto somebody's laptop. `prepare.yml` also refuses to run if `system_swap_size` is ever raised past 128 MB, because that number is megabytes of zeroes written to a real disk on every scenario in the matrix.
-
-That leaves the role unable to finish, so `prepare.yml` puts a recording shim in front of `swapon`, `swapoff` and `sysctl`, in `/usr/local/sbin` — which precedes `/usr/sbin`, where the real tools live, in root's `PATH`. The shims answer the way a real host would and record what they were asked for. Nothing takes their presence on trust: if a shim were not found, the real tool would run, fail (`EPERM`, or a read-only `/proc/sys`) and take `prepare.yml` or the converge down with it.
-
-So what a green run proves is:
-
-- everything the role writes to disk, for real: the swap file at the configured path, at the configured size, mode `0600` `root:root`, carrying the `SWAPSPACE2` signature only `mkswap` writes; the `/etc/fstab` entry, field by field, and that the system's own parser (`findmnt --verify`) still accepts the file afterwards; the content of `/etc/sysctl.d/99-swap.conf`;
-- that the role asked `swapon`, `swapoff` and `sysctl` for exactly the right thing, exactly once — with the path and the parameter values it was configured with, not the ones it defaults to;
-- that a second run changes nothing: the swap file comes through with the same inode, size, checksum and mtime, and the uninstall does not try a second `swapoff`.
-
-What it does not prove, and cannot without a virtual machine:
-
-- **that the swap is actually usable.** The kernel never sees it. `verify.yml` asserts instead that the kernel's list of swap areas came through the run *unchanged* and never mentions the role's swap file. `/proc/swaps` belongs to the shared kernel, so it lists whatever the machine running the suite has enabled — a 4 GB `/mnt/swapfile` on a GitHub Actions runner, usually nothing on a laptop. That is the honest counterpart to the shim, and is also how a container that somehow gained the ability to touch that machine's swap would be caught.
-- **that the kernel accepts the parameter values.** `vm.swappiness` is never really set; what is asserted is the value the role handed to `sysctl`, recovered from the shim's store.
-
-Both scenarios leave `idempotence` out of their test sequence. The role is idempotent where it matters — the whole initialization block is skipped once the swap file exists — but `ansible.posix.sysctl` reports a change whenever it reloads, so Molecule's own idempotence step would fail on something harmless. What a second run must not do is rewrite the swap file or repeat the destructive steps, and each scenario runs the role twice and asserts that directly instead.
+The `default` and `uninstall` scenarios run the role twice in `converge.yml` instead of using Molecule's `idempotence` step, which would fail because `ansible.posix.sysctl` reports a change on every reload. The `file-removal` scenario sets no kernel parameters and keeps the step.
 
 ## Scenarios
 
@@ -67,19 +54,21 @@ Currently these testing scenarios are available:
 
 ### `default`
 
-`system_swap_enabled: true` on a host with no swap: everything `tasks/install.yml` does.
+`system_swap_enabled: true` on a host with no swap, for two swap files: one described by `system_swap_path`, `system_swap_size` and `system_swap_priority`, the other added through `system_swap_files_custom` with no priority.
 
-Every value the scenario sets differs from the role's own default — 48 MB rather than 1024, `/var/swap-molecule` rather than `/var/swap`, `vm.swappiness` at 33 rather than 10 — so that a value the role rendered from its variables can be told apart from one that merely looks right. `verify.yml` asserts the role's default path was *not* written to, and that each kernel parameter was applied as the scenario's value rather than the role's default or the deliberately wrong baseline `prepare.yml` seeded beforehand.
-
-A decoy file is seeded next to the swap file, with the same mode, named nowhere in the role's variables, and is asserted to be untouched.
+Every value differs from the role's own default, and what `verify.yml` expects of each swap file is spelled out by hand in `molecule.yml` rather than read back out of `system_swap_files`. A decoy file the role was never told about must be left untouched.
 
 ### `uninstall`
 
-`system_swap_enabled: false` on a host that already has swap — the destructive half of the role, which a fresh-install scenario structurally cannot reach.
+`system_swap_enabled: false` on a host with three swap files, of which two are in `system_swap_files`. Both must be gone afterwards, from disk and from `/etc/fstab`, and the third must be left alone.
 
-`prepare.yml` builds that host: two swap files, made the same way `tasks/install.yml` makes one and registered in `/etc/fstab` the same way, of which only one is named in `system_swap_path`. Afterwards exactly one file and exactly one `/etc/fstab` line must be left, and it must be the one the role was never told about. This is the scenario that pins down [the `state: present` / `state: absent` mix-up](https://github.com/mother-of-all-self-hosting/ansible-role-swap/commit/d948619) that used to leave a stale swap entry in `/etc/fstab` pointing at a file the role had just deleted.
+The scenario also asserts that `/etc/sysctl.d/99-swap.conf` is left behind, which the role does on purpose.
 
-It also records two things the role deliberately does not do: it leaves `/etc/sysctl.d/99-swap.conf` behind, so a host that turns swap off keeps whatever `system_swap_sysctl` last persisted; and it takes no second `swapoff` on a run where the swap file is already gone.
+### `file-removal`
+
+`system_swap_enabled: true` on a host with three swap files: one to keep, one marked `state: absent` and one the role was never told about. The role is also asked for a new swap file.
+
+Afterwards only the marked one may be gone, and the new one must be in place. Both shims write to a single log, so that `verify.yml` can assert the new swap file was enabled before the old one was disabled.
 
 ## Running
 
