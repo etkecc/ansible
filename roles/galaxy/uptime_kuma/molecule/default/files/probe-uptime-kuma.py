@@ -27,6 +27,10 @@ library, no WebSocket upgrade needed):
 - only an *authenticated* connection is told the version. Uptime Kuma sends
   `info` with the version field omitted to anonymous sockets, so the running
   version simply cannot be read without completing the two steps above
+- a ping monitor against `127.0.0.1` is added and its first heartbeat awaited.
+  `/usr/bin/ping` in the 2.x image carries a `cap_net_raw` file capability and
+  refuses to be executed at all while every capability is dropped, so the
+  monitor only reports up while the container holds `NET_RAW`
 
 The resulting `info` payload reports the running server's own version, its
 timezone and whether it was told it is containerized -- values that the caller
@@ -48,6 +52,27 @@ POLL_TIMEOUT_SECONDS = 40
 
 # How long to keep retrying the initial handshake while the server boots.
 HANDSHAKE_TIMEOUT_SECONDS = 120
+
+# First beats happen right after a monitor is started, so this covers the scheduler picking it up.
+HEARTBEAT_TIMEOUT_SECONDS = 120
+
+# A login queues its acknowledgement behind every list the server sends that new session.
+ACK_TIMEOUT_SECONDS = 120
+
+# A ping monitor against the container itself: it stays down while the image's ping cannot run.
+PING_MONITOR = {
+    "name": "probe-ping-127.0.0.1",
+    "type": "ping",
+    "hostname": "127.0.0.1",
+    "interval": 20,
+    "retryInterval": 20,
+    "maxretries": 0,
+    "accepted_statuscodes": ["200-299"],
+    "conditions": [],
+    "notificationIDList": {},
+    "active": True,
+    "upsideDown": False,
+}
 
 
 class ProbeError(Exception):
@@ -132,14 +157,18 @@ class SocketIOClient:
         except ValueError:
             return None
 
-    def wait_for_ack(self, ack_id, attempts=6):
+    def wait_for_ack(self, ack_id, timeout_seconds=ACK_TIMEOUT_SECONDS):
         prefix = "43{}[".format(ack_id)
-        for _ in range(attempts):
+        deadline = time.monotonic() + timeout_seconds
+
+        while time.monotonic() < deadline:
             for packet in self.received_events:
                 if packet.startswith(prefix):
                     decoded = self._decode(packet)
                     return decoded[0] if decoded else None
+
             self.poll()
+
         raise ProbeError("No acknowledgement for request {}".format(ack_id))
 
     def wait_for_event(self, event_name, predicate=None, attempts=6):
@@ -163,6 +192,29 @@ class SocketIOClient:
                 if decoded and decoded[0] == event_name:
                     return True
         return False
+
+    def wait_for_heartbeat(self, monitor_id, timeout_seconds=HEARTBEAT_TIMEOUT_SECONDS):
+        """Waits for one monitor's heartbeat, returning the last one seen when none is up."""
+        deadline = time.monotonic() + timeout_seconds
+        last_beat = None
+
+        while time.monotonic() < deadline:
+            for packet in self.received_events:
+                if not packet.startswith("42"):
+                    continue
+                decoded = self._decode(packet)
+                if not decoded or decoded[0] != "heartbeat":
+                    continue
+                payload = decoded[1] if len(decoded) > 1 else None
+                if not payload or payload.get("monitorID") != monitor_id:
+                    continue
+                last_beat = payload
+                if payload.get("status") == 1:
+                    return payload
+
+            self.poll()
+
+        return last_beat
 
 
 def probe(base_url, username, password):
@@ -201,6 +253,13 @@ def probe(base_url, username, password):
         "info", predicate=lambda payload: bool(payload) and payload.get("version")
     )
 
+    add_result = client.wait_for_ack(client.emit("add", PING_MONITOR))
+
+    if not (add_result and add_result.get("ok")):
+        raise ProbeError("Adding a ping monitor was refused: {}".format(add_result))
+
+    ping_heartbeat = client.wait_for_heartbeat(add_result.get("monitorID")) or {}
+
     return {
         "ok": True,
         "setup_offered": setup_offered,
@@ -209,6 +268,9 @@ def probe(base_url, username, password):
         "login_ok": True,
         "token_returned": bool(login_result.get("token")),
         "info": info,
+        "ping_monitor_up": ping_heartbeat.get("status") == 1,
+        "ping_monitor_msg": ping_heartbeat.get("msg"),
+        "ping_monitor_ping": ping_heartbeat.get("ping"),
     }
 
 

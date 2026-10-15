@@ -13,7 +13,7 @@ uptime_kuma_base_path: "/{{ uptime_kuma_identifier }}"
 uptime_kuma_data_path: "{{ uptime_kuma_base_path }}/data"
 
 # renovate: datasource=docker depName=louislam/uptime-kuma versioning=semver
-uptime_kuma_version: 1.23.17
+uptime_kuma_version: 2.5.6
 
 uptime_kuma_uid: ""
 uptime_kuma_gid: ""
@@ -31,7 +31,9 @@ uptime_kuma_hostname: ""
 uptime_kuma_path_prefix: /
 
 uptime_kuma_container_image: "{{ uptime_kuma_container_image_registry_prefix }}louislam/uptime-kuma:{{ uptime_kuma_container_image_tag }}"
-uptime_kuma_container_image_tag: "{{ uptime_kuma_version }}-alpine"
+# 2.x dropped the `-alpine` flavor; `-slim` keeps its feature set (no bundled Chromium or MariaDB).
+# Use a bare version for the full image, or `-rootless` for an unprivileged 1000:1000 container.
+uptime_kuma_container_image_tag: "{{ uptime_kuma_version }}-slim"
 uptime_kuma_container_image_registry_prefix: "{{ uptime_kuma_container_image_registry_prefix_upstream }}"
 uptime_kuma_container_image_registry_prefix_upstream: "{{ uptime_kuma_container_image_registry_prefix_upstream_default }}"
 uptime_kuma_container_image_registry_prefix_upstream_default: docker.io/

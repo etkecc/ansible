@@ -15,6 +15,8 @@ Type=simple
 Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
 ExecStartPre={{ devture_systemd_docker_base_host_command_sh }} -c '{{ uptime_kuma_container_cleanup_command | trim | replace("\n", " ") }}'
 
+# Uptime Kuma 2.x images ship `/usr/bin/ping` with a `cap_net_raw` file capability, which
+# refuses to execute while all capabilities are dropped, so ping monitors fail with `spawn EPERM`.
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --rm \
       --name={{ uptime_kuma_identifier }} \
@@ -22,6 +24,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --user={{ uptime_kuma_uid }}:{{ uptime_kuma_gid }} \
       --entrypoint="/usr/bin/dumb-init" \
       --cap-drop=ALL \
+      --cap-add=NET_RAW \
       --network={{ uptime_kuma_container_network }} \
       {% if uptime_kuma_container_http_host_bind_port %}
       -p {{ uptime_kuma_container_http_host_bind_port }}:{{ uptime_kuma_container_http_port }} \

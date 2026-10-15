@@ -14,6 +14,28 @@
     - "{{ uptime_kuma_base_path }}"
     - "{{ uptime_kuma_data_path }}"
 
+# Uptime Kuma 2.x serves a database-setup page when the data directory holds no database
+# configuration yet; SQLite is the backend 1.x installations have always used.
+- name: Ensure Uptime Kuma database configuration exists
+  ansible.builtin.copy:
+    dest: "{{ uptime_kuma_data_path }}/db-config.json"
+    content: |
+      {
+          "type": "sqlite"
+      }
+    force: false
+    mode: "0640"
+    owner: "{{ uptime_kuma_uid }}"
+    group: "{{ uptime_kuma_gid }}"
+
+- name: Ensure Uptime Kuma database configuration belongs to the container user
+  ansible.builtin.file:
+    path: "{{ uptime_kuma_data_path }}/db-config.json"
+    state: file
+    mode: "0640"
+    owner: "{{ uptime_kuma_uid }}"
+    group: "{{ uptime_kuma_gid }}"
+
 - name: Ensure Uptime Kuma support files installed
   ansible.builtin.template:
     src: "{{ role_path }}/templates/{{ item }}.j2"

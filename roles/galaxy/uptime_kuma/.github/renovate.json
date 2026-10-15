@@ -6,10 +6,10 @@
   ],
   "packageRules": [
     {
-      "description": "Uptime Kuma 2.x dropped the `-alpine` image flavor this role appends to the tag, so a 2.x bump yields an unpullable image. Moving to 2.x (with `-slim`) has database/migration implications and is a deliberate decision, not a Renovate bump - staying on 1.x until then.",
+      "description": "Uptime Kuma majors need deliberate migration planning: 2.x replaced the `-alpine` image flavor with `-slim` and runs a one-way database migration on first start. Renovate stays within 2.x, which the role's `-slim` tag suffix supports.",
       "matchDatasources": ["docker"],
       "matchPackageNames": ["louislam/uptime-kuma"],
-      "allowedVersions": "<2"
+      "allowedVersions": "<3"
     }
   ]
 }

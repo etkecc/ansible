@@ -50,11 +50,12 @@ scenario() {
 	git config user.email 'test@example.com'
 	git config user.name 'Test'
 	git config commit.gpgsign false
+	git config tag.gpgsign false
 
 	{
 		printf '# renovate: datasource=docker depName=louislam/uptime-kuma versioning=semver\n'
 		printf 'uptime_kuma_version: 1.23.16\n'
-		printf 'uptime_kuma_container_image_tag: "{{ uptime_kuma_version }}-alpine"\n'
+		printf 'uptime_kuma_container_image_tag: "{{ uptime_kuma_version }}-slim"\n'
 		printf 'uptime_kuma_container_image: "{{ uptime_kuma_container_image_registry_prefix }}louislam/uptime-kuma:{{ uptime_kuma_container_image_tag }}"\n'
 	} > defaults/main.yml
 
@@ -103,7 +104,7 @@ expect() {
 bump_version="sed -i 's|^uptime_kuma_version: 1.23.16|uptime_kuma_version: 1.23.17|' defaults/main.yml"
 revert_version="sed -i 's|^uptime_kuma_version: 1.23.17|uptime_kuma_version: 1.23.16|' defaults/main.yml"
 edit_annotation="sed -i 's|versioning=semver|versioning=docker|' defaults/main.yml"
-edit_image_flavor="sed -i 's|-alpine|-debian|' defaults/main.yml"
+edit_image_flavor="sed -i 's|-slim|-rootless|' defaults/main.yml"
 edit_task="printf 'a task\n' >> tasks/main.yml"
 edit_template="printf 'a line\n' >> templates/env.j2"
 edit_readme="printf 'documentation\n' >> README.md"

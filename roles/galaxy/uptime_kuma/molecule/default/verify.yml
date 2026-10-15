@@ -127,6 +127,18 @@
               Uptime Kuma runs with the configured timezone
               ({{ uptime_kuma_report.info.serverTimezone }}) and additional environment variables
 
+        # The probe adds a ping monitor and awaits its first heartbeat. 2.x images ship
+        # `/usr/bin/ping` with a `cap_net_raw` file capability, so that monitor stays down
+        # with an EPERM message unless the container holds NET_RAW; see the systemd unit template.
+        - name: Assert the Uptime Kuma ping monitor comes up
+          ansible.builtin.assert:
+            that: uptime_kuma_report.ping_monitor_up | default(false)
+            fail_msg: >-
+              The ping monitor did not come up, so the container cannot run `/usr/bin/ping`:
+              {{ uptime_kuma_report.ping_monitor_msg | default('no heartbeat arrived', true) }}
+            success_msg: >-
+              The ping monitor is up ({{ uptime_kuma_report.ping_monitor_ping | default('n/a', true) }} ms)
+
         - name: Inspect the Uptime Kuma container
           ansible.builtin.command:
             cmd: docker container inspect uptime-kuma
@@ -199,6 +211,7 @@
               - "Uptime Kuma setup wizard offered: {{ uptime_kuma_report.setup_offered }}"
               - "Uptime Kuma admin created by this run: {{ uptime_kuma_report.setup_completed }}"
               - "Uptime Kuma timezone: {{ uptime_kuma_report.info.serverTimezone }}"
+              - "Uptime Kuma ping monitor up: {{ uptime_kuma_report.ping_monitor_up }} ({{ uptime_kuma_report.ping_monitor_ping | default('n/a', true) }} ms)"
               - "Uptime Kuma container labels: {{ uptime_kuma_container.Config.Labels }}"
 
       rescue:

@@ -17,3 +17,4 @@
 * [Radicale](https://github.com/tomsquest/docker-radicale): [3.8.1.1](https://github.com/tomsquest/docker-radicale/releases/tag/3.8.1.1) ⇾ [3.8.3.0](https://github.com/tomsquest/docker-radicale/releases/tag/3.8.3.0)
 * [Synapse](https://github.com/element-hq/synapse): [v1.162.0](https://github.com/element-hq/synapse/releases/tag/v1.162.0) ⇾ [v1.163.0](https://github.com/element-hq/synapse/releases/tag/v1.163.0)
 * [Synapse Reverse Proxy Companion](https://github.com/element-hq/synapse): 1.31.6-alpine ⇾ 1.31.7-alpine
+* [Uptime Kuma](https://github.com/louislam/uptime-kuma): [1.23.17](https://github.com/louislam/uptime-kuma/releases/tag/1.23.17) ⇾ [2.5.6](https://github.com/louislam/uptime-kuma/releases/tag/2.5.6)
