@@ -24,7 +24,7 @@ ntfy lets you send push notifications to your phone or desktop via scripts from 
 
 See the project's [documentation](https://docs.ntfy.sh/) to learn what ntfy does and why it might be useful to you.
 
-**Note**: you need to install [the ntfy Android/iOS app](https://docs.ntfy.sh/subscribe/phone/) on your device in order to receive push notifications from the ntfy server. Notifications can also be sent/received on the ntfy's web app. Refer [this section](#usage) for details about how to use the apps.
+**Note**: you need to install [the ntfy Android/iOS app](https://docs.ntfy.sh/subscribe/phone/) on your device in order to receive push notifications from the ntfy server. Notifications can also be sent/received on the ntfy's web app. Refer to [this section](#usage) for details about the usage.
 
 ## Implementation
 
