@@ -15,7 +15,7 @@
 * Fluffychat: v2.10.0
 * Funkwhale: 1.4.1
 * Google Chat Bridge: v0.5.2
-* Google Messages Bridge: v0.2609.0
+* Google Messages Bridge: v0.2610.0
 * Google Voice Bridge: v0.2605.0
 * Gotosocial: 0.22.2
 * Grafana: 13.0.2
@@ -36,8 +36,8 @@
 * Livekit Server: v1.13.10
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.6.0
-* Meta Instagram Bridge: v0.2609.0
-* Meta Messenger Bridge: v0.2609.0
+* Meta Instagram Bridge: v0.2610.0
+* Meta Messenger Bridge: v0.2610.0
 * Miniflux: 2.3.3
 * Ntfy: v2.31.0
 * Peertube: v8.3.1
@@ -59,8 +59,8 @@
 * Radicale: 3.8.3.0
 * Sable: 1.22.11
 * Schildichat: 1.11.109-sc.0.test.0
-* Signal Bridge: v0.2609.0
-* Slack Bridge: v0.2609.1
+* Signal Bridge: v0.2610.0
+* Slack Bridge: v0.2610.0
 * Spam Checker Mjolnir Antispam: v2.0.1
 * Spam Checker Synapse Simple Antispam: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.44.1
@@ -72,7 +72,7 @@
 * Synapse HTTP Antispam: v0.5.1
 * Synapse Reverse Proxy Companion: 1.31.7-alpine
 * Synapse S3 Storage Provider: 1.7.0
-* Telegram Bridge: v0.2609.0
+* Telegram Bridge: v0.2610.0
 * Traefik: v3.7.15
 * Traefik Certs Dumper: v2.11.4
 * Traefik Proxy Protocol: 1
@@ -81,4 +81,4 @@
 * Valkey: 9.1.2
 * Vaultwarden: 1.37.4
 * Wg Easy: 15.4.0
-* WhatsApp Bridge: v0.2609.0
+* WhatsApp Bridge: v0.2610.0
