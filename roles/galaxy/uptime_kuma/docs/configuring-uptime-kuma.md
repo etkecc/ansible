@@ -1,10 +1,10 @@
 <!--
-SPDX-FileCopyrightText: 2020 - 2024 MDAD project contributors
-SPDX-FileCopyrightText: 2020 - 2024 Slavi Pantaleev
 SPDX-FileCopyrightText: 2020 Aaron Raimist
 SPDX-FileCopyrightText: 2020 Chris van Dijk
 SPDX-FileCopyrightText: 2020 Dominik Zajac
 SPDX-FileCopyrightText: 2020 Mickaël Cornière
+SPDX-FileCopyrightText: 2020-2024 MDAD project contributors
+SPDX-FileCopyrightText: 2020-2024 Slavi Pantaleev
 SPDX-FileCopyrightText: 2022 François Darveau
 SPDX-FileCopyrightText: 2022 Julian Foad
 SPDX-FileCopyrightText: 2022 Warren Bailey
@@ -12,7 +12,8 @@ SPDX-FileCopyrightText: 2023 Antonis Christofides
 SPDX-FileCopyrightText: 2023 Felix Stupp
 SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
 SPDX-FileCopyrightText: 2023 Pierre 'McFly' Marty
-SPDX-FileCopyrightText: 2024 - 2025 Suguru Hirahara
+SPDX-FileCopyrightText: 2024 Thomas Miceli
+SPDX-FileCopyrightText: 2024-2026 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
@@ -38,6 +39,12 @@ Uptime Kuma is a fancy self-hosted monitoring tool similar to [Uptime Robot](htt
 See the project's [documentation](https://github.com/louislam/uptime-kuma/wiki) to learn what Uptime Kuma does and why it might be useful to you.
 
 ✨ Kuma (くま/熊) means bear 🐻 in Japanese.
+
+## Prerequisites
+
+To run an Uptime Kuma instance it is necessary to prepare a database. You can use a [MySQL](https://www.mysql.com/) compatible database server or [SQLite](https://www.sqlite.org/). By default it is configured to use SQLite.
+
+If you are looking for Ansible roles for a MySQL compatible server, you can check out [ansible-role-mariadb](https://github.com/mother-of-all-self-hosting/ansible-role-mariadb) maintained by the [Mother-of-All-Self-Hosting (MASH)](https://github.com/mother-of-all-self-hosting) team.
 
 ## Adjusting the playbook configuration
 
@@ -70,6 +77,43 @@ uptime_kuma_hostname: "example.com"
 After adjusting the hostname, make sure to adjust your DNS records to point the domain to your server.
 
 **Note**: hosting Uptime Kuma under a subpath (by configuring the `uptime_kuma_path_prefix` variable) does not seem to be possible due to Uptime Kuma's technical limitations.
+
+### Configuring database
+
+#### Specify database (optional)
+
+You can specify a database used by Uptime Kuma. By default it is configured to use SQLite. The SQLite database is stored in the directory specified with `uptime_kuma_data_path`.
+
+To use MariaDB, add the following configuration to your `vars.yml` file:
+
+```yaml
+uptime_kuma_database_type: mariadb
+```
+
+For other settings, check variables such as `uptime_kuma_database_*` on [`defaults/main.yml`](../defaults/main.yml).
+
+>[!NOTE]
+> If the Update Kuma instance is upgraded from 1.x, you need to remove the existing `kuma.db` database manually first in order to use a new MariaDB database. [Database migration is not supported officially](https://github.com/louislam/uptime-kuma/wiki/Migration-From-v1-To-v2#can-i-migrate-my-existing-sqlite-database-to-mariadb), and you need to import with a third-party tool for migration.
+
+#### Configuring connection to the database server (optional)
+
+By default the role is configured to establish connection with the MariaDB server via the Unix socket. You can mount the Unix socket by adding the following configuration to your `vars.yml` file:
+
+```yaml
+# Specify the path to the MariaDB Unix socket path on the host (bind-mount source)
+uptime_kuma_database_socket_path_host: ""
+```
+
+Setting it enables to connect to the MariaDB server via Unix socket mounted in the container at `/run-mysqld/mysqld.sock`.
+
+If TCP connection is preferred, connection via the Unix socket can be disabled by adding the following configuration to your `vars.yml` file:
+
+```yaml
+# Disable the connection to MariaDB server via a Unix socket
+uptime_kuma_database_socket_enabled: false
+
+uptime_kuma_database_hostname: YOUR_MARIADB_SERVER_HOSTNAME_HERE
+```
 
 ## Installing
 
@@ -111,12 +155,6 @@ Uptime Kuma 1.x published the `-alpine` flavor this role used by default. 2.x ha
 | `{{ uptime_kuma_version }}-rootless` (and its `-slim-rootless` variant) | The same images with `USER node` baked in, which this role overrides with its own `--user`, so the flavor changes nothing here. Upstream advises against these flavors for 1.x to 2.x upgrades, and the Docker monitor type needs root by default |
 
 If your configuration overrides `uptime_kuma_container_image_tag`, make sure it names a 2.x tag before upgrading: a `-alpine` tag no longer exists and the image pull fails.
-
-### Database configuration
-
-2.x asks for a database backend on first start. The role seeds a `db-config.json` with SQLite into the data directory, which is the backend 1.x installations have always used, so a fresh instance starts straight into the setup wizard instead of that question. Upgrading from 1.x works the same way, because 2.x finds the existing `kuma.db` and treats it as SQLite on its own.
-
-To use MariaDB or the embedded MariaDB of the full image instead, delete the file and answer the database-selection page, or configure `UPTIME_KUMA_DB_*` variables through `uptime_kuma_environment_variables_additional_variables`.
 
 ### Ping monitors
 

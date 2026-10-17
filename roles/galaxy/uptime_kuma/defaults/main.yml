@@ -1,5 +1,6 @@
-# SPDX-FileCopyrightText: 2023 - 2024 Nikita Chernyi
-# SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2023, 2024 Nikita Chernyi
+# SPDX-FileCopyrightText: 2023-2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -221,6 +222,42 @@ uptime_kuma_container_cleanup_command: |
   done;
   echo "Failed to remove stale container {{ uptime_kuma_identifier }} after {{ uptime_kuma_container_cleanup_timeout_seconds }} attempts" >&2;
   exit 1
+
+########################################################################
+#                                                                      #
+# database                                                             #
+#                                                                      #
+########################################################################
+
+# Specify a database driver to use
+# Valid values: mariadb, sqlite
+uptime_kuma_database_type: sqlite
+
+# Specify database configuration
+uptime_kuma_database_hostname: ""
+uptime_kuma_database_port: 3306
+uptime_kuma_database_username: uptimekuma
+uptime_kuma_database_password: ""
+uptime_kuma_database_name: uptimekuma
+uptime_kuma_database_ssl: false
+uptime_kuma_database_ca: ""
+
+# Control if the database connection to MySQL is made via a Unix socket
+uptime_kuma_database_socket_enabled: true
+
+# Specify the path to the MySQL Unix socket path inside the Matomo container
+uptime_kuma_database_socket_path_container: /run-mysqld
+
+# Specify the path to the MySQL Unix socket path on the host (bind-mount source)
+uptime_kuma_database_socket_path_host: ""
+
+uptime_kuma_environment_variables_uptime_kuma_db_socket: "{{ uptime_kuma_database_socket_path_container + '/mysqld.sock' }}"
+
+########################################################################
+#                                                                      #
+# /database                                                            #
+#                                                                      #
+########################################################################
 
 # Specify the timezone
 uptime_kuma_environment_variables_tz: UTC

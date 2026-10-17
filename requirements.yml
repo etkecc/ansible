@@ -38,7 +38,7 @@
   version: main
   name: ufw
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-uptime_kuma.git
-  version: v2.5.6-0
+  version: v2.5.6-1
   name: uptime_kuma
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-vaultwarden.git
   version: v1.37.4-0

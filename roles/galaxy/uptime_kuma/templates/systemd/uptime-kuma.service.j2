@@ -1,4 +1,10 @@
-#jinja2: lstrip_blocks: True
+{#
+SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+SPDX-FileCopyrightText: 2025-2026 Suguru Hirahara
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+#}
+
 [Unit]
 Description=Uptime Kuma ({{ uptime_kuma_identifier }})
 {% for service in uptime_kuma_systemd_required_services_list %}
@@ -36,6 +42,9 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --label-file={{ uptime_kuma_base_path }}/labels \
       --health-interval={{ uptime_kuma_container_health_interval }} \
       --mount type=bind,src={{ uptime_kuma_data_path }},dst=/app/data \
+      {% if uptime_kuma_database_type == 'mariadb' and uptime_kuma_database_socket_enabled and uptime_kuma_database_socket_path_host != '' %}
+      --mount type=bind,src={{ uptime_kuma_database_socket_path_host }},dst={{ uptime_kuma_database_socket_path_container }} \
+      {% endif %}
       --tmpfs=/.npm:rw,noexec,nosuid,size={{ uptime_kuma_container_tmpfs_dotnpm_size }} \
       {% for arg in uptime_kuma_container_extra_arguments %}
       {{ arg }} \

@@ -25,8 +25,44 @@
     - uptime_kuma_hostname
     - uptime_kuma_path_prefix
     - uptime_kuma_container_network
+    - uptime_kuma_database_type
 
-- name: Validate Uptime Kuma Traefik settings
+- name: Fail if Uptime Kuma database type invalid
+  ansible.builtin.fail:
+    msg: >-
+      uptime_kuma_database_type must be 'mariadb' or 'sqlite'
+  when: "uptime_kuma_database_type not in ['mariadb', 'sqlite']"
+
+- name: Run if Uptime Kuma + MariaDB integration is enabled
+  when: uptime_kuma_database_type == 'mariadb'
+  block:
+    - name: Fail if required Uptime Kuma + MariaDB integration settings not defined
+      ansible.builtin.fail:
+        msg: >-
+          You need to define a required configuration setting (`{{ item }}`) when `uptime_kuma_database_type` is `mariadb`
+      when: "lookup('vars', item, default='') | string | length == 0"
+      with_items:
+        - uptime_kuma_database_password
+
+    - name: Fail if MariaDB socket host path for Uptime Kuma is missing when Unix socket is enabled
+      ansible.builtin.fail:
+        msg: >-
+          You need to define `uptime_kuma_database_socket_path_host` when `uptime_kuma_database_type` is `mariadb`
+          and `uptime_kuma_database_socket_enabled` is `true`.
+      when: >-
+        uptime_kuma_database_socket_enabled and
+        uptime_kuma_database_socket_path_host | string | length == 0
+
+    - name: Fail if MariaDB hostname for Uptime Kuma is missing when Unix socket is disabled
+      ansible.builtin.fail:
+        msg: >-
+          You need to define `uptime_kuma_database_hostname` when `uptime_kuma_database_type` is `mariadb`
+          and `uptime_kuma_database_socket_enabled` is `false`.
+      when: >-
+        not uptime_kuma_database_socket_enabled and
+        uptime_kuma_database_hostname | string | length == 0
+
+- name: Run if Traefik is enabled
   when: uptime_kuma_container_labels_traefik_enabled | bool
   block:
     - name: Fail if Traefik settings required for Uptime Kuma are not defined
