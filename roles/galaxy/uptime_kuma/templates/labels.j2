@@ -53,6 +53,52 @@ traefik.http.routers.{{ uptime_kuma_identifier }}.tls.certResolver={{ uptime_kum
 {% endif %}
 
 traefik.http.services.{{ uptime_kuma_identifier }}.loadbalancer.server.port={{ uptime_kuma_container_http_port }}
+
+{% if uptime_kuma_container_labels_traefik_metrics_enabled %}
+########################################################################
+#                                                                      #
+# Metrics                                                              #
+#                                                                      #
+########################################################################
+
+{% set middlewares = uptime_kuma_container_labels_traefik_metrics_middlewares %}
+
+{% if uptime_kuma_container_labels_traefik_metrics_middleware_basic_auth_enabled %}
+traefik.http.middlewares.{{ uptime_kuma_identifier }}-metrics-basic-auth.basicauth.users={{ uptime_kuma_container_labels_traefik_metrics_middleware_basic_auth_users }}
+{% set middlewares = middlewares + [uptime_kuma_identifier + '-metrics-basic-auth'] %}
+{% endif %}
+
+traefik.http.middlewares.{{ uptime_kuma_identifier }}-metrics-replace-path.replacepath.path=/metrics
+{% set middlewares = middlewares + [uptime_kuma_identifier + '-metrics-replace-path'] %}
+
+traefik.http.routers.{{ uptime_kuma_identifier }}-metrics.rule={{ uptime_kuma_container_labels_traefik_metrics_rule }}
+
+{% if uptime_kuma_container_labels_traefik_metrics_priority | int > 0 %}
+traefik.http.routers.{{ uptime_kuma_identifier }}-metrics.priority={{ uptime_kuma_container_labels_traefik_metrics_priority }}
+{% endif %}
+
+traefik.http.routers.{{ uptime_kuma_identifier }}-metrics.service={{ uptime_kuma_identifier }}-metrics
+
+{% if middlewares | length > 0 %}
+traefik.http.routers.{{ uptime_kuma_identifier }}-metrics.middlewares={{ middlewares | join(',') }}
+{% endif %}
+
+traefik.http.routers.{{ uptime_kuma_identifier }}-metrics.entrypoints={{ uptime_kuma_container_labels_traefik_metrics_entrypoints }}
+
+traefik.http.routers.{{ uptime_kuma_identifier }}-metrics.tls={{ uptime_kuma_container_labels_traefik_metrics_tls | to_json }}
+{% if uptime_kuma_container_labels_traefik_metrics_tls %}
+traefik.http.routers.{{ uptime_kuma_identifier }}-metrics.tls.certResolver={{ uptime_kuma_container_labels_traefik_metrics_tls_certResolver }}
+{% endif %}
+
+traefik.http.services.{{ uptime_kuma_identifier }}-metrics.loadbalancer.server.port={{ uptime_kuma_container_http_port }}
+
+########################################################################
+#                                                                      #
+# /Metrics                                                             #
+#                                                                      #
+########################################################################
+{% endif %}
+
 {% endif %}
 
 {% for arg in uptime_kuma_container_labels_additional_labels %}

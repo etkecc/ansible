@@ -91,3 +91,25 @@
           uptime_kuma_container_labels_traefik_path_prefix (`{{ uptime_kuma_container_labels_traefik_path_prefix }}`)
           must either be `/` or not end with a slash (e.g. `/kuma`).
       when: "uptime_kuma_container_labels_traefik_path_prefix != '/' and uptime_kuma_container_labels_traefik_path_prefix[-1] == '/'"
+
+- name: Run if Traefik is enabled for Prometheus endpoint
+  when: uptime_kuma_container_labels_traefik_metrics_enabled | bool
+  block:
+    - name: Fail if Traefik settings required for Uptime Kuma metrics endpoint are not defined
+      ansible.builtin.fail:
+        msg: >-
+          You need to define a required configuration setting (`{{ item.name }}`) for using this role.
+      when: "item.when | bool and lookup('vars', item.name, default='') | string | length == 0"
+      with_items:
+        - { "name": "uptime_kuma_container_labels_traefik_metrics_hostname", when: true }
+        - { "name": "uptime_kuma_container_labels_traefik_metrics_path_prefix", when: true }
+        - { "name": "uptime_kuma_container_labels_traefik_metrics_middleware_basic_auth_users", when: "{{ uptime_kuma_container_labels_traefik_metrics_middleware_basic_auth_enabled }}" }
+
+    # We ensure it doesn't end with a slash, because we handle both (slash and no-slash).
+    # Knowing that `uptime_kuma_container_labels_traefik_metrics_path_prefix` does not end with a slash
+    # ensures we know how to set these routes up without having to do "does it end with a slash" checks elsewhere.
+    - name: Fail if uptime_kuma_container_labels_traefik_metrics_path_prefix ends with a slash
+      ansible.builtin.fail:
+        msg: >-
+          uptime_kuma_container_labels_traefik_metrics_path_prefix (`{{ uptime_kuma_container_labels_traefik_metrics_path_prefix }}`) must either be `/` or not end with a slash (e.g. `/metrics`).
+      when: "uptime_kuma_container_labels_traefik_metrics_path_prefix != '/' and uptime_kuma_container_labels_traefik_metrics_path_prefix[-1] == '/'"

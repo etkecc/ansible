@@ -115,6 +115,15 @@ uptime_kuma_database_socket_enabled: false
 uptime_kuma_database_hostname: YOUR_MARIADB_SERVER_HOSTNAME_HERE
 ```
 
+### Integrating with Prometheus (optional)
+
+Uptime Kuma can natively expose metrics to Prometheus.
+
+If you are looking for an integration, you can check out the MASH playbook. See [this section of the documentation on the playbook](https://github.com/mother-of-all-self-hosting/mash-playbook/blob/main/docs/services/uptime-kuma.md#integrating-with-prometheus-optional) for more information.
+
+>[!NOTE]
+> Uptime Kuma enables the HTTP Basic authentication for the metrics endpoint by default, and you're required to input log in credentials to retrieve metrics, unless its authentication is disabled on the settings UI.
+
 ## Installing
 
 After configuring the playbook, run the installation command of your playbook as below:
