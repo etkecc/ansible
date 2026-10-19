@@ -1,5 +1,7 @@
 {#
-SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
+SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
+SPDX-FileCopyrightText: 2023-2025 Slavi Pantaleev
+SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
@@ -48,6 +50,52 @@ traefik.http.routers.{{ wg_easy_identifier }}.tls.certResolver={{ wg_easy_contai
 {% endif %}
 
 traefik.http.services.{{ wg_easy_identifier }}.loadbalancer.server.port={{ wg_easy_environment_variables_additional_variable_port}}
+
+{% if wg_easy_container_labels_traefik_metrics_enabled %}
+########################################################################
+#                                                                      #
+# Metrics                                                              #
+#                                                                      #
+########################################################################
+
+{% set middlewares = wg_easy_container_labels_traefik_metrics_middlewares %}
+
+{% if wg_easy_container_labels_traefik_metrics_middleware_basic_auth_enabled %}
+traefik.http.middlewares.{{ wg_easy_identifier }}-metrics-basic-auth.basicauth.users={{ wg_easy_container_labels_traefik_metrics_middleware_basic_auth_users }}
+{% set middlewares = middlewares + [wg_easy_identifier + '-metrics-basic-auth'] %}
+{% endif %}
+
+traefik.http.middlewares.{{ wg_easy_identifier }}-metrics-replace-path.replacepath.path=/metrics/prometheus
+{% set middlewares = middlewares + [wg_easy_identifier + '-metrics-replace-path'] %}
+
+traefik.http.routers.{{ wg_easy_identifier }}-metrics.rule={{ wg_easy_container_labels_traefik_metrics_rule }}
+
+{% if wg_easy_container_labels_traefik_metrics_priority | int > 0 %}
+traefik.http.routers.{{ wg_easy_identifier }}-metrics.priority={{ wg_easy_container_labels_traefik_metrics_priority }}
+{% endif %}
+
+traefik.http.routers.{{ wg_easy_identifier }}-metrics.service={{ wg_easy_identifier }}-metrics
+
+{% if middlewares | length > 0 %}
+traefik.http.routers.{{ wg_easy_identifier }}-metrics.middlewares={{ middlewares | join(',') }}
+{% endif %}
+
+traefik.http.routers.{{ wg_easy_identifier }}-metrics.entrypoints={{ wg_easy_container_labels_traefik_metrics_entrypoints }}
+
+traefik.http.routers.{{ wg_easy_identifier }}-metrics.tls={{ wg_easy_container_labels_traefik_metrics_tls | to_json }}
+{% if wg_easy_container_labels_traefik_metrics_tls %}
+traefik.http.routers.{{ wg_easy_identifier }}-metrics.tls.certResolver={{ wg_easy_container_labels_traefik_metrics_tls_certResolver }}
+{% endif %}
+
+traefik.http.services.{{ wg_easy_identifier }}-metrics.loadbalancer.server.port={{ wg_easy_environment_variables_additional_variable_port }}
+
+########################################################################
+#                                                                      #
+# /Metrics                                                             #
+#                                                                      #
+########################################################################
+{% endif %}
+
 {% endif %}
 
 {% for arg in wg_easy_container_labels_additional_labels %}

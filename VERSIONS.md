@@ -9,7 +9,7 @@
 * Discord Bridge: v0.7.7
 * Draupnir: v3.2.0
 * Element: v1.12.32
-* Etherpad: 3.3.8
+* Etherpad: 3.3.9
 * Exim Relay: 4.99.5-r0-1
 * Firezone: 0.7.36
 * Fluffychat: v2.10.0
