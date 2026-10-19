@@ -6,6 +6,7 @@
 
 ### Component Updates
 
+* [Baibot](https://github.com/etkecc/baibot): [v1.28.0](https://github.com/etkecc/baibot/releases/tag/v1.28.0) ⇾ [v1.29.0](https://github.com/etkecc/baibot/releases/tag/v1.29.0)
 * [Element](https://github.com/element-hq/element-web): [v1.12.31](https://github.com/element-hq/element-web/releases/tag/v1.12.31) ⇾ [v1.12.32](https://github.com/element-hq/element-web/releases/tag/v1.12.32)
 * [Etherpad](https://github.com/ether/etherpad-lite): [3.3.8](https://github.com/ether/etherpad-lite/releases/tag/3.3.8) ⇾ [3.3.9](https://github.com/ether/etherpad-lite/releases/tag/3.3.9)
 * [Fluffychat](https://github.com/krille-chan/fluffychat): [v2.10.0](https://github.com/krille-chan/fluffychat/releases/tag/v2.10.0) ⇾ [v2.11.1](https://github.com/krille-chan/fluffychat/releases/tag/v2.11.1)
