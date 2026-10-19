@@ -8,6 +8,7 @@
 
 * [Element](https://github.com/element-hq/element-web): [v1.12.31](https://github.com/element-hq/element-web/releases/tag/v1.12.31) ⇾ [v1.12.32](https://github.com/element-hq/element-web/releases/tag/v1.12.32)
 * [Etherpad](https://github.com/ether/etherpad-lite): [3.3.8](https://github.com/ether/etherpad-lite/releases/tag/3.3.8) ⇾ [3.3.9](https://github.com/ether/etherpad-lite/releases/tag/3.3.9)
+* [Fluffychat](https://github.com/krille-chan/fluffychat): [v2.10.0](https://github.com/krille-chan/fluffychat/releases/tag/v2.10.0) ⇾ [v2.11.1](https://github.com/krille-chan/fluffychat/releases/tag/v2.11.1)
 * [Google Messages Bridge](https://github.com/mautrix/gmessages): [v0.2609.0](https://github.com/mautrix/gmessages/releases/tag/v0.2609.0) ⇾ [v0.2610.0](https://github.com/mautrix/gmessages/releases/tag/v0.2610.0)
 * [Meta Instagram Bridge](https://github.com/mautrix/meta): [v0.2609.0](https://github.com/mautrix/meta/releases/tag/v0.2609.0) ⇾ [v0.2610.0](https://github.com/mautrix/meta/releases/tag/v0.2610.0)
 * [Meta Messenger Bridge](https://github.com/mautrix/meta): [v0.2609.0](https://github.com/mautrix/meta/releases/tag/v0.2609.0) ⇾ [v0.2610.0](https://github.com/mautrix/meta/releases/tag/v0.2610.0)

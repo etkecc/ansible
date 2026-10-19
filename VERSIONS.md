@@ -12,7 +12,7 @@
 * Etherpad: 3.3.9
 * Exim Relay: 4.99.5-r0-1
 * Firezone: 0.7.36
-* Fluffychat: v2.10.0
+* Fluffychat: v2.11.1
 * Funkwhale: 1.4.1
 * Google Chat Bridge: v0.5.2
 * Google Messages Bridge: v0.2610.0
