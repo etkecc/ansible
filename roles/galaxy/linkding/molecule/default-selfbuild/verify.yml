@@ -111,17 +111,19 @@
           register: linkding_image_raw
           changed_when: false
 
-        # An image that was pulled carries the registry digest it was pulled by. One
-        # that was built here has never been in a registry and carries none, which
-        # rules out the tag above having simply been fetched from somewhere.
+        # An image that was pulled carries the time upstream built it. One that was
+        # built here was created during this test run, which rules out the tag above
+        # having simply been fetched from somewhere. Repository digests cannot tell
+        # the two apart: Docker's containerd image store records one for local
+        # builds too.
         - name: Assert the image was built here rather than pulled
           ansible.builtin.assert:
-            that: (linkding_image_raw.stdout | from_json)[0].RepoDigests | length == 0
+            that: (now(utc=true) - ((linkding_image_raw.stdout | from_json)[0].Created[:19] | to_datetime('%Y-%m-%dT%H:%M:%S'))).total_seconds() < 3600
             fail_msg: >-
-              The image '{{ linkding_container_image_name }}' carries registry digests
-              {{ (linkding_image_raw.stdout | from_json)[0].RepoDigests }},
-              so it was pulled rather than built here
-            success_msg: "The image '{{ linkding_container_image_name }}' carries no registry digest, so it was built here"
+              The image '{{ linkding_container_image_name }}' was created at
+              {{ (linkding_image_raw.stdout | from_json)[0].Created }}, not during this
+              test run, so it was pulled rather than built here
+            success_msg: "The image '{{ linkding_container_image_name }}' was created during this test run, so it was built here"
 
         - name: Probe the linkding environment and accounts
           ansible.builtin.command:

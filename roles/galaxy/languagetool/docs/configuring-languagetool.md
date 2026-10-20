@@ -59,7 +59,7 @@ After adjusting the hostname, make sure to adjust your DNS records to point the 
 
 ### Enable n-gram data (optional)
 
-LanguageTool can make use of large n-gram data sets to detect errors with words that are often confused, like "their" and "there". See [*Finding errors using n-gram data*](https://dev.languagetool.org/finding-errors-using-n-gram-data) to learn more.
+LanguageTool can make use of large n-gram data sets to detect errors with words that are often confused, like "their" and "there". Refer to [*Finding errors using n-gram data*](https://dev.languagetool.org/finding-errors-using-n-gram-data) to learn more.
 
 >[!NOTE]
 > The n-gram data set is huge and thus not enabled by default.

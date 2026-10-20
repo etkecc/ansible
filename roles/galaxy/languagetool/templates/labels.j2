@@ -1,5 +1,6 @@
 {#
 SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+SPDX-FileCopyrightText: 2026 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
@@ -12,6 +13,11 @@ traefik.docker.network={{ languagetool_container_labels_traefik_docker_network }
 {% endif %}
 
 {% set middlewares = [] %}
+
+{% if languagetool_container_labels_traefik_middleware_basic_auth_enabled %}
+{% set middlewares = middlewares + [languagetool_identifier + '-basic-auth'] %}
+traefik.http.middlewares.{{ languagetool_identifier }}-basic-auth.basicauth.users={{ languagetool_container_labels_traefik_middleware_basic_auth_users }}
+{% endif %}
 
 {% if languagetool_container_labels_traefik_path_prefix != '/' %}
 traefik.http.middlewares.{{ languagetool_identifier }}-slashless-redirect.redirectregex.regex=^({{ languagetool_container_labels_traefik_path_prefix | quote }})$

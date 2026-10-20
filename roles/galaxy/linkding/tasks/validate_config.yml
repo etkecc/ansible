@@ -81,11 +81,12 @@
     - name: Fail if Traefik settings required for linkding are not defined
       ansible.builtin.fail:
         msg: >-
-          You need to define a required configuration setting (`{{ item }}`).
-      when: "lookup('vars', item, default='') | string | length == 0"
+          You need to define a required configuration setting (`{{ item.name }}`).
+      when: "item.when | bool and lookup('vars', item.name, default='') | string | length == 0"
       with_items:
-        - linkding_container_labels_traefik_hostname
-        - linkding_container_labels_traefik_path_prefix
+        - { "name": "linkding_container_labels_traefik_hostname", when: true }
+        - { "name": "linkding_container_labels_traefik_path_prefix", when: true }
+        - { "name": "linkding_container_labels_traefik_middleware_basic_auth_users", when: "{{ linkding_container_labels_traefik_middleware_basic_auth_enabled }}" }
 
     # We ensure it doesn't end with a slash, because we handle both (slash and no-slash).
     # Knowing that `linkding_container_labels_traefik_path_prefix` does not end with a slash

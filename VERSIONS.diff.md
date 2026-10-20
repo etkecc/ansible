@@ -13,6 +13,7 @@
 * [Google Messages Bridge](https://github.com/mautrix/gmessages): [v0.2609.0](https://github.com/mautrix/gmessages/releases/tag/v0.2609.0) ⇾ [v0.2610.0](https://github.com/mautrix/gmessages/releases/tag/v0.2610.0)
 * [Meta Instagram Bridge](https://github.com/mautrix/meta): [v0.2609.0](https://github.com/mautrix/meta/releases/tag/v0.2609.0) ⇾ [v0.2610.0](https://github.com/mautrix/meta/releases/tag/v0.2610.0)
 * [Meta Messenger Bridge](https://github.com/mautrix/meta): [v0.2609.0](https://github.com/mautrix/meta/releases/tag/v0.2609.0) ⇾ [v0.2610.0](https://github.com/mautrix/meta/releases/tag/v0.2610.0)
+* [Miniflux](https://github.com/miniflux/v2): [2.3.3](https://github.com/miniflux/v2/releases/tag/2.3.3) ⇾ [2.3.4](https://github.com/miniflux/v2/releases/tag/2.3.4)
 * [Ntfy](https://github.com/binwiederhier/ntfy): [v2.30.0](https://github.com/binwiederhier/ntfy/releases/tag/v2.30.0) ⇾ [v2.32.0](https://github.com/binwiederhier/ntfy/releases/tag/v2.32.0)
 * [Signal Bridge](https://github.com/mautrix/signal): [v0.2609.0](https://github.com/mautrix/signal/releases/tag/v0.2609.0) ⇾ [v0.2610.0](https://github.com/mautrix/signal/releases/tag/v0.2610.0)
 * [Slack Bridge](https://github.com/mautrix/slack): [v0.2609.1](https://github.com/mautrix/slack/releases/tag/v0.2609.1) ⇾ [v0.2610.0](https://github.com/mautrix/slack/releases/tag/v0.2610.0)

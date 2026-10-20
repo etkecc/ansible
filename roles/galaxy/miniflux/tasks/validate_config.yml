@@ -53,6 +53,7 @@
       with_items:
         - { "name": "miniflux_container_labels_traefik_hostname", when: true }
         - { "name": "miniflux_container_labels_traefik_path_prefix", when: true }
+        - { "name": "miniflux_container_labels_traefik_middleware_basic_auth_users", when: "{{ miniflux_container_labels_traefik_middleware_basic_auth_enabled }}" }
         - { "name": "miniflux_container_labels_traefik_compression_middleware_name", when: "{{ miniflux_container_labels_traefik_compression_middleware_enabled }}" }
 
     # We ensure it doesn't end with a slash, because we handle both (slash and no-slash).

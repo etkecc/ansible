@@ -18,6 +18,13 @@ platforms:
     command: ${MOLECULE_DOCKER_COMMAND:-""}
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
+      # Docker inside the instance stores images via containerd. Its storage
+      # cannot use overlay on top of the instance's own overlay filesystem, so a
+      # volume puts it on a real filesystem.
+      - /var/lib/containerd
+    # Remove volumes along with the instance, so that local runs do not leave
+    # gigabytes behind.
+    keep_volumes: false
     cgroupns_mode: host
     privileged: true
     pre_build_image: true
@@ -82,7 +89,7 @@ provisioner:
         prometheus_nginxlog_exporter_uid: 1000
         prometheus_nginxlog_exporter_gid: 1000
         prometheus_nginxlog_exporter_hostname: localhost
-        prometheus_nginxlog_exporter_container_labels_metrics_enabled: false
+        prometheus_nginxlog_exporter_container_labels_traefik_metrics_enabled: false
         prometheus_nginxlog_exporter_container_http_host_bind_port: "127.0.0.1:{{ prometheus_nginxlog_exporter_molecule_http_bind_port }}"
         prometheus_nginxlog_exporter_container_syslog_host_bind_port: "127.0.0.1:{{ prometheus_nginxlog_exporter_molecule_syslog_bind_port }}"
         prometheus_nginxlog_exporter_architecture: amd64
