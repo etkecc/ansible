@@ -92,9 +92,10 @@
   ansible.builtin.fail:
     msg: >-
       You need to define a required configuration setting (`{{ item }}`) to correctly set up email via SMTP.
-  when: "gotosocial_smtp_host != '' and lookup('vars', item, default='') | string | length == 0"
+  when: "gotosocial_environment_variables_gts_smtp_host != '' and lookup('vars', item, default='') | string | length == 0"
   with_items:
-    - gotosocial_smtp_from
+    - gotosocial_environment_variables_gts_smtp_port
+    - gotosocial_environment_variables_gts_smtp_from
 
 - name: Run if Traefik is enabled
   when: gotosocial_container_labels_traefik_enabled | bool

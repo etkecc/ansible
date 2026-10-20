@@ -87,6 +87,9 @@ vaultwarden_container_labels_traefik_priority: 0
 vaultwarden_container_labels_traefik_entrypoints: web-secure
 vaultwarden_container_labels_traefik_tls: "{{ vaultwarden_container_labels_traefik_entrypoints != 'web' }}"
 vaultwarden_container_labels_traefik_tls_certResolver: default  # noqa var-naming
+vaultwarden_container_labels_traefik_middleware_basic_auth_enabled: false
+# See: https://doc.traefik.io/traefik/reference/routing-configuration/http/middlewares/basicauth/
+vaultwarden_container_labels_traefik_middleware_basic_auth_users: ""
 
 # Controls whether a compression middleware will be injected into the middlewares list.
 # This compression middleware is supposed to be defined elsewhere (using labels or a File provider, etc.) and is merely referenced by this router.
@@ -365,31 +368,31 @@ vaultwarden_config_rocket_port: 8080
 # See: https://github.com/dani-garcia/vaultwarden/wiki/Changing-the-API-request-size-limit
 vaultwarden_config_rocket_limits: "{json={{ vaultwarden_max_json_mb | int * 1024 * 1024 }}}"
 
-# vaultwarden_config_smtp_from controls the SMTP_FROM environment variable.
+# vaultwarden_environment_variables_smtp_from controls the SMTP_FROM environment variable.
 # See: https://github.com/dani-garcia/vaultwarden/wiki/SMTP-Configuration
-vaultwarden_config_smtp_from: ""
+vaultwarden_environment_variables_smtp_from: ""
 
-# vaultwarden_config_smtp_host controls the SMTP_HOST environment variable.
+# vaultwarden_environment_variables_smtp_host controls the SMTP_HOST environment variable.
 # See: https://github.com/dani-garcia/vaultwarden/wiki/SMTP-Configuration
-vaultwarden_config_smtp_host: ""
+vaultwarden_environment_variables_smtp_host: ""
 
-# vaultwarden_config_smtp_port controls the SMTP_PORT environment variable.
+# vaultwarden_environment_variables_smtp_port controls the SMTP_PORT environment variable.
 # See: https://github.com/dani-garcia/vaultwarden/wiki/SMTP-Configuration
-# See: vaultwarden_config_smtp_security
-vaultwarden_config_smtp_port: 587
+# See: vaultwarden_environment_variables_smtp_security
+vaultwarden_environment_variables_smtp_port: 587
 
-# vaultwarden_config_smtp_security controls the SMTP_SECURITY environment variable.
+# vaultwarden_environment_variables_smtp_security controls the SMTP_SECURITY environment variable.
 # Valid values: starttls, force_tls, off
 # See: https://github.com/dani-garcia/vaultwarden/wiki/SMTP-Configuration
-vaultwarden_config_smtp_security: starttls
+vaultwarden_environment_variables_smtp_security: starttls
 
-# vaultwarden_config_smtp_username controls the SMTP_USERNAME environment variable.
+# vaultwarden_environment_variables_smtp_username controls the SMTP_USERNAME environment variable.
 # See: https://github.com/dani-garcia/vaultwarden/wiki/SMTP-Configuration
-vaultwarden_config_smtp_username: ""
+vaultwarden_environment_variables_smtp_username: ""
 
-# vaultwarden_config_smtp_password controls the SMTP_PASSWORD environment variable.
+# vaultwarden_environment_variables_smtp_password controls the SMTP_PASSWORD environment variable.
 # See: https://github.com/dani-garcia/vaultwarden/wiki/SMTP-Configuration
-vaultwarden_config_smtp_password: ""
+vaultwarden_environment_variables_smtp_password: ""
 
 # vaultwarden_config_smtp_auth_mechanism controls the SMTP_AUTH_MECHANISM environment variable.
 # Valid values: Plain, Login, Xoauth2. Multiple may be provided when comma-separated

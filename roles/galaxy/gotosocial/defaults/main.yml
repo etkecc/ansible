@@ -366,12 +366,12 @@ gotosocial_accounts_reason_required: true
 # Configure the E-Mail address that GTS will use to inform you about reports, enable password resets and other activities
 # Not required but useful
 # Check out https://docs.gotosocial.org/en/latest/configuration/smtp/ for a configuration reference
-gotosocial_smtp_host: ""
-gotosocial_smtp_port: 587
-gotosocial_smtp_username: ""
-gotosocial_smtp_password: ""
-gotosocial_smtp_from: ""
-gotosocial_smtp_disclose_recipients: false
+gotosocial_environment_variables_gts_smtp_host: ""
+gotosocial_environment_variables_gts_smtp_port: 587
+gotosocial_environment_variables_gts_smtp_username: ""
+gotosocial_environment_variables_gts_smtp_password: ""
+gotosocial_environment_variables_gts_smtp_from: ""
+gotosocial_environment_variables_gts_smtp_disclose_recipients: false
 
 # Will set GTS_TRUSTED_PROXIES
 # By default this is set to all private IPs (https://datatracker.ietf.org/doc/html/rfc1918#section-3)

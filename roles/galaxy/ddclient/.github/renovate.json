@@ -6,9 +6,9 @@
   ],
   "packageRules": [
     {
-      "description": "linuxserver/ddclient publishes several tag families side by side, and only the plain `X.Y.Z` one names a version of ddclient itself. Alongside it there are bare LinuxServer build numbers (`19` through `150`, pointing at unrelated images), per-build tags (`v4.0.0-ls230`), architecture-prefixed tags (`amd64-4.0.0`) and `version-vX.Y.Z` tags. Restricting the allowed versions keeps a bump confined to the family this role tracks, whatever a future edit to the `# renovate:` annotation in defaults/main.yml might do.",
+      "description": "linuxserver/ddclient publishes several tag families side by side, and only the plain `X.Y.Z` one names a version of ddclient itself. Alongside it there are bare LinuxServer build numbers (`19` through `150`, pointing at unrelated images), per-build tags (`v4.0.0-ls230`), architecture-prefixed tags (`amd64-4.0.0`) and `version-vX.Y.Z` tags. Restricting the allowed versions keeps a bump confined to the family this role tracks, whatever a future edit to the `# renovate:` annotation in defaults/main.yml might do. matchPackageNames has to follow the depName in defaults/main.yml: when the image moved to ghcr.io, this rule kept naming the docker.io package and silently stopped applying.",
       "matchDatasources": ["docker"],
-      "matchPackageNames": ["linuxserver/ddclient"],
+      "matchPackageNames": ["ghcr.io/linuxserver/ddclient"],
       "allowedVersions": "/^\\d+\\.\\d+\\.\\d+$/"
     }
   ]

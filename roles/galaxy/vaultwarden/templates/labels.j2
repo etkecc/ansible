@@ -1,6 +1,7 @@
 {#
 SPDX-FileCopyrightText: 2023 Slavi Pantaleev
 SPDX-FileCopyrightText: 2025 spatterlight
+SPDX-FileCopyrightText: 2026 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
@@ -16,6 +17,11 @@ traefik.docker.network={{ vaultwarden_container_labels_traefik_docker_network }}
 
 {% if vaultwarden_container_labels_traefik_compression_middleware_enabled %}
 {% set middlewares = middlewares + [vaultwarden_container_labels_traefik_compression_middleware_name] %}
+{% endif %}
+
+{% if vaultwarden_container_labels_traefik_middleware_basic_auth_enabled %}
+{% set middlewares = middlewares + [vaultwarden_identifier + '-basic-auth'] %}
+traefik.http.middlewares.{{ vaultwarden_identifier }}-basic-auth.basicauth.users={{ vaultwarden_container_labels_traefik_middleware_basic_auth_users }}
 {% endif %}
 
 {% if vaultwarden_path_prefix != '/' %}

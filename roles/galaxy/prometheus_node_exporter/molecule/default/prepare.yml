@@ -25,9 +25,6 @@
     - name: Ensure Docker is installed for Prometheus node exporter Molecule tests preparation
       ansible.builtin.include_role:
         name: ansible-role-docker
-      vars:
-        docker_daemon_options:
-          storage-driver: vfs
 
     # The role bind-mounts the host root into the exporter container with
     # `bind-propagation=rslave`, which Docker refuses unless the source is a

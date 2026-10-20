@@ -36,6 +36,12 @@
     - { "old": "vaultwarden_database_username", "new": "vaultwarden_database_postgres_username" }
     - { "old": "vaultwarden_database_password", "new": "vaultwarden_database_postgres_password" }
     - { "old": "vaultwarden_database_sslmode", "new": "vaultwarden_database_postgres_sslmode" }
+    - { "old": "vaultwarden_config_smtp_host", "new": "vaultwarden_environment_variables_smtp_host" }
+    - { "old": "vaultwarden_config_smtp_port", "new": "vaultwarden_environment_variables_smtp_port" }
+    - { "old": "vaultwarden_config_smtp_username", "new": "vaultwarden_environment_variables_smtp_username" }
+    - { "old": "vaultwarden_config_smtp_password", "new": "vaultwarden_environment_variables_smtp_password" }
+    - { "old": "vaultwarden_config_smtp_security", "new": "vaultwarden_environment_variables_smtp_security" }
+    - { "old": "vaultwarden_config_smtp_from", "new": "vaultwarden_environment_variables_smtp_from" }
     - { "old": "vaultwarden_container_image_force_pull", "new": "<removed> (the new community.docker.docker_image_pull module handles this natively)" }
 
 - name: Fail if required Vaultwarden settings not defined
@@ -118,15 +124,15 @@
   ansible.builtin.fail:
     msg: >-
       You need to define a required configuration setting (`{{ item }}`) to correctly set up email via SMTP.
-  when: "vaultwarden_config_smtp_host !='' and lookup('vars', item, default='') | string | length == 0"
+  when: "vaultwarden_environment_variables_smtp_host != '' and lookup('vars', item, default='') | string | length == 0"
   with_items:
-    - vaultwarden_config_smtp_from
+    - vaultwarden_environment_variables_smtp_from
 
 - name: Fail if SMTP security setting is invalid
   ansible.builtin.fail:
     msg: >-
-      vaultwarden_config_smtp_security must be 'starttls', 'force_tls', or 'off'
-  when: "vaultwarden_config_smtp_security not in ['starttls', 'force_tls', 'off']"
+      vaultwarden_environment_variables_smtp_security must be 'starttls', 'force_tls', or 'off'
+  when: "vaultwarden_environment_variables_smtp_security not in ['starttls', 'force_tls', 'off']"
 
 - name: Fail if Vaultwarden logging level is invalid
   ansible.builtin.fail:

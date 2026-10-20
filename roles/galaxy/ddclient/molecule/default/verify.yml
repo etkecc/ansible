@@ -141,12 +141,6 @@
             fail_msg: "The additional volume did not carry the marker into the container"
             success_msg: "The additional volume carries the marker into the container"
 
-        # The `docker create` line in templates/systemd/ddclient.service.j2 has a
-        # comment sitting in the middle of a backslash continuation, right in front
-        # of the tmpfs that linuxserver.io's read-only mode needs. systemd drops
-        # such a comment rather than passing it on to docker, but that is worth
-        # holding onto: if it ever stopped doing so, everything after the comment
-        # would silently become part of the image name.
         - name: Assert that the read-only container still gets its writable /run
           ansible.builtin.assert:
             that:

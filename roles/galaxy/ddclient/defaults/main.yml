@@ -20,7 +20,7 @@ ddclient_identifier: ddclient
 ddclient_base_path: "/{{ ddclient_identifier }}"
 ddclient_config_path: "{{ ddclient_base_path }}/config"
 
-# renovate: datasource=docker depname=ghcr.io/linuxserver/ddclient versioning=semver
+# renovate: datasource=docker depName=ghcr.io/linuxserver/ddclient versioning=semver
 ddclient_version: 4.0.0
 
 ddclient_uid: ""

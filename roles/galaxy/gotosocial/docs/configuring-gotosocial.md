@@ -120,16 +120,19 @@ You can configure a SMTP mailer for functions such as sending notifications. To 
 
 ```yaml
 # Specify SMTP server hostname
-gotosocial_smtp_host: 'smtp.example.com'
+gotosocial_environment_variables_gts_smtp_host: ""
+
+# Specify SMTP server port number
+gotosocial_environment_variables_gts_smtp_port: 587
 
 # Specify SMTP server username
-gotosocial_smtp_username: gotosocial@example.com
+gotosocial_environment_variables_gts_smtp_username: ""
 
 # Specify SMTP server password
-gotosocial_smtp_password: yourpassword
+gotosocial_environment_variables_gts_smtp_password: ""
 
 # Specify the email address that emails will be sent from
-gotosocial_smtp_from: gotosocial@example.com
+gotosocial_environment_variables_gts_smtp_from: ""
 ```
 
 >[!WARNING]
