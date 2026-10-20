@@ -122,19 +122,19 @@ gotosocial_container_labels_traefik_tls: "{{ gotosocial_container_labels_traefik
 gotosocial_container_labels_traefik_tls_certResolver: default  # noqa var-naming
 
 # Controls if labels are added to expose the Prometheus metrics publicly.
-gotosocial_container_labels_metrics_enabled: "{{ gotosocial_metrics_enabled }}"
-gotosocial_container_labels_metrics_hostname: "{{ gotosocial_hostname }}"
+gotosocial_container_labels_traefik_metrics_enabled: "{{ gotosocial_metrics_enabled }}"
+gotosocial_container_labels_traefik_metrics_hostname: "{{ gotosocial_hostname }}"
 # The path prefix must either be `/` or not end with a slash (e.g. `/metrics`).
-gotosocial_container_labels_metrics_path_prefix: /metrics
-gotosocial_container_labels_metrics_rule: "Host(`{{ gotosocial_container_labels_metrics_hostname }}`){% if gotosocial_container_labels_metrics_path_prefix != '/' %} && PathPrefix(`{{ gotosocial_container_labels_metrics_path_prefix }}`){% endif %}"
-gotosocial_container_labels_metrics_priority: 0
-gotosocial_container_labels_metrics_entrypoints: "{{ gotosocial_container_labels_traefik_entrypoints }}"
-gotosocial_container_labels_metrics_middlewares: []
-gotosocial_container_labels_metrics_tls: "{{ gotosocial_container_labels_metrics_entrypoints != 'web' }}"
-gotosocial_container_labels_metrics_tls_certResolver: "{{ gotosocial_container_labels_traefik_tls_certResolver }}"  # noqa var-naming
-gotosocial_container_labels_metrics_middleware_basic_auth_enabled: false
+gotosocial_container_labels_traefik_metrics_path_prefix: /metrics
+gotosocial_container_labels_traefik_metrics_rule: "Host(`{{ gotosocial_container_labels_traefik_metrics_hostname }}`){% if gotosocial_container_labels_traefik_metrics_path_prefix != '/' %} && PathPrefix(`{{ gotosocial_container_labels_traefik_metrics_path_prefix }}`){% endif %}"
+gotosocial_container_labels_traefik_metrics_priority: 0
+gotosocial_container_labels_traefik_metrics_entrypoints: "{{ gotosocial_container_labels_traefik_entrypoints }}"
+gotosocial_container_labels_traefik_metrics_middlewares: []
+gotosocial_container_labels_traefik_metrics_tls: "{{ gotosocial_container_labels_traefik_metrics_entrypoints != 'web' }}"
+gotosocial_container_labels_traefik_metrics_tls_certResolver: "{{ gotosocial_container_labels_traefik_tls_certResolver }}"  # noqa var-naming
+gotosocial_container_labels_traefik_metrics_middleware_basic_auth_enabled: false
 # See: https://doc.traefik.io/traefik/reference/routing-configuration/http/middlewares/basicauth/
-gotosocial_container_labels_metrics_middleware_basic_auth_users: ""
+gotosocial_container_labels_traefik_metrics_middleware_basic_auth_users: ""
 
 # Controls which additional headers to attach to all HTTP requests.
 # To add your own custom request headers, use `gotosocial_container_labels_traefik_additional_request_headers_custom`

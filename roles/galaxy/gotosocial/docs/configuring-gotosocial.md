@@ -90,7 +90,7 @@ gotosocial_account_domain: "example.com"
 
 #### Specify database (optional)
 
-You can specify a database used by GoToSocial. By default it is configured to use SQLite. It is sufficient for small instances and single-board computers, where a dedicated database would be overkill. The SQLite database is stored in the directory specified with `gotosocial_database_path`.
+You can specify a database used by GoToSocial. By default it is configured to use SQLite. The SQLite database is stored in the directory specified with `gotosocial_database_path`.
 
 To use Postgres, add the following configuration to your `vars.yml` file:
 

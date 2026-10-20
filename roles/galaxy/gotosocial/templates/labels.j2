@@ -55,27 +55,27 @@ traefik.http.routers.{{ gotosocial_identifier }}.tls.certResolver={{ gotosocial_
 
 traefik.http.services.{{ gotosocial_identifier }}.loadbalancer.server.port={{ gotosocial_container_http_port }}
 
-{% if gotosocial_container_labels_metrics_enabled %}
-############################################################
-#                                                          #
-# Metrics                                                  #
-#                                                          #
-############################################################
+{% if gotosocial_container_labels_traefik_metrics_enabled %}
+########################################################################
+#                                                                      #
+# Metrics                                                              #
+#                                                                      #
+########################################################################
 
-{% set middlewares = gotosocial_container_labels_metrics_middlewares %}
+{% set middlewares = gotosocial_container_labels_traefik_metrics_middlewares %}
 
-{% if gotosocial_container_labels_metrics_middleware_basic_auth_enabled %}
-traefik.http.middlewares.{{ gotosocial_identifier }}-metrics-basic-auth.basicauth.users={{ gotosocial_container_labels_metrics_middleware_basic_auth_users }}
+{% if gotosocial_container_labels_traefik_metrics_middleware_basic_auth_enabled %}
+traefik.http.middlewares.{{ gotosocial_identifier }}-metrics-basic-auth.basicauth.users={{ gotosocial_container_labels_traefik_metrics_middleware_basic_auth_users }}
 {% set middlewares = middlewares + [gotosocial_identifier + '-metrics-basic-auth'] %}
 {% endif %}
 
 traefik.http.middlewares.{{ gotosocial_identifier }}-metrics-replace-path.replacepath.path=/metrics
 {% set middlewares = middlewares + [gotosocial_identifier + '-metrics-replace-path'] %}
 
-traefik.http.routers.{{ gotosocial_identifier }}-metrics.rule={{ gotosocial_container_labels_metrics_rule }}
+traefik.http.routers.{{ gotosocial_identifier }}-metrics.rule={{ gotosocial_container_labels_traefik_metrics_rule }}
 
-{% if gotosocial_container_labels_metrics_priority | int > 0 %}
-traefik.http.routers.{{ gotosocial_identifier }}-metrics.priority={{ gotosocial_container_labels_metrics_priority }}
+{% if gotosocial_container_labels_traefik_metrics_priority | int > 0 %}
+traefik.http.routers.{{ gotosocial_identifier }}-metrics.priority={{ gotosocial_container_labels_traefik_metrics_priority }}
 {% endif %}
 
 traefik.http.routers.{{ gotosocial_identifier }}-metrics.service={{ gotosocial_identifier }}-metrics
@@ -84,20 +84,20 @@ traefik.http.routers.{{ gotosocial_identifier }}-metrics.service={{ gotosocial_i
 traefik.http.routers.{{ gotosocial_identifier }}-metrics.middlewares={{ middlewares | join(',') }}
 {% endif %}
 
-traefik.http.routers.{{ gotosocial_identifier }}-metrics.entrypoints={{ gotosocial_container_labels_metrics_entrypoints }}
+traefik.http.routers.{{ gotosocial_identifier }}-metrics.entrypoints={{ gotosocial_container_labels_traefik_metrics_entrypoints }}
 
-traefik.http.routers.{{ gotosocial_identifier }}-metrics.tls={{ gotosocial_container_labels_metrics_tls | to_json }}
-{% if gotosocial_container_labels_metrics_tls %}
-traefik.http.routers.{{ gotosocial_identifier }}-metrics.tls.certResolver={{ gotosocial_container_labels_metrics_tls_certResolver }}
+traefik.http.routers.{{ gotosocial_identifier }}-metrics.tls={{ gotosocial_container_labels_traefik_metrics_tls | to_json }}
+{% if gotosocial_container_labels_traefik_metrics_tls %}
+traefik.http.routers.{{ gotosocial_identifier }}-metrics.tls.certResolver={{ gotosocial_container_labels_traefik_metrics_tls_certResolver }}
 {% endif %}
 
 traefik.http.services.{{ gotosocial_identifier }}-metrics.loadbalancer.server.port={{ gotosocial_container_metrics_port }}
 
-############################################################
-#                                                          #
-# /Metrics                                                 #
-#                                                          #
-############################################################
+########################################################################
+#                                                                      #
+# /Metrics                                                             #
+#                                                                      #
+########################################################################
 {% endif %}
 
 
