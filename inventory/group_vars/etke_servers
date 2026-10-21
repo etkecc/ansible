@@ -313,12 +313,12 @@ vaultwarden_container_additional_networks_auto: |
     +
     ([postgres_container_network] if postgres_enabled and vaultwarden_database_postgres_hostname == postgres_identifier and vaultwarden_container_network != postgres_container_network else [])
     +
-    ([exim_relay_container_network | default('matrix-exim-relay')] if (exim_relay_enabled | default(false) and vaultwarden_config_smtp_host == exim_relay_identifier | default('matrix-exim-relay') and exim_relay_container_network != vaultwarden_container_network) else [])
+    ([exim_relay_container_network | default('matrix-exim-relay')] if (exim_relay_enabled | default(false) and vaultwarden_environment_variables_smtp_host == exim_relay_identifier | default('matrix-exim-relay') and exim_relay_container_network != vaultwarden_container_network) else [])
   }}
 
 vaultwarden_systemd_wanted_services_list_auto: |
   {{
-    ([(exim_relay_identifier | default('matrix-exim-relay')) ~ '.service'] if (exim_relay_enabled | default(false) and vaultwarden_config_smtp_host == exim_relay_identifier | default('matrix-exim-relay')) else [])
+    ([(exim_relay_identifier | default('matrix-exim-relay')) ~ '.service'] if (exim_relay_enabled | default(false) and vaultwarden_environment_variables_smtp_host == exim_relay_identifier | default('matrix-exim-relay')) else [])
   }}
 
 vaultwarden_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
@@ -335,10 +335,10 @@ vaultwarden_database_postgres_username: "vaultwarden"
 vaultwarden_database_postgres_password: "{{ '%s' | format(mash_playbook_generic_secret_key) | password_hash('sha512', 'db.vaultwarden', rounds=655555) | to_uuid }}"
 
 # role-specific:exim_relay
-vaultwarden_config_smtp_from: "{{ exim_relay_sender_address if exim_relay_enabled else '' }}"
-vaultwarden_config_smtp_host: "{{ exim_relay_identifier if exim_relay_enabled else '' }}"
-vaultwarden_config_smtp_port: 8025
-vaultwarden_config_smtp_security: "{{ 'off' if exim_relay_enabled else 'starttls' }}"
+vaultwarden_environment_variables_smtp_from: "{{ exim_relay_sender_address if exim_relay_enabled else '' }}"
+vaultwarden_environment_variables_smtp_host: "{{ exim_relay_identifier if exim_relay_enabled else '' }}"
+vaultwarden_environment_variables_smtp_port: 8025
+vaultwarden_environment_variables_smtp_security: "{{ 'off' if exim_relay_enabled else 'starttls' }}"
 # /role-specific:exim_relay
 
 ########################################################################
