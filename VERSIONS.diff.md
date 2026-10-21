@@ -19,5 +19,5 @@
 * [Slack Bridge](https://github.com/mautrix/slack): [v0.2609.1](https://github.com/mautrix/slack/releases/tag/v0.2609.1) ⇾ [v0.2610.0](https://github.com/mautrix/slack/releases/tag/v0.2610.0)
 * [Spam Checker Mjolnir Antispam](https://github.com/element-hq/synapse): [v1.12.1](https://github.com/element-hq/synapse/releases/tag/v1.12.1) ⇾ v2.0.1
 * [Telegram Bridge](https://github.com/mautrix/telegram): [v0.2609.0](https://github.com/mautrix/telegram/releases/tag/v0.2609.0) ⇾ [v0.2610.0](https://github.com/mautrix/telegram/releases/tag/v0.2610.0)
-* [Traefik](https://github.com/traefik/traefik): [v3.7.14](https://github.com/traefik/traefik/releases/tag/v3.7.14) ⇾ [v3.7.15](https://github.com/traefik/traefik/releases/tag/v3.7.15)
+* [Traefik](https://github.com/traefik/traefik): [v3.7.14](https://github.com/traefik/traefik/releases/tag/v3.7.14) ⇾ [v3.7.16](https://github.com/traefik/traefik/releases/tag/v3.7.16)
 * [WhatsApp Bridge](https://github.com/mautrix/whatsapp): [v0.2609.0](https://github.com/mautrix/whatsapp/releases/tag/v0.2609.0) ⇾ [v0.2610.0](https://github.com/mautrix/whatsapp/releases/tag/v0.2610.0)
