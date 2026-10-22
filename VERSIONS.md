@@ -66,7 +66,7 @@
 * Static Files: 2.44.1
 * Steam Bridge: 1.4.0
 * Sygnal: v0.17.0
-* Synapse: v1.163.0
+* Synapse: v1.163.1
 * Synapse Auto Compressor: v0.0.3
 * Synapse Compress State: v0.0.3
 * Synapse HTTP Antispam: v0.5.1

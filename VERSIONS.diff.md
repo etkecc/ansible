@@ -6,22 +6,4 @@
 
 ### Component Updates
 
-* [Authentication Service](https://github.com/element-hq/matrix-authentication-service): [1.27.0](https://github.com/element-hq/matrix-authentication-service/releases/tag/v1.27.0) ⇾ [1.27.1](https://github.com/element-hq/matrix-authentication-service/releases/tag/v1.27.1)
-* [Baibot](https://github.com/etkecc/baibot): [v1.28.0](https://github.com/etkecc/baibot/releases/tag/v1.28.0) ⇾ [v1.29.0](https://github.com/etkecc/baibot/releases/tag/v1.29.0)
-* [Element](https://github.com/element-hq/element-web): [v1.12.31](https://github.com/element-hq/element-web/releases/tag/v1.12.31) ⇾ [v1.12.32](https://github.com/element-hq/element-web/releases/tag/v1.12.32)
-* [Etherpad](https://github.com/ether/etherpad-lite): [3.3.8](https://github.com/ether/etherpad-lite/releases/tag/3.3.8) ⇾ [3.3.9](https://github.com/ether/etherpad-lite/releases/tag/3.3.9)
-* [Fluffychat](https://github.com/krille-chan/fluffychat): [v2.10.0](https://github.com/krille-chan/fluffychat/releases/tag/v2.10.0) ⇾ [v2.11.1](https://github.com/krille-chan/fluffychat/releases/tag/v2.11.1)
-* [Google Messages Bridge](https://github.com/mautrix/gmessages): [v0.2609.0](https://github.com/mautrix/gmessages/releases/tag/v0.2609.0) ⇾ [v0.2610.0](https://github.com/mautrix/gmessages/releases/tag/v0.2610.0)
-* [Gotosocial](https://codeberg.org/superseriousbusiness/gotosocial): 0.22.2 ⇾ 0.22.3
-* [Meta Instagram Bridge](https://github.com/mautrix/meta): [v0.2609.0](https://github.com/mautrix/meta/releases/tag/v0.2609.0) ⇾ [v0.2610.0](https://github.com/mautrix/meta/releases/tag/v0.2610.0)
-* [Meta Messenger Bridge](https://github.com/mautrix/meta): [v0.2609.0](https://github.com/mautrix/meta/releases/tag/v0.2609.0) ⇾ [v0.2610.0](https://github.com/mautrix/meta/releases/tag/v0.2610.0)
-* [Miniflux](https://github.com/miniflux/v2): [2.3.3](https://github.com/miniflux/v2/releases/tag/2.3.3) ⇾ [2.3.4](https://github.com/miniflux/v2/releases/tag/2.3.4)
-* [Ntfy](https://github.com/binwiederhier/ntfy): [v2.30.0](https://github.com/binwiederhier/ntfy/releases/tag/v2.30.0) ⇾ [v2.32.0](https://github.com/binwiederhier/ntfy/releases/tag/v2.32.0)
-* [Prometheus](https://github.com/prometheus/prometheus): [v3.15.0](https://github.com/prometheus/prometheus/releases/tag/v3.15.0) ⇾ [v3.15.1](https://github.com/prometheus/prometheus/releases/tag/v3.15.1)
-* [Signal Bridge](https://github.com/mautrix/signal): [v0.2609.0](https://github.com/mautrix/signal/releases/tag/v0.2609.0) ⇾ [v0.2610.0](https://github.com/mautrix/signal/releases/tag/v0.2610.0)
-* [Slack Bridge](https://github.com/mautrix/slack): [v0.2609.1](https://github.com/mautrix/slack/releases/tag/v0.2609.1) ⇾ [v0.2610.0](https://github.com/mautrix/slack/releases/tag/v0.2610.0)
-* [Spam Checker Mjolnir Antispam](https://github.com/element-hq/synapse): [v1.12.1](https://github.com/element-hq/synapse/releases/tag/v1.12.1) ⇾ v2.0.1
-* [Synapse Reverse Proxy Companion](https://github.com/element-hq/synapse): 1.31.7-alpine ⇾ 1.31.8-alpine
-* [Telegram Bridge](https://github.com/mautrix/telegram): [v0.2609.0](https://github.com/mautrix/telegram/releases/tag/v0.2609.0) ⇾ [v0.2610.0](https://github.com/mautrix/telegram/releases/tag/v0.2610.0)
-* [Traefik](https://github.com/traefik/traefik): [v3.7.14](https://github.com/traefik/traefik/releases/tag/v3.7.14) ⇾ [v3.7.16](https://github.com/traefik/traefik/releases/tag/v3.7.16)
-* [WhatsApp Bridge](https://github.com/mautrix/whatsapp): [v0.2609.0](https://github.com/mautrix/whatsapp/releases/tag/v0.2609.0) ⇾ [v0.2610.0](https://github.com/mautrix/whatsapp/releases/tag/v0.2610.0)
+* [Synapse](https://github.com/element-hq/synapse): [v1.163.0](https://github.com/element-hq/synapse/releases/tag/v1.163.0) ⇾ [v1.163.1](https://github.com/element-hq/synapse/releases/tag/v1.163.1)
