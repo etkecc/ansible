@@ -256,7 +256,7 @@ gotosocial_systemd_required_services_list_auto: |
 
 gotosocial_systemd_wanted_services_list_auto: |
   {{
-    ([(exim_relay_identifier | default('matrix-exim-relay')) ~ '.service'] if (exim_relay_enabled | default(false) and gotosocial_smtp_host == exim_relay_identifier | default('matrix-exim-relay')) else [])
+    ([(exim_relay_identifier | default('matrix-exim-relay')) ~ '.service'] if (exim_relay_enabled | default(false) and gotosocial_environment_variables_gts_smtp_host == exim_relay_identifier | default('matrix-exim-relay')) else [])
   }}
 
 gotosocial_container_image_registry_prefix_upstream: "{{ matrix_container_global_registry_prefix_override if matrix_container_global_registry_prefix_override else gotosocial_container_image_registry_prefix_upstream_default }}"
@@ -267,7 +267,7 @@ gotosocial_container_additional_networks_auto: |
     +
     ([postgres_container_network] if postgres_enabled and gotosocial_database_hostname == postgres_identifier and gotosocial_container_network != postgres_container_network else [])
      +
-    ([exim_relay_container_network | default('matrix-exim-relay')] if (exim_relay_enabled | default(false) and gotosocial_smtp_host == exim_relay_identifier | default('matrix-exim-relay') and exim_relay_container_network != gotosocial_container_network) else [])
+    ([exim_relay_container_network | default('matrix-exim-relay')] if (exim_relay_enabled | default(false) and gotosocial_environment_variables_gts_smtp_host == exim_relay_identifier | default('matrix-exim-relay') and exim_relay_container_network != gotosocial_container_network) else [])
   }}
 
 gotosocial_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
@@ -282,9 +282,9 @@ gotosocial_database_password: "{{ '%s' | format(mash_playbook_generic_secret_key
 gotosocial_database_username: "{{ gotosocial_identifier }}"
 
 # role-specific:exim_relay
-gotosocial_smtp_host: "{{ exim_relay_identifier if exim_relay_enabled else '' }}"
-gotosocial_smtp_port: 8025
-gotosocial_smtp_from: "{{ exim_relay_sender_address if exim_relay_enabled else '' }}"
+gotosocial_environment_variables_gts_smtp_host: "{{ exim_relay_identifier if exim_relay_enabled else '' }}"
+gotosocial_environment_variables_gts_smtp_port: 8025
+gotosocial_environment_variables_gts_smtp_from: "{{ exim_relay_sender_address if exim_relay_enabled else '' }}"
 # /role-specific:exim_relay
 
 ########################################################################
