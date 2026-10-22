@@ -17,7 +17,7 @@
 * Google Chat Bridge: v0.5.2
 * Google Messages Bridge: v0.2610.0
 * Google Voice Bridge: v0.2605.0
-* Gotosocial: 0.22.2
+* Gotosocial: 0.22.3
 * Grafana: 13.0.2
 * Heisenbridge: 1.15.4
 * Honoroit: v0.9.30
@@ -70,7 +70,7 @@
 * Synapse Auto Compressor: v0.0.3
 * Synapse Compress State: v0.0.3
 * Synapse HTTP Antispam: v0.5.1
-* Synapse Reverse Proxy Companion: 1.31.7-alpine
+* Synapse Reverse Proxy Companion: 1.31.8-alpine
 * Synapse S3 Storage Provider: 1.7.0
 * Telegram Bridge: v0.2610.0
 * Traefik: v3.7.16

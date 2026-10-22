@@ -20,6 +20,12 @@
     - { "old": "gotosocial_database_host", "new": "gotosocial_database_hostname" }
     - { "old": "gotosocial_env_path", "new": "<Removed>" }
     - { "old": "gotosocial_container_tmp_size", "new": "gotosocial_container_tmpfs_tmp_size" }
+    - { "old": "gotosocial_smtp_host", "new": "gotosocial_environment_variables_gts_smtp_host" }
+    - { "old": "gotosocial_smtp_port", "new": "gotosocial_environment_variables_gts_smtp_port" }
+    - { "old": "gotosocial_smtp_username", "new": "gotosocial_environment_variables_gts_smtp_username" }
+    - { "old": "gotosocial_smtp_password", "new": "gotosocial_environment_variables_gts_smtp_password" }
+    - { "old": "gotosocial_smtp_from", "new": "gotosocial_environment_variables_gts_smtp_from" }
+    - { "old": "gotosocial_smtp_disclose_recipients", "new": "gotosocial_environment_variables_gts_smtp_disclose_recipients" }
     - { "old": "gotosocial_environment_variables_extension", "new": "gotosocial_environment_variables_additional_variables" }
     - { "old": "gotosocial_http_header_content_permission_policy", "new": "gotosocial_http_header_permissions_policy" }
     - { "old": "gotosocial_metrics_auth_enabled", "new": "gotosocial_container_labels_traefik_metrics_middleware_basic_auth_enabled" }
