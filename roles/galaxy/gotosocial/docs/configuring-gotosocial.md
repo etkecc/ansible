@@ -30,7 +30,7 @@ See the project's [documentation](https://docs.gotosocial.org/) to learn what Go
 
 ## Prerequisites
 
-To run a GoToSocial instance it is necessary to prepare a database. You can use a [Postgres](https://www.postgresql.org/) database server or [SQLite](https://www.sqlite.org/). By default it is configured to use SQLite.
+To run a GoToSocial instance it is necessary to prepare a database. You can use a [Postgres](https://www.postgresql.org/) database server or [SQLite](https://www.sqlite.org/).
 
 If you are looking for an Ansible role for Postgres, you can check out [this role (ansible-role-postgres)](https://github.com/mother-of-all-self-hosting/ansible-role-postgres) maintained by the [Mother-of-All-Self-Hosting (MASH)](https://github.com/mother-of-all-self-hosting) team.
 
@@ -88,9 +88,9 @@ gotosocial_account_domain: "example.com"
 
 ### Configuring database
 
-#### Specify database (optional)
+#### Specify database
 
-You can specify a database used by GoToSocial. By default it is configured to use SQLite. The SQLite database is stored in the directory specified with `gotosocial_database_path`.
+GoToSocial can use either Postgres or SQLite, and you need to choose one.
 
 To use Postgres, add the following configuration to your `vars.yml` file:
 
@@ -98,7 +98,12 @@ To use Postgres, add the following configuration to your `vars.yml` file:
 gotosocial_database_type: postgres
 ```
 
+Set `sqlite` to use SQLite. The SQLite database is stored in the directory specified with `gotosocial_config_path`.
+
 For other settings, check variables such as `gotosocial_database_*` on [`defaults/main.yml`](../defaults/main.yml).
+
+>[!NOTE]
+> If you (or your playbook) have not specified Postgres explicitly, the database for your existing installation is most likely to be `sqlite`.
 
 #### Configuring connection to the database server (optional)
 

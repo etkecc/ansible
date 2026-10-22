@@ -52,6 +52,7 @@
     - gotosocial_hostname
     - gotosocial_path_prefix
     - gotosocial_container_network
+    - gotosocial_database_type
 
 - name: Fail if GoToSocial database type invalid
   ansible.builtin.fail:

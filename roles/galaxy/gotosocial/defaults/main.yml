@@ -280,7 +280,7 @@ gotosocial_container_cleanup_command: |
 
 # Specify a database driver to use
 # Valid values: postgres, sqlite
-gotosocial_database_type: sqlite
+gotosocial_database_type: ""
 
 # Specify database configuration
 gotosocial_database_address_sqlite: "/opt/gotosocial/sqlite.db"

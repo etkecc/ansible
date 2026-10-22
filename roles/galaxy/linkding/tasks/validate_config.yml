@@ -39,6 +39,7 @@
     - linkding_hostname
     - linkding_path_prefix
     - linkding_container_network
+    - linkding_database_type
 
 - name: Fail if linkding database type invalid
   ansible.builtin.fail:

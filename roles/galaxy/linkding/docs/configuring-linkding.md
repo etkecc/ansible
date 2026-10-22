@@ -30,7 +30,7 @@ See the project's [documentation](https://linkding.link/installation/) to learn 
 
 ## Prerequisites
 
-To run a linkding instance it is necessary to prepare a database. You can use a [Postgres](https://www.postgresql.org/) database server or [SQLite](https://www.sqlite.org/). By default it is configured to use SQLite.
+To run a linkding instance it is necessary to prepare a database. You can use a [Postgres](https://www.postgresql.org/) database server or [SQLite](https://www.sqlite.org/).
 
 If you are looking for an Ansible role for Postgres, you can check out [this role (ansible-role-postgres)](https://github.com/mother-of-all-self-hosting/ansible-role-postgres) maintained by the [Mother-of-All-Self-Hosting (MASH)](https://github.com/mother-of-all-self-hosting) team.
 
@@ -68,9 +68,9 @@ After adjusting the hostname, make sure to adjust your DNS records to point the 
 
 ### Configuring database
 
-#### Specify database (optional)
+#### Specify database
 
-You can specify a database used by linkding. By default it is configured to use SQLite. The SQLite database is stored in the directory specified with `linkding_data_path`.
+linkding can use either Postgres or SQLite, and you need to choose one.
 
 To use Postgres, add the following configuration to your `vars.yml` file:
 
@@ -78,7 +78,12 @@ To use Postgres, add the following configuration to your `vars.yml` file:
 linkding_database_type: postgres
 ```
 
+Set `sqlite` to use SQLite. The SQLite database is stored in the directory specified with `linkding_config_path`.
+
 For other settings, check variables such as `linkding_database_*` on [`defaults/main.yml`](../defaults/main.yml).
+
+>[!NOTE]
+> If you (or your playbook) have not specified Postgres explicitly, the database for your existing installation is most likely to be `sqlite`.
 
 #### Configuring connection to the database server (optional)
 

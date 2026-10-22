@@ -228,7 +228,7 @@ linkding_container_cleanup_command: |
 
 # Specify a database driver to use
 # Valid values: postgres, sqlite
-linkding_database_type: sqlite
+linkding_database_type: ""
 
 # Specify database configuration
 linkding_database_hostname: ""
