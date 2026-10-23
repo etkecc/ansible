@@ -286,7 +286,7 @@ etherpad_framing_enabled: true
 
 # Specify a database driver to use
 # See: https://etherpad.org/doc/latest/#_database and https://www.npmjs.com/package/ueberdb2
-etherpad_database_type: "postgres"
+etherpad_database_type: ""
 
 # Specify database configuration
 etherpad_database_couchdb_hostname: ""

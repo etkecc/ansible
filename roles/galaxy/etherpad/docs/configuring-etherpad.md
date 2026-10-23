@@ -29,7 +29,7 @@ See the project's [documentation](https://docs.etherpad.org/) to learn what Ethe
 
 ## Prerequisites
 
-To run an Etherpad instance it is necessary to prepare a database supported by [ueberdb2](https://www.npmjs.com/package/ueberdb2). The role supports [CouchDB](https://couchdb.apache.org/), [MariaDB](https://mariadb.org), [Postgres](https://www.postgresql.org/), [Redis](https://redis.io/), [SQLite](https://www.sqlite.org/), as well as `memory` (an in-memory ephemeral database). By default it is configured to use Postgres.
+To run an Etherpad instance it is necessary to prepare a database supported by [ueberdb2](https://www.npmjs.com/package/ueberdb2). The role supports [CouchDB](https://couchdb.apache.org/), [MariaDB](https://mariadb.org), [Postgres](https://www.postgresql.org/), [Redis](https://redis.io/), [SQLite](https://www.sqlite.org/), as well as `memory` (an in-memory ephemeral database).
 
 If you are looking for Ansible roles for them, you can check out these roles maintained by the [Mother-of-All-Self-Hosting (MASH)](https://github.com/mother-of-all-self-hosting) team:
 
@@ -79,10 +79,10 @@ After adjusting the hostname, make sure to adjust your DNS records to point the 
 
 ### Configure database
 
->[!NOTE]
-> If you use the MDAD Ansible playbook, any additional configurations are not required as they are specified by default. See its [`matrix_servers`](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/group_vars/matrix_servers) for details.
+Etherpad can use databases available with [ueberdb2](https://www.npmjs.com/package/ueberdb2), and you need to choose one.
 
-Etherpad supports databases available with [ueberdb2](https://www.npmjs.com/package/ueberdb2), including MariaDB and Postgres. By default the role is configured to use Postgres for its database.
+>[!NOTE]
+> If you (or your playbook) have not specified one explicitly, the database for your existing installation is most likely to be `postgres`.
 
 #### CouchDB
 
@@ -111,6 +111,7 @@ Make sure to replace `YOUR_DATABASE_USERNAME_HERE` and `YOUR_DATABASE_PASSWORD_H
 To use Postgres, add the following configuration to your `vars.yml` file:
 
 ```yaml
+etherpad_database_type: postgres
 etherpad_database_postgres_username: YOUR_DATABASE_USERNAME_HERE
 etherpad_database_postgres_password: YOUR_DATABASE_PASSWORD_HERE
 ```
