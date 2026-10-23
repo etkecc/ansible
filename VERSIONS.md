@@ -77,7 +77,7 @@
 * Traefik Certs Dumper: v2.11.4
 * Traefik Proxy Protocol: 1
 * Twitter Bridge: v0.2609.0
-* Uptime Kuma: 2.5.6
+* Uptime Kuma: 2.5.7
 * Valkey: 9.1.2
 * Vaultwarden: 1.37.4
 * Wg Easy: 15.4.0
