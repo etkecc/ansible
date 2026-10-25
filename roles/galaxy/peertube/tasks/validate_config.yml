@@ -78,7 +78,7 @@
   ansible.builtin.fail:
     msg: >-
       You need to define a required configuration setting (`{{ item }}`) to correctly set up email via SMTP.
-  when: "peertube_config_smtp_hostname !='' and lookup('vars', item, default='') | string | length == 0"
+  when: "peertube_config_smtp_hostname != '' and lookup('vars', item, default='') | string | length == 0"
   with_items:
     - peertube_config_smtp_from
 
