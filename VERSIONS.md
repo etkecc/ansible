@@ -12,7 +12,7 @@
 * Etherpad: 3.3.10
 * Exim Relay: 4.99.5-r0-2
 * Firezone: 0.7.36
-* Fluffychat: v2.11.2
+* Fluffychat: v2.11.3
 * Funkwhale: 1.4.1
 * Google Chat Bridge: v0.5.2
 * Google Messages Bridge: v0.2610.0
@@ -39,7 +39,7 @@
 * Meta Instagram Bridge: v0.2610.0
 * Meta Messenger Bridge: v0.2610.0
 * Miniflux: 2.3.4
-* Ntfy: v2.33.1
+* Ntfy: v2.34.0
 * Peertube: v8.3.1
 * Postgres Container Image V10: 10.23
 * Postgres Container Image V11: 11.22
