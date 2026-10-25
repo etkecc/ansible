@@ -29,7 +29,7 @@ See the project's [documentation](https://github.com/dani-garcia/vaultwarden/blo
 
 ## Prerequisites
 
-To run a Vaultwarden instance it is necessary to prepare a database. You can use a [MySQL](https://www.mysql.com/) compatible database server, [Postgres](https://www.postgresql.org/), or [SQLite](https://www.sqlite.org/). The SQLite database file will be automatically created by the service if it is enabled.
+To run a Vaultwarden instance it is necessary to prepare a database. You can use a [MySQL](https://www.mysql.com/) compatible database server, [Postgres](https://www.postgresql.org/), or [SQLite](https://www.sqlite.org/).
 
 If you are looking for Ansible roles for a MySQL compatible server or Postgres, you can check out [ansible-role-mariadb](https://github.com/mother-of-all-self-hosting/ansible-role-mariadb) and [ansible-role-postgres](https://github.com/mother-of-all-self-hosting/ansible-role-postgres), both of which are maintained by the [Mother-of-All-Self-Hosting (MASH)](https://github.com/mother-of-all-self-hosting) team.
 
@@ -80,19 +80,22 @@ Removing the line will disable the `/admin` section.
 
 ### Configuring database
 
-#### Specify database (optional)
+#### Specify database
 
-You can specify a database used by Vaultwarden. By default it is configured to use Postgres.
+Vaultwarden can use either a MySQL compatible database, Postgres, or SQLite, and you need to choose one.
 
-To use SQLite, add the following configuration to your `vars.yml` file:
+To use Postgres, add the following configuration to your `vars.yml` file:
 
 ```yaml
-vaultwarden_database_type: sqlite
+vaultwarden_database_type: postgres
 ```
 
-Set `mysql` to use a MySQL compatible database. The SQLite database is stored in the directory specified with `vaultwarden_data_path`.
+Set `mysql` to use a MySQL compatible database and `sqlite` to use SQLite, respectively. The SQLite database is stored in the directory specified with `vaultwarden_data_path`.
 
 For other settings, check variables such as `vaultwarden_database_*` on [`defaults/main.yml`](../defaults/main.yml).
+
+>[!NOTE]
+> If you (or your playbook) have not specified a MySQL compatible database or Postgres explicitly, the database for your existing installation is most likely to be `postgres`.
 
 #### Configuring connection to the database server (optional)
 

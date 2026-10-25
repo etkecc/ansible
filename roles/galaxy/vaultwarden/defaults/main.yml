@@ -253,7 +253,7 @@ vaultwarden_container_cleanup_command: |
 
 # Specify a database driver to use
 # Valid values: mysql, postgres, sqlite
-vaultwarden_database_type: postgres
+vaultwarden_database_type: ""
 
 # Specify database configuration
 vaultwarden_database_mysql_hostname: ""

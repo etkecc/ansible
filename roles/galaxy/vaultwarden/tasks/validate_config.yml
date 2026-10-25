@@ -55,6 +55,7 @@
     - vaultwarden_hostname
     - vaultwarden_path_prefix
     - vaultwarden_container_network
+    - vaultwarden_database_type
 
 - name: Fail if Vaultwarden database type invalid
   ansible.builtin.fail:
