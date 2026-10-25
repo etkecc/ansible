@@ -1,6 +1,6 @@
 * Alpine: edge
 * Authentication Service: 1.27.1
-* Baibot: v1.29.0
+* Baibot: v1.29.1
 * Bluesky Bridge: v0.2510.0
 * Buscarron: v1.5.0
 * Cinny: v4.12.7
@@ -9,7 +9,7 @@
 * Discord Bridge: v0.7.7
 * Draupnir: v3.2.0
 * Element: v1.12.32
-* Etherpad: 3.3.10
+* Etherpad: 3.3.11
 * Exim Relay: 4.99.5-r0-2
 * Firezone: 0.7.36
 * Fluffychat: v2.11.3
@@ -80,5 +80,5 @@
 * Uptime Kuma: 2.5.7
 * Valkey: 9.1.2
 * Vaultwarden: 1.37.4
-* Wg Easy: 15.4.0
+* Wg Easy: 15.5.0
 * WhatsApp Bridge: v0.2610.0
