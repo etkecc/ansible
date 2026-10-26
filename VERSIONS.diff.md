@@ -15,6 +15,8 @@
 * [Ketesa](https://github.com/etkecc/ketesa): [v1.5.1](https://github.com/etkecc/ketesa/releases/tag/v1.5.1) ⇾ [v1.5.2](https://github.com/etkecc/ketesa/releases/tag/v1.5.2)
 * [Livekit Server](https://github.com/livekit/livekit): [v1.13.10](https://github.com/livekit/livekit/releases/tag/v1.13.10) ⇾ [v1.13.11](https://github.com/livekit/livekit/releases/tag/v1.13.11)
 * [Ntfy](https://github.com/binwiederhier/ntfy): [v2.32.0](https://github.com/binwiederhier/ntfy/releases/tag/v2.32.0) ⇾ [v2.34.0](https://github.com/binwiederhier/ntfy/releases/tag/v2.34.0)
+* [Peertube](https://github.com/Chocobozzz/PeerTube): [v8.3.1](https://github.com/Chocobozzz/PeerTube/releases/tag/v8.3.1) ⇾ [v8.3.2](https://github.com/Chocobozzz/PeerTube/releases/tag/v8.3.2)
+* [Radicale](https://github.com/tomsquest/docker-radicale): [3.8.3.0](https://github.com/tomsquest/docker-radicale/releases/tag/3.8.3.0) ⇾ [3.9.0.0](https://github.com/tomsquest/docker-radicale/releases/tag/3.9.0.0)
 * [Synapse](https://github.com/element-hq/synapse): [v1.163.0](https://github.com/element-hq/synapse/releases/tag/v1.163.0) ⇾ [v1.163.2](https://github.com/element-hq/synapse/releases/tag/v1.163.2)
 * [Uptime Kuma](https://github.com/louislam/uptime-kuma): [2.5.6](https://github.com/louislam/uptime-kuma/releases/tag/2.5.6) ⇾ [2.5.7](https://github.com/louislam/uptime-kuma/releases/tag/2.5.7)
 * [Wg Easy](https://github.com/wg-easy/wg-easy): [15.4.0](https://github.com/wg-easy/wg-easy/releases/tag/v15.4.0) ⇾ [15.5.0](https://github.com/wg-easy/wg-easy/releases/tag/v15.5.0)

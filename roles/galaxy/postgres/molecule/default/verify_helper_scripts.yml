@@ -1,0 +1,109 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+# cli-non-interactive is exercised by verify_managed_databases.yml.
+- name: Verify the Postgres helper scripts
+  hosts: all
+  become: true
+  gather_facts: false
+
+  vars:
+    postgres_verify_dump_directory: /root/molecule-dump
+
+  tasks:
+    - name: Run a query through the cli script (piped in)
+      ansible.builtin.command:
+        cmd: /postgres/bin/cli -tA
+        stdin: SELECT current_user;
+      register: postgres_verify_cli
+      changed_when: false
+
+    - name: Assert the cli script runs queries
+      ansible.builtin.assert:
+        that: (postgres_verify_cli.stdout | trim) == 'root'
+        fail_msg: "The cli script did not run the query as `root`: {{ postgres_verify_cli.stdout }}{{ postgres_verify_cli.stderr }}"
+        success_msg: "The cli script runs queries"
+
+    - name: Ensure the dump directory exists
+      ansible.builtin.file:
+        path: "{{ postgres_verify_dump_directory }}"
+        state: directory
+        mode: "0700"
+
+    - name: Dump all databases via the dump-all script
+      ansible.builtin.command:
+        cmd: /postgres/bin/dump-all {{ postgres_verify_dump_directory }}
+      changed_when: true
+
+    - name: Check the mode of the dump
+      ansible.builtin.stat:
+        path: "{{ postgres_verify_dump_directory }}/latest-dump.sql.zst"
+      register: postgres_verify_dump_stat
+
+    - name: Assert only the caller can read the dump
+      ansible.builtin.assert:
+        that: postgres_verify_dump_stat.stat.mode == '0600'
+        fail_msg: "The dump's mode is {{ postgres_verify_dump_stat.stat.mode }}, expected 0600"
+        success_msg: "Only the caller can read the dump"
+
+    # zstd may not be available on the host, so the dump is checked in the Postgres container.
+    - name: Read the start of the dump
+      ansible.builtin.shell:
+        cmd: >-
+          set -o pipefail
+          && docker exec -i postgres sh -c 'zstd --test && echo valid'
+          < {{ postgres_verify_dump_directory }}/latest-dump.sql.zst
+          && docker exec -i postgres sh -c 'zstd -dc | head -n 5'
+          < {{ postgres_verify_dump_directory }}/latest-dump.sql.zst
+        executable: /bin/bash
+      register: postgres_verify_dump
+      changed_when: false
+
+    - name: Assert the dump is a complete Postgres cluster dump
+      ansible.builtin.assert:
+        that:
+          - postgres_verify_dump.stdout_lines[0] == 'valid'
+          - postgres_verify_dump.stdout is search('PostgreSQL database cluster dump')
+        fail_msg: "The dump is not a complete Postgres cluster dump: {{ postgres_verify_dump.stdout }}{{ postgres_verify_dump.stderr }}"
+        success_msg: "The dump-all script makes a complete Postgres cluster dump"
+
+    # A dump of the whole server (as made above) cannot be imported back into the same server,
+    # as it re-creates roles and databases which exist, so a small dump is made up for this.
+    - name: Make a small compressed dump to import
+      ansible.builtin.shell:
+        cmd: >-
+          set -o pipefail
+          && docker exec -i postgres sh -c 'zstd --stdout' > {{ postgres_verify_dump_directory }}/molecule-import.sql.zst
+        stdin: |
+          CREATE DATABASE molecule_import;
+          \c molecule_import
+          CREATE TABLE probe (value text);
+          INSERT INTO probe VALUES ('molecule-import-value');
+        executable: /bin/bash
+      changed_when: true
+
+    - name: Include the variables the Postgres role relies on
+      ansible.builtin.include_role:
+        name: com.devture.ansible.role.systemd_docker_base
+        public: true
+
+    - name: Import the small dump
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+        tasks_from: import_postgres
+      vars:
+        server_path_postgres_dump: "{{ postgres_verify_dump_directory }}/molecule-import.sql.zst"
+
+    - name: Read the imported data back
+      ansible.builtin.command:
+        cmd: /postgres/bin/cli-non-interactive -d molecule_import -tAc "SELECT value FROM probe"
+      register: postgres_verify_imported
+      changed_when: false
+
+    - name: Assert the dump was imported
+      ansible.builtin.assert:
+        that: (postgres_verify_imported.stdout | trim) == 'molecule-import-value'
+        fail_msg: "Importing did not bring the data in: {{ postgres_verify_imported.stdout }}{{ postgres_verify_imported.stderr }}"
+        success_msg: "Importing a compressed dump works"

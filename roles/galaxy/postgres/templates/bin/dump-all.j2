@@ -2,7 +2,7 @@
 
 if [ $# -ne 1 ]; then
     echo "Usage: "$0" <directory_path>"
-    echo "A latest-dump.sql.gz file will be dumped to the specified directory"
+    echo "A latest-dump.sql.zst file will be dumped to the specified directory"
     exit 1
 fi
 
@@ -13,25 +13,29 @@ if [ ! -d "$directory_path" ]; then
     exit 1
 fi
 
-docker_flags=''
-if [ -t 1 ]; then
-    # Got tty
-    docker_flags='-it'
+# The dump holds every database (including password hashes), so only the caller may read it.
+umask 077
+
+dump_path="$directory_path/latest-dump.sql.zst"
+
+# Runs pg_dumpall inside the (running) Postgres container, connecting the same way the managed databases preparation does,
+# and streams the compressed dump out. The credentials come from the env-postgres-psql file, which Docker reads itself,
+# so that they do not appear on any command line.
+#
+# The dump goes to a temporary file first, so that a failed dump neither leaves a truncated dump behind
+# (which could be mistaken for a good one) nor destroys the previous dump.
+docker exec \
+    --env-file={{ postgres_base_path }}/env-postgres-psql \
+    {{ postgres_identifier }} \
+    {{ postgres_container_shell_path }} -c \
+    'set -o pipefail && pg_dumpall -h {{ postgres_run_path_in_container if postgres_cli_use_unix_socket_enabled else '127.0.0.1' }} | zstd --stdout' \
+    > "$dump_path.partial"
+status=$?
+
+if [ $status -ne 0 ]; then
+    rm -f "$dump_path.partial"
+    echo "Dumping failed (exit code $status)." >&2
+    exit $status
 fi
 
-docker run \
-    $docker_flags \
-    --rm \
-    --user={{ postgres_container_uid }}:{{ postgres_container_gid }} \
-    --cap-drop=ALL \
-    --env-file={{ postgres_base_path }}/env-postgres-psql \
-    {% if postgres_cli_use_unix_socket_enabled %}
-    --mount type=bind,src={{ postgres_run_path }},dst={{ postgres_run_path_in_container }} \
-    {% else %}
-    --network={{ postgres_container_network }} \
-    {% endif %}
-    --mount type=bind,src=$directory_path,dst=/out \
-    --entrypoint={{ postgres_container_shell_path }} \
-    {{ postgres_container_image_to_use }} \
-    -c \
-    'set -o pipefail && pg_dumpall -h {{ postgres_run_path_in_container if postgres_cli_use_unix_socket_enabled else postgres_connection_hostname }} | zstd --stdout > /out/latest-dump.sql.zst'
+mv "$dump_path.partial" "$dump_path"

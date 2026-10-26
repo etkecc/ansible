@@ -78,15 +78,20 @@
   with_items:
     - src: "{{ role_path }}/templates/systemd/funkwhale-frontend.service.j2"
       dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ funkwhale_frontend_identifier }}.service"
+      when: true
     - src: "{{ role_path }}/templates/systemd/funkwhale-api.service.j2"
       dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ funkwhale_api_identifier }}.service"
+      when: true
     - src: "{{ role_path }}/templates/systemd/funkwhale-celery-beat.service.j2"
       dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ funkwhale_celery_beat_identifier }}.service"
+      when: true
     - src: "{{ role_path }}/templates/systemd/funkwhale-celery-worker.service.j2"
       dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ funkwhale_celery_worker_identifier }}.service"
+      when: true
     - src: "{{ role_path }}/templates/systemd/funkwhale-watch-imports.service.j2"
       dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ funkwhale_watch_imports_identifier }}.service"
-      when: funkwhale_watch_imports_enabled
+      when: "{{ funkwhale_watch_imports_enabled }}"
+  when: item.when | bool
   register: funkwhale_systemd_services_result
 
 - name: Determine whether Funkwhale needs a restart

@@ -8,7 +8,7 @@
   version: v0.7.36-11
   name: firezone
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-funkwhale.git
-  version: v1.4.1-9
+  version: v1.4.1-10
   name: funkwhale
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-gotosocial.git
   version: v0.22.3-1
@@ -23,10 +23,10 @@
   version: v2.3.4-1
   name: miniflux
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-peertube.git
-  version: v8.3.1-2
+  version: v8.3.2-0
   name: peertube
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-radicale.git
-  version: v3.8.3.0-0
+  version: v3.9.0.0-0
   name: radicale
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-ssh.git
   version: v1.0.3-0

@@ -1,17 +1,11 @@
 #jinja2: lstrip_blocks: True
 #!/bin/bash
 
-docker run \
+# Runs psql inside the (running) Postgres container, connecting the same way the managed databases preparation does.
+# The credentials come from the env-postgres-psql file, which Docker reads itself, so that they do not appear on any command line.
+exec docker exec \
     -i \
-    --rm \
-    --user={{ postgres_container_uid }}:{{ postgres_container_gid }} \
-    --cap-drop=ALL \
     --env-file={{ postgres_base_path }}/env-postgres-psql \
-    {% if postgres_cli_use_unix_socket_enabled %}
-    --mount type=bind,src={{ postgres_run_path }},dst={{ postgres_run_path_in_container }} \
-    {% else %}
-    --network={{ postgres_container_network }} \
-    {% endif %}
-    {{ postgres_container_image_to_use }} \
-    psql -h {{ postgres_run_path_in_container if postgres_cli_use_unix_socket_enabled else postgres_connection_hostname }} \
+    {{ postgres_identifier }} \
+    psql -h {{ postgres_run_path_in_container if postgres_cli_use_unix_socket_enabled else '127.0.0.1' }} \
     "$@"

@@ -40,7 +40,7 @@
 * Meta Messenger Bridge: v0.2610.0
 * Miniflux: 2.3.4
 * Ntfy: v2.34.0
-* Peertube: v8.3.1
+* Peertube: v8.3.2
 * Postgres Container Image V10: 10.23
 * Postgres Container Image V11: 11.22
 * Postgres Container Image V12: 12.22
@@ -56,7 +56,7 @@
 * Prometheus Nginxlog Exporter: v1.11.0
 * Prometheus Node Exporter: v1.12.1
 * Prometheus Postgres Exporter: v0.20.1
-* Radicale: 3.8.3.0
+* Radicale: 3.9.0.0
 * Sable: 1.22.11
 * Schildichat: 1.11.109-sc.0.test.0
 * Signal Bridge: v0.2610.0

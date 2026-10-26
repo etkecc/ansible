@@ -63,19 +63,17 @@
 # role (`postgres_connection_username`) and database (`postgres_db_name`).
 # The dump most likely contains those same entries and would try to re-create them, leading to errors.
 # We need to skip over those lines.
+#
+# The dump is streamed into psql inside the (running) Postgres container, which connects the same way
+# the managed databases preparation does, with the credentials from the env-postgres-psql file (which Docker reads itself).
 - name: Generate Postgres database import command
   ansible.builtin.set_fact:
     postgres_import_command: >-
-      {{ devture_systemd_docker_base_host_command_docker }} run --rm --name {{ postgres_identifier }}-import
-      --log-driver=none
-      --user={{ postgres_container_uid }}:{{ postgres_container_gid }}
-      --cap-drop=ALL
-      --network={{ postgres_container_network }}
+      {{ devture_systemd_docker_base_host_command_docker }} exec -i
       --env-file={{ postgres_base_path }}/env-postgres-psql
-      --mount type=bind,src={{ server_path_postgres_dump }},dst=/{{ server_path_postgres_dump | basename }},ro
-      --entrypoint={{ postgres_container_shell_path }}
-      {{ postgres_detected_version_corresponding_container_image }}
-      -c "set -o pipefail && cat /{{ server_path_postgres_dump | basename }} |
+      {{ postgres_identifier }}
+      {{ postgres_container_shell_path }}
+      -c "set -o pipefail && cat |
       {{ 'gunzip |' if server_path_postgres_dump.endswith('.gz') else '' }}
       {{ 'unzstd |' if server_path_postgres_dump.endswith('.zst') else '' }}
       {% if postgres_import_roles_to_ignore | length > 0 %}
@@ -87,7 +85,8 @@
       {% if postgres_import_schemas_to_ignore | length > 0 %}
       grep -vE '{{ postgres_import_schemas_ignore_regex }}' |
       {% endif %}
-      psql -b -v ON_ERROR_STOP=1 -h {{ postgres_identifier }} --dbname={{ postgres_default_import_database }}"
+      psql -b -v ON_ERROR_STOP=1 -h 127.0.0.1 --dbname={{ postgres_default_import_database }}"
+      < {{ server_path_postgres_dump | quote }}
   tags:
     - skip_ansible_lint
 
@@ -106,8 +105,9 @@
       delete its existing data (`rm -rf {{ postgres_data_path }}/*`), start it again (`systemctl start {{ postgres_identifier }}`)
       and manually run the above import command directly on the server.
 
+# A shell, as the dump is fed to the command on stdin (the redirection is part of `postgres_import_command`).
 - name: Perform Postgres database import
-  ansible.builtin.command:
+  ansible.builtin.shell:
     cmd: "{{ postgres_import_command }}"
   async: "{{ postgres_import_wait_time }}"
   poll: 10
