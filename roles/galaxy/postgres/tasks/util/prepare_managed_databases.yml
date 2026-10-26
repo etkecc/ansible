@@ -13,19 +13,6 @@
   delegate_to: 127.0.0.1
   become: false
 
-# If Postgres is up from before, but it had originally been installed on a different container network,
-# trying to prepare databases by connecting to `postgres_container_network` would fail.
-# For this reason, we determine and use the currently used network.
-# Restarting the service later would put it in the current network.
-- name: Check Postgres container network
-  ansible.builtin.command: "{{ devture_systemd_docker_base_host_command_docker }} container inspect {{ postgres_identifier }} --format '{% raw %}{{.HostConfig.NetworkMode}}{% endraw %}'"
-  register: postgres_container_network_check_result
-  changed_when: false
-
-- name: Set Postgres container network to use for preparing databases
-  ansible.builtin.set_fact:
-    postgres_container_network_for_preparing_databases: "{{ postgres_container_network_check_result.stdout }}"
-
 - name: Detect managed databases with invalid fields
   ansible.builtin.set_fact:
     postgres_managed_databases_with_missing_keys: >-
@@ -48,74 +35,43 @@
       {% endfor %}
   when: postgres_managed_databases_with_missing_keys | length > 0
 
-- name: Initialize managed databases
-  no_log: true
+# Only the statements needed are run (see the module), so that this only reports a change when something did change.
+# SQL is passed to psql on stdin, so that passwords do not end up in files or on command lines.
+- name: Ensure managed databases are prepared
   when: postgres_managed_databases | length > 0
-  block:
-    - name: Create managed database initialization SQL file
-      ansible.builtin.template:
-        src: "{{ role_path }}/templates/sql/init-managed-dbs-user-and-role.sql.j2"
-        dest: "/tmp/{{ postgres_identifier }}-init-managed-dbs-user-and-role.sql"
-        mode: "0600"
-        owner: "{{ postgres_uid }}"
-        group: "{{ postgres_gid }}"
-
-    - name: Execute Postgres managed database initialization SQL file
-      ansible.builtin.command:
-        cmd: >-
-          {{ devture_systemd_docker_base_host_command_docker }} run
-          --rm
-          --user={{ postgres_container_uid }}:{{ postgres_container_gid }}
-          {% if postgres_container_cap_drop_all_enabled %}
-          --cap-drop=ALL
-          {% endif %}
-          --env-file={{ postgres_base_path }}/env-postgres-psql
-          --network={{ postgres_container_network_for_preparing_databases }}
-          --mount type=bind,src=/tmp/{{ postgres_identifier }}-init-managed-dbs-user-and-role.sql,dst=/{{ postgres_identifier }}-init-managed-dbs-user-and-role.sql,ro
-          --entrypoint={{ postgres_container_shell_path }}
-          {{ postgres_container_image_to_use }}
-          -c
-          'psql -v ON_ERROR_STOP=1 -v VERBOSITY=terse -h {{ postgres_connection_hostname }} --file=/{{ postgres_identifier }}-init-managed-dbs-user-and-role.sql'
-      changed_when: true
-      register: postgres_managed_dbs_init_result
-      # Judged below, after the SQL file (which contains passwords) is deleted
-      # and outside of `no_log`, so that the failure can be explained.
-      failed_when: false
-      # psql exits with 2 when it cannot connect to Postgres (or loses the connection).
-      # Running the SQL file again is safe, as it already runs on every installation.
-      until: postgres_managed_dbs_init_result.rc != 2
-      retries: "{{ postgres_managed_databases_connection_retries }}"
-      delay: "{{ postgres_managed_databases_connection_retry_delay_seconds }}"
-
-    - name: Delete managed database initialization SQL file
-      ansible.builtin.file:
-        path: /tmp/{{ postgres_identifier }}-init-managed-dbs-user-and-role.sql
-        state: absent
-
-    # psql reports errors (and notices) on stderr. `VERBOSITY=terse` above keeps it from quoting
-    # the failing statement, but error messages may still contain values (e.g. passwords), so these are redacted.
-    - name: Fail if the managed database initialization SQL file could not be executed
-      when: postgres_managed_dbs_init_result.rc != 0
-      no_log: false
-      ansible.builtin.fail:
-        msg: |-
-          Initializing the managed databases failed: psql exited with code {{ postgres_managed_dbs_init_result.rc }}
-          ({{ postgres_managed_dbs_init_psql_exit_codes[postgres_managed_dbs_init_result.rc] | default('see the output below') }}).
-          Output (with passwords redacted):
-          {{ postgres_managed_dbs_init_result.stderr | regex_replace(postgres_managed_dbs_init_passwords_regex, '********') }}
-      vars:
-        postgres_managed_dbs_init_psql_exit_codes:
-          1: fatal psql error
-          2: could not connect to Postgres, or the connection was lost
-          3: an SQL statement failed
-        postgres_managed_dbs_init_passwords: "{{ (postgres_managed_databases | map(attribute='password') | list + [postgres_connection_password]) | map('string') | select | unique | list }}"
-        # Longest first, so that a password which contains another one is redacted whole.
-        postgres_managed_dbs_init_passwords_regex: >-
-          {{
-            postgres_managed_dbs_init_passwords | map('length') | zip(postgres_managed_dbs_init_passwords)
-            | sort(attribute='0', reverse=true) | map(attribute='1')
-            | map('regex_escape') | join('|')
-          }}
+  postgres_managed_databases:
+    # psql runs inside the (already started) Postgres container and connects the same way its readiness check does.
+    psql_command: >-
+      {{
+        devture_systemd_docker_base_host_command_docker.split()
+        + [
+          'exec',
+          '-i',
+          '--env-file=' ~ postgres_base_path ~ '/env-postgres-psql',
+          postgres_identifier,
+          'psql',
+          '--host=127.0.0.1',
+          '--port=5432',
+        ]
+      }}
+    # Only the keys the module knows about are passed (definitions may contain others).
+    databases: |-
+      {%- set result = [] -%}
+      {%- for db in postgres_managed_databases -%}
+        {%- set _ = result.append({
+          'name': db.name,
+          'username': db.username,
+          'password': db.password | string,
+          'additional_sql_queries': db.additional_sql_queries | default([]),
+        }) -%}
+      {%- endfor -%}
+      {{ result }}
+    lc_ctype: "{{ postgres_default_lc_type }}"
+    lc_collate: "{{ postgres_default_lc_collate }}"
+    connection_retries: "{{ postgres_managed_databases_connection_retries }}"
+    connection_retry_delay_seconds: "{{ postgres_managed_databases_connection_retry_delay_seconds }}"
+    redact_values:
+      - "{{ postgres_connection_password }}"
 
 - name: Ensure Postgres is stopped, if it originally was and if we are configured to do it
   when: postgres_systemd_service_stop_originally_stopped_after_preparation | bool and postgres_ensure_started_result.changed | bool

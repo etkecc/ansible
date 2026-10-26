@@ -21,7 +21,7 @@
 * Grafana: 13.0.2
 * Heisenbridge: 1.15.4
 * Honoroit: v0.9.30
-* Hookshot Bridge: 7.5.0
+* Hookshot Bridge: 7.6.0
 * Hydrogen: v0.5.1
 * Image: 1.4.5-2.1.10
 * Jitsi: stable-11248

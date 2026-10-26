@@ -70,8 +70,7 @@ scenario:
     - create
     - prepare
     - converge
-    # Disable idempotence test for now
-    # - idempotence
+    - idempotence
     - side_effect
     - verify
     - cleanup

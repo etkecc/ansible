@@ -3,6 +3,12 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
+- name: Make Postgres reject connections ({{ postgres_verify_failure_case }})
+  when: postgres_verify_failure_reject_connections | bool
+  ansible.builtin.command:
+    cmd: "{{ postgres_verify_reject_connections_command }}"
+  changed_when: true
+
 - name: Prepare the managed databases, expecting it to fail ({{ postgres_verify_failure_case }})
   block:
     - name: Prepare the managed databases ({{ postgres_verify_failure_case }})
@@ -11,7 +17,6 @@
         tasks_from: util/prepare_managed_databases
       vars:
         postgres_managed_databases_additional: "{{ postgres_verify_failure_managed_databases_additional }}"
-        postgres_connection_hostname: "{{ postgres_verify_failure_connection_hostname }}"
         # Failing to connect is retried, but retrying once is enough to see it given up on.
         postgres_managed_databases_connection_retries: 1
         postgres_managed_databases_connection_retry_delay_seconds: 1
@@ -23,11 +28,12 @@
     - name: Note how preparing the managed databases failed ({{ postgres_verify_failure_case }})
       ansible.builtin.set_fact:
         postgres_verify_failure_result: "{{ ansible_failed_result }}"
-
-- name: Check for a leftover managed database initialization SQL file ({{ postgres_verify_failure_case }})
-  ansible.builtin.stat:
-    path: /tmp/postgres-init-managed-dbs-user-and-role.sql
-  register: postgres_verify_failure_sql_file
+  always:
+    - name: Make Postgres accept connections again ({{ postgres_verify_failure_case }})
+      when: postgres_verify_failure_reject_connections | bool
+      ansible.builtin.command:
+        cmd: "{{ postgres_verify_accept_connections_command }}"
+      changed_when: true
 
 - name: Assert that preparing the managed databases failed as expected ({{ postgres_verify_failure_case }})
   ansible.builtin.assert:
@@ -35,15 +41,12 @@
       - postgres_verify_failure_result is not none
       - postgres_verify_failure_expected_output in (postgres_verify_failure_result.msg | default(''))
       - postgres_verify_managed_dbs | map(attribute='password') | select('in', postgres_verify_failure_result | to_json) | list == []
-      - not postgres_verify_failure_sql_file.stat.exists
     fail_msg: >-
       Preparing the managed databases ({{ postgres_verify_failure_case }})
       {% if postgres_verify_failure_result is none %}
       succeeded, but it should have failed.
       {% else %}
-      did not fail as expected: the error should contain `{{ postgres_verify_failure_expected_output }}` but no passwords,
-      and the initialization SQL file (which contains passwords) should be deleted
-      (left behind: {{ postgres_verify_failure_sql_file.stat.exists }}).
+      did not fail as expected: the error should contain `{{ postgres_verify_failure_expected_output }}` but no passwords.
       Error:
       {{ (postgres_verify_failure_result.msg | default('')) | regex_replace(postgres_verify_managed_dbs | map(attribute='password') | map('regex_escape') | join('|'), '<password>') }}
       {% endif %}

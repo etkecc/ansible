@@ -75,11 +75,13 @@
     - "{{ postgres_data_path }}"
     - "{{ postgres_bin_path }}"
 
+# The container's entrypoint changes the mode of this directory (bind-mounted to `/var/run/postgresql`) to 3775
+# whenever it starts, so the same mode is used here (instead of fighting over it and always reporting a change).
 - name: Ensure Postgres run path exists
   ansible.builtin.file:
     path: "{{ postgres_run_path }}"
     state: directory
-    mode: "0755"
+    mode: "3775"
     owner: "{{ postgres_uid }}"
     group: "{{ postgres_gid }}"
   when: postgres_container_unix_socket_enabled
@@ -106,7 +108,6 @@
     - cli
     - cli-non-interactive
     - dump-all
-  register: postgres_scripts_result
 
 - name: Ensure Postgres container network is created
   community.docker.docker_network:
@@ -127,7 +128,6 @@
     postgres_restart_necessary: >-
       {{
         postgres_config_file_result.changed | default(false)
-        or postgres_scripts_result.changed | default(false)
         or postgres_systemd_service_result.changed | default(false)
         or postgres_container_image_pull_result.changed | default(false)
       }}

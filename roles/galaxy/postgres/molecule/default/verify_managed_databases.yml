@@ -8,7 +8,26 @@
   become: true
   gather_facts: false
 
+  vars:
+    # psql connects to Postgres from inside its container (over 127.0.0.1), so making Postgres
+    # unreachable over the network has no effect. `pg_hba.conf` is made to reject such connections instead.
+    # These commands contain no `$`, so that they can be passed through other commands (like `systemd-run`) as they are.
+    postgres_verify_reject_connections_command: >-
+      docker exec postgres sh -c 'sed -i "1i host all all 127.0.0.1/32 reject # molecule-reject" {{ postgres_verify_hba_file | quote }} && pg_ctl reload --silent'
+    postgres_verify_accept_connections_command: >-
+      docker exec postgres sh -c 'sed -i "/# molecule-reject/d" {{ postgres_verify_hba_file | quote }} && pg_ctl reload --silent'
+
   tasks:
+    - name: Determine the path of pg_hba.conf
+      ansible.builtin.command:
+        cmd: /postgres/bin/cli-non-interactive -tAc "SHOW hba_file"
+      register: postgres_verify_hba_file_result
+      changed_when: false
+
+    - name: Remember the path of pg_hba.conf
+      ansible.builtin.set_fact:
+        postgres_verify_hba_file: "{{ postgres_verify_hba_file_result.stdout }}"
+
     # A fact rather than a play variable, because the checks below override
     # `postgres_managed_databases_additional` based on it.
     - name: Determine the managed databases to verify
@@ -41,14 +60,37 @@
         loop_var: postgres_verify_managed_db
         label: "{{ postgres_verify_managed_db.name }}"
 
+    # Passwords are only set when they differ from the stored ones, so changing one has to be noticed.
+    # The ones after this restore the original password.
+    - name: Determine the managed databases with a changed password
+      ansible.builtin.set_fact:
+        postgres_verify_managed_dbs_changed_password:
+          - "{{ postgres_verify_managed_dbs[0] | combine({'password': 'molecule-changed-password'}) }}"
+          - "{{ postgres_verify_managed_dbs[1] }}"
+
+    - name: Prepare the managed databases with a changed password
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+        tasks_from: util/prepare_managed_databases
+      vars:
+        postgres_managed_databases_additional: "{{ postgres_verify_managed_dbs_changed_password }}"
+
+    - name: Verify the managed databases after preparing them with a changed password
+      ansible.builtin.include_tasks: verify_managed_databases_tasks.yml
+      loop: "{{ postgres_verify_managed_dbs_changed_password }}"
+      loop_control:
+        loop_var: postgres_verify_managed_db
+        label: "{{ postgres_verify_managed_db.name }}"
+
     # Postgres may not accept connections yet when preparation starts (e.g. when it starts up slower
     # than `postgres_managed_databases_postgres_start_wait_timeout_seconds`). Postgres starts up too fast
-    # here to reproduce that reliably, so it is made unreachable for a while instead, which psql fails on the same way.
-    - name: Make Postgres unreachable for a while
+    # here to reproduce that reliably, so it is made to reject connections for a while instead, which psql fails on the same way.
+    # Timers are only accurate to a minute by default, which could outlast the retries.
+    - name: Make Postgres reject connections for a while
       ansible.builtin.shell:
         cmd: >-
-          docker network disconnect postgres postgres
-          && systemd-run --on-active=10 docker network connect postgres postgres
+          {{ postgres_verify_reject_connections_command }}
+          && systemd-run --on-active=10 --timer-property=AccuracySec=100ms sh -c {{ postgres_verify_accept_connections_command | quote }}
       changed_when: true
 
     - name: Prepare the managed databases while Postgres is unreachable for a while
@@ -73,7 +115,7 @@
           - "{{ postgres_verify_managed_dbs[0] }}"
           - "{{ postgres_verify_managed_dbs[1] | combine({'additional_sql_queries': [postgres_verify_failure_query]}) }}"
         postgres_verify_failure_query: "SELECT '{{ postgres_verify_managed_dbs[1].password | replace(\"'\", \"''\") }}'::integer;"
-        postgres_verify_failure_connection_hostname: postgres
+        postgres_verify_failure_reject_connections: false
         postgres_verify_failure_expected_output: 'ERROR:  invalid input syntax for type integer'
 
     - name: Verify that failing to connect fails the preparation
@@ -81,5 +123,5 @@
       vars:
         postgres_verify_failure_case: failing to connect
         postgres_verify_failure_managed_databases_additional: "{{ postgres_verify_managed_dbs }}"
-        postgres_verify_failure_connection_hostname: molecule-nonexistent-host
-        postgres_verify_failure_expected_output: 'psql: error:'
+        postgres_verify_failure_reject_connections: true
+        postgres_verify_failure_expected_output: 'pg_hba.conf rejects connection'
