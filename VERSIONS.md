@@ -3,7 +3,7 @@
 * Baibot: v1.29.1
 * Bluesky Bridge: v0.2510.0
 * Buscarron: v1.5.0
-* Cinny: v4.12.7
+* Cinny: v4.12.8
 * Container Socket Proxy: v0.5.0
 * Coturn: 4.18.0
 * Discord Bridge: v0.7.7

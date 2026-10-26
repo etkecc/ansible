@@ -7,6 +7,7 @@
 ### Component Updates
 
 * [Baibot](https://github.com/etkecc/baibot): [v1.29.0](https://github.com/etkecc/baibot/releases/tag/v1.29.0) ⇾ [v1.29.1](https://github.com/etkecc/baibot/releases/tag/v1.29.1)
+* [Cinny](https://github.com/ajbura/cinny): [v4.12.7](https://github.com/ajbura/cinny/releases/tag/v4.12.7) ⇾ [v4.12.8](https://github.com/ajbura/cinny/releases/tag/v4.12.8)
 * [Etherpad](https://github.com/ether/etherpad-lite): [3.3.9](https://github.com/ether/etherpad-lite/releases/tag/3.3.9) ⇾ [3.3.11](https://github.com/ether/etherpad-lite/releases/tag/3.3.11)
 * [Exim Relay](https://github.com/devture/exim-relay): [4.99.5-r0-1](https://github.com/devture/exim-relay/releases/tag/4.99.5-r0-1) ⇾ [4.99.5-r0-2](https://github.com/devture/exim-relay/releases/tag/4.99.5-r0-2)
 * [Fluffychat](https://github.com/krille-chan/fluffychat): [v2.11.1](https://github.com/krille-chan/fluffychat/releases/tag/v2.11.1) ⇾ [v2.11.3](https://github.com/krille-chan/fluffychat/releases/tag/v2.11.3)
