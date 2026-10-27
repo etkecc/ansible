@@ -1,5 +1,5 @@
 * Alpine: edge
-* Authentication Service: 1.27.1
+* Authentication Service: 1.28.0
 * Baibot: v1.29.1
 * Bluesky Bridge: v0.2510.0
 * Buscarron: v1.5.0
@@ -8,7 +8,7 @@
 * Coturn: 4.18.0
 * Discord Bridge: v0.7.7
 * Draupnir: v3.2.0
-* Element: v1.12.32
+* Element: v1.12.33
 * Etherpad: 3.3.11
 * Exim Relay: 4.99.5-r0-2
 * Firezone: 0.7.36
@@ -66,7 +66,7 @@
 * Static Files: 2.44.1
 * Steam Bridge: 1.4.0
 * Sygnal: v0.17.0
-* Synapse: v1.163.2
+* Synapse: v1.164.0
 * Synapse Auto Compressor: v0.0.3
 * Synapse Compress State: v0.0.3
 * Synapse HTTP Antispam: v0.5.1
