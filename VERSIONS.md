@@ -78,7 +78,7 @@
 * Traefik Proxy Protocol: 1
 * Twitter Bridge: v0.2609.0
 * Uptime Kuma: 2.5.8
-* Valkey: 9.1.2
+* Valkey: 9.1.3
 * Vaultwarden: 1.37.4
 * Wg Easy: 15.5.0
 * WhatsApp Bridge: v0.2610.0
