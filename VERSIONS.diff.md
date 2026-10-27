@@ -18,5 +18,5 @@
 * [Peertube](https://github.com/Chocobozzz/PeerTube): [v8.3.1](https://github.com/Chocobozzz/PeerTube/releases/tag/v8.3.1) ⇾ [v8.3.2](https://github.com/Chocobozzz/PeerTube/releases/tag/v8.3.2)
 * [Radicale](https://github.com/tomsquest/docker-radicale): [3.8.3.0](https://github.com/tomsquest/docker-radicale/releases/tag/3.8.3.0) ⇾ [3.9.0.0](https://github.com/tomsquest/docker-radicale/releases/tag/3.9.0.0)
 * [Synapse](https://github.com/element-hq/synapse): [v1.163.0](https://github.com/element-hq/synapse/releases/tag/v1.163.0) ⇾ [v1.163.2](https://github.com/element-hq/synapse/releases/tag/v1.163.2)
-* [Uptime Kuma](https://github.com/louislam/uptime-kuma): [2.5.6](https://github.com/louislam/uptime-kuma/releases/tag/2.5.6) ⇾ [2.5.7](https://github.com/louislam/uptime-kuma/releases/tag/2.5.7)
+* [Uptime Kuma](https://github.com/louislam/uptime-kuma): [2.5.6](https://github.com/louislam/uptime-kuma/releases/tag/2.5.6) ⇾ [2.5.8](https://github.com/louislam/uptime-kuma/releases/tag/2.5.8)
 * [Wg Easy](https://github.com/wg-easy/wg-easy): [15.4.0](https://github.com/wg-easy/wg-easy/releases/tag/v15.4.0) ⇾ [15.5.0](https://github.com/wg-easy/wg-easy/releases/tag/v15.5.0)
