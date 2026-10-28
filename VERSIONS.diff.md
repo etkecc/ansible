@@ -19,6 +19,7 @@
 * [Ntfy](https://github.com/binwiederhier/ntfy): [v2.32.0](https://github.com/binwiederhier/ntfy/releases/tag/v2.32.0) ⇾ [v2.34.0](https://github.com/binwiederhier/ntfy/releases/tag/v2.34.0)
 * [Peertube](https://github.com/Chocobozzz/PeerTube): [v8.3.1](https://github.com/Chocobozzz/PeerTube/releases/tag/v8.3.1) ⇾ [v8.3.2](https://github.com/Chocobozzz/PeerTube/releases/tag/v8.3.2)
 * [Radicale](https://github.com/tomsquest/docker-radicale): [3.8.3.0](https://github.com/tomsquest/docker-radicale/releases/tag/3.8.3.0) ⇾ [3.9.0.0](https://github.com/tomsquest/docker-radicale/releases/tag/3.9.0.0)
+* [Spam Checker Mjolnir Antispam](https://github.com/element-hq/synapse): v2.0.1 ⇾ v2.0.2
 * [Synapse](https://github.com/element-hq/synapse): [v1.163.0](https://github.com/element-hq/synapse/releases/tag/v1.163.0) ⇾ [v1.164.0](https://github.com/element-hq/synapse/releases/tag/v1.164.0)
 * [Uptime Kuma](https://github.com/louislam/uptime-kuma): [2.5.6](https://github.com/louislam/uptime-kuma/releases/tag/2.5.6) ⇾ [2.5.8](https://github.com/louislam/uptime-kuma/releases/tag/2.5.8)
 * [Valkey](https://github.com/valkey-io/valkey): [9.1.2](https://github.com/valkey-io/valkey/releases/tag/9.1.2) ⇾ [9.1.3](https://github.com/valkey-io/valkey/releases/tag/9.1.3)
