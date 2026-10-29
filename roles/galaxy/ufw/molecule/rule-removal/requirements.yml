@@ -1,6 +1,5 @@
 ---
 
-roles: []
 collections:
   - name: community.general
     version: 13.5.0
