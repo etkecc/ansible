@@ -4,12 +4,14 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
+# Owned by root: the container runs as root and executes the scripts in the bin path.
+# Whoever owns the base path could rename the bin path (even a root-owned one) and put another in its place.
 - name: Ensure Traefik certs dumper paths exist
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     mode: "0750"
-    owner: "{{ traefik_certs_dumper_uid }}"
+    owner: root
     group: "{{ traefik_certs_dumper_gid }}"
   with_items:
     - "{{ traefik_certs_dumper_base_path }}"
@@ -28,7 +30,7 @@
     src: "{{ role_path }}/templates/{{ item }}.j2"
     dest: "{{ traefik_certs_dumper_base_path }}/{{ item }}"
     mode: "0640"
-    owner: "{{ traefik_certs_dumper_uid }}"
+    owner: root
     group: "{{ traefik_certs_dumper_gid }}"
   with_items:
     - env
@@ -38,7 +40,7 @@
   ansible.builtin.template:
     src: "{{ role_path }}/templates/bin/{{ item }}"
     dest: "{{ traefik_certs_dumper_bin_path }}/{{ item }}"
-    owner: "{{ traefik_certs_dumper_uid }}"
+    owner: root
     group: "{{ traefik_certs_dumper_gid }}"
     mode: "0750"
   with_items:

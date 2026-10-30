@@ -63,17 +63,26 @@
   delay: "{{ devture_playbook_help_container_retries_delay }}"
   until: postgres_container_image_pull_result is not failed
 
-- name: Ensure Postgres paths exist
+# Owned by root: root runs the scripts in the bin path and reads the environment variables files.
+# Whoever owns the base path could rename the bin path (even a root-owned one) and put another in its place.
+- name: Ensure Postgres base paths exist
   ansible.builtin.file:
     path: "{{ item }}"
+    state: directory
+    mode: "0750"
+    owner: root
+    group: "{{ postgres_gid }}"
+  with_items:
+    - "{{ postgres_base_path }}"
+    - "{{ postgres_bin_path }}"
+
+- name: Ensure Postgres data path exists
+  ansible.builtin.file:
+    path: "{{ postgres_data_path }}"
     state: directory
     mode: "0700"
     owner: "{{ postgres_uid }}"
     group: "{{ postgres_gid }}"
-  with_items:
-    - "{{ postgres_base_path }}"
-    - "{{ postgres_data_path }}"
-    - "{{ postgres_bin_path }}"
 
 # The container's entrypoint changes the mode of this directory (bind-mounted to `/var/run/postgresql`) to 3775
 # whenever it starts, so the same mode is used here (instead of fighting over it and always reporting a change).
@@ -91,7 +100,7 @@
   ansible.builtin.template:
     src: "{{ role_path }}/templates/{{ item }}.j2"
     dest: "{{ postgres_base_path }}/{{ item }}"
-    owner: "{{ postgres_uid }}"
+    owner: root
     group: "{{ postgres_gid }}"
     mode: "0640"
   with_items:
@@ -103,6 +112,8 @@
   ansible.builtin.template:
     src: "{{ role_path }}/templates/bin/{{ item }}.j2"
     dest: "{{ postgres_bin_path }}/{{ item }}"
+    owner: root
+    group: root
     mode: "0755"
   with_items:
     - cli

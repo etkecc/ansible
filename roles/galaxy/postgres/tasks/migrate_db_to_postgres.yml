@@ -27,6 +27,15 @@
 
 - when: "postgres_pgloader_container_image_self_build | bool"
   block:
+    # The base path is owned by root, so the clone below (as postgres_uid) cannot create this directory itself.
+    - name: Ensure pgloader repository path exists on self-build
+      ansible.builtin.file:
+        path: "{{ postgres_pgloader_container_image_self_build_src_path }}"
+        state: directory
+        mode: "0750"
+        owner: "{{ postgres_uid }}"
+        group: "{{ postgres_gid }}"
+
     - name: Ensure pgloader repository is present on self-build
       ansible.builtin.git:
         repo: "{{ postgres_pgloader_container_image_self_build_repo }}"

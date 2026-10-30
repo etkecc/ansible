@@ -4,12 +4,14 @@
 
 ---
 
+# Owned by root: the container runs as root with the container socket mounted, and the env file controls which API calls it lets through.
+# Whoever owns the base path could rename the env file (even a root-owned one) and put another in its place.
 - name: Ensure container-socket-proxy path exists
   ansible.builtin.file:
     path: "{{ container_socket_proxy_base_path }}"
     state: directory
     mode: "0750"
-    owner: "{{ container_socket_proxy_uid }}"
+    owner: root
     group: "{{ container_socket_proxy_gid }}"
 
 - name: Ensure container-socket-proxy support files installed
@@ -17,7 +19,7 @@
     src: "{{ role_path }}/templates/{{ item }}.j2"
     dest: "{{ container_socket_proxy_base_path }}/{{ item }}"
     mode: "0640"
-    owner: "{{ container_socket_proxy_uid }}"
+    owner: root
     group: "{{ container_socket_proxy_gid }}"
   with_items:
     - env

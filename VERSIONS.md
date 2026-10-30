@@ -23,7 +23,7 @@
 * Honoroit: v0.9.30
 * Hookshot Bridge: 7.6.0
 * Hydrogen: v0.5.1
-* Image: 1.4.5-2.1.10
+* Image: 1.4.5-2.2.0
 * Jitsi: stable-11248
 * Jitsi LDAP: 3
 * Jitsi User Verification: 19b69e543cdb99b16a939eeed921d7ed1da57d44

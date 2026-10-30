@@ -26,9 +26,6 @@
     - name: Ensure Docker is installed for Traefik certs dumper Molecule tests preparation
       ansible.builtin.include_role:
         name: ansible-role-docker
-      vars:
-        docker_daemon_options:
-          storage-driver: vfs
 
     # This role dumps certificates out of the `acme.json` file that Traefik
     # maintains. Without such a file there is nothing to dump: the role's
