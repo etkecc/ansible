@@ -1,6 +1,6 @@
 * Alpine: edge
 * Authentication Service: 1.28.0
-* Baibot: v1.29.1
+* Baibot: v1.30.0
 * Bluesky Bridge: v0.2510.0
 * Buscarron: v1.5.0
 * Cinny: v4.12.8
@@ -12,7 +12,7 @@
 * Etherpad: 3.3.12
 * Exim Relay: 4.99.5-r0-2
 * Firezone: 0.7.36
-* Fluffychat: v2.11.3
+* Fluffychat: v2.11.4
 * Funkwhale: 1.4.1
 * Google Chat Bridge: v0.5.2
 * Google Messages Bridge: v0.2610.0
