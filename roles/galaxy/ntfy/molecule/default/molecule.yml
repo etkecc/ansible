@@ -60,6 +60,7 @@ provisioner:
         ntfy_hostname: localhost
         ntfy_container_labels_traefik_enabled: false
         ntfy_container_http_host_bind_port: 8080
+        ntfy_database_type: sqlite
 
         # `/config.js` - the only way to read the running server's own view of
         # its configuration back out of it - is served only when the web app

@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: 2023, 2024 Nikita Chernyi
 # SPDX-FileCopyrightText: 2023-2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2024 Julian-Samuel Gebühr
 # SPDX-FileCopyrightText: 2024 Sergio Durigan Junior
 # SPDX-FileCopyrightText: 2025 MASH project contributors
 # SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
@@ -252,6 +253,40 @@ ntfy_container_cleanup_command: |
   done;
   echo "Failed to remove stale container {{ ntfy_identifier }} after {{ ntfy_container_cleanup_timeout_seconds }} attempts" >&2;
   exit 1
+
+########################################################################
+#                                                                      #
+# database                                                             #
+#                                                                      #
+########################################################################
+
+# Specify a database driver to use
+# Valid values: postgres, sqlite
+ntfy_database_type: ""
+
+# Specify database configuration
+ntfy_database_hostname: ""
+ntfy_database_port: 5432
+ntfy_database_username: ntfy
+ntfy_database_password: ""
+# Specify SSL mode for Postgres database server
+# By default, we expect a local container (without SSL), so attempting SSL connections is not necessary.
+# Valid values: see https://www.postgresql.org/docs/11/libpq-ssl.html#LIBPQ-SSL-SSLMODE-STATEMENTS
+ntfy_database_sslmode: disable
+ntfy_database_name: ntfy
+
+# See: https://docs.ntfy.sh/config/#postgresql and https://docs.cloud.google.com/spanner/docs/pg-pgx-connect
+ntfy_database_url: "postgres://{{ ntfy_database_username }}:{{ ntfy_database_password }}@{{ ntfy_database_hostname }}:{{ ntfy_database_port }}/{{ ntfy_database_name }}?sslmode={{ ntfy_database_sslmode }}"
+
+########################################################################
+#                                                                      #
+# /database                                                            #
+#                                                                      #
+########################################################################
+
+# Control if message cache is stored in Postgres
+# If set to `false`, messages are cached in-memory.
+ntfy_database_url_enabled: true
 
 # Control if message cache is stored in a SQLite file
 # If set to `false`, messages are cached in-memory.

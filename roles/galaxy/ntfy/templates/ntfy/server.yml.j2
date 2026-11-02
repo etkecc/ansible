@@ -1,17 +1,15 @@
-# SPDX-FileCopyrightText: 2023 - 2024 Slavi Pantaleev
-# SPDX-FileCopyrightText: 2025 MASH project contributors
-# SPDX-FileCopyrightText: 2025 Suguru Hirahara
-#
-# SPDX-License-Identifier: AGPL-3.0-or-later
+{#
+SPDX-FileCopyrightText: 2023, 2024 Slavi Pantaleev
+SPDX-FileCopyrightText: 2025 MASH project contributors
+SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+#}
 
 base_url: {{ ntfy_base_url }}
 behind_proxy: true
 
 upstream-base-url: {{ ntfy_upstream_base_url }}
-
-{% if ntfy_cache_file_enabled %}
-cache_file: /data/cache.db
-{% endif %}
 
 listen-http: :8080
 
@@ -35,8 +33,18 @@ visitor-attachment-total-size-limit: {{ ntfy_visitor_attachment_total_size_limit
 visitor-attachment-daily-bandwidth-limit: {{ ntfy_visitor_attachment_daily_bandwidth_limit | to_json }}
 {% endif %}
 
+{% if ntfy_database_type == 'postgres' and ntfy_database_url_enabled | bool %}
+database-url: {{ ntfy_database_url | to_json }}
+{% endif %}
+
+{% if ntfy_database_type == 'sqlite' and ntfy_cache_file_enabled | bool %}
+cache_file: /data/cache.db
+{% endif %}
+
 {% if ntfy_auth_enabled | bool %}
+{% if ntfy_database_type == 'sqlite' %}
 auth-file: /data/auth.db
+{% endif %}
 auth-default-access: {{ ntfy_auth_default_access | to_json }}
 {% if ntfy_auth_users | length > 0 %}
 auth-users:

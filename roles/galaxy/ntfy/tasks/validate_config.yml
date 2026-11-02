@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
 # SPDX-FileCopyrightText: 2023 Slavi Pantaleev
-# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -30,6 +30,24 @@
     - ntfy_hostname
     - ntfy_path_prefix
     - ntfy_container_network
+    - ntfy_database_type
+
+- name: Fail if ntfy database type is invalid
+  ansible.builtin.fail:
+    msg: >-
+      ntfy_database_type must be 'postgres' or 'sqlite'.
+  when: "ntfy_database_type not in ['postgres', 'sqlite']"
+
+- name: Run if ntfy + Postgres integration is enabled
+  when: ntfy_database_type == 'postgres'
+  block:
+    - name: Fail if required ntfy + Postgres integration settings not defined
+      ansible.builtin.fail:
+        msg: >-
+          You need to define a required configuration setting (`{{ item }}`) when `ntfy_database_type` is `postgres`
+      when: "lookup('vars', item, default='') | string | length == 0"
+      with_items:
+        - ntfy_database_password
 
 - name: Fail if ntfy user declarations are incomplete
   ansible.builtin.fail:
