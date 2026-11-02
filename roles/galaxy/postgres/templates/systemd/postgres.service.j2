@@ -74,10 +74,12 @@ ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {
 #
 # `pg_isready` does not authenticate, so no credentials are needed. `-U` is passed anyway, because
 # without it `pg_isready` gives up when the container's user has no `/etc/passwd` entry.
+# `-d` names a database that exists: without it, `pg_isready` asks for one named after the user,
+# which Postgres refuses with a harmless but noisy `FATAL: database "..." does not exist` log line.
 #
 # The `-` prefix makes a timeout non-fatal: the service then counts as started, as it did before this
 # check existed. A setup where Postgres does not listen on TCP is thus delayed, but not broken.
-ExecStartPost=-{{ devture_systemd_docker_base_host_command_sh }} -c 'timeout {{ postgres_systemd_readiness_check_timeout_seconds }} {{ devture_systemd_docker_base_host_command_sh }} -c "until {{ devture_systemd_docker_base_host_command_docker }} exec {{ postgres_identifier }} pg_isready --quiet --host=127.0.0.1 --port=5432 --username={{ postgres_connection_username }}; do sleep 1; done"'
+ExecStartPost=-{{ devture_systemd_docker_base_host_command_sh }} -c 'timeout {{ postgres_systemd_readiness_check_timeout_seconds }} {{ devture_systemd_docker_base_host_command_sh }} -c "until {{ devture_systemd_docker_base_host_command_docker }} exec {{ postgres_identifier }} pg_isready --quiet --host=127.0.0.1 --port=5432 --username={{ postgres_connection_username }} --dbname={{ postgres_db_name }}; do sleep 1; done"'
 TimeoutStartSec={{ postgres_systemd_readiness_check_timeout_seconds | int + 120 }}
 {% endif %}
 
