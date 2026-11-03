@@ -1,0 +1,62 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+# Ensures the Funkwhale API service is running with the current configuration.
+#
+# Merely starting the service is not enough, because an already-running container may have been created
+# from an older configuration (see `determine_container_staleness.yml`).
+# Commands executed inside such a container (e.g. `docker exec … funkwhale-manage …`) would use the old configuration.
+#
+# `funkwhale_restart_necessary` applies to all Funkwhale services, so when a restart is necessary,
+# all of them are restarted (not just the API service) and `funkwhale_restart_necessary` is then reset.
+# This way, the service manager does not restart them (including the just-restarted API service) once again later.
+
+- name: Determine whether the Funkwhale containers are stale
+  ansible.builtin.include_tasks: "{{ role_path }}/tasks/util/determine_container_staleness.yml"
+
+- name: Restart all Funkwhale services, if necessary
+  when: funkwhale_restart_necessary | default(false) | bool or funkwhale_container_stale | bool
+  block:
+    - name: Ensure systemd reloaded
+      ansible.builtin.systemd_service:
+        daemon_reload: true
+
+    # All services are restarted in a single systemd transaction,
+    # so that services which depend on others (e.g. the Celery services depend on the API service) are not restarted twice.
+    - name: Ensure all Funkwhale services are restarted
+      ansible.builtin.command:
+        cmd: "{{ devture_systemd_docker_base_host_command_systemctl }} restart {{ services | join(' ') }}"
+      vars:
+        services: |
+          {{
+            [
+              funkwhale_api_identifier ~ '.service',
+              funkwhale_frontend_identifier ~ '.service',
+              funkwhale_celery_worker_identifier ~ '.service',
+              funkwhale_celery_beat_identifier ~ '.service',
+            ]
+            +
+            ([funkwhale_watch_imports_identifier ~ '.service'] if funkwhale_watch_imports_enabled | bool else [])
+          }}
+      register: restart_result
+      changed_when: true
+
+    - name: Mark Funkwhale as not needing a restart
+      ansible.builtin.set_fact:
+        funkwhale_restart_necessary: false
+      when: "restart_result.changed"
+
+- name: Ensure Funkwhale API service is started
+  ansible.builtin.service:
+    name: "{{ funkwhale_api_identifier }}"
+    state: started
+    daemon_reload: true
+  register: start_result
+  when: not (restart_result.changed | default(false))
+
+- name: Wait a while, so that the Funkwhale API instance can manage to start
+  ansible.builtin.pause:
+    seconds: 7
+  when: "restart_result.changed | default(false) or start_result.changed | default(false)"

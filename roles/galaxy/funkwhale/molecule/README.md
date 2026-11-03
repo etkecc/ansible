@@ -43,11 +43,15 @@ pip3 install -r ./molecule/requirements.txt
 
 ## Scenarios
 
-Currently there is one testing scenario available.
+Currently there are two testing scenarios available.
 
 ### `default`
 
 Tests a standard Funkwhale installation.
+
+### `postgres-stale-container`
+
+Tests that Funkwhale recovers from containers which were created from an older configuration (e.g. after a run which changed the database password, but did not get to restart the services).
 
 ## Running
 

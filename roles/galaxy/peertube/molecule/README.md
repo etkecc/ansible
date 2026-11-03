@@ -43,13 +43,17 @@ pip3 install -r ./molecule/requirements.txt
 
 ## Scenarios
 
-Currently there are two testing scenarios available.
+Currently there are three testing scenarios available.
 
 ### `default`
 
 Installs PeerTube against a Postgres database (reached over a Unix socket) and a Valkey data-store, and then drives PeerTube's own API: it asks for OAuth client credentials, logs in as the `root` account with the password the role passed, reads that account back, creates a video channel and reads it back — then cross-checks the channel in Postgres and PeerTube's job queues in Valkey.
 
 Several of the scenario's variables are deliberately set away from PeerTube's own defaults (`peertube_container_http_port` to 9012, `peertube_redis_db` to 4, `peertube_hostname` to `peertube.local`), so that a setting which never reaches the process cannot pass for one that did.
+
+### `stale-container`
+
+Starts from the `default` scenario's setup, then emulates a run which changed PeerTube's configuration (the database password) but did not get to restart the service. It verifies that subsequent runs (including ones in check mode) still consider a restart necessary until the service is restarted, and that once it has been restarted, PeerTube works with the changed configuration and a restart is no longer considered necessary.
 
 ### `validate_config`
 

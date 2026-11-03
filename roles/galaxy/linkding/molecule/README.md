@@ -63,6 +63,12 @@ Tests a standard linkding installation with the Postgres database.
 
 A scenario named after a backend is no proof that the application ended up using it — linkding falls back to SQLite whenever `LD_DB_ENGINE` does not say otherwise — so this one reads the backend off the connection Django actually opened, and then looks for the bookmark it wrote through the API in the Postgres database itself, with `psql`.
 
+### `postgres-stale-container`
+
+Tests that the role recovers from a stale container, i.e. one created from an older configuration.
+
+A container's configuration (environment variables, labels, image) is frozen at creation time. Building on the `postgres` scenario, it changes the database password without restarting linkding (emulating a run that failed midway), then checks that subsequent runs (including one in check mode) still consider a restart necessary, even though no files change anymore. After restarting the service (as the service manager would), it checks that a restart is no longer considered necessary and that linkding works with the changed password.
+
 ### What these scenarios deliberately do not gate on
 
 linkding is a Django application, and its login page renders without ever touching the database. A container pointed at a nonexistent database host still answers `/` with a `302` and `/login/` with a `200`, with uWSGI up and every migration failed. Asserting on either would pass on a completely broken installation, so the scenarios gate on `/health` instead, which calls `ensure_connection()` and answers `500` when the database is unreachable.

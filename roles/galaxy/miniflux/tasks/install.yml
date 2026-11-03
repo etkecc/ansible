@@ -97,6 +97,9 @@
     mode: "0644"
   register: miniflux_systemd_service_result
 
+- name: Determine whether the Miniflux container is stale
+  ansible.builtin.include_tasks: "{{ role_path }}/tasks/util/determine_container_staleness.yml"
+
 - name: Determine whether Miniflux needs a restart
   ansible.builtin.set_fact:
     miniflux_restart_necessary: >-
@@ -106,4 +109,5 @@
         or miniflux_container_image_pull_result_ansible_module.changed | default(false)
         or miniflux_container_image_pull_result_command.changed | default(false)
         or miniflux_container_image_build_result.changed | default(false)
+        or miniflux_container_stale | bool
       }}

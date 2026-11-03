@@ -1,0 +1,30 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+# Ensures the GoToSocial service is running with the current configuration.
+#
+# Merely starting the service is not enough, because an already-running container may have been created
+# from an older configuration (see `determine_container_staleness.yml`).
+# Commands executed inside such a container (e.g. `docker exec … gotosocial admin …`) would use the old configuration.
+
+- name: Determine whether the GoToSocial container is stale
+  ansible.builtin.include_tasks: "{{ role_path }}/tasks/util/determine_container_staleness.yml"
+
+- name: Ensure GoToSocial service is started
+  ansible.builtin.service:
+    name: "{{ gotosocial_identifier }}"
+    state: "{{ 'restarted' if (gotosocial_restart_necessary | default(false) | bool or gotosocial_container_stale | bool) else 'started' }}"
+    daemon_reload: true
+  register: start_result
+
+- name: Mark GoToSocial as not needing a restart
+  ansible.builtin.set_fact:
+    gotosocial_restart_necessary: false
+  when: "start_result.changed"
+
+- name: Wait a while, so that the GoToSocial instance can manage to start
+  ansible.builtin.pause:
+    seconds: 7
+  when: "start_result.changed"

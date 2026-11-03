@@ -118,6 +118,9 @@
     owner: "{{ peertube_uid }}"
     group: "{{ peertube_gid }}"
 
+- name: Determine whether the PeerTube container is stale
+  ansible.builtin.include_tasks: "{{ role_path }}/tasks/utils/determine_container_staleness.yml"
+
 - name: Determine whether PeerTube needs a restart
   ansible.builtin.set_fact:
     peertube_restart_necessary: >-
@@ -126,4 +129,5 @@
         or peertube_systemd_service_result.changed | default(false)
         or peertube_container_image_pull_result_ansible_module.changed | default(false)
         or peertube_container_image_pull_result_command.changed | default(false)
+        or peertube_container_stale | bool
       }}

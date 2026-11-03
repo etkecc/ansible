@@ -42,6 +42,7 @@ jobs:
           - ubuntu2604
         scenario:
           - default
+          - default-stale-container
       fail-fast: false
 
     env:

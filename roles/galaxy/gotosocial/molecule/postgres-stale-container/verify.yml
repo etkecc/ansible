@@ -1,0 +1,145 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+# A container's configuration (environment variables, labels, etc.) is frozen at creation time.
+#
+# This scenario emulates a run which changed GoToSocial's configuration (here: the database password),
+# but did not get to restart the service (e.g. because it failed midway).
+#
+# It then verifies that:
+# - subsequent runs still consider a restart necessary, even though the configuration files no longer change
+# - running in check mode works
+# - creating users (which runs commands inside the container) restarts the stale container first, instead of failing
+# - once restarted, the container is no longer considered stale
+- name: Verify GoToSocial recovers from a stale container
+  hosts: all
+  become: true
+  gather_facts: true
+
+  vars:
+    gotosocial_verify_units:
+      - gotosocial.service
+      - postgres.service
+
+  tasks:
+    - name: Run the shared GoToSocial verification before making changes
+      ansible.builtin.include_tasks: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/molecule/verify_tasks.yml"
+
+    - name: Retrieve the original GoToSocial container ID
+      ansible.builtin.command:
+        cmd: docker inspect --type=container --format={{ '{{' }}.Id{{ '}}' }} gotosocial
+      register: gotosocial_original_container_id
+      changed_when: false
+
+    - name: Change the GoToSocial database password
+      ansible.builtin.set_fact:
+        gotosocial_database_password: my_changed_database_password
+
+    - name: Apply the changed configuration without restarting GoToSocial
+      ansible.builtin.include_role:
+        name: "{{ role_name }}"
+        public: true
+      loop:
+        - com.devture.ansible.role.playbook_help
+        - com.devture.ansible.role.systemd_docker_base
+        - ansible-role-postgres
+      loop_control:
+        loop_var: role_name
+
+    - name: Install GoToSocial with the changed configuration
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+        tasks_from: install
+        public: true
+
+    - name: Assert that a GoToSocial restart is considered necessary
+      ansible.builtin.assert:
+        that: gotosocial_restart_necessary | bool
+        fail_msg: "A GoToSocial restart is not considered necessary, even though its configuration changed"
+
+    - name: Install GoToSocial again, without any configuration changes
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+        tasks_from: install
+        public: true
+
+    - name: Assert that a GoToSocial restart is still considered necessary
+      ansible.builtin.assert:
+        that:
+          - gotosocial_restart_necessary | bool
+          - gotosocial_container_stale | bool
+        fail_msg: >-
+          A GoToSocial restart is no longer considered necessary,
+          even though the running container was created from an older configuration
+
+    - name: Install GoToSocial again, in check mode
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+        tasks_from: install
+        public: true
+        apply:
+          check_mode: true
+
+    - name: Assert that the original GoToSocial container is still running
+      ansible.builtin.command:
+        cmd: docker inspect --type=container --format={{ '{{' }}.Id{{ '}}' }} gotosocial
+      register: gotosocial_container_id
+      changed_when: false
+      failed_when: gotosocial_container_id.stdout != gotosocial_original_container_id.stdout
+
+    # Emulates a run which only creates users (e.g. one invoked with the users-creation tag only),
+    # so the decision to restart has to come from the stale container itself.
+    - name: Forget that a GoToSocial restart is considered necessary
+      ansible.builtin.set_fact:
+        gotosocial_restart_necessary: false
+
+    - name: Create GoToSocial users
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+        tasks_from: add_users_auto
+        public: true
+      vars:
+        gotosocial_users_additional:
+          - username: admin
+            initial_email: admin@example.com
+            initial_password: my_admin_password
+            initial_type: admin
+
+    - name: Retrieve the new GoToSocial container ID
+      ansible.builtin.command:
+        cmd: docker inspect --type=container --format={{ '{{' }}.Id{{ '}}' }} gotosocial
+      register: gotosocial_new_container_id
+      changed_when: false
+
+    - name: Assert that GoToSocial was restarted and no further restart is considered necessary
+      ansible.builtin.assert:
+        that:
+          - gotosocial_new_container_id.stdout != gotosocial_original_container_id.stdout
+          - not gotosocial_restart_necessary | bool
+
+    - name: Install GoToSocial again, after the restart
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+        tasks_from: install
+        public: true
+
+    - name: Assert that a GoToSocial restart is no longer considered necessary
+      ansible.builtin.assert:
+        that:
+          - not gotosocial_container_stale | bool
+          - not gotosocial_restart_necessary | bool
+        fail_msg: "A GoToSocial restart is considered necessary, even though the running container is up to date"
+
+    - name: Ensure the GoToSocial admin user exists
+      ansible.builtin.command:
+        cmd: >-
+          docker exec gotosocial /gotosocial/gotosocial admin account create
+          --username admin --email admin@example.com --password my_admin_password
+      register: gotosocial_admin_create_result
+      changed_when: false
+      failed_when: "'is already in use' not in gotosocial_admin_create_result.stderr"
+
+    - name: Run the shared GoToSocial verification after the restart
+      ansible.builtin.include_tasks: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/molecule/verify_tasks.yml"

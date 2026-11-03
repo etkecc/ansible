@@ -278,7 +278,8 @@ linkding_environment_variables_additional_variables: ""
 # systemd service manager role (when conditional restart is enabled).
 #
 # This value is automatically computed during installation based on whether
-# any configuration files, the systemd service file, or the container image changed.
+# any configuration files, the systemd service file, or the container image changed,
+# or whether the running container was created from an older configuration or image.
 # The default of `false` means "no restart needed" — appropriate when the role's
 # installation tasks haven't run (e.g., due to --tags skipping them).
 linkding_restart_necessary: false

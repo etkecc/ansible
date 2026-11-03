@@ -53,6 +53,10 @@ Tests a standard Miniflux installation.
 
 Tests a standard Miniflux installation with self-building the container image.
 
+### `default-stale-container`
+
+Tests that a Miniflux container created from an older configuration (e.g. because a previous run changed it, but did not get to restart the service) is still considered to need a restart in subsequent runs.
+
 ## Running
 
 By default it is configured to run the scenarios on Ubuntu 26.04.

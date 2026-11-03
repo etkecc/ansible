@@ -1,0 +1,126 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Run the Postgres scenario's Vaultwarden verification before making changes
+  ansible.builtin.import_playbook: ../postgres/verify.yml
+
+# A container's configuration (environment variables, labels, etc.) is frozen at creation time.
+#
+# This scenario emulates a run which changed Vaultwarden's configuration (here: the database password),
+# but did not get to restart the service (e.g. because it failed midway).
+#
+# It then verifies that:
+# - subsequent runs still consider a restart necessary, even though the configuration files no longer change
+# - running in check mode works and does not restart anything
+# - once the service manager restarts the service, the container is no longer considered stale
+- name: Verify Vaultwarden recovers from a stale container
+  hosts: all
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Retrieve the original Vaultwarden container ID
+      ansible.builtin.command:
+        cmd: docker inspect --type=container --format={{ '{{' }}.Id{{ '}}' }} vaultwarden
+      register: vaultwarden_original_container_id
+      changed_when: false
+
+    - name: Change the Vaultwarden database password
+      ansible.builtin.set_fact:
+        vaultwarden_database_postgres_password: my_changed_database_password
+
+    - name: Apply the changed configuration without restarting Vaultwarden
+      ansible.builtin.include_role:
+        name: "{{ role_name }}"
+        public: true
+      loop:
+        - com.devture.ansible.role.playbook_help
+        - com.devture.ansible.role.systemd_docker_base
+        - ansible-role-postgres
+      loop_control:
+        loop_var: role_name
+
+    - name: Install Vaultwarden with the changed configuration
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+        tasks_from: install
+        public: true
+
+    - name: Assert that a Vaultwarden restart is considered necessary
+      ansible.builtin.assert:
+        that: vaultwarden_restart_necessary | bool
+        fail_msg: "A Vaultwarden restart is not considered necessary, even though its configuration changed"
+
+    - name: Install Vaultwarden again, without any configuration changes
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+        tasks_from: install
+        public: true
+
+    - name: Assert that a Vaultwarden restart is still considered necessary
+      ansible.builtin.assert:
+        that:
+          - vaultwarden_restart_necessary | bool
+          - vaultwarden_container_stale | bool
+        fail_msg: >-
+          A Vaultwarden restart is no longer considered necessary,
+          even though the running container was created from an older configuration
+
+    - name: Install Vaultwarden again, in check mode
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+        tasks_from: install
+        public: true
+        apply:
+          check_mode: true
+
+    - name: Assert that a Vaultwarden restart is still considered necessary in check mode
+      ansible.builtin.assert:
+        that:
+          - vaultwarden_restart_necessary | bool
+          - vaultwarden_container_stale | bool
+        fail_msg: "A Vaultwarden restart is not considered necessary in check mode, even though the running container is stale"
+
+    - name: Assert that the original Vaultwarden container is still running
+      ansible.builtin.command:
+        cmd: docker inspect --type=container --format={{ '{{' }}.Id{{ '}}' }} vaultwarden
+      register: vaultwarden_container_id
+      changed_when: false
+      failed_when: vaultwarden_container_id.stdout != vaultwarden_original_container_id.stdout
+
+    # Emulates the service manager, which restarts services that are considered to need a restart.
+    - name: Restart Vaultwarden, because a restart is considered necessary
+      ansible.builtin.systemd_service:
+        name: vaultwarden.service
+        state: restarted
+        daemon_reload: true
+      when: vaultwarden_restart_necessary | bool
+
+    - name: Retrieve the new Vaultwarden container ID
+      ansible.builtin.command:
+        cmd: docker inspect --type=container --format={{ '{{' }}.Id{{ '}}' }} vaultwarden
+      register: vaultwarden_new_container_id
+      changed_when: false
+
+    - name: Assert that Vaultwarden was restarted
+      ansible.builtin.assert:
+        that: vaultwarden_new_container_id.stdout != vaultwarden_original_container_id.stdout
+        fail_msg: "The Vaultwarden container was not recreated"
+
+    - name: Install Vaultwarden again, after the restart
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+        tasks_from: install
+        public: true
+
+    - name: Assert that a Vaultwarden restart is no longer considered necessary
+      ansible.builtin.assert:
+        that:
+          - not vaultwarden_container_stale | bool
+          - not vaultwarden_restart_necessary | bool
+        fail_msg: "A Vaultwarden restart is considered necessary, even though the running container is up to date"
+
+- name: Run the Postgres scenario's Vaultwarden verification after the restart
+  ansible.builtin.import_playbook: ../postgres/verify.yml

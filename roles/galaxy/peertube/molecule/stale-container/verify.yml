@@ -1,0 +1,132 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Run the shared PeerTube verification before making changes
+  ansible.builtin.import_playbook: ../default/verify.yml
+
+# A container's configuration (environment variables, labels, etc.) is frozen at creation time.
+#
+# This play emulates a run which changed PeerTube's configuration (here: the database password),
+# but did not get to restart the service (e.g. because it failed midway).
+#
+# It then verifies that:
+# - subsequent runs still consider a restart necessary, even though the configuration files no longer change
+# - running in check mode works and also considers a restart necessary
+# - once the service manager restarts the service, the container is no longer considered stale
+- name: Verify PeerTube recovers from a stale container
+  hosts: all
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Retrieve the original PeerTube container ID
+      ansible.builtin.command:
+        cmd: docker inspect --type=container --format={{ '{{' }}.Id{{ '}}' }} peertube
+      register: peertube_original_container_id
+      changed_when: false
+
+    - name: Change the PeerTube database password
+      ansible.builtin.set_fact:
+        peertube_database_password: my_changed_database_password
+
+    - name: Apply the changed configuration without restarting PeerTube
+      ansible.builtin.include_role:
+        name: "{{ role_name }}"
+        public: true
+      loop:
+        - com.devture.ansible.role.playbook_help
+        - com.devture.ansible.role.systemd_docker_base
+        - ansible-role-postgres
+        # Not changed here, but PeerTube's configuration refers to its variables.
+        - ansible-role-valkey
+      loop_control:
+        loop_var: role_name
+
+    - name: Install PeerTube with the changed configuration
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+        tasks_from: install
+        public: true
+
+    - name: Assert that a PeerTube restart is considered necessary
+      ansible.builtin.assert:
+        that: peertube_restart_necessary | bool
+        fail_msg: "A PeerTube restart is not considered necessary, even though its configuration changed"
+
+    - name: Install PeerTube again, without any configuration changes
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+        tasks_from: install
+        public: true
+
+    - name: Assert that a PeerTube restart is still considered necessary
+      ansible.builtin.assert:
+        that:
+          - peertube_restart_necessary | bool
+          - peertube_container_stale | bool
+        fail_msg: >-
+          A PeerTube restart is no longer considered necessary,
+          even though the running container was created from an older configuration
+
+    - name: Install PeerTube again, in check mode
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+        tasks_from: install
+        public: true
+        apply:
+          check_mode: true
+
+    - name: Assert that a PeerTube restart is still considered necessary in check mode
+      ansible.builtin.assert:
+        that:
+          - peertube_restart_necessary | bool
+          - peertube_container_stale | bool
+        fail_msg: >-
+          A PeerTube restart is not considered necessary in check mode,
+          even though the running container was created from an older configuration
+
+    - name: Assert that the original PeerTube container is still running
+      ansible.builtin.command:
+        cmd: docker inspect --type=container --format={{ '{{' }}.Id{{ '}}' }} peertube
+      register: peertube_container_id
+      changed_when: false
+      failed_when: peertube_container_id.stdout != peertube_original_container_id.stdout
+
+    # The role itself does not restart services. That is left to the service manager
+    # (e.g. the playbook's systemd service manager role), based on `peertube_restart_necessary`.
+    - name: Restart PeerTube, the way the service manager would
+      when: peertube_restart_necessary | bool
+      ansible.builtin.systemd_service:
+        name: peertube.service
+        state: restarted
+        daemon_reload: true
+
+    - name: Retrieve the new PeerTube container ID
+      ansible.builtin.command:
+        cmd: docker inspect --type=container --format={{ '{{' }}.Id{{ '}}' }} peertube
+      register: peertube_new_container_id
+      changed_when: false
+
+    - name: Assert that PeerTube was restarted
+      ansible.builtin.assert:
+        that: peertube_new_container_id.stdout != peertube_original_container_id.stdout
+        fail_msg: "The PeerTube container was not recreated by the restart"
+
+    - name: Install PeerTube again, after the restart
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+        tasks_from: install
+        public: true
+
+    - name: Assert that a PeerTube restart is no longer considered necessary
+      ansible.builtin.assert:
+        that:
+          - not peertube_container_stale | bool
+          - not peertube_restart_necessary | bool
+        fail_msg: "A PeerTube restart is considered necessary, even though the running container is up to date"
+
+# Proves that the restarted PeerTube works with the changed configuration (the new database password).
+- name: Run the shared PeerTube verification after the restart
+  ansible.builtin.import_playbook: ../default/verify.yml

@@ -117,6 +117,9 @@
     - config.stat.exists | bool
     - vaultwarden_config_admin_token == ''
 
+- name: Determine whether the Vaultwarden container is stale
+  ansible.builtin.include_tasks: "{{ role_path }}/tasks/util/determine_container_staleness.yml"
+
 - name: Determine whether Vaultwarden needs a restart
   ansible.builtin.set_fact:
     vaultwarden_restart_necessary: >-
@@ -126,4 +129,5 @@
         or vaultwarden_container_image_pull_result_ansible_module.changed | default(false)
         or vaultwarden_container_image_pull_result_command.changed | default(false)
         or vaultwarden_container_image_build_result.changed | default(false)
+        or vaultwarden_container_stale | bool
       }}

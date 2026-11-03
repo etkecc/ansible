@@ -94,6 +94,9 @@
   when: item.when | bool
   register: funkwhale_systemd_services_result
 
+- name: Determine whether the Funkwhale containers are stale
+  ansible.builtin.include_tasks: "{{ role_path }}/tasks/util/determine_container_staleness.yml"
+
 - name: Determine whether Funkwhale needs a restart
   ansible.builtin.set_fact:
     funkwhale_restart_necessary: >-
@@ -101,6 +104,7 @@
         funkwhale_support_files_result.changed | default(false)
         or funkwhale_systemd_services_result.changed | default(false)
         or funkwhale_container_images_pull_result.changed | default(false)
+        or funkwhale_container_stale | bool
       }}
 
 - name: Ensure disabled Funkwhale watch imports systemd service is stopped and removed

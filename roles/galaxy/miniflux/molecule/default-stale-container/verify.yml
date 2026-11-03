@@ -1,0 +1,163 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+# A container's configuration (environment variables, labels, etc.) is frozen at creation time.
+#
+# This scenario emulates a run which changed Miniflux's configuration (here: the database password),
+# but did not get to restart the service (e.g. because it failed midway).
+#
+# It then verifies that:
+# - subsequent runs still consider a restart necessary, even though the configuration files no longer change
+# - running in check mode works
+# - once the service manager restarts the service, the container is no longer considered stale
+- name: Verify Miniflux recovers from a stale container
+  hosts: all
+  become: true
+  gather_facts: true
+
+  vars:
+    miniflux_verify_base_url: "http://localhost:8080"
+
+    miniflux_verify_units:
+      - miniflux.service
+      - postgres.service
+
+  tasks:
+    - name: Verify that Miniflux recovers from a stale container
+      block:
+        # The shared verification writes to the database (and cannot be repeated against the same database),
+        # so it only runs once, after the restart. A health check is enough to establish the starting point.
+        - name: Wait for Miniflux to report itself healthy before making changes (up to 180s)
+          ansible.builtin.uri:
+            url: "{{ miniflux_verify_base_url }}/healthcheck"
+            method: GET
+            status_code: [200]
+            return_content: true
+          register: miniflux_health_initial
+          until: miniflux_health_initial.status == 200 and miniflux_health_initial.content is search('OK')
+          retries: 36
+          delay: 5
+
+        - name: Retrieve the original Miniflux container ID
+          ansible.builtin.command:
+            cmd: docker inspect --type=container --format={{ '{{' }}.Id{{ '}}' }} miniflux
+          register: miniflux_original_container_id
+          changed_when: false
+
+        - name: Change the Miniflux database password
+          ansible.builtin.set_fact:
+            miniflux_database_password: my_changed_database_password
+
+        - name: Apply the changed configuration without restarting Miniflux
+          ansible.builtin.include_role:
+            name: "{{ role_name }}"
+            public: true
+          loop:
+            - com.devture.ansible.role.playbook_help
+            - com.devture.ansible.role.systemd_docker_base
+            - ansible-role-postgres
+          loop_control:
+            loop_var: role_name
+
+        - name: Install Miniflux with the changed configuration
+          ansible.builtin.include_role:
+            name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+            tasks_from: install
+            public: true
+
+        - name: Assert that a Miniflux restart is considered necessary
+          ansible.builtin.assert:
+            that: miniflux_restart_necessary | bool
+            fail_msg: "A Miniflux restart is not considered necessary, even though its configuration changed"
+
+        - name: Install Miniflux again, without any configuration changes
+          ansible.builtin.include_role:
+            name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+            tasks_from: install
+            public: true
+
+        - name: Assert that a Miniflux restart is still considered necessary
+          ansible.builtin.assert:
+            that:
+              - miniflux_restart_necessary | bool
+              - miniflux_container_stale | bool
+            fail_msg: >-
+              A Miniflux restart is no longer considered necessary,
+              even though the running container was created from an older configuration
+
+        - name: Install Miniflux again, in check mode
+          ansible.builtin.include_role:
+            name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+            tasks_from: install
+            public: true
+            apply:
+              check_mode: true
+
+        - name: Assert that a Miniflux restart is still considered necessary in check mode
+          ansible.builtin.assert:
+            that:
+              - miniflux_restart_necessary | bool
+              - miniflux_container_stale | bool
+            fail_msg: "A Miniflux restart is not considered necessary in check mode, even though the running container is stale"
+
+        - name: Assert that the original Miniflux container is still running
+          ansible.builtin.command:
+            cmd: docker inspect --type=container --format={{ '{{' }}.Id{{ '}}' }} miniflux
+          register: miniflux_container_id
+          changed_when: false
+          failed_when: miniflux_container_id.stdout != miniflux_original_container_id.stdout
+
+        # Emulates the service manager, which restarts services whose restart is considered necessary
+        # and merely starts the others.
+        - name: Ensure Miniflux service is restarted or started, as the service manager would do
+          ansible.builtin.systemd_service:
+            name: miniflux.service
+            state: "{{ 'restarted' if miniflux_restart_necessary | bool else 'started' }}"
+            daemon_reload: true
+
+        - name: Retrieve the new Miniflux container ID
+          ansible.builtin.command:
+            cmd: docker inspect --type=container --format={{ '{{' }}.Id{{ '}}' }} miniflux
+          register: miniflux_new_container_id
+          changed_when: false
+
+        - name: Assert that Miniflux was restarted
+          ansible.builtin.assert:
+            that: miniflux_new_container_id.stdout != miniflux_original_container_id.stdout
+            fail_msg: "The Miniflux container was not recreated"
+
+        - name: Install Miniflux again, after the restart
+          ansible.builtin.include_role:
+            name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+            tasks_from: install
+            public: true
+
+        - name: Assert that a Miniflux restart is no longer considered necessary
+          ansible.builtin.assert:
+            that:
+              - not miniflux_container_stale | bool
+              - not miniflux_restart_necessary | bool
+            fail_msg: "A Miniflux restart is considered necessary, even though the running container is up to date"
+
+        # Proves that the restarted container uses the changed database password.
+        - name: Run the checks shared by all Miniflux scenarios after the restart
+          ansible.builtin.include_tasks:
+            file: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}/molecule/verify_tasks.yml"
+
+      rescue:
+        # Whatever went wrong, the reason is almost always in the systemd service log.
+        - name: Retrieve the Miniflux systemd service log
+          ansible.builtin.command:
+            cmd: journalctl --no-pager --output=cat --unit=miniflux.service
+          register: miniflux_service_log
+          changed_when: false
+
+        - name: Show the Miniflux systemd service log
+          ansible.builtin.debug:
+            var: miniflux_service_log.stdout_lines
+
+        - name: Fail because verification did not pass
+          ansible.builtin.fail:
+            msg: "Miniflux stale container verification failed. The systemd service log is printed above."

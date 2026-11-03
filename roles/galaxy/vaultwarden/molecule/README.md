@@ -61,6 +61,10 @@ Tests a standard Vaultwarden installation with the MariaDB database.
 
 Tests a standard Vaultwarden installation with the Postgres database.
 
+### `postgres-stale-container`
+
+Tests that Vaultwarden is still considered to need a restart when its configuration changed, but the service was not restarted afterwards (e.g. because a previous run failed midway).
+
 ## Running
 
 By default it is configured to run the scenarios on Ubuntu 26.04.

@@ -1,0 +1,133 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+# A container's configuration (environment variables, labels, etc.) is frozen at creation time.
+#
+# This scenario emulates a run which changed linkding's configuration (here: the database password),
+# but did not get to restart the service (e.g. because it failed midway).
+#
+# It then verifies that:
+# - subsequent runs still consider a restart necessary, even though the configuration files no longer change
+# - running in check mode works and leaves the container alone
+# - once the service is restarted (as the service manager would do), a restart is no longer considered necessary
+# - the restarted linkding works with the changed configuration
+- name: Verify linkding recovers from a stale container
+  hosts: all
+  become: true
+  gather_facts: true
+
+  vars:
+    linkding_verify_base_url: "http://localhost:{{ linkding_container_http_host_bind_port }}"
+
+    linkding_verify_units:
+      - linkding.service
+      - postgres.service
+
+  tasks:
+    - name: Run the shared linkding verification before making changes
+      ansible.builtin.include_tasks: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/molecule/verify_tasks.yml"
+
+    - name: Retrieve the original linkding container ID
+      ansible.builtin.command:
+        cmd: docker inspect --type=container --format={{ '{{' }}.Id{{ '}}' }} {{ linkding_defaults.linkding_identifier }}
+      register: linkding_original_container_id
+      changed_when: false
+
+    - name: Change the linkding database password
+      ansible.builtin.set_fact:
+        linkding_database_password: my_changed_database_password
+
+    - name: Apply the changed configuration without restarting linkding
+      ansible.builtin.include_role:
+        name: "{{ role_name }}"
+        public: true
+      loop:
+        - com.devture.ansible.role.playbook_help
+        - com.devture.ansible.role.systemd_docker_base
+        - ansible-role-postgres
+      loop_control:
+        loop_var: role_name
+
+    - name: Install linkding with the changed configuration
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+        tasks_from: install
+        public: true
+
+    - name: Assert that a linkding restart is considered necessary
+      ansible.builtin.assert:
+        that: linkding_restart_necessary | bool
+        fail_msg: "A linkding restart is not considered necessary, even though its configuration changed"
+
+    - name: Install linkding again, without any configuration changes
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+        tasks_from: install
+        public: true
+
+    - name: Assert that a linkding restart is still considered necessary
+      ansible.builtin.assert:
+        that:
+          - linkding_restart_necessary | bool
+          - linkding_container_stale | bool
+        fail_msg: >-
+          A linkding restart is no longer considered necessary,
+          even though the running container was created from an older configuration
+
+    - name: Install linkding again, in check mode
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+        tasks_from: install
+        public: true
+        apply:
+          check_mode: true
+
+    - name: Assert that a linkding restart is still considered necessary in check mode
+      ansible.builtin.assert:
+        that:
+          - linkding_restart_necessary | bool
+          - linkding_container_stale | bool
+        fail_msg: "A linkding restart is not considered necessary in check mode, even though the running container is stale"
+
+    - name: Assert that the original linkding container is still running
+      ansible.builtin.command:
+        cmd: docker inspect --type=container --format={{ '{{' }}.Id{{ '}}' }} {{ linkding_defaults.linkding_identifier }}
+      register: linkding_container_id
+      changed_when: false
+      failed_when: linkding_container_id.stdout != linkding_original_container_id.stdout
+
+    # Emulates the service manager, which restarts services whose `*_restart_necessary` is true at the end of a run.
+    - name: Restart linkding, as the service manager would
+      ansible.builtin.systemd_service:
+        name: linkding.service
+        state: restarted
+        daemon_reload: true
+
+    - name: Retrieve the new linkding container ID
+      ansible.builtin.command:
+        cmd: docker inspect --type=container --format={{ '{{' }}.Id{{ '}}' }} {{ linkding_defaults.linkding_identifier }}
+      register: linkding_new_container_id
+      changed_when: false
+
+    - name: Assert that linkding was restarted with a new container
+      ansible.builtin.assert:
+        that: linkding_new_container_id.stdout != linkding_original_container_id.stdout
+
+    - name: Install linkding again, after the restart
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+        tasks_from: install
+        public: true
+
+    - name: Assert that a linkding restart is no longer considered necessary
+      ansible.builtin.assert:
+        that:
+          - not linkding_container_stale | bool
+          - not linkding_restart_necessary | bool
+        fail_msg: "A linkding restart is considered necessary, even though the running container is up to date"
+
+    # `/health` opens a database connection, so this also proves that the new container uses the changed password.
+    - name: Run the shared linkding verification after the restart
+      ansible.builtin.include_tasks: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/molecule/verify_tasks.yml"

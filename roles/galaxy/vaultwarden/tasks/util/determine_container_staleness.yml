@@ -1,0 +1,85 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+# Determines whether the currently running Vaultwarden container is stale,
+# i.e. it was created from an older version of its configuration (env file, labels, systemd unit) or from an older image.
+#
+# A container's configuration is frozen at creation time, so changes to these files only take effect after a restart.
+# If a previous run changed them but did not manage to restart the service (e.g. because it failed midway),
+# subsequent runs would not see any changes and would never restart the service on their own.
+#
+# Sets `vaultwarden_container_stale` (bool).
+
+- name: Inspect the Vaultwarden container
+  ansible.builtin.command:
+    cmd: "{{ devture_systemd_docker_base_host_command_docker }} inspect --type=container {{ vaultwarden_identifier }}"
+  register: vaultwarden_container_staleness_container_inspect_result
+  changed_when: false
+  failed_when: false
+  check_mode: false
+  # The output contains the container's environment variables, which include secrets.
+  no_log: true
+
+- name: Determine Vaultwarden container facts
+  vars:
+    container: "{{ (vaultwarden_container_staleness_container_inspect_result.stdout | from_json | first) if vaultwarden_container_staleness_container_inspect_result.rc == 0 else {} }}"
+    # `Created` looks like `2026-01-02T03:04:05.123456789Z` (always UTC, trailing zeros in the fractional part may be omitted).
+    container_created: "{{ container.Created | default('1970-01-01T00:00:00Z') }}"
+    container_created_fraction: "{{ container_created | regex_search('\\.([0-9]+)', '\\1') | default([], true) | first | default('0') }}"
+  ansible.builtin.set_fact:
+    vaultwarden_container_staleness_container_running: "{{ container.State.Running | default(false) | bool }}"
+    vaultwarden_container_staleness_container_created_timestamp: >-
+      {{
+        ((container_created[:19] ~ '+0000') | to_datetime('%Y-%m-%dT%H:%M:%S%z')).timestamp() | int
+        + ('0.' ~ container_created_fraction[:6]) | float
+      }}
+    vaultwarden_container_staleness_container_image_id: "{{ container.Image | default('') }}"
+
+- name: Inspect the Vaultwarden container image and files, if the container is running
+  when: vaultwarden_container_staleness_container_running | bool
+  block:
+    - name: Inspect the Vaultwarden container image
+      ansible.builtin.command:
+        # Keep this in sync with the image used in the systemd unit (`templates/systemd/vaultwarden.service.j2`).
+        cmd: >-
+          {{ devture_systemd_docker_base_host_command_docker }} image inspect --format={{ '{{' }}.Id{{ '}}' }}
+          {{ vaultwarden_container_image_self_build_name if vaultwarden_container_image_self_build | bool else vaultwarden_container_image }}
+      register: vaultwarden_container_staleness_image_inspect_result
+      changed_when: false
+      failed_when: false
+      check_mode: false
+
+    - name: Check Vaultwarden files that affect the container
+      ansible.builtin.stat:
+        path: "{{ item }}"
+        get_checksum: false
+      register: vaultwarden_container_staleness_file_stat_results
+      loop:
+        - "{{ vaultwarden_base_path }}/env"
+        - "{{ vaultwarden_base_path }}/labels"
+        - "{{ devture_systemd_docker_base_systemd_path }}/{{ vaultwarden_identifier }}.service"
+
+- name: Determine whether the Vaultwarden container is stale
+  ansible.builtin.set_fact:
+    vaultwarden_container_stale: >-
+      {{
+        vaultwarden_container_staleness_container_running | bool
+        and (
+          (
+            vaultwarden_container_staleness_image_inspect_result.rc == 0
+            and vaultwarden_container_staleness_image_inspect_result.stdout | trim != vaultwarden_container_staleness_container_image_id
+          )
+          or
+          (
+            vaultwarden_container_staleness_file_stat_results.results
+            | selectattr('stat.exists')
+            | map(attribute='stat.mtime')
+            | map('float')
+            | select('gt', vaultwarden_container_staleness_container_created_timestamp | float)
+            | list
+            | length > 0
+          )
+        )
+      }}

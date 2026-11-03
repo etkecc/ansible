@@ -43,6 +43,7 @@ jobs:
         scenario:
           - default
           - postgres
+          - postgres-stale-container
       fail-fast: false
 
     env:
