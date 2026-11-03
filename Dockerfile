@@ -1,4 +1,4 @@
-FROM fedora:latest
+FROM fedora:44
 
 RUN dnf install -y ansible-core python3-passlib python3-resolvelib \
     ansible-collection-community-general ansible-collection-community-docker \
