@@ -9,7 +9,9 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 base_url: {{ ntfy_base_url }}
 behind_proxy: true
 
-upstream-base-url: {{ ntfy_upstream_base_url }}
+{% if ntfy_upstream_base_url %}
+upstream-base-url: {{ ntfy_upstream_base_url | to_json }}
+{% endif %}
 
 listen-http: :8080
 

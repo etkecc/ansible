@@ -27,7 +27,7 @@ See the project's [documentation](https://docs.ntfy.sh/) to learn what ntfy does
 >[!NOTE]
 >
 > - You need to install [the ntfy Android/iOS app](https://docs.ntfy.sh/subscribe/phone/) on your device in order to receive push notifications from the ntfy server. Notifications can also be sent/received on the ntfy's web app. Refer to [this section](#usage) for details about the usage.
-> - Because iOS heavily restricts background processing, it is impossible to implement instant push notifications without a central server. To implement instant notification through the self-hosted ntfy server, refer to [this official documentation](https://docs.ntfy.sh/config/#ios-instant-notifications) for instructions.
+> - Because iOS heavily restricts background processing, it is impossible to implement instant push notifications without a central server. To implement instant notification through the self-hosted ntfy server, refer to [this official documentation](https://docs.ntfy.sh/config/#ios-instant-notifications) for instructions. With this role, it can be enabled by adding `ntfy_upstream_base_url: https://ntfy.sh` to your `vars.yml` file.
 
 ## Prerequisites
 

@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
-# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2023 - 2026 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -37,6 +37,15 @@
     msg: >-
       ntfy_database_type must be 'postgres' or 'sqlite'.
   when: "ntfy_database_type not in ['postgres', 'sqlite']"
+
+# ntfy (v2.36.0+) refuses to start with such a configuration, so we catch it early.
+- name: Fail if ntfy_upstream_base_url is the same as ntfy_base_url
+  ansible.builtin.fail:
+    msg: >-
+      ntfy_upstream_base_url (`{{ ntfy_upstream_base_url }}`) must not be the same as ntfy_base_url (`{{ ntfy_base_url }}`).
+      To enable instant notifications on iOS, set it to `https://ntfy.sh`. Otherwise, leave it empty.
+      See: https://docs.ntfy.sh/config/#ios-instant-notifications
+  when: "ntfy_upstream_base_url | length > 0 and ntfy_upstream_base_url | regex_replace('/+$', '') == ntfy_base_url | regex_replace('/+$', '')"
 
 - name: Run if ntfy + Postgres integration is enabled
   when: ntfy_database_type == 'postgres'

@@ -1,6 +1,6 @@
 * Alpine: edge
 * Authentication Service: 1.28.0
-* Baibot: v1.30.0
+* Baibot: v2026.11.02.1
 * Bluesky Bridge: v0.2510.0
 * Buscarron: v1.5.0
 * Cinny: v4.12.8
@@ -39,7 +39,7 @@
 * Meta Instagram Bridge: v0.2610.0
 * Meta Messenger Bridge: v0.2610.0
 * Miniflux: 2.3.5
-* Ntfy: v2.35.0
+* Ntfy: v2.36.0
 * Peertube: v8.3.2
 * Postgres Container Image V10: 10.23
 * Postgres Container Image V11: 11.22
@@ -66,7 +66,7 @@
 * Static Files: 2.44.1
 * Steam Bridge: 1.4.0
 * Sygnal: v0.17.0
-* Synapse: v1.164.1
+* Synapse: v1.164.2
 * Synapse Auto Compressor: v0.0.3
 * Synapse Compress State: v0.0.3
 * Synapse HTTP Antispam: v0.5.1
