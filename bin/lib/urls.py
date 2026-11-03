@@ -12,7 +12,6 @@ HOST_FEED_RULES = {
     'gitlab.com': 'gitlab',
     'mau.dev': 'gitlab',
     'framagit.org': 'gitlab',
-    'dev.funkwhale.audio': 'gitlab',
     'codeberg.org': 'forgejo',
     'git.zx2c4.com': 'cgit',
     'git.osgeo.org': 'gitea',
@@ -34,7 +33,7 @@ RULE_TEMPLATES = {
     'forgejo': '{repo}/releases.atom',
 }
 
-GITLAB_RELEASE_HOSTS = ('gitlab.com', 'mau.dev', 'dev.funkwhale.audio')
+GITLAB_RELEASE_HOSTS = ('gitlab.com', 'mau.dev')
 
 
 def _release_host_kind(repo):

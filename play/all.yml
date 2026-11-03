@@ -94,7 +94,6 @@
     - galaxy/vaultwarden
     - galaxy/firezone
     - galaxy/wg_easy
-    - galaxy/funkwhale
     - galaxy/peertube
     # END CUSTOM
 
