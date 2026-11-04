@@ -38,7 +38,7 @@
   version: v2.5.9-0
   name: uptime_kuma
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-vaultwarden.git
-  version: v1.37.4-4
+  version: v1.37.5-0
   name: vaultwarden
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-wg-easy.git
   version: v15.5.0-0

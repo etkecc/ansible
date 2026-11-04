@@ -15,3 +15,4 @@
 * [Synapse](https://github.com/element-hq/synapse): [v1.164.1](https://github.com/element-hq/synapse/releases/tag/v1.164.1) ⇾ [v1.164.2](https://github.com/element-hq/synapse/releases/tag/v1.164.2)
 * [Traefik](https://github.com/traefik/traefik): [v3.7.16](https://github.com/traefik/traefik/releases/tag/v3.7.16) ⇾ [v3.7.17](https://github.com/traefik/traefik/releases/tag/v3.7.17)
 * [Uptime Kuma](https://github.com/louislam/uptime-kuma): [2.5.8](https://github.com/louislam/uptime-kuma/releases/tag/2.5.8) ⇾ [2.5.9](https://github.com/louislam/uptime-kuma/releases/tag/2.5.9)
+* [Vaultwarden](https://github.com/dani-garcia/vaultwarden): [1.37.4](https://github.com/dani-garcia/vaultwarden/releases/tag/1.37.4) ⇾ [1.37.5](https://github.com/dani-garcia/vaultwarden/releases/tag/1.37.5)
