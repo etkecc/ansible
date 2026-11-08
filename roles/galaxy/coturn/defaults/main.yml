@@ -22,9 +22,6 @@ coturn_identifier: coturn
 coturn_base_path: "/{{ coturn_identifier }}"
 coturn_config_path: "{{ coturn_base_path }}/turnserver.conf"
 
-# The versioning Renovate compares coturn/coturn tags with is pinned in
-# .github/renovate.json - the shape needed here cannot be spelled out in this
-# annotation.
 # renovate: datasource=docker depName=coturn/coturn
 coturn_version: 4.18.0
 
@@ -311,7 +308,8 @@ coturn_environment_variables_additional_variables: ""
 # systemd service manager role (when conditional restart is enabled).
 #
 # This value is automatically computed during installation based on whether
-# any configuration files, the systemd service file, or the container image changed.
+# any configuration files, the systemd service file, or the container image changed,
+# or whether the running container was created from an older configuration or image.
 # The default of `false` means "no restart needed" — appropriate when the role's
 # installation tasks haven't run (e.g., due to --tags skipping them).
 coturn_restart_necessary: false

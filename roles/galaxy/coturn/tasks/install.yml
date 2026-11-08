@@ -178,6 +178,9 @@
     - service
     - timer
 
+- name: Determine whether coturn container is stale
+  ansible.builtin.include_tasks: "{{ role_path }}/tasks/util/determine_container_staleness.yml"
+
 - name: Determine whether coturn needs a restart
   ansible.builtin.set_fact:
     coturn_restart_necessary: >-
@@ -189,4 +192,5 @@
         or coturn_container_image_pull_result_ansible_module.changed | default(false)
         or coturn_container_image_pull_result_command.changed | default(false)
         or coturn_container_image_build_result.changed | default(false)
+        or coturn_container_stale | bool
       }}
