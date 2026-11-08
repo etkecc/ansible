@@ -10,7 +10,7 @@
 * Draupnir: v3.2.0
 * Element: v1.12.33
 * Etherpad: 3.3.16
-* Exim Relay: 4.99.5-r0-3
+* Exim Relay: 4.99.5-r0-4
 * Firezone: 0.7.36
 * Fluffychat: v2.11.5
 * Google Chat Bridge: v0.5.2
