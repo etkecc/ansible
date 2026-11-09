@@ -295,7 +295,7 @@ vaultwarden_database_postgres_socket_path_container: /run-postgres
 # https://github.com/dani-garcia/vaultwarden/blob/main/.env.template,
 # and the other database-related Wiki articles
 vaultwarden_config_database_url: |-
-  postgres://{{ vaultwarden_database_postgres_username }}:{{ vaultwarden_database_postgres_password }}@
+  postgres://{{ vaultwarden_database_postgres_username | urlencode | replace('/', '%2F') }}:{{ vaultwarden_database_postgres_password | urlencode | replace('/', '%2F') }}@
   {%- if vaultwarden_database_postgres_socket_enabled -%}
   localhost/{{ vaultwarden_database_name }}?host={{ vaultwarden_database_postgres_socket_path_container }}
   {%- else -%}
@@ -303,7 +303,7 @@ vaultwarden_config_database_url: |-
   {%- endif -%}
 
 vaultwarden_config_database_mysql_url: |-
-  mysql://{{ vaultwarden_database_mysql_username }}:{{ vaultwarden_database_mysql_password }}@
+  mysql://{{ vaultwarden_database_mysql_username | urlencode | replace('/', '%2F') }}:{{ vaultwarden_database_mysql_password | urlencode | replace('/', '%2F') }}@
   {%- if vaultwarden_database_mysql_socket_enabled -%}
   localhost/{{ vaultwarden_database_name }}?unix_socket={{ vaultwarden_database_mysql_socket_path_container + '/mysqld.sock' }}
   {%- else -%}

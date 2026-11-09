@@ -55,8 +55,8 @@ provisioner:
 
         # Variables required for Vaultwarden to connect to the Postgres database (via Unix socket)
         vaultwarden_database_type: postgres
-        vaultwarden_database_postgres_username: my_database_username
-        vaultwarden_database_postgres_password: my_database_password
+        vaultwarden_database_postgres_username: /#@my_database_username?%
+        vaultwarden_database_postgres_password: /#@my_database_password?%
         vaultwarden_database_postgres_sslmode: disable
         vaultwarden_database_name: vaultwarden
         vaultwarden_database_postgres_socket_enabled: true

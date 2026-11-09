@@ -17,7 +17,7 @@
   version: v1.47.0-5
   name: linkding
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-miniflux.git
-  version: v2.3.5-1
+  version: v2.3.5-2
   name: miniflux
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-peertube.git
   version: v8.3.2-1
@@ -38,7 +38,7 @@
   version: v2.5.9-0
   name: uptime_kuma
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-vaultwarden.git
-  version: v1.37.5-0
+  version: v1.37.5-1
   name: vaultwarden
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-wg-easy.git
   version: v15.5.0-0

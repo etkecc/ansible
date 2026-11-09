@@ -55,8 +55,8 @@ provisioner:
 
         # Variables required for Vaultwarden to connect to the MariaDB database (via Unix socket)
         vaultwarden_database_type: mysql
-        vaultwarden_database_mysql_username: my_database_username
-        vaultwarden_database_mysql_password: my_database_password
+        vaultwarden_database_mysql_username: /#@my_database_username?%
+        vaultwarden_database_mysql_password: /#@my_database_password?%
         vaultwarden_database_name: vaultwarden
         vaultwarden_database_mysql_socket_enabled: true
         vaultwarden_database_mysql_socket_path_host: "{{ mariadb_run_path }}"

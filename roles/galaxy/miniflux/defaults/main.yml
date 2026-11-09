@@ -247,7 +247,7 @@ miniflux_database_connection_string: |
   {% if miniflux_database_socket_enabled %}
   user={{ miniflux_database_username }} password={{ miniflux_database_password }} dbname={{ miniflux_database_name }} sslmode=disable host={{ miniflux_database_socket_path_container }}
   {% else %}
-  postgres://{{ miniflux_database_username }}:{{ miniflux_database_password }}@{{ miniflux_database_hostname }}:{{ miniflux_database_port }}/{{ miniflux_database_name }}?sslmode={{ miniflux_database_sslmode }}
+  postgres://{{ miniflux_database_username | urlencode | replace('/', '%2F') }}:{{ miniflux_database_password | urlencode | replace('/', '%2F') }}@{{ miniflux_database_hostname }}:{{ miniflux_database_port }}/{{ miniflux_database_name }}?sslmode={{ miniflux_database_sslmode }}
   {%- endif -%}
 
 ########################################################################

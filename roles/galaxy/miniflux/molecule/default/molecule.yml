@@ -53,8 +53,8 @@ provisioner:
         miniflux_admin_password: molecule-password
 
         # Variables required for Miniflux to connect to the Postgres database (via Unix socket)
-        miniflux_database_username: my_database_username
-        miniflux_database_password: my_database_password
+        miniflux_database_username: /#@my_database_username?%
+        miniflux_database_password: /#@my_database_password?%
         miniflux_database_sslmode: disable
         miniflux_database_name: miniflux
         miniflux_database_socket_enabled: true
