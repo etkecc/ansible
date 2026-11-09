@@ -117,7 +117,7 @@ valkey_container_cleanup_command: |
 
 valkey_connection_password: ""
 
-valkey_arch: x86_64
+valkey_arch: amd64
 
 # The strict memory allocation can cause Valkey's background saving to fail with a fork() error
 # https://valkey.io/docs/topics/faq/#background-saving-fails-with-a-fork-error-on-linux

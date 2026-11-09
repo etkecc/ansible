@@ -43,7 +43,6 @@ provisioner:
         # Variables for Valkey
         valkey_uid: 1000
         valkey_gid: 1000
-        valkey_arch: amd64
 
         # Verification asserts that unauthenticated clients are turned away,
         # which only tests anything when a password is actually configured.
