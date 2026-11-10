@@ -1,3 +1,8 @@
+# SPDX-FileCopyrightText: 2023-2026 Aine <aine@etke.cc>
+# SPDX-FileCopyrightText: 2025 QEDeD
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 ---
 # Enable ssh config hardening
 system_security_ssh_enabled: true

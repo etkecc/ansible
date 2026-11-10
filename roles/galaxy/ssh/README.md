@@ -1,3 +1,11 @@
+<!--
+SPDX-FileCopyrightText: 2023-2026 Aine <aine@etke.cc>
+SPDX-FileCopyrightText: 2025 QEDeD
+SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+
+SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
 # system/security/ssh
 
 This role manages **OpenSSH server (sshd)** configuration and **authorized / unauthorized SSH keys**.
