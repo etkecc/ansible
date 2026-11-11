@@ -16,6 +16,7 @@ Refer to `defaults/main.yml` to get the list of options
 `system_cleanup_docker` installs a script (`/system-cleanup/bin/cleanup-docker` by default) which removes:
 
 - **superseded images**: unused images for which a newer image of the same repository arrived at least 3 days ago (`system_cleanup_docker_config_superseded_images_grace_period_days`). Unlike `docker image prune -a`, unused images without a newer version (stopped services, timer-only containers, locally built images) are kept.
+- **unused build cache**: build cache which no build has used for at least 3 days (`system_cleanup_docker_config_build_cache_grace_period_days`). Roles which build images locally (e.g. to customize an upstream image) leave build cache behind for each version they build. The images themselves are handled like any other.
 - **stopped containers**
 - **anonymous volumes**, only if `system_cleanup_docker_config_remove_anonymous_volumes` is on
 

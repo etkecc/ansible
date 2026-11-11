@@ -37,6 +37,7 @@
       - "{{ aux_molecule_base_path }}/from-custom.txt"
       - "{{ aux_molecule_base_path }}/explicit.txt"
       - "{{ aux_molecule_base_path }}/binary.dat"
+      - "{{ aux_molecule_base_path }}/sensitive.txt"
       - "{{ aux_molecule_base_path }}/untouched.txt"
       - "{{ aux_molecule_base_path }}/command-as-root.marker"
       - "{{ aux_molecule_base_path }}/command-as-user.marker"
@@ -124,6 +125,7 @@
         - "{{ aux_molecule_base_path }}/from-auto.txt"
         - "{{ aux_molecule_base_path }}/from-custom.txt"
         - "{{ aux_molecule_base_path }}/explicit.txt"
+        - "{{ aux_molecule_base_path }}/sensitive.txt"
         - "{{ aux_molecule_base_path }}/untouched.txt"
 
     - name: Index the content by path
@@ -178,6 +180,21 @@
           {{ aux_verify[aux_molecule_base_path + '/explicit.txt'].pw_name | default('missing') }}:{{
           aux_verify[aux_molecule_base_path + '/explicit.txt'].gr_name | default('missing') }}
         success_msg: "Per-item mode, owner and group override the file defaults"
+
+    # `sensitive` only changes what Ansible prints (`no_log`, no diff), which
+    # this play can't observe. What it can observe is that the separate task
+    # for sensitive files writes them like the ordinary one does.
+    - name: Assert the sensitive file was written like any other
+      ansible.builtin.assert:
+        that:
+          - aux_verify_content[aux_molecule_base_path + '/sensitive.txt'] == aux_molecule_marker + ' sensitive' + '\n'
+          - aux_verify[aux_molecule_base_path + '/sensitive.txt'].mode == '0600'
+          - aux_verify[aux_molecule_base_path + '/sensitive.txt'].pw_name == aux_verify_shipped_file_owner
+          - aux_verify[aux_molecule_base_path + '/sensitive.txt'].gr_name == aux_verify_shipped_file_group
+        fail_msg: >-
+          The file defined with `sensitive: true` is missing or differs from what the role was told
+          to write, so the task for sensitive files no longer writes them like the ordinary one
+        success_msg: "A sensitive file is written exactly like an ordinary one"
 
     # The `src` half of the file task. The checksum is taken from the fixture on
     # the controller rather than written down here, so the assertion keeps

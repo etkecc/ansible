@@ -56,6 +56,17 @@ aux_file_default_owner: root
 # The default file group when creating files using `aux_file_definitions`
 aux_file_default_group: root
 
+# Controls whether files created using `aux_file_definitions` are treated as sensitive by default.
+# Sensitive files are written by a separate task with `diff: false` and `no_log: true`,
+# so their content shows neither as a diff when running with `--diff`, nor in the task's results in verbose (`-v` and up) output.
+# The cost is that their whole task result is hidden ("censored due to no_log"), including their paths and the module's error messages.
+# Like any `no_log`, this doesn't cover Ansible's own error diagnostics, which may quote the definition's source
+# (e.g. on a templating error in it, like an undefined variable), nor Ansible's internal debugging output (`ANSIBLE_DEBUG`),
+# nor other places that display the variables holding the content.
+# They are written after all other files.
+# Rather than enabling this globally, prefer adding `sensitive: true` to the individual file definitions which hold secrets.
+aux_file_default_sensitive: false
+
 # Holds a list of files to create on the server.
 #
 # By default, files are:
@@ -100,6 +111,12 @@ aux_file_default_group: root
 #     mode: '0600'
 #     owner: 'some-user'
 #     group: 'some-group'
+#
+#   # Holds a secret: its content is kept out of the task's output (see `aux_file_default_sensitive`).
+#   - dest: /aux/secret.env
+#     content: "PASSWORD={{ vault_some_password }}"
+#     mode: '0600'
+#     sensitive: true
 aux_file_definitions_custom: []
 # this var is for playbook- or group-level definitions, and should not be used in specific host's `vars.yml`
 aux_file_definitions_auto: []

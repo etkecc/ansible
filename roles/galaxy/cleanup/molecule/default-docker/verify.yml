@@ -41,6 +41,7 @@
             - "docker image inspect {{ cleanup_molecule_unused_image }}"
             - "docker image inspect {{ cleanup_molecule_superseded_image }}"
             - "docker image inspect {{ cleanup_molecule_superseding_image }}"
+            - "docker image inspect {{ cleanup_molecule_built_image }}"
             - "docker volume inspect {{ cleanup_molecule_used_volume }}"
             - "docker volume inspect {{ cleanup_molecule_named_volume }}"
             - "docker volume inspect {{ cleanup_molecule_anonymous_volume }}"
@@ -174,6 +175,36 @@
 
         ########################################################################
         #                                                                      #
+        # what `docker builder prune` removed                                  #
+        #                                                                      #
+        ########################################################################
+
+        - name: Read how much build cache is left
+          ansible.builtin.command:
+            cmd: docker system df --format json
+          register: cleanup_molecule_docker_df
+          changed_when: false
+
+        # The build cache goes, the image built with it stays: it is the only
+        # one of its repository, and a locally built image is exactly what must
+        # not be lost along with its cache.
+        - name: Assert that the build cache was removed and the built image was not
+          vars:
+            cleanup_molecule_build_cache: "{{ cleanup_molecule_docker_df.stdout_lines | map('from_json') | selectattr('Type', 'equalto', 'Build Cache') | first }}"
+            cleanup_molecule_built_image_key: "docker image inspect {{ cleanup_molecule_built_image }}"
+          ansible.builtin.assert:
+            that:
+              - cleanup_molecule_build_cache.TotalCount | int == 0
+              - cleanup_molecule_built_image_key in cleanup_molecule_found
+            fail_msg: >-
+              `docker system df` reports {{ cleanup_molecule_build_cache }} and the built image
+              {{ cleanup_molecule_built_image }} is
+              {{ 'still there' if cleanup_molecule_built_image_key in cleanup_molecule_found else 'gone' }}.
+              The build cache should be gone and the image should be kept.
+            success_msg: "The build cache was removed and {{ cleanup_molecule_built_image }} was left alone"
+
+        ########################################################################
+        #                                                                      #
         # what `docker volume prune -f` removed                                #
         #                                                                      #
         ########################################################################
@@ -304,8 +335,8 @@
             cleanup_molecule_anonymous_volume: "{{ cleanup_molecule_anonymous_volume_slurp.content | b64decode | trim }}"
           ansible.builtin.debug:
             msg:
-              - "pruned: container {{ cleanup_molecule_exited_container }}, image {{ cleanup_molecule_superseded_image }}, anonymous volume {{ cleanup_molecule_anonymous_volume }}"
-              - "kept: container {{ cleanup_molecule_running_container }} (running), images {{ cleanup_molecule_docker_image }} (in use), {{ cleanup_molecule_superseding_image }} (newest) and {{ cleanup_molecule_unused_image }} (no newer version)"
+              - "pruned: container {{ cleanup_molecule_exited_container }}, image {{ cleanup_molecule_superseded_image }}, the build cache, anonymous volume {{ cleanup_molecule_anonymous_volume }}"
+              - "kept: container {{ cleanup_molecule_running_container }} (running), images {{ cleanup_molecule_docker_image }} (in use), {{ cleanup_molecule_superseding_image }} (newest), {{ cleanup_molecule_unused_image }} and {{ cleanup_molecule_built_image }} (no newer version)"
               - "kept: volumes {{ cleanup_molecule_used_volume }} (with its contents) and {{ cleanup_molecule_named_volume }}"
               - "kept: network {{ cleanup_molecule_network }}"
               - "uninstalled: the journald autovacuum units and purge-old-kernels"

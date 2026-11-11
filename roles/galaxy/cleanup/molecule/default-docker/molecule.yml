@@ -67,6 +67,10 @@ provisioner:
         # if a newer image of its repository exists.
         system_cleanup_docker_config_superseded_images_grace_period_days: 0
 
+        # Same as above: the build cache prepare.yml creates is minutes old,
+        # and when a build last used it cannot be backdated.
+        system_cleanup_docker_config_build_cache_grace_period_days: 0
+
         # The default scenario covers the journald autovacuum units being
         # installed. Here they are turned off: prepare.yml installs and enables
         # stand-ins for them, and verify.yml asserts that the role removed them.
@@ -93,6 +97,7 @@ provisioner:
         cleanup_molecule_unused_image: molecule-cleanup-unused:latest
         cleanup_molecule_superseded_image: molecule-cleanup-app:1
         cleanup_molecule_superseding_image: molecule-cleanup-app:2
+        cleanup_molecule_built_image: molecule-cleanup-built:latest
         cleanup_molecule_used_volume: molecule-cleanup-volume-used
         cleanup_molecule_named_volume: molecule-cleanup-volume-named
         cleanup_molecule_network: molecule-cleanup-network

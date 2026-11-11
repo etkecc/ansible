@@ -66,7 +66,7 @@ The destructive half: `system_cleanup_docker` with the `start` tag actually pres
 
 It also covers the role uninstalling what it no longer should have: `system_cleanup_logs` and `system_cleanup_kernels` are off, and stand-ins for the journald autovacuum units (installed and enabled) and for `purge-old-kernels` (at the role's path and at `/usr/local/bin`, where earlier versions of the role installed it), put in place before the role runs, are asserted to be stopped, disabled and removed afterwards.
 
-An empty Docker daemon is filled with a running container, a stopped one, the image the running container uses, an unused image which is the only one of its repository, two unused images of another repository (one superseded by the other), a named volume in use, an unused named volume, an anonymous volume nothing references any more, and a network attached to nothing. After the role has run, the stopped container, the superseded image and the anonymous volume are gone, and everything else — including the contents of the volume in use — is still there.
+An empty Docker daemon is filled with a running container, a stopped one, the image the running container uses, an unused image which is the only one of its repository, two unused images of another repository (one superseded by the other), a locally built image and the build cache it left behind, a named volume in use, an unused named volume, an anonymous volume nothing references any more, and a network attached to nothing. After the role has run, the stopped container, the superseded image, the build cache and the anonymous volume are gone, and everything else — including the contents of the volume in use — is still there.
 
 Three of those are worth spelling out:
 

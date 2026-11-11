@@ -5,7 +5,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 # Removes Docker images that have been superseded by a newer image of the same
-# repository for a while, and optionally stopped containers and anonymous volumes.
+# repository for a while, build cache which no build has used for a while, and
+# optionally stopped containers and anonymous volumes.
 #
 # An image is removed only when:
 #
@@ -42,6 +43,9 @@ STOPPED_CONTAINER_STATUSES = ("created", "exited", "dead")
 
 SIZE_PATTERN = re.compile(r"^([0-9.]+)\s*([kMGTP]?B)$")
 SIZE_UNITS = {"B": 1, "kB": 1e3, "MB": 1e6, "GB": 1e9, "TB": 1e12, "PB": 1e15}
+
+# `docker builder prune` ends with `Total:\t<size>` (or `Total reclaimed space: <size>` on older versions).
+BUILD_CACHE_TOTAL_PATTERN = re.compile(r"^Total(?: reclaimed space)?:\s*(\S+)$", re.MULTILINE)
 
 TIME_PATTERN = re.compile(
     r"^(\d{4})-(\d\d)-(\d\d)T(\d\d):(\d\d):(\d\d)(\.\d+)?(Z|[+-]\d\d:\d\d)$"
@@ -118,19 +122,29 @@ def format_size(size):
             return "%.1f %s" % (size, unit)
 
 
+def parse_size(value):
+    match = SIZE_PATTERN.match(value or "")
+    if match is None:
+        return None
+    return float(match.group(1)) * SIZE_UNITS[match.group(2)]
+
+
+def disk_usage(kind, field="Size"):
+    """Returns a field of a `docker system df` row (e.g. `Images`, `Build Cache`) in bytes, or None if unknown."""
+    for line in docker_lines("system", "df", "--format", "json"):
+        entry = json.loads(line)
+        if entry.get("Type") == kind:
+            return parse_size(entry.get(field))
+    return None
+
+
 def images_disk_usage():
     """Returns how much disk space images take up, as `docker system df` reports it, or None if unknown.
 
     The sizes of individual images include layers they share with other images, so adding those up
     overstates what removing them frees. Measuring the total before and after does not.
     """
-    for line in docker_lines("system", "df", "--format", "json"):
-        entry = json.loads(line)
-        if entry.get("Type") == "Images":
-            match = SIZE_PATTERN.match(entry.get("Size", ""))
-            if match is not None:
-                return float(match.group(1)) * SIZE_UNITS[match.group(2)]
-    return None
+    return disk_usage("Images")
 
 
 def short_id(object_id):
@@ -208,6 +222,35 @@ def prune_volumes(dry_run):
     for volume in removed:
         log("%s anonymous volume %s" % (verb, volume))
     return len(removed)
+
+
+def prune_build_cache(config, dry_run):
+    """Removes build cache which no build has used for the grace period. Returns the bytes freed, or None if unknown.
+
+    Build cache is never needed: a build without it only takes longer. Unlike images, it is not
+    tied to a repository, so it goes by when a build last used it (which `until` filters on).
+    """
+    grace_period_days = config["build_cache_grace_period_days"]
+    description = "build cache unused for %d day(s)" % grace_period_days if grace_period_days > 0 else "all unused build cache"
+
+    if dry_run:
+        reclaimable = disk_usage("Build Cache", "Reclaimable")
+        log(
+            "Would remove %s (%s of build cache is unused in total)"
+            % (description, format_size(reclaimable) if reclaimable is not None else "an unknown amount")
+        )
+        return None
+
+    args = ["builder", "prune", "--all", "--force"]
+    if grace_period_days > 0:
+        args += ["--filter", "until=%dh" % (grace_period_days * 24)]
+    match = BUILD_CACHE_TOTAL_PATTERN.search(docker(*args))
+    freed = parse_size(match.group(1)) if match is not None else None
+    if freed is None:
+        log("Removed %s (freeing an unknown amount)" % description)
+    elif freed > 0:
+        log("Removed %s (freeing %s)" % (description, format_size(freed)))
+    return freed
 
 
 class Image:
@@ -341,7 +384,7 @@ def prune_images(config, dry_run):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Removes superseded Docker images and other Docker leftovers.")
+    parser = argparse.ArgumentParser(description="Removes superseded Docker images, unused build cache and other Docker leftovers.")
     parser.add_argument("--config", default=DEFAULT_CONFIG_PATH, help="config file (default: %(default)s)")
     parser.add_argument("--dry-run", action="store_true", help="report what would be removed, without removing anything")
     args = parser.parse_args()
@@ -353,11 +396,13 @@ def main():
             log("Dry run: nothing will be removed")
 
         containers = images = volumes = 0
-        freed = None
+        freed = build_cache_freed = None
         if config["remove_stopped_containers"]:
             containers = prune_containers(dry_run)
         if config["remove_superseded_images"]:
             images, freed = prune_images(config, dry_run)
+        if config["remove_build_cache"]:
+            build_cache_freed = prune_build_cache(config, dry_run)
         if config["remove_anonymous_volumes"]:
             volumes = prune_volumes(dry_run)
     except CleanupError as error:
@@ -365,13 +410,14 @@ def main():
         return 1
 
     log(
-        "Summary: %s %d stopped container(s), %d image(s)%s and %d anonymous volume(s)"
+        "Summary: %s %d stopped container(s), %d image(s)%s and %d anonymous volume(s)%s"
         % (
             "would remove" if dry_run else "removed",
             containers,
             images,
             " (freeing %s of image storage)" % format_size(freed) if freed is not None else "",
             volumes,
+            "; freed %s of build cache" % format_size(build_cache_freed) if build_cache_freed is not None else "",
         )
     )
     return 0

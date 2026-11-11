@@ -125,6 +125,31 @@
         - "{{ cleanup_molecule_superseded_image }}"
         - "{{ cleanup_molecule_superseding_image }}"
 
+    # Leaves build cache behind, which the role is supposed to reap. The image
+    # itself is the only one of its repository, so it is kept.
+    - name: Ensure an image is built, leaving build cache behind
+      ansible.builtin.command:
+        cmd: "docker build --tag {{ cleanup_molecule_built_image }} -"
+        stdin: |
+          FROM {{ cleanup_molecule_docker_image }}
+          RUN echo built > /built
+      register: cleanup_molecule_docker_build
+      changed_when: cleanup_molecule_docker_build.rc == 0
+
+    - name: Read how much build cache there is
+      ansible.builtin.command:
+        cmd: docker system df --format json
+      register: cleanup_molecule_docker_df
+      changed_when: false
+
+    - name: Assert that the build left build cache behind
+      vars:
+        cleanup_molecule_build_cache: "{{ cleanup_molecule_docker_df.stdout_lines | map('from_json') | selectattr('Type', 'equalto', 'Build Cache') | first }}"
+      ansible.builtin.assert:
+        that: cleanup_molecule_build_cache.TotalCount | int > 0
+        fail_msg: "`docker system df` reports no build cache after a build: {{ cleanup_molecule_build_cache }}"
+        success_msg: "The build left {{ cleanup_molecule_build_cache.TotalCount }} build cache record(s) behind"
+
     # Without `-v`, so the anonymous volume outlives the container and becomes
     # the dangling volume `docker volume prune` is meant to find.
     - name: Ensure the seed container is removed while its volume is kept
@@ -215,6 +240,7 @@
         - "docker image inspect {{ cleanup_molecule_unused_image }}"
         - "docker image inspect {{ cleanup_molecule_superseded_image }}"
         - "docker image inspect {{ cleanup_molecule_superseding_image }}"
+        - "docker image inspect {{ cleanup_molecule_built_image }}"
         - "docker volume inspect {{ cleanup_molecule_used_volume }}"
         - "docker volume inspect {{ cleanup_molecule_named_volume }}"
         - "docker volume inspect {{ cleanup_molecule_docker_volumes.stdout }}"

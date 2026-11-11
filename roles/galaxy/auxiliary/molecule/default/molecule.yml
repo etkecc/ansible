@@ -110,6 +110,13 @@ provisioner:
             src: "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}/files/binary.dat"
             mode: "0600"
 
+          # `sensitive` hides the item from Ansible's output (`no_log`, no
+          # diff). The file itself must come out exactly as an ordinary one.
+          - dest: /var/lib/molecule-aux/sensitive.txt
+            content: "rendered-by-the-aux-role sensitive\n"
+            mode: "0600"
+            sensitive: true
+
         # ------------------------------------------------------------------
         # Packages
         #

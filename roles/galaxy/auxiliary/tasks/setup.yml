@@ -14,6 +14,10 @@
     mode: "{{ item.mode | default(aux_directory_default_mode) }}"
   with_items: "{{ aux_directory_definitions }}"
 
+# Sensitive files go through a separate task (below), selected in the loop
+# rather than skipped with `when`: a skipped item is printed too. This task
+# sets neither `diff` nor `no_log`, so it keeps whatever the run and the caller
+# decide (`--diff`, an inherited `no_log: true`, ...).
 - name: Ensure AUX files are created
   ansible.builtin.copy:
     src: "{{ item.src if 'src' in item else omit }}"
@@ -22,9 +26,30 @@
     owner: "{{ item.owner | default(aux_file_default_owner) }}"
     group: "{{ item.group | default(aux_file_default_group) }}"
     mode: "{{ item.mode | default(aux_file_default_mode) }}"
-  with_items: "{{ aux_file_definitions }}"
+  with_items: "{{ aux_file_definitions | zip(aux_file_definitions_sensitivity) | rejectattr('1') | map(attribute='0') | list }}"
   loop_control:
     label: "{{ item.dest }}"
+  vars:
+    aux_file_definitions_sensitivity: "{{ aux_file_definitions | map(attribute='sensitive', default=aux_file_default_sensitive) | map('bool') | list }}"
+
+# A sensitive file's content must show neither in --diff output nor in the
+# loop item that verbose output (-v and up) prints, so `diff: false` alone is
+# not enough.
+- name: Ensure sensitive AUX files are created
+  ansible.builtin.copy:
+    src: "{{ item.src if 'src' in item else omit }}"
+    content: "{{ item.content if 'content' in item else omit }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ item.owner | default(aux_file_default_owner) }}"
+    group: "{{ item.group | default(aux_file_default_group) }}"
+    mode: "{{ item.mode | default(aux_file_default_mode) }}"
+  with_items: "{{ aux_file_definitions | zip(aux_file_definitions_sensitivity) | selectattr('1') | map(attribute='0') | list }}"
+  loop_control:
+    label: "{{ item.dest }}"
+  vars:
+    aux_file_definitions_sensitivity: "{{ aux_file_definitions | map(attribute='sensitive', default=aux_file_default_sensitive) | map('bool') | list }}"
+  diff: false
+  no_log: true
 
 - name: Ensure AUX packages are installed
   ansible.builtin.package:

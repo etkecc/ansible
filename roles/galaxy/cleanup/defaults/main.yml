@@ -12,7 +12,7 @@ system_cleanup_base_path: "/{{ system_cleanup_identifier }}"
 system_cleanup_bin_path: "{{ system_cleanup_base_path }}/bin"
 system_cleanup_config_path: "{{ system_cleanup_base_path }}/config"
 
-# Clean up Docker: remove superseded images and stopped containers (and optionally anonymous volumes).
+# Clean up Docker: remove superseded images, unused build cache and stopped containers (and optionally anonymous volumes).
 # Networks and named volumes are never removed.
 #
 # This installs a script (`cleanup-docker` in `system_cleanup_bin_path`) and its config (`docker.json` in
@@ -36,6 +36,15 @@ system_cleanup_docker_config_superseded_images_grace_period_days: 3
 
 # Repositories (shell-style patterns, e.g. `localhost/*`, `ghcr.io/mailcow/*` or `postgres`) whose images are never removed.
 system_cleanup_docker_config_superseded_images_exclude_patterns: []
+
+# Remove build cache which no build has used for at least `system_cleanup_docker_config_build_cache_grace_period_days`
+# (`docker builder prune --all --filter until=...`; 0 removes all build cache not in use by a running build).
+#
+# Build cache is only an optimization: builds without it take longer, but give the same result.
+# Roles which build images locally (e.g. to customize an upstream image) leave behind build cache
+# for each version they build, and nothing else removes it.
+system_cleanup_docker_config_remove_build_cache: true
+system_cleanup_docker_config_build_cache_grace_period_days: 3
 
 # Remove anonymous volumes that no container uses (`docker volume prune`, which leaves named volumes alone).
 # Off by default, because volumes hold data.

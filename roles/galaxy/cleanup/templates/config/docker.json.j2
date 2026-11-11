@@ -4,5 +4,7 @@
   "remove_superseded_images": {{ system_cleanup_docker_config_remove_superseded_images | bool | to_json }},
   "superseded_images_grace_period_days": {{ system_cleanup_docker_config_superseded_images_grace_period_days | int | to_json }},
   "superseded_images_exclude_patterns": {{ system_cleanup_docker_config_superseded_images_exclude_patterns | to_json }},
+  "remove_build_cache": {{ system_cleanup_docker_config_remove_build_cache | bool | to_json }},
+  "build_cache_grace_period_days": {{ system_cleanup_docker_config_build_cache_grace_period_days | int | to_json }},
   "remove_anonymous_volumes": {{ system_cleanup_docker_config_remove_anonymous_volumes | bool | to_json }}
 }
