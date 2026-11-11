@@ -8,7 +8,7 @@
 * Coturn: 4.18.0
 * Discord Bridge: v0.7.7
 * Draupnir: v3.2.0
-* Element: v1.12.33
+* Element: v1.12.34
 * Etherpad: 3.3.16
 * Exim Relay: 4.99.5-r0-4
 * Firezone: 0.7.36
@@ -72,7 +72,7 @@
 * Synapse Reverse Proxy Companion: 1.31.8-alpine
 * Synapse S3 Storage Provider: 1.7.0
 * Telegram Bridge: v0.2610.0
-* Traefik: v3.7.17
+* Traefik: v3.7.18
 * Traefik Certs Dumper: v2.11.4
 * Traefik Proxy Protocol: 1
 * Twitter Bridge: v0.2609.0
