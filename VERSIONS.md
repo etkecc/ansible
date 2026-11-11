@@ -1,5 +1,5 @@
 * Alpine: edge
-* Authentication Service: 1.28.0
+* Authentication Service: 1.29.0
 * Baibot: v2026.11.09.0
 * Bluesky Bridge: v0.2510.0
 * Buscarron: v1.5.0
@@ -63,9 +63,9 @@
 * Spam Checker Mjolnir Antispam: v2.0.2
 * Spam Checker Synapse Simple Antispam: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.44.1
-* Steam Bridge: 1.4.0
+* Steam Bridge: 1.5.0
 * Sygnal: v0.17.0
-* Synapse: v1.164.2
+* Synapse: v1.165.0
 * Synapse Auto Compressor: v0.0.3
 * Synapse Compress State: v0.0.3
 * Synapse HTTP Antispam: v0.5.1
