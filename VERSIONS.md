@@ -9,7 +9,7 @@
 * Discord Bridge: v0.7.7
 * Draupnir: v3.2.0
 * Element: v1.12.34
-* Etherpad: 3.3.16
+* Etherpad: 3.3.17
 * Exim Relay: 4.99.5-r0-4
 * Firezone: 0.7.36
 * Fluffychat: v2.11.5
@@ -62,7 +62,7 @@
 * Slack Bridge: v0.2610.0
 * Spam Checker Mjolnir Antispam: v2.0.2
 * Spam Checker Synapse Simple Antispam: 5ab711971e3a4541a7a40310ff85e17f8262cc05
-* Static Files: 2.44.1
+* Static Files: 2.44.2
 * Steam Bridge: 1.5.0
 * Sygnal: v0.17.0
 * Synapse: v1.165.0

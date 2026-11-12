@@ -82,8 +82,8 @@ provisioner:
         etherpad_database_type: postgres
         etherpad_database_postgres_hostname: "{{ postgres_connection_hostname }}"
         etherpad_database_postgres_port: "{{ postgres_connection_port }}"
-        etherpad_database_postgres_username: my_database_username
-        etherpad_database_postgres_password: my_database_password
+        etherpad_database_postgres_username: /#@my_database_username?%
+        etherpad_database_postgres_password: /#@my_database_password?%
         etherpad_database_name: etherpad
         etherpad_systemd_required_services_list_auto: |
           {{

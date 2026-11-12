@@ -80,8 +80,8 @@ provisioner:
 
         # Variables required for Etherpad to connect to the MariaDB database (via Unix socket)
         etherpad_database_type: mysql
-        etherpad_database_mysql_username: my_database_username
-        etherpad_database_mysql_password: my_database_password
+        etherpad_database_mysql_username: /#@my_database_username?%
+        etherpad_database_mysql_password: /#@my_database_password?%
         etherpad_database_name: etherpad
         etherpad_database_mysql_socket_enabled: true
         etherpad_database_mysql_socket_path_host: "{{ mariadb_run_path }}"
