@@ -20,7 +20,7 @@
 * Grafana: 13.0.2
 * Heisenbridge: 1.15.4
 * Honoroit: v0.9.30
-* Hookshot Bridge: 7.6.0
+* Hookshot Bridge: 7.6.2
 * Hydrogen: v0.5.1
 * Image: 1.4.5-2.2.0
 * Jitsi: stable-11248
@@ -31,7 +31,7 @@
 * Line Bridge: 412eda7f028f0ee946d6fe584c64c7e97f27c7a7
 * Linkding: 1.47.0
 * LinkedIn Bridge: v0.2609.0
-* Livekit JWT Service: 0.9.0
+* Livekit JWT Service: 0.10.0
 * Livekit Server: v1.13.11
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.6.0

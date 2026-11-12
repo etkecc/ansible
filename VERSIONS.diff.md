@@ -12,6 +12,8 @@
 * [Etherpad](https://github.com/ether/etherpad-lite): [3.3.15](https://github.com/ether/etherpad-lite/releases/tag/3.3.15) ⇾ [3.3.17](https://github.com/ether/etherpad-lite/releases/tag/3.3.17)
 * [Exim Relay](https://github.com/devture/exim-relay): [4.99.5-r0-2](https://github.com/devture/exim-relay/releases/tag/4.99.5-r0-2) ⇾ [4.99.5-r0-4](https://github.com/devture/exim-relay/releases/tag/4.99.5-r0-4)
 * [Fluffychat](https://github.com/krille-chan/fluffychat): [v2.11.4](https://github.com/krille-chan/fluffychat/releases/tag/v2.11.4) ⇾ [v2.11.5](https://github.com/krille-chan/fluffychat/releases/tag/v2.11.5)
+* [Hookshot Bridge](https://github.com/matrix-org/matrix-hookshot): [7.6.0](https://github.com/matrix-org/matrix-hookshot/releases/tag/7.6.0) ⇾ [7.6.2](https://github.com/matrix-org/matrix-hookshot/releases/tag/7.6.2)
+* [Livekit JWT Service](https://github.com/element-hq/lk-jwt-service): [0.9.0](https://github.com/element-hq/lk-jwt-service/releases/tag/v0.9.0) ⇾ [0.10.0](https://github.com/element-hq/lk-jwt-service/releases/tag/v0.10.0)
 * [Prometheus](https://github.com/prometheus/prometheus): [v3.15.1](https://github.com/prometheus/prometheus/releases/tag/v3.15.1) ⇾ [v3.16.0](https://github.com/prometheus/prometheus/releases/tag/v3.16.0)
 * Static Files: 2.44.1 ⇾ 2.44.2
 * [Steam Bridge](https://github.com/jasonlaguidice/matrix-steam-bridge): [1.4.0](https://github.com/jasonlaguidice/matrix-steam-bridge/releases/tag/v1.4.0) ⇾ [1.5.0](https://github.com/jasonlaguidice/matrix-steam-bridge/releases/tag/v1.5.0)
