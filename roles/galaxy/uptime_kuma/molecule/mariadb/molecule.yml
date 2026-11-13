@@ -55,8 +55,8 @@ provisioner:
 
         # Variables required for Forgejo to connect to the MariaDB database (via Unix socket)
         uptime_kuma_database_type: mariadb
-        uptime_kuma_database_username: my_database_username
-        uptime_kuma_database_password: my_database_password
+        uptime_kuma_database_username: /#@my_database_username?%
+        uptime_kuma_database_password: /#@my_database_password?%
         uptime_kuma_database_name: uptimekuma
         uptime_kuma_database_socket_enabled: true
         uptime_kuma_database_socket_path_host: "{{ mariadb_run_path }}"
