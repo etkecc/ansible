@@ -23,7 +23,7 @@
   version: v8.3.2-1
   name: peertube
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-radicale.git
-  version: v3.9.0.0-0
+  version: v3.9.1.0-0
   name: radicale
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-ssh.git
   version: v1.0.3-1

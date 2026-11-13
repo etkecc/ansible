@@ -1,6 +1,6 @@
 * Alpine: edge
 * Authentication Service: 1.29.0
-* Baibot: v2026.11.09.0
+* Baibot: v2026.11.13.0
 * Bluesky Bridge: v0.2510.0
 * Buscarron: v1.5.0
 * Cinny: v4.12.8
@@ -46,8 +46,8 @@
 * Postgres Container Image V13: 13.23
 * Postgres Container Image V14: 14.25
 * Postgres Container Image V15: 15.20
-* Postgres Container Image V16: 16.15
-* Postgres Container Image V17: 17.11
+* Postgres Container Image V16: 16.16
+* Postgres Container Image V17: 17.12
 * Postgres Container Image V18: 18.6
 * Postgres Container Image V9: 9.6.24
 * Postmoogle Bridge: v0.9.31
@@ -55,7 +55,7 @@
 * Prometheus Nginxlog Exporter: v1.11.0
 * Prometheus Node Exporter: v1.12.1
 * Prometheus Postgres Exporter: v0.20.1
-* Radicale: 3.9.0.0
+* Radicale: 3.9.1.0
 * Sable: 1.22.11
 * Schildichat: 1.11.109-sc.0.test.0
 * Signal Bridge: v0.2610.0

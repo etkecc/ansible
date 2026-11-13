@@ -25,10 +25,13 @@ on:  # yamllint disable-line rule:truthy
       - "REUSE.toml"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   molecule:
     name: Run Molecule scenario '${{ matrix.scenario }}' on ${{ matrix.distro }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     # Same-repository pull requests already run via the push event;
     # run pull_request jobs only for pull requests from forks.
@@ -72,6 +75,15 @@ jobs:
           path: ~/.ansible/collections
           key: ansible-collections-${{ hashFiles('radicale/molecule/*/requirements.yml') }}
 
+      # The runner ships AppArmor profiles for individual programs (wg-quick, mosquitto, ...),
+      # which attach by path.
+      # Docker inside the Molecule instance cannot confine its containers with AppArmor,
+      # so those profiles end up applying to the programs inside the containers under test and break them.
+      # On a real host, Docker's own profile confines the containers,
+      # so the host's per-program profiles do not attach.
+      - name: Unload the runner's AppArmor profiles
+        run: sudo aa-teardown
+
       - name: Run Molecule
         working-directory: radicale
         run: molecule test --scenario-name ${{ matrix.scenario }}
@@ -83,7 +95,7 @@ jobs:
   # green, so a main-side rerun would be redundant.
   selfbuild-gate:
     name: Check whether the self-build scenario needs to run
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     if: >-
       github.event_name == 'workflow_dispatch'
@@ -120,7 +132,7 @@ jobs:
 
   molecule-selfbuild:
     name: Run Molecule scenario 'default-selfbuild' on ${{ matrix.distro }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     needs: selfbuild-gate
     if: needs.selfbuild-gate.outputs.run == 'true'
@@ -158,6 +170,15 @@ jobs:
         with:
           path: ~/.ansible/collections
           key: ansible-collections-${{ hashFiles('radicale/molecule/default-selfbuild/requirements.yml') }}
+
+      # The runner ships AppArmor profiles for individual programs (wg-quick, mosquitto, ...),
+      # which attach by path.
+      # Docker inside the Molecule instance cannot confine its containers with AppArmor,
+      # so those profiles end up applying to the programs inside the containers under test and break them.
+      # On a real host, Docker's own profile confines the containers,
+      # so the host's per-program profiles do not attach.
+      - name: Unload the runner's AppArmor profiles
+        run: sudo aa-teardown
 
       - name: Run Molecule
         working-directory: radicale
