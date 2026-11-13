@@ -45,7 +45,7 @@
 * Postgres Container Image V12: 12.22
 * Postgres Container Image V13: 13.23
 * Postgres Container Image V14: 14.25
-* Postgres Container Image V15: 15.19
+* Postgres Container Image V15: 15.20
 * Postgres Container Image V16: 16.15
 * Postgres Container Image V17: 17.11
 * Postgres Container Image V18: 18.6
