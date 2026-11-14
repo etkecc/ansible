@@ -15,6 +15,6 @@
 * [Postgres Container Image V16](https://github.com/postgres/postgres): 16.15 ⇾ 16.16
 * [Postgres Container Image V17](https://github.com/postgres/postgres): 17.11 ⇾ 17.12
 * [Postgres Container Image V18](https://github.com/postgres/postgres): 18.6 ⇾ 18.7
-* [Radicale](https://github.com/tomsquest/docker-radicale): [3.9.0.0](https://github.com/tomsquest/docker-radicale/releases/tag/3.9.0.0) ⇾ [3.9.1.0](https://github.com/tomsquest/docker-radicale/releases/tag/3.9.1.0)
+* [Radicale](https://github.com/tomsquest/docker-radicale): [3.9.0.0](https://github.com/tomsquest/docker-radicale/releases/tag/3.9.0.0) ⇾ [3.9.1.1](https://github.com/tomsquest/docker-radicale/releases/tag/3.9.1.1)
 * [Traefik](https://github.com/traefik/traefik): [v3.7.18](https://github.com/traefik/traefik/releases/tag/v3.7.18) ⇾ [v3.7.19](https://github.com/traefik/traefik/releases/tag/v3.7.19)
 * [Uptime Kuma](https://github.com/louislam/uptime-kuma): [2.5.9](https://github.com/louislam/uptime-kuma/releases/tag/2.5.9) ⇾ [2.5.11](https://github.com/louislam/uptime-kuma/releases/tag/2.5.11)
