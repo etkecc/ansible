@@ -5,7 +5,7 @@
 * Buscarron: v1.5.0
 * Cinny: v4.12.8
 * Container Socket Proxy: v0.5.0
-* Coturn: 4.18.0
+* Coturn: 4.19.0
 * Discord Bridge: v0.7.7
 * Draupnir: v3.2.0
 * Element: v1.12.35
@@ -72,7 +72,7 @@
 * Synapse Reverse Proxy Companion: 1.31.8-alpine
 * Synapse S3 Storage Provider: 1.7.0
 * Telegram Bridge: v0.2610.0
-* Traefik: v3.7.18
+* Traefik: v3.7.19
 * Traefik Certs Dumper: v2.11.4
 * Traefik Proxy Protocol: 1
 * Twitter Bridge: v0.2609.0
