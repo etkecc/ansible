@@ -189,7 +189,7 @@ postgres_container_image_v17: "{{ postgres_container_image_registry_prefix }}{{ 
 postgres_container_image_v17_version: "17.12"
 
 postgres_container_image_v18: "{{ postgres_container_image_registry_prefix }}{{ postgres_container_image_name }}:{{ postgres_container_image_v18_version }}{{ postgres_container_image_suffix }}"
-postgres_container_image_v18_version: "18.6"
+postgres_container_image_v18_version: "18.7"
 
 postgres_container_image_by_major_version:
   "9": "{{ postgres_container_image_v9 }}"

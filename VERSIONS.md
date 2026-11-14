@@ -1,6 +1,6 @@
 * Alpine: edge
 * Authentication Service: 1.29.0
-* Baibot: v2026.11.13.0
+* Baibot: v2026.11.14.2
 * Bluesky Bridge: v0.2510.0
 * Buscarron: v1.5.0
 * Cinny: v4.12.8
@@ -38,7 +38,7 @@
 * Meta Instagram Bridge: v0.2610.0
 * Meta Messenger Bridge: v0.2610.0
 * Miniflux: 2.3.5
-* Ntfy: v2.37.2
+* Ntfy: v2.38.0
 * Peertube: v8.3.2
 * Postgres Container Image V10: 10.23
 * Postgres Container Image V11: 11.22
@@ -48,7 +48,7 @@
 * Postgres Container Image V15: 15.20
 * Postgres Container Image V16: 16.16
 * Postgres Container Image V17: 17.12
-* Postgres Container Image V18: 18.6
+* Postgres Container Image V18: 18.7
 * Postgres Container Image V9: 9.6.24
 * Postmoogle Bridge: v0.9.31
 * Prometheus: v3.16.0
