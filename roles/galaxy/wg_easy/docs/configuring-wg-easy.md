@@ -206,9 +206,7 @@ After doing so, you'll wish to restart `iptables`/`ip6tables`. Restarting iptabl
 
 ### Integrating with Prometheus (optional)
 
-WireGuard Easy can natively expose metrics to Prometheus.
-
-If you are looking for an integration, you can check out the MASH playbook. Refer to [this section of the documentation on the playbook](https://github.com/mother-of-all-self-hosting/mash-playbook/blob/main/docs/services/wg-easy.md#integrating-with-prometheus-optional) for more information.
+WireGuard Easy can natively expose metrics to Prometheus. If you are looking for an integration, you can check out the MASH Ansible playbook. Please refer to the service's documentation over there for more information.
 
 ### Extending the configuration
 

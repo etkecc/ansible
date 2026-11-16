@@ -64,6 +64,8 @@
         # wg-easy answers this without authentication from the moment its HTTP
         # listener is up, which makes it the readiness probe. It also reports the
         # version of the running wg-easy, asserted against the pinned one below.
+        # It answers 500 if wg-easy's GitHub version check fails, so this relies
+        # on the role disabling that check by default.
         - name: Wait for WireGuard Easy to report its version (up to 10m)
           ansible.builtin.uri:
             url: "{{ wg_easy_verify_base_url }}/api/information"

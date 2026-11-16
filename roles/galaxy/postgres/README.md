@@ -1,5 +1,8 @@
 <!--
+SPDX-FileCopyrightText: 2022 Slavi Pantaleev
 SPDX-FileCopyrightText: 2026 Suguru Hirahara
+
+SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
 # Postgres Ansible role

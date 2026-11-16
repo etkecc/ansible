@@ -1,5 +1,10 @@
 #jinja2: lstrip_blocks: True
 #!/bin/bash
+{#
+SPDX-FileCopyrightText: 2022-2026 Slavi Pantaleev
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+#}
 
 # Runs psql inside the (running) Postgres container, connecting the same way the managed databases preparation does.
 # The credentials come from the env-postgres-psql file, which Docker reads itself, so that they do not appear on any command line.

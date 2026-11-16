@@ -375,6 +375,14 @@ wg_easy_environment_variables_additional_variable_port: 8080
 # Set this to `true` if you'll be accessing via HTTP.
 wg_easy_environment_variables_additional_variable_insecure: "{{ wg_easy_container_labels_traefik_enabled and not wg_easy_container_labels_traefik_tls}}"
 
+# Controls the `DISABLE_VERSION_CHECK` environment variable.
+# When the check is enabled, wg-easy asks the GitHub API for its latest release and shows an "update available" notice in its web UI when a newer release exists.
+# If that request fails (for example, due to GitHub rate limits or no outbound access), wg-easy's `/api/information` endpoint fails as well
+# (for up to an hour, as wg-easy caches the failure), which can hide some settings in the web UI.
+# The check is disabled by default, because this role pins the wg-easy version (see `wg_easy_version`)
+# and updates should come through the role instead.
+wg_easy_environment_variables_additional_variable_disable_version_check: true
+
 # Controls the `NUXT_APP_BASE_URL` environment variable.
 # The base URL of the Nuxt.js application.
 wg_easy_environment_variables_additional_variable_nuxt_app_base_url: "{{ wg_easy_path_prefix }}"

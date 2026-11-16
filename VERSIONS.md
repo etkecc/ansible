@@ -14,8 +14,8 @@
 * Firezone: 0.7.36
 * Fluffychat: v2.11.5
 * Google Chat Bridge: v0.5.2
-* Google Messages Bridge: v0.2610.0
-* Google Voice Bridge: v0.2605.0
+* Google Messages Bridge: v0.2611.0
+* Google Voice Bridge: v0.2611.0
 * Gotosocial: 0.22.3
 * Grafana: 13.0.2
 * Heisenbridge: 1.15.4
@@ -30,7 +30,7 @@
 * Languagetool: 6.8
 * Line Bridge: 412eda7f028f0ee946d6fe584c64c7e97f27c7a7
 * Linkding: 1.47.0
-* LinkedIn Bridge: v0.2609.0
+* LinkedIn Bridge: v0.2611.0
 * Livekit JWT Service: 0.10.0
 * Livekit Server: v1.13.11
 * Matrix Reminder Bot: v0.4.0
@@ -58,7 +58,7 @@
 * Radicale: 3.9.1.1
 * Sable: 1.22.11
 * Schildichat: 1.11.109-sc.0.test.0
-* Signal Bridge: v0.2610.0
+* Signal Bridge: v0.2611.0
 * Slack Bridge: v0.2610.0
 * Spam Checker Mjolnir Antispam: v2.0.2
 * Spam Checker Synapse Simple Antispam: 5ab711971e3a4541a7a40310ff85e17f8262cc05

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022-2025 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 ---
 # This utility aims to determine if there is some existing Postgres version in use or not.
 # If there is, it also tries to detect the container image that corresponds to that version.
