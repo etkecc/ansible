@@ -6,7 +6,7 @@
 
 ### Component Updates
 
-* [Baibot](https://github.com/etkecc/baibot): [v2026.11.09.0](https://github.com/etkecc/baibot/releases/tag/v2026.11.09.0) ⇾ [v2026.11.15.0](https://github.com/etkecc/baibot/releases/tag/v2026.11.15.0)
+* [Baibot](https://github.com/etkecc/baibot): [v2026.11.09.0](https://github.com/etkecc/baibot/releases/tag/v2026.11.09.0) ⇾ [v2026.11.16.0](https://github.com/etkecc/baibot/releases/tag/v2026.11.16.0)
 * [Coturn](https://github.com/coturn/coturn): 4.18.0 ⇾ 4.19.0
 * [Element](https://github.com/element-hq/element-web): [v1.12.34](https://github.com/element-hq/element-web/releases/tag/v1.12.34) ⇾ [v1.12.35](https://github.com/element-hq/element-web/releases/tag/v1.12.35)
 * [Ntfy](https://github.com/binwiederhier/ntfy): [v2.37.2](https://github.com/binwiederhier/ntfy/releases/tag/v2.37.2) ⇾ [v2.38.0](https://github.com/binwiederhier/ntfy/releases/tag/v2.38.0)
