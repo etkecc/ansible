@@ -4,7 +4,7 @@
 * Bluesky Bridge: v0.2510.0
 * Buscarron: v1.5.0
 * Cinny: v4.12.8
-* Container Socket Proxy: v0.5.0
+* Container Socket Proxy: 3.4
 * Coturn: 4.19.0
 * Discord Bridge: v0.7.7
 * Draupnir: v3.2.0

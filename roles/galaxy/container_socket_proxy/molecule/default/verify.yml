@@ -83,26 +83,31 @@
         # produces an unusable image cannot pass here.
         #
         # The Docker API cannot be asked for this - what it reports is the daemon
-        # behind the proxy. The image carries its own version as an OCI label
-        # instead, which the container inherits.
+        # behind the proxy. The image's tags name the haproxy series it is built
+        # from (e.g. `3.4`), and its OCI version label is just the upstream branch
+        # name, so the haproxy version that the image carries in its environment
+        # (and that the container inherits) is what identifies it.
         - name: Inspect the running Container Socket Proxy container
           ansible.builtin.command:
             cmd: docker inspect {{ container_socket_proxy_defaults.container_socket_proxy_identifier }}
           register: container_socket_proxy_inspect
           changed_when: false
 
-        - name: Determine the version of the running Container Socket Proxy
+        - name: Determine the haproxy version of the running Container Socket Proxy
           ansible.builtin.set_fact:
             container_socket_proxy_reported_version: >-
-              {{ (container_socket_proxy_inspect.stdout | from_json | first).Config.Labels['org.opencontainers.image.version'] | default('') }}
+              {{ (container_socket_proxy_inspect.stdout | from_json | first).Config.Env
+                 | select('match', '^HAPROXY_VERSION=') | map('regex_replace', '^HAPROXY_VERSION=', '')
+                 | first | default('') }}
 
-        - name: Assert the running Container Socket Proxy is the version this role installs
+        - name: Assert the running Container Socket Proxy is from the haproxy series this role installs
           ansible.builtin.assert:
             that: >-
-              (container_socket_proxy_reported_version | trim | regex_replace('^v', '')) ==
-              (container_socket_proxy_defaults.container_socket_proxy_version | regex_replace('^v', ''))
-            fail_msg: "Container Socket Proxy reports {{ container_socket_proxy_reported_version | trim | default('none') }}, expected {{ container_socket_proxy_defaults.container_socket_proxy_version }}"
-            success_msg: "Container Socket Proxy reports {{ container_socket_proxy_reported_version | trim }}"
+              (container_socket_proxy_reported_version | trim) is match(
+                '^' ~ (container_socket_proxy_defaults.container_socket_proxy_version | regex_replace('^v', '') | regex_escape) ~ '\\.'
+              )
+            fail_msg: "Container Socket Proxy reports haproxy {{ container_socket_proxy_reported_version | trim | default('none', true) }}, expected {{ container_socket_proxy_defaults.container_socket_proxy_version }}.x"
+            success_msg: "Container Socket Proxy reports haproxy {{ container_socket_proxy_reported_version | trim }}"
 
         # `ApiVersion` and `MinAPIVersion` are Docker's own, so their presence is
         # what separates a real daemon answer from any body haproxy could produce
