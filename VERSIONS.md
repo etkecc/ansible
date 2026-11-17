@@ -23,7 +23,7 @@
 * Hookshot Bridge: 7.6.2
 * Hydrogen: v0.5.1
 * Image: 1.4.5-2.2.0
-* Jitsi: stable-11248
+* Jitsi: stable-11509
 * Jitsi LDAP: 3
 * Jitsi User Verification: 19b69e543cdb99b16a939eeed921d7ed1da57d44
 * Ketesa: v1.5.2
@@ -35,8 +35,8 @@
 * Livekit Server: v1.13.11
 * Matrix Reminder Bot: v0.4.0
 * Maubot: v0.6.0
-* Meta Instagram Bridge: v0.2610.0
-* Meta Messenger Bridge: v0.2610.0
+* Meta Instagram Bridge: v0.2611.0
+* Meta Messenger Bridge: v0.2611.0
 * Miniflux: 2.3.5
 * Ntfy: v2.38.0
 * Peertube: v8.3.2
@@ -59,7 +59,7 @@
 * Sable: 1.22.11
 * Schildichat: 1.11.109-sc.0.test.0
 * Signal Bridge: v0.2611.0
-* Slack Bridge: v0.2610.0
+* Slack Bridge: v0.2611.0
 * Spam Checker Mjolnir Antispam: v2.0.2
 * Spam Checker Synapse Simple Antispam: 5ab711971e3a4541a7a40310ff85e17f8262cc05
 * Static Files: 2.44.3
@@ -71,7 +71,7 @@
 * Synapse HTTP Antispam: v0.5.1
 * Synapse Reverse Proxy Companion: 1.31.8-alpine
 * Synapse S3 Storage Provider: 1.7.0
-* Telegram Bridge: v0.2610.0
+* Telegram Bridge: v0.2611.0
 * Traefik: v3.7.19
 * Traefik Certs Dumper: v2.11.4
 * Traefik Proxy Protocol: 1
@@ -80,4 +80,4 @@
 * Valkey: 9.1.3
 * Vaultwarden: 1.37.5
 * Wg Easy: 15.5.0
-* WhatsApp Bridge: v0.2610.0
+* WhatsApp Bridge: v0.2611.0
