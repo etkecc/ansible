@@ -1,6 +1,6 @@
 * Alpine: edge
 * Authentication Service: 1.29.0
-* Baibot: v2026.11.16.0
+* Baibot: v2026.11.18.0
 * Bluesky Bridge: v0.2510.0
 * Buscarron: v1.5.0
 * Cinny: v4.12.8
@@ -9,7 +9,7 @@
 * Discord Bridge: v0.7.7
 * Draupnir: v3.2.0
 * Element: v1.12.35
-* Etherpad: 3.3.17
+* Etherpad: 3.3.19
 * Exim Relay: 4.99.5-r0-4
 * Firezone: 0.7.36
 * Fluffychat: v2.11.5
@@ -76,7 +76,7 @@
 * Traefik Certs Dumper: v2.11.4
 * Traefik Proxy Protocol: 1
 * Twitter Bridge: v0.2609.0
-* Uptime Kuma: 2.5.11
+* Uptime Kuma: 2.5.12
 * Valkey: 9.1.3
 * Vaultwarden: 1.37.5
 * Wg Easy: 15.5.0
