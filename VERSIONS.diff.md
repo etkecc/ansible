@@ -22,7 +22,7 @@
 * [Postgres Container Image V16](https://github.com/postgres/postgres): 16.15 ⇾ 16.16
 * [Postgres Container Image V17](https://github.com/postgres/postgres): 17.11 ⇾ 17.12
 * [Postgres Container Image V18](https://github.com/postgres/postgres): 18.6 ⇾ 18.7
-* [Radicale](https://github.com/tomsquest/docker-radicale): [3.9.0.0](https://github.com/tomsquest/docker-radicale/releases/tag/3.9.0.0) ⇾ [3.9.1.1](https://github.com/tomsquest/docker-radicale/releases/tag/3.9.1.1)
+* [Radicale](https://github.com/tomsquest/docker-radicale): [3.9.0.0](https://github.com/tomsquest/docker-radicale/releases/tag/3.9.0.0) ⇾ [3.9.2.0](https://github.com/tomsquest/docker-radicale/releases/tag/3.9.2.0)
 * [Signal Bridge](https://github.com/mautrix/signal): [v0.2610.0](https://github.com/mautrix/signal/releases/tag/v0.2610.0) ⇾ [v0.2611.0](https://github.com/mautrix/signal/releases/tag/v0.2611.0)
 * [Slack Bridge](https://github.com/mautrix/slack): [v0.2610.0](https://github.com/mautrix/slack/releases/tag/v0.2610.0) ⇾ [v0.2611.0](https://github.com/mautrix/slack/releases/tag/v0.2611.0)
 * Static Files: 2.44.2 ⇾ 2.44.3
