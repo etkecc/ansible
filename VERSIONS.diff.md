@@ -27,6 +27,7 @@
 * [Signal Bridge](https://github.com/mautrix/signal): [v0.2610.0](https://github.com/mautrix/signal/releases/tag/v0.2610.0) ⇾ [v0.2611.0](https://github.com/mautrix/signal/releases/tag/v0.2611.0)
 * [Slack Bridge](https://github.com/mautrix/slack): [v0.2610.0](https://github.com/mautrix/slack/releases/tag/v0.2610.0) ⇾ [v0.2611.0](https://github.com/mautrix/slack/releases/tag/v0.2611.0)
 * Static Files: 2.44.2 ⇾ 2.44.3
+* [Synapse Reverse Proxy Companion](https://github.com/element-hq/synapse): 1.31.8-alpine ⇾ 1.31.9-alpine
 * [Telegram Bridge](https://github.com/mautrix/telegram): [v0.2610.0](https://github.com/mautrix/telegram/releases/tag/v0.2610.0) ⇾ [v0.2611.0](https://github.com/mautrix/telegram/releases/tag/v0.2611.0)
 * [Traefik](https://github.com/traefik/traefik): [v3.7.18](https://github.com/traefik/traefik/releases/tag/v3.7.18) ⇾ [v3.7.19](https://github.com/traefik/traefik/releases/tag/v3.7.19)
 * [Uptime Kuma](https://github.com/louislam/uptime-kuma): [2.5.9](https://github.com/louislam/uptime-kuma/releases/tag/2.5.9) ⇾ [2.5.12](https://github.com/louislam/uptime-kuma/releases/tag/2.5.12)
