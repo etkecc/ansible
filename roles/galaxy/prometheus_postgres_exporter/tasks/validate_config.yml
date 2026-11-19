@@ -29,6 +29,29 @@
       "new": "prometheus_postgres_exporter_environment_variables_additional_variables"
     - { "old": "prometheus_postgres_exporter_database_ssl", "new": "prometheus_postgres_exporter_database_sslmode" }
     - { "old": "prometheus_postgres_exporter_container_image_force_pull", "new": "<removed> (the new community.docker.docker_image_pull module handles this natively)" }
+    - "old": "prometheus_postgres_exporter_env_variable_pg_exporter_auto_discover_databases"
+      "new": "prometheus_postgres_exporter_auto_discover_databases_enabled"
+    - "old": "prometheus_postgres_exporter_env_variable_pg_exporter_web_listen_address"
+      "new": "prometheus_postgres_exporter_web_listen_address"
+
+# postgres_exporter v0.21.0 deprecated these environment variables in favor of command-line flags and
+# will stop reading them in v0.22.0. `PG_EXPORTER_WEB_LISTEN_ADDRESS` is no longer read at all.
+- name: (Deprecation) Catch and report exporter environment variables replaced by command-line flags
+  ansible.builtin.fail:
+    msg: |-
+      `prometheus_postgres_exporter_environment_variables_additional_variables` sets environment variables
+      which the exporter no longer reads, or will stop reading: {{ prometheus_postgres_exporter_deprecated_environment_variables | join(', ') }}.
+      Pass the corresponding command-line flags via `prometheus_postgres_exporter_process_extra_arguments_custom` instead
+      (e.g. `PG_EXPORTER_WEB_TELEMETRY_PATH=/metrics` -> `--web.telemetry-path=/metrics`).
+      See https://github.com/prometheus-community/postgres_exporter/releases/tag/v0.21.0 for the flag of each variable.
+  vars:
+    prometheus_postgres_exporter_deprecated_environment_variables: >-
+      {{
+        prometheus_postgres_exporter_environment_variables_additional_variables
+        | regex_findall('^\s*(PG_EXPORTER_[A-Z_]+|DATA_SOURCE_URI|DATA_SOURCE_URI_FILE|DATA_SOURCE_USER_FILE|DATA_SOURCE_PASS_FILE)=', multiline=True)
+        | unique
+      }}
+  when: prometheus_postgres_exporter_deprecated_environment_variables | length > 0
 
 - name: (Deprecation) Catch and report renamed variables for Traefik labels
   ansible.builtin.fail:

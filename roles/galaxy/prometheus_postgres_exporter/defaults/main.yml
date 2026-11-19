@@ -19,7 +19,7 @@ prometheus_postgres_exporter_identifier: prometheus-postgres-exporter
 prometheus_postgres_exporter_base_path: "/{{ prometheus_postgres_exporter_identifier }}"
 
 # renovate: datasource=docker depName=quay.io/prometheuscommunity/postgres-exporter versioning=semver
-prometheus_postgres_exporter_version: v0.20.1
+prometheus_postgres_exporter_version: v0.21.1
 
 prometheus_postgres_exporter_uid: ""
 prometheus_postgres_exporter_gid: ""
@@ -95,8 +95,9 @@ prometheus_postgres_exporter_container_extra_arguments: "{{ prometheus_postgres_
 prometheus_postgres_exporter_container_extra_arguments_auto: []
 prometheus_postgres_exporter_container_extra_arguments_custom: []
 
-# A list of extra arguments to pass to the process inside the container
-# Example: ['--SOME_ARGUMENT']
+# A list of extra arguments to pass to the process inside the container.
+# Use this for exporter options, as the exporter no longer reads its `PG_EXPORTER_*` environment variables.
+# Example: ['--web.telemetry-path=/metrics']
 prometheus_postgres_exporter_process_extra_arguments: "{{ prometheus_postgres_exporter_process_extra_arguments_auto + prometheus_postgres_exporter_process_extra_arguments_custom }}"
 prometheus_postgres_exporter_process_extra_arguments_auto: []
 prometheus_postgres_exporter_process_extra_arguments_custom: []
@@ -155,11 +156,11 @@ prometheus_postgres_exporter_database_password: ""
 prometheus_postgres_exporter_database_sslmode: disable
 prometheus_postgres_exporter_database_name: "prometheus_postgres_exporter"
 
-# Controls the PG_EXPORTER_AUTO_DISCOVER_DATABASES environment variable
-prometheus_postgres_exporter_env_variable_pg_exporter_auto_discover_databases: true
+# Controls whether the exporter also discovers and scrapes the other databases on the server (`--auto-discover-databases`)
+prometheus_postgres_exporter_auto_discover_databases_enabled: true
 
-# Controls the PG_EXPORTER_WEB_LISTEN_ADDRESS environment variable
-prometheus_postgres_exporter_env_variable_pg_exporter_web_listen_address: ":{{ prometheus_postgres_exporter_container_http_port }}"
+# Controls the address that the exporter listens on in the container (`--web.listen-address`)
+prometheus_postgres_exporter_web_listen_address: ":{{ prometheus_postgres_exporter_container_http_port }}"
 
 # Controls the DATA_SOURCE_NAME environment variable
 prometheus_postgres_exporter_env_variable_data_source_name: "postgresql://{{ prometheus_postgres_exporter_database_username }}:{{ prometheus_postgres_exporter_database_password }}@{{ prometheus_postgres_exporter_database_hostname }}:{{ prometheus_postgres_exporter_database_port }}/{{ prometheus_postgres_exporter_database_name }}?sslmode={{ prometheus_postgres_exporter_database_sslmode }}"

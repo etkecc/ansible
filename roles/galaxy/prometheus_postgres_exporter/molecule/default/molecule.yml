@@ -56,14 +56,14 @@ provisioner:
         prometheus_postgres_exporter_molecule_dead_port: 9
 
         # The path that the exporter is asked to serve its metrics under,
-        # through the role's own additional-environment-variables knob below.
+        # through the role's own process-extra-arguments knob below.
         #
         # The exporter serves /metrics out of the box and answers it just as
         # cheerfully when it has never reached a database, so a 200 there says
         # very little. Moving the endpoint turns that around: with a telemetry
         # path in effect, the stock /metrics answers 404, and `verify.yml`
-        # asserts both halves. That makes it a direct statement that the env
-        # file the role rendered is what the running process read.
+        # asserts both halves. That makes it a direct statement that the
+        # arguments the role rendered are what the running process received.
         prometheus_postgres_exporter_molecule_telemetry_path: /molecule/metrics
 
         # The name of the container that `verify.yml` starts as its negative
@@ -96,6 +96,12 @@ provisioner:
         prometheus_postgres_exporter_container_labels_traefik_metrics_enabled: false
         prometheus_postgres_exporter_container_http_host_bind_port: "127.0.0.1:{{ prometheus_postgres_exporter_molecule_http_bind_port }}"
 
+        # A port other than the exporter's stock 9187. The exporter only listens
+        # on it because the role passes `--web.listen-address` derived from it,
+        # and the published port above forwards to it, so every request that
+        # `verify.yml` makes depends on that flag reaching the process.
+        prometheus_postgres_exporter_container_http_port: 9190
+
         # Both of these are pinned to literal values, because `verify.yml` has
         # to name them and the role derives them from other variables, which
         # cannot be resolved out of the role's defaults file on its own.
@@ -114,12 +120,12 @@ provisioner:
             ([prometheus_postgres_exporter_molecule_postgres_hostname ~ '.service'])
           }}
 
-        # The role's own extension point for the env file it renders. Nothing
-        # else in this scenario can put this variable in front of the exporter
+        # The role's own extension point for the exporter's arguments. Nothing
+        # else in this scenario can put this flag in front of the exporter
         # process, which is what makes the pair of assertions about the
-        # telemetry path in `verify.yml` evidence that the env file was read.
-        prometheus_postgres_exporter_environment_variables_additional_variables: |
-          PG_EXPORTER_WEB_TELEMETRY_PATH={{ prometheus_postgres_exporter_molecule_telemetry_path }}
+        # telemetry path in `verify.yml` evidence that the arguments were passed.
+        prometheus_postgres_exporter_process_extra_arguments_custom:
+          - "--web.telemetry-path={{ prometheus_postgres_exporter_molecule_telemetry_path }}"
 
         # Variables for Postgres
         postgres_uid: 1000
@@ -138,21 +144,5 @@ provisioner:
   env:
     # Workaround for https://github.com/ansible/molecule/issues/4391
     ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles
-scenario:
-  # See: https://docs.ansible.com/projects/molecule/configuration/?h=test_sequence#scenario
-  test_sequence:
-    - dependency
-    - cleanup
-    - destroy
-    - syntax
-    - create
-    - prepare
-    - converge
-    # Disable idempotence test for now due to ansible-role-postgres
-    # - idempotence
-    - side_effect
-    - verify
-    - cleanup
-    - destroy
 verifier:
   name: ansible
