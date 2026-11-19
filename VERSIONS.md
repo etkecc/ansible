@@ -12,7 +12,7 @@
 * Etherpad: 3.3.19
 * Exim Relay: 4.99.5-r0-4
 * Firezone: 0.7.36
-* Fluffychat: v2.11.5
+* Fluffychat: v2.11.6
 * Google Chat Bridge: v0.5.2
 * Google Messages Bridge: v0.2611.0
 * Google Voice Bridge: v0.2611.0
@@ -77,7 +77,7 @@
 * Traefik Proxy Protocol: 1
 * Twitter Bridge: v0.2609.0
 * Uptime Kuma: 2.5.12
-* Valkey: 9.1.3
+* Valkey: 9.2.0
 * Vaultwarden: 1.37.5
 * Wg Easy: 15.5.0
 * WhatsApp Bridge: v0.2611.0

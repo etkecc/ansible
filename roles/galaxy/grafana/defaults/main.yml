@@ -23,6 +23,9 @@ grafana_version: 13.0.2
 grafana_uid: ""
 grafana_gid: ""
 
+# The scheme used for serving Grafana.
+grafana_scheme: https
+
 # The hostname at which Grafana is served.
 grafana_hostname: ""
 
@@ -204,6 +207,8 @@ grafana_container_cleanup_command: |
 
 # Specify the timezone
 grafana_environment_variables_tz: UTC
+
+grafana_server_root_url: "{{ grafana_scheme }}://{{ grafana_hostname }}{{ grafana_path_prefix }}"
 
 # grafana_dashboard_download_urls holds a list of URLs of dashboards to download.
 #
