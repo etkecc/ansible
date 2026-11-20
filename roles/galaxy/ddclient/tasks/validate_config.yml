@@ -22,7 +22,6 @@
   with_items:
     - ddclient_uid
     - ddclient_gid
-    - ddclient_container_network
 
 - name: Fail if no ddclient configurations specified
   ansible.builtin.fail:

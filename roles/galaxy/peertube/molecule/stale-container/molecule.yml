@@ -64,8 +64,8 @@ provisioner:
         peertube_environment_variable_open_telemetry_metrics_enabled: true
 
         # Variables required for PeerTube to connect to the Postgres database (via Unix socket)
-        peertube_database_username: my_database_username
-        peertube_database_password: my_database_password
+        peertube_database_username: /#@my_database_username?%
+        peertube_database_password: /#@my_database_password?%
         peertube_database_ssl_enabled: false
         peertube_database_name: peertube
         peertube_database_socket_enabled: true

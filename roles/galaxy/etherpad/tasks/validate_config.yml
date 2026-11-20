@@ -39,9 +39,6 @@
   with_items:
     - etherpad_uid
     - etherpad_gid
-    - etherpad_hostname
-    - etherpad_path_prefix
-    - etherpad_container_network
 
 - name: Fail if the Etherpad users variables are not lists
   ansible.builtin.fail:

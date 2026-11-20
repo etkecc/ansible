@@ -33,12 +33,8 @@
       You need to define a required configuration setting (`{{ item }}`).
   when: "lookup('vars', item, default='') | string | length == 0"
   with_items:
-    - linkding_identifier
     - linkding_uid
     - linkding_gid
-    - linkding_hostname
-    - linkding_path_prefix
-    - linkding_container_network
     - linkding_database_type
 
 - name: Fail if linkding database type invalid

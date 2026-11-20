@@ -20,12 +20,8 @@
       You need to define a required configuration setting (`{{ item }}`).
   when: "lookup('vars', item, default='') | string | length == 0"
   with_items:
-    - radicale_identifier
     - radicale_uid
     - radicale_gid
-    - radicale_hostname
-    - radicale_path_prefix
-    - radicale_container_network
 
 - name: Run if Traefik is enabled
   when: radicale_container_labels_traefik_enabled | bool

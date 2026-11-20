@@ -47,12 +47,8 @@
       You need to define a required configuration setting (`{{ item.name }}`).
   when: "item.when | bool and lookup('vars', item.name, default='') | string | length == 0"
   with_items:
-    - { "name": "peertube_identifier", when: true }
     - { "name": "peertube_uid", when: true }
     - { "name": "peertube_gid", when: true }
-    - { "name": "peertube_hostname", when: true }
-    - { "name": "peertube_path_prefix", when: true }
-    - { "name": "peertube_container_network", when: true }
     - { "name": "peertube_database_socket_path_host", when: "{{ peertube_database_socket_enabled }}" }
     - { "name": "peertube_database_hostname", when: "{{ not peertube_database_socket_enabled }}" }
     - { "name": "peertube_database_password", when: true }

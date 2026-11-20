@@ -22,9 +22,6 @@
   with_items:
     - cinny_uid
     - cinny_gid
-    - cinny_hostname
-    - cinny_path_prefix
-    - cinny_container_network
     - cinny_default_hs_url
 
 - name: Run if Traefik is enabled
