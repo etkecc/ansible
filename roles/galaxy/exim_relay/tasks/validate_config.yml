@@ -24,4 +24,3 @@
     - { "name": "exim_relay_gid", when: true }
     - { "name": "exim_relay_hostname", when: true }
     - { "name": "exim_relay_sender_address", when: true }
-    - { "name": "exim_relay_container_network", when: true }

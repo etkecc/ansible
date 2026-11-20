@@ -21,23 +21,26 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
-      - id: check-executables-have-shebangs
       - id: check-added-large-files
       - id: check-case-conflict
+      - id: check-executables-have-shebangs
       - id: check-json
       - id: check-merge-conflict
+        args: ["--assume-in-merge"]
       - id: check-toml
-      - id: trailing-whitespace
+      - id: detect-private-key
       - id: end-of-file-fixer
       - id: mixed-line-ending
-        args: [--fix=lf]
+        args: ["--fix=lf"]
+      - id: requirements-txt-fixer
+      - id: trailing-whitespace
   - repo: https://github.com/igorshubovych/markdownlint-cli
     rev: v0.49.0
     hooks:
       - id: markdownlint
         args: [
-          --disable=MD013,  # https://github.com/DavidAnson/markdownlint/blob/main/doc/md013.md
-          --disable=MD033
+          --disable=MD013, # Line length
+          --disable=MD033  # Inline HTML (for img HTML tags)
         ]
   - repo: https://github.com/codespell-project/codespell
     rev: v2.4.2

@@ -42,12 +42,8 @@
       You need to define a required configuration setting (`{{ item }}`).
   when: "lookup('vars', item, default='') | string | length == 0"
   with_items:
-    - wg_easy_identifier
     - wg_easy_uid
     - wg_easy_gid
-    - wg_easy_hostname
-    - wg_easy_path_prefix
-    - wg_easy_container_network
     - wg_easy_environment_variables_additional_variable_host
 
 - name: Run if Traefik is enabled

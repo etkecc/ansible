@@ -22,9 +22,6 @@
   with_items:
     - hydrogen_uid
     - hydrogen_gid
-    - hydrogen_hostname
-    - hydrogen_path_prefix
-    - hydrogen_container_network
     - hydrogen_default_hs_url
 
 - name: Run if Traefik is enabled
