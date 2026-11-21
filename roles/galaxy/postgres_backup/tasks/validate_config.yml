@@ -23,7 +23,6 @@
   with_items:
     - postgres_backup_uid
     - postgres_backup_gid
-    - postgres_backup_container_network
     - postgres_backup_connection_hostname
     - postgres_backup_connection_username
     - postgres_backup_connection_password

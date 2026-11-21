@@ -18,6 +18,11 @@ Check [`defaults/main.yml`](defaults/main.yml) for the full list of supported op
 
 💡 For an Ansible playbook which integrates this role and makes it easier to use, see the [Mother-of-All-Self-Hosting Ansible playbook](https://github.com/mother-of-all-self-hosting/mash-playbook).
 
+## Related roles
+
+- [ansible-role-paradedb](https://github.com/mother-of-all-self-hosting/ansible-role-paradedb/)
+- [ansible-role-postgis](https://github.com/mother-of-all-self-hosting/ansible-role-postgis/)
+
 ## Development
 
 Please refer to [this page](https://github.com/mother-of-all-self-hosting/mash-playbook/blob/main/docs/developer-documentation.md) on the MASH playbook for general guidelines about development.
