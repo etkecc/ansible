@@ -70,7 +70,5 @@
   with_items:
     - prometheus_postgres_exporter_uid
     - prometheus_postgres_exporter_gid
-    - prometheus_postgres_exporter_path_prefix
-    - prometheus_postgres_exporter_container_network
     - prometheus_postgres_exporter_database_hostname
     - prometheus_postgres_exporter_database_password

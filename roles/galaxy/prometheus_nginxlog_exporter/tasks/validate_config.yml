@@ -32,7 +32,6 @@
   with_items:
     - prometheus_nginxlog_exporter_uid
     - prometheus_nginxlog_exporter_gid
-    - prometheus_nginxlog_exporter_container_network
     - prometheus_nginxlog_exporter_architecture
 
 - name: Fail if prometheus-nginxlog-exporter container image not available for architecture

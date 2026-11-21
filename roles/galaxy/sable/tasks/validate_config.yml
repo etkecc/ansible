@@ -23,9 +23,6 @@
   with_items:
     - sable_uid
     - sable_gid
-    - sable_hostname
-    - sable_path_prefix
-    - sable_container_network
     - sable_default_hs_url
 
 - name: Run if Traefik is enabled
