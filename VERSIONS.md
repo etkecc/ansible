@@ -1,6 +1,6 @@
 * Alpine: edge
 * Authentication Service: 1.29.0
-* Baibot: v2026.11.21.2
+* Baibot: v2026.11.21.3
 * Bluesky Bridge: v0.2510.0
 * Buscarron: v1.5.0
 * Cinny: v4.12.8
@@ -9,7 +9,7 @@
 * Discord Bridge: v0.7.7
 * Draupnir: v3.2.0
 * Element: v1.12.35
-* Etherpad: 3.3.19
+* Etherpad: 3.3.21
 * Exim Relay: 4.99.5-r0-4
 * Firezone: 0.7.36
 * Fluffychat: v2.11.6
@@ -34,7 +34,7 @@
 * Livekit JWT Service: 0.10.0
 * Livekit Server: v1.13.11
 * Matrix Reminder Bot: v0.4.0
-* Maubot: v0.6.0
+* Maubot: v0.6.1
 * Meta Instagram Bridge: v0.2611.0
 * Meta Messenger Bridge: v0.2611.0
 * Miniflux: 2.3.5
@@ -53,7 +53,7 @@
 * Postmoogle Bridge: v0.9.31
 * Prometheus: v3.16.0
 * Prometheus Nginxlog Exporter: v1.11.0
-* Prometheus Node Exporter: v1.12.1
+* Prometheus Node Exporter: v1.13.1
 * Prometheus Postgres Exporter: v0.21.1
 * Radicale: 3.9.2.0
 * Sable: 1.22.11

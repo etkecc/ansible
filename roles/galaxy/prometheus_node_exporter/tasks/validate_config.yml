@@ -42,7 +42,6 @@
   with_items:
     - prometheus_node_exporter_uid
     - prometheus_node_exporter_gid
-    - prometheus_node_exporter_container_network
 
 - name: Run if Traefik is enabled
   when: prometheus_node_exporter_container_labels_traefik_metrics_enabled | bool
