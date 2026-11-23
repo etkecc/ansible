@@ -1,6 +1,6 @@
 * Alpine: edge
 * Authentication Service: 1.29.0
-* Baibot: v2026.11.22.1
+* Baibot: v2026.11.23.0
 * Bluesky Bridge: v0.2510.0
 * Buscarron: v1.5.0
 * Cinny: v4.12.8
@@ -9,7 +9,7 @@
 * Discord Bridge: v0.7.7
 * Draupnir: v3.2.0
 * Element: v1.12.35
-* Etherpad: 3.3.21
+* Etherpad: 3.3.22
 * Exim Relay: 4.99.5-r0-4
 * Firezone: 0.7.36
 * Fluffychat: v2.11.6

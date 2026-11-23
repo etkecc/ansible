@@ -6,8 +6,8 @@
 
 ### Component Updates
 
-* [Baibot](https://github.com/etkecc/baibot): [v2026.11.18.0](https://github.com/etkecc/baibot/releases/tag/v2026.11.18.0) ⇾ [v2026.11.22.1](https://github.com/etkecc/baibot/releases/tag/v2026.11.22.1)
-* [Etherpad](https://github.com/ether/etherpad-lite): [3.3.19](https://github.com/ether/etherpad-lite/releases/tag/3.3.19) ⇾ [3.3.21](https://github.com/ether/etherpad-lite/releases/tag/3.3.21)
+* [Baibot](https://github.com/etkecc/baibot): [v2026.11.18.0](https://github.com/etkecc/baibot/releases/tag/v2026.11.18.0) ⇾ [v2026.11.23.0](https://github.com/etkecc/baibot/releases/tag/v2026.11.23.0)
+* [Etherpad](https://github.com/ether/etherpad-lite): [3.3.19](https://github.com/ether/etherpad-lite/releases/tag/3.3.19) ⇾ [3.3.22](https://github.com/ether/etherpad-lite/releases/tag/3.3.22)
 * [Fluffychat](https://github.com/krille-chan/fluffychat): [v2.11.5](https://github.com/krille-chan/fluffychat/releases/tag/v2.11.5) ⇾ [v2.11.6](https://github.com/krille-chan/fluffychat/releases/tag/v2.11.6)
 * [Maubot](https://mau.dev/maubot/maubot): [v0.6.0](https://mau.dev/maubot/maubot/-/tags/v0.6.0) ⇾ [v0.6.1](https://mau.dev/maubot/maubot/-/tags/v0.6.1)
 * [Prometheus Node Exporter](https://github.com/prometheus/node_exporter): [v1.12.1](https://github.com/prometheus/node_exporter/releases/tag/v1.12.1) ⇾ [v1.13.1](https://github.com/prometheus/node_exporter/releases/tag/v1.13.1)
