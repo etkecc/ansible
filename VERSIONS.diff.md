@@ -11,4 +11,5 @@
 * [Fluffychat](https://github.com/krille-chan/fluffychat): [v2.11.5](https://github.com/krille-chan/fluffychat/releases/tag/v2.11.5) ⇾ [v2.11.6](https://github.com/krille-chan/fluffychat/releases/tag/v2.11.6)
 * [Maubot](https://mau.dev/maubot/maubot): [v0.6.0](https://mau.dev/maubot/maubot/-/tags/v0.6.0) ⇾ [v0.6.1](https://mau.dev/maubot/maubot/-/tags/v0.6.1)
 * [Prometheus Node Exporter](https://github.com/prometheus/node_exporter): [v1.12.1](https://github.com/prometheus/node_exporter/releases/tag/v1.12.1) ⇾ [v1.13.1](https://github.com/prometheus/node_exporter/releases/tag/v1.13.1)
+* [Synapse Reverse Proxy Companion](https://github.com/element-hq/synapse): 1.31.9-alpine ⇾ 1.31.10-alpine
 * [Valkey](https://github.com/valkey-io/valkey): [9.1.3](https://github.com/valkey-io/valkey/releases/tag/9.1.3) ⇾ [9.2.0](https://github.com/valkey-io/valkey/releases/tag/9.2.0)
