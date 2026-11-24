@@ -23,7 +23,7 @@ coturn_base_path: "/{{ coturn_identifier }}"
 coturn_config_path: "{{ coturn_base_path }}/turnserver.conf"
 
 # renovate: datasource=docker depName=coturn/coturn
-coturn_version: 4.19.0
+coturn_version: 4.19.2
 
 coturn_uid: ""
 coturn_gid: ""
@@ -40,7 +40,7 @@ coturn_container_image_registry_prefix_upstream_default: docker.io/
 coturn_container_image_self_build: false
 coturn_container_image_self_build_name: "coturn/coturn:{{ coturn_container_image_self_build_repo_version }}"
 coturn_container_image_self_build_repo: "https://github.com/coturn/coturn"
-coturn_container_image_self_build_repo_version: "docker/{{ coturn_version }}"
+coturn_container_image_self_build_repo_version: "{{ coturn_version }}"
 coturn_container_image_self_build_repo_dockerfile_path: "docker/coturn/alpine/Dockerfile"
 coturn_container_image_self_build_src_files_path: "{{ coturn_base_path }}/docker-src"
 

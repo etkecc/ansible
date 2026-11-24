@@ -1,14 +1,14 @@
 * Alpine: edge
-* Authentication Service: 1.29.0
+* Authentication Service: 1.30.0
 * Baibot: v2026.11.23.0
 * Bluesky Bridge: v0.2510.0
 * Buscarron: v1.5.0
 * Cinny: v4.12.8
 * Container Socket Proxy: 3.4
-* Coturn: 4.19.0
+* Coturn: 4.19.2
 * Discord Bridge: v0.7.7
 * Draupnir: v3.2.0
-* Element: v1.12.35
+* Element: v1.12.36
 * Etherpad: 3.3.22
 * Exim Relay: 4.99.5-r0-4
 * Firezone: 0.7.36
@@ -65,14 +65,14 @@
 * Static Files: 2.44.3
 * Steam Bridge: 1.5.0
 * Sygnal: v0.17.0
-* Synapse: v1.165.0
+* Synapse: v1.166.0
 * Synapse Auto Compressor: v0.0.3
 * Synapse Compress State: v0.0.3
 * Synapse HTTP Antispam: v0.5.1
 * Synapse Reverse Proxy Companion: 1.31.10-alpine
 * Synapse S3 Storage Provider: 1.7.0
 * Telegram Bridge: v0.2611.0
-* Traefik: v3.7.19
+* Traefik: v3.8.0
 * Traefik Certs Dumper: v2.11.4
 * Traefik Proxy Protocol: 1
 * Twitter Bridge: v0.2609.0

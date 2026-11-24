@@ -57,7 +57,7 @@ scenario() {
 
 		coturn_container_image: "{{ coturn_container_image_registry_prefix }}coturn/coturn:{{ coturn_container_image_tag }}"
 		coturn_container_image_tag: "{{ coturn_version }}-alpine"
-		coturn_container_image_self_build_repo_version: "docker/{{ coturn_version }}"
+		coturn_container_image_self_build_repo_version: "{{ coturn_version }}"
 	EOF
 
 	printf 'placeholder\n' > tasks/main.yml
