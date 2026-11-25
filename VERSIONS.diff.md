@@ -13,6 +13,7 @@
 * [Etherpad](https://github.com/ether/etherpad-lite): [3.3.19](https://github.com/ether/etherpad-lite/releases/tag/3.3.19) ⇾ [3.3.22](https://github.com/ether/etherpad-lite/releases/tag/3.3.22)
 * [Fluffychat](https://github.com/krille-chan/fluffychat): [v2.11.5](https://github.com/krille-chan/fluffychat/releases/tag/v2.11.5) ⇾ [v2.11.6](https://github.com/krille-chan/fluffychat/releases/tag/v2.11.6)
 * [Maubot](https://mau.dev/maubot/maubot): [v0.6.0](https://mau.dev/maubot/maubot/-/tags/v0.6.0) ⇾ [v0.6.1](https://mau.dev/maubot/maubot/-/tags/v0.6.1)
+* [Ntfy](https://github.com/binwiederhier/ntfy): [v2.38.1](https://github.com/binwiederhier/ntfy/releases/tag/v2.38.1) ⇾ [v2.38.2](https://github.com/binwiederhier/ntfy/releases/tag/v2.38.2)
 * [Prometheus Node Exporter](https://github.com/prometheus/node_exporter): [v1.12.1](https://github.com/prometheus/node_exporter/releases/tag/v1.12.1) ⇾ [v1.13.1](https://github.com/prometheus/node_exporter/releases/tag/v1.13.1)
 * [Sable](https://git.sable.moe/SableClient/sable-next): 1.22.11 ⇾ 26.11.4
 * [Synapse](https://github.com/element-hq/synapse): [v1.165.0](https://github.com/element-hq/synapse/releases/tag/v1.165.0) ⇾ [v1.166.0](https://github.com/element-hq/synapse/releases/tag/v1.166.0)
