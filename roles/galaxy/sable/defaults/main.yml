@@ -12,7 +12,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-# Project source code URL: https://github.com/sableclient/sable
+# Project source code URL: https://git.sable.moe/SableClient/sable-next
 
 sable_enabled: true
 
@@ -20,8 +20,8 @@ sable_identifier: sable
 sable_base_path: "/{{ sable_identifier }}"
 sable_config_path: "{{ sable_base_path }}/config"
 
-# renovate: datasource=docker depName=ghcr.io/sableclient/sable versioning=semver
-sable_version: 1.22.11
+# renovate: datasource=docker depName=git.sable.moe/sableclient/sable-next versioning=semver
+sable_version: 26.11.4
 
 sable_uid: ""
 sable_gid: ""
@@ -39,15 +39,15 @@ sable_hostname: ""
 # technical limitations.
 sable_path_prefix: /
 
-sable_container_image: "{{ sable_container_image_registry_prefix }}sableclient/sable:{{ sable_container_image_tag }}"
+sable_container_image: "{{ sable_container_image_registry_prefix }}sableclient/sable-next:{{ sable_container_image_tag }}"
 sable_container_image_tag: "{{ sable_version }}"
 sable_container_image_registry_prefix: "{{ sable_container_image_registry_prefix_upstream }}"
 sable_container_image_registry_prefix_upstream: "{{ sable_container_image_registry_prefix_upstream_default }}"
-sable_container_image_registry_prefix_upstream_default: ghcr.io/
+sable_container_image_registry_prefix_upstream_default: git.sable.moe/
 
 sable_container_image_self_build: false
-sable_container_image_self_build_name: "sableclient/sable:{{ sable_container_image_self_build_repo_version }}"
-sable_container_image_self_build_repo: "https://github.com/sableclient/sable.git"
+sable_container_image_self_build_name: "sableclient/sable-next:{{ sable_container_image_self_build_repo_version }}"
+sable_container_image_self_build_repo: "https://git.sable.moe/SableClient/sable-next.git"
 sable_container_image_self_build_repo_version: "{{ 'v' + sable_version if sable_version != 'latest' else 'main' }}"
 sable_container_image_self_build_src_files_path: "{{ sable_base_path }}/docker-src"
 
@@ -167,7 +167,10 @@ sable_http_header_content_type_options: nosniff
 
 # Specifies the value of the `Content-Security-Policy` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
-sable_http_header_content_security_policy: frame-ancestors 'self'
+#
+# Sable sends a strict policy of its own, generated for each build (it contains hashes of inline scripts).
+# A value specified here replaces that policy, so leave this empty unless you need to do so.
+sable_http_header_content_security_policy: ""
 
 # Specifies the value of the `Permissions-Policy` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy
@@ -259,27 +262,14 @@ sable_config_homeserverList: "{{ [sable_default_hs_url] }}"  # noqa var-naming
 # Controls the `allowCustomHomeservers` value in the `config.json` file.
 sable_config_allowCustomHomeservers: true  # noqa var-naming
 
-# Controls the `featuredCommunities.spaces` value in the `config.json` file.
-sable_config_featuredCommunities_spaces: []  # noqa var-naming
-
-# Controls the `featuredCommunities.rooms` value in the `config.json` file.
-sable_config_featuredCommunities_rooms: []  # noqa var-naming
-
 # Controls the `featuredCommunities.servers` value in the `config.json` file.
 sable_config_featuredCommunities_servers: ["matrix.org"]  # noqa var-naming
-
-# Controls the `featuredCommunities.openAsDefault` value in the `config.json` file.
-sable_config_featuredCommunities_openAsDefault: false  # noqa var-naming
 
 # Configures the gateway server used for webpush notifications.
 # This should not be changed in most cases.
 sable_config_pushNotifyUrl: "https://sygnal.sable.moe/_matrix/push/v1/notify"  # noqa var-naming
 sable_config_vapidPublicKey: "BCnS4SbHjeOaqVFW4wjt5xDt_pYIL62qMzKePfYF9fl9PQU14RieIaObh7nLR_9dQf4sykZa-CTrcjkgMIE1mcg"  # noqa var-naming
 sable_config_webPushAppID: "moe.sable.app.sygnal"  # noqa var-naming
-
-# Controls whether MSC4186 Simplified Sliding Sync is available in experimental options.
-# Disabled by default for the moment as it is known to have multiple bugs.
-sable_config_slidingSync_enabled: false  # noqa var-naming
 
 # Default Sable configuration template which covers the generic use case.
 # You can customize it by controlling the various variables inside it.

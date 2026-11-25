@@ -9,14 +9,7 @@
     "webPushAppID": {{ sable_config_webPushAppID | to_json }}
   },
 
-  "slidingSync": {
-    "enabled": {{ sable_config_slidingSync_enabled | to_json }}
-  },
-
   "featuredCommunities": {
-    "spaces": {{ sable_config_featuredCommunities_spaces | to_json }},
-    "rooms": {{ sable_config_featuredCommunities_rooms | to_json }},
-    "servers": {{ sable_config_featuredCommunities_servers | to_json }},
-    "openAsDefault": {{ sable_config_featuredCommunities_openAsDefault | to_json }}
+    "servers": {{ sable_config_featuredCommunities_servers | to_json }}
   }
 }

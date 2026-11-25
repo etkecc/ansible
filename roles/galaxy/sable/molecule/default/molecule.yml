@@ -51,9 +51,10 @@ provisioner:
         sable_molecule_http_status_codes: [200, 301, 302, 304, 400, 401, 403, 404, 405, 500, 502, 503]
 
         # Sable's release workflow labels the image it publishes with the
-        # version, but the Dockerfile in the repository does not, so only a
-        # pulled image carries the label. See `default-selfbuild`.
-        sable_molecule_image_carries_version_label: true
+        # version and passes the version to the build, but the Dockerfile in
+        # the repository does neither, so only a pulled image carries the
+        # version. See `default-selfbuild`.
+        sable_molecule_image_carries_version: true
 
         # Variables for Sable
         sable_uid: 1000
@@ -65,24 +66,21 @@ provisioner:
 
         # A bare Sable image ships a `config.json` of its own and serves it
         # from the very same path, so a request for it succeeds whether or not
-        # this role did anything. That file lists five homeservers and defaults
-        # to the second of them; a hostname that appears nowhere in it is what
+        # this role did anything. That file lists several public
+        # homeservers; a hostname that appears nowhere in it is what
         # lets the assertions in `verify.yml` tell the two files apart.
         sable_default_hs_url: https://matrix.molecule.example.com
 
         # The extension is combined into the rendered configuration, which is
         # how a deployment sets keys the role has no variable for. Overriding
         # `allowCustomHomeservers` (which both the image's own `config.json`
-        # and this role's default leave at `true`) and adding `hashRouter`
+        # and this role's default leave at `true`) and adding `disableAccountSwitcher`
         # (which the role's template never emits) leaves marks in the served
         # file that neither the image nor the role's defaults can produce.
         sable_configuration_extension_json: |
           {
             "allowCustomHomeservers": false,
-            "hashRouter": {
-              "enabled": true,
-              "basename": "/molecule"
-            }
+            "disableAccountSwitcher": true
           }
   env:
     # Workaround for https://github.com/ansible/molecule/issues/4391

@@ -180,15 +180,15 @@ jobs:
       - name: Unload the runner's AppArmor profiles
         run: sudo aa-teardown
 
-      # Upstream's Dockerfile does not copy package.json before `RUN pnpm fetch`,
-      # so corepack cannot see the pinned pnpm version and self-building fails
-      # (upstream's own CI does not exercise this Dockerfile stage). Until that
-      # is fixed upstream, a self-build failure only warns instead of failing
+      # As of Sable 26.11.4, upstream's Dockerfile only packages a frontend which
+      # was built beforehand, so self-building fails. It can build from source
+      # on upstream's main branch, so this is expected to work for later releases.
+      # Until then, a self-build failure only warns instead of failing
       # the job, so that it cannot block automerge - which is why
       # continue-on-error sits on the step and not on the job (a failing job
       # would still produce a failed check run).
       #
-      # TODO: Send a fix to the upstream project to make the note above invalid altogether
+      # TODO: Remove continue-on-error once self-building works with a released version
       - name: Run Molecule
         id: molecule
         continue-on-error: true
@@ -200,4 +200,4 @@ jobs:
         run: >-
           echo "::warning title=Self-build failed::The default-selfbuild
           scenario failed. This is non-blocking (known upstream Dockerfile
-          bit-rot), but worth a look."
+          limitation), but worth a look."

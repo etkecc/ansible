@@ -1,0 +1,38 @@
+{#
+SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+#}
+
+// Replaces the service worker of Sable Legacy (v1), which Sable v2 does not do by itself.
+//
+// Sable Legacy registered a service worker at `/sw.js`, which serves `/` out of a cache inside the browser.
+// Without this, browsers which have used Sable Legacy keep running it when they visit `/`.
+// Browsers check `/sw.js` for updates and switch to this worker, which removes the cache and itself.
+self.addEventListener("install", () => {
+  self.skipWaiting();
+});
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    (async () => {
+      for (const name of await caches.keys()) {
+        if (name.startsWith("workbox-precache-") && name.endsWith(self.registration.scope)) {
+          await caches.delete(name);
+        }
+      }
+
+      const windows = await self.clients.matchAll({ type: "window" });
+
+      // The registration is shared with Sable v2's own worker.
+      // If that one is already taking over, unregistering would remove it.
+      if (!self.registration.installing && !self.registration.waiting) {
+        await self.registration.unregister();
+      }
+
+      for (const client of windows) {
+        client.navigate(client.url).catch(() => {});
+      }
+    })(),
+  );
+});

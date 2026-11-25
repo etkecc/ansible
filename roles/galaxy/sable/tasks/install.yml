@@ -30,6 +30,7 @@
   with_items:
     - env
     - labels
+    - legacy-service-worker.js
   register: sable_support_files_result
 
 - name: Ensure Sable configuration installed
@@ -78,7 +79,7 @@
     - name: Ensure Sable container image is built
       community.docker.docker_image_build:
         name: "{{ sable_container_image_self_build_name }}"
-        dockerfile: Dockerfile
+        dockerfile: packaging/docker/Dockerfile
         path: "{{ sable_container_image_self_build_src_files_path }}"
         pull: true
         rebuild: "{{ 'always' if sable_git_pull_results.changed | bool else 'never' }}"

@@ -1,6 +1,6 @@
 * Alpine: edge
 * Authentication Service: 1.30.0
-* Baibot: v2026.11.23.0
+* Baibot: v2026.11.24.0
 * Bluesky Bridge: v0.2510.0
 * Buscarron: v1.5.0
 * Cinny: v4.12.8
@@ -56,7 +56,7 @@
 * Prometheus Node Exporter: v1.13.1
 * Prometheus Postgres Exporter: v0.21.1
 * Radicale: 3.9.2.0
-* Sable: 1.22.11
+* Sable: 26.11.4
 * Schildichat: 1.11.109-sc.0.test.0
 * Signal Bridge: v0.2611.0
 * Slack Bridge: v0.2611.0

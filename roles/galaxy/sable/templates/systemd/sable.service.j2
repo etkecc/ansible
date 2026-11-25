@@ -37,6 +37,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --env-file={{ sable_base_path }}/env \
       --label-file={{ sable_base_path }}/labels \
       --mount type=bind,src={{ sable_config_path }}/config.json,dst=/app/config.json,ro \
+      --mount type=bind,src={{ sable_base_path }}/legacy-service-worker.js,dst=/app/sw.js,ro \
       {% for volume in sable_container_additional_volumes %}
       --mount type={{ volume.type | default('bind' if '/' in volume.src else 'volume') }},src={{ volume.src }},dst={{ volume.dst }}{{ (',' + volume.options) if volume.options | default('') else '' }} \
       {% endfor %}

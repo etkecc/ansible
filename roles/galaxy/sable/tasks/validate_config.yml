@@ -14,6 +14,10 @@
   when: "lookup('ansible.builtin.varnames', ('^' + item.old + '$'), wantlist=True) | length > 0"
   with_items:
     - { "old": "sable_container_image_force_pull", "new": "<removed> (the new community.docker.docker_image_pull module handles this natively)" }
+    - { "old": "sable_config_featuredCommunities_spaces", "new": "<removed> (Sable v2 does not support this setting)" }
+    - { "old": "sable_config_featuredCommunities_rooms", "new": "<removed> (Sable v2 does not support this setting)" }
+    - { "old": "sable_config_featuredCommunities_openAsDefault", "new": "<removed> (Sable v2 does not support this setting)" }
+    - { "old": "sable_config_slidingSync_enabled", "new": "<removed> (Sable v2 always uses Simplified Sliding Sync)" }
 
 - name: Fail if required Sable settings not defined
   ansible.builtin.fail:

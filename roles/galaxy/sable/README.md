@@ -7,7 +7,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Sable Ansible role
 
-This is an [Ansible](https://www.ansible.com/) role which installs [Sable](https://github.com/SableClient/Sable) (a fork of [Cinny](https://github.com/cinnyapp/cinny)) to run as a [Docker](https://www.docker.com/) container wrapped in a systemd service.
+This is an [Ansible](https://www.ansible.com/) role which installs [Sable](https://git.sable.moe/SableClient/sable-next) to run as a [Docker](https://www.docker.com/) container wrapped in a systemd service.
 
 This role *implicitly* depends on:
 

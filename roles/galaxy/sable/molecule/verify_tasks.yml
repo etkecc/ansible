@@ -86,20 +86,17 @@
 # cheapest statement of what is running. The label comes from Sable's
 # release workflow rather than from the Dockerfile, so a self-built image
 # does not have it and the scenario says so.
-- name: Assert the running Sable is the version this role installs
+- name: Assert the running Sable image is labeled with the version this role installs
+  when: "sable_molecule_image_carries_version | bool"
   ansible.builtin.assert:
     that: sable_container.Config.Labels['org.opencontainers.image.version'] == sable_defaults.sable_version
     fail_msg: "Sable reports {{ sable_container.Config.Labels['org.opencontainers.image.version'] | default('none') }}, expected {{ sable_defaults.sable_version }}"
     success_msg: "Sable reports {{ sable_container.Config.Labels['org.opencontainers.image.version'] }}"
 
 # ------------------------------------------------------------------
-# What the role's nginx configuration serves
+# What the image's Caddy configuration serves
 # ------------------------------------------------------------------
 
-# The image's own vhost listens on port 80 and this role's `nginx.conf`
-# listens on 8080 so that it can run as a non-root user, and the role's
-# file does not include `conf.d`, so the image's vhost is never loaded.
-# Anything answering here at all is therefore the role's configuration.
 - name: Wait for the Sable page to be served (up to 180s)
   ansible.builtin.uri:
     url: "{{ sable_molecule_base_url }}/"
@@ -118,14 +115,12 @@
   ansible.builtin.assert:
     that:
       - sable_index.status == 200
-      - "'<title>Sable Client</title>' in sable_index.content"
+      - "'<meta name=\"apple-mobile-web-app-title\" content=\"Sable\" />' in sable_index.content"
     fail_msg: "The Sable page was not served ({{ sable_index.status }})"
     success_msg: "The Sable page is served ({{ sable_index.content | length }} bytes)"
 
 # Sable is a single-page application: every route that is not a real file
-# has to come back as `index.html`. That fallback is a rewrite rule in the
-# `nginx.conf` this role renders, so a deep route answering with the page
-# is this role's routing working, not a static file happening to exist.
+# has to come back as `index.html`.
 - name: Request a Sable route that is not a file on disk
   ansible.builtin.uri:
     url: "{{ sable_molecule_base_url }}/room/!molecule:example.com"
@@ -140,16 +135,17 @@
   ansible.builtin.assert:
     that:
       - sable_spa_route.status == 200
-      - "'<title>Sable Client</title>' in sable_spa_route.content"
+      - sable_spa_route.content == sable_index.content
     fail_msg: "A Sable route was not rewritten to the application ({{ sable_spa_route.status }})"
     success_msg: "Sable routes unknown paths to the application"
 
 - name: Request the Sable web application manifest
   ansible.builtin.uri:
-    url: "{{ sable_molecule_base_url }}/manifest.json"
+    url: "{{ sable_molecule_base_url }}/manifest.webmanifest"
     method: GET
     follow_redirects: none
     status_code: "{{ sable_molecule_http_status_codes }}"
+    return_content: true
   register: sable_manifest
   changed_when: false
 
@@ -157,9 +153,32 @@
   ansible.builtin.assert:
     that:
       - sable_manifest.status == 200
-      - sable_manifest.json.name == 'Sable'
+      - (sable_manifest.content | from_json).name == 'Sable'
     fail_msg: "The Sable manifest was not served ({{ sable_manifest.status }})"
     success_msg: "The Sable manifest is served"
+
+# Sable has no such file, so without the role's one this path falls back to
+# `index.html`, which browsers do not accept as a service worker.
+- name: Request the service worker which replaces the one of Sable Legacy
+  ansible.builtin.uri:
+    url: "{{ sable_molecule_base_url }}/sw.js"
+    method: GET
+    follow_redirects: none
+    status_code: "{{ sable_molecule_http_status_codes }}"
+    return_content: true
+  register: sable_legacy_service_worker
+  changed_when: false
+
+- name: Assert the service worker which replaces the one of Sable Legacy is served
+  ansible.builtin.assert:
+    that:
+      - sable_legacy_service_worker.status == 200
+      - "'javascript' in sable_legacy_service_worker.content_type"
+      - "'self.registration.unregister()' in sable_legacy_service_worker.content"
+    fail_msg: >-
+      The service worker which replaces the one of Sable Legacy was not served
+      ({{ sable_legacy_service_worker.status }}, {{ sable_legacy_service_worker.content_type | default('no content type') }})
+    success_msg: "The service worker which replaces the one of Sable Legacy is served"
 
 # ------------------------------------------------------------------
 # The configuration this role rendered, as the browser receives it
@@ -198,18 +217,14 @@
   ansible.builtin.assert:
     that:
       - not sable_served_config.json.allowCustomHomeservers
-      - sable_served_config.json.hashRouter.enabled
-      - sable_served_config.json.hashRouter.basename == '/molecule'
+      - sable_served_config.json.disableAccountSwitcher
     fail_msg: "The served configuration does not carry the extension: {{ sable_served_config.json }}"
     success_msg: "The served configuration carries the extension, combined into the role's own keys"
 
 - name: Assert the served Sable configuration carries the role's featured communities
   ansible.builtin.assert:
     that:
-      - sable_served_config.json.featuredCommunities.spaces == []
-      - sable_served_config.json.featuredCommunities.rooms == []
       - sable_served_config.json.featuredCommunities.servers == ['matrix.org']
-      - not sable_served_config.json.featuredCommunities.openAsDefault
     fail_msg: "The served configuration does not carry the role's featured communities: {{ sable_served_config.json.featuredCommunities }}"
     success_msg: "The served configuration carries the role's featured communities"
 
@@ -217,71 +232,49 @@
 # The version of the application that is actually running
 # ------------------------------------------------------------------
 
-# Sable builds its own version into its JavaScript bundle, and renders it
-# in its about screen. The bundle's filename carries a content hash that
-# changes with every release, so the only way to reach it is to read it
-# off the page that references it. Unlike the image label, this holds for
-# a self-built image too, because the value comes from the sources.
-- name: Determine the Sable page module that the page loads
+# Sable's release workflow also builds the version into the page itself,
+# which tells what application is being served, regardless of the label.
+- name: Read the version out of the Sable page
   ansible.builtin.set_fact:
     # `regex_search` with a capture group hands back a list of groups, or
     # nothing at all when the page does not match. Joining covers both.
-    sable_bundle_url: "{{ (sable_index.content | regex_search('href=\"(/assets/page-[^\"]+\\.js)\"', '\\1') | default([], true)) | join('') }}"
+    sable_page_version: "{{ (sable_index.content | regex_search('version: \"([0-9]+\\.[0-9]+\\.[0-9]+)\"', '\\1') | default([], true)) | join('') }}"
 
-    # sable_bundle_url: "{{ (sable_index.content | regex_search('src=\"(/assets/index-[^\"]+\\.js)\"', '\\1') | default([], true)) | join('') }}"
-
-- name: Assert the Sable page references an page module
+- name: Assert the served Sable is the version this role installs
+  when: "sable_molecule_image_carries_version | bool"
   ansible.builtin.assert:
-    that: sable_bundle_url | length > 0
-    fail_msg: "The served page references no page module: {{ sable_index.content }}"
-    success_msg: "The served page loads its page module from {{ sable_bundle_url }}"
+    that: sable_page_version == sable_defaults.sable_version
+    fail_msg: "Sable reports {{ sable_page_version | default('none', true) }}, expected {{ sable_defaults.sable_version }}"
+    success_msg: "Sable reports {{ sable_page_version }}"
 
-- name: Download the Sable page module
-  ansible.builtin.get_url:
-    url: "{{ sable_molecule_base_url }}{{ sable_bundle_url }}"
-    dest: "{{ sable_molecule_bundle_path }}"
-    mode: "0640"
-  register: sable_bundle_download
+# The page is only a shell which loads the application. The name of its entry
+# module carries a content hash that changes with every release, so the only
+# way to reach it is to read it off the page that references it.
+- name: Determine the Sable entry module that the page loads
+  ansible.builtin.set_fact:
+    sable_entry_module_url: "{{ (sable_index.content | regex_search('href=\"(/_app/immutable/entry/start\\.[^\"]+\\.js)\"', '\\1') | default([], true)) | join('') }}"
 
-- name: Display the Sable page module
-  when: sable_debug_service_enabled | bool
-  ansible.builtin.command:
-    cmd: "cat {{ sable_molecule_bundle_path }}"
-  changed_when: false
+- name: Assert the Sable page references an entry module
+  ansible.builtin.assert:
+    that: sable_entry_module_url | length > 0
+    fail_msg: "The served page references no entry module: {{ sable_index.content }}"
+    success_msg: "The served page loads its entry module from {{ sable_entry_module_url }}"
 
-# The bundle is several megabytes, so it is searched on the host rather
-# than pulled into a variable. Sable renders its version as the text of a
-# link to its releases page, which is what this pattern picks up.
-- name: Read the version out of the Sable page module
-  ansible.builtin.command:
-    argv:
-      - python3
-      - -c
-      - |
-        import re
-        import sys
+- name: Request the Sable entry module
+  ansible.builtin.uri:
+    url: "{{ sable_molecule_base_url }}{{ sable_entry_module_url }}"
+    method: GET
+    follow_redirects: none
+    status_code: "{{ sable_molecule_http_status_codes }}"
+  register: sable_entry_module
 
-        with open(sys.argv[1], encoding='utf-8', errors='replace') as handle:
-            bundle = handle.read()
-
-        matches = re.findall(
-            r"build:`v([0-9]+\.[0-9]+\.[0-9]+)",
-            bundle,
-        )
-
-        print(" ".join(sorted(set(matches))))
-      - "{{ sable_molecule_bundle_path }}"
-  register: sable_bundle_version
-  changed_when: false
-
-# This time the version is checked inside the application that is actually running
-- name: Assert the running Sable is the version this role installs
+- name: Assert the Sable entry module is served
   ansible.builtin.assert:
     that:
-      - sable_bundle_version.stdout_lines | length > 0
-      - sable_defaults.sable_version in sable_bundle_version.stdout.split()
-    fail_msg: "Sable reports {{ sable_bundle_version.stdout | default('none') }}, expected {{ sable_defaults.sable_version }}"
-    success_msg: "Sable reports {{ sable_bundle_version.stdout }}"
+      - sable_entry_module.status == 200
+      - "'javascript' in sable_entry_module.content_type"
+    fail_msg: "The Sable entry module was not served ({{ sable_entry_module.status }}, {{ sable_entry_module.content_type | default('no content type') }})"
+    success_msg: "The Sable entry module is served"
 
 - name: Verify nothing was quietly restarting while all of that was being checked
   when: "sable_restarts_check_enabled | bool"
@@ -328,7 +321,6 @@
       - "Sable systemd: {% for unit, state in sable_verify_units | zip(sable_services.results | map(attribute='status.ActiveState')) %}{{ unit }} ({{ state }}){% if not loop.last %}, {% endif %}{% endfor %}"
       - "Sable restarts: {% for unit, restarts in sable_verify_units | zip(sable_restarts_after.results | map(attribute='status.NRestarts')) %}{{ restarts }} ({{ unit }}){% if not loop.last %}, {% endif %}{% endfor %}"
       - "Sable container user: {{ sable_container.Config.User }}"
-      - "Sable running version: {{ sable_bundle_version.stdout }}"
+      - "Sable running version: {{ sable_page_version }}"
       - "Sable page size: {{ sable_index.content | length }} bytes"
-      - "Sable bundle: {{ sable_bundle_url }} ({{ sable_bundle_download.size | default('unknown') }} bytes)"
       - "Sable homeservers served: {{ sable_served_config.json.homeserverList }}"
