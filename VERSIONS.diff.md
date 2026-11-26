@@ -7,7 +7,7 @@
 ### Component Updates
 
 * [Authentication Service](https://github.com/element-hq/matrix-authentication-service): [1.29.0](https://github.com/element-hq/matrix-authentication-service/releases/tag/v1.29.0) ⇾ [1.30.0](https://github.com/element-hq/matrix-authentication-service/releases/tag/v1.30.0)
-* [Baibot](https://github.com/etkecc/baibot): [v2026.11.18.0](https://github.com/etkecc/baibot/releases/tag/v2026.11.18.0) ⇾ [v2026.11.24.0](https://github.com/etkecc/baibot/releases/tag/v2026.11.24.0)
+* [Baibot](https://github.com/etkecc/baibot): [v2026.11.18.0](https://github.com/etkecc/baibot/releases/tag/v2026.11.18.0) ⇾ [v2026.11.25.0](https://github.com/etkecc/baibot/releases/tag/v2026.11.25.0)
 * [Coturn](https://github.com/coturn/coturn): 4.19.0 ⇾ 4.19.2
 * [Element](https://github.com/element-hq/element-web): [v1.12.35](https://github.com/element-hq/element-web/releases/tag/v1.12.35) ⇾ [v1.12.36](https://github.com/element-hq/element-web/releases/tag/v1.12.36)
 * [Etherpad](https://github.com/ether/etherpad-lite): [3.3.19](https://github.com/ether/etherpad-lite/releases/tag/3.3.19) ⇾ [3.3.22](https://github.com/ether/etherpad-lite/releases/tag/3.3.22)
