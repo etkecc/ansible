@@ -1,0 +1,21 @@
+{#
+SPDX-FileCopyrightText: 2026 Suguru Hirahara
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+#}
+
+FROM node:26.13.1 AS build
+
+WORKDIR /app
+
+RUN npm install -g pnpm
+
+COPY . .
+
+RUN pnpm install
+
+EXPOSE {{ matrixto_container_http_port }}
+
+USER {{ matrixto_uid }}
+
+CMD ["pnpm", "start"]

@@ -1,0 +1,240 @@
+# SPDX-FileCopyrightText: 2023, 2024 Nikita Chernyi
+# SPDX-FileCopyrightText: 2023-2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2024 Sergio Durigan Junior
+# SPDX-FileCopyrightText: 2025 MASH project contributors
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+# Project source code URL: https://github.com/matrix-org/matrix.to
+
+matrixto_enabled: true
+
+matrixto_identifier: matrixto
+matrixto_base_path: "/{{ matrixto_identifier }}"
+
+matrixto_version: 794e6946be746908d91691600e8a2690a2ca3e5c
+
+matrixto_uid: 1000
+matrixto_gid: 1000
+
+# The scheme used for serving Matrix.to.
+matrixto_scheme: https
+
+# The hostname at which Matrix.to is served.
+matrixto_hostname: ""
+
+# The path at which Matrix.to is served.
+# This value must either be `/` or not end with a slash (e.g. `/matrixto`).
+#
+# Hosting Matrix.to under a subpath does not seem to be possible due to Matrix.to's
+# technical limitations.
+matrixto_path_prefix: /
+
+# NOTE: the Docker image is not provided by the developers
+matrixto_container_image_self_build_name: "matrixorg/matrixto:{{ matrixto_container_image_self_build_repo_version }}"
+matrixto_container_image_self_build_repo: "https://github.com/matrix-org/matrix.to.git"
+matrixto_container_image_self_build_repo_version: "{{ matrixto_version if matrixto_version != 'latest' else 'main' }}"
+matrixto_container_image_self_build_src_files_path: "{{ matrixto_base_path }}/docker-src"
+
+# The base container network. It will be auto-created by this role if it doesn't exist already.
+matrixto_container_network: "{{ matrixto_identifier }}"
+
+# Control if the container network is deleted on uninstalling.
+matrixto_container_network_deletion_enabled: true
+
+# Specify how the container publishes its HTTP port (as defined by `matrixto_container_http_port`).
+#
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
+matrixto_container_http_host_bind_port: ""
+
+# The port number in the container
+matrixto_container_http_port: 5000
+
+# A list of additional container networks that the container would be connected to.
+# The role does not create these networks, so make sure they already exist.
+# Use this to expose this container to another reverse proxy, which runs in a different container network.
+matrixto_container_additional_networks: "{{ matrixto_container_additional_networks_auto + matrixto_container_additional_networks_custom }}"
+matrixto_container_additional_networks_auto: []
+matrixto_container_additional_networks_custom: []
+
+# A list of additional "volumes" to mount in the container.
+# This list gets populated dynamically at runtime. You can provide a different default value,
+# if you wish to mount your own files into the container.
+# Contains definition objects like this: `{"type": "bind", "src": "/outside", "dst": "/inside", "options": "readonly"}.
+# See the `--mount` documentation for the `docker run` command.
+matrixto_container_additional_volumes: "{{ matrixto_container_additional_volumes_auto + matrixto_container_additional_volumes_custom }}"
+matrixto_container_additional_volumes_auto: []
+matrixto_container_additional_volumes_custom: []
+
+# matrixto_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
+# See `../templates/labels.j2` for details.
+#
+# To inject your own other container labels, see `matrixto_container_labels_additional_labels_custom`.
+matrixto_container_labels_traefik_enabled: true
+matrixto_container_labels_traefik_docker_network: "{{ matrixto_container_network }}"
+matrixto_container_labels_traefik_hostname: "{{ matrixto_hostname }}"
+# The path prefix must either be `/` or not end with a slash (e.g. `/matrixto`).
+matrixto_container_labels_traefik_path_prefix: "{{ matrixto_path_prefix }}"
+matrixto_container_labels_traefik_rule: "Host(`{{ matrixto_container_labels_traefik_hostname }}`){% if matrixto_container_labels_traefik_path_prefix != '/' %} && PathPrefix(`{{ matrixto_container_labels_traefik_path_prefix }}`){% endif %}"
+matrixto_container_labels_traefik_priority: 0
+matrixto_container_labels_traefik_entrypoints: web-secure
+matrixto_container_labels_traefik_tls: "{{ matrixto_container_labels_traefik_entrypoints != 'web' }}"
+matrixto_container_labels_traefik_tls_certResolver: default  # noqa var-naming
+matrixto_container_labels_traefik_middleware_basic_auth_enabled: false
+# See: https://doc.traefik.io/traefik/reference/routing-configuration/http/middlewares/basicauth/
+matrixto_container_labels_traefik_middleware_basic_auth_users: ""
+
+# Controls which additional headers to attach to all HTTP requests.
+# To add your own custom request headers, use `matrixto_container_labels_traefik_additional_request_headers_custom`
+matrixto_container_labels_traefik_additional_request_headers: "{{ matrixto_container_labels_traefik_additional_request_headers_auto | combine(matrixto_container_labels_traefik_additional_request_headers_custom) }}"
+matrixto_container_labels_traefik_additional_request_headers_auto: {}
+matrixto_container_labels_traefik_additional_request_headers_custom: {}
+
+# Controls which additional headers to attach to all HTTP responses.
+# To add your own custom response headers, use `matrixto_container_labels_traefik_additional_response_headers_custom`
+matrixto_container_labels_traefik_additional_response_headers: "{{ matrixto_container_labels_traefik_additional_response_headers_auto | combine(matrixto_container_labels_traefik_additional_response_headers_custom) }}"
+matrixto_container_labels_traefik_additional_response_headers_auto: |
+  {{
+    {}
+    | combine ({'X-XSS-Protection': matrixto_http_header_xss_protection} if matrixto_http_header_xss_protection else {})
+    | combine ({'X-Content-Type-Options': matrixto_http_header_content_type_options} if matrixto_http_header_content_type_options else {})
+    | combine ({'Content-Security-Policy': matrixto_http_header_content_security_policy} if matrixto_http_header_content_security_policy else {})
+    | combine ({'Permissions-Policy': matrixto_http_header_permissions_policy} if matrixto_http_header_permissions_policy else {})
+    | combine ({'Strict-Transport-Security': matrixto_http_header_strict_transport_security} if matrixto_http_header_strict_transport_security and matrixto_container_labels_traefik_tls else {})
+  }}
+matrixto_container_labels_traefik_additional_response_headers_custom: {}
+
+# matrixto_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
+# See `../templates/labels.j2` for details.
+# To add your own custom labels, use `matrixto_container_labels_additional_labels_custom`
+#
+# Example:
+# matrixto_container_labels_additional_labels_custom:
+#   - my.label=1
+#   - another.label="here"
+matrixto_container_labels_additional_labels: "{{ matrixto_container_labels_additional_labels_auto + matrixto_container_labels_additional_labels_custom }}"
+matrixto_container_labels_additional_labels_auto: []
+matrixto_container_labels_additional_labels_custom: []
+
+# Specify the size of the container's tmpfs volume
+matrixto_container_tmpfs_tmp_size: 128m
+
+# A list of extra arguments to pass to the container (`docker create` command)
+matrixto_container_extra_arguments: "{{ matrixto_container_extra_arguments_auto + matrixto_container_extra_arguments_custom }}"
+matrixto_container_extra_arguments_auto: []
+matrixto_container_extra_arguments_custom: []
+
+# A list of extra arguments to pass to the process inside the container
+# Example: ['--SOME_ARGUMENT']
+matrixto_process_extra_arguments: "{{ matrixto_process_extra_arguments_auto + matrixto_process_extra_arguments_custom }}"
+matrixto_process_extra_arguments_auto: []
+matrixto_process_extra_arguments_custom: []
+
+# Specifies the value of the `X-XSS-Protection` header
+# Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
+#
+# Learn more about it is here:
+# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
+# - https://portswigger.net/web-security/cross-site-scripting/reflected
+matrixto_http_header_xss_protection: "1; mode=block"
+
+# Specifies the value of the `X-Content-Type-Options` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
+matrixto_http_header_content_type_options: nosniff
+
+# Specifies the value of the `Content-Security-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
+matrixto_http_header_content_security_policy: frame-ancestors 'self'
+
+# Specifies the value of the `Permissions-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy
+matrixto_http_header_permissions_policy: "{{ 'interest-cohort=()' if matrixto_floc_optout_enabled else '' }}"
+
+# Specifies the value of the `Strict-Transport-Security` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+matrixto_http_header_strict_transport_security: "max-age=31536000; includeSubDomains{{ '; preload' if matrixto_hsts_preload_enabled else '' }}"
+
+# Controls whether to send a "Permissions-Policy interest-cohort=();" header along with all responses
+#
+# Learn more about what it is here:
+# - https://www.eff.org/deeplinks/2021/03/googles-floc-terrible-idea
+# - https://paramdeo.com/blog/opting-your-website-out-of-googles-floc-network
+# - https://amifloced.org/
+#
+# Of course, a better solution is to just stop using browsers (like Chrome), which participate in such tracking practices.
+# See: `matrixto_http_header_permissions_policy`
+matrixto_floc_optout_enabled: true
+
+# Controls if HSTS preloading is enabled
+#
+# In its strongest and recommended form, the [HSTS policy](https://www.chromium.org/hsts) includes all subdomains, and
+# indicates a willingness to be "preloaded" into browsers:
+# `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload`
+# For more information visit:
+# - https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
+# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+# - https://hstspreload.org/#opt-in
+# See: `matrixto_http_header_strict_transport_security`
+matrixto_hsts_preload_enabled: false
+
+# List of systemd services that the Matrix.to systemd service depends on
+matrixto_systemd_required_services_list: "{{ matrixto_systemd_required_services_list_default + matrixto_systemd_required_services_list_auto + matrixto_systemd_required_services_list_custom }}"
+matrixto_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+matrixto_systemd_required_services_list_auto: []
+matrixto_systemd_required_services_list_custom: []
+
+# List of systemd services that the Matrix.to systemd service wants
+matrixto_systemd_wanted_services_list: "{{ matrixto_systemd_wanted_services_list_default + matrixto_systemd_wanted_services_list_auto + matrixto_systemd_wanted_services_list_custom }}"
+matrixto_systemd_wanted_services_list_default: []
+matrixto_systemd_wanted_services_list_auto: []
+matrixto_systemd_wanted_services_list_custom: []
+
+# Controls how long to wait for the container to stop gracefully before killing it.
+matrixto_container_stop_grace_time_seconds: "{{ devture_systemd_docker_base_container_stop_grace_time_seconds }}"
+
+# Controls how long the pre-start cleanup should wait for stale container-name release
+# before failing startup explicitly.
+matrixto_container_cleanup_timeout_seconds: "{{ devture_systemd_docker_base_container_cleanup_timeout_seconds }}"
+
+# Controls the delay between pre-start cleanup retries.
+matrixto_container_cleanup_retry_delay_seconds: "{{ devture_systemd_docker_base_container_cleanup_retry_delay_seconds }}"
+
+# Shell command used in the systemd pre-start phase to deterministically remove a stale
+# container and wait until Docker releases its name.
+matrixto_container_cleanup_command: |
+  i=0;
+  while [ "$i" -lt {{ matrixto_container_cleanup_timeout_seconds }} ]; do
+  {{ devture_systemd_docker_base_host_command_docker }} stop -t {{ matrixto_container_stop_grace_time_seconds }} {{ matrixto_identifier }} >/dev/null 2>&1 || true;
+  {{ devture_systemd_docker_base_host_command_docker }} rm -f {{ matrixto_identifier }} >/dev/null 2>&1 || true;
+  if {{ devture_systemd_docker_base_host_command_docker }} container inspect {{ matrixto_identifier }} >/dev/null 2>&1; then
+  i=$((i + 1));
+  sleep {{ matrixto_container_cleanup_retry_delay_seconds }};
+  continue;
+  fi;
+  if {{ devture_systemd_docker_base_host_command_docker }} info >/dev/null 2>&1; then
+  exit 0;
+  fi;
+  echo "Failed to query Docker daemon while cleaning up {{ matrixto_identifier }}" >&2;
+  exit 1;
+  done;
+  echo "Failed to remove stale container {{ matrixto_identifier }} after {{ matrixto_container_cleanup_timeout_seconds }} attempts" >&2;
+  exit 1
+
+# Specify the timezone
+matrixto_environment_variables_tz: UTC
+
+# Additional environment variables.
+matrixto_environment_variables_additional_variables: ""
+
+# matrixto_restart_necessary controls whether the Matrix.to systemd
+# service will be restarted (when true) or merely started (when false) by the
+# systemd service manager role (when conditional restart is enabled).
+#
+# This value is automatically computed during installation based on whether
+# any configuration files, the systemd service file, or the container image changed,
+# or whether the running container was created from an older configuration or image.
+# The default of `false` means "no restart needed" — appropriate when the role's
+# installation tasks haven't run (e.g., due to --tags skipping them).
+matrixto_restart_necessary: false
