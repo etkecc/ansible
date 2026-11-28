@@ -54,12 +54,26 @@
 - name: Run if self-building of linkding container image is enabled
   when: "linkding_container_image_self_build | bool"
   block:
+    # A checkout owned by a different user (a uid change, an earlier clone by another user, etc.) would make the git task below fail on ownership or permissions.
+    - name: Ensure linkding repository ownership is correct on self-build
+      ansible.builtin.file:
+        path: "{{ linkding_container_image_self_build_src_files_path }}"
+        state: directory
+        owner: "{{ linkding_uid }}"
+        group: "{{ linkding_gid }}"
+        recurse: true
+
     - name: Ensure linkding repository is present on self-build
       ansible.builtin.git:
         repo: "{{ linkding_container_image_self_build_repo }}"
         version: "{{ linkding_container_image_self_build_repo_version }}"
         dest: "{{ linkding_container_image_self_build_src_files_path }}"
         force: "yes"
+      # Keep this even though the task above normalizes ownership. Git may still see an ownership mismatch when Ansible becomes an unprivileged user.
+      environment:
+        GIT_CONFIG_COUNT: "1"
+        GIT_CONFIG_KEY_0: safe.directory
+        GIT_CONFIG_VALUE_0: "{{ linkding_container_image_self_build_src_files_path }}"
       register: linkding_git_pull_results
 
     - name: Ensure linkding container image is built

@@ -120,26 +120,29 @@
           ETHERPAD_PLUGINS: "{{ etherpad_plugins | join(' ') }}"
       register: etherpad_container_image_build_result
 
-- name: Ensure Etherpad container network is created via community.docker.docker_network
-  when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
-  community.docker.docker_network:
-    enable_ipv6: "{{ devture_systemd_docker_base_ipv6_enabled }}"
-    name: "{{ etherpad_container_network }}"
-    driver: bridge
-    driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
-  register: etherpad_network_creation_result
+- name: Run if 'host' network is not specified to be used
+  when: etherpad_container_network != 'host'
+  block:
+    - name: Ensure Etherpad container network is created via community.docker.docker_network
+      when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+      community.docker.docker_network:
+        enable_ipv6: "{{ devture_systemd_docker_base_ipv6_enabled }}"
+        name: "{{ etherpad_container_network }}"
+        driver: bridge
+        driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
+      register: etherpad_network_creation_result
 
-- name: Ensure Etherpad container network is created via ansible.builtin.command
-  when: devture_systemd_docker_base_container_network_creation_method == 'command'
-  ansible.builtin.command:
-    cmd: >-
-      {{ devture_systemd_docker_base_host_command_docker }} network create
-      {% if devture_systemd_docker_base_ipv6_enabled %}--ipv6{% endif %}
-      {{ devture_systemd_docker_base_container_networks_driver_options_string }}
-      {{ etherpad_container_network }}
-  register: etherpad_network_creation_result
-  changed_when: etherpad_network_creation_result.rc == 0
-  failed_when: etherpad_network_creation_result.rc != 0 and 'already exists' not in etherpad_network_creation_result.stderr
+    - name: Ensure Etherpad container network is created via ansible.builtin.command
+      when: devture_systemd_docker_base_container_network_creation_method == 'command'
+      ansible.builtin.command:
+        cmd: >-
+          {{ devture_systemd_docker_base_host_command_docker }} network create
+          {% if devture_systemd_docker_base_ipv6_enabled %}--ipv6{% endif %}
+          {{ devture_systemd_docker_base_container_networks_driver_options_string }}
+          {{ etherpad_container_network }}
+      register: etherpad_network_creation_result
+      changed_when: etherpad_network_creation_result.rc == 0
+      failed_when: etherpad_network_creation_result.rc != 0 and 'already exists' not in etherpad_network_creation_result.stderr
 
 - name: Ensure Etherpad systemd service is present
   ansible.builtin.template:

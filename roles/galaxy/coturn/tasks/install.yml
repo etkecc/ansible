@@ -124,8 +124,8 @@
         rebuild: "{{ 'always' if coturn_git_pull_results.changed | bool else 'never' }}"
       register: coturn_container_image_build_result
 
-- name: Ensure coturn container network is created
-  when: coturn_container_network not in ['', 'host']
+- name: Run if 'host' network is not specified to be used
+  when: coturn_container_network != 'host'
   block:
     - name: Ensure coturn container network is created via community.docker.docker_network
       when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
