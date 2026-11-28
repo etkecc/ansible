@@ -50,9 +50,11 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {{ arg }} \
       {% endfor %}
 
+{% if cinny_container_network != 'host' %}
 {% for network in cinny_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ cinny_identifier }}
 {% endfor %}
+{% endif %}
 
 ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ cinny_identifier }}
 

@@ -25,7 +25,7 @@
         state: absent
 
     - name: Ensure Uptime Kuma container network does not exist
-      when: uptime_kuma_container_network_deletion_enabled
+      when: uptime_kuma_container_network_deletion_enabled and uptime_kuma_container_network != 'host'
       block:
         - name: Ensure Uptime Kuma container network does not exist via community.docker.docker_network
           when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'

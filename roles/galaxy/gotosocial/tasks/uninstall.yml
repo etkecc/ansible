@@ -60,7 +60,7 @@
       failed_when: false
 
     - name: Ensure GoToSocial container network does not exist
-      when: gotosocial_container_network_deletion_enabled
+      when: gotosocial_container_network_deletion_enabled and gotosocial_container_network != 'host'
       block:
         - name: Ensure GoToSocial container network does not exist via community.docker.docker_network
           when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'

@@ -62,7 +62,7 @@
       failed_when: false
 
     - name: Ensure Vaultwarden container network does not exist
-      when: vaultwarden_container_network_deletion_enabled
+      when: vaultwarden_container_network_deletion_enabled and vaultwarden_container_network != 'host'
       block:
         - name: Ensure Vaultwarden container network does not exist via community.docker.docker_network
           when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'

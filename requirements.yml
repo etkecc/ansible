@@ -8,22 +8,22 @@
   version: v0.7.36-11
   name: firezone
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-gotosocial.git
-  version: v0.22.3-3
+  version: v0.22.3-4
   name: gotosocial
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-languagetool.git
-  version: v6.8-5
+  version: v6.8-6
   name: languagetool
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-linkding.git
-  version: v1.47.0-6
+  version: v1.47.0-7
   name: linkding
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-miniflux.git
-  version: v2.3.5-3
+  version: v2.3.5-4
   name: miniflux
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-peertube.git
-  version: v8.3.2-2
+  version: v8.3.2-3
   name: peertube
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-radicale.git
-  version: v3.9.2.0-1
+  version: v3.9.2.0-2
   name: radicale
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-ssh.git
   version: v1.0.3-1
@@ -35,10 +35,10 @@
   version: main
   name: ufw
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-uptime_kuma.git
-  version: v2.5.12-1
+  version: v2.5.12-2
   name: uptime_kuma
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-vaultwarden.git
-  version: v1.37.5-2
+  version: v1.37.5-3
   name: vaultwarden
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-wg-easy.git
   version: v15.5.0-2

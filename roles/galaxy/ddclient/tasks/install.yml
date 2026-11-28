@@ -79,26 +79,29 @@
         rebuild: "{{ 'always' if ddclient_git_pull_results.changed | bool else 'never' }}"
       register: ddclient_container_image_build_result
 
-- name: Ensure ddclient container network is created via community.docker.docker_network
-  when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
-  community.docker.docker_network:
-    enable_ipv6: "{{ devture_systemd_docker_base_ipv6_enabled }}"
-    name: "{{ ddclient_container_network }}"
-    driver: bridge
-    driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
-  register: ddclient_network_creation_result
+- name: Run if 'host' network is not specified to be used
+  when: ddclient_container_network != 'host'
+  block:
+    - name: Ensure ddclient container network is created via community.docker.docker_network
+      when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+      community.docker.docker_network:
+        enable_ipv6: "{{ devture_systemd_docker_base_ipv6_enabled }}"
+        name: "{{ ddclient_container_network }}"
+        driver: bridge
+        driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
+      register: ddclient_network_creation_result
 
-- name: Ensure ddclient container network is created via ansible.builtin.command
-  when: devture_systemd_docker_base_container_network_creation_method == 'command'
-  ansible.builtin.command:
-    cmd: >-
-      {{ devture_systemd_docker_base_host_command_docker }} network create
-      {% if devture_systemd_docker_base_ipv6_enabled %}--ipv6{% endif %}
-      {{ devture_systemd_docker_base_container_networks_driver_options_string }}
-      {{ ddclient_container_network }}
-  register: ddclient_network_creation_result
-  changed_when: ddclient_network_creation_result.rc == 0
-  failed_when: ddclient_network_creation_result.rc != 0 and 'already exists' not in ddclient_network_creation_result.stderr
+    - name: Ensure ddclient container network is created via ansible.builtin.command
+      when: devture_systemd_docker_base_container_network_creation_method == 'command'
+      ansible.builtin.command:
+        cmd: >-
+          {{ devture_systemd_docker_base_host_command_docker }} network create
+          {% if devture_systemd_docker_base_ipv6_enabled %}--ipv6{% endif %}
+          {{ devture_systemd_docker_base_container_networks_driver_options_string }}
+          {{ ddclient_container_network }}
+      register: ddclient_network_creation_result
+      changed_when: ddclient_network_creation_result.rc == 0
+      failed_when: ddclient_network_creation_result.rc != 0 and 'already exists' not in ddclient_network_creation_result.stderr
 
 - name: Ensure ddclient systemd service is present
   ansible.builtin.template:

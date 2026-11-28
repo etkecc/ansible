@@ -59,7 +59,7 @@
       failed_when: false
 
     - name: Ensure PeerTube container network does not exist
-      when: peertube_container_network_deletion_enabled
+      when: peertube_container_network_deletion_enabled and peertube_container_network != 'host'
       block:
         - name: Ensure PeerTube container network does not exist via community.docker.docker_network
           when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
